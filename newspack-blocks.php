@@ -94,10 +94,10 @@ function newspack_blocks_enqueue_view_assets( $type, $dependencies = array() ) {
 }
 
 /* An array of slugs for the blocks that require server-side handling (rendering, or asset loading) */
-$newspack_blocks_blocks = array();
+$newspack_blocks_blocks = array( 'homepage-articles' );
 
 foreach ( $newspack_blocks_blocks as $newspack_blocks_block ) {
-	$newspack_blocks_view_path = NEWSPACK__PLUGIN_DIR . 'src/blocks/' . $newspack_blocks_block . '/view.php';
+	$newspack_blocks_view_path = NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/' . $newspack_blocks_block . '/index.php';
 	if ( file_exists( $newspack_blocks_view_path ) ) {
 		include_once $newspack_blocks_view_path;
 	}
