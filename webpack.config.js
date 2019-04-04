@@ -20,8 +20,8 @@ const path = require( 'path' );
 /**
  * Internal variables
  */
-const editorSetup = path.join( __dirname, 'extensions', 'setup', 'editor' );
-const viewSetup = path.join( __dirname, 'extensions', 'setup', 'view' );
+const editorSetup = path.join( __dirname, 'src', 'setup', 'editor' );
+const viewSetup = path.join( __dirname, 'src', 'setup', 'view' );
 
 function blockScripts( type, inputDir, presetBlocks ) {
 	return presetBlocks
@@ -29,7 +29,7 @@ function blockScripts( type, inputDir, presetBlocks ) {
 		.filter( fs.existsSync );
 }
 
-const presetPath = path.join( __dirname, 'extensions', 'setup', 'index.json' );
+const presetPath = path.join( __dirname, 'src', 'setup', 'blocks.json' );
 const presetIndex = require( presetPath );
 const presetBlocks = _.get( presetIndex, [ 'production' ], [] );
 const presetBetaBlocks = _.get( presetIndex, [ 'beta' ], [] );
@@ -37,7 +37,7 @@ const allPresetBlocks = [ ...presetBlocks, ...presetBetaBlocks ];
 
 // Helps split up each block into its own folder view script
 const viewBlocksScripts = allPresetBlocks.reduce( ( viewBlocks, block ) => {
-	const viewScriptPath = path.join( __dirname, 'extensions', 'blocks', block, 'view.js' );
+	const viewScriptPath = path.join( __dirname, 'src', 'blocks', block, 'view.js' );
 	if ( fs.existsSync( viewScriptPath ) ) {
 		viewBlocks[ block + '/view' ] = [ viewSetup, ...[ viewScriptPath ] ];
 	}
@@ -47,13 +47,13 @@ const viewBlocksScripts = allPresetBlocks.reduce( ( viewBlocks, block ) => {
 // Combines all the different blocks into one editor.js script
 const editorScript = [
 	editorSetup,
-	...blockScripts( 'editor', path.join( __dirname, 'extensions' ), presetBlocks ),
+	...blockScripts( 'editor', path.join( __dirname, 'src' ), presetBlocks ),
 ];
 
 // Combines all the different blocks into one editor-beta.js script
 const editorBetaScript = [
 	editorSetup,
-	...blockScripts( 'editor', path.join( __dirname, 'extensions' ), allPresetBlocks ),
+	...blockScripts( 'editor', path.join( __dirname, 'src' ), allPresetBlocks ),
 ];
 
 const webpackConfig = getBaseWebpackConfig( null, {
@@ -62,7 +62,7 @@ const webpackConfig = getBaseWebpackConfig( null, {
 		'editor-beta': editorBetaScript,
 		...viewBlocksScripts,
 	},
-	'output-path': path.join( __dirname, '_inc', 'blocks' ),
+	'output-path': path.join( __dirname, 'dist' ),
 } );
 
 module.exports = _.merge( {}, webpackConfig, {
