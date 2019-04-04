@@ -13,8 +13,9 @@
  * @return string Returns the post content with latest posts added.
  */
 function newspack_blocks_render_block_newspack_homepage_articles( $attributes ) {
-	$args = array(
-		'posts_per_page'   => isset( $attributes['postsToShow'] ) ? $attributes['postsToShow'] : 5,
+	$list_items_markup = '';
+	$posts_per_page    = isset( $attributes['postsToShow'] ) ? $attributes['postsToShow'] : 5;
+	$args              = array(
 		'post_status'      => 'publish',
 		'order'            => isset( $attributes['order'] ) ? $attributes['order'] : 'desc',
 		'orderby'          => isset( $attributes['orderBy'] ) ? $attributes['orderBy'] : 'date',
@@ -24,12 +25,9 @@ function newspack_blocks_render_block_newspack_homepage_articles( $attributes ) 
 	if ( isset( $attributes['categories'] ) ) {
 		$args['category'] = $attributes['categories'];
 	}
+	$posts_to_show = Newspack_Blocks::newspack_blocks_posts_with_args_and_limit( $args, $posts_per_page );
 
-	$recent_posts = get_posts( $args );
-
-	$list_items_markup = '';
-
-	foreach ( $recent_posts as $post ) {
+	foreach ( $posts_to_show as $post ) {
 		$title = get_the_title( $post );
 		if ( ! $title ) {
 			$title = __( '(Untitled)', 'newspack-blocks' );

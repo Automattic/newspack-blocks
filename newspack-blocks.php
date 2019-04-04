@@ -116,6 +116,63 @@ class Newspack_Blocks {
 			);
 		}
 	}
+
+	/**
+	 * An array of post IDs that have been show by a block on the current page
+	 *
+	 * @var array $newspack_blocks_already_shown Arry of block slugs that require server-side handling (rendering or asset loading)
+	 */
+	private static $newspack_blocks_already_shown = array();
+
+	/**
+	 * Get the number of posts that have been shown on the curren page.
+	 *
+	 * @return number The number of posts that have been shown on the current page.
+	 */
+	private static function newspack_blocks_already_shown_count() {
+		return count( self::$newspack_blocks_already_shown );
+	}
+
+	/**
+	 * Determine if a post has been shown on the current page already. If it has not, add it to the array for future checks.
+	 *
+	 * @param number $post_id The ID of the post to check.
+	 *
+	 * @return boolean
+	 */
+	private static function newspack_blocks_should_show_post( $post_id ) {
+		if ( ! in_array( $post_id, self::$newspack_blocks_already_shown, true ) ) {
+			self::$newspack_blocks_already_shown[] = $post_id;
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Get an array of posts based on query parameters and limit.
+	 *
+	 * @param object $args Query parameters (should NOT include posts_per_page).
+	 *
+	 * @param number $limit Desired number of posts.
+	 *
+	 * @return array An array of posts.
+	 */
+	public static function newspack_blocks_posts_with_args_and_limit( $args = array(), $limit = 0 ) {
+		$args['posts_per_page'] = $limit + self::newspack_blocks_already_shown_count();
+		$all_posts              = get_posts( $args );
+		$counter                = 0;
+		$posts                  = array();
+		foreach ( $all_posts as $post ) {
+			if ( $counter > $limit ) {
+				break;
+			}
+			if ( self::newspack_blocks_should_show_post( $post->ID ) ) {
+				$posts[] = $post;
+				$counter++;
+			}
+		}
+		return $posts;
+	}
 }
 
 Newspack_Blocks::newspack_blocks_enqueue_block_view_assets();
