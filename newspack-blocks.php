@@ -94,10 +94,10 @@ class Newspack_Blocks {
 	 * @param array  $dependencies An array of script dependencies.
 	 */
 	public static function newspack_blocks_enqueue_view_assets( $type, $dependencies = array() ) {
-		$style_path  = BLOCKS_DIRECTORY . $type . '/view' . ( is_rtl() ? '.rtl' : '' ) . '.css';
-		$script_path = BLOCKS_DIRECTORY . $type . '/view.js';
+		$style_path  = NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $type . '/view' . ( is_rtl() ? '.rtl' : '' ) . '.css';
+		$script_path = NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $type . '/view.js';
 
-		if ( file_exists( NEWSPACK__PLUGIN_DIR . $style_path ) ) {
+		if ( file_exists( NEWSPACK_BLOCKS__PLUGIN_DIR . $style_path ) ) {
 			wp_enqueue_style(
 				"newspack-block-{$type}",
 				plugins_url( $style_path, __FILE__ ),
@@ -106,7 +106,7 @@ class Newspack_Blocks {
 			);
 		}
 
-		if ( file_exists( NEWSPACK__PLUGIN_DIR . $script_path ) ) {
+		if ( file_exists( NEWSPACK_BLOCKS__PLUGIN_DIR . $script_path ) ) {
 			wp_enqueue_script(
 				"newspack-block-{$type}",
 				plugins_url( $script_path, __FILE__ ),

@@ -29,6 +29,8 @@ import {
 } from '@wordpress/editor';
 import { withSelect } from '@wordpress/data';
 
+import './editor.scss';
+
 /**
  * Module Constants
  */

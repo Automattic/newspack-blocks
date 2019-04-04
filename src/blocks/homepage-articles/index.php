@@ -51,7 +51,7 @@ function newspack_blocks_render_block_newspack_homepage_articles( $attributes ) 
 		$list_items_markup .= "</li>\n";
 	}
 
-	$class = 'wp-block-latest-posts';
+	$class = 'wp-block-newspack-blocks-homepage-articles';
 	if ( isset( $attributes['align'] ) ) {
 		$class .= ' align' . $attributes['align'];
 	}
@@ -77,6 +77,8 @@ function newspack_blocks_render_block_newspack_homepage_articles( $attributes ) 
 		esc_attr( $class ),
 		$list_items_markup
 	);
+
+	Newspack_Blocks::newspack_blocks_enqueue_view_assets( 'homepage-articles' );
 
 	return $block_content;
 }

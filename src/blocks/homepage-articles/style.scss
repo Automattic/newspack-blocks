@@ -1,4 +1,8 @@
-.wp-block-latest-posts {
+.wp-block-newspack-blocks-homepage-articles {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+
 	&.alignleft {
 		/*rtl:ignore*/
 		margin-right: 2em;
@@ -18,19 +22,9 @@
 			width: 100%;
 		}
 	}
-
-	@include break-small {
-		@for $i from 2 through 6 {
-			&.columns-#{ $i } li {
-				width: calc((100% / #{ $i }) - 16px);
-			}
-		}
-	}
 }
 
 .wp-block-latest-posts__post-date {
 	display: block;
-	color: $dark-gray-300;
-	font-size: $default-font-size;
 }
 

@@ -9,7 +9,7 @@ import { Path, Rect, SVG } from '@wordpress/components';
  */
 import edit from './edit';
 export const name = 'homepage-articles';
-export const title = __( 'Newspack Attributes Example' );
+export const title = __( 'Newspack Articles' );
 export const icon = (
 	<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 		<Path d="M0,0h24v24H0V0z" fill="none" />
