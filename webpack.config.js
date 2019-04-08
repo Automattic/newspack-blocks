@@ -27,7 +27,10 @@ function blockScripts( type, inputDir, blocks ) {
 		.filter( fs.existsSync );
 }
 
-const blocks = require( path.join( __dirname, 'src', 'setup', 'blocks.json' ) );
+const blocksDir = path.join( __dirname, 'src', 'blocks' );
+const blocks = fs
+  .readdirSync( blocksDir )
+  .filter( block => fs.existsSync( path.join( __dirname, 'src', 'blocks', block, 'editor.js' ) ) );
 
 // Helps split up each block into its own folder view script
 const viewBlocksScripts = blocks.reduce( ( viewBlocks, block ) => {
