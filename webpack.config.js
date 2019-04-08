@@ -6,18 +6,14 @@
 /**
  * External dependencies
  */
-
-const _ = require( 'lodash' );
-const path = require( 'path' );
 const fs = require( 'fs' );
-const webpack = require( 'webpack' );
-const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
-const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
-const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
-const Minify = require( '@automattic/calypso-build/webpack/minify' );
-const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
-const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
-const wordpressExternals = require( '@automattic/calypso-build/webpack/wordpress-externals' );
+const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
+const path = require( 'path' );
+
+/**
+ * Internal dependencies
+ */
+// const { workerCount } = require( './webpack.common' ); // todo: shard...
 
 /**
  * Internal variables
@@ -25,90 +21,38 @@ const wordpressExternals = require( '@automattic/calypso-build/webpack/wordpress
 const editorSetup = path.join( __dirname, 'src', 'setup', 'editor' );
 const viewSetup = path.join( __dirname, 'src', 'setup', 'view' );
 
-function blockScripts( type, inputDir, presetBlocks ) {
-	return presetBlocks
+function blockScripts( type, inputDir, blocks ) {
+	return blocks
 		.map( block => path.join( inputDir, 'blocks', block, `${ type }.js` ) )
 		.filter( fs.existsSync );
 }
-/**
- * Return a webpack config object
- *
- * @return {object} webpack config
- */
-function getWebpackConfig() {
-	const workerCount = 1;
-	const cssFilename = '[name].css';
 
-	const presetPath = path.join( __dirname, 'src', 'setup', 'blocks.json' );
-	console.log( presetPath );
-	const presetIndex = require( presetPath );
-	const presetBlocks = _.get( presetIndex, [ 'production' ], [] );
+const blocksDir = path.join( __dirname, 'src', 'blocks' );
+const blocks = fs
+  .readdirSync( blocksDir )
+  .filter( block => fs.existsSync( path.join( __dirname, 'src', 'blocks', block, 'editor.js' ) ) );
 
-	// Helps split up each block into its own folder view script
-	const viewBlocksScripts = presetBlocks.reduce( ( viewBlocks, block ) => {
-		const viewScriptPath = path.join( __dirname, 'src', 'blocks', block, 'view.js' );
-		if ( fs.existsSync( viewScriptPath ) ) {
-			viewBlocks[ block + '/view' ] = [ viewSetup, ...[ viewScriptPath ] ];
-		}
-		return viewBlocks;
-	}, {} );
+// Helps split up each block into its own folder view script
+const viewBlocksScripts = blocks.reduce( ( viewBlocks, block ) => {
+	const viewScriptPath = path.join( __dirname, 'src', 'blocks', block, 'view.js' );
+	if ( fs.existsSync( viewScriptPath ) ) {
+		viewBlocks[ block + '/view' ] = [ viewSetup, ...[ viewScriptPath ] ];
+	}
+	return viewBlocks;
+}, {} );
 
-	// Combines all the different blocks into one editor.js script
-	const editorScript = [
-		editorSetup,
-		...blockScripts( 'editor', path.join( __dirname, 'src' ), presetBlocks ),
-	];
+// Combines all the different blocks into one editor.js script
+const editorScript = [
+	editorSetup,
+	...blockScripts( 'editor', path.join( __dirname, 'src' ), blocks ),
+];
 
-	const webpackConfig = {
-		entry: {
-			editor: editorScript,
-			...viewBlocksScripts,
-		},
-		mode: 'production',
-		module: {
-			rules: [
-				TranspileConfig.loader( {
-					workerCount,
-					configFile: path.join( __dirname, 'babel.config.js' ),
-					cacheDirectory: true,
-					exclude: /node_modules\//,
-				} ),
-				SassConfig.loader( {
-					preserveCssCustomProperties: false,
-					includePaths: [ path.join( __dirname, 'client' ) ],
-					prelude: '@import "~@automattic/calypso-color-schemes/src/shared/colors";',
-				} ),
-				FileConfig.loader(),
-			],
-		},
-		output: {
-			path: path.join( __dirname, 'dist' ),
-			filename: '[name].js',
-			libraryTarget: 'window',
-		},
-		resolve: {
-			extensions: [ '.json', '.js', '.jsx' ],
-			modules: [ 'node_modules' ],
-		},
-		plugins: [
-			new webpack.DefinePlugin( {
-				'process.env.NODE_ENV': JSON.stringify( process.env.NODE_ENV ),
-				global: 'window',
-			} ),
-			new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
-			...SassConfig.plugins( { cssFilename, minify: true } ),
-			new DuplicatePackageCheckerPlugin(),
-			new CopyWebpackPlugin( [
-				{
-					from: presetPath,
-					to: 'index.json',
-				},
-			] ),
-		],
-		externals: [ wordpressExternals, 'wp', 'lodash' ],
-	};
+const webpackConfig = getBaseWebpackConfig( null, {
+	entry: {
+		editor: editorScript,
+		...viewBlocksScripts,
+	},
+	'output-path': path.join( __dirname, 'dist' ),
+} );
 
-	return webpackConfig;
-}
-
-module.exports = getWebpackConfig;
+module.exports = webpackConfig;
