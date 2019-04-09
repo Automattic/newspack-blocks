@@ -42,6 +42,74 @@ class Newspack_Blocks {
 	}
 
 	/**
+	 * Enqueue block scripts and styles for view.
+	 */
+	public static function manage_view_scripts() {
+		if ( is_admin() ) {
+			// In editor environment, do nothing.
+			return;
+		}
+		$src_directory  = NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/';
+		$dist_directory = NEWSPACK_BLOCKS__PLUGIN_DIR . 'dist/';
+		$iterator       = new DirectoryIterator( $src_directory );
+		foreach ( $iterator as $block_directory ) {
+			if ( ! $block_directory->isDir() || $block_directory->isDot() ) {
+				continue;
+			}
+			$type = $block_directory->getFilename();
+
+			/* If index.php is found, include it and use for block rendering. */
+			$view_php_path = $src_directory . $type . '/index.php';
+			if ( file_exists( $view_php_path ) ) {
+				include_once $view_php_path;
+				continue;
+			}
+
+			/* If index.php is missing but view Javascript file is found, do generic view asset loading. */
+			$view_js_path = $dist_directory . $type . '/view.js';
+			if ( file_exists( $view_js_path ) ) {
+				register_block_type(
+					"newspack-blocks/{$type}",
+					array(
+						'render_callback' => function( $attributes, $content ) use ( $type ) {
+							Newspack_Blocks::enqueue_view_assets( $type );
+							return $content;
+						},
+					)
+				);
+			}
+		}
+	}
+
+	/**
+	 * Enqueue view scripts and styles for a single block.
+	 *
+	 * @param string $type The block's slug.
+	 * @param array  $dependencies An array of script dependencies.
+	 */
+	public static function enqueue_view_assets( $type, $dependencies = array() ) {
+		$style_path  = NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $type . '/view' . ( is_rtl() ? '.rtl' : '' ) . '.css';
+		$script_path = NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $type . '/view.js';
+		if ( file_exists( NEWSPACK_BLOCKS__PLUGIN_DIR . $style_path ) ) {
+			wp_enqueue_style(
+				"newspack-blocks-{$type}",
+				plugins_url( $style_path, __FILE__ ),
+				array(),
+				NEWSPACK_BLOCKS__VERSION
+			);
+		}
+		if ( file_exists( NEWSPACK_BLOCKS__PLUGIN_DIR . $script_path ) ) {
+			wp_enqueue_script(
+				"newspack-blocks-{$type}",
+				plugins_url( $script_path, __FILE__ ),
+				$dependencies,
+				array(),
+				NEWSPACK_BLOCKS__VERSION
+			);
+		}
+	}
+
+	/**
 	 * Parse generated .deps.json file and return array of dependencies to be enqueued.
 	 *
 	 * @param string $path Path to the generated dependencies file.
@@ -57,4 +125,5 @@ class Newspack_Blocks {
 		return $dependencies;
 	}
 }
+Newspack_Blocks::manage_view_scripts();
 add_action( 'enqueue_block_editor_assets', array( 'Newspack_Blocks', 'enqueue_block_editor_assets' ) );
