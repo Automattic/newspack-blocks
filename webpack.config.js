@@ -47,7 +47,7 @@ const editorScript = [
 	...blockScripts( 'editor', path.join( __dirname, 'src' ), blocks ),
 ];
 
-const webpackConfig = getBaseWebpackConfig( null, {
+const webpackConfig = getBaseWebpackConfig( { WP: true }, {
 	entry: {
 		editor: editorScript,
 		...viewBlocksScripts,
