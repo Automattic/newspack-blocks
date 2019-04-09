@@ -85,7 +85,6 @@ class Newspack_Blocks {
 	 * Enqueue view scripts and styles for a single block.
 	 *
 	 * @param string $type The block's slug.
-	 * @param array  $dependencies An array of script dependencies.
 	 */
 	public static function enqueue_view_assets( $type ) {
 		$style_path  = NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $type . '/view' . ( is_rtl() ? '.rtl' : '' ) . '.css';
