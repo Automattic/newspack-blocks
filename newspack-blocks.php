@@ -25,28 +25,7 @@ class Newspack_Blocks {
 	public static function enqueue_block_editor_assets() {
 		$editor_script = plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.js', __FILE__ );
 		$editor_style  = plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.css', __FILE__ );
-		$dependencies  = array(
-			'lodash',
-			'wp-api-fetch',
-			'wp-blob',
-			'wp-blocks',
-			'wp-components',
-			'wp-compose',
-			'wp-data',
-			'wp-date',
-			'wp-edit-post',
-			'wp-editor',
-			'wp-element',
-			'wp-escape-html',
-			'wp-hooks',
-			'wp-i18n',
-			'wp-keycodes',
-			'wp-plugins',
-			'wp-polyfill',
-			'wp-rich-text',
-			'wp-token-list',
-			'wp-url',
-		);
+		$dependencies  = self::dependencies_from_path( NEWSPACK_BLOCKS__PLUGIN_DIR . 'dist/editor.deps.json' );
 		wp_enqueue_script(
 			'newspack-blocks-editor',
 			$editor_script,
@@ -60,6 +39,22 @@ class Newspack_Blocks {
 			array(),
 			NEWSPACK_BLOCKS__VERSION
 		);
+	}
+
+	/**
+	 * Parse generated .deps.json file and return array of dependencies to be enqueued.
+	 *
+	 * @param string $path Path to the generated dependencies file.
+	 *
+	 * @return array Array of dependencides.
+	 */
+	public static function dependencies_from_path( $path ) {
+		$dependencies = file_exists( $path )
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+			? json_decode( file_get_contents( $path ) )
+			: array();
+		$dependencies[] = 'wp-polyfill';
+		return $dependencies;
 	}
 }
 add_action( 'enqueue_block_editor_assets', array( 'Newspack_Blocks', 'enqueue_block_editor_assets' ) );
