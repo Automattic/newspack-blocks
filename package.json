@@ -4,7 +4,7 @@
   "main": "Gruntfile.js",
   "author": "Automattic",
   "devDependencies": {
-    "@automattic/calypso-build": "^1.0.0-alpha.2",
+    "@automattic/calypso-build": "^1.0.0-alpha.4",
     "@automattic/calypso-color-schemes": "^1.0.0-alpha.1",
     "@babel/core": "^7.4.0",
     "@babel/plugin-proposal-class-properties": "^7.4.0",
