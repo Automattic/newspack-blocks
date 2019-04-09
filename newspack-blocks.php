@@ -58,14 +58,14 @@ class Newspack_Blocks {
 			}
 			$type = $block_directory->getFilename();
 
-			/* If index.php is found, include it and use for block rendering. */
-			$view_php_path = $src_directory . $type . '/index.php';
+			/* If view.php is found, include it and use for block rendering. */
+			$view_php_path = $src_directory . $type . '/view.php';
 			if ( file_exists( $view_php_path ) ) {
 				include_once $view_php_path;
 				continue;
 			}
 
-			/* If index.php is missing but view Javascript file is found, do generic view asset loading. */
+			/* If view.php is missing but view Javascript file is found, do generic view asset loading. */
 			$view_js_path = $dist_directory . $type . '/view.js';
 			if ( file_exists( $view_js_path ) ) {
 				register_block_type(
