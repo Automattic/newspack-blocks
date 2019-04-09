@@ -124,6 +124,26 @@ class Newspack_Blocks {
 		$dependencies[] = 'wp-polyfill';
 		return $dependencies;
 	}
+
+	/**
+	 * Utility to assemble the class for a server-side rendered bloc
+	 *
+	 * @param string $type The block type.
+	 * @param array  $attributes Block attributes.
+	 *
+	 * @return string Class list separated by spaces.
+	 */
+	public static function block_classes( $type, $attributes = array() ) {
+		$align   = isset( $attributes['align'] ) ? $attributes['align'] : 'center';
+		$classes = array(
+			"wp-block-newspack-blocks-{$type}",
+			"align{$align}",
+		);
+		if ( isset( $attributes['className'] ) ) {
+			array_push( $classes, $attributes['className'] );
+		}
+		return implode( $classes, ' ' );
+	}
 }
 Newspack_Blocks::manage_view_scripts();
 add_action( 'enqueue_block_editor_assets', array( 'Newspack_Blocks', 'enqueue_block_editor_assets' ) );
