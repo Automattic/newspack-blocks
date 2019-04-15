@@ -47,12 +47,15 @@ const editorScript = [
 	...blockScripts( 'editor', path.join( __dirname, 'src' ), blocks ),
 ];
 
-const webpackConfig = getBaseWebpackConfig( { WP: true }, {
-	entry: {
-		editor: editorScript,
-		...viewBlocksScripts,
-	},
-	'output-path': path.join( __dirname, 'dist' ),
-} );
+const webpackConfig = getBaseWebpackConfig(
+	{ WP: true },
+	{
+		entry: {
+			editor: editorScript,
+			...viewBlocksScripts,
+		},
+		'output-path': path.join( __dirname, 'dist' ),
+	}
+);
 
 module.exports = webpackConfig;
