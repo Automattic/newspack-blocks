@@ -52,9 +52,11 @@ class Edit extends Component {
 									{ showExcerpt && <RawHTML key="excerpt">{ post.excerpt.rendered }</RawHTML> }
 									{ showAuthor && (
 										<div key="byline">
-											<span className="author-avatar" key="author-avatar">
-												<RawHTML>{ post.author_avatar }</RawHTML>
-											</span>
+											{ post.author_avatar && (
+												<span className="author-avatar" key="author-avatar">
+													<RawHTML>{ post.author_avatar }</RawHTML>
+												</span>
+											) }
 											<span key="author-name">
 												{ __( 'by' ) } { post.author_info.display_name }
 											</span>
