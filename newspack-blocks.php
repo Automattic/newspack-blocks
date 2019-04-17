@@ -42,6 +42,30 @@ class Newspack_Blocks {
 	}
 
 	/**
+	 * Include index.php file if exists.
+	 */
+	public static function include_index_php() {
+		if ( is_admin() ) {
+			// In editor environment, do nothing.
+			return;
+		}
+		$src_directory = NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/';
+		$iterator      = new DirectoryIterator( $src_directory );
+		foreach ( $iterator as $block_directory ) {
+			if ( ! $block_directory->isDir() || $block_directory->isDot() ) {
+				continue;
+			}
+			$type = $block_directory->getFilename();
+
+			/* If index.php is found, include it and use generic functions. */
+			$index_php_path = $src_directory . $type . '/index.php';
+			if ( file_exists( $index_php_path ) ) {
+				include_once $index_php_path;
+			}
+		}
+	}
+
+	/**
 	 * Enqueue block scripts and styles for view.
 	 */
 	public static function manage_view_scripts() {
@@ -145,5 +169,6 @@ class Newspack_Blocks {
 		return implode( $classes, ' ' );
 	}
 }
+Newspack_Blocks::include_index_php();
 Newspack_Blocks::manage_view_scripts();
 add_action( 'enqueue_block_editor_assets', array( 'Newspack_Blocks', 'enqueue_block_editor_assets' ) );
