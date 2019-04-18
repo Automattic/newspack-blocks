@@ -55,45 +55,57 @@ function newspack_blocks_render_block_homepage_articles( $attributes, $content )
 				<?php
 				$categories = get_the_category( $post );
 				if ( ! empty( $categories ) && $attributes['showCategory'] ) :
-					echo '<a href="' . esc_url( get_category_link( $categories[0]->term_id ) ) . '">' . esc_html( $categories[0]->name ) . '</a>';
+					?>
+					<div class="cat-links">
+						<a href="<?php echo esc_url( get_category_link( $categories[0]->term_id ) ); ?>"><?php echo esc_html( $categories[0]->name ); ?></a>
+					</div>
+					<?php
 				endif;
 				?>
-
-				<h2>
-					<a href="<?php echo esc_url( get_the_permalink( $post ) ); ?>">
-						<?php echo esc_html( get_the_title( $post ) ); ?>
-					</a>
-				</h2>
-
+				<h2><a href="<?php echo esc_url( get_the_permalink( $post ) ); ?>"><?php echo esc_html( get_the_title( $post ) ); ?></a></h2>
 				<?php
 				if ( $attributes['showExcerpt'] ) :
 					echo esc_html( get_the_excerpt( $post ) );
 				endif;
 				?>
 
-				<?php if ( $attributes['showAuthor'] ) : ?>
-					<div>
-						<?php echo get_avatar( $post->post_author ); ?>
+				<?php if ( $attributes['showAuthor'] || $attributes['showDate'] ) : ?>
 
-						<?php
-						printf(
-							/* translators: %s: post author. */
-							esc_html__( 'by %s', 'newspack-blocks' ),
-							// TODO: Add link.
-							esc_html( get_the_author_meta( 'display_name', $post->post_author ) )
-						);
+					<div class="article-meta">
+
+						<?php if ( $attributes['showAuthor'] ) : ?>
+							<span class="byline">
+								<?php
+								echo get_avatar( $post->post_author );
+								printf(
+									/* translators: %s: post author. */
+									esc_html_x( 'by %s', 'post author', 'newspack-blocks' ),
+									'<span class="author vcard"><a class="url fn n" href="' . esc_url( get_author_posts_url( $post->post_author ) ) . '">' . esc_html( get_the_author_meta( 'display_name', $post->post_author ) ) . '</a></span>'
+								);
+								?>
+							</span>
+							<?php
+						endif;
+
+						if ( $attributes['showDate'] ) {
+							$time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
+
+							if ( get_the_time( 'U' ) !== get_the_modified_time( 'U' ) ) {
+								$time_string = '<time class="entry-date published" datetime="%1$s">%2$s</time><time class="updated" datetime="%3$s">%4$s</time>';
+							}
+
+							$time_string = sprintf(
+								$time_string,
+								esc_attr( get_the_date( DATE_W3C ) ),
+								esc_html( get_the_date() ),
+								esc_attr( get_the_modified_date( DATE_W3C ) ),
+								esc_html( get_the_modified_date() )
+							);
+
+							echo $time_string; // WPCS: XSS OK.
+						}
 						?>
-
-					</div>
-					<?php
-				endif;
-				?>
-
-				<?php if ( $attributes['showDate'] ) : ?>
-					<?php // TODO: Add last changed attribute. ?>
-					<time>
-						<?php echo esc_html( get_the_date( '', $post ) ); ?>
-					</time>
+					</div><!-- .article-meta -->
 					<?php
 				endif;
 				?>
