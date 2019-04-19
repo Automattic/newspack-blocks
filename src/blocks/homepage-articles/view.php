@@ -15,7 +15,7 @@
  */
 function newspack_blocks_render_block_homepage_articles( $attributes, $content ) {
 	$args    = array(
-		'posts_per_page'   => 3,
+		'posts_per_page'   => $attributes['postsToShow'],
 		'post_status'      => 'publish',
 		'suppress_filters' => false,
 	);
@@ -174,6 +174,10 @@ function newspack_blocks_register_homepage_articles() {
 				'columns'      => array(
 					'type'    => 'integer',
 					'default' => 2,
+				),
+				'postsToShow'  => array(
+					'type'    => 'integer',
+					'default' => 3,
 				),
 			),
 			'render_callback' => 'newspack_blocks_render_block_homepage_articles',
