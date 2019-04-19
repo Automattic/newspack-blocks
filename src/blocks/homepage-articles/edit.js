@@ -11,13 +11,22 @@ import moment from 'moment';
 import { __ } from '@wordpress/i18n';
 import { Component, Fragment, RawHTML } from '@wordpress/element';
 import { InspectorControls, RichText, BlockControls } from '@wordpress/editor';
-import { ToggleControl, PanelBody, PanelRow, RangeControl, Toolbar } from '@wordpress/components';
+import {
+	ToggleControl,
+	PanelBody,
+	PanelRow,
+	QueryControls,
+	RangeControl,
+	Toolbar,
+} from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 
 /**
  * Module Constants
  */
 const MAX_POSTS_COLUMNS = 6;
+
+const MAX_POSTS_TO_SHOW = 20;
 
 class Edit extends Component {
 	render() {
@@ -58,6 +67,8 @@ class Edit extends Component {
 				isActive: postLayout === 'grid',
 			},
 		];
+
+		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
 
 		return (
 			<Fragment>
@@ -150,6 +161,12 @@ class Edit extends Component {
 								onChange={ () => setAttributes( { showCategory: ! showCategory } ) }
 							/>
 						</PanelRow>
+						<PanelRow>
+							<QueryControls
+								numberOfItems={ postsToShow }
+								onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
+							/>
+						</PanelRow>
 						{ postLayout === 'grid' && (
 							<PanelRow>
 								<RangeControl
@@ -157,7 +174,11 @@ class Edit extends Component {
 									value={ columns }
 									onChange={ value => setAttributes( { columns: value } ) }
 									min={ 2 }
-									max={ MAX_POSTS_COLUMNS }
+									max={
+										! hasPosts
+											? MAX_POSTS_COLUMNS
+											: Math.min( MAX_POSTS_COLUMNS, latestPosts.length )
+									}
 									required
 								/>
 							</PanelRow>
@@ -170,10 +191,11 @@ class Edit extends Component {
 }
 
 export default withSelect( ( select, props ) => {
+	const { postsToShow } = props.attributes;
 	const { getEntityRecords } = select( 'core' );
 	const latestPostsQuery = pickBy(
 		{
-			per_page: 3,
+			per_page: postsToShow,
 		},
 		value => ! isUndefined( value )
 	);

@@ -72,6 +72,10 @@ export const settings = {
 			type: 'integer',
 			default: '2',
 		},
+		postsToShow: {
+			type: 'integer',
+			default: '3',
+		},
 	},
 	supports: {
 		html: false,
