@@ -38,6 +38,9 @@ export const settings = {
 			type: 'string',
 			default: '',
 		},
+		className: {
+			type: 'string',
+		},
 		showExcerpt: {
 			type: 'boolean',
 			default: true,
@@ -60,6 +63,14 @@ export const settings = {
 		},
 		content: {
 			type: 'string',
+		},
+		postLayout: {
+			type: 'string',
+			default: 'list',
+		},
+		columns: {
+			type: 'integer',
+			default: '2',
 		},
 	},
 	supports: {

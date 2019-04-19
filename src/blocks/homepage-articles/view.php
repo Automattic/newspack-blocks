@@ -22,6 +22,16 @@ function newspack_blocks_render_block_homepage_articles( $attributes, $content )
 	$posts   = get_posts( $args );
 	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes );
 
+	if ( isset( $attributes['postLayout'] ) && 'grid' === $attributes['postLayout'] ) {
+		$classes .= ' is-grid';
+	}
+	if ( isset( $attributes['columns'] ) && 'grid' === $attributes['postLayout'] ) {
+		$classes .= ' columns-' . $attributes['columns'];
+	}
+	if ( isset( $attributes['className'] ) ) {
+		$classes .= ' ' . $attributes['className'];
+	}
+
 	ob_start();
 	?>
 	<div class="<?php echo esc_attr( $classes ); ?>">
@@ -131,6 +141,9 @@ function newspack_blocks_register_homepage_articles() {
 					'type'    => 'string',
 					'default' => '',
 				),
+				'className'    => array(
+					'type' => 'string',
+				),
 				'showExcerpt'  => array(
 					'type'    => 'boolean',
 					'default' => true,
@@ -153,6 +166,14 @@ function newspack_blocks_register_homepage_articles() {
 				),
 				'content'      => array(
 					'type' => 'string',
+				),
+				'postLayout'   => array(
+					'type'    => 'string',
+					'default' => 'list',
+				),
+				'columns'      => array(
+					'type'    => 'integer',
+					'default' => 2,
 				),
 			),
 			'render_callback' => 'newspack_blocks_render_block_homepage_articles',
