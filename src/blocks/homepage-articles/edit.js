@@ -10,9 +10,14 @@ import moment from 'moment';
  */
 import { __ } from '@wordpress/i18n';
 import { Component, Fragment, RawHTML } from '@wordpress/element';
-import { InspectorControls, RichText } from '@wordpress/editor';
-import { ToggleControl, PanelBody, PanelRow } from '@wordpress/components';
+import { InspectorControls, RichText, BlockControls } from '@wordpress/editor';
+import { ToggleControl, PanelBody, PanelRow, RangeControl, Toolbar } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
+
+/**
+ * Module Constants
+ */
+const MAX_POSTS_COLUMNS = 6;
 
 class Edit extends Component {
 	render() {
@@ -29,8 +34,30 @@ class Edit extends Component {
 			showAuthor,
 			showCategory,
 			postsToShow,
+			postLayout,
+			columns,
 		} = attributes;
-		const classes = classNames( className, `align${ align }` );
+
+		const classes = classNames( className, {
+			[ `align${ align }` ]: align !== '',
+			'is-grid': postLayout === 'grid',
+			[ `columns-${ columns }` ]: postLayout === 'grid',
+		} );
+
+		const layoutControls = [
+			{
+				icon: 'list-view',
+				title: __( 'List View' ),
+				onClick: () => setAttributes( { postLayout: 'list' } ),
+				isActive: postLayout === 'list',
+			},
+			{
+				icon: 'grid-view',
+				title: __( 'Grid View' ),
+				onClick: () => setAttributes( { postLayout: 'grid' } ),
+				isActive: postLayout === 'grid',
+			},
+		];
 
 		return (
 			<Fragment>
@@ -50,7 +77,7 @@ class Edit extends Component {
 										</div>
 									) }
 									<h2 key="title">
-										<a href={ post.link }>{ post.title.rendered }</a>
+										<a href={ post.link }>{ post.title.rendered.trim() }</a>
 									</h2>
 									{ showExcerpt && <RawHTML key="excerpt">{ post.excerpt.rendered }</RawHTML> }
 
@@ -83,6 +110,9 @@ class Edit extends Component {
 						</Fragment>
 					) }
 				</div>
+				<BlockControls>
+					<Toolbar controls={ layoutControls } />
+				</BlockControls>
 				<InspectorControls>
 					<PanelBody title={ __( 'Latest Articles Settings' ) } initialOpen={ true }>
 						<PanelRow>
@@ -120,6 +150,18 @@ class Edit extends Component {
 								onChange={ () => setAttributes( { showCategory: ! showCategory } ) }
 							/>
 						</PanelRow>
+						{ postLayout === 'grid' && (
+							<PanelRow>
+								<RangeControl
+									label={ __( 'Columns' ) }
+									value={ columns }
+									onChange={ value => setAttributes( { columns: value } ) }
+									min={ 2 }
+									max={ MAX_POSTS_COLUMNS }
+									required
+								/>
+							</PanelRow>
+						) }
 					</PanelBody>
 				</InspectorControls>
 			</Fragment>
