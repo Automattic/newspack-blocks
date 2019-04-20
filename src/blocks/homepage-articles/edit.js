@@ -147,42 +147,7 @@ class Edit extends Component {
 					<Toolbar controls={ blockControls } />
 				</BlockControls>
 				<InspectorControls>
-					<PanelBody title={ __( 'Latest Articles Settings' ) } initialOpen={ true }>
-						<PanelRow>
-							<ToggleControl
-								label={ __( 'Show Featured Image' ) }
-								checked={ showImage }
-								onChange={ () => setAttributes( { showImage: ! showImage } ) }
-							/>
-						</PanelRow>
-						<PanelRow>
-							<ToggleControl
-								label={ __( 'Show Excerpt' ) }
-								checked={ showExcerpt }
-								onChange={ () => setAttributes( { showExcerpt: ! showExcerpt } ) }
-							/>
-						</PanelRow>
-						<PanelRow>
-							<ToggleControl
-								label={ __( 'Show Date' ) }
-								checked={ showDate }
-								onChange={ () => setAttributes( { showDate: ! showDate } ) }
-							/>
-						</PanelRow>
-						<PanelRow>
-							<ToggleControl
-								label={ __( 'Show Author' ) }
-								checked={ showAuthor }
-								onChange={ () => setAttributes( { showAuthor: ! showAuthor } ) }
-							/>
-						</PanelRow>
-						<PanelRow>
-							<ToggleControl
-								label={ __( 'Show Category' ) }
-								checked={ showCategory }
-								onChange={ () => setAttributes( { showCategory: ! showCategory } ) }
-							/>
-						</PanelRow>
+					<PanelBody title={ __( 'Display Settings' ) } initialOpen={ true }>
 						<PanelRow>
 							<QueryControls
 								numberOfItems={ postsToShow }
@@ -205,6 +170,47 @@ class Edit extends Component {
 								/>
 							</PanelRow>
 						) }
+					</PanelBody>
+					<PanelBody title={ __( 'Featured Image Settings' ) }>
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Show Featured Image' ) }
+								checked={ showImage }
+								onChange={ () => setAttributes( { showImage: ! showImage } ) }
+							/>
+						</PanelRow>
+					</PanelBody>
+					<PanelBody title={ __( 'Article Control Settings' ) }>
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Show Excerpt' ) }
+								checked={ showExcerpt }
+								onChange={ () => setAttributes( { showExcerpt: ! showExcerpt } ) }
+							/>
+						</PanelRow>
+					</PanelBody>
+					<PanelBody title={ __( 'Article Meta Settings' ) }>
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Show Date' ) }
+								checked={ showDate }
+								onChange={ () => setAttributes( { showDate: ! showDate } ) }
+							/>
+						</PanelRow>
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Show Author' ) }
+								checked={ showAuthor }
+								onChange={ () => setAttributes( { showAuthor: ! showAuthor } ) }
+							/>
+						</PanelRow>
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Show Category' ) }
+								checked={ showCategory }
+								onChange={ () => setAttributes( { showCategory: ! showCategory } ) }
+							/>
+						</PanelRow>
 					</PanelBody>
 				</InspectorControls>
 			</Fragment>
