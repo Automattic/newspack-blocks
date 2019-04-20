@@ -76,6 +76,10 @@ export const settings = {
 			type: 'integer',
 			default: '3',
 		},
+		mediaPosition: {
+			type: 'string',
+			default: 'top',
+		},
 	},
 	supports: {
 		html: false,

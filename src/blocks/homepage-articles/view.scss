@@ -1,8 +1,5 @@
 .wp-block-newspack-blocks-homepage-articles {
-	.avatar {
-		border-radius: 100%;
-		display: inline-block;
-	}
+	/* Column styles */
 
 	&.is-grid {
 		display: flex;
@@ -22,5 +19,42 @@
 				width: calc( ( 100% / #{$i} ) - 16px );
 			}
 		}
+	}
+
+	/* Image styles */
+
+	.post-thumbnail {
+		margin: 0;
+	}
+
+	&.image-alignleft {
+		.post-thumbnail {
+			float: left;
+			width: 50%;
+		}
+	}
+	&.image-alignright {
+		.post-thumbnail {
+			float: right;
+			width: 50%;
+		}
+	}
+
+	/* Article meta */
+
+	.article-meta,
+	.byline {
+		align-items: center;
+		display: flex;
+	}
+
+	.avatar {
+		border-radius: 100%;
+		display: inline-block;
+		margin-right: 0.25em;
+	}
+
+	.byline {
+		padding-right: 1.5em;
 	}
 }
