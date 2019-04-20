@@ -44,6 +44,7 @@ class Edit extends Component {
 			showCategory,
 			postsToShow,
 			postLayout,
+			mediaPosition,
 			columns,
 		} = attributes;
 
@@ -51,9 +52,10 @@ class Edit extends Component {
 			[ `align${ align }` ]: align !== '',
 			'is-grid': postLayout === 'grid',
 			[ `columns-${ columns }` ]: postLayout === 'grid',
+			[ `image-align${ mediaPosition }` ]: mediaPosition !== 'top',
 		} );
 
-		const layoutControls = [
+		const blockControls = [
 			{
 				icon: 'list-view',
 				title: __( 'List View' ),
@@ -65,6 +67,24 @@ class Edit extends Component {
 				title: __( 'Grid View' ),
 				onClick: () => setAttributes( { postLayout: 'grid' } ),
 				isActive: postLayout === 'grid',
+			},
+			{
+				icon: 'align-none',
+				title: __( 'Show media on top' ),
+				isActive: mediaPosition === 'top',
+				onClick: () => setAttributes( { mediaPosition: 'top' } ),
+			},
+			{
+				icon: 'align-pull-left',
+				title: __( 'Show media on left' ),
+				isActive: mediaPosition === 'left',
+				onClick: () => setAttributes( { mediaPosition: 'left' } ),
+			},
+			{
+				icon: 'align-pull-right',
+				title: __( 'Show media on right' ),
+				isActive: mediaPosition === 'right',
+				onClick: () => setAttributes( { mediaPosition: 'right' } ),
 			},
 		];
 
@@ -100,11 +120,13 @@ class Edit extends Component {
 														<RawHTML>{ post.author_avatar }</RawHTML>
 													</span>
 												) }
-												{ __( 'by' ) }
-												<span className="author vcard">
-													<a className="url fn n" href={ post.author_info.author_link }>
-														{ post.author_info.display_name }
-													</a>
+												<span className="author-name">
+													{ __( 'by' ) }{' '}
+													<span className="author vcard">
+														<a className="url fn n" href={ post.author_info.author_link }>
+															{ post.author_info.display_name }
+														</a>
+													</span>
 												</span>
 											</span>
 										) }
@@ -122,7 +144,7 @@ class Edit extends Component {
 					) }
 				</div>
 				<BlockControls>
-					<Toolbar controls={ layoutControls } />
+					<Toolbar controls={ blockControls } />
 				</BlockControls>
 				<InspectorControls>
 					<PanelBody title={ __( 'Latest Articles Settings' ) } initialOpen={ true }>

@@ -89,8 +89,9 @@ function newspack_blocks_render_block_homepage_articles( $attributes, $content )
 								echo get_avatar( $post->post_author );
 								printf(
 									/* translators: %s: post author. */
-									esc_html_x( 'by %s', 'post author', 'newspack-blocks' ),
-									'<span class="author vcard"><a class="url fn n" href="' . esc_url( get_author_posts_url( $post->post_author ) ) . '">' . esc_html( get_the_author_meta( 'display_name', $post->post_author ) ) . '</a></span>'
+									esc_html_x( '%$1s by %$2s', 'post author', 'newspack-blocks' ),
+									'<span class="author-name">',
+									'<span class="author vcard"><a class="url fn n" href="' . esc_url( get_author_posts_url( $post->post_author ) ) . '">' . esc_html( get_the_author_meta( 'display_name', $post->post_author ) ) . '</a></span></span>'
 								);
 								?>
 							</span>
@@ -137,47 +138,51 @@ function newspack_blocks_register_homepage_articles() {
 		'newspack-blocks/homepage-articles',
 		array(
 			'attributes'      => array(
-				'align'        => array(
+				'align'         => array(
 					'type'    => 'string',
 					'default' => '',
 				),
-				'className'    => array(
+				'className'     => array(
 					'type' => 'string',
 				),
-				'showExcerpt'  => array(
+				'showExcerpt'   => array(
 					'type'    => 'boolean',
 					'default' => true,
 				),
-				'showDate'     => array(
+				'showDate'      => array(
 					'type'    => 'boolean',
 					'default' => true,
 				),
-				'showImage'    => array(
+				'showImage'     => array(
 					'type'    => 'boolean',
 					'default' => true,
 				),
-				'showAuthor'   => array(
+				'showAuthor'    => array(
 					'type'    => 'boolean',
 					'default' => true,
 				),
-				'showCategory' => array(
+				'showCategory'  => array(
 					'type'    => 'boolean',
 					'default' => true,
 				),
-				'content'      => array(
+				'content'       => array(
 					'type' => 'string',
 				),
-				'postLayout'   => array(
+				'postLayout'    => array(
 					'type'    => 'string',
 					'default' => 'list',
 				),
-				'columns'      => array(
+				'columns'       => array(
 					'type'    => 'integer',
 					'default' => 2,
 				),
-				'postsToShow'  => array(
+				'postsToShow'   => array(
 					'type'    => 'integer',
 					'default' => 3,
+				),
+				'mediaPosition' => array(
+					'type'    => 'string',
+					'default' => '',
 				),
 			),
 			'render_callback' => 'newspack_blocks_render_block_homepage_articles',
