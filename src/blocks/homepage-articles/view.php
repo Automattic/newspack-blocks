@@ -85,16 +85,17 @@ function newspack_blocks_render_block_homepage_articles( $attributes, $content )
 
 						<?php if ( $attributes['showAuthor'] ) : ?>
 							<span class="byline">
-								<?php
-								echo get_avatar( $post->post_author );
-								printf(
-									/* translators: %s: post author. */
-									esc_html_x( '%$1s by %$2s', 'post author', 'newspack-blocks' ),
-									'<span class="author-name">',
-									'<span class="author vcard"><a class="url fn n" href="' . esc_url( get_author_posts_url( $post->post_author ) ) . '">' . esc_html( get_the_author_meta( 'display_name', $post->post_author ) ) . '</a></span></span>'
-								);
-								?>
-							</span>
+								<?php get_avatar( $post->post_author ); ?>
+								<span class="author-name">
+									<?php
+									printf(
+										/* translators: %s: post author. */
+										esc_html_x( 'by %s', 'post author', 'newspack-blocks' ),
+										'<span class="author vcard"><a class="url fn n" href="' . esc_url( get_author_posts_url( $post->post_author ) ) . '">' . esc_html( get_the_author_meta( 'display_name', $post->post_author ) ) . '</a></span>'
+									);
+									?>
+								</span><!-- .author-name -->
+							</span><!-- .byline -->
 							<?php
 						endif;
 
