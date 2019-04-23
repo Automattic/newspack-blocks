@@ -148,27 +148,21 @@ class Edit extends Component {
 				</BlockControls>
 				<InspectorControls>
 					<PanelBody title={ __( 'Display Settings' ) } initialOpen={ true }>
-						<PanelRow>
-							<QueryControls
-								numberOfItems={ postsToShow }
-								onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
-							/>
-						</PanelRow>
+						<QueryControls
+							numberOfItems={ postsToShow }
+							onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
+						/>
 						{ postLayout === 'grid' && (
-							<PanelRow>
-								<RangeControl
-									label={ __( 'Columns' ) }
-									value={ columns }
-									onChange={ value => setAttributes( { columns: value } ) }
-									min={ 2 }
-									max={
-										! hasPosts
-											? MAX_POSTS_COLUMNS
-											: Math.min( MAX_POSTS_COLUMNS, latestPosts.length )
-									}
-									required
-								/>
-							</PanelRow>
+							<RangeControl
+								label={ __( 'Columns' ) }
+								value={ columns }
+								onChange={ value => setAttributes( { columns: value } ) }
+								min={ 2 }
+								max={
+									! hasPosts ? MAX_POSTS_COLUMNS : Math.min( MAX_POSTS_COLUMNS, latestPosts.length )
+								}
+								required
+							/>
 						) }
 					</PanelBody>
 					<PanelBody title={ __( 'Featured Image Settings' ) }>
