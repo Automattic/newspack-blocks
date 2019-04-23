@@ -80,6 +80,9 @@ export const settings = {
 			type: 'string',
 			default: 'top',
 		},
+		categories: {
+			type: 'string',
+		},
 	},
 	supports: {
 		html: false,
