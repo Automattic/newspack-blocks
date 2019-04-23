@@ -76,13 +76,13 @@ class Edit extends Component {
 				onClick: () => setAttributes( { mediaPosition: 'top' } ),
 			},
 			{
-				icon: 'align-pull-left',
+				icon: 'align-left',
 				title: __( 'Show media on left' ),
 				isActive: mediaPosition === 'left',
 				onClick: () => setAttributes( { mediaPosition: 'left' } ),
 			},
 			{
-				icon: 'align-pull-right',
+				icon: 'align-right',
 				title: __( 'Show media on right' ),
 				isActive: mediaPosition === 'right',
 				onClick: () => setAttributes( { mediaPosition: 'right' } ),
@@ -97,46 +97,50 @@ class Edit extends Component {
 					{ latestPosts && ( // makes sure the thing exists before trying to render, to prevent errors (sometimes block tries to render before query is done)
 						<Fragment>
 							{ latestPosts.map( post => (
-								<article>
+								<article className={ post.featured_image_src && ( 'has-featured-image' ) }>
 									{ showImage && post.featured_image_src && (
 										<div className="post-thumbnail" key="thumbnail">
 											<img src={ post.featured_image_src } />
 										</div>
 									) }
-									{ showCategory && post.category_info && (
-										<div className="cat-links" key="category-links">
-											<RawHTML key="category">{ post.category_info }</RawHTML>
-										</div>
-									) }
-									<h2 key="title">
-										<a href={ post.link }>{ post.title.rendered.trim() }</a>
-									</h2>
-									{ showExcerpt && <RawHTML key="excerpt">{ post.excerpt.rendered }</RawHTML> }
+									<div className="entry-wrapper">
+										{ showCategory && post.category_info && (
+											<div className="cat-links" key="category-links">
+												<RawHTML key="category">{ post.category_info }</RawHTML>
+											</div>
+										) }
+										<h2 className="entry-title" key="title">
+											<a href={ post.link }>{ post.title.rendered.trim() }</a>
+										</h2>
+										{ showExcerpt && <RawHTML key="excerpt">{ post.excerpt.rendered }</RawHTML> }
 
-									<div className="article-meta">
-										{ showAuthor && (
-											<span className="byline" key="byline">
-												{ post.author_avatar && (
-													<span className="avatar author-avatar" key="author-avatar">
-														<RawHTML>{ post.author_avatar }</RawHTML>
+										{ showAuthor || showDate && (
+											<div className="article-meta">
+												{ showAuthor && (
+													<span className="byline" key="byline">
+														{ post.author_avatar && (
+															<span className="avatar author-avatar" key="author-avatar">
+																<RawHTML>{ post.author_avatar }</RawHTML>
+															</span>
+														) }
+														<span className="author-name">
+															{ __( 'by' ) }{' '}
+															<span className="author vcard">
+																<a className="url fn n" href={ post.author_info.author_link }>
+																	{ post.author_info.display_name }
+																</a>
+															</span>
+														</span>
 													</span>
 												) }
-												<span className="author-name">
-													{ __( 'by' ) }{' '}
-													<span className="author vcard">
-														<a className="url fn n" href={ post.author_info.author_link }>
-															{ post.author_info.display_name }
-														</a>
-													</span>
-												</span>
-											</span>
-										) }
-										{ showDate && (
-											<time className="entry-date published" key="pub-date">
-												{ moment( post.date_gmt )
-													.local()
-													.format( 'MMMM DD, Y' ) }
-											</time>
+												{ showDate && (
+													<time className="entry-date published" key="pub-date">
+														{ moment( post.date_gmt )
+															.local()
+															.format( 'MMMM DD, Y' ) }
+													</time>
+												) }
+											</div>
 										) }
 									</div>
 								</article>

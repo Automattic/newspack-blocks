@@ -31,6 +31,9 @@ function newspack_blocks_render_block_homepage_articles( $attributes, $content )
 	if ( isset( $attributes['columns'] ) && 'grid' === $attributes['postLayout'] ) {
 		$classes .= ' columns-' . $attributes['columns'];
 	}
+	if ( isset( $attributes['mediaPosition'] ) && 'top' !== $attributes['mediaPosition'] ) {
+		$classes .= ' image-align' . $attributes['mediaPosition'];
+	}
 	if ( isset( $attributes['className'] ) ) {
 		$classes .= ' ' . $attributes['className'];
 	}
@@ -41,10 +44,11 @@ function newspack_blocks_render_block_homepage_articles( $attributes, $content )
 		<?php
 		foreach ( $posts as $post ) :
 			setup_postdata( $post );
+			$featured_image = get_the_post_thumbnail( $post, 'large' );
 			?>
-			<article>
+			<article <?php echo $featured_image ? 'class="has-featured-image"' : ''; ?>>
 				<?php
-				$featured_image     = get_the_post_thumbnail( $post );
+
 				$image_allowed_tags = array(
 					'img' => array(
 						'alt'    => array(),
@@ -64,66 +68,69 @@ function newspack_blocks_render_block_homepage_articles( $attributes, $content )
 					<?php
 				endif;
 				?>
-
-				<?php
-				$categories = get_the_category( $post );
-				if ( ! empty( $categories ) && $attributes['showCategory'] ) :
-					?>
-					<div class="cat-links">
-						<a href="<?php echo esc_url( get_category_link( $categories[0]->term_id ) ); ?>"><?php echo esc_html( $categories[0]->name ); ?></a>
-					</div>
+				<div class="entry-wrapper">
 					<?php
-				endif;
-				?>
-				<h2><a href="<?php echo esc_url( get_the_permalink( $post ) ); ?>"><?php echo esc_html( get_the_title( $post ) ); ?></a></h2>
-				<?php
-				if ( $attributes['showExcerpt'] ) :
-					echo esc_html( get_the_excerpt( $post ) );
-				endif;
-				?>
-
-				<?php if ( $attributes['showAuthor'] || $attributes['showDate'] ) : ?>
-
-					<div class="article-meta">
-
-						<?php if ( $attributes['showAuthor'] ) : ?>
-							<span class="byline">
-								<?php get_avatar( $post->post_author ); ?>
-								<span class="author-name">
-									<?php
-									printf(
-										/* translators: %s: post author. */
-										esc_html_x( 'by %s', 'post author', 'newspack-blocks' ),
-										'<span class="author vcard"><a class="url fn n" href="' . esc_url( get_author_posts_url( $post->post_author ) ) . '">' . esc_html( get_the_author_meta( 'display_name', $post->post_author ) ) . '</a></span>'
-									);
-									?>
-								</span><!-- .author-name -->
-							</span><!-- .byline -->
-							<?php
-						endif;
-
-						if ( $attributes['showDate'] ) {
-							$time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
-
-							if ( get_the_time( 'U' ) !== get_the_modified_time( 'U' ) ) {
-								$time_string = '<time class="entry-date published" datetime="%1$s">%2$s</time><time class="updated" datetime="%3$s">%4$s</time>';
-							}
-
-							$time_string = sprintf(
-								$time_string,
-								esc_attr( get_the_date( DATE_W3C ) ),
-								esc_html( get_the_date() ),
-								esc_attr( get_the_modified_date( DATE_W3C ) ),
-								esc_html( get_the_modified_date() )
-							);
-
-							echo $time_string; // WPCS: XSS OK.
-						}
+					$categories = get_the_category( $post );
+					if ( ! empty( $categories ) && $attributes['showCategory'] ) :
 						?>
-					</div><!-- .article-meta -->
+						<div class="cat-links">
+							<a href="<?php echo esc_url( get_category_link( $categories[0]->term_id ) ); ?>"><?php echo esc_html( $categories[0]->name ); ?></a>
+						</div>
+						<?php
+					endif;
+					?>
+					<h2 class="entry-title">
+						<a href="<?php echo esc_url( get_the_permalink( $post ) ); ?>"><?php echo esc_html( get_the_title( $post ) ); ?></a>
+					</h2>
 					<?php
-				endif;
-				?>
+					if ( $attributes['showExcerpt'] ) :
+						echo esc_html( get_the_excerpt( $post ) );
+					endif;
+					?>
+
+					<?php if ( $attributes['showAuthor'] || $attributes['showDate'] ) : ?>
+
+						<div class="article-meta">
+
+							<?php if ( $attributes['showAuthor'] ) : ?>
+								<span class="byline">
+									<?php get_avatar( $post->post_author ); ?>
+									<span class="author-name">
+										<?php
+										printf(
+											/* translators: %s: post author. */
+											esc_html_x( 'by %s', 'post author', 'newspack-blocks' ),
+											'<span class="author vcard"><a class="url fn n" href="' . esc_url( get_author_posts_url( $post->post_author ) ) . '">' . esc_html( get_the_author_meta( 'display_name', $post->post_author ) ) . '</a></span>'
+										);
+										?>
+									</span><!-- .author-name -->
+								</span><!-- .byline -->
+								<?php
+							endif;
+
+							if ( $attributes['showDate'] ) {
+								$time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
+
+								if ( get_the_time( 'U' ) !== get_the_modified_time( 'U' ) ) {
+									$time_string = '<time class="entry-date published" datetime="%1$s">%2$s</time><time class="updated" datetime="%3$s">%4$s</time>';
+								}
+
+								$time_string = sprintf(
+									$time_string,
+									esc_attr( get_the_date( DATE_W3C ) ),
+									esc_html( get_the_date() ),
+									esc_attr( get_the_modified_date( DATE_W3C ) ),
+									esc_html( get_the_modified_date() )
+								);
+
+								echo $time_string; // WPCS: XSS OK.
+							}
+							?>
+						</div><!-- .article-meta -->
+						<?php
+					endif;
+					?>
+				</div><!-- .entry-wrapper -->
 			</article>
 
 		<?php endforeach; ?>

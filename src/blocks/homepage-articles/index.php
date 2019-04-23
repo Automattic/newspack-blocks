@@ -66,7 +66,7 @@ add_action( 'rest_api_init', 'newspack_blocks_register_rest_fields' );
 function newspack_blocks_get_image_src( $object, $field_name, $request ) {
 	$feat_img_array = wp_get_attachment_image_src(
 		$object['featured_media'],
-		'thumbnail',
+		'large',
 		false
 	);
 	return $feat_img_array[0];

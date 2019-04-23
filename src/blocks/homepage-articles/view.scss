@@ -1,6 +1,10 @@
 .wp-block-newspack-blocks-homepage-articles {
-	/* Column styles */
 
+	article {
+		margin-bottom: 16px;
+	}
+
+	/* Column styles */
 	&.is-grid {
 		display: flex;
 		flex-wrap: wrap;
@@ -8,7 +12,7 @@
 		list-style: none;
 
 		article {
-			margin: 0 16px 16px 0;
+			margin-left: 16px;
 			width: 100%;
 		}
 	}
@@ -27,26 +31,48 @@
 		margin: 0;
 	}
 
-	&.image-alignleft {
-		.post-thumbnail {
-			float: left;
-			width: 50%;
+	&.image-alignleft,
+	&.image-alignright {
+		.has-featured-image {
+			display: flex;
+
+			.post-thumbnail,
+			.entry-wrapper {
+				flex-basis: 50%;
+			}
 		}
 	}
+
+	&.image-alignleft {
+		.post-thumbnail {
+			margin-right: 16px;
+		}
+	}
+
 	&.image-alignright {
 		.post-thumbnail {
-			float: right;
-			width: 50%;
+			margin-left: 16px;
+		}
+		.entry-wrapper {
+			order: -1;
+		}
+	}
+
+	/* Headings */
+
+	.entry-title {
+		margin: 0;
+		a {
+			color: inherit;
+			text-decoration: none;
+
+			&:hover {
+				color: inherit;
+			}
 		}
 	}
 
 	/* Article meta */
-
-	.article-meta,
-	.byline {
-		align-items: center;
-		display: flex;
-	}
 
 	.avatar {
 		border-radius: 100%;
