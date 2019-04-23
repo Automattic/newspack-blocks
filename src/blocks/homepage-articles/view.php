@@ -14,10 +14,13 @@
  * @return string Returns the post content with latest posts added.
  */
 function newspack_blocks_render_block_homepage_articles( $attributes, $content ) {
+	$categories = isset( $attributes['categories'] ) ? $attributes['categories'] : '';
+
 	$args    = array(
 		'posts_per_page'   => $attributes['postsToShow'],
 		'post_status'      => 'publish',
 		'suppress_filters' => false,
+		'cat'              => $categories,
 	);
 	$posts   = get_posts( $args );
 	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes );
@@ -184,6 +187,9 @@ function newspack_blocks_register_homepage_articles() {
 				'mediaPosition' => array(
 					'type'    => 'string',
 					'default' => '',
+				),
+				'categories'    => array(
+					'type' => 'string',
 				),
 			),
 			'render_callback' => 'newspack_blocks_render_block_homepage_articles',

@@ -33,7 +33,7 @@ class Edit extends Component {
 		/**
 		 * Constants
 		 */
-		const { attributes, className, setAttributes, latestPosts } = this.props; // variables getting pulled out of props
+		const { attributes, className, setAttributes, latestPosts, categoriesList } = this.props; // variables getting pulled out of props
 		const {
 			align,
 			content,
@@ -46,6 +46,7 @@ class Edit extends Component {
 			postLayout,
 			mediaPosition,
 			columns,
+			categories,
 		} = attributes;
 
 		const classes = classNames( className, {
@@ -151,6 +152,11 @@ class Edit extends Component {
 						<QueryControls
 							numberOfItems={ postsToShow }
 							onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
+							categoriesList={ categoriesList }
+							selectedCategoryId={ categories }
+							onCategoryChange={ value =>
+								setAttributes( { categories: '' !== value ? value : undefined } )
+							}
 						/>
 						{ postLayout === 'grid' && (
 							<RangeControl
@@ -213,15 +219,21 @@ class Edit extends Component {
 }
 
 export default withSelect( ( select, props ) => {
-	const { postsToShow } = props.attributes;
+	const { postsToShow, categories } = props.attributes;
 	const { getEntityRecords } = select( 'core' );
 	const latestPostsQuery = pickBy(
 		{
 			per_page: postsToShow,
+			categories,
 		},
 		value => ! isUndefined( value )
 	);
+
+	const categoriesListQuery = {
+		per_page: 100,
+	};
 	return {
 		latestPosts: getEntityRecords( 'postType', 'post', latestPostsQuery ),
+		categoriesList: getEntityRecords( 'taxonomy', 'category', categoriesListQuery ),
 	};
 } )( Edit );
