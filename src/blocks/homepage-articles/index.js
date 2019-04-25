@@ -85,7 +85,11 @@ export const settings = {
 		},
 		typeScale: {
 			type: 'integer',
-			default: 4
+			default: 4,
+		},
+		imageScale: {
+			type: 'integer',
+			default: 3,
 		},
 	},
 	supports: {

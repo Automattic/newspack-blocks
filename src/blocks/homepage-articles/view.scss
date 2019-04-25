@@ -1,5 +1,4 @@
 .wp-block-newspack-blocks-homepage-articles {
-
 	article {
 		margin-bottom: 16px;
 		word-break: break-word;
@@ -41,6 +40,35 @@
 			.post-thumbnail,
 			.entry-wrapper {
 				flex-basis: 50%;
+			}
+		}
+
+		&.image-scale4 {
+			.post-thumbnail {
+				flex-basis: 75%;
+			}
+			.entry-wrapper {
+				flex-basis: 25%;
+			}
+		}
+
+		// .image-scale3 is the default - 50%
+
+		&.image-scale2 {
+			.post-thumbnail {
+				flex-basis: 33%;
+			}
+			.entry-wrapper {
+				flex-basis: 67%;
+			}
+		}
+
+		&.image-scale1 {
+			.post-thumbnail {
+				flex-basis: 25%;
+			}
+			.entry-wrapper {
+				flex-basis: 75%;
 			}
 		}
 	}
@@ -92,7 +120,7 @@
 	/* 'Normal' size */
 	article {
 		.entry-title {
-			font-size: 32px
+			font-size: 32px;
 		}
 
 		.entry-wrapper p {
@@ -139,7 +167,7 @@
 		}
 
 		.entry-wrapper p {
-			font-size: 20px
+			font-size: 20px;
 		}
 
 		.cat-links,

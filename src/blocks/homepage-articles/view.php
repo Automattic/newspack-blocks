@@ -37,6 +37,9 @@ function newspack_blocks_render_block_homepage_articles( $attributes, $content )
 	if ( isset( $attributes['typeScale'] ) ) {
 		$classes .= ' type-scale' . $attributes['typeScale'];
 	}
+	if ( isset( $attributes['imageScale'] ) ) {
+		$classes .= ' image-scale' . $attributes['imageScale'];
+	}
 
 	if ( isset( $attributes['className'] ) ) {
 		$classes .= ' ' . $attributes['className'];
@@ -205,6 +208,10 @@ function newspack_blocks_register_homepage_articles() {
 				'typeScale'     => array(
 					'type'    => 'integer',
 					'default' => 4,
+				),
+				'imageScale'    => array(
+					'type'    => 'integer',
+					'default' => 3,
 				),
 			),
 			'render_callback' => 'newspack_blocks_render_block_homepage_articles',

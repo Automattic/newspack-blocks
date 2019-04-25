@@ -52,6 +52,7 @@ class Edit extends Component {
 			columns,
 			categories,
 			typeScale,
+			imageScale,
 		} = attributes;
 
 		const classes = classNames( className, {
@@ -60,6 +61,7 @@ class Edit extends Component {
 			[ `columns-${ columns }` ]: postLayout === 'grid',
 			[ `image-align${ mediaPosition }` ]: mediaPosition !== 'top',
 			[ `type-scale${ typeScale }` ]: typeScale !== '5',
+			[ `image-scale${ imageScale }` ]: imageScale !== '1',
 		} );
 
 		const blockControls = [
@@ -187,6 +189,20 @@ class Edit extends Component {
 								onChange={ () => setAttributes( { showImage: ! showImage } ) }
 							/>
 						</PanelRow>
+						{ showImage && mediaPosition !== 'top' && (
+							<RangeControl
+								className="image-scale-slider"
+								className="image-scale-slider"
+								label={ __( 'Featured Image Scale' ) }
+								value={ imageScale }
+								onChange={ value => setAttributes( { imageScale: value } ) }
+								min={ 1 }
+								max={ 4 }
+								beforeIcon="images-alt2"
+								afterIcon="images-alt2"
+								required
+							/>
+						) }
 					</PanelBody>
 					<PanelBody title={ __( 'Article Control Settings' ) }>
 						<PanelRow>
