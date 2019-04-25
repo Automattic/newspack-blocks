@@ -18,9 +18,8 @@ import {
 	QueryControls,
 	RangeControl,
 	Toolbar,
-	FontSizePicker,
-	Path,
-	SVG } from '@wordpress/components';
+	Dashicon,
+} from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 import { withState } from '@wordpress/compose';
 
@@ -104,7 +103,7 @@ class Edit extends Component {
 					{ latestPosts && ( // makes sure the thing exists before trying to render, to prevent errors (sometimes block tries to render before query is done)
 						<Fragment>
 							{ latestPosts.map( post => (
-								<article className={ post.featured_image_src && ( 'has-featured-image' ) }>
+								<article className={ post.featured_image_src && 'has-featured-image' }>
 									{ showImage && post.featured_image_src && (
 										<div className="post-thumbnail" key="thumbnail">
 											<img src={ post.featured_image_src } />
@@ -198,12 +197,14 @@ class Edit extends Component {
 							/>
 						</PanelRow>
 						<RangeControl
+							className="type-scale-slider"
 							label={ __( 'Type Scale' ) }
 							value={ typeScale }
 							onChange={ value => setAttributes( { typeScale: value } ) }
 							min={ 1 }
 							max={ 8 }
-							beforeIcon={ '<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><Path d="M0 0h24v24H0z" fill="none"/><Path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></SVG>' }
+							beforeIcon="editor-textcolor"
+							afterIcon="editor-textcolor"
 							required
 						/>
 					</PanelBody>
