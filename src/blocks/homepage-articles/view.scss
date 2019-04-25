@@ -2,17 +2,19 @@
 
 	article {
 		margin-bottom: 16px;
+		word-break: break-word;
+		overflow-wrap: break-word;
 	}
 
 	/* Column styles */
 	&.is-grid {
 		display: flex;
 		flex-wrap: wrap;
+		justify-content: space-between;
 		padding: 0;
 		list-style: none;
 
 		article {
-			margin-left: 16px;
 			width: 100%;
 		}
 	}
@@ -20,7 +22,7 @@
 	@media ( min-width: 600px ) {
 		@for $i from 2 through 6 {
 			&.columns-#{ $i } article {
-				width: calc( ( 100% / #{$i} ) - 16px );
+				width: calc( ( 100% / #{$i} ) - 24px );
 			}
 		}
 	}
@@ -59,7 +61,7 @@
 	}
 
 	/* Headings */
-
+	// This may be removeable, depending on the theme sizing.
 	.entry-title {
 		margin: 0;
 		a {
@@ -81,6 +83,120 @@
 	}
 
 	.byline {
-		padding-right: 1.5em;
+		display: block;
+	}
+}
+
+/* Some really rough font sizing */
+.wp-block-newspack-blocks-homepage-articles {
+	/* 'Normal' size */
+	article {
+		.entry-title {
+			font-size: 32px
+		}
+
+		.entry-wrapper p {
+			font-size: 18px;
+		}
+
+		.cat-links,
+		.article-meta {
+			font-size: 14px;
+		}
+	}
+
+	&.type-scale8 article {
+		.entry-title {
+			font-size: 80px;
+		}
+
+		.entry-wrapper p {
+			font-size: 28px;
+		}
+
+		.cat-links,
+		.article-meta {
+			font-size: 20px;
+		}
+	}
+
+	&.type-scale7 article {
+		.entry-title {
+			font-size: 70px;
+		}
+		.entry-wrapper p {
+			font-size: 22px;
+		}
+		.cat-links,
+		.article-meta {
+			font-size: 18px;
+		}
+	}
+
+	&.type-scale6 article {
+		.entry-title {
+			font-size: 60px;
+		}
+
+		.entry-wrapper p {
+			font-size: 20px
+		}
+
+		.cat-links,
+		.article-meta {
+			font-size: 18px;
+		}
+	}
+
+	&.type-scale5 article {
+		.entry-title {
+			font-size: 42px;
+		}
+		.entry-wrapper p {
+			font-size: 18px;
+		}
+		.cat-links,
+		.article-meta {
+			font-size: 16px;
+		}
+	}
+
+	/* Type Scale 4: default */
+
+	&.type-scale3 article {
+		.entry-title {
+			font-size: 24px;
+		}
+		.entry-wrapper p {
+			font-size: 16px;
+		}
+		.cat-links,
+		.article-meta {
+			font-size: 14px;
+		}
+	}
+
+	&.type-scale2 article {
+		.entry-title {
+			font-size: 20px;
+		}
+		.entry-wrapper p {
+			font-size: 16px;
+		}
+		.cat-links,
+		.article-meta {
+			font-size: 14px;
+		}
+	}
+
+	&.type-scale1 article {
+		.entry-title {
+			font-size: 16px;
+		}
+		.entry-wrapper p,
+		.cat-links,
+		.article-meta {
+			font-size: 14px;
+		}
 	}
 }
