@@ -34,6 +34,10 @@ function newspack_blocks_render_block_homepage_articles( $attributes, $content )
 	if ( isset( $attributes['mediaPosition'] ) && 'top' !== $attributes['mediaPosition'] ) {
 		$classes .= ' image-align' . $attributes['mediaPosition'];
 	}
+	if ( isset( $attributes['typeScale'] ) ) {
+		$classes .= ' type-scale' . $attributes['typeScale'];
+	}
+
 	if ( isset( $attributes['className'] ) ) {
 		$classes .= ' ' . $attributes['className'];
 	}
@@ -94,7 +98,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes, $content )
 
 							<?php if ( $attributes['showAuthor'] ) : ?>
 								<span class="byline">
-									<?php get_avatar( $post->post_author ); ?>
+									<?php echo get_avatar( $post->post_author ); ?>
 									<span class="author-name">
 										<?php
 										printf(
@@ -185,7 +189,7 @@ function newspack_blocks_register_homepage_articles() {
 				),
 				'columns'       => array(
 					'type'    => 'integer',
-					'default' => 2,
+					'default' => 3,
 				),
 				'postsToShow'   => array(
 					'type'    => 'integer',
@@ -197,6 +201,10 @@ function newspack_blocks_register_homepage_articles() {
 				),
 				'categories'    => array(
 					'type' => 'string',
+				),
+				'typeScale'     => array(
+					'type'    => 'integer',
+					'default' => 4,
 				),
 			),
 			'render_callback' => 'newspack_blocks_render_block_homepage_articles',

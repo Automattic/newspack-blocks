@@ -18,8 +18,13 @@ import {
 	QueryControls,
 	RangeControl,
 	Toolbar,
-} from '@wordpress/components';
+	FontSizePicker,
+	Path,
+	SVG } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
+import { withState } from '@wordpress/compose';
+
+const { decodeEntities } = wp.htmlEntities;
 
 /**
  * Module Constants
@@ -47,6 +52,7 @@ class Edit extends Component {
 			mediaPosition,
 			columns,
 			categories,
+			typeScale,
 		} = attributes;
 
 		const classes = classNames( className, {
@@ -54,6 +60,7 @@ class Edit extends Component {
 			'is-grid': postLayout === 'grid',
 			[ `columns-${ columns }` ]: postLayout === 'grid',
 			[ `image-align${ mediaPosition }` ]: mediaPosition !== 'top',
+			[ `type-scale${ typeScale }` ]: typeScale !== '5',
 		} );
 
 		const blockControls = [
@@ -110,38 +117,36 @@ class Edit extends Component {
 											</div>
 										) }
 										<h2 className="entry-title" key="title">
-											<a href={ post.link }>{ post.title.rendered.trim() }</a>
+											<a href={ post.link }>{ decodeEntities( post.title.rendered.trim() ) }</a>
 										</h2>
 										{ showExcerpt && <RawHTML key="excerpt">{ post.excerpt.rendered }</RawHTML> }
 
-										{ showAuthor || showDate && (
-											<div className="article-meta">
-												{ showAuthor && (
-													<span className="byline" key="byline">
-														{ post.author_avatar && (
-															<span className="avatar author-avatar" key="author-avatar">
-																<RawHTML>{ post.author_avatar }</RawHTML>
-															</span>
-														) }
-														<span className="author-name">
-															{ __( 'by' ) }{' '}
-															<span className="author vcard">
-																<a className="url fn n" href={ post.author_info.author_link }>
-																	{ post.author_info.display_name }
-																</a>
-															</span>
+										<div className="article-meta">
+											{ showAuthor && (
+												<span className="byline" key="byline">
+													{ post.author_avatar && (
+														<span className="avatar author-avatar" key="author-avatar">
+															<RawHTML>{ post.author_avatar }</RawHTML>
+														</span>
+													) }
+													<span className="author-name">
+														{ __( 'by' ) }{' '}
+														<span className="author vcard">
+															<a className="url fn n" href={ post.author_info.author_link }>
+																{ post.author_info.display_name }
+															</a>
 														</span>
 													</span>
-												) }
-												{ showDate && (
-													<time className="entry-date published" key="pub-date">
-														{ moment( post.date_gmt )
-															.local()
-															.format( 'MMMM DD, Y' ) }
-													</time>
-												) }
-											</div>
-										) }
+												</span>
+											) }
+											{ showDate && (
+												<time className="entry-date published" key="pub-date">
+													{ moment( post.date_gmt )
+														.local()
+														.format( 'MMMM DD, Y' ) }
+												</time>
+											) }
+										</div>
 									</div>
 								</article>
 							) ) }
@@ -192,6 +197,15 @@ class Edit extends Component {
 								onChange={ () => setAttributes( { showExcerpt: ! showExcerpt } ) }
 							/>
 						</PanelRow>
+						<RangeControl
+							label={ __( 'Type Scale' ) }
+							value={ typeScale }
+							onChange={ value => setAttributes( { typeScale: value } ) }
+							min={ 1 }
+							max={ 8 }
+							beforeIcon={ '<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><Path d="M0 0h24v24H0z" fill="none"/><Path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></SVG>' }
+							required
+						/>
 					</PanelBody>
 					<PanelBody title={ __( 'Article Meta Settings' ) }>
 						<PanelRow>

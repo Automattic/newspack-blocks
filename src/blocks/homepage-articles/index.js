@@ -70,11 +70,11 @@ export const settings = {
 		},
 		columns: {
 			type: 'integer',
-			default: '2',
+			default: 3,
 		},
 		postsToShow: {
 			type: 'integer',
-			default: '3',
+			default: 3,
 		},
 		mediaPosition: {
 			type: 'string',
@@ -82,6 +82,10 @@ export const settings = {
 		},
 		categories: {
 			type: 'string',
+		},
+		typeScale: {
+			type: 'integer',
+			default: 4
 		},
 	},
 	supports: {
