@@ -12,7 +12,7 @@ function newspack_blocks_register_rest_fields() {
 	/* Add featured image source */
 	register_rest_field(
 		array( 'post', 'page' ),
-		'featured_image_src',
+		'newspack_featured_image_src',
 		array(
 			'get_callback'    => 'newspack_blocks_get_image_src',
 			'update_callback' => null,
@@ -23,7 +23,7 @@ function newspack_blocks_register_rest_fields() {
 	/* Add author info source */
 	register_rest_field(
 		'post',
-		'author_info',
+		'newspack_author_info',
 		array(
 			'get_callback'    => 'newspack_blocks_get_author_info',
 			'update_callback' => null,
@@ -34,7 +34,7 @@ function newspack_blocks_register_rest_fields() {
 	/* Add author avatar source */
 	register_rest_field(
 		'post',
-		'author_avatar',
+		'newspack_author_avatar',
 		array(
 			'get_callback'    => 'newspack_blocks_get_avatar',
 			'update_callback' => null,
@@ -45,7 +45,7 @@ function newspack_blocks_register_rest_fields() {
 	/* Add first category source */
 	register_rest_field(
 		'post',
-		'category_info',
+		'newspack_category_info',
 		array(
 			'get_callback'    => 'newspack_blocks_get_first_category',
 			'update_callback' => null,
@@ -64,12 +64,35 @@ add_action( 'rest_api_init', 'newspack_blocks_register_rest_fields' );
  * @param String $request  The current request object.
  */
 function newspack_blocks_get_image_src( $object, $field_name, $request ) {
-	$feat_img_array = wp_get_attachment_image_src(
+	$feat_img_array_thumbnail        = wp_get_attachment_image_src(
+		$object['featured_media'],
+		'thumbnail',
+		false
+	);
+	$featured_image_set['thumbnail'] = $feat_img_array_thumbnail[0];
+
+	$feat_img_array_medium        = wp_get_attachment_image_src(
+		$object['featured_media'],
+		'medium',
+		false
+	);
+	$featured_image_set['medium'] = $feat_img_array_medium[0];
+
+	$feat_img_array_large        = wp_get_attachment_image_src(
 		$object['featured_media'],
 		'large',
 		false
 	);
-	return $feat_img_array[0];
+	$featured_image_set['large'] = $feat_img_array_large[0];
+
+	$feat_img_array_full        = wp_get_attachment_image_src(
+		$object['featured_media'],
+		'full',
+		false
+	);
+	$featured_image_set['full'] = $feat_img_array_full[0];
+
+	return $featured_image_set;
 }
 
 /**
