@@ -91,7 +91,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes, $content )
 					</h2>
 					<?php
 					if ( $attributes['showExcerpt'] ) :
-						echo esc_html( get_the_excerpt( $post ) );
+						echo '<p>' . esc_html( get_the_excerpt( $post ) ) . '</p>';
 					endif;
 					?>
 
@@ -200,7 +200,7 @@ function newspack_blocks_register_homepage_articles() {
 				),
 				'mediaPosition' => array(
 					'type'    => 'string',
-					'default' => '',
+					'default' => 'top',
 				),
 				'categories'    => array(
 					'type' => 'string',
