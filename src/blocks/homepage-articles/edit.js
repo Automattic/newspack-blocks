@@ -105,16 +105,16 @@ class Edit extends Component {
 					{ latestPosts && ( // makes sure the thing exists before trying to render, to prevent errors (sometimes block tries to render before query is done)
 						<Fragment>
 							{ latestPosts.map( post => (
-								<article className={ post.featured_image_src && 'has-featured-image' }>
-									{ showImage && post.featured_image_src && (
+								<article className={ post.newspack_featured_image_src && 'has-featured-image' }>
+									{ showImage && post.newspack_featured_image_src && (
 										<div className="post-thumbnail" key="thumbnail">
-											<img src={ post.featured_image_src } />
+											<img src={ post.newspack_featured_image_src.large } />
 										</div>
 									) }
 									<div className="entry-wrapper">
-										{ showCategory && post.category_info && (
+										{ showCategory && post.newspack_category_info && (
 											<div className="cat-links" key="category-links">
-												<RawHTML key="category">{ post.category_info }</RawHTML>
+												<RawHTML key="category">{ post.newspack_category_info }</RawHTML>
 											</div>
 										) }
 										<h2 className="entry-title" key="title">
@@ -125,16 +125,19 @@ class Edit extends Component {
 										<div className="article-meta">
 											{ showAuthor && (
 												<span className="byline" key="byline">
-													{ post.author_avatar && (
+													{ post.newspack_author_avatar && (
 														<span className="avatar author-avatar" key="author-avatar">
-															<RawHTML>{ post.author_avatar }</RawHTML>
+															<RawHTML>{ post.newspack_author_avatar }</RawHTML>
 														</span>
 													) }
 													<span className="author-name">
 														{ __( 'by' ) }{' '}
 														<span className="author vcard">
-															<a className="url fn n" href={ post.author_info.author_link }>
-																{ post.author_info.display_name }
+															<a
+																className="url fn n"
+																href={ post.newspack_author_info.author_link }
+															>
+																{ post.newspack_author_info.display_name }
 															</a>
 														</span>
 													</span>
