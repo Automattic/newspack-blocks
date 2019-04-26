@@ -159,15 +159,17 @@ class Edit extends Component {
 				</BlockControls>
 				<InspectorControls>
 					<PanelBody title={ __( 'Display Settings' ) } initialOpen={ true }>
-						<QueryControls
-							numberOfItems={ postsToShow }
-							onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
-							categoriesList={ categoriesList }
-							selectedCategoryId={ categories }
-							onCategoryChange={ value =>
-								setAttributes( { categories: '' !== value ? value : undefined } )
-							}
-						/>
+						{ postsToShow && categoriesList && (
+							<QueryControls
+								numberOfItems={ postsToShow }
+								onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
+								categoriesList={ categoriesList }
+								selectedCategoryId={ categories }
+								onCategoryChange={ value =>
+									setAttributes( { categories: '' !== value ? value : undefined } )
+								}
+							/>
+						) }
 						{ postLayout === 'grid' && (
 							<RangeControl
 								label={ __( 'Columns' ) }
