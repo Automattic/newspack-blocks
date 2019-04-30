@@ -40,7 +40,6 @@ class Edit extends Component {
 		const { attributes, className, setAttributes, latestPosts, categoriesList } = this.props; // variables getting pulled out of props
 		const {
 			align,
-			content,
 			showExcerpt,
 			showDate,
 			showImage,
