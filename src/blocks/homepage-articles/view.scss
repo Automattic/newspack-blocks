@@ -107,7 +107,9 @@
 	.avatar {
 		border-radius: 100%;
 		display: inline-block;
+		height: 36px;
 		margin-right: 0.25em;
+		width: 36px;
 	}
 
 	.byline {
@@ -123,11 +125,9 @@
 		.entry-title {
 			font-size: 32px;
 		}
-
 		.entry-wrapper p {
 			font-size: 18px;
 		}
-
 		.cat-links,
 		.article-meta {
 			font-size: 16px;
@@ -138,14 +138,16 @@
 		.entry-title {
 			font-size: 80px;
 		}
-
 		.entry-wrapper p {
 			font-size: 24px;
 		}
-
 		.cat-links,
 		.article-meta {
 			font-size: 20px;
+		}
+		.avatar {
+			height: 48px;
+			width: 48px;
 		}
 	}
 
@@ -160,20 +162,26 @@
 		.article-meta {
 			font-size: 18px;
 		}
+		.avatar {
+			height: 48px;
+			width: 48px;
+		}
 	}
 
 	&.type-scale6 article {
 		.entry-title {
 			font-size: 60px;
 		}
-
 		.entry-wrapper p {
 			font-size: 20px;
 		}
-
 		.cat-links,
 		.article-meta {
 			font-size: 18px;
+		}
+		.avatar {
+			height: 44px;
+			width: 44px;
 		}
 	}
 
@@ -187,6 +195,10 @@
 		.cat-links,
 		.article-meta {
 			font-size: 16px;
+		}
+		.avatar {
+			height: 40px;
+			width: 40px;
 		}
 	}
 
@@ -203,6 +215,10 @@
 		.article-meta {
 			font-size: 14px;
 		}
+		.avatar {
+			height: 32px;
+			width: 32px;
+		}
 	}
 
 	&.type-scale2 article {
@@ -216,6 +232,10 @@
 		.article-meta {
 			font-size: 14px;
 		}
+		.avatar {
+			height: 28px;
+			width: 28px;
+		}
 	}
 
 	&.type-scale1 article {
@@ -226,6 +246,10 @@
 		.cat-links,
 		.article-meta {
 			font-size: 14px;
+		}
+		.avatar {
+			height: 24px;
+			width: 24px;
 		}
 	}
 }
