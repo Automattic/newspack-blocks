@@ -61,9 +61,6 @@ export const settings = {
 			type: 'boolean',
 			default: true,
 		},
-		content: {
-			type: 'string',
-		},
 		postLayout: {
 			type: 'string',
 			default: 'list',

@@ -8,12 +8,11 @@
 /**
  * Renders the `newspack-blocks/author-bio` block on server.
  *
- * @param array  $attributes The block attributes.
- * @param string $content The block content.
+ * @param array $attributes The block attributes.
  *
  * @return string Returns the post content with latest posts added.
  */
-function newspack_blocks_render_block_homepage_articles( $attributes, $content ) {
+function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	$categories = isset( $attributes['categories'] ) ? $attributes['categories'] : '';
 
 	$args    = array(
