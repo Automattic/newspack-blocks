@@ -44,6 +44,7 @@ class Edit extends Component {
 			showDate,
 			showImage,
 			showAuthor,
+			showAvatar,
 			showCategory,
 			postsToShow,
 			postLayout,
@@ -243,6 +244,15 @@ class Edit extends Component {
 								onChange={ () => setAttributes( { showAuthor: ! showAuthor } ) }
 							/>
 						</PanelRow>
+						{ showAuthor && (
+							<PanelRow>
+								<ToggleControl
+									label={ __( 'Show Author Avatar' ) }
+									checked={ showAvatar }
+									onChange={ () => setAttributes( { showAvatar: ! showAvatar } ) }
+								/>
+							</PanelRow>
+						) }
 						<PanelRow>
 							<ToggleControl
 								label={ __( 'Show Category' ) }

@@ -57,6 +57,10 @@ export const settings = {
 			type: 'boolean',
 			default: true,
 		},
+		showAvatar: {
+			type: 'boolean',
+			default: true,
+		},
 		showCategory: {
 			type: 'boolean',
 			default: true,
