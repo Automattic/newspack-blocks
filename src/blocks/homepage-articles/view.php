@@ -101,7 +101,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 							<?php if ( $attributes['showAuthor'] ) : ?>
 								<span class="byline">
 									<?php
-									if ( $attributes['showAuthor'] ) {
+									if ( $attributes['showAvatar'] ) {
 										echo get_avatar( $post->post_author );
 									}
 									?>
