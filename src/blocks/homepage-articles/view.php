@@ -100,7 +100,11 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 							<?php if ( $attributes['showAuthor'] ) : ?>
 								<span class="byline">
-									<?php echo get_avatar( $post->post_author ); ?>
+									<?php
+									if ( $attributes['showAuthor'] ) {
+										echo get_avatar( $post->post_author );
+									}
+									?>
 									<span class="author-name">
 										<?php
 										printf(
@@ -175,6 +179,10 @@ function newspack_blocks_register_homepage_articles() {
 					'default' => true,
 				),
 				'showAuthor'    => array(
+					'type'    => 'boolean',
+					'default' => true,
+				),
+				'showAvatar'    => array(
 					'type'    => 'boolean',
 					'default' => true,
 				),
