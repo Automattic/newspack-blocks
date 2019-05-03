@@ -4,7 +4,7 @@
   "main": "Gruntfile.js",
   "author": "Automattic",
   "devDependencies": {
-    "@automattic/calypso-build": "^1.0.0-beta.1",
+    "@automattic/calypso-build": "^1.0.0-rc.3",
     "@babel/core": "^7.4.0",
     "@wordpress/blocks": "^6.2.0",
     "@wordpress/element": "^2.3.0",
@@ -24,7 +24,7 @@
   "private": true,
   "dependencies": {},
   "scripts": {
-    "build": "webpack",
+    "build": "calypso-build --config='./webpack.config.js'",
     "clean": "rm -rf dist/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
