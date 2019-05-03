@@ -24,7 +24,7 @@
   "private": true,
   "dependencies": {},
   "scripts": {
-    "build": "webpack",
+    "build": "calypso-build --config='./webpack.config.js'",
     "clean": "rm -rf dist/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
