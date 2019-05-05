@@ -87,22 +87,11 @@ class Newspack_Blocks {
 	 * @param string $type The block's type.
 	 */
 	public static function enqueue_view_assets( $type ) {
-		$style_path  = NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $type . '/view' . ( is_rtl() ? '.rtl' : '' ) . '.css';
-		$script_path = NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $type . '/view.js';
+		$style_path = NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $type . '/view' . ( is_rtl() ? '.rtl' : '' ) . '.css';
 		if ( file_exists( NEWSPACK_BLOCKS__PLUGIN_DIR . $style_path ) ) {
 			wp_enqueue_style(
 				"newspack-blocks-{$type}",
 				plugins_url( $style_path, __FILE__ ),
-				array(),
-				NEWSPACK_BLOCKS__VERSION
-			);
-		}
-		if ( file_exists( NEWSPACK_BLOCKS__PLUGIN_DIR . $script_path ) ) {
-			$dependencies = self::dependencies_from_path( NEWSPACK_BLOCKS__PLUGIN_DIR . "dist/{$type}/view.deps.json" );
-			wp_enqueue_script(
-				"newspack-blocks-{$type}",
-				plugins_url( $script_path, __FILE__ ),
-				$dependencies,
 				array(),
 				NEWSPACK_BLOCKS__VERSION
 			);
