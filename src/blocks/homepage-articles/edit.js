@@ -30,8 +30,6 @@ const { decodeEntities } = wp.htmlEntities;
  */
 const MAX_POSTS_COLUMNS = 6;
 
-const MAX_POSTS_TO_SHOW = 20;
-
 class Edit extends Component {
 	render() {
 		/**
