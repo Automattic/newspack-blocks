@@ -105,26 +105,26 @@ class Edit extends Component {
 					{ latestPosts && ( // makes sure the thing exists before trying to render, to prevent errors (sometimes block tries to render before query is done)
 						<Fragment>
 							{ latestPosts.map( post => (
-								<article className={ post.newspack_featured_image_src && 'has-featured-image' }>
+								<article className={ post.newspack_featured_image_src && 'article-has-image' }>
 									{ showImage && post.newspack_featured_image_src && (
-										<div className="post-thumbnail" key="thumbnail">
+										<div className="article-thumbnail" key="thumbnail">
 											<img src={ post.newspack_featured_image_src.large } />
 										</div>
 									) }
-									<div className="entry-wrapper">
+									<div className="article-wrapper">
 										{ showCategory && post.newspack_category_info && (
 											<div className="cat-links" key="category-links">
 												<RawHTML key="category">{ post.newspack_category_info }</RawHTML>
 											</div>
 										) }
-										<h2 className="entry-title" key="title">
+										<h2 className="article-title" key="title">
 											<a href={ post.link }>{ decodeEntities( post.title.rendered.trim() ) }</a>
 										</h2>
 										{ showExcerpt && <RawHTML key="excerpt">{ post.excerpt.rendered }</RawHTML> }
 
 										<div className="article-meta">
 											{ showAuthor && (
-												<span className="byline" key="byline">
+												<span className="article-byline" key="byline">
 													{ post.newspack_author_avatar && showAvatar && (
 														<span className="avatar author-avatar" key="author-avatar">
 															<RawHTML>{ post.newspack_author_avatar }</RawHTML>
@@ -144,7 +144,7 @@ class Edit extends Component {
 												</span>
 											) }
 											{ showDate && (
-												<time className="entry-date published" key="pub-date">
+												<time className="article-date published" key="pub-date">
 													{ moment( post.date_gmt )
 														.local()
 														.format( 'MMMM DD, Y' ) }
