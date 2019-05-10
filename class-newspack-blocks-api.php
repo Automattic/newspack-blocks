@@ -50,7 +50,7 @@ class Newspack_Blocks_API {
 	/**
 	 * Get thumbnail featured image source for the rest field.
 	 *
-	 * @param Array  $object  The object info.
+	 * @param Array $object  The object info.
 	 */
 	public static function newspack_blocks_get_image_src( $object ) {
 		if ( 0 === $object['featured_media'] ) {
@@ -90,17 +90,17 @@ class Newspack_Blocks_API {
 	/**
 	 * Get author info for the rest field.
 	 *
-	 * @param Array  $object  The object info.
+	 * @param Array $object  The object info.
 	 */
 	public static function newspack_blocks_get_author_info( $object ) {
-		$author_data = [
+		$author_data = array(
 			/* Get the author name */
 			'display_name' => get_the_author_meta( 'display_name', $object['author'] ),
 			/* Get the author link */
 			'author_link'  => get_author_posts_url( $object['author'] ),
 			/* Get the author avatar */
-			'avatar'       => get_avatar( $object['author'], 48 )
-		];
+			'avatar'       => get_avatar( $object['author'], 48 ),
+		);
 
 		/* Return the author data */
 		return $author_data;
@@ -109,7 +109,7 @@ class Newspack_Blocks_API {
 	/**
 	 * Get first category for the rest field.
 	 *
-	 * @param Array  $object  The object info.
+	 * @param Array $object  The object info.
 	 */
 	public static function newspack_blocks_get_first_category( $object ) {
 		$object['ID']    = '';
