@@ -60,9 +60,9 @@ class Edit extends Component {
 					<div className="article-meta">
 						{ showAuthor && (
 							<span className="article-byline" key="byline">
-								{ post.newspack_author_avatar && showAvatar && (
+								{ post.newspack_author_info.avatar && showAvatar && (
 									<span className="avatar author-avatar" key="author-avatar">
-										<RawHTML>{ post.newspack_author_avatar }</RawHTML>
+										<RawHTML>{ post.newspack_author_info.avatar }</RawHTML>
 									</span>
 								) }
 								<span className="author-name">

@@ -35,17 +35,6 @@ class Newspack_Blocks_API {
 			)
 		);
 
-		/* Add author avatar source */
-		register_rest_field(
-			'post',
-			'newspack_author_avatar',
-			array(
-				'get_callback'    => array( 'Newspack_Blocks_API', 'newspack_blocks_get_avatar' ),
-				'update_callback' => null,
-				'schema'          => null,
-			)
-		);
-
 		/* Add first category source */
 		register_rest_field(
 			'post',
@@ -104,27 +93,17 @@ class Newspack_Blocks_API {
 	 * @param Array  $object  The object info.
 	 */
 	public static function newspack_blocks_get_author_info( $object ) {
-		/* Get the author name */
-		$author_data['display_name'] = get_the_author_meta( 'display_name', $object['author'] );
-
-		/* Get the author link */
-		$author_data['author_link'] = get_author_posts_url( $object['author'] );
+		$author_data = [
+			/* Get the author name */
+			'display_name' => get_the_author_meta( 'display_name', $object['author'] ),
+			/* Get the author link */
+			'author_link'  => get_author_posts_url( $object['author'] ),
+			/* Get the author avatar */
+			'avatar'       => get_avatar( $object['author'], 48 )
+		];
 
 		/* Return the author data */
 		return $author_data;
-	}
-
-	/**
-	 * Get author info for the rest field.
-	 *
-	 * @param Array  $object  The object info.
-	 */
-	public static function newspack_blocks_get_avatar( $object ) {
-		/* Get the author avatar */
-		$author_avatar = get_avatar( $object['author'], 48 );
-
-		/* Return the author data */
-		return $author_avatar;
 	}
 
 	/**
