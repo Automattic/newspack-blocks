@@ -61,7 +61,7 @@ class Newspack_Blocks_API {
 	/**
 	 * Get thumbnail featured image source for the rest field.
 	 *
-	 * @param String $object  The object type.
+	 * @param Array  $object  The object info.
 	 * @param String $field_name  Name of the field to retrieve.
 	 * @param String $request  The current request object.
 	 */
@@ -100,7 +100,7 @@ class Newspack_Blocks_API {
 	/**
 	 * Get author info for the rest field.
 	 *
-	 * @param String $object  The object type.
+	 * @param Array  $object  The object info.
 	 * @param String $field_name  Name of the field to retrieve.
 	 * @param String $request  The current request object.
 	 */
@@ -118,7 +118,7 @@ class Newspack_Blocks_API {
 	/**
 	 * Get author info for the rest field.
 	 *
-	 * @param String $object  The object type.
+	 * @param Array  $object  The object info.
 	 * @param String $field_name  Name of the field to retrieve.
 	 * @param String $request  The current request object.
 	 */
@@ -133,7 +133,7 @@ class Newspack_Blocks_API {
 	/**
 	 * Get first category for the rest field.
 	 *
-	 * @param String $object  The object type.
+	 * @param Array  $object  The object info.
 	 * @param String $field_name  Name of the field to retrieve.
 	 * @param String $request  The current request object.
 	 */
