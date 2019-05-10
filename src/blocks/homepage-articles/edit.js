@@ -19,6 +19,8 @@ import {
 	RangeControl,
 	Toolbar,
 	Dashicon,
+	Placeholder,
+	Spinner,
 } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 import { withState } from '@wordpress/compose';
@@ -100,10 +102,24 @@ class Edit extends Component {
 		return (
 			<Fragment>
 				<div className={ classes }>
+					<Fragment>
+						{ latestPosts && ! latestPosts.length && (
+							<Placeholder>{ __( 'Sorry, no posts were found.' ) }</Placeholder>
+						) }
+
+						{ ! latestPosts && (
+							<Placeholder>
+								<Spinner />
+							</Placeholder>
+						) }
+					</Fragment>
 					{ latestPosts && ( // makes sure the thing exists before trying to render, to prevent errors (sometimes block tries to render before query is done)
 						<Fragment>
 							{ latestPosts.map( post => (
-								<article className={ post.newspack_featured_image_src && 'article-has-image' } key={ post.id }>
+								<article
+									className={ post.newspack_featured_image_src && 'article-has-image' }
+									key={ post.id }
+								>
 									{ showImage && post.newspack_featured_image_src && (
 										<div className="article-thumbnail" key="thumbnail">
 											<img src={ post.newspack_featured_image_src.large } />
