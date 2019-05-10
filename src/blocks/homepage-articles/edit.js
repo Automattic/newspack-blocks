@@ -103,7 +103,7 @@ class Edit extends Component {
 					{ latestPosts && ( // makes sure the thing exists before trying to render, to prevent errors (sometimes block tries to render before query is done)
 						<Fragment>
 							{ latestPosts.map( post => (
-								<article className={ post.newspack_featured_image_src && 'article-has-image' }>
+								<article className={ post.newspack_featured_image_src && 'article-has-image' } key={ post.id }>
 									{ showImage && post.newspack_featured_image_src && (
 										<div className="article-thumbnail" key="thumbnail">
 											<img src={ post.newspack_featured_image_src.large } />
