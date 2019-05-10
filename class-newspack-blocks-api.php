@@ -64,6 +64,9 @@ class Newspack_Blocks_API {
 	 * @param Array  $object  The object info.
 	 */
 	public static function newspack_blocks_get_image_src( $object ) {
+		if ( 0 === $object['featured_media'] ) {
+			return;
+		}
 		$feat_img_array_thumbnail        = wp_get_attachment_image_src(
 			$object['featured_media'],
 			'thumbnail',
