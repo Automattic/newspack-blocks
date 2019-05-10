@@ -112,8 +112,7 @@ class Newspack_Blocks_API {
 	 * @param Array $object  The object info.
 	 */
 	public static function newspack_blocks_get_first_category( $object ) {
-		$object['ID']    = '';
-		$categories_list = get_the_category( $object['ID'] );
+		$categories_list = get_the_category( $object['id'] );
 		$category_info   = '';
 
 		if ( ! empty( $categories_list ) ) {
