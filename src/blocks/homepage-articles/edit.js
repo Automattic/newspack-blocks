@@ -88,6 +88,129 @@ class Edit extends Component {
 		);
 	};
 
+	renderInspectorControls = () => {
+		const { attributes, categoriesList, setAttributes } = this.props;
+		const {
+			postsToShow,
+			categories,
+			columns,
+			showImage,
+			imageScale,
+			showExcerpt,
+			typeScale,
+			showDate,
+			showAuthor,
+			showAvatar,
+			showCategory,
+			postLayout,
+			mediaPosition,
+		} = attributes;
+		return (
+			<Fragment>
+				<PanelBody title={ __( 'Display Settings' ) } initialOpen={ true }>
+					{ postsToShow && categoriesList && (
+						<QueryControls
+							numberOfItems={ postsToShow }
+							onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
+							categoriesList={ categoriesList }
+							selectedCategoryId={ categories }
+							onCategoryChange={ value =>
+								setAttributes( { categories: '' !== value ? value : undefined } )
+							}
+						/>
+					) }
+					{ postLayout === 'grid' && (
+						<RangeControl
+							label={ __( 'Columns' ) }
+							value={ columns }
+							onChange={ value => setAttributes( { columns: value } ) }
+							min={ 2 }
+							max={
+								! hasPosts ? MAX_POSTS_COLUMNS : Math.min( MAX_POSTS_COLUMNS, latestPosts.length )
+							}
+							required
+						/>
+					) }
+				</PanelBody>
+				<PanelBody title={ __( 'Featured Image Settings' ) }>
+					<PanelRow>
+						<ToggleControl
+							label={ __( 'Show Featured Image' ) }
+							checked={ showImage }
+							onChange={ () => setAttributes( { showImage: ! showImage } ) }
+						/>
+					</PanelRow>
+					{ showImage && mediaPosition !== 'top' && (
+						<RangeControl
+							className="image-scale-slider"
+							className="image-scale-slider"
+							label={ __( 'Featured Image Scale' ) }
+							value={ imageScale }
+							onChange={ value => setAttributes( { imageScale: value } ) }
+							min={ 1 }
+							max={ 4 }
+							beforeIcon="images-alt2"
+							afterIcon="images-alt2"
+							required
+						/>
+					) }
+				</PanelBody>
+				<PanelBody title={ __( 'Article Control Settings' ) }>
+					<PanelRow>
+						<ToggleControl
+							label={ __( 'Show Excerpt' ) }
+							checked={ showExcerpt }
+							onChange={ () => setAttributes( { showExcerpt: ! showExcerpt } ) }
+						/>
+					</PanelRow>
+					<RangeControl
+						className="type-scale-slider"
+						label={ __( 'Type Scale' ) }
+						value={ typeScale }
+						onChange={ value => setAttributes( { typeScale: value } ) }
+						min={ 1 }
+						max={ 8 }
+						beforeIcon="editor-textcolor"
+						afterIcon="editor-textcolor"
+						required
+					/>
+				</PanelBody>
+				<PanelBody title={ __( 'Article Meta Settings' ) }>
+					<PanelRow>
+						<ToggleControl
+							label={ __( 'Show Date' ) }
+							checked={ showDate }
+							onChange={ () => setAttributes( { showDate: ! showDate } ) }
+						/>
+					</PanelRow>
+					<PanelRow>
+						<ToggleControl
+							label={ __( 'Show Author' ) }
+							checked={ showAuthor }
+							onChange={ () => setAttributes( { showAuthor: ! showAuthor } ) }
+						/>
+					</PanelRow>
+					{ showAuthor && (
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Show Author Avatar' ) }
+								checked={ showAvatar }
+								onChange={ () => setAttributes( { showAvatar: ! showAvatar } ) }
+							/>
+						</PanelRow>
+					) }
+					<PanelRow>
+						<ToggleControl
+							label={ __( 'Show Category' ) }
+							checked={ showCategory }
+							onChange={ () => setAttributes( { showCategory: ! showCategory } ) }
+						/>
+					</PanelRow>
+				</PanelBody>
+			</Fragment>
+		);
+	};
+
 	render() {
 		/**
 		 * Constants
@@ -170,108 +293,7 @@ class Edit extends Component {
 				<BlockControls>
 					<Toolbar controls={ blockControls } />
 				</BlockControls>
-				<InspectorControls>
-					<PanelBody title={ __( 'Display Settings' ) } initialOpen={ true }>
-						{ postsToShow && categoriesList && (
-							<QueryControls
-								numberOfItems={ postsToShow }
-								onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
-								categoriesList={ categoriesList }
-								selectedCategoryId={ categories }
-								onCategoryChange={ value =>
-									setAttributes( { categories: '' !== value ? value : undefined } )
-								}
-							/>
-						) }
-						{ postLayout === 'grid' && (
-							<RangeControl
-								label={ __( 'Columns' ) }
-								value={ columns }
-								onChange={ value => setAttributes( { columns: value } ) }
-								min={ 2 }
-								max={
-									! hasPosts ? MAX_POSTS_COLUMNS : Math.min( MAX_POSTS_COLUMNS, latestPosts.length )
-								}
-								required
-							/>
-						) }
-					</PanelBody>
-					<PanelBody title={ __( 'Featured Image Settings' ) }>
-						<PanelRow>
-							<ToggleControl
-								label={ __( 'Show Featured Image' ) }
-								checked={ showImage }
-								onChange={ () => setAttributes( { showImage: ! showImage } ) }
-							/>
-						</PanelRow>
-						{ showImage && mediaPosition !== 'top' && (
-							<RangeControl
-								className="image-scale-slider"
-								className="image-scale-slider"
-								label={ __( 'Featured Image Scale' ) }
-								value={ imageScale }
-								onChange={ value => setAttributes( { imageScale: value } ) }
-								min={ 1 }
-								max={ 4 }
-								beforeIcon="images-alt2"
-								afterIcon="images-alt2"
-								required
-							/>
-						) }
-					</PanelBody>
-					<PanelBody title={ __( 'Article Control Settings' ) }>
-						<PanelRow>
-							<ToggleControl
-								label={ __( 'Show Excerpt' ) }
-								checked={ showExcerpt }
-								onChange={ () => setAttributes( { showExcerpt: ! showExcerpt } ) }
-							/>
-						</PanelRow>
-						<RangeControl
-							className="type-scale-slider"
-							label={ __( 'Type Scale' ) }
-							value={ typeScale }
-							onChange={ value => setAttributes( { typeScale: value } ) }
-							min={ 1 }
-							max={ 8 }
-							beforeIcon="editor-textcolor"
-							afterIcon="editor-textcolor"
-							required
-						/>
-					</PanelBody>
-					<PanelBody title={ __( 'Article Meta Settings' ) }>
-						<PanelRow>
-							<ToggleControl
-								label={ __( 'Show Date' ) }
-								checked={ showDate }
-								onChange={ () => setAttributes( { showDate: ! showDate } ) }
-							/>
-						</PanelRow>
-						<PanelRow>
-							<ToggleControl
-								label={ __( 'Show Author' ) }
-								checked={ showAuthor }
-								onChange={ () => setAttributes( { showAuthor: ! showAuthor } ) }
-							/>
-						</PanelRow>
-						{ showAuthor && (
-							<PanelRow>
-								<ToggleControl
-									label={ __( 'Show Author Avatar' ) }
-									checked={ showAvatar }
-									onChange={ () => setAttributes( { showAvatar: ! showAvatar } ) }
-								/>
-							</PanelRow>
-						) }
-						<PanelRow>
-							<ToggleControl
-								label={ __( 'Show Category' ) }
-								checked={ showCategory }
-								onChange={ () => setAttributes( { showCategory: ! showCategory } ) }
-							/>
-						</PanelRow>
-					</PanelBody>
-				</InspectorControls>
+				<InspectorControls>{ this.renderInspectorControls() }</InspectorControls>
 			</Fragment>
 		);
 	}
