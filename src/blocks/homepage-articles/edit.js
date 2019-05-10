@@ -33,6 +33,61 @@ const { decodeEntities } = wp.htmlEntities;
 const MAX_POSTS_COLUMNS = 6;
 
 class Edit extends Component {
+	renderPost = post => {
+		const { attributes } = this.props;
+		const { showImage, showCategory, showExcerpt, showAuthor, showAvatar, showDate } = attributes;
+		return (
+			<article
+				className={ post.newspack_featured_image_src && 'article-has-image' }
+				key={ post.id }
+			>
+				{ showImage && post.newspack_featured_image_src && (
+					<div className="article-thumbnail" key="thumbnail">
+						<img src={ post.newspack_featured_image_src.large } />
+					</div>
+				) }
+				<div className="article-wrapper">
+					{ showCategory && post.newspack_category_info && (
+						<div className="cat-links" key="category-links">
+							<RawHTML key="category">{ post.newspack_category_info }</RawHTML>
+						</div>
+					) }
+					<h2 className="article-title" key="title">
+						<a href={ post.link }>{ decodeEntities( post.title.rendered.trim() ) }</a>
+					</h2>
+					{ showExcerpt && <RawHTML key="excerpt">{ post.excerpt.rendered }</RawHTML> }
+
+					<div className="article-meta">
+						{ showAuthor && (
+							<span className="article-byline" key="byline">
+								{ post.newspack_author_avatar && showAvatar && (
+									<span className="avatar author-avatar" key="author-avatar">
+										<RawHTML>{ post.newspack_author_avatar }</RawHTML>
+									</span>
+								) }
+								<span className="author-name">
+									{ __( 'by' ) }{' '}
+									<span className="author vcard">
+										<a className="url fn n" href={ post.newspack_author_info.author_link }>
+											{ post.newspack_author_info.display_name }
+										</a>
+									</span>
+								</span>
+							</span>
+						) }
+						{ showDate && (
+							<time className="article-date published" key="pub-date">
+								{ moment( post.date_gmt )
+									.local()
+									.format( 'MMMM DD, Y' ) }
+							</time>
+						) }
+					</div>
+				</div>
+			</article>
+		);
+	};
+
 	render() {
 		/**
 		 * Constants
@@ -102,74 +157,15 @@ class Edit extends Component {
 		return (
 			<Fragment>
 				<div className={ classes }>
-					<Fragment>
-						{ latestPosts && ! latestPosts.length && (
-							<Placeholder>{ __( 'Sorry, no posts were found.' ) }</Placeholder>
-						) }
-
-						{ ! latestPosts && (
-							<Placeholder>
-								<Spinner />
-							</Placeholder>
-						) }
-					</Fragment>
-					{ latestPosts && ( // makes sure the thing exists before trying to render, to prevent errors (sometimes block tries to render before query is done)
-						<Fragment>
-							{ latestPosts.map( post => (
-								<article
-									className={ post.newspack_featured_image_src && 'article-has-image' }
-									key={ post.id }
-								>
-									{ showImage && post.newspack_featured_image_src && (
-										<div className="article-thumbnail" key="thumbnail">
-											<img src={ post.newspack_featured_image_src.large } />
-										</div>
-									) }
-									<div className="article-wrapper">
-										{ showCategory && post.newspack_category_info && (
-											<div className="cat-links" key="category-links">
-												<RawHTML key="category">{ post.newspack_category_info }</RawHTML>
-											</div>
-										) }
-										<h2 className="article-title" key="title">
-											<a href={ post.link }>{ decodeEntities( post.title.rendered.trim() ) }</a>
-										</h2>
-										{ showExcerpt && <RawHTML key="excerpt">{ post.excerpt.rendered }</RawHTML> }
-
-										<div className="article-meta">
-											{ showAuthor && (
-												<span className="article-byline" key="byline">
-													{ post.newspack_author_avatar && showAvatar && (
-														<span className="avatar author-avatar" key="author-avatar">
-															<RawHTML>{ post.newspack_author_avatar }</RawHTML>
-														</span>
-													) }
-													<span className="author-name">
-														{ __( 'by' ) }{' '}
-														<span className="author vcard">
-															<a
-																className="url fn n"
-																href={ post.newspack_author_info.author_link }
-															>
-																{ post.newspack_author_info.display_name }
-															</a>
-														</span>
-													</span>
-												</span>
-											) }
-											{ showDate && (
-												<time className="article-date published" key="pub-date">
-													{ moment( post.date_gmt )
-														.local()
-														.format( 'MMMM DD, Y' ) }
-												</time>
-											) }
-										</div>
-									</div>
-								</article>
-							) ) }
-						</Fragment>
+					{ latestPosts && ! latestPosts.length && (
+						<Placeholder>{ __( 'Sorry, no posts were found.' ) }</Placeholder>
 					) }
+					{ ! latestPosts && (
+						<Placeholder>
+							<Spinner />
+						</Placeholder>
+					) }
+					{ latestPosts && latestPosts.map( post => this.renderPost( post ) ) }
 				</div>
 				<BlockControls>
 					<Toolbar controls={ blockControls } />
