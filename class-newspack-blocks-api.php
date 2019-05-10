@@ -62,10 +62,8 @@ class Newspack_Blocks_API {
 	 * Get thumbnail featured image source for the rest field.
 	 *
 	 * @param Array  $object  The object info.
-	 * @param String $field_name  Name of the field to retrieve.
-	 * @param String $request  The current request object.
 	 */
-	public static function newspack_blocks_get_image_src( $object, $field_name, $request ) {
+	public static function newspack_blocks_get_image_src( $object ) {
 		$feat_img_array_thumbnail        = wp_get_attachment_image_src(
 			$object['featured_media'],
 			'thumbnail',
@@ -101,10 +99,8 @@ class Newspack_Blocks_API {
 	 * Get author info for the rest field.
 	 *
 	 * @param Array  $object  The object info.
-	 * @param String $field_name  Name of the field to retrieve.
-	 * @param String $request  The current request object.
 	 */
-	public static function newspack_blocks_get_author_info( $object, $field_name, $request ) {
+	public static function newspack_blocks_get_author_info( $object ) {
 		/* Get the author name */
 		$author_data['display_name'] = get_the_author_meta( 'display_name', $object['author'] );
 
@@ -119,10 +115,8 @@ class Newspack_Blocks_API {
 	 * Get author info for the rest field.
 	 *
 	 * @param Array  $object  The object info.
-	 * @param String $field_name  Name of the field to retrieve.
-	 * @param String $request  The current request object.
 	 */
-	public static function newspack_blocks_get_avatar( $object, $field_name, $request ) {
+	public static function newspack_blocks_get_avatar( $object ) {
 		/* Get the author avatar */
 		$author_avatar = get_avatar( $object['author'], 48 );
 
@@ -134,10 +128,8 @@ class Newspack_Blocks_API {
 	 * Get first category for the rest field.
 	 *
 	 * @param Array  $object  The object info.
-	 * @param String $field_name  Name of the field to retrieve.
-	 * @param String $request  The current request object.
 	 */
-	public static function newspack_blocks_get_first_category( $object, $field_name, $request ) {
+	public static function newspack_blocks_get_first_category( $object ) {
 		$object['ID']    = '';
 		$categories_list = get_the_category( $object['ID'] );
 		$category_info   = '';
