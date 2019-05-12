@@ -255,6 +255,9 @@ class Edit extends Component {
 				onClick: () => setAttributes( { postLayout: 'grid' } ),
 				isActive: postLayout === 'grid',
 			},
+		];
+
+		const blockControlsImages = [
 			{
 				icon: 'align-none',
 				title: __( 'Show media on top' ),
@@ -292,6 +295,7 @@ class Edit extends Component {
 				</div>
 				<BlockControls>
 					<Toolbar controls={ blockControls } />
+					{ showImage && <Toolbar controls={ blockControlsImages } /> }
 				</BlockControls>
 				<InspectorControls>{ this.renderInspectorControls() }</InspectorControls>
 			</Fragment>
