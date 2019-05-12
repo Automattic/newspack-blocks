@@ -237,9 +237,9 @@ class Edit extends Component {
 			[ `align${ align }` ]: align !== '',
 			'is-grid': postLayout === 'grid',
 			[ `columns-${ columns }` ]: postLayout === 'grid',
-			[ `image-align${ mediaPosition }` ]: mediaPosition !== 'top',
 			[ `type-scale${ typeScale }` ]: typeScale !== '5',
-			[ `image-scale${ imageScale }` ]: imageScale !== '1',
+			[ `image-align${ mediaPosition }` ]: mediaPosition !== 'top' && showImage,
+			[ `image-scale${ imageScale }` ]: imageScale !== '1' && showImage,
 		} );
 
 		const blockControls = [

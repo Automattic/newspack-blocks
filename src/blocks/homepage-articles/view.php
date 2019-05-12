@@ -30,13 +30,13 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	if ( isset( $attributes['columns'] ) && 'grid' === $attributes['postLayout'] ) {
 		$classes .= ' columns-' . $attributes['columns'];
 	}
-	if ( isset( $attributes['mediaPosition'] ) && 'top' !== $attributes['mediaPosition'] ) {
+	if ( $attributes['showImage'] && isset( $attributes['mediaPosition'] ) && 'top' !== $attributes['mediaPosition'] ) {
 		$classes .= ' image-align' . $attributes['mediaPosition'];
 	}
 	if ( isset( $attributes['typeScale'] ) ) {
 		$classes .= ' type-scale' . $attributes['typeScale'];
 	}
-	if ( isset( $attributes['imageScale'] ) ) {
+	if ( $attributes['showImage'] && isset( $attributes['imageScale'] ) ) {
 		$classes .= ' image-scale' . $attributes['imageScale'];
 	}
 
