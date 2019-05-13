@@ -33,10 +33,6 @@ export const settings = {
 	keywords: [ __( 'posts' ), __( 'articles' ), __( 'latest' ) ],
 	description: __( 'A block for displaying homepage articles.' ),
 	attributes: {
-		align: {
-			type: 'string',
-			default: '',
-		},
 		className: {
 			type: 'string',
 		},
@@ -90,7 +86,7 @@ export const settings = {
 	},
 	supports: {
 		html: false,
-		align: [ 'left', 'right', 'center' ],
+		align: false,
 	},
 	edit,
 	save: () => null, // to use view.php

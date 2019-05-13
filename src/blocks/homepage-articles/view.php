@@ -133,10 +133,6 @@ function newspack_blocks_register_homepage_articles() {
 		'newspack-blocks/homepage-articles',
 		array(
 			'attributes'      => array(
-				'align'         => array(
-					'type'    => 'string',
-					'default' => '',
-				),
 				'className'     => array(
 					'type' => 'string',
 				),

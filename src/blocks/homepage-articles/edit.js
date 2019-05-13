@@ -204,7 +204,6 @@ class Edit extends Component {
 		 */
 		const { attributes, className, setAttributes, latestPosts, categoriesList } = this.props; // variables getting pulled out of props
 		const {
-			align,
 			showExcerpt,
 			showDate,
 			showImage,
@@ -220,7 +219,6 @@ class Edit extends Component {
 		} = attributes;
 
 		const classes = classNames( className, {
-			[ `align${ align }` ]: align !== '',
 			'is-grid': postLayout === 'grid',
 			[ `columns-${ columns }` ]: postLayout === 'grid',
 			[ `type-scale${ typeScale }` ]: typeScale !== '5',
@@ -251,13 +249,13 @@ class Edit extends Component {
 				onClick: () => setAttributes( { mediaPosition: 'top' } ),
 			},
 			{
-				icon: 'align-left',
+				icon: 'align-pull-left',
 				title: __( 'Show media on left' ),
 				isActive: mediaPosition === 'left',
 				onClick: () => setAttributes( { mediaPosition: 'left' } ),
 			},
 			{
-				icon: 'align-right',
+				icon: 'align-pull-right',
 				title: __( 'Show media on right' ),
 				isActive: mediaPosition === 'right',
 				onClick: () => setAttributes( { mediaPosition: 'right' } ),
