@@ -35,7 +35,7 @@ const MAX_POSTS_COLUMNS = 6;
 class Edit extends Component {
 	renderPost = post => {
 		const { attributes } = this.props;
-		const { showImage, showCategory, showExcerpt, showAuthor, showAvatar, showDate } = attributes;
+		const { showImage, showExcerpt, showAuthor, showAvatar, showDate } = attributes;
 		return (
 			<article
 				className={ post.newspack_featured_image_src && 'article-has-image' }
@@ -47,11 +47,6 @@ class Edit extends Component {
 					</div>
 				) }
 				<div className="article-wrapper">
-					{ showCategory && post.newspack_category_info && (
-						<div className="cat-links" key="category-links">
-							<RawHTML key="category">{ post.newspack_category_info }</RawHTML>
-						</div>
-					) }
 					<h2 className="article-title" key="title">
 						<a href={ post.link }>{ decodeEntities( post.title.rendered.trim() ) }</a>
 					</h2>
@@ -101,7 +96,6 @@ class Edit extends Component {
 			showDate,
 			showAuthor,
 			showAvatar,
-			showCategory,
 			postLayout,
 			mediaPosition,
 		} = attributes;
@@ -199,13 +193,6 @@ class Edit extends Component {
 							/>
 						</PanelRow>
 					) }
-					<PanelRow>
-						<ToggleControl
-							label={ __( 'Show Category' ) }
-							checked={ showCategory }
-							onChange={ () => setAttributes( { showCategory: ! showCategory } ) }
-						/>
-					</PanelRow>
 				</PanelBody>
 			</Fragment>
 		);
@@ -223,7 +210,6 @@ class Edit extends Component {
 			showImage,
 			showAuthor,
 			showAvatar,
-			showCategory,
 			postsToShow,
 			postLayout,
 			mediaPosition,

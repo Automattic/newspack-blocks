@@ -60,14 +60,6 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 					<?php endif; ?>
 
 					<div class="article-wrapper">
-						<?php
-						$categories = get_the_category();
-						if ( ! empty( $categories ) && $attributes['showCategory'] ) :
-							?>
-							<div class="cat-links">
-								<a href="<?php echo esc_url( get_category_link( $categories[0]->term_id ) ); ?>"><?php echo esc_html( $categories[0]->name ); ?></a>
-							</div><!-- .cat-links -->
-							<?php endif; ?>
 
 						<?php the_title( '<h2 class="article-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h2>' ); ?>
 
@@ -165,10 +157,6 @@ function newspack_blocks_register_homepage_articles() {
 					'default' => true,
 				),
 				'showAvatar'    => array(
-					'type'    => 'boolean',
-					'default' => true,
-				),
-				'showCategory'  => array(
 					'type'    => 'boolean',
 					'default' => true,
 				),
