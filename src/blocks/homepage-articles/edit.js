@@ -84,7 +84,8 @@ class Edit extends Component {
 	};
 
 	renderInspectorControls = () => {
-		const { attributes, categoriesList, setAttributes } = this.props;
+		const { attributes, categoriesList, setAttributes, latestPosts } = this.props;
+		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
 		const {
 			postsToShow,
 			categories,
@@ -202,7 +203,14 @@ class Edit extends Component {
 		/**
 		 * Constants
 		 */
-		const { attributes, className, setAttributes, latestPosts, categoriesList } = this.props; // variables getting pulled out of props
+		const {
+			attributes,
+			className,
+			setAttributes,
+			latestPosts,
+			hasPosts,
+			categoriesList,
+		} = this.props; // variables getting pulled out of props
 		const {
 			showExcerpt,
 			showDate,
@@ -261,8 +269,6 @@ class Edit extends Component {
 				onClick: () => setAttributes( { mediaPosition: 'right' } ),
 			},
 		];
-
-		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
 
 		return (
 			<Fragment>
