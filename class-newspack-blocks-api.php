@@ -35,17 +35,6 @@ class Newspack_Blocks_API {
 			)
 		);
 
-		/* Add author avatar source */
-		register_rest_field(
-			'post',
-			'newspack_author_avatar',
-			array(
-				'get_callback'    => array( 'Newspack_Blocks_API', 'newspack_blocks_get_avatar' ),
-				'update_callback' => null,
-				'schema'          => null,
-			)
-		);
-
 		/* Add first category source */
 		register_rest_field(
 			'post',
@@ -61,11 +50,12 @@ class Newspack_Blocks_API {
 	/**
 	 * Get thumbnail featured image source for the rest field.
 	 *
-	 * @param String $object  The object type.
-	 * @param String $field_name  Name of the field to retrieve.
-	 * @param String $request  The current request object.
+	 * @param Array $object  The object info.
 	 */
-	public static function newspack_blocks_get_image_src( $object, $field_name, $request ) {
+	public static function newspack_blocks_get_image_src( $object ) {
+		if ( 0 === $object['featured_media'] ) {
+			return;
+		}
 		$feat_img_array_thumbnail        = wp_get_attachment_image_src(
 			$object['featured_media'],
 			'thumbnail',
@@ -100,46 +90,29 @@ class Newspack_Blocks_API {
 	/**
 	 * Get author info for the rest field.
 	 *
-	 * @param String $object  The object type.
-	 * @param String $field_name  Name of the field to retrieve.
-	 * @param String $request  The current request object.
+	 * @param Array $object  The object info.
 	 */
-	public static function newspack_blocks_get_author_info( $object, $field_name, $request ) {
-		/* Get the author name */
-		$author_data['display_name'] = get_the_author_meta( 'display_name', $object['author'] );
-
-		/* Get the author link */
-		$author_data['author_link'] = get_author_posts_url( $object['author'] );
+	public static function newspack_blocks_get_author_info( $object ) {
+		$author_data = array(
+			/* Get the author name */
+			'display_name' => get_the_author_meta( 'display_name', $object['author'] ),
+			/* Get the author link */
+			'author_link'  => get_author_posts_url( $object['author'] ),
+			/* Get the author avatar */
+			'avatar'       => get_avatar( $object['author'], 48 ),
+		);
 
 		/* Return the author data */
 		return $author_data;
 	}
 
 	/**
-	 * Get author info for the rest field.
-	 *
-	 * @param String $object  The object type.
-	 * @param String $field_name  Name of the field to retrieve.
-	 * @param String $request  The current request object.
-	 */
-	public static function newspack_blocks_get_avatar( $object, $field_name, $request ) {
-		/* Get the author avatar */
-		$author_avatar = get_avatar( $object['author'], 48 );
-
-		/* Return the author data */
-		return $author_avatar;
-	}
-
-	/**
 	 * Get first category for the rest field.
 	 *
-	 * @param String $object  The object type.
-	 * @param String $field_name  Name of the field to retrieve.
-	 * @param String $request  The current request object.
+	 * @param Array $object  The object info.
 	 */
-	public static function newspack_blocks_get_first_category( $object, $field_name, $request ) {
-		$object['ID']    = '';
-		$categories_list = get_the_category( $object['ID'] );
+	public static function newspack_blocks_get_first_category( $object ) {
+		$categories_list = get_the_category( $object['id'] );
 		$category_info   = '';
 
 		if ( ! empty( $categories_list ) ) {

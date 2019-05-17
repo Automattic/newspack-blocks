@@ -28,26 +28,22 @@
 
 	/* Image styles */
 
-	.post-thumbnail {
-		margin: 0;
-	}
-
 	&.image-alignleft,
 	&.image-alignright {
-		.has-featured-image {
+		.article-has-image {
 			display: flex;
 
-			.post-thumbnail,
-			.entry-wrapper {
+			.article-thumbnail,
+			.article-wrapper {
 				flex-basis: 50%;
 			}
 		}
 
 		&.image-scale4 {
-			.post-thumbnail {
+			.article-thumbnail {
 				flex-basis: 75%;
 			}
-			.entry-wrapper {
+			.article-wrapper {
 				flex-basis: 25%;
 			}
 		}
@@ -55,42 +51,42 @@
 		// .image-scale3 is the default - 50%
 
 		&.image-scale2 {
-			.post-thumbnail {
+			.article-thumbnail {
 				flex-basis: 33%;
 			}
-			.entry-wrapper {
+			.article-wrapper {
 				flex-basis: 67%;
 			}
 		}
 
 		&.image-scale1 {
-			.post-thumbnail {
+			.article-thumbnail {
 				flex-basis: 25%;
 			}
-			.entry-wrapper {
+			.article-wrapper {
 				flex-basis: 75%;
 			}
 		}
 	}
 
 	&.image-alignleft {
-		.post-thumbnail {
+		.article-thumbnail {
 			margin-right: 16px;
 		}
 	}
 
 	&.image-alignright {
-		.post-thumbnail {
+		.article-thumbnail {
 			margin-left: 16px;
 		}
-		.entry-wrapper {
+		.article-wrapper {
 			order: -1;
 		}
 	}
 
 	/* Headings */
 	// This may be removeable, depending on the theme sizing.
-	.entry-title {
+	.article-title {
 		margin: 0;
 		a {
 			color: inherit;
@@ -112,7 +108,7 @@
 		width: 36px;
 	}
 
-	.byline {
+	.article-byline {
 		align-items: center;
 		display: flex;
 	}
@@ -122,26 +118,24 @@
 .wp-block-newspack-blocks-homepage-articles {
 	/* 'Normal' size */
 	article {
-		.entry-title {
+		.article-title {
 			font-size: 32px;
 		}
-		.entry-wrapper p {
+		.article-wrapper p {
 			font-size: 18px;
 		}
-		.cat-links,
 		.article-meta {
 			font-size: 16px;
 		}
 	}
 
 	&.type-scale8 article {
-		.entry-title {
+		.article-title {
 			font-size: 80px;
 		}
-		.entry-wrapper p {
+		.article-wrapper p {
 			font-size: 24px;
 		}
-		.cat-links,
 		.article-meta {
 			font-size: 20px;
 		}
@@ -152,13 +146,12 @@
 	}
 
 	&.type-scale7 article {
-		.entry-title {
+		.article-title {
 			font-size: 70px;
 		}
-		.entry-wrapper p {
+		.article-wrapper p {
 			font-size: 22px;
 		}
-		.cat-links,
 		.article-meta {
 			font-size: 18px;
 		}
@@ -169,13 +162,12 @@
 	}
 
 	&.type-scale6 article {
-		.entry-title {
+		.article-title {
 			font-size: 60px;
 		}
-		.entry-wrapper p {
+		.article-wrapper p {
 			font-size: 20px;
 		}
-		.cat-links,
 		.article-meta {
 			font-size: 18px;
 		}
@@ -186,13 +178,12 @@
 	}
 
 	&.type-scale5 article {
-		.entry-title {
+		.article-title {
 			font-size: 42px;
 		}
-		.entry-wrapper p {
+		.article-wrapper p {
 			font-size: 18px;
 		}
-		.cat-links,
 		.article-meta {
 			font-size: 16px;
 		}
@@ -205,13 +196,12 @@
 	/* Type Scale 4: default */
 
 	&.type-scale3 article {
-		.entry-title {
+		.article-title {
 			font-size: 24px;
 		}
-		.entry-wrapper p {
+		.article-wrapper p {
 			font-size: 16px;
 		}
-		.cat-links,
 		.article-meta {
 			font-size: 14px;
 		}
@@ -222,13 +212,12 @@
 	}
 
 	&.type-scale2 article {
-		.entry-title {
+		.article-title {
 			font-size: 20px;
 		}
-		.entry-wrapper p {
+		.article-wrapper p {
 			font-size: 16px;
 		}
-		.cat-links,
 		.article-meta {
 			font-size: 14px;
 		}
@@ -239,11 +228,10 @@
 	}
 
 	&.type-scale1 article {
-		.entry-title {
+		.article-title {
 			font-size: 16px;
 		}
-		.entry-wrapper p,
-		.cat-links,
+		.article-wrapper p,
 		.article-meta {
 			font-size: 14px;
 		}
