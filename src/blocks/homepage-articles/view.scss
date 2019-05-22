@@ -1,0 +1,243 @@
+.wp-block-newspack-blocks-homepage-articles {
+	article {
+		margin-bottom: 16px;
+		word-break: break-word;
+		overflow-wrap: break-word;
+	}
+
+	/* Column styles */
+	&.is-grid {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		padding: 0;
+		list-style: none;
+
+		article {
+			width: 100%;
+		}
+	}
+
+	@media ( min-width: 600px ) {
+		@for $i from 2 through 6 {
+			&.columns-#{ $i } article {
+				width: calc( ( 100% / #{$i} ) - 24px );
+			}
+		}
+	}
+
+	/* Image styles */
+
+	&.image-alignleft,
+	&.image-alignright {
+		.article-has-image {
+			display: flex;
+
+			.article-thumbnail,
+			.article-wrapper {
+				flex-basis: 50%;
+			}
+		}
+
+		&.image-scale4 {
+			.article-thumbnail {
+				flex-basis: 75%;
+			}
+			.article-wrapper {
+				flex-basis: 25%;
+			}
+		}
+
+		// .image-scale3 is the default - 50%
+
+		&.image-scale2 {
+			.article-thumbnail {
+				flex-basis: 33%;
+			}
+			.article-wrapper {
+				flex-basis: 67%;
+			}
+		}
+
+		&.image-scale1 {
+			.article-thumbnail {
+				flex-basis: 25%;
+			}
+			.article-wrapper {
+				flex-basis: 75%;
+			}
+		}
+	}
+
+	&.image-alignleft {
+		.article-thumbnail {
+			margin-right: 16px;
+		}
+	}
+
+	&.image-alignright {
+		.article-thumbnail {
+			margin-left: 16px;
+		}
+		.article-wrapper {
+			order: -1;
+		}
+	}
+
+	/* Headings */
+	// This may be removeable, depending on the theme sizing.
+	.article-title {
+		margin: 0;
+		a {
+			color: inherit;
+			text-decoration: none;
+
+			&:hover {
+				color: inherit;
+			}
+		}
+	}
+
+	/* Article meta */
+
+	.avatar {
+		border-radius: 100%;
+		display: inline-block;
+		height: 36px;
+		margin-right: 0.25em;
+		width: 36px;
+	}
+
+	.article-byline {
+		align-items: center;
+		display: flex;
+	}
+}
+
+/* Some really rough font sizing */
+.wp-block-newspack-blocks-homepage-articles {
+	/* 'Normal' size */
+	article {
+		.article-title {
+			font-size: 32px;
+		}
+		.article-wrapper p {
+			font-size: 18px;
+		}
+		.article-meta {
+			font-size: 16px;
+		}
+	}
+
+	&.type-scale8 article {
+		.article-title {
+			font-size: 80px;
+		}
+		.article-wrapper p {
+			font-size: 24px;
+		}
+		.article-meta {
+			font-size: 20px;
+		}
+		.avatar {
+			height: 48px;
+			width: 48px;
+		}
+	}
+
+	&.type-scale7 article {
+		.article-title {
+			font-size: 70px;
+		}
+		.article-wrapper p {
+			font-size: 22px;
+		}
+		.article-meta {
+			font-size: 18px;
+		}
+		.avatar {
+			height: 48px;
+			width: 48px;
+		}
+	}
+
+	&.type-scale6 article {
+		.article-title {
+			font-size: 60px;
+		}
+		.article-wrapper p {
+			font-size: 20px;
+		}
+		.article-meta {
+			font-size: 18px;
+		}
+		.avatar {
+			height: 44px;
+			width: 44px;
+		}
+	}
+
+	&.type-scale5 article {
+		.article-title {
+			font-size: 42px;
+		}
+		.article-wrapper p {
+			font-size: 18px;
+		}
+		.article-meta {
+			font-size: 16px;
+		}
+		.avatar {
+			height: 40px;
+			width: 40px;
+		}
+	}
+
+	/* Type Scale 4: default */
+
+	&.type-scale3 article {
+		.article-title {
+			font-size: 24px;
+		}
+		.article-wrapper p {
+			font-size: 16px;
+		}
+		.article-meta {
+			font-size: 14px;
+		}
+		.avatar {
+			height: 32px;
+			width: 32px;
+		}
+	}
+
+	&.type-scale2 article {
+		.article-title {
+			font-size: 20px;
+		}
+		.article-wrapper p {
+			font-size: 16px;
+		}
+		.article-meta {
+			font-size: 14px;
+		}
+		.avatar {
+			height: 28px;
+			width: 28px;
+		}
+	}
+
+	&.type-scale1 article {
+		.article-title {
+			font-size: 16px;
+		}
+		.article-wrapper p,
+		.article-meta {
+			font-size: 14px;
+		}
+		.avatar {
+			height: 24px;
+			width: 24px;
+		}
+	}
+}

@@ -145,5 +145,8 @@ class Newspack_Blocks {
 		return implode( $classes, ' ' );
 	}
 }
+
+require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'class-newspack-blocks-api.php';
+
 Newspack_Blocks::manage_view_scripts();
 add_action( 'enqueue_block_editor_assets', array( 'Newspack_Blocks', 'enqueue_block_editor_assets' ) );

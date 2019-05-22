@@ -1,0 +1,14 @@
+.type-scale-slider,
+.image-scale-slider {
+	.dashicons-editor-textcolor,
+	.dashicons-images-alt2 {
+		height: 24px;
+		width: 24px;
+	}
+
+	label + .dashicons-editor-textcolor,
+	label + .dashicons-images-alt2 {
+		height: 16px;
+		width: 16px;
+	}
+}
