@@ -97,7 +97,7 @@ class Newspack_Blocks {
 				NEWSPACK_BLOCKS__VERSION
 			);
 		}
-		if ( file_exists( NEWSPACK_BLOCKS__PLUGIN_DIR . $script_path ) ) {
+		if ( ! self::is_amp_request() && file_exists( NEWSPACK_BLOCKS__PLUGIN_DIR . $script_path ) ) {
 			$dependencies = self::dependencies_from_path( NEWSPACK_BLOCKS__PLUGIN_DIR . "dist/{$type}/view.deps.json" );
 			wp_enqueue_script(
 				"newspack-blocks-{$type}",
@@ -143,6 +143,15 @@ class Newspack_Blocks {
 			array_push( $classes, $attributes['className'] );
 		}
 		return implode( $classes, ' ' );
+	}
+
+	/**
+	 * Does the page return AMP content.
+	 *
+	 * @return bool $is_amp_request Are we on am AMP view.
+	 */
+	public static function is_amp_request() {
+		return ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() );
 	}
 }
 
