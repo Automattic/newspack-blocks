@@ -15,10 +15,11 @@
 function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	$categories    = isset( $attributes['categories'] ) ? $attributes['categories'] : '';
 	$args          = array(
-		'posts_per_page'   => $attributes['postsToShow'],
-		'post_status'      => 'publish',
-		'suppress_filters' => false,
-		'cat'              => $categories,
+		'posts_per_page'      => $attributes['postsToShow'],
+		'post_status'         => 'publish',
+		'suppress_filters'    => false,
+		'cat'                 => $categories,
+		'ignore_sticky_posts' => true,
 	);
 	$article_query = new WP_Query( $args );
 
