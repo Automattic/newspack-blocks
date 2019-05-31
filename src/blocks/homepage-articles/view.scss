@@ -31,7 +31,7 @@ $font__line-height-double: 2 * $font__line-height-heading;
 	/* Section header */
 	.article-section-title {
 		font-family: $font__sans-serif;
-		font-size: $font__size-xxs;
+		font-size: $font__size-sm;
 		font-weight: bold;
 		margin-bottom: 0.5em;
 		width: 100%; // make sure this isn't caught up in the flex styles.
