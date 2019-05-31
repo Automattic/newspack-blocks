@@ -48,6 +48,21 @@ class Newspack_Blocks_API {
 	}
 
 	/**
+	 * Register Newspack REST API to return array of menus.
+	 */
+	public static function register_newspack_blocks_menu() {
+		register_rest_route(
+			'/newspack-blocks/v1',
+			'menus',
+			array(
+				'methods'  => 'GET',
+				'callback' => array( 'Newspack_Blocks_API', 'get_menus' ),
+			)
+		);
+	}
+
+
+	/**
 	 * Get thumbnail featured image source for the rest field.
 	 *
 	 * @param Array $object  The object info.
@@ -122,6 +137,27 @@ class Newspack_Blocks_API {
 		return $category_info;
 	}
 
+	/**
+	 * Get all available menus
+	 */
+	public static function get_menus() {
+		$menus = array();
+		foreach ( wp_get_nav_menus() as $menu ) {
+			$menu           = $menu->to_array();
+			$slug           = $menu['slug'];
+			$menus[ $slug ] = array(
+				'name'   => $menu['name'],
+				'markup' => wp_nav_menu(
+					array(
+						'menu'      => $slug,
+						'echo'      => false,
+						'container' => null,
+					)
+				),
+			);
+		}
+		return $menus;
+	}
 }
-
 add_action( 'rest_api_init', array( 'Newspack_Blocks_API', 'register_rest_fields' ) );
+add_action( 'rest_api_init', array( 'Newspack_Blocks_API', 'register_newspack_blocks_menu' ) );
