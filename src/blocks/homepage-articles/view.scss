@@ -1,8 +1,40 @@
+/* Variables */
+$font__sans-serif: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+	'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+$font__serif: Georgia, Garamond, 'Times New Roman', serif;
+
+$font__size_base: 20px;
+$font__size-ratio: 1.125;
+
+$font__size-xxs: 1em / ( 1.5 * $font__size-ratio );
+$font__size-xs: 1em / ( 1.25 * $font__size-ratio );
+$font__size-sm: 1em / ( 1 * $font__size-ratio );
+$font__size-md: 1em * ( 1 * $font__size-ratio );
+$font__size-lg: 1em * ( 1.25 * $font__size-ratio );
+$font__size-xl: 1em * ( 1.5 * $font__size-ratio );
+$font__size-xxl: 1em * ( 2 * $font__size-ratio );
+$font__size-xxxl: 1em * ( 2.5 * $font__size-ratio );
+$font__size-xxxxl: 1em * ( 2.75 * $font__size-ratio );
+
+$font__line-height-body: 1.6;
+$font__line-height-pre: 1.6;
+$font__line-height-heading: 1.2;
+$font__line-height-double: 2 * $font__line-height-heading;
+
 .wp-block-newspack-blocks-homepage-articles {
 	article {
-		margin-bottom: 16px;
+		margin-bottom: 0.75em;
 		word-break: break-word;
 		overflow-wrap: break-word;
+	}
+
+	/* Section header */
+	.article-section-title {
+		font-family: $font__sans-serif;
+		font-size: $font__size-xxs;
+		font-weight: bold;
+		margin-bottom: 0.5em;
+		width: 100%; // make sure this isn't caught up in the flex styles.
 	}
 
 	/* Column styles */
@@ -87,6 +119,7 @@
 	/* Headings */
 	// This may be removeable, depending on the theme sizing.
 	.article-title {
+		font-family: $font__sans-serif;
 		margin: 0;
 		a {
 			color: inherit;
@@ -99,6 +132,10 @@
 	}
 
 	/* Article meta */
+
+	.article-meta {
+		font-family: $font__sans-serif;
+	}
 
 	.avatar {
 		border-radius: 100%;

@@ -21,6 +21,7 @@ import {
 	Dashicon,
 	Placeholder,
 	Spinner,
+	TextControl,
 } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 import { withState } from '@wordpress/compose';
@@ -89,6 +90,7 @@ class Edit extends Component {
 		const {
 			postsToShow,
 			categories,
+			sectionHeader,
 			columns,
 			showImage,
 			imageScale,
@@ -126,6 +128,12 @@ class Edit extends Component {
 							required
 						/>
 					) }
+					<TextControl
+						label={ __( 'Block Section Header' ) }
+						value={ sectionHeader }
+						onChange={ value => setAttributes( { sectionHeader: value } ) }
+						help={ __( 'Displays an optional header above the article blocks.' ) }
+					/>
 				</PanelBody>
 				<PanelBody title={ __( 'Featured Image Settings' ) }>
 					<PanelRow>
@@ -224,6 +232,7 @@ class Edit extends Component {
 			categories,
 			typeScale,
 			imageScale,
+			sectionHeader,
 		} = attributes;
 
 		const classes = classNames( className, {
@@ -273,6 +282,12 @@ class Edit extends Component {
 		return (
 			<Fragment>
 				<div className={ classes }>
+					{ sectionHeader && (
+						<div className="article-section-title" key="article-section-title">
+							{ sectionHeader }
+						</div>
+					) }
+
 					{ latestPosts && ! latestPosts.length && (
 						<Placeholder>{ __( 'Sorry, no posts were found.' ) }</Placeholder>
 					) }
