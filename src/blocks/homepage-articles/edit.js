@@ -284,7 +284,7 @@ class Edit extends Component {
 				<div className={ classes }>
 					{ sectionHeader && (
 						<div className="article-section-title" key="article-section-title">
-							{ sectionHeader }
+							<span>{ sectionHeader }</span>
 						</div>
 					) }
 
