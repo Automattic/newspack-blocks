@@ -21,7 +21,6 @@ import {
 	Dashicon,
 	Placeholder,
 	Spinner,
-	TextControl,
 } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 import { withState } from '@wordpress/compose';
@@ -85,7 +84,7 @@ class Edit extends Component {
 	};
 
 	renderInspectorControls = () => {
-		const { attributes, categoriesList, setAttributes, latestPosts } = this.props;
+		const { attributes, categoriesList, setAttributes, latestPosts, isSelected } = this.props;
 		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
 		const {
 			postsToShow,
@@ -128,12 +127,6 @@ class Edit extends Component {
 							required
 						/>
 					) }
-					<TextControl
-						label={ __( 'Block Section Header' ) }
-						value={ sectionHeader }
-						onChange={ value => setAttributes( { sectionHeader: value } ) }
-						help={ __( 'Displays an optional header above the article blocks.' ) }
-					/>
 				</PanelBody>
 				<PanelBody title={ __( 'Featured Image Settings' ) }>
 					<PanelRow>
@@ -215,6 +208,7 @@ class Edit extends Component {
 			attributes,
 			className,
 			setAttributes,
+			isSelected,
 			latestPosts,
 			hasPosts,
 			categoriesList,
@@ -282,12 +276,6 @@ class Edit extends Component {
 		return (
 			<Fragment>
 				<div className={ classes }>
-					{ sectionHeader && (
-						<div className="article-section-title" key="article-section-title">
-							<span>{ sectionHeader }</span>
-						</div>
-					) }
-
 					{ latestPosts && ! latestPosts.length && (
 						<Placeholder>{ __( 'Sorry, no posts were found.' ) }</Placeholder>
 					) }
@@ -295,6 +283,17 @@ class Edit extends Component {
 						<Placeholder>
 							<Spinner />
 						</Placeholder>
+					) }
+					{ latestPosts && ( ! RichText.isEmpty( sectionHeader ) || isSelected ) && (
+						<div className="article-section-title">
+							<span>
+								<RichText
+									onChange={ value => setAttributes( { sectionHeader: value } ) }
+									placeholder={ __( 'Write header…' ) }
+									value={ sectionHeader }
+								/>
+							</span>
+						</div>
 					) }
 					{ latestPosts && latestPosts.map( post => this.renderPost( post ) ) }
 				</div>
