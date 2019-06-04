@@ -48,7 +48,13 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	if ( $article_query->have_posts() ) :
 		?>
 		<div class="<?php echo esc_attr( $classes ); ?>">
+
+			<?php if ( '' !== $attributes['sectionHeader'] ) : ?>
+				<div class="article-section-title">
+					<span><?php echo wp_kses_post( $attributes['sectionHeader'] ); ?></span>
+				</div>
 			<?php
+			endif;
 			while ( $article_query->have_posts() ) :
 				$article_query->the_post();
 				?>
@@ -185,6 +191,10 @@ function newspack_blocks_register_homepage_articles() {
 				'imageScale'    => array(
 					'type'    => 'integer',
 					'default' => 3,
+				),
+				'sectionHeader' => array(
+					'type'    => 'string',
+					'default' => '',
 				),
 			),
 			'render_callback' => 'newspack_blocks_render_block_homepage_articles',

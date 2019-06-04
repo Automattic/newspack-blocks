@@ -3,9 +3,17 @@
 
 .wp-block-newspack-blocks-homepage-articles {
 	article {
-		margin-bottom: 16px;
+		margin-bottom: 0.75em;
 		word-break: break-word;
 		overflow-wrap: break-word;
+	}
+
+	/* Section header */
+	.article-section-title {
+		font-size: $font__size-sm;
+		font-weight: bold;
+		margin-bottom: 0.5em;
+		width: 100%; // make sure this isn't caught up in the flex styles.
 	}
 
 	/* Column styles */
@@ -102,7 +110,6 @@
 	}
 
 	/* Article meta */
-
 	.avatar {
 		border-radius: 100%;
 		display: inline-block;

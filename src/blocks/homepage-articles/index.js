@@ -83,6 +83,10 @@ export const settings = {
 			type: 'integer',
 			default: 3,
 		},
+		sectionHeader: {
+			type: 'string',
+			default: '',
+		},
 	},
 	supports: {
 		html: false,

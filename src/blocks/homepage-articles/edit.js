@@ -84,11 +84,12 @@ class Edit extends Component {
 	};
 
 	renderInspectorControls = () => {
-		const { attributes, categoriesList, setAttributes, latestPosts } = this.props;
+		const { attributes, categoriesList, setAttributes, latestPosts, isSelected } = this.props;
 		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
 		const {
 			postsToShow,
 			categories,
+			sectionHeader,
 			columns,
 			showImage,
 			imageScale,
@@ -207,6 +208,7 @@ class Edit extends Component {
 			attributes,
 			className,
 			setAttributes,
+			isSelected,
 			latestPosts,
 			hasPosts,
 			categoriesList,
@@ -224,6 +226,7 @@ class Edit extends Component {
 			categories,
 			typeScale,
 			imageScale,
+			sectionHeader,
 		} = attributes;
 
 		const classes = classNames( className, {
@@ -273,6 +276,15 @@ class Edit extends Component {
 		return (
 			<Fragment>
 				<div className={ classes }>
+					{ latestPosts && ( ! RichText.isEmpty( sectionHeader ) || isSelected ) && (
+						<RichText
+							onChange={ value => setAttributes( { sectionHeader: value } ) }
+							placeholder={ __( 'Write header…' ) }
+							value={ sectionHeader }
+							tagName="div"
+							className="article-section-title"
+						/>
+					) }
 					{ latestPosts && ! latestPosts.length && (
 						<Placeholder>{ __( 'Sorry, no posts were found.' ) }</Placeholder>
 					) }
