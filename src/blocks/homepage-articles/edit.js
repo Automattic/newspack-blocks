@@ -277,15 +277,13 @@ class Edit extends Component {
 			<Fragment>
 				<div className={ classes }>
 					{ latestPosts && ( ! RichText.isEmpty( sectionHeader ) || isSelected ) && (
-						<div className="article-section-title">
-							<span>
-								<RichText
-									onChange={ value => setAttributes( { sectionHeader: value } ) }
-									placeholder={ __( 'Write header…' ) }
-									value={ sectionHeader }
-								/>
-							</span>
-						</div>
+						<RichText
+							onChange={ value => setAttributes( { sectionHeader: value } ) }
+							placeholder={ __( 'Write header…' ) }
+							value={ sectionHeader }
+							tagName="div"
+							className="article-section-title"
+						/>
 					) }
 					{ latestPosts && ! latestPosts.length && (
 						<Placeholder>{ __( 'Sorry, no posts were found.' ) }</Placeholder>
