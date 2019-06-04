@@ -1,3 +1,6 @@
+@import "sass/variables";
+@import "sass/mixins";
+
 .wp-block-newspack-blocks-homepage-articles {
 	article {
 		margin-bottom: 16px;
@@ -18,7 +21,7 @@
 		}
 	}
 
-	@media ( min-width: 600px ) {
+	@include media(tablet) {
 		@for $i from 2 through 6 {
 			&.columns-#{ $i } article {
 				width: calc( ( 100% / #{$i} ) - 24px );
@@ -119,77 +122,95 @@
 	/* 'Normal' size */
 	article {
 		.article-title {
-			font-size: 32px;
-		}
-		.article-wrapper p {
-			font-size: 18px;
+			font-size: 24px;
 		}
 		.article-meta {
 			font-size: 16px;
+		}
+		.avatar {
+			height: 36px;
+			width: 36px;
+		}
+
+		@include media(tablet) {
+			.article-title {
+				font-size: 32px;
+			}
 		}
 	}
 
 	&.type-scale8 article {
 		.article-title {
-			font-size: 80px;
+			font-size: 44px;
 		}
-		.article-wrapper p {
-			font-size: 24px;
+		@include media(tablet) {
+			.article-title {
+				font-size: 68px;
+			}
+			.avatar {
+				height: 48px;
+				width: 48px;
+			}
 		}
-		.article-meta {
-			font-size: 20px;
-		}
-		.avatar {
-			height: 48px;
-			width: 48px;
+		@include media(desktop) {
+			.article-title {
+				font-size: 80px;
+			}
 		}
 	}
 
 	&.type-scale7 article {
 		.article-title {
-			font-size: 70px;
+			font-size: 40px;
 		}
-		.article-wrapper p {
-			font-size: 22px;
+		@include media( tablet) {
+			.article-title {
+				font-size: 56px;
+			}
+			.avatar {
+				height: 48px;
+				width: 48px;
+			}
 		}
-		.article-meta {
-			font-size: 18px;
-		}
-		.avatar {
-			height: 48px;
-			width: 48px;
+		@include media(desktop) {
+			.article-title {
+				font-size: 68px;
+			}
 		}
 	}
 
 	&.type-scale6 article {
 		.article-title {
-			font-size: 60px;
+			font-size: 36px;
 		}
-		.article-wrapper p {
-			font-size: 20px;
+		@include media(tablet) {
+			.article-title {
+				font-size: 48px;
+			}
+			.avatar {
+				height: 44px;
+				width: 44px;
+			}
 		}
-		.article-meta {
-			font-size: 18px;
-		}
-		.avatar {
-			height: 44px;
-			width: 44px;
+		@include media(desktop) {
+			.article-title {
+				font-size: 60px;
+			}
 		}
 	}
 
 	&.type-scale5 article {
 		.article-title {
-			font-size: 42px;
+			font-size: 28px;
 		}
-		.article-wrapper p {
-			font-size: 18px;
-		}
-		.article-meta {
-			font-size: 16px;
-		}
-		.avatar {
-			height: 40px;
-			width: 40px;
+		@include media(tablet) {
+			.article-title {
+				font-size: 44px;
+			}
+			.avatar {
+				height: 40px;
+				width: 40px;
+			}
 		}
 	}
 
@@ -197,7 +218,7 @@
 
 	&.type-scale3 article {
 		.article-title {
-			font-size: 24px;
+			font-size: 20px;
 		}
 		.article-wrapper p {
 			font-size: 16px;
@@ -209,11 +230,19 @@
 			height: 32px;
 			width: 32px;
 		}
+		@include media(tablet) {
+			.article-title {
+				font-size: 24px;
+			}
+		}
 	}
 
 	&.type-scale2 article {
 		.article-title {
-			font-size: 20px;
+			font-size: 18px;
+			@include media(tablet) {
+				font-size: 20px;
+			}
 		}
 		.article-wrapper p {
 			font-size: 16px;
