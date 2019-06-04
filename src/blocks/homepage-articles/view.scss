@@ -1,8 +1,3 @@
-/* Variables */
-$font__sans-serif: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
-	'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-$font__serif: Georgia, Garamond, 'Times New Roman', serif;
-
 $font__size_base: 20px;
 $font__size-ratio: 1.125;
 
@@ -30,7 +25,6 @@ $font__line-height-double: 2 * $font__line-height-heading;
 
 	/* Section header */
 	.article-section-title {
-		font-family: $font__sans-serif;
 		font-size: $font__size-sm;
 		font-weight: bold;
 		margin-bottom: 0.5em;
@@ -119,7 +113,6 @@ $font__line-height-double: 2 * $font__line-height-heading;
 	/* Headings */
 	// This may be removeable, depending on the theme sizing.
 	.article-title {
-		font-family: $font__sans-serif;
 		margin: 0;
 		a {
 			color: inherit;
@@ -132,10 +125,6 @@ $font__line-height-double: 2 * $font__line-height-heading;
 	}
 
 	/* Article meta */
-
-	.article-meta {
-		font-family: $font__sans-serif;
-	}
 
 	.avatar {
 		border-radius: 100%;
