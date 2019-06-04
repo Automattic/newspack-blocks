@@ -123,16 +123,19 @@
 	article {
 		.article-title {
 			font-size: 24px;
-			@include media(tablet) {
-				font-size: 32px;
-			}
 		}
 		.article-meta {
 			font-size: 16px;
 		}
 		.avatar {
-			height: 28px;
-			width: 28px;
+			height: 36px;
+			width: 36px;
+		}
+
+		@include media(tablet) {
+			.article-title {
+				font-size: 32px;
+			}
 		}
 	}
 
@@ -223,13 +226,13 @@
 		.article-meta {
 			font-size: 14px;
 		}
+		.avatar {
+			height: 32px;
+			width: 32px;
+		}
 		@include media(tablet) {
 			.article-title {
 				font-size: 24px;
-			}
-			.avatar {
-				height: 32px;
-				width: 32px;
 			}
 		}
 	}
