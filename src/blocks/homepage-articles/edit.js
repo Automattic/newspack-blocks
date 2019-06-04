@@ -276,14 +276,6 @@ class Edit extends Component {
 		return (
 			<Fragment>
 				<div className={ classes }>
-					{ latestPosts && ! latestPosts.length && (
-						<Placeholder>{ __( 'Sorry, no posts were found.' ) }</Placeholder>
-					) }
-					{ ! latestPosts && (
-						<Placeholder>
-							<Spinner />
-						</Placeholder>
-					) }
 					{ latestPosts && ( ! RichText.isEmpty( sectionHeader ) || isSelected ) && (
 						<div className="article-section-title">
 							<span>
@@ -294,6 +286,14 @@ class Edit extends Component {
 								/>
 							</span>
 						</div>
+					) }
+					{ latestPosts && ! latestPosts.length && (
+						<Placeholder>{ __( 'Sorry, no posts were found.' ) }</Placeholder>
+					) }
+					{ ! latestPosts && (
+						<Placeholder>
+							<Spinner />
+						</Placeholder>
 					) }
 					{ latestPosts && latestPosts.map( post => this.renderPost( post ) ) }
 				</div>
