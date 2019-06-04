@@ -51,7 +51,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 			<?php if ( '' !== $attributes['sectionHeader'] ) : ?>
 				<div class="article-section-title">
-					<span><?php echo esc_html( $attributes['sectionHeader'] ); ?></span>
+					<span><?php echo wp_kses_post( $attributes['sectionHeader'] ); ?></span>
 				</div>
 			<?php
 			endif;
