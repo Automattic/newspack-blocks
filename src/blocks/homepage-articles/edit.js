@@ -53,20 +53,19 @@ class Edit extends Component {
 					{ showExcerpt && <RawHTML key="excerpt">{ post.excerpt.rendered }</RawHTML> }
 
 					<div className="article-meta">
+						{ showAuthor && post.newspack_author_info.avatar && showAvatar && (
+							<span className="avatar author-avatar" key="author-avatar">
+								<RawHTML>{ post.newspack_author_info.avatar }</RawHTML>
+							</span>
+						) }
+
 						{ showAuthor && (
-							<span className="article-byline" key="byline">
-								{ post.newspack_author_info.avatar && showAvatar && (
-									<span className="avatar author-avatar" key="author-avatar">
-										<RawHTML>{ post.newspack_author_info.avatar }</RawHTML>
-									</span>
-								) }
-								<span className="author-name">
-									{ __( 'by' ) }{' '}
-									<span className="author vcard">
-										<a className="url fn n" href={ post.newspack_author_info.author_link }>
-											{ post.newspack_author_info.display_name }
-										</a>
-									</span>
+							<span className="author-name">
+								{ __( 'by' ) }{' '}
+								<span className="author vcard">
+									<a className="url fn n" href={ post.newspack_author_info.author_link }>
+										{ post.newspack_author_info.display_name }
+									</a>
 								</span>
 							</span>
 						) }

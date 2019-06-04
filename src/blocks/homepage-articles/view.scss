@@ -6,6 +6,10 @@
 		margin-bottom: 0.75em;
 		word-break: break-word;
 		overflow-wrap: break-word;
+
+		&:not(:last-child) {
+			margin-bottom: 1.5em;
+		}
 	}
 
 	/* Section header */
@@ -32,7 +36,7 @@
 	@include media(tablet) {
 		@for $i from 2 through 6 {
 			&.columns-#{ $i } article {
-				width: calc( ( 100% / #{$i} ) - 24px );
+				width: calc( ( 100% / #{$i} ) - 12px );
 			}
 		}
 	}
@@ -110,17 +114,23 @@
 	}
 
 	/* Article meta */
-	.avatar {
-		border-radius: 100%;
-		display: inline-block;
-		height: 36px;
-		margin-right: 0.25em;
-		width: 36px;
+	.article-meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		margin-top: 0.75em;
+
+		.author-name:not(:last-child) {
+			margin-right: 0.5em;
+		}
 	}
 
-	.article-byline {
-		align-items: center;
-		display: flex;
+	.avatar {
+		border-radius: 100%;
+		display: block;
+		height: 36px;
+		margin-right: 0.5em;
+		width: 36px;
 	}
 }
 
