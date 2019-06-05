@@ -125,6 +125,17 @@
 		}
 	}
 
+	.article-meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		margin-top: 0.75em;
+
+		.author-name:not(:last-child) {
+			margin-right: 0.5em;
+		}
+	}
+
 	.avatar {
 		border-radius: 100%;
 		display: block;
