@@ -3,13 +3,9 @@
 
 .wp-block-newspack-blocks-homepage-articles {
 	article {
-		margin-bottom: 1em;
+		margin-bottom: 1.5em;
 		word-break: break-word;
 		overflow-wrap: break-word;
-
-		&:not(:last-child) {
-			margin-bottom: 1.5em;
-		}
 	}
 
 	/* Section header */
@@ -30,6 +26,10 @@
 
 		article {
 			width: 100%;
+
+			@include media(tablet) {
+				margin-bottom: 1em;
+			}
 		}
 	}
 
