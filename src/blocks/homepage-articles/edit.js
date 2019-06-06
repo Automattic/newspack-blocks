@@ -35,7 +35,7 @@ const MAX_POSTS_COLUMNS = 6;
 class Edit extends Component {
 	renderPost = post => {
 		const { attributes } = this.props;
-		const { showImage, showExcerpt, showAuthor, showAvatar, showDate } = attributes;
+		const { showImage, showExcerpt, showAuthor, showAvatar, showDate, sectionHeader } = attributes;
 		return (
 			<article
 				className={ post.newspack_featured_image_src && 'article-has-image' }
@@ -47,11 +47,16 @@ class Edit extends Component {
 					</div>
 				) }
 				<div className="article-wrapper">
-					<h2 className="article-title" key="title">
-						<a href={ post.link }>{ decodeEntities( post.title.rendered.trim() ) }</a>
-					</h2>
+					{ RichText.isEmpty( sectionHeader ) ? (
+						<h2 className="article-title" key="title">
+							<a href={ post.link }>{ decodeEntities( post.title.rendered.trim() ) }</a>
+						</h2>
+					) : (
+						<h3 className="article-title" key="title">
+							<a href={ post.link }>{ decodeEntities( post.title.rendered.trim() ) }</a>
+						</h3>
+					) }
 					{ showExcerpt && <RawHTML key="excerpt">{ post.excerpt.rendered }</RawHTML> }
-
 					<div className="article-meta">
 						{ showAuthor && post.newspack_author_info.avatar && showAvatar && (
 							<span className="avatar author-avatar" key="author-avatar">
@@ -280,7 +285,7 @@ class Edit extends Component {
 							onChange={ value => setAttributes( { sectionHeader: value } ) }
 							placeholder={ __( 'Write header…' ) }
 							value={ sectionHeader }
-							tagName="div"
+							tagName="h2"
 							className="article-section-title"
 						/>
 					) }
