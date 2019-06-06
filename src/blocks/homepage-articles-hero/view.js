@@ -4,4 +4,4 @@
  * Style dependencies
  */
 
-import './view.scss';
+import '../../shared/homepage-articles/view.scss';

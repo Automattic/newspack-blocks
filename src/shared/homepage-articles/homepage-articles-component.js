@@ -6,6 +6,11 @@ import { isUndefined, pickBy } from 'lodash';
 import moment from 'moment';
 
 /**
+ * Internal dependencies
+ */
+import { renderPost } from '../../shared/homepage-articles';
+
+/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
@@ -32,10 +37,9 @@ const { decodeEntities } = wp.htmlEntities;
  */
 const MAX_POSTS_COLUMNS = 6;
 
-class Edit extends Component {
+class HomepageArticlesComponent extends Component {
 	renderPost = post => {
-		const { attributes } = this.props;
-		const { showImage, showExcerpt, showAuthor, showAvatar, showDate } = attributes;
+		const { attributes, showImage, showExcerpt, showAuthor, showAvatar, showDate } = this.props;
 		return (
 			<article
 				className={ post.newspack_featured_image_src && 'article-has-image' }
@@ -83,20 +87,26 @@ class Edit extends Component {
 	};
 
 	renderInspectorControls = () => {
-		const { attributes, categoriesList, setAttributes, latestPosts, isSelected } = this.props;
+		const {
+			attributes,
+			categoriesList,
+			setAttributes,
+			latestPosts,
+			isSelected,
+			showImage,
+			showExcerpt,
+			showDate,
+			showAuthor,
+			showAvatar,
+		} = this.props;
 		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
 		const {
 			postsToShow,
 			categories,
 			sectionHeader,
 			columns,
-			showImage,
 			imageScale,
-			showExcerpt,
 			typeScale,
-			showDate,
-			showAuthor,
-			showAvatar,
 			postLayout,
 			mediaPosition,
 		} = attributes;
@@ -128,13 +138,6 @@ class Edit extends Component {
 					) }
 				</PanelBody>
 				<PanelBody title={ __( 'Featured Image Settings' ) }>
-					<PanelRow>
-						<ToggleControl
-							label={ __( 'Show Featured Image' ) }
-							checked={ showImage }
-							onChange={ () => setAttributes( { showImage: ! showImage } ) }
-						/>
-					</PanelRow>
 					{ showImage && mediaPosition !== 'top' && (
 						<RangeControl
 							className="image-scale-slider"
@@ -151,13 +154,6 @@ class Edit extends Component {
 					) }
 				</PanelBody>
 				<PanelBody title={ __( 'Article Control Settings' ) }>
-					<PanelRow>
-						<ToggleControl
-							label={ __( 'Show Excerpt' ) }
-							checked={ showExcerpt }
-							onChange={ () => setAttributes( { showExcerpt: ! showExcerpt } ) }
-						/>
-					</PanelRow>
 					<RangeControl
 						className="type-scale-slider"
 						label={ __( 'Type Scale' ) }
@@ -171,20 +167,6 @@ class Edit extends Component {
 					/>
 				</PanelBody>
 				<PanelBody title={ __( 'Article Meta Settings' ) }>
-					<PanelRow>
-						<ToggleControl
-							label={ __( 'Show Date' ) }
-							checked={ showDate }
-							onChange={ () => setAttributes( { showDate: ! showDate } ) }
-						/>
-					</PanelRow>
-					<PanelRow>
-						<ToggleControl
-							label={ __( 'Show Author' ) }
-							checked={ showAuthor }
-							onChange={ () => setAttributes( { showAuthor: ! showAuthor } ) }
-						/>
-					</PanelRow>
 					{ showAuthor && (
 						<PanelRow>
 							<ToggleControl
@@ -211,13 +193,13 @@ class Edit extends Component {
 			latestPosts,
 			hasPosts,
 			categoriesList,
-		} = this.props; // variables getting pulled out of props
-		const {
 			showExcerpt,
 			showDate,
 			showImage,
 			showAuthor,
 			showAvatar,
+		} = this.props; // variables getting pulled out of props
+		const {
 			postsToShow,
 			postLayout,
 			mediaPosition,
@@ -322,4 +304,4 @@ export default withSelect( ( select, props ) => {
 		latestPosts: getEntityRecords( 'postType', 'post', latestPostsQuery ),
 		categoriesList: getEntityRecords( 'taxonomy', 'category', categoriesListQuery ),
 	};
-} )( Edit );
+} )( HomepageArticlesComponent );

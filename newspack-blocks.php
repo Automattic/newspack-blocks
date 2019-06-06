@@ -59,7 +59,7 @@ class Newspack_Blocks {
 			$type = $block_directory->getFilename();
 
 			/* If view.php is found, include it and use for block rendering. */
-			$view_php_path = $src_directory . $type . '/view.php';
+			$view_php_path = $src_directory . $type . '/class-newspack-blocks-' . $type . '.php';
 			if ( file_exists( $view_php_path ) ) {
 				include_once $view_php_path;
 				continue;
