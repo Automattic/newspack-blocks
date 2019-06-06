@@ -57,7 +57,7 @@ class Edit extends Component {
 						</h3>
 					) }
 					{ showExcerpt && <RawHTML key="excerpt">{ post.excerpt.rendered }</RawHTML> }
-					<div className="article-meta">
+					<div className="article-meta use-header-font">
 						{ showAuthor && post.newspack_author_info.avatar && showAvatar && (
 							<span className="avatar author-avatar" key="author-avatar">
 								<RawHTML>{ post.newspack_author_info.avatar }</RawHTML>

@@ -81,7 +81,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 						<?php if ( $attributes['showAuthor'] || $attributes['showDate'] ) : ?>
 
-							<div class="article-meta">
+							<div class="article-meta use-header-font">
 
 								<?php if ( $attributes['showAuthor'] ) : ?>
 									<?php
