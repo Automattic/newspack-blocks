@@ -210,7 +210,7 @@ class HomepageArticlesComponent extends Component {
 			sectionHeader,
 		} = attributes;
 
-		const classes = classNames( className, {
+		const classes = classNames( className, 'wp-block-newspack-blocks-homepage-articles', {
 			'is-grid': postLayout === 'grid',
 			[ `columns-${ columns }` ]: postLayout === 'grid',
 			[ `type-scale${ typeScale }` ]: typeScale !== '5',
