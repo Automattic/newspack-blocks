@@ -50,9 +50,9 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		<div class="<?php echo esc_attr( $classes ); ?>">
 
 			<?php if ( '' !== $attributes['sectionHeader'] ) : ?>
-				<div class="article-section-title">
+				<h2 class="article-section-title">
 					<span><?php echo wp_kses_post( $attributes['sectionHeader'] ); ?></span>
-				</div>
+				</h2>
 			<?php
 			endif;
 			while ( $article_query->have_posts() ) :
@@ -67,7 +67,13 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 					<div class="article-wrapper">
 
-						<?php the_title( '<h2 class="article-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h2>' ); ?>
+						<?php
+						if ( '' === $attributes['sectionHeader'] ) {
+							the_title( '<h2 class="article-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h2>' );
+						} else {
+							the_title( '<h3 class="article-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h3>' );
+						}
+						?>
 
 						<?php if ( $attributes['showExcerpt'] ) : ?>
 							<?php the_excerpt(); ?>
@@ -75,7 +81,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 						<?php if ( $attributes['showAuthor'] || $attributes['showDate'] ) : ?>
 
-							<div class="article-meta">
+							<div class="article-meta use-header-font">
 
 								<?php if ( $attributes['showAuthor'] ) : ?>
 									<?php
