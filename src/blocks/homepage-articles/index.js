@@ -87,6 +87,10 @@ export const settings = {
 			type: 'string',
 			default: '',
 		},
+		moreLink: {
+			type: 'boolean',
+			default: false,
+		},
 	},
 	supports: {
 		html: false,

@@ -35,7 +35,15 @@ const MAX_POSTS_COLUMNS = 6;
 class Edit extends Component {
 	renderPost = post => {
 		const { attributes } = this.props;
-		const { showImage, showExcerpt, showAuthor, showAvatar, showDate, sectionHeader } = attributes;
+		const {
+			showImage,
+			showExcerpt,
+			showAuthor,
+			showAvatar,
+			showDate,
+			sectionHeader,
+			moreLink,
+		} = attributes;
 		return (
 			<article
 				className={ post.newspack_featured_image_src && 'article-has-image' }
@@ -104,6 +112,7 @@ class Edit extends Component {
 			showAvatar,
 			postLayout,
 			mediaPosition,
+			moreLink,
 		} = attributes;
 		return (
 			<Fragment>
@@ -131,6 +140,11 @@ class Edit extends Component {
 							required
 						/>
 					) }
+					<ToggleControl
+						label={ __( 'Show "More" Link' ) }
+						checked={ moreLink }
+						onChange={ () => setAttributes( { moreLink: ! moreLink } ) }
+					/>
 				</PanelBody>
 				<PanelBody title={ __( 'Featured Image Settings' ) }>
 					<PanelRow>
@@ -142,7 +156,6 @@ class Edit extends Component {
 					</PanelRow>
 					{ showImage && mediaPosition !== 'top' && (
 						<RangeControl
-							className="image-scale-slider"
 							className="image-scale-slider"
 							label={ __( 'Featured Image Scale' ) }
 							value={ imageScale }
@@ -231,6 +244,7 @@ class Edit extends Component {
 			typeScale,
 			imageScale,
 			sectionHeader,
+			moreLink,
 		} = attributes;
 
 		const classes = classNames( className, {
@@ -298,6 +312,11 @@ class Edit extends Component {
 						</Placeholder>
 					) }
 					{ latestPosts && latestPosts.map( post => this.renderPost( post ) ) }
+					{ latestPosts && moreLink && (
+						<a className="button" href="#">
+							{ __( 'More…' ) }
+						</a>
+					) }
 				</div>
 				<BlockControls>
 					<Toolbar controls={ blockControls } />
