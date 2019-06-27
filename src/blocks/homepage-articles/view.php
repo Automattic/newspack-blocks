@@ -134,7 +134,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				if ( $categories ) {
 					$more_url = get_category_link( $categories );
 				}
-				echo '<a class="button" href="' . esc_url( $more_url ) . '">' . esc_html( 'More', 'newspack-blocks' ) . '</a>';
+				echo '<a class="button" href="' . esc_url( $more_url ) . '">' . esc_html__( 'More', 'newspack-blocks' ) . '</a>';
 			}
 			?>
 
