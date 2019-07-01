@@ -33,11 +33,8 @@ export const settings = {
 	keywords: [ __( 'ad' ), __( 'advert' ), __( 'ads' ), __( 'Google' ) ],
 	description: __( 'A block for displaying ad inventory from Google Ad Manager.' ),
 	attributes: {
-		className: {
-			type: 'string',
-		},
 		activeAd: {
-			type: 'integer',
+			type: 'string',
 		}
 	},
 	supports: {

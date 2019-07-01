@@ -33,9 +33,6 @@ function newspack_blocks_register_google_ad_manager() {
 		'newspack-blocks/google-ad-manager',
 		array(
 			'attributes'      => array(
-				'className'     => array(
-					'type' => 'string',
-				),
 				'activeAd'   => array(
 					'type'    => 'integer',
 				),

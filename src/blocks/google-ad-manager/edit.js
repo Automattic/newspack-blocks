@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import classNames from 'classnames';
-
-/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
@@ -53,25 +48,22 @@ class Edit extends Component {
 		 * Constants
 		 */
 		const { attributes, setAttributes } = this.props;
-		const { className, activeAd } = attributes;
+		const { activeAd } = attributes;
 		const { adSlots } = this.state;
 
 		return (
 			<Fragment>
-				<div className={ className }>
-					{ activeAd && (
-						<p>{ __( 'Hello, please choose an advert.' ) }</p>
-					) }
-					{ ! activeAd && (
-						<p>{ __( 'Displaying ad #%s', activeAd ) }</p>
-					) }
+				<div>
+					{ __('Advert') }
 				</div>
 				<InspectorControls>
 					<SelectControl
 						label={ __('Advert') }
 						value={ activeAd }
 						options={ adSlots }
-						onChange={ ( activeAd ) => { setAttributes( { activeAd: activeAd } ) } }
+						onChange={ ( activeAd ) => {
+							setAttributes( { activeAd: activeAd } );
+						} }
 					>
 					</SelectControl>
 				</InspectorControls>
