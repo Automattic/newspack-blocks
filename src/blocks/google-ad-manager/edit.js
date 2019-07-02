@@ -3,10 +3,17 @@
  */
 import { __ } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
-import { InspectorControls } from '@wordpress/editor';
-import { SelectControl } from '@wordpress/components';
+import { InspectorControls, BlockControls } from '@wordpress/editor';
+import { SelectControl, Placeholder } from '@wordpress/components';
 import { withState } from '@wordpress/compose';
 import apiFetch from '@wordpress/api-fetch';
+
+/**
+ * Internal dependencies.
+ */
+import { icon } from './';
+import FormatPicker from './format-picker';
+import { AD_FORMATS } from './constants';
 
 class Edit extends Component {
 
@@ -48,14 +55,12 @@ class Edit extends Component {
 		 * Constants
 		 */
 		const { attributes, setAttributes } = this.props;
-		const { activeAd } = attributes;
+		const { activeAd, format } = attributes;
 		const { adSlots } = this.state;
+		const selectedFormatObject = AD_FORMATS.filter( ( { tag } ) => tag === format )[ 0 ];
 
 		return (
 			<Fragment>
-				<div>
-					{ __('Advert') }
-				</div>
 				<InspectorControls>
 					<SelectControl
 						label={ __('Advert') }
@@ -67,6 +72,26 @@ class Edit extends Component {
 					>
 					</SelectControl>
 				</InspectorControls>
+				<BlockControls>
+					<FormatPicker
+						value={ format }
+						onChange={ nextFormat => setAttributes( { format: nextFormat } ) }
+					/>
+				</BlockControls>
+				<div className={ `wp-block-newspack-blocks-google-ad-manager newspack-gam-ad-${ format }` }>
+					<div
+						className="newspack-gam-ad"
+						style={ {
+							width: selectedFormatObject.width,
+							height: selectedFormatObject.height + selectedFormatObject.editorPadding,
+						} }
+						>
+						<Placeholder
+							icon={ icon }
+							label={ __('Advert') }
+						/>
+					</div>
+				</div>
 			</Fragment>
 		);
 	}
