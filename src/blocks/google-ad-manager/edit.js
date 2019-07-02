@@ -23,21 +23,21 @@ class Edit extends Component {
 	constructor() {
 		super( ...arguments );
 		this.state = {
-			adSlots: [],
+			adUnits: [],
 		};
 	}
 
 	componentDidMount() {
-		return apiFetch( { path: '/newspack/v1/wizard/adslots' } )
-			.then( adSlots => {
+		return apiFetch( { path: '/newspack/v1/wizard/adunits' } )
+			.then( adUnits => {
 				// Convert the JSON robject response into a Dropdown array
-				const result = Object.values(adSlots).map( adSlot => {
-					return { label: adSlot.name, value: adSlot.id };
+				const result = Object.values(adUnits).map( adUnit => {
+					return { label: adUnit.name, value: adUnit.id };
 				} );
 				return new Promise( resolve => {
 					this.setState(
 						{
-							adSlots: result,
+							adUnits: result,
 						},
 						() => {
 							resolve( this.state );
@@ -56,7 +56,7 @@ class Edit extends Component {
 		 */
 		const { attributes, setAttributes } = this.props;
 		const { activeAd, format } = attributes;
-		const { adSlots } = this.state;
+		const { adUnits } = this.state;
 		const selectedFormatObject = AD_FORMATS.filter( ( { tag } ) => tag === format )[ 0 ];
 
 		return (
@@ -65,7 +65,7 @@ class Edit extends Component {
 					<SelectControl
 						label={ __('Advert') }
 						value={ activeAd }
-						options={ adSlots }
+						options={ adUnits }
 						onChange={ ( activeAd ) => {
 							setAttributes( { activeAd: activeAd } );
 						} }
