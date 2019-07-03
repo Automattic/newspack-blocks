@@ -103,7 +103,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 								endif;
 
 								if ( $attributes['showDate'] ) {
-									$time_string = '<time class="article-date published updated" datetime="%1$s">%2$s</time>';
+									$time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
 
 									if ( get_the_time( 'U' ) !== get_the_modified_time( 'U' ) ) {
 										$time_string = '<time class="entry-date published" datetime="%1$s">%2$s</time><time class="updated" datetime="%3$s">%4$s</time>';
