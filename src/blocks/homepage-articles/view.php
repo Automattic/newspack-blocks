@@ -59,20 +59,20 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			while ( $article_query->have_posts() ) :
 				$article_query->the_post();
 				?>
-				<article <?php echo has_post_thumbnail() ? 'class="article-has-image"' : ''; ?>>
+				<article <?php echo has_post_thumbnail() ? 'class="post-has-image"' : ''; ?>>
 					<?php if ( has_post_thumbnail() && $attributes['showImage'] ) : ?>
-						<div class="article-thumbnail">
+						<div class="post-thumbnail">
 							<?php the_post_thumbnail( 'large' ); ?>
 						</div><!-- .featured-image -->
 					<?php endif; ?>
 
-					<div class="article-wrapper">
+					<div class="entry-wrapper">
 
 						<?php
 						if ( '' === $attributes['sectionHeader'] ) {
-							the_title( '<h2 class="article-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h2>' );
+							the_title( '<h2 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h2>' );
 						} else {
-							the_title( '<h3 class="article-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h3>' );
+							the_title( '<h3 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h3>' );
 						}
 						?>
 
@@ -82,7 +82,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 						<?php if ( $attributes['showAuthor'] || $attributes['showDate'] ) : ?>
 
-							<div class="article-meta use-header-font">
+							<div class="entry-meta">
 
 								<?php if ( $attributes['showAuthor'] ) : ?>
 									<?php
@@ -90,7 +90,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 										echo get_avatar( get_the_author_meta( 'ID' ) );
 									}
 									?>
-									<span class="author-name">
+									<span class="byline">
 										<?php
 										printf(
 											/* translators: %s: post author. */
@@ -106,7 +106,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 									$time_string = '<time class="article-date published updated" datetime="%1$s">%2$s</time>';
 
 									if ( get_the_time( 'U' ) !== get_the_modified_time( 'U' ) ) {
-										$time_string = '<time class="article-date published" datetime="%1$s">%2$s</time><time class="updated" datetime="%3$s">%4$s</time>';
+										$time_string = '<time class="entry-date published" datetime="%1$s">%2$s</time><time class="updated" datetime="%3$s">%4$s</time>';
 									}
 
 									$time_string = sprintf(
@@ -120,9 +120,9 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 									echo $time_string; // WPCS: XSS OK.
 								}
 								?>
-							</div><!-- .article-meta -->
+							</div><!-- .entry-meta -->
 						<?php endif; ?>
-					</div><!-- .article-wrapper -->
+					</div><!-- .entry-wrapper -->
 				</article>
 				<?php
 			endwhile;
