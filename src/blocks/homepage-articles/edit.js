@@ -45,27 +45,24 @@ class Edit extends Component {
 			moreLink,
 		} = attributes;
 		return (
-			<article
-				className={ post.newspack_featured_image_src && 'article-has-image' }
-				key={ post.id }
-			>
+			<article className={ post.newspack_featured_image_src && 'post-has-image' } key={ post.id }>
 				{ showImage && post.newspack_featured_image_src && (
-					<div className="article-thumbnail" key="thumbnail">
+					<div className="post-thumbnail" key="thumbnail">
 						<img src={ post.newspack_featured_image_src.large } />
 					</div>
 				) }
-				<div className="article-wrapper">
+				<div className="entry-wrapper">
 					{ RichText.isEmpty( sectionHeader ) ? (
-						<h2 className="article-title" key="title">
+						<h2 className="entry-title" key="title">
 							<a href={ post.link }>{ decodeEntities( post.title.rendered.trim() ) }</a>
 						</h2>
 					) : (
-						<h3 className="article-title" key="title">
+						<h3 className="entry-title" key="title">
 							<a href={ post.link }>{ decodeEntities( post.title.rendered.trim() ) }</a>
 						</h3>
 					) }
 					{ showExcerpt && <RawHTML key="excerpt">{ post.excerpt.rendered }</RawHTML> }
-					<div className="article-meta use-header-font">
+					<div className="entry-meta">
 						{ showAuthor && post.newspack_author_info.avatar && showAvatar && (
 							<span className="avatar author-avatar" key="author-avatar">
 								<RawHTML>{ post.newspack_author_info.avatar }</RawHTML>
@@ -73,7 +70,7 @@ class Edit extends Component {
 						) }
 
 						{ showAuthor && (
-							<span className="author-name">
+							<span className="byline">
 								{ __( 'by' ) }{' '}
 								<span className="author vcard">
 									<a className="url fn n" href={ post.newspack_author_info.author_link }>
@@ -83,7 +80,7 @@ class Edit extends Component {
 							</span>
 						) }
 						{ showDate && (
-							<time className="article-date published" key="pub-date">
+							<time className="entry-date published" key="pub-date">
 								{ moment( post.date_gmt )
 									.local()
 									.format( 'MMMM DD, Y' ) }
