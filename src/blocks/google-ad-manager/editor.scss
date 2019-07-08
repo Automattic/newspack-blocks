@@ -29,19 +29,3 @@
 .newspack-gam-ad-mobile_leaderboard .components-placeholder {
 	min-height: 72px;
 }
-
-.wp-block-newspack-blocks-google-ad-manager__format-picker {
-	$active-item-outline-width: 2px;
-
-	padding: 7px;
-
-	// Leave space between elements for active state styling
-	.components-menu-item__button + .components-menu-item__button {
-		margin-top: $active-item-outline-width;
-	}
-
-	.components-menu-item__button.is-active {
-		color: grey;
-		box-shadow: 0 0 0 $active-item-outline-width #555d66 !important;
-	}
-}

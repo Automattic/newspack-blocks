@@ -8,7 +8,6 @@ import { Path, SVG } from '@wordpress/components';
  */
 import { __ } from '@wordpress/i18n';
 import edit from './edit';
-import { DEFAULT_FORMAT } from './constants';
 
 /**
  * Style dependencies - will load in editor
@@ -36,10 +35,6 @@ export const settings = {
 	attributes: {
 		activeAd: {
 			type: 'string',
-		},
-		format: {
-			type: 'string',
-			default: DEFAULT_FORMAT,
 		}
 	},
 	supports: {

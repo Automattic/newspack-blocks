@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
-import { InspectorControls, BlockControls } from '@wordpress/editor';
+import { InspectorControls } from '@wordpress/editor';
 import { SelectControl, Placeholder } from '@wordpress/components';
 import { withState } from '@wordpress/compose';
 import apiFetch from '@wordpress/api-fetch';
@@ -12,8 +12,6 @@ import apiFetch from '@wordpress/api-fetch';
  * Internal dependencies.
  */
 import { icon } from './';
-import FormatPicker from './format-picker';
-import { AD_FORMATS } from './constants';
 
 class Edit extends Component {
 
@@ -30,14 +28,11 @@ class Edit extends Component {
 	componentDidMount() {
 		return apiFetch( { path: '/newspack/v1/wizard/adunits' } )
 			.then( adUnits => {
-				// Convert the JSON robject response into a Dropdown array
-				const result = Object.values(adUnits).map( adUnit => {
-					return { label: adUnit.name, value: adUnit.id };
-				} );
 				return new Promise( resolve => {
 					this.setState(
 						{
-							adUnits: result,
+							adUnits: adUnits,
+							activeAdData: this.dataForActiveAdUnit(),
 						},
 						() => {
 							resolve( this.state );
@@ -50,14 +45,31 @@ class Edit extends Component {
 			} );
 	}
 
+	adUnitsForSelect = () => {
+		const { adUnits } = this.state;
+		return Object.values( adUnits ).map( adUnit => {
+			return {
+				label: adUnit.name,
+				value: adUnit.id
+			};
+		} );
+	};
+
+	dataForActiveAdUnit = () => {
+		const { attributes } = this.props;
+		const { activeAd } = attributes;
+		const { adUnits } = this.state;
+
+		return adUnits.find( unit => unit.id === activeAd );
+	}
+
 	render() {
 		/**
 		 * Constants
 		 */
 		const { attributes, setAttributes } = this.props;
-		const { activeAd, format } = attributes;
-		const { adUnits } = this.state;
-		const selectedFormatObject = AD_FORMATS.filter( ( { tag } ) => tag === format )[ 0 ];
+		const { activeAd } = attributes;
+		const { adUnits, activeAdData } = this.state;
 
 		return (
 			<Fragment>
@@ -65,25 +77,24 @@ class Edit extends Component {
 					<SelectControl
 						label={ __('Advert') }
 						value={ activeAd }
-						options={ adUnits }
+						options={ this.adUnitsForSelect() }
 						onChange={ ( activeAd ) => {
-							setAttributes( { activeAd: activeAd } );
+							setAttributes( {
+								activeAd: activeAd,
+							} );
+							this.setState( {
+								activeAdData: this.dataForAdUnit(), // @todo grab ad data from adUnits
+							} );
 						} }
 					>
 					</SelectControl>
 				</InspectorControls>
-				<BlockControls>
-					<FormatPicker
-						value={ format }
-						onChange={ nextFormat => setAttributes( { format: nextFormat } ) }
-					/>
-				</BlockControls>
-				<div className={ `wp-block-newspack-blocks-google-ad-manager newspack-gam-ad-${ format }` }>
+				<div className={ `wp-block-newspack-blocks-google-ad-manager` }>
 					<div
 						className="newspack-gam-ad"
 						style={ {
-							width: selectedFormatObject.width,
-							height: selectedFormatObject.height + selectedFormatObject.editorPadding,
+							width: activeAdData.width,
+							height: activeAdData.height,
 						} }
 						>
 						<Placeholder
