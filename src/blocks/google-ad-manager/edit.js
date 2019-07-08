@@ -14,7 +14,6 @@ import apiFetch from '@wordpress/api-fetch';
 import { icon } from './';
 
 class Edit extends Component {
-
 	/**
 	 * Constructor.
 	 */
@@ -26,42 +25,19 @@ class Edit extends Component {
 	}
 
 	componentDidMount() {
-		return apiFetch( { path: '/newspack/v1/wizard/adunits' } )
-			.then( adUnits => {
-				return new Promise( resolve => {
-					this.setState(
-						{
-							adUnits: adUnits,
-							activeAdData: this.dataForActiveAdUnit(),
-						},
-						() => {
-							resolve( this.state );
-						}
-					);
-				} );
-			} )
-			.catch( error => {
-				console.log(error);
-			} );
+		apiFetch( { path: '/newspack/v1/wizard/adunits' } ).then( adUnits =>
+			this.setState( { adUnits } )
+		);
 	}
 
-	adUnitsForSelect = () => {
-		const { adUnits } = this.state;
+	adUnitsForSelect = adUnits => {
 		return Object.values( adUnits ).map( adUnit => {
 			return {
 				label: adUnit.name,
-				value: adUnit.id
+				value: adUnit.id,
 			};
 		} );
 	};
-
-	dataForActiveAdUnit = () => {
-		const { attributes } = this.props;
-		const { activeAd } = attributes;
-		const { adUnits } = this.state;
-
-		return adUnits.find( unit => unit.id === activeAd );
-	}
 
 	render() {
 		/**
@@ -69,38 +45,25 @@ class Edit extends Component {
 		 */
 		const { attributes, setAttributes } = this.props;
 		const { activeAd } = attributes;
-		const { adUnits, activeAdData } = this.state;
-
+		const { adUnits } = this.state;
+		const activeAdData = adUnits.find( adUnit => parseInt( adUnit.id ) === parseInt( activeAd ) );
+		const style = activeAdData && {
+			width: `${ activeAdData.width }px`,
+			height: `${ activeAdData.height }px`,
+		};
 		return (
 			<Fragment>
 				<InspectorControls>
 					<SelectControl
-						label={ __('Advert') }
+						label={ __( 'Advert' ) }
 						value={ activeAd }
-						options={ this.adUnitsForSelect() }
-						onChange={ ( activeAd ) => {
-							setAttributes( {
-								activeAd: activeAd,
-							} );
-							this.setState( {
-								activeAdData: this.dataForAdUnit(), // @todo grab ad data from adUnits
-							} );
-						} }
-					>
-					</SelectControl>
+						options={ this.adUnitsForSelect( adUnits ) }
+						onChange={ activeAd => setAttributes( { activeAd } ) }
+					/>
 				</InspectorControls>
-				<div className={ `wp-block-newspack-blocks-google-ad-manager` }>
-					<div
-						className="newspack-gam-ad"
-						style={ {
-							width: activeAdData.width,
-							height: activeAdData.height,
-						} }
-						>
-						<Placeholder
-							icon={ icon }
-							label={ __('Advert') }
-						/>
+				<div className="wp-block-newspack-blocks-google-ad-manager">
+					<div className="newspack-gam-ad" style={ style }>
+						<Placeholder icon={ icon } label={ __( 'Advert' ) } />
 					</div>
 				</div>
 			</Fragment>
