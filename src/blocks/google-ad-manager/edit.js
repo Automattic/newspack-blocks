@@ -40,13 +40,13 @@ class Edit extends Component {
 
 	dimensionsFromAd = adData => {
 		const { code } = adData || {};
-		const widthRegex = /width[:=].*?([0-9].*?)[px|\s]/i;
+		const widthRegex = /width[:=].*?([0-9].*?)(?:px|\s)/i;
 		const width = ( code || '' ).match( widthRegex );
-		const heightRegex = /height[:=].*?([0-9].*?)[px|\s]/i;
+		const heightRegex = /height[:=].*?([0-9].*?)(?:px|\s)/i;
 		const height = ( code || '' ).match( heightRegex );
 		return {
-			width: width ? width[ 1 ] : null,
-			height: height ? height[ 1 ] : null,
+			width: width ? parseInt( width[ 1 ] ) : 0,
+			height: height ? parseInt( height[ 1 ] ) : 0,
 		};
 	};
 
