@@ -5,7 +5,6 @@ import { __ } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import { InspectorControls } from '@wordpress/editor';
 import { SelectControl, Placeholder } from '@wordpress/components';
-import { withState } from '@wordpress/compose';
 import apiFetch from '@wordpress/api-fetch';
 
 /**
@@ -39,6 +38,18 @@ class Edit extends Component {
 		} );
 	};
 
+	dimensionsFromAd = adData => {
+		const { code } = adData || {};
+		const widthRegex = /width[:=].*?([0-9].*?)[px|\s]/i;
+		const width = ( code || '' ).match( widthRegex );
+		const heightRegex = /height[:=].*?([0-9].*?)[px|\s]/i;
+		const height = ( code || '' ).match( heightRegex );
+		return {
+			width: width ? width[ 1 ] : null,
+			height: height ? height[ 1 ] : null,
+		};
+	};
+
 	render() {
 		/**
 		 * Constants
@@ -47,10 +58,12 @@ class Edit extends Component {
 		const { activeAd } = attributes;
 		const { adUnits } = this.state;
 		const activeAdData = adUnits.find( adUnit => parseInt( adUnit.id ) === parseInt( activeAd ) );
-		const style = activeAdData && {
-			width: `${ activeAdData.width }px`,
-			height: `${ activeAdData.height }px`,
+		const { width, height } = this.dimensionsFromAd( activeAdData );
+		const style = {
+			width: `${ width }px`,
+			height: `${ height }px`,
 		};
+		const dimensions = width && height ? ` (${ width } x ${ height })` : '';
 		return (
 			<Fragment>
 				<InspectorControls>
@@ -63,7 +76,7 @@ class Edit extends Component {
 				</InspectorControls>
 				<div className="wp-block-newspack-blocks-google-ad-manager">
 					<div className="newspack-gam-ad" style={ style }>
-						<Placeholder icon={ icon } label={ __( 'Advert' ) } />
+						<Placeholder icon={ icon } label={ __( 'Advert' ) + dimensions } />
 					</div>
 				</div>
 			</Fragment>
