@@ -13,7 +13,6 @@
  * @return string Returns the post content with latest posts added.
  */
 function newspack_blocks_render_block_google_ad_manager( $attributes ) {
-
 	$active_ad = isset( $attributes['activeAd'] ) ? (int) $attributes['activeAd'] : 0;
 	if ( 1 > $active_ad ) {
 		return '';
@@ -22,7 +21,7 @@ function newspack_blocks_render_block_google_ad_manager( $attributes ) {
 	$classes = Newspack_Blocks::block_classes( 'newspack-blocks-google-ad-manager', $attributes );
 
 	$content = sprintf(
-		"<div class=\"%s\">%s</div>",
+		'<div class="%s">%s</div>',
 		esc_attr( $classes ),
 		get_post_meta( $active_ad, 'newspack_ad_code', true )
 	);
@@ -40,8 +39,8 @@ function newspack_blocks_register_google_ad_manager() {
 		'newspack-blocks/google-ad-manager',
 		array(
 			'attributes'      => array(
-				'activeAd'   => array(
-					'type'    => 'integer',
+				'activeAd' => array(
+					'type' => 'integer',
 				),
 			),
 			'render_callback' => 'newspack_blocks_render_block_google_ad_manager',
