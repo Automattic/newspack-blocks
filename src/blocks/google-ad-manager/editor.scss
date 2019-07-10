@@ -1,31 +1,6 @@
-[data-type='newspack-blocks/google-ad-manager'][data-align='center'] .newspack-gam-ad {
-	margin: 0 auto;
-}
-
-.newspack-gam-ad {
+.newspack-gam-ad .components-placeholder {
+	display: block;
+	height: 100%;
 	display: flex;
-	overflow: hidden;
-	flex-direction: column;
-	max-width: 100%;
-
-	.components-placeholder {
-		flex-grow: 2;
-		min-height: 31px;
-	}
-
-	.components-toggle-control__label {
-		line-height: 1.4em;
-	}
-
-	.components-base-control__field {
-		padding: 7px;
-	}
-}
-
-.newspack-gam-ad-leaderboard .components-placeholder {
-	min-height: 90px;
-}
-
-.newspack-gam-ad-mobile_leaderboard .components-placeholder {
-	min-height: 72px;
+	min-height: 31px;
 }
