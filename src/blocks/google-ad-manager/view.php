@@ -19,10 +19,20 @@ function newspack_blocks_render_block_google_ad_manager( $attributes ) {
 		return '';
 	}
 
-	$ad_code = get_post_meta( $active_ad, 'newspack_ad_code', true );
+	$classes = Newspack_Blocks::block_classes( 'newspack-blocks-google-ad-manager', $attributes );
+	if ( isset( $attributes['className'] ) ) {
+		$classes .= ' ' . $attributes['className'];
+	}
+
+	$content = sprintf(
+		"<div class=\"%s\">%s</div>",
+		esc_attr( $classes ),
+		get_post_meta( $active_ad, 'newspack_ad_code', true )
+	);
 
 	Newspack_Blocks::enqueue_view_assets( 'google-ad-manager' );
-	return $ad_code;
+
+	return $content;
 }
 
 /**
