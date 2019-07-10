@@ -13,7 +13,6 @@ import edit from './edit';
  * Style dependencies - will load in editor
  */
 import './editor.scss';
-import './view.scss';
 
 export const name = 'google-ad-manager';
 export const title = __( 'Google Ad Manager' );

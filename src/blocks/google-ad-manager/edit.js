@@ -5,7 +5,6 @@ import { __ } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import { InspectorControls } from '@wordpress/editor';
 import { SelectControl, Placeholder } from '@wordpress/components';
-import { withState } from '@wordpress/compose';
 import apiFetch from '@wordpress/api-fetch';
 
 /**
