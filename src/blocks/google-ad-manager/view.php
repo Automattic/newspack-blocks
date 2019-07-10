@@ -21,14 +21,26 @@ function newspack_blocks_render_block_google_ad_manager( $attributes ) {
 	$classes = Newspack_Blocks::block_classes( 'newspack-blocks-google-ad-manager', $attributes );
 
 	$content = sprintf(
-		'<div class="%s">%s</div>',
+		'<div class="%s" id="%s">%s</div>',
 		esc_attr( $classes ),
+		esc_attr( newspack_blocks_google_add_manager_unique_id() ),
 		get_post_meta( $active_ad, 'newspack_ad_code', true )
 	);
 
 	Newspack_Blocks::enqueue_view_assets( 'google-ad-manager' );
 
 	return $content;
+}
+
+/**
+ * Returns a unique ID for the block container
+ *
+ * @return string Returns a unique ID for the element.
+ */
+function newspack_blocks_google_add_manager_unique_id() {
+	global $newspack_blocks_google_ad_manager_id;
+	$newspack_blocks_google_ad_manager_id = intval( $newspack_blocks_google_ad_manager_id ) + 1;
+	return 'newspack-blocks-google-ad-manager-id__' . $newspack_blocks_google_ad_manager_id;
 }
 
 /**
