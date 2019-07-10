@@ -20,9 +20,6 @@ function newspack_blocks_render_block_google_ad_manager( $attributes ) {
 	}
 
 	$classes = Newspack_Blocks::block_classes( 'newspack-blocks-google-ad-manager', $attributes );
-	if ( isset( $attributes['className'] ) ) {
-		$classes .= ' ' . $attributes['className'];
-	}
 
 	$content = sprintf(
 		"<div class=\"%s\">%s</div>",

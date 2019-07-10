@@ -68,16 +68,23 @@ class Edit extends Component {
 			<Fragment>
 				<InspectorControls>
 					<SelectControl
-						label={ __( 'Advert' ) }
+						label={ __( 'Ad Unit' ) }
 						value={ activeAd }
 						options={ this.adUnitsForSelect( adUnits ) }
 						onChange={ activeAd => setAttributes( { activeAd } ) }
 					/>
 				</InspectorControls>
 				<div className="wp-block-newspack-blocks-google-ad-manager">
-					<div className="newspack-gam-ad" style={ style }>
-						<Placeholder icon={ icon } label={ __( 'Advert' ) + dimensions } />
-					</div>
+					{ !! activeAdData && (
+						<div className="newspack-gam-ad" style={ style }>
+							<Placeholder icon={ icon } label={ __( 'Ad Unit' ) + dimensions } />
+						</div>
+					) }
+					{ ! activeAdData && (
+						<div className="newspack-gam-ad">
+							<Placeholder icon={ icon } label={ __( 'Select an Ad Unit' ) } />
+						</div>
+					) }
 				</div>
 			</Fragment>
 		);
