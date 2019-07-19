@@ -38,6 +38,7 @@ class Edit extends Component {
 		const {
 			showImage,
 			showExcerpt,
+			excerptLength,
 			showAuthor,
 			showAvatar,
 			showDate,
@@ -61,7 +62,14 @@ class Edit extends Component {
 							<a href={ post.link }>{ decodeEntities( post.title.rendered.trim() ) }</a>
 						</h3>
 					) }
-					{ showExcerpt && <RawHTML key="excerpt">{ post.excerpt.rendered }</RawHTML> }
+					{ showExcerpt && (
+						<RawHTML key="excerpt">
+							{ post.excerpt.rendered
+								.trim()
+								.split( ' ', excerptLength )
+								.join( ' ' ) + ' [&hellip;]' }
+						</RawHTML>
+					) }
 					<div className="entry-meta">
 						{ showAuthor && post.newspack_author_info.avatar && showAvatar && (
 							<span className="avatar author-avatar" key="author-avatar">
@@ -103,6 +111,7 @@ class Edit extends Component {
 			showImage,
 			imageScale,
 			showExcerpt,
+			excerptLength,
 			typeScale,
 			showDate,
 			showAuthor,
@@ -173,6 +182,15 @@ class Edit extends Component {
 							onChange={ () => setAttributes( { showExcerpt: ! showExcerpt } ) }
 						/>
 					</PanelRow>
+					{ showExcerpt && (
+						<RangeControl
+							label={ __( 'Maximum words in excerpt.' ) }
+							value={ excerptLength }
+							onChange={ value => setAttributes( { excerptLength: value } ) }
+							min={ 1 }
+							max={ 100 }
+						/>
+					) }
 					<RangeControl
 						className="type-scale-slider"
 						label={ __( 'Type Scale' ) }
@@ -229,6 +247,7 @@ class Edit extends Component {
 		} = this.props; // variables getting pulled out of props
 		const {
 			showExcerpt,
+			excerptLength,
 			showDate,
 			showImage,
 			showAuthor,

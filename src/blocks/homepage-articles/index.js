@@ -40,6 +40,10 @@ export const settings = {
 			type: 'boolean',
 			default: true,
 		},
+		excerptLength: {
+			type: 'integer',
+			default: 55,
+		},
 		showDate: {
 			type: 'boolean',
 			default: true,

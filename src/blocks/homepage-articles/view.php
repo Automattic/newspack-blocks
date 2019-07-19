@@ -77,7 +77,11 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 						?>
 
 						<?php if ( $attributes['showExcerpt'] ) : ?>
-							<?php the_excerpt(); ?>
+							<?php
+								$excerpt_length = $attributes['excerptLength'];
+								$post_excerpt = get_the_excerpt();
+
+								echo esc_html( wp_trim_words( $post_excerpt, $excerpt_length, ' [&hellip;] ' ) ); ?>
 						<?php endif; ?>
 
 						<?php if ( $attributes['showAuthor'] || $attributes['showDate'] ) : ?>
@@ -161,6 +165,10 @@ function newspack_blocks_register_homepage_articles() {
 				'showExcerpt'   => array(
 					'type'    => 'boolean',
 					'default' => true,
+				),
+				'excerptLength' => array(
+					'type'    => 'integer',
+					'default' => 55,
 				),
 				'showDate'      => array(
 					'type'    => 'boolean',
