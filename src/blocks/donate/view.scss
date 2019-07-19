@@ -1,0 +1,80 @@
+.wp-block-newspack-blocks-donate {
+	background-color: #f3f4f5;
+	max-width: 590px;
+	button {
+		background: none;
+		border: 1px solid #86909B;
+		width: 100%;
+		background: white;
+		color: #6c7781;
+		display: flex;
+		font-family: sans-serif;
+		font-size: 14px;
+		justify-content: center;
+		padding: 10px;
+		text-transform: uppercase;
+		&.primary {
+			background: #2A7DE1;
+			border-radius: 3px;
+			color: white;
+			padding: 16px 24px;
+			width: auto;
+			text-transform: none;
+			font-weight: bold;
+		}
+	}
+	ul {
+		display: flex;
+		list-style-type: none;
+		margin: 0;
+	}
+	ul.term {
+		flex-grow: 1;
+		align-items: center;
+		li {
+			margin: 0 5px;
+		}
+		button {
+			text-transform: lowercase;
+		}
+	}
+	li {
+		flex: 1;
+		list-style-type: none;
+		&.is-selected button {
+			background: #6c7781;
+			color: white;
+		}
+	}
+	.purchase-row {
+		display: flex;
+		padding: 0;
+	}
+	input[type="text"] {
+		border-radius: 3px;
+		border: 1px solid #B0B5B8;
+		padding: 25px 15px;
+		font-size: 16px;
+		margin: 10px 10px 10px 0;
+		max-width: 150px;
+	}
+	.lower {
+		padding: 30px;
+	}
+	p.membership-description {
+		font-size: 14px;
+		margin: 0.5em 0;
+	}
+	.amount {
+		display: flex;
+	}
+	.currency {
+		font-size: 16px;
+		font-weight: bold;
+		margin: 0 3px 0 0;
+		align-self: center;
+	}
+	.tier-name {
+		font-weight: bold;
+	}
+}
