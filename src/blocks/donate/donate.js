@@ -60,6 +60,6 @@ export default function donateBlock(
 	}
 	const minimums = getMinimums();
 	const sorted = Object.values( minimums ).sort( ( a, b ) => a - b );
-	amount.value = sorted[ 0 ];
-	amountChanged( amount.value || 0 );
+	amount.value = sorted[ 0 ] || 0;
+	amountChanged( amount.value );
 }
