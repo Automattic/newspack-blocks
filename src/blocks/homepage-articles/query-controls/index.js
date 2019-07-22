@@ -8,7 +8,6 @@ import { QueryControls as BaseControl, SelectControl } from '@wordpress/componen
 class QueryControls extends Component {
 	render = () => {
 		const { authorList, onAuthorChange, selectedAuthorId } = this.props;
-		console.log( authorList );
 		return [
 			<BaseControl { ...this.props } />,
 			onAuthorChange && (
