@@ -13,12 +13,14 @@
  * @return string Returns the post content with latest posts added.
  */
 function newspack_blocks_render_block_homepage_articles( $attributes ) {
+	$author        = isset( $attributes['author'] ) ? $attributes['author'] : '';
 	$categories    = isset( $attributes['categories'] ) ? $attributes['categories'] : '';
 	$args          = array(
 		'posts_per_page'      => $attributes['postsToShow'],
 		'post_status'         => 'publish',
 		'suppress_filters'    => false,
 		'cat'                 => $categories,
+		'author'              => $author,
 		'ignore_sticky_posts' => true,
 	);
 	$article_query = new WP_Query( $args );
@@ -196,6 +198,9 @@ function newspack_blocks_register_homepage_articles() {
 				'mediaPosition' => array(
 					'type'    => 'string',
 					'default' => 'top',
+				),
+				'author'        => array(
+					'type' => 'string',
 				),
 				'categories'    => array(
 					'type' => 'string',
