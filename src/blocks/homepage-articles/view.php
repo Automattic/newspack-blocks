@@ -66,7 +66,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			endif;
 			while ( $article_query->have_posts() ) :
 				$article_query->the_post();
-				if ( isset( $newspack_blocks_post_id[ get_the_ID() ] ) || $post_counter > $posts_to_show ) {
+				if ( isset( $newspack_blocks_post_id[ get_the_ID() ] ) || $post_counter >= $posts_to_show ) {
 					continue;
 				}
 				$newspack_blocks_post_id[ get_the_ID() ] = true;
