@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import QueryControls from './query-controls';
+
+/**
  * External dependencies
  */
 import classNames from 'classnames';
@@ -15,7 +20,6 @@ import {
 	ToggleControl,
 	PanelBody,
 	PanelRow,
-	QueryControls,
 	RangeControl,
 	Toolbar,
 	Dashicon,
@@ -93,9 +97,17 @@ class Edit extends Component {
 	};
 
 	renderInspectorControls = () => {
-		const { attributes, categoriesList, setAttributes, latestPosts, isSelected } = this.props;
+		const {
+			attributes,
+			authorList,
+			categoriesList,
+			setAttributes,
+			latestPosts,
+			isSelected,
+		} = this.props;
 		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
 		const {
+			author,
 			postsToShow,
 			categories,
 			sectionHeader,
@@ -118,10 +130,15 @@ class Edit extends Component {
 						<QueryControls
 							numberOfItems={ postsToShow }
 							onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
+							authorList={ authorList }
 							categoriesList={ categoriesList }
 							selectedCategoryId={ categories }
+							selectedAuthorId={ author }
 							onCategoryChange={ value =>
 								setAttributes( { categories: '' !== value ? value : undefined } )
+							}
+							onAuthorChange={ value =>
+								setAttributes( { author: '' !== value ? value : undefined } )
 							}
 						/>
 					) }
@@ -326,12 +343,13 @@ class Edit extends Component {
 }
 
 export default withSelect( ( select, props ) => {
-	const { postsToShow, categories } = props.attributes;
-	const { getEntityRecords } = select( 'core' );
+	const { postsToShow, author, categories } = props.attributes;
+	const { getAuthors, getEntityRecords } = select( 'core' );
 	const latestPostsQuery = pickBy(
 		{
 			per_page: postsToShow,
 			categories,
+			author,
 		},
 		value => ! isUndefined( value )
 	);
@@ -342,5 +360,6 @@ export default withSelect( ( select, props ) => {
 	return {
 		latestPosts: getEntityRecords( 'postType', 'post', latestPostsQuery ),
 		categoriesList: getEntityRecords( 'taxonomy', 'category', categoriesListQuery ),
+		authorList: getAuthors(),
 	};
 } )( Edit );

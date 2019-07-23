@@ -72,6 +72,9 @@ export const settings = {
 			type: 'string',
 			default: 'top',
 		},
+		author: {
+			type: 'string',
+		},
 		categories: {
 			type: 'string',
 		},
