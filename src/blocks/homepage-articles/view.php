@@ -13,10 +13,15 @@
  * @return string Returns the post content with latest posts added.
  */
 function newspack_blocks_render_block_homepage_articles( $attributes ) {
+	global $newspack_blocks_post_id;
+	if ( ! $newspack_blocks_post_id ) {
+		$newspack_blocks_post_id = array();
+	}
 	$author        = isset( $attributes['author'] ) ? $attributes['author'] : '';
 	$categories    = isset( $attributes['categories'] ) ? $attributes['categories'] : '';
+	$posts_to_show = intval( $attributes['postsToShow'] );
 	$args          = array(
-		'posts_per_page'      => $attributes['postsToShow'],
+		'posts_per_page'      => $posts_to_show + count( $newspack_blocks_post_id ),
 		'post_status'         => 'publish',
 		'suppress_filters'    => false,
 		'cat'                 => $categories,
@@ -45,6 +50,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	if ( isset( $attributes['className'] ) ) {
 		$classes .= ' ' . $attributes['className'];
 	}
+	$post_counter = 0;
 
 	ob_start();
 
@@ -60,6 +66,11 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			endif;
 			while ( $article_query->have_posts() ) :
 				$article_query->the_post();
+				if ( isset( $newspack_blocks_post_id[ get_the_ID() ] ) || $post_counter >= $posts_to_show ) {
+					continue;
+				}
+				$newspack_blocks_post_id[ get_the_ID() ] = true;
+				$post_counter++;
 				?>
 				<article <?php echo has_post_thumbnail() ? 'class="post-has-image"' : ''; ?>>
 					<?php if ( has_post_thumbnail() && $attributes['showImage'] ) : ?>
