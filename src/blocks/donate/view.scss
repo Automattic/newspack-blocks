@@ -1,3 +1,120 @@
-.wp-block-newspack-blocks-donate {
+$primary_color: #2A7DE1;
 
+.newspack-blocks-donate {
+	width: 100%;
+	background-color: $muriel-gray-0;
+	font-size: 14px;
+
+	input[type='radio'] {
+		display: none;
+	}
+
+	.donation-frequency-label,
+	.tier-select-label {
+		text-align: center;
+		display: block;
+		background-color: $muriel-white;
+		line-height: 3em;
+		font-weight: bold;
+	}
+
+	button[type='submit'] {
+		margin-bottom: 2em;
+		font-size: 16px;
+		margin-left: 24px;
+	}
+}
+
+.newspack-blocks-donate__tiers {
+	margin-top: 2em;
+	display: none;
+
+	.tier-select-label {
+		border: 1px solid $muriel-gray-200;
+		border-radius: 3px;
+		font-size: 16px;
+		margin-left: 25px;
+		padding-left: 1em;
+		padding-right: 1em;
+	}
+
+	input[type='radio']:checked {
+		& + .tier-select-label {
+			color: $muriel-white;
+			background-color: $primary_color;
+		}
+	}
+
+	input[type='number'] {
+		position: absolute;
+		top: 10.5em;
+		left: 24px;
+		font-size: 16px;
+		border: 2px solid $primary_color;
+		border-radius: 3px;
+	}
+
+	.other-donate-label {
+		position: absolute;
+		top: 10em;
+		left: 2em;
+		color: $muriel-gray-300;
+	}
+
+	input.other-input {
+		& ~ input[type='number'],
+		& ~ .other-donate-label {
+			display: none;
+		}
+
+		&:checked ~ input[type='number'],
+		&:checked ~ .other-donate-label {
+			display: block;
+		}
+
+		&:checked + label {
+			margin-bottom: 6em;
+		}
+	}
+}
+
+.newspack-blocks-donate__frequencies {
+	position: relative;
+	padding-top: 3em;
+}
+
+.newspack-blocks-donate__frequency {
+	.donation-frequency-label {
+		width: 33.333%;
+		position: absolute;
+		top: 0;
+		border: 1px solid $muriel-gray-400;
+		text-transform: uppercase;
+		color: $muriel-gray-500;
+	}
+
+	input[type='radio']:checked {
+		& + .donation-frequency-label {
+			color: $muriel-white;
+			background-color: $muriel-gray-500;
+		}
+
+		& ~ .newspack-blocks-donate__tiers {
+			display: flex;
+		}
+	}
+
+	&:nth-of-type(2) .donation-frequency-label {
+		left: 33.333%;
+		border-left: none;
+		border-right: none;
+	}
+
+	&:nth-of-type(3) .donation-frequency-label {
+		left: 66.666%;
+	}
+}
+
+.newspack-blocks-donate__thanks {
+	margin-left: 2em;
 }
