@@ -112,7 +112,7 @@ class Edit extends Component {
 							] }
 							onChange={ selectedFrequency => this.setState( { selectedFrequency } ) }
 						/>
-						<div class='wp-block-newspack-blocks-donate__settings-container'>
+						<div className='wp-block-newspack-blocks-donate__settings-container'>
 							{ tiered && (
 								<RadioControl
 									className='wp-block-newspack-blocks-donate__tier-selection'
