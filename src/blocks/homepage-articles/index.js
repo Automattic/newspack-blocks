@@ -97,6 +97,10 @@ export const settings = {
 			type: 'boolean',
 			default: false,
 		},
+		singleMode: {
+			type: 'boolean',
+			default: false
+		},
 	},
 	supports: {
 		html: false,

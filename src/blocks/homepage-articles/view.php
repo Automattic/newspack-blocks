@@ -21,6 +21,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	$categories    = isset( $attributes['categories'] ) ? $attributes['categories'] : '';
 	$single        = isset( $attributes['single'] ) ? $attributes['single'] : '';
 	$posts_to_show = intval( $attributes['postsToShow'] );
+	$single_mode   = intval( $attributes['singleMode'] );
 	$args          = array(
 		'posts_per_page'      => $posts_to_show + count( $newspack_blocks_post_id ),
 		'post_status'         => 'publish',
@@ -29,7 +30,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		'author'              => $author,
 		'ignore_sticky_posts' => true,
 	);
-	if ( $single ) {
+	if ( $single_mode ) {
 		$args['p'] = $single;
 	} else {
 		$args['cat']    = $categories;
@@ -239,6 +240,10 @@ function newspack_blocks_register_homepage_articles() {
 					'default' => '',
 				),
 				'moreLink'      => array(
+					'type'    => 'boolean',
+					'default' => false,
+				),
+				'singleMode'    => array(
 					'type'    => 'boolean',
 					'default' => false,
 				),

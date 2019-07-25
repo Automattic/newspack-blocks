@@ -17,11 +17,11 @@ import { __ } from '@wordpress/i18n';
 import { Component, Fragment, RawHTML } from '@wordpress/element';
 import { InspectorControls, RichText, BlockControls } from '@wordpress/editor';
 import {
-	ToggleControl,
 	PanelBody,
 	PanelRow,
 	RangeControl,
 	Toolbar,
+	ToggleControl,
 	Dashicon,
 	Placeholder,
 	Spinner,
@@ -124,6 +124,7 @@ class Edit extends Component {
 			postLayout,
 			mediaPosition,
 			moreLink,
+			singleMode,
 		} = attributes;
 		return (
 			<Fragment>
@@ -134,6 +135,7 @@ class Edit extends Component {
 							onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
 							authorList={ authorList }
 							postList={ postList }
+							singleMode={ singleMode }
 							categoriesList={ categoriesList }
 							selectedCategoryId={ categories }
 							selectedAuthorId={ author }
@@ -147,6 +149,7 @@ class Edit extends Component {
 							onSingleChange={ value =>
 								setAttributes( { single: '' !== value ? value : undefined } )
 							}
+							onSingleModeChange={ value => setAttributes( { singleMode: value } ) }
 						/>
 					) }
 					{ postLayout === 'grid' && (
@@ -161,11 +164,13 @@ class Edit extends Component {
 							required
 						/>
 					) }
-					<ToggleControl
-						label={ __( 'Show "More" Link' ) }
-						checked={ moreLink }
-						onChange={ () => setAttributes( { moreLink: ! moreLink } ) }
-					/>
+					{ ! singleMode && (
+						<ToggleControl
+							label={ __( 'Show "More" Link' ) }
+							checked={ moreLink }
+							onChange={ () => setAttributes( { moreLink: ! moreLink } ) }
+						/>
+					) }
 				</PanelBody>
 				<PanelBody title={ __( 'Featured Image Settings' ) }>
 					<PanelRow>
@@ -350,10 +355,10 @@ class Edit extends Component {
 }
 
 export default withSelect( ( select, props ) => {
-	const { postsToShow, author, categories, single } = props.attributes;
+	const { postsToShow, author, categories, single, singleMode } = props.attributes;
 	const { getAuthors, getEntityRecords } = select( 'core' );
 	const latestPostsQuery = pickBy(
-		single
+		singleMode
 			? { include: single }
 			: {
 					per_page: postsToShow,
