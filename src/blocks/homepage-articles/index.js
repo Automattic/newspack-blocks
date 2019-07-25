@@ -78,6 +78,9 @@ export const settings = {
 		categories: {
 			type: 'string',
 		},
+		single: {
+			type: 'string',
+		},
 		typeScale: {
 			type: 'integer',
 			default: 4,

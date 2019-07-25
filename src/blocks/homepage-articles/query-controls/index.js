@@ -7,10 +7,22 @@ import { QueryControls as BaseControl, SelectControl } from '@wordpress/componen
 
 class QueryControls extends Component {
 	render = () => {
-		const { authorList, onAuthorChange, selectedAuthorId } = this.props;
+		const { authorList, postList, onAuthorChange, onSingleChange, selectedSingleId, selectedAuthorId } = this.props;
 		return [
-			<BaseControl { ...this.props } />,
-			onAuthorChange && (
+			onSingleChange && (
+				<SelectControl
+					key="query-controls-single-post-select"
+					label={ __( 'Display One Specific Post' ) }
+					value={ selectedSingleId }
+					options={ [
+						{ label: __( '-- Select Post --' ), value: '' },
+						...postList.map( post => ( { label: post.title.rendered, value: post.id } ) ),
+					] }
+					onChange={ onSingleChange }
+				/>
+			),
+			! selectedSingleId && <BaseControl { ...this.props } />,
+			! selectedSingleId && onAuthorChange && (
 				<SelectControl
 					key="query-controls-author-select"
 					label={ __( 'Author' ) }
