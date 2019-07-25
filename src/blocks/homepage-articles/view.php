@@ -30,7 +30,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		'author'              => $author,
 		'ignore_sticky_posts' => true,
 	);
-	if ( $single ) {
+	if ( $single_mode ) {
 		$args['p'] = $single;
 	} else {
 		$args['cat']    = $categories;
