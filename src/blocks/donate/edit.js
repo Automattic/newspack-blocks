@@ -26,15 +26,9 @@ import {
 	ExternalLink,
 } from '@wordpress/components';
 
-/**
- * Internal dependencies
- */
-import donateBlock from './donate';
-
 class Edit extends Component {
 	constructor( props ) {
 		super( props );
-		//this.blockRef = createRef();
 		this.state = {
 			name: __( 'Donate' ),
 			suggestedAmount: 0,
@@ -50,7 +44,6 @@ class Edit extends Component {
 	}
 
 	componentDidMount() {
-		//donateBlock( this.blockRef.current, true );
 		this.getSettings();
 	}
 
@@ -136,7 +129,7 @@ class Edit extends Component {
 								/>
 							) }
 							<p className='info-message'>{ __( 'Your contribution is appreciated.' ) }</p>
-							<button className="primary" onClick={ () => {} }>{ __( 'Donate now!' ) }</button>
+							<button className="primary" onClick={ evt => evt.preventDefault() } >{ __( 'Donate now!' ) }</button>
 						</div>
 					</form>
 				</div>
