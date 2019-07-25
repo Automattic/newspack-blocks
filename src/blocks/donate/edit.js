@@ -7,6 +7,7 @@ import classNames from 'classnames';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
+import apiFetch from '@wordpress/api-fetch';
 import { createRef, Component, Fragment } from '@wordpress/element';
 import { InspectorControls } from '@wordpress/editor';
 import {
@@ -20,100 +21,131 @@ import {
 	Dashicon,
 	Placeholder,
 	Spinner,
+	RadioControl,
+	TextControl,
+	ExternalLink,
 } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import Tiers from './tiers';
 import donateBlock from './donate';
 
 class Edit extends Component {
 	constructor( props ) {
 		super( props );
-		this.blockRef = createRef();
+		//this.blockRef = createRef();
+		this.state = {
+			name: __( 'Donate' ),
+			suggestedAmount: 0,
+			suggestedAmountLow: 0,
+			suggestedAmountHigh: 0,
+			tiered: false,
+
+			isLoading: false,
+			activeTier: 'middle',
+			selectedFrequency: 'month',
+			customDonationAmount: 0,
+		}
 	}
 
 	componentDidMount() {
-		donateBlock( this.blockRef.current, true );
+		//donateBlock( this.blockRef.current, true );
+		this.getSettings();
+	}
+
+	getSettings() {
+		const path = '/newspack/v1/wizard/newspack-donations-wizard/donation';
+
+		this.setState( { isLoading: true }, () => {
+			apiFetch( { path } ).then( settings => {
+				const { name, suggestedAmount, suggestedAmountLow, suggestedAmountHigh, tiered } = settings;
+				this.setState( {
+					name,
+					suggestedAmount,
+					suggestedAmountLow,
+					suggestedAmountHigh,
+					tiered,
+					isLoading: false,
+					customDonationAmount: suggestedAmount,
+				} );
+			} )
+			.catch( error => {
+				console.log( error );
+			} );
+		} );
 	}
 
 	render() {
 		/**
 		 * Constants
 		 */
-		const { attributes, className, setAttributes } = this.props;
-		const { tiers, monthly_term, annual_term, one_time } = attributes;
+		const { className } = this.props;
+		const { 
+			name,
+			suggestedAmount,
+			suggestedAmountLow,
+			suggestedAmountHigh,
+			tiered,
+
+			isLoading,
+			activeTier,
+			selectedFrequency,
+			customDonationAmount,
+		} = this.state;
+
+		if ( isLoading ) {
+			return 'Loading . . . ';
+		}
+
 		return (
 			<Fragment>
-				<div className={ className } ref={ this.blockRef }>
+				<div className={ classNames( className, tiered ? 'tiered' : '' ) }>
 					<form>
-						<ul className="levels">
-							{ tiers.map( ( tier, index ) => (
-								<li data-tier={ index } data-minimum={ tier.minimum } data-title={ tier.title }>
-									<button href="#" key={ index }>
-										{ tier.title }
-									</button>
-								</li>
-							) ) }
-						</ul>
-						<div className="lower">
-							<div className="purchase-row">
-								<div className="amount">
-									<span className="currency">$</span>
-									<input type="text" />
-								</div>
-								<ul className="term">
-									{ monthly_term && (
-										<li data-term="monthly">
-											<button>per month</button>
-										</li>
-									) }
-									{ annual_term && (
-										<li data-term="annual">
-											<button>per year</button>
-										</li>
-									) }
-									{ one_time && (
-										<li data-term="one-time">
-											<button>one time</button>
-										</li>
-									) }
-								</ul>
-							</div>
-							<p className="membership-description">
-								{ __( 'This donation will make you a ' ) }
-								<span className="tier-name">Level 1</span> { __( 'member.' ) }
-							</p>
-							<button className="primary">Donate now</button>
+						<RadioControl
+							className='wp-block-newspack-blocks-donate__frequency-selection'
+							selected={ selectedFrequency }
+							options={ [
+								{ label: __( 'One-time' ), value: 'once' },
+								{ label: __( 'Monthly' ), value: 'month' },
+								{ label: __( 'Annually' ), value: 'year' },
+							] }
+							onChange={ selectedFrequency => this.setState( { selectedFrequency } ) }
+						/>
+						<div class='wp-block-newspack-blocks-donate__settings-container'>
+							{ tiered && (
+								<RadioControl
+									className='wp-block-newspack-blocks-donate__tier-selection'
+									selected={ activeTier }
+									options={ [
+										{ label: 'year' === selectedFrequency ? 12 * suggestedAmountLow : suggestedAmountLow, value: 'low' },
+										{ label: 'year' === selectedFrequency ? 12 * suggestedAmount : suggestedAmount, value: 'middle' },
+										{ label: 'year' === selectedFrequency ? 12 * suggestedAmountHigh : suggestedAmountHigh, value: 'high' },
+										{ label: __( 'Other' ), value: 'other' },
+									] }
+									onChange={ activeTier => this.setState( { activeTier } ) }
+								/>
+							) }
+							{ ( ! tiered || 'other' === activeTier ) && (
+								<TextControl
+									type='number'
+									className='wp-block-newspack-blocks-donate__manual-price'
+									label={ __( 'Donation amount' ) }
+									value={ customDonationAmount }
+									onChange={ customDonationAmount => this.setState( { customDonationAmount } ) }
+								/>
+							) }
+							<p className='info-message'>{ __( 'Your contribution is appreciated.' ) }</p>
+							<button className="primary" onClick={ () => {} }>{ __( 'Donate now!' ) }</button>
 						</div>
 					</form>
 				</div>
 				<InspectorControls>
-					<PanelBody title={ __( 'Tiers' ) }>
-						<Tiers
-							tiers={ tiers }
-							onChange={ value => {
-								setAttributes( { tiers: value } );
-							} }
-						/>
-					</PanelBody>
-					<PanelBody title={ __( 'Term Options' ) }>
-						<CheckboxControl
-							label={ __( 'Monthly term' ) }
-							value={ monthly_term }
-							onChange={ checked => setAttributes( { monthly_term: checked } ) }
-						/>
-						<CheckboxControl
-							label={ __( 'Annual term' ) }
-							value={ annual_term }
-							onChange={ checked => setAttributes( { annual_term: checked } ) }
-						/>
-						<CheckboxControl
-							label={ __( 'Allow One Time Payments' ) }
-							value={ one_time }
-							onChange={ checked => setAttributes( { one_time: checked } ) }
-						/>
+					<PanelBody title={ __( 'Donate Block' ) }>
+						<p>{ __( 'The Donate Block allows you to collect donations from readers. The fields are automatically defined based on your donation settings.' ) }</p>
+						<ExternalLink href='/wp-admin/admin.php?page=newspack-donations-wizard#/'>
+							{ __( 'Edit donation settings.' ) }
+						</ExternalLink>{' '}
 					</PanelBody>
 				</InspectorControls>
 			</Fragment>

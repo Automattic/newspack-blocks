@@ -1,6 +1,113 @@
+$primary_color: #2A7DE1;
+
 .wp-block-newspack-blocks-donate {
 	width: 100%;
+	background-color: $muriel-gray-0;
+
+	button.primary {
+		background: #2A7DE1;
+		border: none;
+		border-radius: 3px;
+		color: $muriel-white;
+		padding: 16px 24px;
+		width: auto;
+		text-transform: none;
+		font-family: 'Segoe UI', sans-serif;
+		font-weight: 500;
+		font-size: 14px;
+	}
 }
-.editor-styles-wrapper .wp-block-newspack-blocks-donate ul {
-	margin: 0;
+
+.wp-block-newspack-blocks-donate__manual-price {
+	label.components-base-control__label {
+		color: $muriel-gray-300;
+		margin-top: 6px;
+		margin-bottom: -6px;
+	}
+
+	input[type="number"] {
+		border-radius: 3px;
+		border: 2px solid $primary_color;
+		padding: 25px 15px;
+		font-size: 16px;
+		margin: 10px 10px 4px 0;
+		max-width: 150px;
+	}
+}
+
+.wp-block-newspack-blocks-donate__settings-container {
+	margin-left: 30px;
+	padding-bottom: 35px;
+
+	p.info-message {
+		font-family: 'Segoe UI', sans-serif;
+		font-size: 14px;
+		margin-top: 8px;
+		margin-bottom: 22px;
+	}
+}
+
+.wp-block-newspack-blocks-donate__frequency-selection,
+.wp-block-newspack-blocks-donate__tier-selection {
+	.components-base-control__field {
+		display: flex;
+	}
+
+	input[type='radio'] {
+		display: none;
+	}
+
+	label {
+		text-align: center;
+		display: block;
+		background-color: $muriel-white;
+		line-height: 3em;
+		font-weight: 500;
+	}
+}
+
+
+.wp-block-newspack-blocks-donate__frequency-selection {
+	margin-bottom: 15px;
+
+	.components-radio-control__option {
+		width: 100%;
+	}
+
+	label {
+		border: 1px solid $muriel-gray-400;
+		text-transform: uppercase;
+		color: $muriel-gray-500;
+	}
+
+	.components-radio-control__option:nth-of-type(2) label {
+		border-left: none;
+		border-right: none;
+	}
+
+	input[type='radio']:checked + label {
+		color: $muriel-white;
+		background-color: $muriel-gray-500;
+	}
+}
+
+.wp-block-newspack-blocks-donate__tier-selection {
+	label {
+		border: 1px solid $muriel-gray-200;
+		border-radius: 3px;
+		font-size: 16px;
+		margin-left: 25px;
+		padding-left: 1em;
+		padding-right: 1em;
+	}
+
+	.components-radio-control__option:nth-of-type(1) label {
+		margin-left: 0;
+	}
+
+	input[type='radio']:checked + label {
+		color: $muriel-white;
+		background-color: $primary_color;
+		border: none;
+	}
 }

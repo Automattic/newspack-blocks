@@ -2,11 +2,13 @@
  * External dependencies
  */
 import { Path, SVG } from '@wordpress/components';
+import apiFetch from '@wordpress/api-fetch';
+import { registerStore } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
-import { __ } from '@wordpress/i18n';
 import edit from './edit';
 
 /**
@@ -22,7 +24,7 @@ export const title = __( 'Donate' );
 export const icon = (
 	<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
 		<Path d="M0 0h24v24H0z" fill="none" />
-		<Path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" />
+		<Path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
 	</SVG>
 );
 
@@ -35,20 +37,7 @@ export const settings = {
 	attributes: {
 		className: {
 			type: 'string',
-		},
-		tiers: {
-			type: 'array',
-			default: [],
-		},
-		monthly_term: {
-			type: 'boolean',
-		},
-		annual_term: {
-			type: 'boolean',
-		},
-		one_time: {
-			type: 'boolean',
-		},
+		}
 	},
 	supports: {
 		html: false,
