@@ -8,18 +8,11 @@ import classNames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
-import { createRef, Component, Fragment } from '@wordpress/element';
+import { Component, Fragment } from '@wordpress/element';
 import { InspectorControls } from '@wordpress/editor';
 import {
 	CheckboxControl,
-	ToggleControl,
 	PanelBody,
-	PanelRow,
-	QueryControls,
-	RangeControl,
-	Toolbar,
-	Dashicon,
-	Placeholder,
 	Spinner,
 	RadioControl,
 	TextControl,
@@ -30,16 +23,17 @@ class Edit extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			name: __( 'Donate' ),
-			suggestedAmount: 0,
-			suggestedAmountLow: 0,
-			suggestedAmountHigh: 0,
+			suggestedAmounts: [ 0, 0, 0 ],
+			suggestedAmountUntiered: 0,
+			currencySymbol: '$',
 			tiered: false,
+			created: false,
 
 			isLoading: false,
-			activeTier: 'middle',
+			activeTier: 1,
 			selectedFrequency: 'month',
 			customDonationAmount: 0,
+			error: '',
 		}
 	}
 
@@ -52,44 +46,77 @@ class Edit extends Component {
 
 		this.setState( { isLoading: true }, () => {
 			apiFetch( { path } ).then( settings => {
-				const { name, suggestedAmount, suggestedAmountLow, suggestedAmountHigh, tiered } = settings;
+				const { suggestedAmounts, suggestedAmountUntiered, currencySymbol, tiered, created } = settings;
 				this.setState( {
-					name,
-					suggestedAmount,
-					suggestedAmountLow,
-					suggestedAmountHigh,
+					suggestedAmounts,
+					suggestedAmountUntiered,
+					currencySymbol,
 					tiered,
+					created,
 					isLoading: false,
-					customDonationAmount: suggestedAmount,
+					customDonationAmount: tiered ? suggestedAmounts[1] : suggestedAmountUntiered,
+					activeTier: suggestedAmounts[1],
 				} );
 			} )
 			.catch( error => {
-				console.log( error );
+				this.setState( {
+					isLoading: false,
+					error: error.message
+				} );
 			} );
 		} );
 	}
 
 	render() {
-		/**
-		 * Constants
-		 */
 		const { className } = this.props;
 		const { 
-			name,
-			suggestedAmount,
-			suggestedAmountLow,
-			suggestedAmountHigh,
+			suggestedAmounts,
+			suggestedAmountUntiered,
+			currencySymbol,
 			tiered,
+			created,
 
 			isLoading,
 			activeTier,
 			selectedFrequency,
 			customDonationAmount,
+			error,
 		} = this.state;
 
 		if ( isLoading ) {
-			return 'Loading . . . ';
+			return (
+				<div className={ classNames( className, 'loading' ) }>
+					<Spinner />
+				</div>
+			);
 		}
+
+		if ( error.length ) {
+			return (
+				<div className={ classNames( className, 'not-ready' ) }>
+					<p>{ error }</p>
+				</div>
+			);
+		}
+
+		if ( ! created ) {
+			return (
+				<div className={ classNames( className, 'not-ready' ) }>
+					<p>{ __( 'You have not set up your donation settings yet. You need to do that before you can use the Donate Block.' ) }</p>
+					<ExternalLink href='/wp-admin/admin.php?page=newspack-donations-wizard#/'>
+						{ __( 'Set up donation settings.' ) }
+					</ExternalLink>
+				</div>
+			);
+		}
+
+		const tierOptions = suggestedAmounts.map( amt => ( 
+			{ 
+				label: 'year' === selectedFrequency ? currencySymbol + ( 12 * amt ) : currencySymbol + amt, 
+				value: amt,
+			} 
+		) );
+		tierOptions.push( { label: __( 'Other' ), value: 'other' } );
 
 		return (
 			<Fragment>
@@ -110,23 +137,20 @@ class Edit extends Component {
 								<RadioControl
 									className='wp-block-newspack-blocks-donate__tier-selection'
 									selected={ activeTier }
-									options={ [
-										{ label: 'year' === selectedFrequency ? 12 * suggestedAmountLow : suggestedAmountLow, value: 'low' },
-										{ label: 'year' === selectedFrequency ? 12 * suggestedAmount : suggestedAmount, value: 'middle' },
-										{ label: 'year' === selectedFrequency ? 12 * suggestedAmountHigh : suggestedAmountHigh, value: 'high' },
-										{ label: __( 'Other' ), value: 'other' },
-									] }
+									options={ tierOptions }
 									onChange={ activeTier => this.setState( { activeTier } ) }
 								/>
 							) }
 							{ ( ! tiered || 'other' === activeTier ) && (
-								<TextControl
-									type='number'
-									className='wp-block-newspack-blocks-donate__manual-price'
-									label={ __( 'Donation amount' ) }
-									value={ customDonationAmount }
-									onChange={ customDonationAmount => this.setState( { customDonationAmount } ) }
-								/>
+								<div className='wp-block-newspack-blocks-donate__money-input'>
+									<span className='currency'>{ currencySymbol }</span>
+									<TextControl
+										type='number'
+										label={ __( 'Donation amount' ) }
+										value={ customDonationAmount }
+										onChange={ customDonationAmount => this.setState( { customDonationAmount } ) }
+									/>
+								</div>
 							) }
 							<p className='info-message'>{ __( 'Your contribution is appreciated.' ) }</p>
 							<button className="primary" onClick={ evt => evt.preventDefault() } >{ __( 'Donate now!' ) }</button>
@@ -138,7 +162,7 @@ class Edit extends Component {
 						<p>{ __( 'The Donate Block allows you to collect donations from readers. The fields are automatically defined based on your donation settings.' ) }</p>
 						<ExternalLink href='/wp-admin/admin.php?page=newspack-donations-wizard#/'>
 							{ __( 'Edit donation settings.' ) }
-						</ExternalLink>{' '}
+						</ExternalLink>
 					</PanelBody>
 				</InspectorControls>
 			</Fragment>
