@@ -1,6 +1,7 @@
 $primary_color: #2A7DE1;
 
 .newspack-blocks-donate {
+	position: relative;
 	width: 100%;
 	background-color: $muriel-gray-0;
 	font-size: 14px;
@@ -26,56 +27,91 @@ $primary_color: #2A7DE1;
 	}
 }
 
-.newspack-blocks-donate__tiers {
-	margin-top: 2em;
-	display: none;
+.newspack-blocks-donate.tiered {
+	.newspack-blocks-donate__tiers {
+		margin-top: 2em;
+		display: none;
 
-	.tier-select-label {
-		border: 1px solid $muriel-gray-200;
-		border-radius: 3px;
-		font-size: 16px;
-		margin-left: 25px;
-		padding-left: 1em;
-		padding-right: 1em;
+		.tier-select-label {
+			border: 1px solid $muriel-gray-200;
+			border-radius: 3px;
+			font-size: 16px;
+			margin-left: 25px;
+			padding-left: 1em;
+			padding-right: 1em;
+		}
+
+		input[type='radio']:checked {
+			& + .tier-select-label {
+				color: $muriel-white;
+				background-color: $primary_color;
+			}
+		}
+
+		.other-donate-label {
+			position: absolute;
+			top: 10em;
+			left: 2em;
+			color: $muriel-gray-300;
+		}
+
+		input.other-input {
+			& ~ .newspack-blocks-donate__money-input,
+			& ~ .other-donate-label {
+				display: none;
+			}
+
+			&:checked ~ .newspack-blocks-donate__money-input,
+			&:checked ~ .other-donate-label {
+				display: block;
+			}
+
+			&:checked + label {
+				margin-bottom: 6em;
+			}
+		}
 	}
 
-	input[type='radio']:checked {
-		& + .tier-select-label {
-			color: $muriel-white;
-			background-color: $primary_color;
+	.newspack-blocks-donate__money-input {
+		position: absolute;
+		top: 12em;
+		left: 24px;
+	}
+}
+
+.newspack-blocks-donate.untiered {
+	padding-top: 3em;
+
+	.input-container {
+		margin-left: 2em;
+		margin-top: 2em;
+		display: none;
+
+		label {
+			color: $muriel-gray-300;
 		}
+	}
+
+	input[type='radio']:checked ~ .input-container {
+		display: block;
+	}
+}
+
+.newspack-blocks-donate__money-input {
+	position: relative;
+
+	.currency {
+		position: absolute;
+		top: 9px;
+		left: 1em;
+		font-size: 16px;
 	}
 
 	input[type='number'] {
-		position: absolute;
-		top: 10.5em;
-		left: 24px;
 		font-size: 16px;
 		border: 2px solid $primary_color;
 		border-radius: 3px;
-	}
-
-	.other-donate-label {
-		position: absolute;
-		top: 10em;
-		left: 2em;
-		color: $muriel-gray-300;
-	}
-
-	input.other-input {
-		& ~ input[type='number'],
-		& ~ .other-donate-label {
-			display: none;
-		}
-
-		&:checked ~ input[type='number'],
-		&:checked ~ .other-donate-label {
-			display: block;
-		}
-
-		&:checked + label {
-			margin-bottom: 6em;
-		}
+		padding-left: 2em;
 	}
 }
 
@@ -118,4 +154,24 @@ $primary_color: #2A7DE1;
 
 .newspack-blocks-donate__thanks {
 	margin-left: 2em;
+}
+
+@media screen and (max-width: 600px) {
+	.newspack-blocks-donate__tiers {
+		justify-content: space-around;
+
+		.tier-select-label {
+			margin-left: 0;
+			border-radius: 0;
+			font-size: 12px;
+		}
+
+		.other-donate-label {
+			top: 8.5em;
+		}
+
+		.newspack-blocks-donate__money-input {
+			top: 10.5em;
+		}
+	}
 }
