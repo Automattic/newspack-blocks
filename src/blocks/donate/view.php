@@ -28,7 +28,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 	$frequencies = [
 		'once'  => __( 'One-time', 'newspack' ),
 		'month' => __( 'Monthly', 'newspack' ),
-		'year'  => __( 'Anually', 'newspack' ),
+		'year'  => __( 'Annually', 'newspack' ),
 	];
 
 	$selected_frequency = 'month';
