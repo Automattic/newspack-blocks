@@ -157,21 +157,23 @@ $primary_color: #2A7DE1;
 }
 
 @media screen and (max-width: 600px) {
-	.newspack-blocks-donate__tiers {
-		justify-content: space-around;
+	.newspack-blocks-donate.tiered {
+		.newspack-blocks-donate__tiers {
+			justify-content: space-around;
 
-		.tier-select-label {
-			margin-left: 0;
-			border-radius: 0;
-			font-size: 12px;
-		}
+			.tier-select-label {
+				margin-left: 0;
+				border-radius: 0;
+				font-size: 12px;
+			}
 
-		.other-donate-label {
-			top: 8.5em;
-		}
+			.other-donate-label {
+				top: 8.5em;
+			}
 
-		.newspack-blocks-donate__money-input {
-			top: 10.5em;
+			.newspack-blocks-donate__money-input {
+				top: 10.5em;
+			}
 		}
 	}
 }
