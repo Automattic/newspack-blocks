@@ -11,12 +11,10 @@ import apiFetch from '@wordpress/api-fetch';
 import { Component, Fragment } from '@wordpress/element';
 import { InspectorControls } from '@wordpress/editor';
 import {
-	CheckboxControl,
 	PanelBody,
-	Spinner,
-	RadioControl,
-	TextControl,
 	ExternalLink,
+	Placeholder,
+	Spinner,
 } from '@wordpress/components';
 
 class Edit extends Component {
@@ -211,28 +209,35 @@ class Edit extends Component {
 
 		if ( isLoading ) {
 			return (
-				<div className={ classNames( className, 'loading' ) }>
-					<Spinner />
-				</div>
+				<Placeholder icon={ <Spinner /> } />
 			);
 		}
 
 		if ( error.length ) {
 			return (
-				<div className={ classNames( className, 'not-ready' ) }>
-					<p>{ error }</p>
-				</div>
+				<Placeholder
+					icon='warning'
+					label={ __( 'Error' ) }
+					instructions={ error }
+				>
+					<ExternalLink href='/wp-admin/admin.php?page=newspack-donations-wizard#/'>
+						{ __( 'Go to donation settings to troubleshoot.' ) }
+					</ExternalLink>
+				</Placeholder>
 			);
 		}
 
 		if ( ! created ) {
 			return (
-				<div className={ classNames( className, 'not-ready' ) }>
-					<p>{ __( 'You have not set up your donation settings yet. You need to do that before you can use the Donate Block.' ) }</p>
+				<Placeholder
+					icon='warning'
+					label={ __( 'Not ready' ) }
+					instructions={ __( 'You have not set up your donation settings yet. You need to do that before you can use the Donate Block.' ) }
+				>
 					<ExternalLink href='/wp-admin/admin.php?page=newspack-donations-wizard#/'>
 						{ __( 'Set up donation settings.' ) }
 					</ExternalLink>
-				</div>
+				</Placeholder>
 			);
 		}
 
