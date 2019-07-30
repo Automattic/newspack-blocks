@@ -13,14 +13,13 @@
  * @return string
  */
 function newspack_blocks_render_block_donate( $attributes ) {
-	if ( ! class_exists( 'Newspack\Configuration_Managers' ) ) {
+	if ( ! class_exists( 'Newspack\Donations' ) ) {
 		return '';
 	}
 
 	Newspack_Blocks::enqueue_view_assets( 'donate' );
 
-	$configuration_manager = Newspack\Configuration_Managers::configuration_manager_class_for_plugin_slug( 'woocommerce' );
-	$settings = $configuration_manager->get_donation_settings();
+	$settings = Newspack\Donations::get_donation_settings();
 	if ( is_wp_error( $settings ) || ! $settings['created'] ) {
 		return '';
 	}
@@ -142,6 +141,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 
 	return ob_get_clean();
 }
+
 
 /**
  * Registers the `newspack-blocks/donate` block on server.
