@@ -1,6 +1,6 @@
 $primary_color: #2A7DE1;
 
-.newspack-blocks-donate {
+.wp-block-newspack-blocks-donate {
 	position: relative;
 	width: 100%;
 	background-color: $muriel-gray-0;
@@ -27,8 +27,8 @@ $primary_color: #2A7DE1;
 	}
 }
 
-.newspack-blocks-donate.tiered {
-	.newspack-blocks-donate__tiers {
+.wp-block-newspack-blocks-donate.tiered {
+	.wp-block-newspack-blocks-donate__tiers {
 		margin-top: 2em;
 		display: none;
 
@@ -56,12 +56,12 @@ $primary_color: #2A7DE1;
 		}
 
 		input.other-input {
-			& ~ .newspack-blocks-donate__money-input,
+			& ~ .wp-block-newspack-blocks-donate__money-input,
 			& ~ .other-donate-label {
 				display: none;
 			}
 
-			&:checked ~ .newspack-blocks-donate__money-input,
+			&:checked ~ .wp-block-newspack-blocks-donate__money-input,
 			&:checked ~ .other-donate-label {
 				display: block;
 			}
@@ -72,14 +72,14 @@ $primary_color: #2A7DE1;
 		}
 	}
 
-	.newspack-blocks-donate__money-input {
+	.wp-block-newspack-blocks-donate__money-input {
 		position: absolute;
 		top: 12em;
 		left: 24px;
 	}
 }
 
-.newspack-blocks-donate.untiered {
+.wp-block-newspack-blocks-donate.untiered {
 	padding-top: 3em;
 
 	.input-container {
@@ -97,7 +97,7 @@ $primary_color: #2A7DE1;
 	}
 }
 
-.newspack-blocks-donate__money-input {
+.wp-block-newspack-blocks-donate__money-input {
 	position: relative;
 
 	.currency {
@@ -115,12 +115,12 @@ $primary_color: #2A7DE1;
 	}
 }
 
-.newspack-blocks-donate__frequencies {
+.wp-block-newspack-blocks-donate__frequencies {
 	position: relative;
 	padding-top: 3em;
 }
 
-.newspack-blocks-donate__frequency {
+.wp-block-newspack-blocks-donate__frequency {
 	.donation-frequency-label {
 		width: 33.333%;
 		position: absolute;
@@ -136,7 +136,7 @@ $primary_color: #2A7DE1;
 			background-color: $muriel-gray-500;
 		}
 
-		& ~ .newspack-blocks-donate__tiers {
+		& ~ .wp-block-newspack-blocks-donate__tiers {
 			display: flex;
 		}
 	}
@@ -152,13 +152,13 @@ $primary_color: #2A7DE1;
 	}
 }
 
-.newspack-blocks-donate__thanks {
+.wp-block-newspack-blocks-donate__thanks {
 	margin-left: 2em;
 }
 
 @media screen and (max-width: 600px) {
-	.newspack-blocks-donate.tiered {
-		.newspack-blocks-donate__tiers {
+	.wp-block-newspack-blocks-donate.tiered {
+		.wp-block-newspack-blocks-donate__tiers {
 			justify-content: space-around;
 
 			.tier-select-label {
@@ -171,7 +171,7 @@ $primary_color: #2A7DE1;
 				top: 8.5em;
 			}
 
-			.newspack-blocks-donate__money-input {
+			.wp-block-newspack-blocks-donate__money-input {
 				top: 10.5em;
 			}
 		}

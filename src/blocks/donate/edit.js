@@ -32,7 +32,11 @@ class Edit extends Component {
 			isLoading: false,
 			activeTier: 1,
 			selectedFrequency: 'month',
-			customDonationAmount: 0,
+			customDonationAmounts: {
+				once: 0,
+				month: 0,
+				year: 0,
+			},
 			error: '',
 		}
 	}
@@ -54,7 +58,11 @@ class Edit extends Component {
 					tiered,
 					created,
 					isLoading: false,
-					customDonationAmount: tiered ? suggestedAmounts[1] : suggestedAmountUntiered,
+					customDonationAmounts: {
+						once: tiered ? suggestedAmounts[1] : suggestedAmountUntiered,
+						month: tiered ? suggestedAmounts[1] : suggestedAmountUntiered,
+						year: tiered ? 12 * suggestedAmounts[1] : 12 * suggestedAmountUntiered,
+					},
 					activeTier: suggestedAmounts[1],
 				} );
 			} )
@@ -67,19 +75,137 @@ class Edit extends Component {
 		} );
 	}
 
-	render() {
+	handleCustomDonationChange( evt, frequency ) {
+		const { customDonationAmounts } = this.state;
+		customDonationAmounts[ frequency ] = evt.target.value;
+		this.setState( { customDonationAmounts } );
+	}
+
+	renderUntieredForm() {
+		const { className } = this.props;
+		const { 
+			currencySymbol,
+			selectedFrequency,
+			customDonationAmounts,
+			error,
+		} = this.state;
+
+		const frequencies = {
+			once: __( 'Once' ),
+			month: __( 'Month' ),
+			year: __( 'Year' ),
+		};
+
+		return (
+			<div className={ classNames( className, 'untiered' ) }>
+				<form>
+					<div className='wp-block-newspack-blocks-donate__options'>
+						{ Object.keys( frequencies ).map( frequencySlug => (
+							<div className='wp-block-newspack-blocks-donate__frequency'>
+								<input type='radio' onClick={ () => this.setState( { selectedFrequency: frequencySlug } ) } id={ 'newspack-donate-' + frequencySlug } name='donation_frequency' checked={ frequencySlug === selectedFrequency } />
+								<label htmlFor={ 'newspack-donate-' + frequencySlug } className='donation-frequency-label'>
+									{ frequencies[ frequencySlug ] }
+								</label>
+								<div className='input-container'>
+									<label className='donate-label' htmlFor={ 'newspack-' + frequencySlug + '-untiered-input' }>
+										{ __( 'Donation amount' ) }
+									</label>
+									<div className='wp-block-newspack-blocks-donate__money-input'>
+										<span className='currency'>
+											{ currencySymbol }
+										</span>
+										<input type='number' onChange={ evt => this.handleCustomDonationChange( evt, frequencySlug ) } value={ customDonationAmounts[ frequencySlug ] } id={ 'newspack-' + frequencySlug + '-untiered-input' } />
+									</div>
+								</div>
+							</div>
+						) ) }
+					</div>
+					<p className='wp-block-newspack-blocks-donate__thanks'>
+						{ __( 'Your contribution is appreciated' ) }
+					</p>
+					<button type='submit' onClick={ evt => evt.preventDefault() }>
+						{ __( 'Donate now!' ) }
+					</button>
+				</form>
+			</div>
+		);
+
+	}
+
+	renderTieredForm() {
 		const { className } = this.props;
 		const { 
 			suggestedAmounts,
-			suggestedAmountUntiered,
 			currencySymbol,
-			tiered,
-			created,
-
-			isLoading,
 			activeTier,
 			selectedFrequency,
-			customDonationAmount,
+			customDonationAmounts,
+		} = this.state;
+
+		const frequencies = {
+			once: __( 'Once' ),
+			month: __( 'Month' ),
+			year: __( 'Year' ),
+		};
+
+		return (
+			<div className={ classNames( className, 'tiered' ) }>
+				<form>
+					<div className='wp-block-newspack-blocks-donate__options'>
+						<div className='wp-block-newspack-blocks-donate__frequencies'>
+							{ Object.keys( frequencies ).map( frequencySlug => (
+								<div className='wp-block-newspack-blocks-donate__frequency'>
+									<input type='radio' onClick={ () => this.setState( { selectedFrequency: frequencySlug } ) } id={ 'newspack-donate-' + frequencySlug } name='donation_frequency' checked={ frequencySlug === selectedFrequency } />
+									<label htmlFor={ 'newspack-donate-' + frequencySlug } className='donation-frequency-label'>
+										{ frequencies[ frequencySlug ] }
+									</label>
+
+									<div className='wp-block-newspack-blocks-donate__tiers'>
+										{ suggestedAmounts.map( ( suggestedAmount, index ) => (
+											<div className='wp-block-newspack-blocks-donate__tier'>
+												<input type='radio' onClick={ () => this.setState( { activeTier: index } ) } id={ 'newspack-tier-' + frequencySlug + '-' + index } checked={ index === activeTier } />
+												<label className='tier-select-label' htmlFor={ 'newspack-tier-' + frequencySlug + '-' + index }>
+													{ currencySymbol + suggestedAmount }
+												</label>
+											</div>
+										) ) }
+
+										<div className='wp-block-newspack-blocks-donate__tier'>
+											<input type='radio' onClick={ () => this.setState( { activeTier: 'other' } ) } className='other-input' id={ 'newspack-tier-' + frequencySlug + '-other' } checked={ 'other' === activeTier } />
+											<label className='tier-select-label' htmlFor={ 'newspack-tier-' + frequencySlug + '-other' }>
+												{ __( 'Other' ) }
+											</label>
+											<div className='wp-block-newspack-blocks-donate__money-input'>
+												<span className='currency'>
+													{ currencySymbol }
+												</span>
+												<input type='number' onChange={ evt => this.handleCustomDonationChange( evt, frequencySlug ) } value={ customDonationAmounts[ frequencySlug ] } id={ 'newspack-tier-' + frequencySlug + '-other-input' } />
+											</div>
+										</div>
+									</div>
+
+
+								</div>
+							) ) }
+						</div>
+					</div>
+					<p className='wp-block-newspack-blocks-donate__thanks'>
+						{ __( 'Your contribution is appreciated' ) }
+					</p>
+					<button type='submit' onClick={ evt => evt.preventDefault() }>
+						{ __( 'Donate now!' ) }
+					</button>
+				</form>
+			</div>
+		);
+	}
+
+	render() {
+		const { className } = this.props;
+		const { 
+			tiered,
+			created,
+			isLoading,
 			error,
 		} = this.state;
 
@@ -110,53 +236,16 @@ class Edit extends Component {
 			);
 		}
 
-		const tierOptions = suggestedAmounts.map( amt => ( 
-			{ 
-				label: 'year' === selectedFrequency ? currencySymbol + ( 12 * amt ) : currencySymbol + amt, 
-				value: amt,
-			} 
-		) );
-		tierOptions.push( { label: __( 'Other' ), value: 'other' } );
+		let form;
+		if ( ! tiered ) {
+			form = this.renderUntieredForm();
+		} else {
+			form = this.renderTieredForm();
+		}
 
 		return (
 			<Fragment>
-				<div className={ classNames( className, tiered ? 'tiered' : '' ) }>
-					<form>
-						<RadioControl
-							className='wp-block-newspack-blocks-donate__frequency-selection'
-							selected={ selectedFrequency }
-							options={ [
-								{ label: __( 'One-time' ), value: 'once' },
-								{ label: __( 'Monthly' ), value: 'month' },
-								{ label: __( 'Annually' ), value: 'year' },
-							] }
-							onChange={ selectedFrequency => this.setState( { selectedFrequency } ) }
-						/>
-						<div className='wp-block-newspack-blocks-donate__settings-container'>
-							{ tiered && (
-								<RadioControl
-									className='wp-block-newspack-blocks-donate__tier-selection'
-									selected={ activeTier }
-									options={ tierOptions }
-									onChange={ activeTier => this.setState( { activeTier } ) }
-								/>
-							) }
-							{ ( ! tiered || 'other' === activeTier ) && (
-								<div className='wp-block-newspack-blocks-donate__money-input'>
-									<span className='currency'>{ currencySymbol }</span>
-									<TextControl
-										type='number'
-										label={ __( 'Donation amount' ) }
-										value={ customDonationAmount }
-										onChange={ customDonationAmount => this.setState( { customDonationAmount } ) }
-									/>
-								</div>
-							) }
-							<p className='info-message'>{ __( 'Your contribution is appreciated.' ) }</p>
-							<button className="primary" onClick={ evt => evt.preventDefault() } >{ __( 'Donate now!' ) }</button>
-						</div>
-					</form>
-				</div>
+				{ form }
 				<InspectorControls>
 					<PanelBody title={ __( 'Donate Block' ) }>
 						<p>{ __( 'The Donate Block allows you to collect donations from readers. The fields are automatically defined based on your donation settings.' ) }</p>
