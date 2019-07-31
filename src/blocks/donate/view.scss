@@ -105,7 +105,7 @@ $primary_color: #2A7DE1;
 
 .wp-block-newspack-blocks-donate__money-input {
 	position: relative;
-
+	max-width: 200px;
 	background-color: $muriel-white;
 	border: 2px solid $primary_color;
 	border-radius: 3px;
@@ -122,6 +122,7 @@ $primary_color: #2A7DE1;
 		outline: none;
 		box-shadow: none;
 		background: none;
+		max-width: 174px;
 
 		&:focus {
 			border: none;
