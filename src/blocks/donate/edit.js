@@ -61,7 +61,7 @@ class Edit extends Component {
 						month: tiered ? suggestedAmounts[1] : suggestedAmountUntiered,
 						year: tiered ? 12 * suggestedAmounts[1] : 12 * suggestedAmountUntiered,
 					},
-					activeTier: suggestedAmounts[1],
+					activeTier: 1,
 				} );
 			} )
 			.catch( error => {
@@ -163,7 +163,7 @@ class Edit extends Component {
 											<div className='wp-block-newspack-blocks-donate__tier'>
 												<input type='radio' onClick={ () => this.setState( { activeTier: index } ) } id={ 'newspack-tier-' + frequencySlug + '-' + index } checked={ index === activeTier } />
 												<label className='tier-select-label' htmlFor={ 'newspack-tier-' + frequencySlug + '-' + index }>
-													{ currencySymbol + suggestedAmount }
+													{ currencySymbol + ( 'year' === frequencySlug ? 12 * suggestedAmount : suggestedAmount ) }
 												</label>
 											</div>
 										) ) }
@@ -172,6 +172,9 @@ class Edit extends Component {
 											<input type='radio' onClick={ () => this.setState( { activeTier: 'other' } ) } className='other-input' id={ 'newspack-tier-' + frequencySlug + '-other' } checked={ 'other' === activeTier } />
 											<label className='tier-select-label' htmlFor={ 'newspack-tier-' + frequencySlug + '-other' }>
 												{ __( 'Other' ) }
+											</label>
+											<label className='other-donate-label' htmlFor={ 'newspack-tier-' + frequencySlug + '-other-input' }>
+												 { __( 'Donation amount' ) }
 											</label>
 											<div className='wp-block-newspack-blocks-donate__money-input'>
 												<span className='currency'>

@@ -16,6 +16,7 @@ $primary_color: #2A7DE1;
 		display: block;
 		background-color: $muriel-white;
 		line-height: 3em;
+		height: 3em;
 		font-weight: bold;
 		cursor: pointer;
 	}
@@ -24,6 +25,11 @@ $primary_color: #2A7DE1;
 		margin-bottom: 2em;
 		font-size: 16px;
 		margin-left: 24px;
+	}
+
+	.wp-block-newspack-blocks-donate__thanks {
+		font-size: 14px;
+		margin-left: 2em;
 	}
 }
 
@@ -100,18 +106,28 @@ $primary_color: #2A7DE1;
 .wp-block-newspack-blocks-donate__money-input {
 	position: relative;
 
+	background-color: $muriel-white;
+	border: 2px solid $primary_color;
+	border-radius: 3px;
+
 	.currency {
-		position: absolute;
-		top: 9px;
-		left: 1em;
 		font-size: 16px;
+		padding-left: 0.5em;
+		cursor: default;
 	}
 
 	input[type='number'] {
 		font-size: 16px;
-		border: 2px solid $primary_color;
-		border-radius: 3px;
-		padding-left: 2em;
+		border: none;
+		outline: none;
+		box-shadow: none;
+		background: none;
+
+		&:focus {
+			border: none;
+			outline: none;
+			box-shadow: none;
+		}
 	}
 }
 
@@ -152,27 +168,31 @@ $primary_color: #2A7DE1;
 	}
 }
 
-.wp-block-newspack-blocks-donate__thanks {
-	margin-left: 2em;
-}
-
 @media screen and (max-width: 600px) {
-	.wp-block-newspack-blocks-donate.tiered {
-		.wp-block-newspack-blocks-donate__tiers {
-			justify-content: space-around;
+	.wp-block-newspack-blocks-donate {
+		.donation-frequency-label {
+			font-size: 12px;
+			height: 42px;
+			line-height: 42px;
+		}
 
-			.tier-select-label {
-				margin-left: 0;
-				border-radius: 0;
-				font-size: 12px;
-			}
+		&.tiered {
+			.wp-block-newspack-blocks-donate__tiers {
+				justify-content: space-around;
 
-			.other-donate-label {
-				top: 8.5em;
-			}
+				.tier-select-label {
+					margin-left: 0;
+					border-radius: 0;
+					font-size: 12px;
+				}
 
-			.wp-block-newspack-blocks-donate__money-input {
-				top: 10.5em;
+				.other-donate-label {
+					top: 8.5em;
+				}
+
+				.wp-block-newspack-blocks-donate__money-input {
+					top: 10.5em;
+				}
 			}
 		}
 	}
