@@ -35,6 +35,17 @@ class Newspack_Blocks_API {
 			)
 		);
 
+		/* Add published date source. */
+		register_rest_field(
+			'post',
+			'newspack_published_date',
+			array(
+				'get_callback'    => array( 'Newspack_Blocks_API', 'newspack_blocks_get_published_date' ),
+				'update_callback' => null,
+				'schema'          => null,
+			)
+		);
+
 		/* Add first category source */
 		register_rest_field(
 			'post',
@@ -104,6 +115,18 @@ class Newspack_Blocks_API {
 
 		/* Return the author data */
 		return $author_data;
+	}
+
+	/**
+	 * Get date published info for the rest field.
+	 *
+	 * @param Array $object  The object info.
+	 */
+	public static function newspack_blocks_get_published_date( $object ) {
+		$published_date = get_the_date( '', $object['id'] );
+
+		/* Return the published date */
+		return $published_date;
 	}
 
 	/**

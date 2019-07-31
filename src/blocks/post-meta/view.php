@@ -59,8 +59,7 @@ function newspack_blocks_render_block_post_meta( $attributes ) {
 			);
 
 			printf(
-				'<span class="posted-on"><a href="%1$s" rel="bookmark">%2$s</a></span>',
-				esc_url( get_permalink() ),
+				'<span class="posted-on">%1$s</span>',
 				wp_kses(
 					$time_string,
 					array(
