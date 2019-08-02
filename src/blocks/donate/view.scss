@@ -1,0 +1,200 @@
+$primary_color: #2A7DE1;
+
+.wp-block-newspack-blocks-donate {
+	position: relative;
+	width: 100%;
+	background-color: $muriel-gray-0;
+	font-size: 14px;
+
+	input[type='radio'] {
+		display: none;
+	}
+
+	.donation-frequency-label,
+	.tier-select-label {
+		text-align: center;
+		display: block;
+		background-color: $muriel-white;
+		line-height: 3em;
+		height: 3em;
+		font-weight: bold;
+		cursor: pointer;
+	}
+
+	button[type='submit'] {
+		margin-bottom: 2em;
+		font-size: 16px;
+		margin-left: 24px;
+	}
+
+	.wp-block-newspack-blocks-donate__thanks {
+		font-size: 14px;
+		margin-left: 2em;
+	}
+}
+
+.wp-block-newspack-blocks-donate.tiered {
+	.wp-block-newspack-blocks-donate__tiers {
+		margin-top: 2em;
+		display: none;
+
+		.tier-select-label {
+			border: 1px solid $muriel-gray-200;
+			border-radius: 3px;
+			font-size: 16px;
+			margin-left: 25px;
+			padding-left: 1em;
+			padding-right: 1em;
+		}
+
+		input[type='radio']:checked {
+			& + .tier-select-label {
+				color: $muriel-white;
+				background-color: $primary_color;
+			}
+		}
+
+		.other-donate-label {
+			position: absolute;
+			top: 10em;
+			left: 2em;
+			color: $muriel-gray-300;
+		}
+
+		input.other-input {
+			& ~ .wp-block-newspack-blocks-donate__money-input,
+			& ~ .other-donate-label {
+				display: none;
+			}
+
+			&:checked ~ .wp-block-newspack-blocks-donate__money-input,
+			&:checked ~ .other-donate-label {
+				display: block;
+			}
+
+			&:checked + label {
+				margin-bottom: 6em;
+			}
+		}
+	}
+
+	.wp-block-newspack-blocks-donate__money-input {
+		position: absolute;
+		top: 12em;
+		left: 24px;
+	}
+}
+
+.wp-block-newspack-blocks-donate.untiered {
+	padding-top: 3em;
+
+	.input-container {
+		margin-left: 2em;
+		margin-top: 2em;
+		display: none;
+
+		label {
+			color: $muriel-gray-300;
+		}
+	}
+
+	input[type='radio']:checked ~ .input-container {
+		display: block;
+	}
+}
+
+.wp-block-newspack-blocks-donate__money-input {
+	position: relative;
+	max-width: 200px;
+	background-color: $muriel-white;
+	border: 2px solid $primary_color;
+	border-radius: 3px;
+
+	.currency {
+		font-size: 16px;
+		padding-left: 0.5em;
+		cursor: default;
+	}
+
+	input[type='number'] {
+		font-size: 16px;
+		border: none;
+		outline: none;
+		box-shadow: none;
+		background: none;
+		max-width: 174px;
+
+		&:focus {
+			border: none;
+			outline: none;
+			box-shadow: none;
+		}
+	}
+}
+
+.wp-block-newspack-blocks-donate__frequencies {
+	position: relative;
+	padding-top: 3em;
+}
+
+.wp-block-newspack-blocks-donate__frequency {
+	.donation-frequency-label {
+		width: 33.333%;
+		position: absolute;
+		top: 0;
+		border: 1px solid $muriel-gray-400;
+		text-transform: uppercase;
+		color: $muriel-gray-500;
+	}
+
+	input[type='radio']:checked {
+		& + .donation-frequency-label {
+			color: $muriel-white;
+			background-color: $muriel-gray-500;
+		}
+
+		& ~ .wp-block-newspack-blocks-donate__tiers {
+			display: flex;
+		}
+	}
+
+	&:nth-of-type(2) .donation-frequency-label {
+		left: 33.333%;
+		border-left: none;
+		border-right: none;
+	}
+
+	&:nth-of-type(3) .donation-frequency-label {
+		left: 66.666%;
+	}
+}
+
+@media screen and (max-width: 600px) {
+	.wp-block-newspack-blocks-donate {
+		.donation-frequency-label {
+			font-size: 12px;
+			height: 42px;
+			line-height: 42px;
+		}
+
+		&.tiered {
+			.wp-block-newspack-blocks-donate__tiers {
+				justify-content: space-around;
+
+				.tier-select-label {
+					margin-left: 0;
+					border-radius: 0;
+					font-size: 12px;
+				}
+
+				.other-donate-label {
+					top: 8.5em;
+				}
+
+				.wp-block-newspack-blocks-donate__money-input {
+					top: 10.5em;
+				}
+			}
+		}
+	}
+}
