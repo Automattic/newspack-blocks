@@ -58,11 +58,11 @@ class Edit extends Component {
 				<div className="entry-wrapper">
 					{ RichText.isEmpty( sectionHeader ) ? (
 						<h2 className="entry-title" key="title">
-							<a href='#'>{ decodeEntities( post.title.rendered.trim() ) }</a>
+							<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
 						</h2>
 					) : (
 						<h3 className="entry-title" key="title">
-							<a href='#'>{ decodeEntities( post.title.rendered.trim() ) }</a>
+							<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
 						</h3>
 					) }
 					{ showExcerpt && <RawHTML key="excerpt">{ post.excerpt.rendered }</RawHTML> }
@@ -77,7 +77,7 @@ class Edit extends Component {
 							<span className="byline">
 								{ __( 'by' ) }{' '}
 								<span className="author vcard">
-									<a className="url fn n" href='#'>
+									<a className="url fn n" href="#">
 										{ post.newspack_author_info.display_name }
 									</a>
 								</span>
@@ -263,6 +263,7 @@ class Edit extends Component {
 
 		const classes = classNames( className, {
 			'is-grid': postLayout === 'grid',
+			'show-image': showImage,
 			[ `columns-${ columns }` ]: postLayout === 'grid',
 			[ `type-scale${ typeScale }` ]: typeScale !== '5',
 			[ `image-align${ mediaPosition }` ]: mediaPosition !== 'top' && showImage,
