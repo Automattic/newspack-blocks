@@ -286,22 +286,12 @@
 
 /* Block styles */
 
-.is-style-background {
-	article {
-		background: #fff;
-		border: 1px solid rgba(0, 0, 0, 0.2);
-	}
-
-	.entry-wrapper {
-		padding: 1.5em;
-	}
-}
-
 .is-style-borders {
 	article {
 		border: solid rgba(0, 0, 0, 0.2);
 		border-width: 0 0 1px;
-		padding-bottom: 1.5em;
+		margin-bottom: 1em;
+		padding-bottom: 1em;
 
 		&:last-of-type {
 			border: 0;

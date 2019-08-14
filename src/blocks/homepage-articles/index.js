@@ -34,7 +34,6 @@ export const settings = {
 	description: __( 'A block for displaying homepage articles.' ),
 	styles: [
 		{ name: 'default', label: _x( 'Default', 'block style' ), isDefault: true },
-		{ name: 'background', label: _x( 'Background', 'block style' ) },
 		{ name: 'borders', label: _x( 'Borders', 'block style' ) },
 	],
 	attributes: {
