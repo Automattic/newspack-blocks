@@ -127,10 +127,6 @@ function newspack_blocks_register_post() {
 					'type'    => 'boolean',
 					'default' => true,
 				),
-				'postLayout'    => array(
-					'type'    => 'string',
-					'default' => 'list',
-				),
 				'mediaPosition' => array(
 					'type'    => 'string',
 					'default' => 'top',
@@ -142,10 +138,6 @@ function newspack_blocks_register_post() {
 				'imageScale'    => array(
 					'type'    => 'integer',
 					'default' => 3,
-				),
-				'moreLink'      => array(
-					'type'    => 'boolean',
-					'default' => false,
 				),
 			),
 		)

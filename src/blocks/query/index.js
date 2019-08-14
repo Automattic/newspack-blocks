@@ -8,6 +8,7 @@ import { Path, SVG } from '@wordpress/components';
  */
 import { __ } from '@wordpress/i18n';
 import edit from './edit';
+import './view.scss';
 
 /**
  * Style dependencies - will load in editor
@@ -44,7 +45,7 @@ export const settings = {
 			type: 'integer',
 			default: 3,
 		},
-		postAttributes: {
+		postAttributesTemplate: {
 			type: 'object',
 			default: {},
 		},

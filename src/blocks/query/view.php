@@ -20,7 +20,10 @@ function newspack_blocks_render_block_query( $attributes ) {
 	$author        = isset( $attributes['author'] ) ? $attributes['author'] : '';
 	$categories    = isset( $attributes['categories'] ) ? $attributes['categories'] : '';
 	$posts_to_show = intval( $attributes['postsToShow'] );
-	$args          = array(
+
+	$post_attributes_template = $attributes['postAttributesTemplate'];
+
+	$args = array(
 		'posts_per_page'      => $posts_to_show + count( $newspack_blocks_post_id ),
 		'post_status'         => 'publish',
 		'suppress_filters'    => false,
@@ -28,6 +31,7 @@ function newspack_blocks_render_block_query( $attributes ) {
 		'author'              => $author,
 		'ignore_sticky_posts' => true,
 	);
+
 	$article_query = new WP_Query( $args );
 
 	$classes = Newspack_Blocks::block_classes( 'query', $attributes );
@@ -55,13 +59,13 @@ function newspack_blocks_render_block_query( $attributes ) {
 			<?php while ( $article_query->have_posts() ) : ?>
 				<?php $article_query->the_post(); ?>
 					<?php
+						$attributes         = $post_attributes_template;
+						$attributes['post'] = $article_query->post;
 						echo wp_kses_post(
 							render_block(
 								array(
 									'blockName'    => 'newspack-blocks/post',
-									'attrs'        => array(
-										'post' => $article_query->post,
-									),
+									'attrs'        => $attributes,
 									'innerContent' => array(),
 								)
 							)
@@ -82,6 +86,25 @@ function newspack_blocks_register_query() {
 		'newspack-blocks/query',
 		array(
 			'render_callback' => 'newspack_blocks_render_block_query',
+			'attributes'      => array(
+				'moreLink'               => array(
+					'type'    => 'boolean',
+					'default' => false,
+				),
+				'postsToShow'            => array(
+					'type'    => 'integer',
+					'default' => 3,
+				),
+				'author'                 => array(
+					'type' => 'string',
+				),
+				'categories'             => array(
+					'type' => 'string',
+				),
+				'postAttributesTemplate' => array(
+					'type' => 'object',
+				),
+			),
 		)
 	);
 }

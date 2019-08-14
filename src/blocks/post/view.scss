@@ -1,5 +1,5 @@
-@import "sass/variables";
-@import "sass/mixins";
+@import "../../shared/sass/variables";
+@import "../../shared/sass/mixins";
 
 .wp-block-newspack-blocks-post {
 	article {
@@ -13,31 +13,6 @@
 		font-size: $font__size-sm;
 		margin-bottom: 0.5em;
 		width: 100%; // make sure this isn't caught up in the flex styles.
-	}
-
-	/* Column styles */
-	&.is-grid {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: space-between;
-		padding: 0;
-		list-style: none;
-
-		article {
-			width: 100%;
-
-			@include media(tablet) {
-				margin-bottom: 1em;
-			}
-		}
-	}
-
-	@include media(tablet) {
-		@for $i from 2 through 6 {
-			&.columns-#{ $i } article {
-				width: calc( ( 100% / #{$i} ) - 12px );
-			}
-		}
 	}
 
 	/* Image styles */
@@ -128,10 +103,6 @@
 		display: block;
 		margin-right: 0.5em;
 	}
-}
-
-/* Some really rough font sizing */
-.wp-block-newspack-blocks-homepage-articles {
 	/* 'Normal' size */
 	article {
 		.entry-title {
@@ -283,3 +254,4 @@
 		}
 	}
 }
+

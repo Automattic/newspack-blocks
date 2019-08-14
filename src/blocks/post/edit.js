@@ -21,15 +21,14 @@ import {
 	Placeholder,
 	Spinner,
 } from '@wordpress/components';
-import { InspectorControls } from '@wordpress/editor';
+import { BlockControls, InspectorControls } from '@wordpress/editor';
 
 const { decodeEntities } = wp.htmlEntities;
 
 class Edit extends Component {
 	render = () => {
-		const { attributes, setAttributes, setAttributesForLikeSiblings } = this.props;
+		const { attributes, className, setAttributes, setAttributesForLikeSiblings } = this.props;
 		const {
-			className,
 			imageScale,
 			mediaPosition,
 			post,
@@ -41,9 +40,14 @@ class Edit extends Component {
 			typeScale,
 		} = attributes;
 		if ( ! post ) return <h4>Post loading...</h4>;
+		const classes = classNames( className, {
+			[ `type-scale${ typeScale }` ]: typeScale !== '5',
+			[ `image-align${ mediaPosition }` ]: mediaPosition !== 'top' && showImage,
+			[ `image-scale${ imageScale }` ]: imageScale !== '1' && showImage,
+		} );
 		return (
 			<Fragment>
-				<div className="wp-block-newspack-blocks-post">
+				<div className={ classes }>
 					<article
 						className={ post.newspack_featured_image_src && 'post-has-image' }
 						key={ post.id }
@@ -155,6 +159,30 @@ class Edit extends Component {
 						) }
 					</PanelBody>
 				</InspectorControls>
+				<BlockControls>
+					<Toolbar
+						controls={ [
+							{
+								icon: 'align-none',
+								title: __( 'Show media on top' ),
+								isActive: mediaPosition === 'top',
+								onClick: () => setAttributesForLikeSiblings( { mediaPosition: 'top' } ),
+							},
+							{
+								icon: 'align-pull-left',
+								title: __( 'Show media on left' ),
+								isActive: mediaPosition === 'left',
+								onClick: () => setAttributesForLikeSiblings( { mediaPosition: 'left' } ),
+							},
+							{
+								icon: 'align-pull-right',
+								title: __( 'Show media on right' ),
+								isActive: mediaPosition === 'right',
+								onClick: () => setAttributesForLikeSiblings( { mediaPosition: 'right' } ),
+							},
+						] }
+					/>
+				</BlockControls>
 			</Fragment>
 		);
 	};
@@ -162,20 +190,28 @@ class Edit extends Component {
 
 export default compose( [
 	withSelect( ( select, props ) => {
+		const findParentBlock = ( blocks, clientId ) => {
+			return blocks.reduce( ( accumulator, block ) => {
+				return block.innerBlocks.filter( innerBlock => innerBlock.clientId === clientId ).length > 0
+					? block
+					: findParentBlock( block.innerBlocks, clientId ) || accumulator;
+			}, null );
+		};
 		const { clientId } = props;
 		const { getBlocks } = select( 'core/block-editor' );
-		const parentBlock = getBlocks().find( block =>
-			block.innerBlocks.find( innerBlock => clientId === innerBlock.clientId ) ? block : null
-		);
+		const parentBlock = findParentBlock( getBlocks(), clientId );
 		const siblingBlocks = parentBlock.innerBlocks.filter( block => true );
 		return { parentBlock, siblingBlocks };
 	} ),
 	withDispatch( ( dispatch, props ) => {
 		const { attributes, parentBlock, siblingBlocks, setAttributes } = props;
-		const { updateBlockAttributes } = dispatch( 'core/editor' );
+		const { updateBlockAttributes } = dispatch( 'core/block-editor' );
 		const setAttributesForLikeSiblings = newAttributes => {
 			updateBlockAttributes( parentBlock.clientId, {
-				childAttributes: { ...parentBlock.attributes.childAttributes, ...newAttributes },
+				postAttributesTemplate: {
+					...parentBlock.attributes.postAttributesTemplate,
+					...newAttributes,
+				},
 			} );
 			siblingBlocks.forEach( block => {
 				updateBlockAttributes( block.clientId, newAttributes );

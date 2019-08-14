@@ -15,8 +15,8 @@ import { isUndefined, pickBy } from 'lodash';
 import { __ } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import { withSelect } from '@wordpress/data';
-import { InspectorControls } from '@wordpress/editor';
-import { Placeholder, Spinner } from '@wordpress/components';
+import { BlockControls, InspectorControls } from '@wordpress/editor';
+import { Placeholder, Spinner, Toolbar } from '@wordpress/components';
 import { getBlockType, createBlock } from '@wordpress/blocks';
 import { InnerBlocks } from '@wordpress/block-editor';
 
@@ -26,11 +26,12 @@ class Edit extends Component {
 			attributes,
 			authorList,
 			categoriesList,
+			className,
 			innerBlocks,
 			setAttributes,
 			posts,
 		} = this.props;
-		const { postsToShow, categories, author } = attributes;
+		const { author, categories, postAttributesTemplate, postsToShow } = attributes;
 		return (
 			<Fragment>
 				<InspectorControls>
@@ -49,19 +50,21 @@ class Edit extends Component {
 						}
 					/>
 				</InspectorControls>
-				<InnerBlocks
-					template={ ( posts || [] ).map( post => [ 'newspack-blocks/post', { post } ] ) }
-					templateInsertUpdatesSelection={ false }
-					templateLock="all"
-				/>
-				{ posts && ! posts.length && (
-					<Placeholder>{ __( 'Sorry, no posts were found.' ) }</Placeholder>
-				) }
-				{ ! posts && (
-					<Placeholder>
-						<Spinner />
-					</Placeholder>
-				) }
+				<div className={ className }>
+					<InnerBlocks
+						template={ ( posts || [] ).map( post => [ 'newspack-blocks/post', { ...postAttributesTemplate, post } ] ) }
+						templateInsertUpdatesSelection={ false }
+						templateLock="all"
+					/>
+					{ posts && ! posts.length && (
+						<Placeholder>{ __( 'Sorry, no posts were found.' ) }</Placeholder>
+					) }
+					{ ! posts && (
+						<Placeholder>
+							<Spinner />
+						</Placeholder>
+					) }
+				</div>
 			</Fragment>
 		);
 	};
