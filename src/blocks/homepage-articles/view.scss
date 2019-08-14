@@ -286,7 +286,7 @@
 
 /* Block styles */
 
-.is-style-borders {
+.wp-block-newspack-blocks-homepage-articles.is-style-borders {
 	article {
 		border: solid rgba(0, 0, 0, 0.2);
 		border-width: 0 0 1px;
@@ -299,10 +299,16 @@
 	}
 
 	@include media(tablet) {
+
+		@for $i from 2 through 6 {
+			&.columns-#{ $i } article {
+				padding-right: calc( ( 12px * #{$i} ) / ( #{$i} - 1 ) );
+			}
+		}
+
 		&.is-grid {
 			article {
 				border-width: 0 1px 0 0;
-				padding-right: 1.5em;
 			}
 		}
 
