@@ -283,3 +283,43 @@
 		}
 	}
 }
+
+/* Block styles */
+
+.wp-block-newspack-blocks-homepage-articles.is-style-borders {
+	article {
+		border: solid rgba(0, 0, 0, 0.2);
+		border-width: 0 0 1px;
+		margin-bottom: 1em;
+		padding-bottom: 1em;
+
+		&:last-of-type {
+			border: 0;
+		}
+	}
+
+	@include media(tablet) {
+
+		@for $i from 2 through 6 {
+			&.columns-#{ $i } article {
+				padding-right: calc( ( 12px * #{$i} ) / ( #{$i} - 1 ) );
+			}
+		}
+
+		&.is-grid {
+			article {
+				border-width: 0 1px 0 0;
+			}
+		}
+
+		&.is-grid article:last-of-type,
+		&.columns-1 article,
+		&.columns-2 article:nth-of-type(2n),
+		&.columns-3 article:nth-of-type(3n),
+		&.columns-4 article:nth-of-type(4n),
+		&.columns-5 article:nth-of-type(5n),
+		&.columns-6 article:nth-of-type(6n) {
+			border: 0;
+		}
+	}
+}

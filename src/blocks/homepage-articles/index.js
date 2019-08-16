@@ -6,7 +6,7 @@ import { Path, SVG } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
 import edit from './edit';
 
 /**
@@ -32,6 +32,10 @@ export const settings = {
 	category: 'newspack',
 	keywords: [ __( 'posts' ), __( 'articles' ), __( 'latest' ) ],
 	description: __( 'A block for displaying homepage articles.' ),
+	styles: [
+		{ name: 'default', label: _x( 'Default', 'block style' ), isDefault: true },
+		{ name: 'borders', label: _x( 'Borders', 'block style' ) },
+	],
 	attributes: {
 		className: {
 			type: 'string',
