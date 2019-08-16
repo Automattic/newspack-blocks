@@ -26,7 +26,8 @@
   "scripts": {
     "build:webpack": "calypso-build --config='./webpack.config.js'",
     "clean": "rm -rf dist/",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "release:archive": "mkdir -p assets/release && zip -r assets/release/newspack-blocks.zip . -x node_modules/\\* .git/\\* .github/\\* .gitignore .DS_Store"
   },
   "repository": {
     "type": "git",
