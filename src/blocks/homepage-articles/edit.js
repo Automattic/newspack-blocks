@@ -17,11 +17,11 @@ import { __ } from '@wordpress/i18n';
 import { Component, Fragment, RawHTML } from '@wordpress/element';
 import { InspectorControls, RichText, BlockControls } from '@wordpress/editor';
 import {
-	ToggleControl,
 	PanelBody,
 	PanelRow,
 	RangeControl,
 	Toolbar,
+	ToggleControl,
 	Dashicon,
 	Placeholder,
 	Spinner,
@@ -58,11 +58,11 @@ class Edit extends Component {
 				<div className="entry-wrapper">
 					{ RichText.isEmpty( sectionHeader ) ? (
 						<h2 className="entry-title" key="title">
-							<a href='#'>{ decodeEntities( post.title.rendered.trim() ) }</a>
+							<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
 						</h2>
 					) : (
 						<h3 className="entry-title" key="title">
-							<a href='#'>{ decodeEntities( post.title.rendered.trim() ) }</a>
+							<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
 						</h3>
 					) }
 					{ showExcerpt && <RawHTML key="excerpt">{ post.excerpt.rendered }</RawHTML> }
@@ -77,7 +77,7 @@ class Edit extends Component {
 							<span className="byline">
 								{ __( 'by' ) }{' '}
 								<span className="author vcard">
-									<a className="url fn n" href='#'>
+									<a className="url fn n" href="#">
 										{ post.newspack_author_info.display_name }
 									</a>
 								</span>
@@ -101,6 +101,7 @@ class Edit extends Component {
 			attributes,
 			authorList,
 			categoriesList,
+			postList,
 			setAttributes,
 			latestPosts,
 			isSelected,
@@ -108,6 +109,7 @@ class Edit extends Component {
 		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
 		const {
 			author,
+			single,
 			postsToShow,
 			categories,
 			sectionHeader,
@@ -122,6 +124,7 @@ class Edit extends Component {
 			postLayout,
 			mediaPosition,
 			moreLink,
+			singleMode,
 		} = attributes;
 		return (
 			<Fragment>
@@ -131,15 +134,22 @@ class Edit extends Component {
 							numberOfItems={ postsToShow }
 							onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
 							authorList={ authorList }
+							postList={ postList }
+							singleMode={ singleMode }
 							categoriesList={ categoriesList }
 							selectedCategoryId={ categories }
 							selectedAuthorId={ author }
+							selectedSingleId={ single }
 							onCategoryChange={ value =>
 								setAttributes( { categories: '' !== value ? value : undefined } )
 							}
 							onAuthorChange={ value =>
 								setAttributes( { author: '' !== value ? value : undefined } )
 							}
+							onSingleChange={ value =>
+								setAttributes( { single: '' !== value ? value : undefined } )
+							}
+							onSingleModeChange={ value => setAttributes( { singleMode: value } ) }
 						/>
 					) }
 					{ postLayout === 'grid' && (
@@ -154,11 +164,13 @@ class Edit extends Component {
 							required
 						/>
 					) }
-					<ToggleControl
-						label={ __( 'Show "More" Link' ) }
-						checked={ moreLink }
-						onChange={ () => setAttributes( { moreLink: ! moreLink } ) }
-					/>
+					{ ! singleMode && (
+						<ToggleControl
+							label={ __( 'Show "More" Link' ) }
+							checked={ moreLink }
+							onChange={ () => setAttributes( { moreLink: ! moreLink } ) }
+						/>
+					) }
 				</PanelBody>
 				<PanelBody title={ __( 'Featured Image Settings' ) }>
 					<PanelRow>
@@ -343,23 +355,28 @@ class Edit extends Component {
 }
 
 export default withSelect( ( select, props ) => {
-	const { postsToShow, author, categories } = props.attributes;
+	const { postsToShow, author, categories, single, singleMode } = props.attributes;
 	const { getAuthors, getEntityRecords } = select( 'core' );
 	const latestPostsQuery = pickBy(
-		{
-			per_page: postsToShow,
-			categories,
-			author,
-		},
+		singleMode
+			? { include: single }
+			: {
+					per_page: postsToShow,
+					categories,
+					author,
+			  },
 		value => ! isUndefined( value )
 	);
-
 	const categoriesListQuery = {
 		per_page: 100,
+	};
+	const postsListQuery = {
+		per_page: 20,
 	};
 	return {
 		latestPosts: getEntityRecords( 'postType', 'post', latestPostsQuery ),
 		categoriesList: getEntityRecords( 'taxonomy', 'category', categoriesListQuery ),
 		authorList: getAuthors(),
+		postList: getEntityRecords( 'postType', 'post', postsListQuery ),
 	};
 } )( Edit );

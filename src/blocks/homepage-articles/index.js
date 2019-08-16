@@ -78,6 +78,9 @@ export const settings = {
 		categories: {
 			type: 'string',
 		},
+		single: {
+			type: 'string',
+		},
 		typeScale: {
 			type: 'integer',
 			default: 4,
@@ -93,6 +96,10 @@ export const settings = {
 		moreLink: {
 			type: 'boolean',
 			default: false,
+		},
+		singleMode: {
+			type: 'boolean',
+			default: false
 		},
 	},
 	supports: {

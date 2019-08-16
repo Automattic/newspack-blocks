@@ -19,7 +19,9 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	}
 	$author        = isset( $attributes['author'] ) ? $attributes['author'] : '';
 	$categories    = isset( $attributes['categories'] ) ? $attributes['categories'] : '';
+	$single        = isset( $attributes['single'] ) ? $attributes['single'] : '';
 	$posts_to_show = intval( $attributes['postsToShow'] );
+	$single_mode   = intval( $attributes['singleMode'] );
 	$args          = array(
 		'posts_per_page'      => $posts_to_show + count( $newspack_blocks_post_id ),
 		'post_status'         => 'publish',
@@ -28,6 +30,12 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		'author'              => $author,
 		'ignore_sticky_posts' => true,
 	);
+	if ( $single_mode ) {
+		$args['p'] = $single;
+	} else {
+		$args['cat']    = $categories;
+		$args['author'] = $author;
+	}
 	$article_query = new WP_Query( $args );
 
 	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes );
@@ -216,6 +224,9 @@ function newspack_blocks_register_homepage_articles() {
 				'categories'    => array(
 					'type' => 'string',
 				),
+				'single'        => array(
+					'type' => 'string',
+				),
 				'typeScale'     => array(
 					'type'    => 'integer',
 					'default' => 4,
@@ -229,6 +240,10 @@ function newspack_blocks_register_homepage_articles() {
 					'default' => '',
 				),
 				'moreLink'      => array(
+					'type'    => 'boolean',
+					'default' => false,
+				),
+				'singleMode'    => array(
 					'type'    => 'boolean',
 					'default' => false,
 				),
