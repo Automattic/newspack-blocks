@@ -46,6 +46,9 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	if ( isset( $attributes['columns'] ) && 'grid' === $attributes['postLayout'] ) {
 		$classes .= ' columns-' . $attributes['columns'];
 	}
+	if ( $attributes['showImage'] ) {
+		$classes .= ' show-image';
+	}
 	if ( $attributes['showImage'] && isset( $attributes['mediaPosition'] ) && 'top' !== $attributes['mediaPosition'] ) {
 		$classes .= ' image-align' . $attributes['mediaPosition'];
 	}
