@@ -36,6 +36,12 @@ export const settings = {
 		className: {
 			type: 'string',
 		},
+		criteria: {
+			type: 'object',
+			default: {
+				per_page: 3,
+			},
+		},
 	},
 	supports: {
 		html: false,
