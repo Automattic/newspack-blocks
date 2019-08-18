@@ -8,7 +8,7 @@ import { QueryPanel } from '../../components/';
  */
 import { __ } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
-import { InspectorControls } from '@wordpress/editor';
+import { InnerBlocks, InspectorControls } from '@wordpress/editor';
 import { PanelBody, Placeholder, Spinner } from '@wordpress/components';
 import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
@@ -27,9 +27,21 @@ class Edit extends Component {
 						/>
 					</PanelBody>
 				</InspectorControls>
-				<Placeholder>
-					<Spinner />
-				</Placeholder>
+				{ ! query && (
+					<Placeholder>
+						<Spinner />
+					</Placeholder>
+				) }
+				{ !! query && (
+					<InnerBlocks
+						template={ ( query || [] ).map( post => [
+							'newspack-blocks/post',
+							{ post },
+						] ) }
+						templateInsertUpdatesSelection={ false }
+						templateLock="all"
+					/>
+				) }
 			</Fragment>
 		);
 	};
