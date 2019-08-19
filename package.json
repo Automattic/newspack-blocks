@@ -28,7 +28,7 @@
     "build:webpack": "calypso-build --config='./webpack.config.js'",
     "clean": "rm -rf dist/",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "release:archive": "run-p \"clean\" && run-p \"build:webpack\" && mkdir -p assets/release && zip -r assets/release/newspack-blocks.zip . -x node_modules/\\* .git/\\* .github/\\* .gitignore .DS_Store"
+    "release:archive": "run-p \"clean\" && run-p \"build:webpack\" && mkdir -p assets/release && zip -r assets/release/newspack-blocks.zip . -x node_modules/\\* .git/\\* .github/\\* .gitignore .DS_Store vendor/\\*"
   },
   "repository": {
     "type": "git",
