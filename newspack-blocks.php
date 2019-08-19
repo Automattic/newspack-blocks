@@ -7,14 +7,14 @@
  * Author URI:      YOUR SITE HERE
  * Text Domain:     newspack-blocks
  * Domain Path:     /languages
- * Version:         0.1.0
+ * Version:         1.0.0-alpha.2
  *
  * @package         Newspack_Blocks
  */
 
 define( 'NEWSPACK_BLOCKS__BLOCKS_DIRECTORY', 'dist/' );
 define( 'NEWSPACK_BLOCKS__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'NEWSPACK_BLOCKS__VERSION', '0.1.0' );
+define( 'NEWSPACK_BLOCKS__VERSION', '1.0.0-alpha.2' );
 /**
  * Newspack blocks functionality
  */
