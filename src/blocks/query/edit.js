@@ -40,7 +40,8 @@ class Edit extends Component {
 						<Spinner />
 					</Placeholder>
 				) }
-				{ !! query && (
+				{ query && ! query.length && <Placeholder>{ __( 'No posts found' ) }</Placeholder> }
+				{ query && query.length > 0 && (
 					<InnerBlocks
 						template={ ( query || [] ).map( post => [
 							'newspack-blocks/post',
@@ -59,8 +60,7 @@ export default compose( [
 		const { attributes } = props;
 		const { criteria } = attributes;
 		const { getEntityRecords } = select( 'core' );
-		const query = getEntityRecords( 'postType', 'post', criteria );
-		return { query };
+		return { query: getEntityRecords( 'postType', 'post', criteria ) };
 	} ),
 	withDispatch( ( dispatch, props, registry ) => {
 		const { clientId } = props;
