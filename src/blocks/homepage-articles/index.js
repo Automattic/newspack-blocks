@@ -35,6 +35,7 @@ export const settings = {
 	styles: [
 		{ name: 'default', label: _x( 'Default', 'block style' ), isDefault: true },
 		{ name: 'borders', label: _x( 'Borders', 'block style' ) },
+		{ name: 'background-image', label: _x( 'Background Image', 'block style' ) },
 	],
 	attributes: {
 		className: {
@@ -123,6 +124,10 @@ export const settings = {
 		customTextColor: {
 			type: 'string',
 			default: '',
+		},
+		singleMode: {
+			type: 'boolean',
+			default: false,
 		},
 	},
 	supports: {
