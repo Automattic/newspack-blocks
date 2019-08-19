@@ -57,7 +57,7 @@ class Edit extends Component {
 					created,
 					isLoading: false,
 					customDonationAmounts: {
-						once: tiered ? suggestedAmounts[1] : suggestedAmountUntiered,
+						once: tiered ? 12 * suggestedAmounts[1] : 12 * suggestedAmountUntiered,
 						month: tiered ? suggestedAmounts[1] : suggestedAmountUntiered,
 						year: tiered ? 12 * suggestedAmounts[1] : 12 * suggestedAmountUntiered,
 					},
@@ -163,7 +163,7 @@ class Edit extends Component {
 											<div className='wp-block-newspack-blocks-donate__tier'>
 												<input type='radio' onClick={ () => this.setState( { activeTier: index } ) } id={ 'newspack-tier-' + frequencySlug + '-' + index } checked={ index === activeTier } />
 												<label className='tier-select-label' htmlFor={ 'newspack-tier-' + frequencySlug + '-' + index }>
-													{ currencySymbol + ( 'year' === frequencySlug ? 12 * suggestedAmount : suggestedAmount ) }
+													{ currencySymbol + ( 'year' === frequencySlug || 'once' == frequencySlug ? 12 * suggestedAmount : suggestedAmount ) }
 												</label>
 											</div>
 										) ) }

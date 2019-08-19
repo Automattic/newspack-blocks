@@ -49,7 +49,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 				<input type='hidden' name='newspack_donate' value='1' />
 				<div class='wp-block-newspack-blocks-donate__options'>
 					<?php foreach ( $frequencies as $frequency_slug => $frequency_name ) : ?>
-						<?php $amount = 'year' === $frequency_slug ? 12 * $settings['suggestedAmountUntiered'] : $settings['suggestedAmountUntiered']; ?>
+						<?php $amount = 'year' === $frequency_slug || 'once' === $frequency_slug ? 12 * $settings['suggestedAmountUntiered'] : $settings['suggestedAmountUntiered']; ?>
 
 						<div class='wp-block-newspack-blocks-donate__frequency'>
 							<input 
@@ -125,7 +125,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 								<div class='wp-block-newspack-blocks-donate__tiers'>
 									<?php foreach ( $suggested_amounts as $index => $suggested_amount ) : ?>
 										<div class='wp-block-newspack-blocks-donate__tier'>
-											<?php $amount = 'year' === $frequency_slug ? 12 * $suggested_amount : $suggested_amount; ?>
+											<?php $amount = 'year' === $frequency_slug || 'once' === $frequency_slug ? 12 * $suggested_amount : $suggested_amount; ?>
 											<input 
 												type='radio' 
 												name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>' 
@@ -143,7 +143,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 									<?php endforeach; ?>
 
 									<div class='wp-block-newspack-blocks-donate__tier'>	
-										<?php $amount = 'year' === $frequency_slug ? 12 * $suggested_amounts[1] : $suggested_amounts[1]; ?>
+										<?php $amount = 'year' === $frequency_slug || 'once' === $frequency_slug ? 12 * $suggested_amounts[1] : $suggested_amounts[1]; ?>
 										<input 
 											type='radio' 
 											class='other-input' 
