@@ -8,15 +8,23 @@ import { QueryPanel } from '../../components/';
  */
 import { __ } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
-import { InnerBlocks, InspectorControls } from '@wordpress/editor';
+import { InnerBlocks, InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, Placeholder, Spinner } from '@wordpress/components';
 import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 
 class Edit extends Component {
+	componentDidUpdate = prevProps => {
+		const { updateInnerBlockAttributes } = this.props;
+		const { innerBlockAttributes } = this.props.attributes;
+		const { innerBlockAttributes: prevInnerBlockAttributes } = prevProps.attributes;
+		if ( prevInnerBlockAttributes !== innerBlockAttributes ) {
+			updateInnerBlockAttributes( innerBlockAttributes );
+		}
+	};
 	render = () => {
 		const { attributes, query, setAttributes } = this.props;
-		const { criteria } = attributes;
+		const { criteria, innerBlockAttributes } = attributes;
 		return (
 			<Fragment>
 				<InspectorControls>
@@ -36,7 +44,7 @@ class Edit extends Component {
 					<InnerBlocks
 						template={ ( query || [] ).map( post => [
 							'newspack-blocks/post',
-							{ post },
+							{ ...innerBlockAttributes, post },
 						] ) }
 						templateInsertUpdatesSelection={ false }
 						templateLock="all"
@@ -55,6 +63,16 @@ export default compose( [
 		return { query };
 	} ),
 	withDispatch( ( dispatch, props, registry ) => {
-		return {};
+		const { clientId } = props;
+		const { updateBlockAttributes } = dispatch( 'core/block-editor' );
+		const { getBlock } = registry.select( 'core/block-editor' );
+		return {
+			updateInnerBlockAttributes: attributes => {
+				const { innerBlocks } = getBlock( clientId );
+				innerBlocks.forEach( innerBlock =>
+					updateBlockAttributes( innerBlock.clientId, attributes )
+				);
+			},
+		};
 	} ),
 ] )( Edit );

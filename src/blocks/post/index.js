@@ -30,6 +30,10 @@ export const settings = {
 		post: {
 			type: 'object',
 		},
+		showImage: {
+			type: 'boolean',
+			default: true,
+		},
 	},
 	supports: {
 		inserter: false,
