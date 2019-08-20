@@ -372,7 +372,7 @@ export default withSelect( ( select, props ) => {
 		per_page: 100,
 	};
 	const postsListQuery = {
-		per_page: 20,
+		per_page: 50,
 	};
 	return {
 		latestPosts: getEntityRecords( 'postType', 'post', latestPostsQuery ),
