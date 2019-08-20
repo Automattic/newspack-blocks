@@ -397,7 +397,7 @@ class Edit extends Component {
 				onClick: () => setAttributes( { mediaPosition: 'right' } ),
 			},
 			{
-				icon: 'admin-page',
+				icon: 'format-image',
 				title: __( 'Show media behind' ),
 				isActive: mediaPosition === 'behind',
 				onClick: () => setAttributes( { mediaPosition: 'behind' } ),
