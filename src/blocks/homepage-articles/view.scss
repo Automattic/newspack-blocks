@@ -195,6 +195,8 @@
 
 	&.image-alignbehind {
 		.post-has-image {
+			display: flex;
+			align-items: flex-end;
 			padding-top: 6em;
 			position: relative;
 
