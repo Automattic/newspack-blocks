@@ -1,0 +1,57 @@
+<?php
+/**
+ * Server-side rendering of the `newspack-blocks/popup` block.
+ *
+ * @package WordPress
+ */
+
+/**
+ * Renders the `newspack-blocks/popup` block on server.
+ *
+ * @param array $attributes The block attributes.
+ *
+ * @return string
+ */
+function newspack_blocks_render_block_popup( $attributes, $content ) {
+	wp_enqueue_script(
+		'amp-lightbox',
+		plugins_url( 'https://cdn.ampproject.org/v0/amp-lightbox-0.1.js', __FILE__ ),
+		array(),
+		array(),
+		NEWSPACK_BLOCKS__VERSION
+	);
+
+	ob_start();
+	?>
+	<amp-lightbox id="my-lightbox" layout="nodisplay">
+		<div class="lightbox" on="tap:my-lightbox.close" role="button" tabindex="0">
+			<div class="wp-block-newspack-blocks-popup">
+				<?php echo wp_kses_post( $content ); ?>
+			</div>
+		</div>
+	</amp-lightbox>
+	<button on="tap:my-lightbox">
+		Open lightbox
+	</button>
+	<?php
+	Newspack_Blocks::enqueue_view_assets( 'popup' );
+	return ob_get_clean();
+}
+
+/**
+ * Registers the `newspack-blocks/popup` block on server.
+ */
+function newspack_blocks_register_popup() {
+	register_block_type(
+		'newspack-blocks/popup',
+		array(
+			'attributes'      => array(
+				'className' => array(
+					'type' => 'string',
+				),
+			),
+			'render_callback' => 'newspack_blocks_render_block_popup',
+		)
+	);
+}
+add_action( 'init', 'newspack_blocks_register_popup' );
