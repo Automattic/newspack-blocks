@@ -395,6 +395,12 @@ class Edit extends Component {
 				isActive: mediaPosition === 'right',
 				onClick: () => setAttributes( { mediaPosition: 'right' } ),
 			},
+			{
+				icon: 'admin-page',
+				title: __( 'Show media behind' ),
+				isActive: mediaPosition === 'behind',
+				onClick: () => setAttributes( { mediaPosition: 'behind' } ),
+			},
 		];
 
 		const blockControlsImageShape = [
