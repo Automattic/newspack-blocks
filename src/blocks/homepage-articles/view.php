@@ -64,6 +64,9 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	if ( $attributes['showCaption'] ) {
 		$classes .= ' show-caption';
 	}
+	if ( $attributes['showImage'] && isset( $attributes['topPadding'] ) && 'behind' === $attributes['mediaPosition'] ) {
+		$classes .= ' top-padding' . $attributes['topPadding'];
+	}
 	if ( isset( $attributes['className'] ) ) {
 		$classes .= ' ' . $attributes['className'];
 	}
@@ -124,7 +127,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 					<div class="entry-wrapper">
 
-						<?php 
+						<?php
 						if ( $attributes['showCategory'] ) :
 							$category = false;
 
@@ -305,6 +308,10 @@ function newspack_blocks_register_homepage_articles() {
 				'imageShape'    => array(
 					'type'    => 'string',
 					'default' => 'landscape',
+				),
+				'topPadding'    => array(
+					'type'    => 'integer',
+					'default' => 10,
 				),
 				'sectionHeader' => array(
 					'type'    => 'string',

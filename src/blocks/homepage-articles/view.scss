@@ -197,12 +197,7 @@
 		.post-has-image {
 			display: flex;
 			align-items: flex-end;
-			padding-top: 6em;
 			position: relative;
-
-			@include media(tablet) {
-				padding-top: 10em;
-			}
 
 			.post-thumbnail {
 				bottom: 0;
@@ -231,9 +226,13 @@
 			}
 
 			.entry-wrapper {
-				padding: 2em;
+				padding: 1em;
 				position: relative;
 				z-index: 2;
+
+				@include media( mobile ) {
+					padding: 2em;
+				}
 			}
 
 			.entry-wrapper,
@@ -242,6 +241,67 @@
 			.entry-meta .byline a {
 				color: #fff;
 			}
+		}
+
+		&.top-padding1 .post-has-image {
+			padding-top: 0.5em;
+			@include media ( mobile ) { padding-top: 1em; }
+			@include media ( tablet ) { padding-top: 2em; }
+		}
+		&.top-padding2 .post-has-image {
+			padding-top: 1em;
+			@include media ( mobile ) { padding-top: 2em; }
+			@include media ( tablet ) { padding-top: 4em; }
+		}
+		&.top-padding3 .post-has-image {
+			padding-top: 1.5em;
+			@include media ( mobile ) { padding-top: 3em; }
+			@include media ( tablet ) { padding-top: 6em; }
+		}
+		&.top-padding4 .post-has-image {
+			padding-top: 2em;
+			@include media ( mobile ) { padding-top: 4em; }
+			@include media ( tablet ) { padding-top: 8em; }
+		}
+		&.top-padding5 .post-has-image {
+			padding-top: 2.5em;
+			@include media ( mobile ) { padding-top: 5em; }
+			@include media ( tablet ) { padding-top: 10em; }
+		}
+		&.top-padding6 .post-has-image {
+			padding-top: 3em;
+			@include media ( mobile ) { padding-top: 6em; }
+			@include media ( tablet ) { padding-top: 12em; }
+		}
+		&.top-padding7 .post-has-image {
+			padding-top: 3.5em;
+			@include media ( mobile ) { padding-top: 7em; }
+			@include media ( tablet ) { padding-top: 14em; }
+		}
+		&.top-padding8 .post-has-image {
+			padding-top: 4em;
+			@include media ( mobile ) { padding-top: 8em; }
+			@include media ( tablet ) { padding-top: 16em; }
+		}
+		&.top-padding9 .post-has-image {
+			padding-top: 4.5em;
+			@include media ( mobile ) { padding-top: 9em; }
+			@include media ( tablet ) { padding-top: 18em; }
+		}
+		&.top-padding10 .post-has-image {
+			padding-top: 5em;
+			@include media ( mobile ) { padding-top: 10em; }
+			@include media ( tablet ) { padding-top: 20em; }
+		}
+		&.top-padding11 .post-has-image {
+			padding-top: 5.5em;
+			@include media ( mobile ) { padding-top: 11em; }
+			@include media ( tablet ) { padding-top: 22em; }
+		}
+		&.top-padding12 .post-has-image {
+			padding-top: 6em;
+			@include media ( mobile ) { padding-top: 12em; }
+			@include media ( tablet ) { padding-top: 24em; }
 		}
 	}
 }
