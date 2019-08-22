@@ -97,6 +97,9 @@ class Newspack_Blocks {
 				NEWSPACK_BLOCKS__VERSION
 			);
 		}
+		if ( self::is_amp() ) {
+			return;
+		}
 		if ( file_exists( NEWSPACK_BLOCKS__PLUGIN_DIR . $script_path ) ) {
 			$dependencies = self::dependencies_from_path( NEWSPACK_BLOCKS__PLUGIN_DIR . "dist/{$type}/view.deps.json" );
 			wp_enqueue_script(
@@ -143,6 +146,15 @@ class Newspack_Blocks {
 			array_push( $classes, $attributes['className'] );
 		}
 		return implode( $classes, ' ' );
+	}
+
+	/**
+	 * Checks whether the current view is served in AMP context.
+	 *
+	 * @return bool True if AMP, false otherwise.
+	 */
+	public static function is_amp() {
+		return ! is_admin() && function_exists( 'is_amp_endpoint' ) && is_amp_endpoint();
 	}
 }
 
