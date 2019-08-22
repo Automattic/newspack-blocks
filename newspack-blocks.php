@@ -82,6 +82,21 @@ class Newspack_Blocks {
 	}
 
 	/**
+	 * Enqueue block styles stylesheet.
+	 */
+	public static function enqueue_block_styles_assets() {
+		$style_path = NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'block_styles' . ( is_rtl() ? '.rtl' : '' ) . '.css';
+		if ( file_exists( NEWSPACK_BLOCKS__PLUGIN_DIR . $style_path ) ) {
+			wp_enqueue_style(
+				'newspack-blocks-block-styles-stylesheet',
+				plugins_url( $style_path, __FILE__ ),
+				array(),
+				NEWSPACK_BLOCKS__VERSION
+			);
+		}
+	}
+
+	/**
 	 * Enqueue view scripts and styles for a single block.
 	 *
 	 * @param string $type The block's type.
@@ -162,3 +177,4 @@ require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'class-newspack-blocks-api.php';
 
 Newspack_Blocks::manage_view_scripts();
 add_action( 'enqueue_block_editor_assets', array( 'Newspack_Blocks', 'enqueue_block_editor_assets' ) );
+add_action( 'wp_enqueue_scripts', array( 'Newspack_Blocks', 'enqueue_block_styles_assets' ) );
