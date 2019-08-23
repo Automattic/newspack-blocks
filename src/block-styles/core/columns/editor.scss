@@ -20,4 +20,42 @@
 			order: -1;
 		}
 	}
+
+	&.is-style-borders {
+		[data-type="core/column"] {
+			border-bottom: 1px solid $color__border;
+			position: relative;
+
+			&:last-child {
+				border-bottom: 0;
+			}
+
+			@include media( mobile ) {
+				border-bottom: 0;
+
+				&:after {
+					border-right: 1px solid transparent;
+					bottom: 0;
+					content: '';
+					position: absolute;
+					right: -30px;
+					top: 0;
+				}
+
+				&:nth-child(odd):after {
+					border-color: $color__border;
+				}
+
+				&:last-child:after {
+					display: none;
+				}
+			}
+
+			@include media( tablet ) {
+				&:after {
+					border-color: $color__border;
+				}
+			}
+		}
+	}
 }
