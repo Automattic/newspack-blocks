@@ -88,11 +88,17 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				?>
 				<article <?php echo has_post_thumbnail() ? 'class="post-has-image"' : ''; ?>>
 					<?php if ( has_post_thumbnail() && $attributes['showImage'] ) : ?>
-						<div class="post-thumbnail">
+
+						<figure class="post-thumbnail">
 							<a href="<?php echo esc_url( get_permalink() ); ?>" rel="bookmark">
 								<?php the_post_thumbnail( 'large' ); ?>
 							</a>
-						</div><!-- .featured-image -->
+
+							<?php if ( $attributes['showCaption'] && '' !== get_the_post_thumbnail_caption() ) : ?>
+								<figcaption><?php the_post_thumbnail_caption(); ?>
+							<?php endif; ?>
+						</figure><!-- .featured-image -->
+
 					<?php endif; ?>
 
 					<div class="entry-wrapper">
@@ -185,6 +191,10 @@ function newspack_blocks_register_homepage_articles() {
 					'default' => true,
 				),
 				'showImage'     => array(
+					'type'    => 'boolean',
+					'default' => true,
+				),
+				'showCaption'   => array(
 					'type'    => 'boolean',
 					'default' => true,
 				),

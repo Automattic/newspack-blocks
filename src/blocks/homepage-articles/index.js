@@ -52,6 +52,10 @@ export const settings = {
 			type: 'boolean',
 			default: true,
 		},
+		showCaption: {
+			type: 'boolean',
+			default: true,
+		},
 		showAuthor: {
 			type: 'boolean',
 			default: true,
