@@ -290,7 +290,7 @@ class Edit extends Component {
 			'show-image': showImage,
 			[ `columns-${ columns }` ]: postLayout === 'grid',
 			[ `type-scale${ typeScale }` ]: typeScale !== '5',
-			[ `image-align${ mediaPosition }` ]: mediaPosition !== 'top' && showImage,
+			[ `image-align${ mediaPosition }` ]: showImage,
 			[ `image-scale${ imageScale }` ]: imageScale !== '1' && showImage,
 		} );
 
