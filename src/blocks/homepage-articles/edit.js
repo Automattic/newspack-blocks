@@ -52,7 +52,9 @@ class Edit extends Component {
 			<article className={ post.newspack_featured_image_src && 'post-has-image' } key={ post.id }>
 				{ showImage && post.newspack_featured_image_src && (
 					<div className="post-thumbnail" key="thumbnail">
-						<img src={ post.newspack_featured_image_src.large } />
+						<a href="#">
+							<img src={ post.newspack_featured_image_src.large } />
+						</a>
 					</div>
 				) }
 				<div className="entry-wrapper">
