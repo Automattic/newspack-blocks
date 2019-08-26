@@ -8,7 +8,7 @@ import classNames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
-import { InnerBlocks, InspectorControls } from '@wordpress/block-editor';
+import { InspectorControls, InnerBlocks } from '@wordpress/block-editor';
 import { PanelBody, PanelRow, Placeholder, ToggleControl, Spinner } from '@wordpress/components';
 import { withDispatch } from '@wordpress/data';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -17,7 +17,17 @@ class Edit extends Component {
 	render = () => {
 		const { attributes, className, setAttributes } = this.props;
 		const { post, showImage } = attributes;
-		const classes = classNames( className ); // This unnecessary use of classNames is a placeholder for className manipulation to come.
+		const classes = classNames( className ); // This unnecessary use of classNames is a placeholder for className manipulation to come.''
+		const TEMPLATE = [
+			[
+				'core/columns',
+				{},
+				[
+					[ 'core/column', {}, [ [ 'core/image' ] ] ],
+					[ 'core/column', {}, [ [ 'core/paragraph', { placeholder: 'Enter side content...' } ] ] ],
+				],
+			],
+		];
 		return (
 			<Fragment>
 				<div className={ classes }>
@@ -38,7 +48,6 @@ class Edit extends Component {
 									<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
 								</h3>
 								<InnerBlocks
-									templateLock="all"
 									template={ [ [ 'newspack-blocks/title', { post } ] ] }
 								/>
 							</div>
@@ -65,9 +74,9 @@ export default withDispatch( ( dispatch, props, registry ) => {
 	const { getBlockRootClientId } = registry.select( 'core/block-editor' );
 	const { updateBlockAttributes } = dispatch( 'core/block-editor' );
 	return {
-		setAttributes: attributes => {
-			const parentBlockClientId = getBlockRootClientId( clientId );
-			return updateBlockAttributes( parentBlockClientId, { innerBlockAttributes: attributes } );
-		},
+		// setAttributes: attributes => {
+		// 	const parentBlockClientId = getBlockRootClientId( clientId );
+		// 	return updateBlockAttributes( parentBlockClientId, { innerBlockAttributes: attributes } );
+		// },
 	};
 } )( Edit );

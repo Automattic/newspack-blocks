@@ -8,10 +8,17 @@ import { QueryPanel } from '../../components/';
  */
 import { __ } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
-import { InnerBlocks, InspectorControls } from '@wordpress/block-editor';
+import {
+	BlockEditorProvider,
+	BlockList,
+	InnerBlocks,
+	InspectorControls,
+	WritingFlow,
+} from '@wordpress/block-editor';
 import { PanelBody, Placeholder, Spinner } from '@wordpress/components';
 import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
+import { createBlock } from '@wordpress/blocks';
 
 class Edit extends Component {
 	componentDidUpdate = prevProps => {
@@ -22,9 +29,16 @@ class Edit extends Component {
 			updateInnerBlockAttributes( innerBlockAttributes );
 		}
 	};
+	onBlocksChange = value => {
+		const { selectedBlock, hasSelectedBlock } = this.props;
+		console.log( value, selectedBlock() );
+	}
 	render = () => {
 		const { attributes, className, query, setAttributes } = this.props;
 		const { criteria, innerBlockAttributes } = attributes;
+		const blocks = ( query || [] ).map( post =>
+			createBlock( 'newspack-blocks/post-bep', { ...innerBlockAttributes, post } )
+		);
 		return (
 			<Fragment>
 				<InspectorControls>
@@ -36,22 +50,23 @@ class Edit extends Component {
 					</PanelBody>
 				</InspectorControls>
 				<div className={ className }>
+					<h1>w/Block Editor Provider</h1>
 					{ ! query && (
 						<Placeholder>
 							<Spinner />
 						</Placeholder>
 					) }
-					<h1>w/Inner Blocks</h1>
 					{ query && ! query.length && <Placeholder>{ __( 'No posts found' ) }</Placeholder> }
 					{ query && query.length > 0 && (
-						<InnerBlocks
-							template={ ( query || [] ).map( post => [
-								'newspack-blocks/post',
-								{ ...innerBlockAttributes, post },
-							] ) }
-							templateInsertUpdatesSelection={ false }
-							templateLock="all"
-						/>
+						<BlockEditorProvider
+							value={ blocks }
+							onChange={ this.onBlocksChange }
+							onInput={ value => console.log( 'input', value ) }
+						>
+							<WritingFlow>
+								<BlockList />
+							</WritingFlow>
+						</BlockEditorProvider>
 					) }
 				</div>
 			</Fragment>
@@ -63,7 +78,14 @@ export default compose( [
 		const { attributes } = props;
 		const { criteria } = attributes;
 		const { getEntityRecords } = select( 'core' );
-		return { query: getEntityRecords( 'postType', 'post', criteria ) };
+		const { getSelectedBlockClientId, getSelectedBlock } = select( 'core/block-editor' );
+		const { hasSelectedBlock, getFirstMultiSelectedBlockClientId } = select( 'core/block-editor' );
+		return {
+			query: getEntityRecords( 'postType', 'post', criteria ),
+			selectedBlock: () => getSelectedBlock(),
+			hasSelectedBlock: hasSelectedBlock(),
+			getFirstMultiSelectedBlockClientId: getFirstMultiSelectedBlockClientId(),
+		};
 	} ),
 	withDispatch( ( dispatch, props, registry ) => {
 		const { clientId } = props;
