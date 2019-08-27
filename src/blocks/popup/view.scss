@@ -11,4 +11,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    position: fixed;
+    z-index: 99999;
+    top: 0;
+    left: 0;
+    transform: translateX( -99999px );
+    visibility: hidden;
+}
+.lightbox-close {
+	position: absolute;
+	right: 1em;
+	top: 1em;
 }
