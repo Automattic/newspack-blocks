@@ -26,6 +26,7 @@ import {
 	Placeholder,
 	Spinner,
 } from '@wordpress/components';
+import { PanelColorSettings } from '@wordpress/block-editor';
 import { withSelect } from '@wordpress/data';
 import { withState } from '@wordpress/compose';
 
@@ -47,6 +48,8 @@ class Edit extends Component {
 			showDate,
 			sectionHeader,
 			moreLink,
+			textColor,
+			setTextColor,
 		} = attributes;
 		return (
 			<article className={ post.newspack_featured_image_src && 'post-has-image' } key={ post.id }>
@@ -125,6 +128,8 @@ class Edit extends Component {
 			mediaPosition,
 			moreLink,
 			singleMode,
+			textColor,
+			setTextColor,
 		} = attributes;
 		return (
 			<Fragment>
@@ -239,6 +244,16 @@ class Edit extends Component {
 						</PanelRow>
 					) }
 				</PanelBody>
+				<PanelColorSettings
+					title={ __( 'Color Settings' ) }
+					colorSettings={ [
+						{
+							value: textColor.color,
+							onChange: setTextColor,
+							label: __( 'Text Color' ),
+						},
+					] }
+				/>
 			</Fragment>
 		);
 	};
@@ -280,6 +295,8 @@ class Edit extends Component {
 			[ `type-scale${ typeScale }` ]: typeScale !== '5',
 			[ `image-align${ mediaPosition }` ]: mediaPosition !== 'top' && showImage,
 			[ `image-scale${ imageScale }` ]: imageScale !== '1' && showImage,
+			'has-text-color': textColor.color,
+			[ textColor.class ]: textColor.class,
 		} );
 
 		const blockControls = [
@@ -320,7 +337,12 @@ class Edit extends Component {
 
 		return (
 			<Fragment>
-				<div className={ classes }>
+				<div
+					className={ classes }
+					style={ {
+						color: textColor.color,
+					} }
+				>
 					{ latestPosts && ( ! RichText.isEmpty( sectionHeader ) || isSelected ) && (
 						<RichText
 							onChange={ value => setAttributes( { sectionHeader: value } ) }

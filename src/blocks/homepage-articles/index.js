@@ -103,7 +103,11 @@ export const settings = {
 		},
 		singleMode: {
 			type: 'boolean',
-			default: false
+			default: false,
+		},
+		textColor: {
+			type: 'string',
+			default: '',
 		},
 	},
 	supports: {
