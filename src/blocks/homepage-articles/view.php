@@ -102,18 +102,25 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				?>
 
 				<article <?php echo has_post_thumbnail() ? 'class="post-has-image"' : ''; ?>>
-					<?php if ( has_post_thumbnail() && $attributes['showImage'] ) : ?>
 
+					<?php if ( has_post_thumbnail() && $attributes['showImage'] && $attributes['imageShape'] ) : ?>
 						<figure class="post-thumbnail">
 							<a href="<?php echo esc_url( get_permalink() ); ?>" rel="bookmark">
-								<?php the_post_thumbnail( 'large' ); ?>
+								<?php
+								if ( 'landscape' === $attributes['imageShape'] ) {
+									the_post_thumbnail( 'newspack-article-block-landscape' );
+								} elseif ( 'portrait' === $attributes['imageShape'] ) {
+									the_post_thumbnail( 'newspack-article-block-portrait' );
+								} else {
+									the_post_thumbnail( 'newspack-article-block-square' );
+								}
+								?>
 							</a>
 
 							<?php if ( $attributes['showCaption'] && '' !== get_the_post_thumbnail_caption() ) : ?>
 								<figcaption><?php the_post_thumbnail_caption(); ?>
 							<?php endif; ?>
 						</figure><!-- .featured-image -->
-
 					<?php endif; ?>
 
 					<div class="entry-wrapper">
@@ -259,6 +266,10 @@ function newspack_blocks_register_homepage_articles() {
 				'imageScale'    => array(
 					'type'    => 'integer',
 					'default' => 3,
+				),
+				'imageShape'    => array(
+					'type'    => 'string',
+					'default' => 'landscape',
 				),
 				'sectionHeader' => array(
 					'type'    => 'string',

@@ -173,6 +173,16 @@ class Newspack_Blocks {
 	}
 }
 
+/**
+ * Add image sizes
+ */
+function newspack_blocks_image_sizes() {
+	add_image_size( 'newspack-article-block-landscape', 800, 600, true );
+	add_image_size( 'newspack-article-block-portrait', 600, 800, true );
+	add_image_size( 'newspack-article-block-square', 800, 800, true );
+}
+add_action( 'after_setup_theme', 'newspack_blocks_image_sizes' );
+
 require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'class-newspack-blocks-api.php';
 
 Newspack_Blocks::manage_view_scripts();

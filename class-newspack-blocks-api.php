@@ -94,6 +94,27 @@ class Newspack_Blocks_API {
 		);
 		$featured_image_set['full'] = $feat_img_array_full[0];
 
+		$feat_img_array_landscape        = wp_get_attachment_image_src(
+			$object['featured_media'],
+			'newspack-article-block-landscape',
+			false
+		);
+		$featured_image_set['landscape'] = $feat_img_array_landscape[0];
+
+		$feat_img_array_portrait        = wp_get_attachment_image_src(
+			$object['featured_media'],
+			'newspack-article-block-portrait',
+			false
+		);
+		$featured_image_set['portrait'] = $feat_img_array_portrait[0];
+
+		$feat_img_array_square        = wp_get_attachment_image_src(
+			$object['featured_media'],
+			'newspack-article-block-square',
+			false
+		);
+		$featured_image_set['square'] = $feat_img_array_square[0];
+
 		return $featured_image_set;
 	}
 

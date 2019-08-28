@@ -56,6 +56,10 @@ export const settings = {
 			type: 'boolean',
 			default: false,
 		},
+		imageShape: {
+			type: 'string',
+			default: 'landscape',
+		},
 		showAuthor: {
 			type: 'boolean',
 			default: true,
