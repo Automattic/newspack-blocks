@@ -21,7 +21,6 @@ import {
 	PanelRow,
 	RangeControl,
 	Toolbar,
-	DropdownMenu,
 	ToggleControl,
 	Dashicon,
 	Placeholder,
