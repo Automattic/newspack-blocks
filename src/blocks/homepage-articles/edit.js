@@ -15,14 +15,8 @@ import moment from 'moment';
  */
 import { __ } from '@wordpress/i18n';
 import { Component, Fragment, RawHTML } from '@wordpress/element';
-import {
-	InspectorControls,
-	RichText,
-	BlockControls,
-	PanelColorSettings,
-	withColors,
-	getColorClass,
-} from '@wordpress/editor';
+import { InspectorControls, RichText, BlockControls } from '@wordpress/editor';
+import { PanelColorSettings, withColors, getColorClass } from '@wordpress/block-editor';
 import {
 	PanelBody,
 	PanelRow,
@@ -54,9 +48,9 @@ const applyFallbackStyles = withFallbackStyles( ( node, ownProps ) => {
 	};
 } );
 
-class Edit extends Component {
+class articleBlock extends Component {
 	renderPost = post => {
-		const { attributes } = this.props;
+		const { attributes, textColor, fallbackTextColor } = this.props;
 		const {
 			showImage,
 			showExcerpt,
@@ -65,9 +59,6 @@ class Edit extends Component {
 			showDate,
 			sectionHeader,
 			moreLink,
-			textColor,
-			backgroundColor,
-			setTextColor,
 		} = attributes;
 		return (
 			<article className={ post.newspack_featured_image_src && 'post-has-image' } key={ post.id }>
@@ -126,6 +117,8 @@ class Edit extends Component {
 			setAttributes,
 			latestPosts,
 			isSelected,
+			textColor,
+			fallbackTextColor,
 		} = this.props;
 		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
 		const {
@@ -146,9 +139,8 @@ class Edit extends Component {
 			mediaPosition,
 			moreLink,
 			singleMode,
-			textColor,
-			setTextColor,
 		} = attributes;
+		const setTextColor = value => setAttributes( { textColor: value } );
 		return (
 			<Fragment>
 				<PanelBody title={ __( 'Display Settings' ) } initialOpen={ true }>
@@ -288,6 +280,8 @@ class Edit extends Component {
 			latestPosts,
 			hasPosts,
 			categoriesList,
+			textColor,
+			fallbackTextColor,
 		} = this.props; // variables getting pulled out of props
 		const {
 			showExcerpt,
@@ -304,7 +298,6 @@ class Edit extends Component {
 			imageScale,
 			sectionHeader,
 			moreLink,
-			textColor,
 		} = attributes;
 
 		const classes = classNames( className, {
@@ -425,6 +418,6 @@ const articleBlockEdit = compose( [
 			postList: getEntityRecords( 'postType', 'post', postsListQuery ),
 		};
 	} ),
-] )( Edit );
+] )( articleBlock );
 
 export default articleBlockEdit;
