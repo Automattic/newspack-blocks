@@ -15,7 +15,14 @@ import moment from 'moment';
  */
 import { __ } from '@wordpress/i18n';
 import { Component, Fragment, RawHTML } from '@wordpress/element';
-import { InspectorControls, RichText, BlockControls } from '@wordpress/editor';
+import {
+	InspectorControls,
+	RichText,
+	BlockControls,
+	PanelColorSettings,
+	withColors,
+	getColorClass,
+} from '@wordpress/editor';
 import {
 	PanelBody,
 	PanelRow,
@@ -25,10 +32,10 @@ import {
 	Dashicon,
 	Placeholder,
 	Spinner,
+	withFallbackStyles,
 } from '@wordpress/components';
-import { PanelColorSettings } from '@wordpress/block-editor';
 import { withSelect } from '@wordpress/data';
-import { withState } from '@wordpress/compose';
+import { withState, compose } from '@wordpress/compose';
 
 const { decodeEntities } = wp.htmlEntities;
 
@@ -36,6 +43,16 @@ const { decodeEntities } = wp.htmlEntities;
  * Module Constants
  */
 const MAX_POSTS_COLUMNS = 6;
+
+const applyFallbackStyles = withFallbackStyles( ( node, ownProps ) => {
+	const { textColor } = ownProps.attributes;
+	const editableNode = node.querySelector( '[contenteditable="true"]' );
+	//verify if editableNode is available, before using getComputedStyle.
+	const computedStyles = editableNode ? getComputedStyle( editableNode ) : null;
+	return {
+		fallbackTextColor: textColor || ! computedStyles ? undefined : computedStyles.color,
+	};
+} );
 
 class Edit extends Component {
 	renderPost = post => {
@@ -49,6 +66,7 @@ class Edit extends Component {
 			sectionHeader,
 			moreLink,
 			textColor,
+			backgroundColor,
 			setTextColor,
 		} = attributes;
 		return (
@@ -286,6 +304,7 @@ class Edit extends Component {
 			imageScale,
 			sectionHeader,
 			moreLink,
+			textColor,
 		} = attributes;
 
 		const classes = classNames( className, {
@@ -377,29 +396,35 @@ class Edit extends Component {
 	}
 }
 
-export default withSelect( ( select, props ) => {
-	const { postsToShow, author, categories, single, singleMode } = props.attributes;
-	const { getAuthors, getEntityRecords } = select( 'core' );
-	const latestPostsQuery = pickBy(
-		singleMode
-			? { include: single }
-			: {
-					per_page: postsToShow,
-					categories,
-					author,
-			  },
-		value => ! isUndefined( value )
-	);
-	const categoriesListQuery = {
-		per_page: 100,
-	};
-	const postsListQuery = {
-		per_page: 50,
-	};
-	return {
-		latestPosts: getEntityRecords( 'postType', 'post', latestPostsQuery ),
-		categoriesList: getEntityRecords( 'taxonomy', 'category', categoriesListQuery ),
-		authorList: getAuthors(),
-		postList: getEntityRecords( 'postType', 'post', postsListQuery ),
-	};
-} )( Edit );
+const articleBlockEdit = compose( [
+	withColors( { textColor: 'color' } ),
+	applyFallbackStyles,
+	withSelect( ( select, props ) => {
+		const { postsToShow, author, categories, single, singleMode } = props.attributes;
+		const { getAuthors, getEntityRecords } = select( 'core' );
+		const latestPostsQuery = pickBy(
+			singleMode
+				? { include: single }
+				: {
+						per_page: postsToShow,
+						categories,
+						author,
+				  },
+			value => ! isUndefined( value )
+		);
+		const categoriesListQuery = {
+			per_page: 100,
+		};
+		const postsListQuery = {
+			per_page: 50,
+		};
+		return {
+			latestPosts: getEntityRecords( 'postType', 'post', latestPostsQuery ),
+			categoriesList: getEntityRecords( 'taxonomy', 'category', categoriesListQuery ),
+			authorList: getAuthors(),
+			postList: getEntityRecords( 'postType', 'post', postsListQuery ),
+		};
+	} ),
+] )( Edit );
+
+export default articleBlockEdit;
