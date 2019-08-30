@@ -13,7 +13,6 @@ registerBlockType( 'newspack-blocks/title', {
 	category: 'layout',
 	parent,
 	edit: ( { attributes } ) => {
-		// console.log( attributes );
 		return <h1><a href={attributes.post.link}>{ attributes.post.title.raw }</a></h1>;
 	},
 	save: ( { attributes } ) => {
@@ -22,7 +21,11 @@ registerBlockType( 'newspack-blocks/title', {
 	attributes: {
 		post: {
 			type: 'object',
-			default: {}
+			default: {
+				title: {
+					raw: "Hello World"
+				}
+			}
 		}
 	}
 } );

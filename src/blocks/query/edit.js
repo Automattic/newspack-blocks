@@ -9,7 +9,7 @@ import { QueryPanel } from '../../components/';
 import { __ } from '@wordpress/i18n';
 import { Component, Fragment, RawHTML } from '@wordpress/element';
 import { InnerBlocks, InspectorControls } from '@wordpress/block-editor';
-import { serialize } from '@wordpress/blocks';
+import { cloneBlock, serialize } from '@wordpress/blocks';
 import { PanelBody, Placeholder, Spinner } from '@wordpress/components';
 import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
@@ -17,12 +17,13 @@ import { compose } from '@wordpress/compose';
 const lipsumPost = {
 	link: '#',
 	title: {
-		raw: 'Title'
+		raw: 'Title',
 	},
 	excerpt: {
-		rendered: '<p>Lorem ipsum dolor sit amet, nostrud volutpat ex mei, sea ad saepe veniam ullamcorper. Quo elit aperiam ne.</p>'
-	}
-}
+		rendered:
+			'<p>Lorem ipsum dolor sit amet, nostrud volutpat ex mei, sea ad saepe veniam ullamcorper. Quo elit aperiam ne.</p>',
+	},
+};
 
 class Edit extends Component {
 	componentDidUpdate = prevProps => {
@@ -39,7 +40,7 @@ class Edit extends Component {
 
 		const block = getBlock( this.props.clientId ); // this may be slow?
 		// default post for the inner blocks editor
-		const output =
+		const output = (
 			<Fragment>
 				<InspectorControls>
 					<PanelBody title={ __( 'Query Settings' ) } initialOpen={ true }>
@@ -55,24 +56,18 @@ class Edit extends Component {
 					</Placeholder>
 				) }
 				<div style={ { background: 'lightgray' } }>
-					<InnerBlocks
-						allowedBlocks={ [ 'newspack-blocks/title', 'newspack-blocks/excerpt' ] }
-					/>
+					<InnerBlocks  />
 				</div>
 				{ query && ! query.length && <Placeholder>{ __( 'No posts found' ) }</Placeholder> }
 				<section>
-				{ query && query.length > 0 && (
-					query.map( post => {
-						// SUPER SLOW?
-						block.innerBlocks.forEach( b => updateBlockAttributes( b.clientId, { post } ) );
-						console.log( post ); // Why are these all the same in the output???
-						// REACT!!!!!! dispatch is async....
-						console.log( block.innerBlocks );
-						return <RawHTML>{ serialize( block.innerBlocks ) }</RawHTML>
-					} )
-				) }
+					{ ( query || [] ).map( post =>
+						block.innerBlocks.map( b => (
+							<RawHTML>{ serialize( cloneBlock( b, { post } ) ) }</RawHTML>
+						) )
+					) }
 				</section>
-			</Fragment>;
+			</Fragment>
+		);
 		// block.innerBlocks.forEach( b => updateBlockAttributes( b.clientId, { post: lipsumPost } ) )
 		return output;
 	};
@@ -99,7 +94,7 @@ export default compose( [
 					updateBlockAttributes( innerBlock.clientId, attributes )
 				);
 			},
-			updateBlockAttributes
+			updateBlockAttributes,
 		};
 	} ),
 ] )( Edit );

@@ -7,6 +7,7 @@ import { Path, SVG } from '@wordpress/components';
  * Internal dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { InnerBlocks } from '@wordpress/block-editor';
 import edit from './edit';
 
 /**
@@ -52,5 +53,5 @@ export const settings = {
 		align: false,
 	},
 	edit,
-	save: () => null, // to use view.php
+	save: () => <InnerBlocks.Content />,
 };
