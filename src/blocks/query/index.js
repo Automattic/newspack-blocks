@@ -47,6 +47,10 @@ export const settings = {
 			type: 'object',
 			default: {},
 		},
+		blocks: {
+			type: 'array',
+			default: [],
+		},
 	},
 	supports: {
 		html: false,

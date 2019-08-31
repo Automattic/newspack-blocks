@@ -8,40 +8,17 @@ import { QueryPanel } from '../../components/';
  */
 import { __ } from '@wordpress/i18n';
 import { Component, Fragment, RawHTML } from '@wordpress/element';
-import { InnerBlocks, InspectorControls } from '@wordpress/block-editor';
+import { BlockList, BlockEditorProvider, InspectorControls } from '@wordpress/block-editor';
 import { cloneBlock, serialize } from '@wordpress/blocks';
 import { PanelBody, Placeholder, Spinner } from '@wordpress/components';
-import { withSelect, withDispatch } from '@wordpress/data';
-import { compose } from '@wordpress/compose';
-
-const lipsumPost = {
-	link: '#',
-	title: {
-		raw: 'Title',
-	},
-	excerpt: {
-		rendered:
-			'<p>Lorem ipsum dolor sit amet, nostrud volutpat ex mei, sea ad saepe veniam ullamcorper. Quo elit aperiam ne.</p>',
-	},
-};
+import { withSelect } from '@wordpress/data';
 
 class Edit extends Component {
-	componentDidUpdate = prevProps => {
-		const { updateInnerBlockAttributes } = this.props;
-		const { innerBlockAttributes } = this.props.attributes;
-		const { innerBlockAttributes: prevInnerBlockAttributes } = prevProps.attributes;
-		if ( prevInnerBlockAttributes !== innerBlockAttributes ) {
-			updateInnerBlockAttributes( innerBlockAttributes );
-		}
-	};
 	render = () => {
-		const { attributes, query, setAttributes, getBlock, updateBlockAttributes } = this.props;
-		const { criteria, innerBlockAttributes } = attributes;
-
-		const block = getBlock( this.props.clientId ); // this may be slow?
-		// default post for the inner blocks editor
-		const output = (
-			<Fragment>
+		const { attributes, className, isSelected, query, setAttributes } = this.props;
+		const { criteria, blocks, innerBlockAttributes } = attributes;
+		return (
+			<div className={ className }>
 				<InspectorControls>
 					<PanelBody title={ __( 'Query Settings' ) } initialOpen={ true }>
 						<QueryPanel
@@ -50,51 +27,31 @@ class Edit extends Component {
 						/>
 					</PanelBody>
 				</InspectorControls>
-				{ ! query && (
-					<Placeholder>
-						<Spinner />
-					</Placeholder>
+				{ isSelected && (
+					<article className="is-edit-area">
+						<BlockEditorProvider value={ blocks } onChange={ blocks => setAttributes( { blocks } ) }>
+							<BlockList />
+						</BlockEditorProvider>
+					</article>
 				) }
-				<div style={ { background: 'lightgray' } }>
-					<InnerBlocks  />
-				</div>
-				{ query && ! query.length && <Placeholder>{ __( 'No posts found' ) }</Placeholder> }
 				<section>
-					{ ( query || [] ).map( post =>
-						block.innerBlocks.map( b => (
-							<RawHTML>{ serialize( cloneBlock( b, { post } ) ) }</RawHTML>
-						) )
-					) }
+					{ ( query || [] ).map( post => (
+						<article>
+							{ blocks.map( block => (
+								<RawHTML>{ serialize( cloneBlock( block, { post } ) ) }</RawHTML>
+							) ) }
+						</article>
+					) ) }
 				</section>
-			</Fragment>
+			</div>
 		);
-		// block.innerBlocks.forEach( b => updateBlockAttributes( b.clientId, { post: lipsumPost } ) )
-		return output;
 	};
 }
-export default compose( [
-	withSelect( ( select, props ) => {
-		const { attributes } = props;
-		const { criteria } = attributes;
-		const { getEntityRecords } = select( 'core' );
-		const { getBlock } = select( 'core/block-editor' );
-		return {
-			query: getEntityRecords( 'postType', 'post', criteria ),
-			getBlock,
-		};
-	} ),
-	withDispatch( ( dispatch, props, registry ) => {
-		const { clientId } = props;
-		const { updateBlockAttributes } = dispatch( 'core/block-editor' );
-		const { getBlock } = registry.select( 'core/block-editor' );
-		return {
-			updateInnerBlockAttributes: attributes => {
-				const { innerBlocks } = getBlock( clientId );
-				innerBlocks.forEach( innerBlock =>
-					updateBlockAttributes( innerBlock.clientId, attributes )
-				);
-			},
-			updateBlockAttributes,
-		};
-	} ),
-] )( Edit );
+export default withSelect( ( select, props ) => {
+	const { attributes } = props;
+	const { criteria } = attributes;
+	const { getEntityRecords } = select( 'core' );
+	return {
+		query: getEntityRecords( 'postType', 'post', criteria ),
+	};
+} )( Edit );

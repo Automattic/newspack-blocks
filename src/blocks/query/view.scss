@@ -1,2 +1,9 @@
 .wp-block-newspack-blocks-query {
+	article {
+		border-bottom: 1px solid black;
+		padding: 1em;
+	}
+	.is-edit-area {
+		background: lightgray;
+	}
 }
