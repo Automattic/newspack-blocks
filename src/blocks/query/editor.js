@@ -13,10 +13,10 @@ registerBlockType( 'newspack-blocks/title', {
 	category: 'layout',
 	parent,
 	edit: ( { attributes } ) => {
-		return <h1><a href={attributes.post.link}>{ attributes.post.title.raw }</a></h1>;
+		return <h1><a href='#'>{ attributes.post.title.raw }</a></h1>;
 	},
 	save: ( { attributes } ) => {
-		return <h1><a href={attributes.post.link}>{ attributes.post.title.raw }</a></h1>;
+		return <h1><a href='#'>{ attributes.post.title.raw }</a></h1>;
 	},
 	attributes: {
 		post: {
@@ -44,7 +44,11 @@ registerBlockType( 'newspack-blocks/excerpt', {
 	attributes: {
 		post: {
 			type: 'object',
-			default: {}
+			default: {
+				excerpt: {
+					rendered: 'Excerpt...',
+				}
+			}
 		}
 	}
 } );
