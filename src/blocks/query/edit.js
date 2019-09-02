@@ -4,26 +4,45 @@
 import { QueryPanel } from '../../components/';
 
 /**
+ * External dependencies
+ */
+import classNames from 'classnames';
+
+/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
 import { Component, Fragment, RawHTML } from '@wordpress/element';
-import { BlockList, BlockEditorProvider, InspectorControls } from '@wordpress/block-editor';
+import {
+	BlockList,
+	BlockEditorProvider,
+	InspectorControls,
+	WritingFlow,
+} from '@wordpress/block-editor';
 import { cloneBlock, serialize } from '@wordpress/blocks';
-import { PanelBody, Placeholder, Spinner } from '@wordpress/components';
+import { Button, PanelBody, Placeholder, Spinner } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 
 const PROTOTYPE_STYLE = 1;
 
 class Edit extends Component {
+	constructor( props ) {
+		super( props );
+		this.state = {
+			editingPost: null,
+		};
+		this._blocks = props.attributes.blocks;
+	}
 	render = () => {
 		const { attributes, className, isSelected, query, setAttributes } = this.props;
 		const { criteria, blocks, innerBlockAttributes } = attributes;
+		const { editingPost } = this.state;
 		const settings = {
-			allowedBlockTypes: [ 'newspack-blocks/title', 'newspack-blocks/excerpt' ],
+			allowedBlockTypes: [ 'newspack-blocks/title', 'newspack-blocks/excerpt', 'core/paragraph' ],
 		};
+		const classes = classNames( className, editingPost ? 'is-editing' : '' );
 		return (
-			<div className={ className }>
+			<div className={ classes }>
 				<InspectorControls>
 					<PanelBody title={ __( 'Query Settings' ) } initialOpen={ true }>
 						<QueryPanel
@@ -47,7 +66,7 @@ class Edit extends Component {
 						{ ( query || [] ).map( post => (
 							<article>
 								{ blocks.map( block => (
-									<RawHTML>{ serialize( cloneBlock( block, { post } ) ) }</RawHTML>
+									<RawHTML key={ post.id }>{ serialize( cloneBlock( block, { post } ) ) }</RawHTML>
 								) ) }
 							</article>
 						) ) }
@@ -56,14 +75,42 @@ class Edit extends Component {
 				{ PROTOTYPE_STYLE === 1 && (
 					<section>
 						{ ( query || [] ).map( post => (
-							<article>
-								<BlockEditorProvider
-									value={ blocks.map( block => cloneBlock( block, { post } ) ) }
-									onChange={ blocks => setAttributes( { blocks } ) }
-									settings={ settings }
-								>
-									<BlockList />
-								</BlockEditorProvider>
+							<article className={ post.id === editingPost ? 'is-editing' : '' }>
+								{ post.id === editingPost && (
+									<Fragment>
+										<Button
+											onClick={ () => {
+												this.setState( { editingPost: null }, () =>
+													setAttributes( { blocks: this._blocks } )
+												);
+											} }
+										>
+											{ __( 'Save' ) }
+										</Button>
+										<BlockEditorProvider
+											value={ blocks.map( block => cloneBlock( block, { post } ) ) }
+											onChange={ blocks => ( this._blocks = blocks ) }
+											onEdit={ blocks => ( this._blocks = blocks ) }
+											settings={ settings }
+										>
+											<WritingFlow>
+												<BlockList />
+											</WritingFlow>
+										</BlockEditorProvider>
+									</Fragment>
+								) }
+								{ post.id !== editingPost && (
+									<Fragment>
+										{ ! editingPost && (
+											<Button onClick={ () => this.setState( { editingPost: post.id } ) }>
+												{ __( 'Edit' ) }
+											</Button>
+										) }
+										{ blocks.map( block => (
+											<RawHTML>{ serialize( cloneBlock( block, { post } ) ) }</RawHTML>
+										) ) }
+									</Fragment>
+								) }
 							</article>
 						) ) }
 					</section>
