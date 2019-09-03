@@ -44,7 +44,7 @@
 			flex-basis: calc( 50% - 16px);
 		}
 
-		&.columns-5 article:last-of-type {
+		&.columns-5 article:last-of-type:nth-child(odd) {
 			flex-grow: 1;
 		}
 	}
