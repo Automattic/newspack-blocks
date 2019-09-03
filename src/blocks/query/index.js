@@ -49,7 +49,15 @@ export const settings = {
 		},
 		blocks: {
 			type: 'array',
-			default: [],
+			default: [
+				{
+					isValid: true,
+					clientId: null,
+					name: "newspack-blocks/title",
+					attributes: {},
+					innerBlocks: [],
+				}
+			],
 		},
 	},
 	supports: {

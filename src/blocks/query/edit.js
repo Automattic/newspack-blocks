@@ -20,10 +20,8 @@ import {
 	WritingFlow,
 } from '@wordpress/block-editor';
 import { cloneBlock, serialize } from '@wordpress/blocks';
-import { Button, PanelBody, Placeholder, Spinner } from '@wordpress/components';
+import { Button, PanelBody } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
-
-const PROTOTYPE_STYLE = 1;
 
 class Edit extends Component {
 	constructor( props ) {
@@ -38,7 +36,7 @@ class Edit extends Component {
 		const { criteria, blocks, innerBlockAttributes } = attributes;
 		const { editingPost } = this.state;
 		const settings = {
-			allowedBlockTypes: [ 'newspack-blocks/title', 'newspack-blocks/excerpt', 'core/paragraph' ],
+			allowedBlockTypes: [ 'newspack-blocks/title', 'newspack-blocks/excerpt', 'newspack-blocks/author', 'core/paragraph' ],
 		};
 		const classes = classNames( className, editingPost ? 'is-editing' : '' );
 		return (
@@ -51,70 +49,47 @@ class Edit extends Component {
 						/>
 					</PanelBody>
 				</InspectorControls>
-				{ isSelected && PROTOTYPE_STYLE === 0 && (
-					<article className="is-edit-area">
-						<BlockEditorProvider
-							value={ blocks }
-							onChange={ blocks => setAttributes( { blocks } ) }
-						>
-							<BlockList />
-						</BlockEditorProvider>
-					</article>
-				) }
-				{ PROTOTYPE_STYLE === 0 && (
-					<section>
-						{ ( query || [] ).map( post => (
-							<article>
-								{ blocks.map( block => (
-									<RawHTML key={ post.id }>{ serialize( cloneBlock( block, { post } ) ) }</RawHTML>
-								) ) }
-							</article>
-						) ) }
-					</section>
-				) }
-				{ PROTOTYPE_STYLE === 1 && (
-					<section>
-						{ ( query || [] ).map( post => (
-							<article className={ post.id === editingPost ? 'is-editing' : '' }>
-								{ post.id === editingPost && (
-									<Fragment>
-										<Button
-											onClick={ () => {
-												this.setState( { editingPost: null }, () =>
-													setAttributes( { blocks: this._blocks } )
-												);
-											} }
-										>
-											{ __( 'Save' ) }
+				<section>
+					{ ( query || [] ).map( post => (
+						<article className={ post.id === editingPost ? 'is-editing' : '' }>
+							{ post.id === editingPost && (
+								<Fragment>
+									<Button
+										onClick={ () => {
+											this.setState( { editingPost: null }, () =>
+												setAttributes( { blocks: this._blocks } )
+											);
+										} }
+									>
+										{ __( 'Save' ) }
+									</Button>
+									<BlockEditorProvider
+										value={ blocks.map( block => cloneBlock( block, { post } ) ) }
+										onChange={ blocks => ( this._blocks = blocks ) }
+										onEdit={ blocks => ( this._blocks = blocks ) }
+										settings={ settings }
+									>
+										<WritingFlow>
+											<BlockList />
+										</WritingFlow>
+									</BlockEditorProvider>
+								</Fragment>
+							) }
+							{ post.id !== editingPost && (
+								<Fragment>
+									{ ! editingPost && (
+										<Button onClick={ () => this.setState( { editingPost: post.id } ) }>
+											{ __( 'Edit' ) }
 										</Button>
-										<BlockEditorProvider
-											value={ blocks.map( block => cloneBlock( block, { post } ) ) }
-											onChange={ blocks => ( this._blocks = blocks ) }
-											onEdit={ blocks => ( this._blocks = blocks ) }
-											settings={ settings }
-										>
-											<WritingFlow>
-												<BlockList />
-											</WritingFlow>
-										</BlockEditorProvider>
-									</Fragment>
-								) }
-								{ post.id !== editingPost && (
-									<Fragment>
-										{ ! editingPost && (
-											<Button onClick={ () => this.setState( { editingPost: post.id } ) }>
-												{ __( 'Edit' ) }
-											</Button>
-										) }
-										{ blocks.map( block => (
-											<RawHTML>{ serialize( cloneBlock( block, { post } ) ) }</RawHTML>
-										) ) }
-									</Fragment>
-								) }
-							</article>
-						) ) }
-					</section>
-				) }
+									) }
+									{ blocks.map( block => (
+										<RawHTML>{ serialize( cloneBlock( block, { post } ) ) }</RawHTML>
+									) ) }
+								</Fragment>
+							) }
+						</article>
+					) ) }
+				</section>
 			</div>
 		);
 	};
