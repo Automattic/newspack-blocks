@@ -97,13 +97,9 @@ export const settings = {
 			type: 'string',
 			default: '',
 		},
-		moreLink: {
-			type: 'boolean',
-			default: false,
-		},
 		singleMode: {
 			type: 'boolean',
-			default: false
+			default: false,
 		},
 	},
 	supports: {
