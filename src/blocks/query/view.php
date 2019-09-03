@@ -20,7 +20,6 @@ function newspack_blocks_render_block_query( $attributes ) {
 	$query = new WP_Query( $args );
 
 	$classes = Newspack_Blocks::block_classes( 'query', $attributes );
-
 	ob_start();
 	?>
 	<div class="<?php echo esc_attr( $classes ); ?>">
@@ -32,7 +31,7 @@ function newspack_blocks_render_block_query( $attributes ) {
 				foreach ( $blocks as $block ) {
 					$block_data = array(
 						'blockName'    => $block['name'],
-						'attrs'        => array( 'post' => (array) $query->post ),
+						'attrs'        => $block['attributes'],
 						'innerContent' => array(),
 					);
 					echo wp_kses_post( render_block( $block_data ) );
@@ -54,11 +53,50 @@ function newspack_blocks_render_block_query( $attributes ) {
  * @return string Returns the post content with latest posts added.
  */
 function newspack_blocks_render_block_title( $attributes ) {
-	$post  = ! empty( $attributes['post'] ) ? $attributes['post'] : array();
-	$title = ! empty( $post['post_title'] ) ? $post['post_title'] : '';
 	ob_start();
 	?>
-	<h1><?php echo wp_kses_post( $title ); ?></h1>
+	<h1><?php the_title(); ?></h1>
+	<?php
+	return ob_get_clean();
+}
+
+/**
+ * Renders the `newspack-blocks/author` block on server.
+ *
+ * @param array $attributes The block attributes.
+ *
+ * @return string Returns the post content with latest posts added.
+ */
+function newspack_blocks_render_block_author( $attributes ) {
+	ob_start();
+	?>
+	<h3>
+		<?php echo get_avatar( get_the_author_meta( 'ID' ) ); ?>
+		<span class="byline">
+			<?php
+			printf(
+				/* translators: %s: post author. */
+				esc_html_x( 'by %s', 'post author', 'newspack-blocks' ),
+				'<span class="author vcard"><a class="url fn n" href="' . esc_url( get_author_posts_url( get_the_author_meta( 'ID' ) ) ) . '">' . esc_html( get_the_author() ) . '</a></span>'
+			);
+			?>
+		</span><!-- .author-name -->
+	</h3>
+	<?php
+	return ob_get_clean();
+}
+
+/**
+ * Renders the `newspack-blocks/excerpt` block on server.
+ *
+ * @param array $attributes The block attributes.
+ *
+ * @return string Returns the post content with latest posts added.
+ */
+function newspack_blocks_render_block_excerpt( $attributes ) {
+	ob_start();
+	?>
+	<p><?php the_excerpt(); ?></p>
 	<?php
 	return ob_get_clean();
 }
@@ -123,6 +161,36 @@ function newspack_blocks_register_query() {
 				),
 			),
 			'render_callback' => 'newspack_blocks_render_block_title',
+		)
+	);
+
+	register_block_type(
+		'newspack-blocks/author',
+		array(
+			'attributes'      => array(
+				'className' => array(
+					'type' => 'string',
+				),
+				'post'      => array(
+					'type' => 'object',
+				),
+			),
+			'render_callback' => 'newspack_blocks_render_block_author',
+		)
+	);
+
+	register_block_type(
+		'newspack-blocks/excerpt',
+		array(
+			'attributes'      => array(
+				'className' => array(
+					'type' => 'string',
+				),
+				'post'      => array(
+					'type' => 'object',
+				),
+			),
+			'render_callback' => 'newspack_blocks_render_block_excerpt',
 		)
 	);
 }
