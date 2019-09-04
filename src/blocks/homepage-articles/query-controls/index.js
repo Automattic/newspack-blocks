@@ -33,7 +33,7 @@ class QueryControls extends Component {
 					value={ selectedSingleId }
 					options={ [
 						{ label: __( '-- Select Post --' ), value: '' },
-						...postList.map( post => ( { label: post.title.rendered, value: post.id } ) ),
+						...( postList || [] ).map( post => ( { label: post.title.rendered, value: post.id } ) ),
 					] }
 					onChange={ onSingleChange }
 				/>
@@ -46,7 +46,7 @@ class QueryControls extends Component {
 					value={ selectedAuthorId }
 					options={ [
 						{ label: __( 'Any author' ), value: '' },
-						...authorList.map( author => ( { label: author.name, value: author.id } ) ),
+						...( authorList || [] ).map( author => ( { label: author.name, value: author.id } ) ),
 					] }
 					onChange={ onAuthorChange }
 				/>
@@ -58,7 +58,7 @@ class QueryControls extends Component {
 					value={ selectedTagId }
 					options={ [
 						{ label: __( 'No tag filter' ), value: '' },
-						...tagsList.map( tag => ( { label: tag.name, value: tag.id } ) ),
+						...( tagsList || [] ).map( tag => ( { label: tag.name, value: tag.id } ) ),
 					] }
 					onChange={ onTagChange }
 				/>
