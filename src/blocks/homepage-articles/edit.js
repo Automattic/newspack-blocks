@@ -378,7 +378,7 @@ export default withSelect( ( select, props ) => {
 		per_page: 100,
 	};
 	const tagsListQuery = {
-		per_page: 100,
+		per_page: 1000,
 	};
 	const postsListQuery = {
 		per_page: 50,
