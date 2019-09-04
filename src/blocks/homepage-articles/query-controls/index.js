@@ -57,7 +57,7 @@ class QueryControls extends Component {
 					label={ __( 'Tag' ) }
 					value={ selectedTagId }
 					options={ [
-						{ label: __( 'No tag filter' ), value: '' },
+						{ label: __( 'All' ), value: '' },
 						...( tagsList || [] ).map( tag => ( { label: tag.name, value: tag.id } ) ),
 					] }
 					onChange={ onTagChange }
