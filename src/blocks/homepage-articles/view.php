@@ -86,7 +86,9 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				<article <?php echo has_post_thumbnail() ? 'class="post-has-image"' : ''; ?>>
 					<?php if ( has_post_thumbnail() && $attributes['showImage'] ) : ?>
 						<div class="post-thumbnail">
-							<?php the_post_thumbnail( 'large' ); ?>
+							<a href="<?php echo esc_url( get_permalink() ); ?>" rel="bookmark">
+								<?php the_post_thumbnail( 'large' ); ?>
+							</a>
 						</div><!-- .featured-image -->
 					<?php endif; ?>
 
