@@ -39,15 +39,7 @@ const MAX_POSTS_COLUMNS = 6;
 class Edit extends Component {
 	renderPost = post => {
 		const { attributes } = this.props;
-		const {
-			showImage,
-			showExcerpt,
-			showAuthor,
-			showAvatar,
-			showDate,
-			sectionHeader,
-			moreLink,
-		} = attributes;
+		const { showImage, showExcerpt, showAuthor, showAvatar, showDate, sectionHeader } = attributes;
 		return (
 			<article className={ post.newspack_featured_image_src && 'post-has-image' } key={ post.id }>
 				{ showImage && post.newspack_featured_image_src && (
@@ -125,7 +117,6 @@ class Edit extends Component {
 			showAvatar,
 			postLayout,
 			mediaPosition,
-			moreLink,
 			singleMode,
 		} = attributes;
 		return (
@@ -164,13 +155,6 @@ class Edit extends Component {
 								! hasPosts ? MAX_POSTS_COLUMNS : Math.min( MAX_POSTS_COLUMNS, latestPosts.length )
 							}
 							required
-						/>
-					) }
-					{ ! singleMode && (
-						<ToggleControl
-							label={ __( 'Show "More" Link' ) }
-							checked={ moreLink }
-							onChange={ () => setAttributes( { moreLink: ! moreLink } ) }
 						/>
 					) }
 				</PanelBody>
@@ -272,7 +256,6 @@ class Edit extends Component {
 			typeScale,
 			imageScale,
 			sectionHeader,
-			moreLink,
 		} = attributes;
 
 		const classes = classNames( className, {
@@ -341,11 +324,6 @@ class Edit extends Component {
 						</Placeholder>
 					) }
 					{ latestPosts && latestPosts.map( post => this.renderPost( post ) ) }
-					{ latestPosts && moreLink && (
-						<a className="button" href="#">
-							{ __( 'More…' ) }
-						</a>
-					) }
 				</div>
 				<BlockControls>
 					<Toolbar controls={ blockControls } />
