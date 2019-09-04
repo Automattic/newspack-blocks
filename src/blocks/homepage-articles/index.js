@@ -60,6 +60,10 @@ export const settings = {
 			type: 'string',
 			default: 'landscape',
 		},
+		imageFileSize: {
+			type: 'string',
+			default: 'medium',
+		},
 		showAuthor: {
 			type: 'boolean',
 			default: true,

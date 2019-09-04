@@ -66,54 +66,93 @@ class Newspack_Blocks_API {
 		if ( 0 === $object['featured_media'] ) {
 			return;
 		}
-		$feat_img_array_thumbnail        = wp_get_attachment_image_src(
-			$object['featured_media'],
-			'thumbnail',
-			false
-		);
-		$featured_image_set['thumbnail'] = $feat_img_array_thumbnail[0];
 
-		$feat_img_array_medium        = wp_get_attachment_image_src(
+		// Landscape image.
+		$feat_img_array_landscape_large        = wp_get_attachment_image_src(
 			$object['featured_media'],
-			'medium',
+			'newspack-article-block-landscape-large',
 			false
 		);
-		$featured_image_set['medium'] = $feat_img_array_medium[0];
+		$featured_image_set['landscape_large'] = $feat_img_array_landscape_large[0];
 
-		$feat_img_array_large        = wp_get_attachment_image_src(
+		$feat_img_array_landscape_medium        = wp_get_attachment_image_src(
 			$object['featured_media'],
-			'large',
+			'newspack-article-block-landscape-medium',
 			false
 		);
-		$featured_image_set['large'] = $feat_img_array_large[0];
+		$featured_image_set['landscape_medium'] = $feat_img_array_landscape_medium[0];
 
-		$feat_img_array_full        = wp_get_attachment_image_src(
+		$feat_img_array_landscape_small        = wp_get_attachment_image_src(
 			$object['featured_media'],
-			'full',
+			'newspack-article-block-landscape-small',
 			false
 		);
-		$featured_image_set['full'] = $feat_img_array_full[0];
+		$featured_image_set['landscape_small'] = $feat_img_array_landscape_small[0];
 
-		$feat_img_array_landscape        = wp_get_attachment_image_src(
+		$feat_img_array_landscape_tiny        = wp_get_attachment_image_src(
 			$object['featured_media'],
-			'newspack-article-block-landscape',
+			'newspack-article-block-landscape-tiny',
 			false
 		);
-		$featured_image_set['landscape'] = $feat_img_array_landscape[0];
+		$featured_image_set['landscape_tiny'] = $feat_img_array_landscape_tiny[0];
 
-		$feat_img_array_portrait        = wp_get_attachment_image_src(
+		// Portrait image.
+		$feat_img_array_portrait_large        = wp_get_attachment_image_src(
 			$object['featured_media'],
-			'newspack-article-block-portrait',
+			'newspack-article-block-portrait-large',
 			false
 		);
-		$featured_image_set['portrait'] = $feat_img_array_portrait[0];
+		$featured_image_set['portrait_large'] = $feat_img_array_portrait_large[0];
 
-		$feat_img_array_square        = wp_get_attachment_image_src(
+		$feat_img_array_portrait_medium        = wp_get_attachment_image_src(
 			$object['featured_media'],
-			'newspack-article-block-square',
+			'newspack-article-block-portrait-medium',
 			false
 		);
-		$featured_image_set['square'] = $feat_img_array_square[0];
+		$featured_image_set['portrait_medium'] = $feat_img_array_portrait_medium[0];
+
+		$feat_img_array_portrait_small        = wp_get_attachment_image_src(
+			$object['featured_media'],
+			'newspack-article-block-portrait-small',
+			false
+		);
+		$featured_image_set['portrait_small'] = $feat_img_array_portrait_small[0];
+
+		$feat_img_array_portrait_tiny        = wp_get_attachment_image_src(
+			$object['featured_media'],
+			'newspack-article-block-portrait-tiny',
+			false
+		);
+		$featured_image_set['portrait_tiny'] = $feat_img_array_portrait_tiny[0];
+
+		// Square image.
+		$feat_img_array_square_large        = wp_get_attachment_image_src(
+			$object['featured_media'],
+			'newspack-article-block-square-large',
+			false
+		);
+		$featured_image_set['square_large'] = $feat_img_array_square_large[0];
+
+		$feat_img_array_square_medium        = wp_get_attachment_image_src(
+			$object['featured_media'],
+			'newspack-article-block-square-medium',
+			false
+		);
+		$featured_image_set['square_medium'] = $feat_img_array_square_medium[0];
+
+		$feat_img_array_square_small        = wp_get_attachment_image_src(
+			$object['featured_media'],
+			'newspack-article-block-square-small',
+			false
+		);
+		$featured_image_set['square_small'] = $feat_img_array_square_small[0];
+
+		$feat_img_array_square_tiny        = wp_get_attachment_image_src(
+			$object['featured_media'],
+			'newspack-article-block-square-tiny',
+			false
+		);
+		$featured_image_set['square_tiny'] = $feat_img_array_square_tiny[0];
 
 		return $featured_image_set;
 	}
