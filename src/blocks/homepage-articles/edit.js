@@ -322,7 +322,6 @@ class Edit extends Component {
 			showDate,
 			showImage,
 			imageShape,
-			imageFileSize,
 			showAuthor,
 			showAvatar,
 			postsToShow,
@@ -342,6 +341,7 @@ class Edit extends Component {
 			[ `type-scale${ typeScale }` ]: typeScale !== '5',
 			[ `image-align${ mediaPosition }` ]: showImage,
 			[ `image-scale${ imageScale }` ]: imageScale !== '1' && showImage,
+			[ `image-shape${ imageShape }` ]: imageShape !== 'landscape',
 			'has-text-color': textColor,
 		} );
 
@@ -402,27 +402,6 @@ class Edit extends Component {
 			},
 		];
 
-		const blockControlsImageFileSize = [
-			{
-				icon: landscapeIcon,
-				title: __( 'Large Image Size' ),
-				isActive: imageFileSize === 'large',
-				onClick: () => setAttributes( { imageFileSize: 'large' } ),
-			},
-			{
-				icon: portraitIcon,
-				title: __( 'Medium Image Size' ),
-				isActive: imageFileSize === 'medium',
-				onClick: () => setAttributes( { imageFileSize: 'medium' } ),
-			},
-			{
-				icon: squareIcon,
-				title: __( 'Small Image Size' ),
-				isActive: imageFileSize === 'small',
-				onClick: () => setAttributes( { imageFileSize: 'small' } ),
-			},
-		];
-
 		return (
 			<Fragment>
 				<div
@@ -454,7 +433,6 @@ class Edit extends Component {
 					<Toolbar controls={ blockControls } />
 					{ showImage && <Toolbar controls={ blockControlsImages } /> }
 					{ showImage && <Toolbar controls={ blockControlsImageShape } /> }
-					{ showImage && <Tollbar controls={ blockControlsImageFileSize } /> }
 				</BlockControls>
 				<InspectorControls>{ this.renderInspectorControls() }</InspectorControls>
 			</Fragment>

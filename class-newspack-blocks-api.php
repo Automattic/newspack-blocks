@@ -68,91 +68,79 @@ class Newspack_Blocks_API {
 		}
 
 		// Landscape image.
-		$feat_img_array_landscape_large        = wp_get_attachment_image_src(
-			$object['featured_media'],
-			'newspack-article-block-landscape-large',
-			false
-		);
-		$featured_image_set['landscape_large'] = $feat_img_array_landscape_large[0];
+		$landscape_large  = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-landscape-large' );
+		$landscape_medium = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-landscape-medium' );
+		$landscape_small  = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-landscape-small' );
+		$landscape_size   = 'newspack-article-block-landscape-tiny';
 
-		$feat_img_array_landscape_medium        = wp_get_attachment_image_src(
-			$object['featured_media'],
-			'newspack-article-block-landscape-medium',
-			false
-		);
-		$featured_image_set['landscape_medium'] = $feat_img_array_landscape_medium[0];
+		if ( 400 === $landscape_small[1] && 300 === $landscape_small[2] ) {
+			$landscape_size = 'newspack-article-block-landscape-small';
+		}
 
-		$feat_img_array_landscape_small        = wp_get_attachment_image_src(
-			$object['featured_media'],
-			'newspack-article-block-landscape-small',
-			false
-		);
-		$featured_image_set['landscape_small'] = $feat_img_array_landscape_small[0];
+		if ( 800 === $landscape_medium[1] && 600 === $landscape_medium[2] ) {
+			$landscape_size = 'newspack-article-block-landscape-medium';
+		}
 
-		$feat_img_array_landscape_tiny        = wp_get_attachment_image_src(
+		if ( 1200 === $landscape_large[1] && 900 === $landscape_large[2] ) {
+			$landscape_size = 'newspack-article-block-landscape-large';
+		}
+
+		$feat_img_array_landscape        = wp_get_attachment_image_src(
 			$object['featured_media'],
-			'newspack-article-block-landscape-tiny',
+			$landscape_size,
 			false
 		);
-		$featured_image_set['landscape_tiny'] = $feat_img_array_landscape_tiny[0];
+		$featured_image_set['landscape'] = $feat_img_array_landscape[0];
 
 		// Portrait image.
-		$feat_img_array_portrait_large        = wp_get_attachment_image_src(
-			$object['featured_media'],
-			'newspack-article-block-portrait-large',
-			false
-		);
-		$featured_image_set['portrait_large'] = $feat_img_array_portrait_large[0];
+		$portrait_large  = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-portrait-large' );
+		$portrait_medium = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-portrait-medium' );
+		$portrait_small  = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-portrait-small' );
+		$portrait_size   = 'newspack-article-block-portrait-tiny';
 
-		$feat_img_array_portrait_medium        = wp_get_attachment_image_src(
-			$object['featured_media'],
-			'newspack-article-block-portrait-medium',
-			false
-		);
-		$featured_image_set['portrait_medium'] = $feat_img_array_portrait_medium[0];
+		if ( 300 === $portrait_small[1] && 400 === $portrait_small[2] ) {
+			$portrait_size = 'newspack-article-block-portrait-small';
+		}
 
-		$feat_img_array_portrait_small        = wp_get_attachment_image_src(
-			$object['featured_media'],
-			'newspack-article-block-portrait-small',
-			false
-		);
-		$featured_image_set['portrait_small'] = $feat_img_array_portrait_small[0];
+		if ( 600 === $portrait_medium[1] && 800 === $portrait_medium[2] ) {
+			$portrait_size = 'newspack-article-block-portrait-medium';
+		}
 
-		$feat_img_array_portrait_tiny        = wp_get_attachment_image_src(
+		if ( 900 === $portrait_large[1] && 1200 === $portrait_large[2] ) {
+			$portrait_size = 'newspack-article-block-portrait-large';
+		}
+
+		$feat_img_array_portrait        = wp_get_attachment_image_src(
 			$object['featured_media'],
-			'newspack-article-block-portrait-tiny',
+			$portrait_size,
 			false
 		);
-		$featured_image_set['portrait_tiny'] = $feat_img_array_portrait_tiny[0];
+		$featured_image_set['portrait'] = $feat_img_array_portrait[0];
 
 		// Square image.
-		$feat_img_array_square_large        = wp_get_attachment_image_src(
-			$object['featured_media'],
-			'newspack-article-block-square-large',
-			false
-		);
-		$featured_image_set['square_large'] = $feat_img_array_square_large[0];
+		$square_large  = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-square-large' );
+		$square_medium = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-square-medium' );
+		$square_small  = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-square-small' );
+		$square_size   = 'newspack-article-block-square-tiny';
 
-		$feat_img_array_square_medium        = wp_get_attachment_image_src(
-			$object['featured_media'],
-			'newspack-article-block-square-medium',
-			false
-		);
-		$featured_image_set['square_medium'] = $feat_img_array_square_medium[0];
+		if ( 400 === $square_small[1] && 400 === $square_small[2] ) {
+			$square_size = 'newspack-article-block-square-small';
+		}
 
-		$feat_img_array_square_small        = wp_get_attachment_image_src(
-			$object['featured_media'],
-			'newspack-article-block-square-small',
-			false
-		);
-		$featured_image_set['square_small'] = $feat_img_array_square_small[0];
+		if ( 800 === $square_medium[1] && 800 === $square_medium[2] ) {
+			$square_size = 'newspack-article-block-square-medium';
+		}
 
-		$feat_img_array_square_tiny        = wp_get_attachment_image_src(
+		if ( 1200 === $square_large[1] && 1200 === $square_large[2] ) {
+			$square_size = 'newspack-article-block-square-large';
+		}
+
+		$feat_img_array_square        = wp_get_attachment_image_src(
 			$object['featured_media'],
-			'newspack-article-block-square-tiny',
+			$square_size,
 			false
 		);
-		$featured_image_set['square_tiny'] = $feat_img_array_square_tiny[0];
+		$featured_image_set['square'] = $feat_img_array_square[0];
 
 		return $featured_image_set;
 	}
@@ -200,7 +188,6 @@ class Newspack_Blocks_API {
 
 		return $category_info;
 	}
-
 }
 
 add_action( 'rest_api_init', array( 'Newspack_Blocks_API', 'register_rest_fields' ) );

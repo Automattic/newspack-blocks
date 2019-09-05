@@ -178,7 +178,7 @@ class Newspack_Blocks {
  */
 function newspack_blocks_image_sizes() {
 	add_image_size( 'newspack-article-block-landscape-large', 1200, 900, true );
-	add_image_size( 'newspack-article-block-portrait-large', 1500, 1200, true );
+	add_image_size( 'newspack-article-block-portrait-large', 900, 1200, true );
 	add_image_size( 'newspack-article-block-square-large', 1200, 1200, true );
 
 	add_image_size( 'newspack-article-block-landscape-medium', 800, 600, true );
