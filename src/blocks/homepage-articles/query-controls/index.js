@@ -10,10 +10,13 @@ class QueryControls extends Component {
 		const {
 			authorList,
 			postList,
+			tagsList,
 			onAuthorChange,
 			onSingleChange,
+			onTagChange,
 			selectedSingleId,
 			selectedAuthorId,
+			selectedTagId,
 			singleMode,
 			onSingleModeChange,
 		} = this.props;
@@ -30,7 +33,7 @@ class QueryControls extends Component {
 					value={ selectedSingleId }
 					options={ [
 						{ label: __( '-- Select Post --' ), value: '' },
-						...postList.map( post => ( { label: post.title.rendered, value: post.id } ) ),
+						...( postList || [] ).map( post => ( { label: post.title.rendered, value: post.id } ) ),
 					] }
 					onChange={ onSingleChange }
 				/>
@@ -43,9 +46,21 @@ class QueryControls extends Component {
 					value={ selectedAuthorId }
 					options={ [
 						{ label: __( 'Any author' ), value: '' },
-						...authorList.map( author => ( { label: author.name, value: author.id } ) ),
+						...( authorList || [] ).map( author => ( { label: author.name, value: author.id } ) ),
 					] }
 					onChange={ onAuthorChange }
+				/>
+			),
+			! singleMode && onTagChange && (
+				<SelectControl
+					key="query-controls-tag-control"
+					label={ __( 'Tag' ) }
+					value={ selectedTagId }
+					options={ [
+						{ label: __( 'All' ), value: '' },
+						...( tagsList || [] ).map( tag => ( { label: tag.name, value: tag.id } ) ),
+					] }
+					onChange={ onTagChange }
 				/>
 			),
 		];
@@ -55,6 +70,7 @@ class QueryControls extends Component {
 QueryControls.defaultProps = {
 	authorList: [],
 	postList: [],
+	tagsList: [],
 };
 
 export default QueryControls;

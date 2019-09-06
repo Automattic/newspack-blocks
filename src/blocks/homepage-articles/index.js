@@ -82,6 +82,9 @@ export const settings = {
 		categories: {
 			type: 'string',
 		},
+		tags: {
+			type: 'string',
+		},
 		single: {
 			type: 'string',
 		},

@@ -95,6 +95,7 @@ class Edit extends Component {
 			attributes,
 			authorList,
 			categoriesList,
+			tagsList,
 			postList,
 			setAttributes,
 			latestPosts,
@@ -118,6 +119,7 @@ class Edit extends Component {
 			postLayout,
 			mediaPosition,
 			singleMode,
+			tags,
 		} = attributes;
 		return (
 			<Fragment>
@@ -128,14 +130,17 @@ class Edit extends Component {
 							onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
 							authorList={ authorList }
 							postList={ postList }
+							tagsList={ tagsList }
 							singleMode={ singleMode }
 							categoriesList={ categoriesList }
 							selectedCategoryId={ categories }
 							selectedAuthorId={ author }
+							selectedTagId={ tags }
 							selectedSingleId={ single }
 							onCategoryChange={ value =>
 								setAttributes( { categories: '' !== value ? value : undefined } )
 							}
+							onTagChange={ value => setAttributes( { tags: '' !== value ? value : undefined } ) }
 							onAuthorChange={ value =>
 								setAttributes( { author: '' !== value ? value : undefined } )
 							}
@@ -336,7 +341,7 @@ class Edit extends Component {
 }
 
 export default withSelect( ( select, props ) => {
-	const { postsToShow, author, categories, single, singleMode } = props.attributes;
+	const { postsToShow, author, categories, tags, single, singleMode } = props.attributes;
 	const { getAuthors, getEntityRecords } = select( 'core' );
 	const latestPostsQuery = pickBy(
 		singleMode
@@ -345,11 +350,15 @@ export default withSelect( ( select, props ) => {
 					per_page: postsToShow,
 					categories,
 					author,
+					tags,
 			  },
 		value => ! isUndefined( value )
 	);
 	const categoriesListQuery = {
 		per_page: 100,
+	};
+	const tagsListQuery = {
+		per_page: 1000,
 	};
 	const postsListQuery = {
 		per_page: 50,
@@ -357,6 +366,7 @@ export default withSelect( ( select, props ) => {
 	return {
 		latestPosts: getEntityRecords( 'postType', 'post', latestPostsQuery ),
 		categoriesList: getEntityRecords( 'taxonomy', 'category', categoriesListQuery ),
+		tagsList: getEntityRecords( 'taxonomy', 'post_tag', tagsListQuery ),
 		authorList: getAuthors(),
 		postList: getEntityRecords( 'postType', 'post', postsListQuery ),
 	};
