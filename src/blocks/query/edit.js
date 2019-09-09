@@ -32,7 +32,7 @@ class Edit extends Component {
 		this._blocks = props.attributes.blocks;
 	}
 	render = () => {
-		const { attributes, className, isSelected, query, setAttributes } = this.props;
+		const { attributes, className, isSelected, query, setAttributes, allTags, allCategories } = this.props;
 		const { criteria, blocks, innerBlockAttributes } = attributes;
 		const { editingPost } = this.state;
 		const settings = {
@@ -74,7 +74,7 @@ class Edit extends Component {
 										{ __( 'Save' ) }
 									</Button>
 									<BlockEditorProvider
-										value={ blocks.map( block => cloneBlock( block, { post } ) ) }
+										value={ blocks.map( block => cloneBlock( block, { post, allTags, allCategories } ) ) }
 										onChange={ blocks => ( this._blocks = blocks ) }
 										onEdit={ blocks => ( this._blocks = blocks ) }
 										settings={ settings }
@@ -93,7 +93,7 @@ class Edit extends Component {
 										</Button>
 									) }
 									{ blocks.map( block => (
-										<RawHTML>{ serialize( cloneBlock( block, { post } ) ) }</RawHTML>
+										<RawHTML>{ serialize( cloneBlock( block, { post, allTags, allCategories } ) ) }</RawHTML>
 									) ) }
 								</Fragment>
 							) }
@@ -108,7 +108,10 @@ export default withSelect( ( select, props ) => {
 	const { attributes } = props;
 	const { criteria } = attributes;
 	const { getEntityRecords } = select( 'core' );
+	const taxonomyCriteria = { per_page: -1, hide_empty: true };
 	return {
 		query: getEntityRecords( 'postType', 'post', criteria ),
+		allTags: getEntityRecords( 'taxonomy', 'post_tag', taxonomyCriteria ),
+		allCategories: getEntityRecords( 'taxonomy', 'category', taxonomyCriteria )
 	};
 } )( Edit );
