@@ -11,21 +11,34 @@ export const registerFeaturedImageBlock = () => registerBlockType( 'newspack-blo
 	parent,
 	edit: ( { attributes } ) => {
 		const { post } = attributes;
+		if ( ! post.newspack_featured_image_src ) {
+			return null;
+		}
+
 		return (
-			<img src={ post.featured_image } />
+			<img src={ post.newspack_featured_image_src.thumbnail } />
 		)
 	},
 	save: ( { attributes } ) => {
 		const { post } = attributes;
+		if ( ! post.newspack_featured_image_src ) {
+			return null;
+		}
+
 		return (
-			<img src={ post.featured_image } />
+			<img src={ post.newspack_featured_image_src.thumbnail } />
 		)
 	},
 	attributes: {
 		post: {
 			type: 'object',
 			default: {
-				featured_image: 'https://placekitten.com/640/480'
+				newspack_featured_image_src: {
+					full: 'https://placekitten.com/1920/1080',
+					large: 'https://placekitten.com/2180/720',
+					medium: 'https://placekitten.com/854/480',
+					thumbnail: 'https://placekitten.com/150/150',
+				}
 			},
 		},
 	},

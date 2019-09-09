@@ -36,7 +36,16 @@ class Edit extends Component {
 		const { criteria, blocks, innerBlockAttributes } = attributes;
 		const { editingPost } = this.state;
 		const settings = {
-			allowedBlockTypes: [ 'newspack-blocks/title', 'newspack-blocks/excerpt', 'newspack-blocks/author', 'core/paragraph' ],
+			allowedBlockTypes: [
+				'newspack-blocks/author',
+				'newspack-blocks/date',
+				'newspack-blocks/excerpt',
+				'newspack-blocks/featured-image',
+				'newspack-blocks/post-categories',
+				'newspack-blocks/post-tags',
+				'newspack-blocks/title',
+				'core/paragraph'
+			],
 		};
 		const classes = classNames( className, editingPost ? 'is-editing' : '' );
 		return (
@@ -51,12 +60,10 @@ class Edit extends Component {
 				</InspectorControls>
 				<section>
 					{ ( query || [] ).map( post => (
-						<article className={ post.id === editingPost ? 'is-editing' : '' }>
-							{ console.log( 'looped post:', post ) }
+						<article className={ post.id === editingPost ? 'is-editing' : '' }>e
 							{ post.id === editingPost && (
 								<Fragment>
 									{ console.log( 'editing post:', post ) }
-									<div id="aoeuaoeuaoeu">aoeu aoeu aoeu</div>
 									<Button
 										onClick={ () => {
 											this.setState( { editingPost: null }, () =>

@@ -10,6 +10,7 @@ export const registerAuthorBlock = () => registerBlockType( 'newspack-blocks/aut
 	category: 'layout',
 	parent,
 	edit: ( { attributes } ) => {
+		console.log( post );
 		const { post } = attributes;
 		return (
 			<h3>
@@ -53,4 +54,4 @@ export const registerAuthorBlock = () => registerBlockType( 'newspack-blocks/aut
 			},
 		},
 	},
-} );;
+} );

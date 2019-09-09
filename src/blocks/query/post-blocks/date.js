@@ -13,9 +13,9 @@ export const registerDateBlock = () => registerBlockType( 'newspack-blocks/date'
 		const { post } = attributes;
 		return (
 			<time className="entry-date published" key="pub-date">
-				{moment( post.date_gmt )
+				{ moment( post.date_gmt )
 					.local()
-					.format( 'MMMM DD, Y' )}
+					.format( 'MMMM DD, Y' ) }
 			</time>
 
 		);
@@ -24,9 +24,9 @@ export const registerDateBlock = () => registerBlockType( 'newspack-blocks/date'
 		const { post } = attributes;
 		return (
 			<time className="entry-date published" key="pub-date">
-				{moment( post.date_gmt )
+				{ moment( post.date_gmt )
 					.local()
-					.format( 'MMMM DD, Y' )}
+					.format( 'MMMM DD, Y' ) }
 			</time>
 
 		);
