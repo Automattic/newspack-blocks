@@ -52,8 +52,11 @@ class Edit extends Component {
 				<section>
 					{ ( query || [] ).map( post => (
 						<article className={ post.id === editingPost ? 'is-editing' : '' }>
+							{ console.log( 'looped post:', post ) }
 							{ post.id === editingPost && (
 								<Fragment>
+									{ console.log( 'editing post:', post ) }
+									<div id="aoeuaoeuaoeu">aoeu aoeu aoeu</div>
 									<Button
 										onClick={ () => {
 											this.setState( { editingPost: null }, () =>
