@@ -103,13 +103,7 @@ class Newspack_Blocks_API {
 	 * @param Array $object  The object info.
 	 */
 	public static function newspack_blocks_get_image_caption( $object ) {
-		if ( 0 === $object['featured_media'] ) {
-			return;
-		}
-
-		$featured_image_caption = wp_get_attachment_caption( $object['featured_media'] );
-
-		return $featured_image_caption;
+		return (int) $object['featured_media'] > 0 ? trim( wp_get_attachment_caption( $object['featured_media'] ) ) : null;
 	}
 
 	/**
