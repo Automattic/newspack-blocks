@@ -17,10 +17,11 @@ import {
 	BlockList,
 	BlockEditorProvider,
 	InspectorControls,
+	ObserveTyping,
 	WritingFlow,
 } from '@wordpress/block-editor';
 import { cloneBlock, serialize } from '@wordpress/blocks';
-import { Button, PanelBody } from '@wordpress/components';
+import { Button, PanelBody, Placeholder } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 
 class Edit extends Component {
@@ -28,13 +29,22 @@ class Edit extends Component {
 		super( props );
 		this.state = {
 			editingPost: null,
+			localBlocks: {},
 		};
 		this._blocks = props.attributes.blocks;
 	}
 	render = () => {
-		const { attributes, className, isSelected, query, setAttributes, allTags, allCategories } = this.props;
+		const {
+			attributes,
+			className,
+			isSelected,
+			query,
+			setAttributes,
+			allTags,
+			allCategories,
+		} = this.props;
 		const { criteria, blocks, innerBlockAttributes } = attributes;
-		const { editingPost } = this.state;
+		const { editingPost, localBlocks } = this.state;
 		const settings = {
 			allowedBlockTypes: [
 				'newspack-blocks/author',
@@ -44,7 +54,7 @@ class Edit extends Component {
 				'newspack-blocks/post-categories',
 				'newspack-blocks/post-tags',
 				'newspack-blocks/title',
-				'core/paragraph'
+				'core/paragraph',
 			],
 		};
 		const classes = classNames( className, editingPost ? 'is-editing' : '' );
@@ -60,45 +70,36 @@ class Edit extends Component {
 				</InspectorControls>
 				<section>
 					{ ( query || [] ).map( post => (
-						<article className={ post.id === editingPost ? 'is-editing' : '' }>e
-							{ post.id === editingPost && (
-								<Fragment>
-									{ console.log( 'editing post:', post ) }
-									<Button
-										onClick={ () => {
-											this.setState( { editingPost: null }, () =>
-												setAttributes( { blocks: this._blocks } )
-											);
-										} }
-									>
-										{ __( 'Save' ) }
-									</Button>
-									<BlockEditorProvider
-										value={ blocks.map( block => cloneBlock( block, { post, allTags, allCategories } ) ) }
-										onChange={ blocks => ( this._blocks = blocks ) }
-										onEdit={ blocks => ( this._blocks = blocks ) }
-										settings={ settings }
-									>
-										<WritingFlow>
-											<BlockList />
-										</WritingFlow>
-									</BlockEditorProvider>
-								</Fragment>
-							) }
-							{ post.id !== editingPost && (
-								<Fragment>
-									{ ! editingPost && (
-										<Button onClick={ () => this.setState( { editingPost: post.id } ) }>
-											{ __( 'Edit' ) }
-										</Button>
-									) }
-									{ blocks.map( block => (
-										<RawHTML>{ serialize( cloneBlock( block, { post, allTags, allCategories } ) ) }</RawHTML>
-									) ) }
-								</Fragment>
-							) }
+						<article className={ post.id === editingPost ? 'is-editing' : '' }>
+							<Fragment>
+								<BlockEditorProvider
+									value={
+										editingPost === post.id
+											? localBlocks
+											: blocks.map( block => cloneBlock( block, { post, allTags, allCategories } ) )
+									}
+									onChange={ blocks => {
+										console.log( 'change' );
+										this.setState( { editingPost: post.id, localBlocks: blocks }, () =>
+											setAttributes( { blocks } )
+										);
+									} }
+									onInput={ blocks => {
+										console.log( 'INPUT' );
+										this.setState( { editingPost: post.id, localBlocks: blocks }, () =>
+											setAttributes( { blocks } )
+										);
+									} }
+									settings={ settings }
+								>
+									<WritingFlow>
+										<BlockList />
+									</WritingFlow>
+								</BlockEditorProvider>
+							</Fragment>
 						</article>
 					) ) }
+					{ ( ! query || ! query.length ) && <Placeholder>{ __( 'Loading posts' ) }</Placeholder> }
 				</section>
 			</div>
 		);
@@ -112,6 +113,6 @@ export default withSelect( ( select, props ) => {
 	return {
 		query: getEntityRecords( 'postType', 'post', criteria ),
 		allTags: getEntityRecords( 'taxonomy', 'post_tag', taxonomyCriteria ),
-		allCategories: getEntityRecords( 'taxonomy', 'category', taxonomyCriteria )
+		allCategories: getEntityRecords( 'taxonomy', 'category', taxonomyCriteria ),
 	};
 } )( Edit );
