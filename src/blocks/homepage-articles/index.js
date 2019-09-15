@@ -108,6 +108,10 @@ export const settings = {
 			type: 'boolean',
 			default: false,
 		},
+		textColor: {
+			type: 'string',
+			default: '',
+		},
 	},
 	supports: {
 		html: false,
