@@ -22,13 +22,15 @@ function newspack_blocks_render_block_popup( $attributes, $content ) {
 		return '<!-- Newspack pop-up already seen -->';
 	}
 
+	$element_id = 'lightbox' . rand(); // phpcs:ignore WordPress.WP.AlternativeFunctions.rand_rand
+
 	ob_start();
 	?>
-	<div class="lightbox" role="button" tabindex="0" id="lightbox1">
+	<div class="lightbox" role="button" tabindex="0" id="<?php echo esc_attr( $element_id ); ?>">
 		<div class="wp-block-newspack-blocks-popup">
 			<?php echo $content; ?>
 		</div>
-		<button on="tap:lightbox1.hide" class="lightbox-close">x</button>
+		<button on="tap:<?php echo esc_attr( $element_id ); ?>.hide" class="lightbox-close">x</button>
 	</div>
 	<div id="marker">
 		<amp-position-observer on="enter:showAnim.start;" once layout="nodisplay" />

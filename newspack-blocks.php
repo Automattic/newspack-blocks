@@ -110,6 +110,23 @@ class Newspack_Blocks {
 	}
 
 	/**
+	 * Enqueue block scripts on Customizer Widget Blocks screen.
+	 * This is done in a sort-of roundabout way because there is no interface for adding block scripts
+	 * to the widget blocks screen yet. In the future it should be simplified.
+	 *
+	 * @see https://github.com/WordPress/gutenberg/blob/master/lib/widgets-page.php#L38
+	 * @param string $tag Script tag html (unused).
+	 * @param string $handle Script name.
+	 * @return string Unmodified $tag.
+	 */
+	public static function enqueue_sidebar_blocks_assets( $tag, $handle ) {
+		if ( 'wp-edit-widgets' === $handle ) {
+			self::enqueue_block_editor_assets();
+		}
+		return $tag;
+	}
+
+	/**
 	 * Parse generated .deps.json file and return array of dependencies to be enqueued.
 	 *
 	 * @param string $path Path to the generated dependencies file.
@@ -150,3 +167,5 @@ require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'class-newspack-blocks-api.php';
 
 Newspack_Blocks::manage_view_scripts();
 add_action( 'enqueue_block_editor_assets', array( 'Newspack_Blocks', 'enqueue_block_editor_assets' ) );
+add_filter( 'script_loader_tag', array( 'Newspack_Blocks', 'enqueue_sidebar_blocks_assets' ), 10, 2 );
+
