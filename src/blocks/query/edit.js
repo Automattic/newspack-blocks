@@ -34,7 +34,7 @@ class Edit extends Component {
 			editingPost: null,
 			blocksTree: {},
 		};
-		this.debouncedCreateBlockTree = debounce( this.createBlockTree.bind( this ), 250 );
+		this.debouncedCreateBlockTree = debounce( this.createBlockTree.bind( this ), 1000 );
 	}
 	componentDidMount() {
 		this.createBlockTree();
