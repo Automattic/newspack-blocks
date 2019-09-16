@@ -14,7 +14,6 @@
  */
 function newspack_blocks_render_block_query( $attributes ) {
 	$blocks = ! empty( $attributes['blocks'] ) ? $attributes['blocks'] : array();
-
 	$args = newspack_blocks_criteria_to_args( $attributes['criteria'] );
 
 	$query = new WP_Query( $args );
@@ -142,7 +141,10 @@ function newspack_blocks_register_query() {
 					'type' => 'string',
 				),
 				'criteria'  => array(
-					'type' => 'object',
+					'type'    => 'object',
+					'default' => array(
+						'per_page' => 3,
+					),
 				),
 			),
 			'render_callback' => 'newspack_blocks_render_block_query',

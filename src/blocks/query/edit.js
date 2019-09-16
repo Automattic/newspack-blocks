@@ -32,14 +32,12 @@ class Edit extends Component {
 		super( props );
 		this.state = {
 			editingPost: null,
-			localBlocks: {},
 			blocksTree: {},
 		};
 		this.debouncedCreateBlockTree = debounce( this.createBlockTree.bind( this ), 250 );
-		this._isMounted = false;
 	}
 	componentDidMount() {
-		this._isMounted = true;
+		this.createBlockTree();
 	}
 	componentDidUpdate( prevProps ) {
 		const { allCategories, allTags, attributes, query } = this.props;
@@ -48,13 +46,7 @@ class Edit extends Component {
 			this.createBlockTree();
 		}
 	}
-	componentWillUnmount() {
-		this._isMounted = false;
-	}
 	createBlockTree = () => {
-		if ( ! this._isMounted ) {
-			return;
-		}
 		const { editingPost, blocksTree } = this.state;
 		const { allCategories, allTags, attributes, query } = this.props;
 		const { blocks } = attributes;
@@ -70,16 +62,23 @@ class Edit extends Component {
 		);
 		this.setState( { blocksTree: newBlocksTree } );
 	};
+	cleanBlock = block => {
+		const { name, isValid, attributes, innerBlocks } = block;
+		return {
+			name,
+			attributes: { ...attributes, post: {}, allTags: [], allCategories: [] },
+			innerBlocks: innerBlocks.map( this.cleanBlock ),
+			isValid,
+		};
+	};
 	updateBlocks = ( blocks, postId ) => {
-		if ( ! this._isMounted ) {
-			return;
-		}
 		const { setAttributes } = this.props;
 		const { blocksTree } = this.state;
+		const cleanBlocks = blocks.map( this.cleanBlock );
 		this.setState(
-			{ blocksTree: { ...blocksTree, [ postId ]: blocks }, editingPost: postId },
+			{ blocksTree: { ...( blocksTree || [] ), [ postId ]: blocks }, editingPost: postId },
 			() => {
-				setAttributes( { blocks } );
+				setAttributes( { blocks: cleanBlocks } );
 				this.debouncedCreateBlockTree();
 			}
 		);
@@ -95,19 +94,8 @@ class Edit extends Component {
 			allCategories,
 		} = this.props;
 		const { criteria, blocks, innerBlockAttributes } = attributes;
-		const { editingPost, localBlocks, blocksTree } = this.state;
-		const settings = {
-			allowedBlockTypes: [
-				'newspack-blocks/author',
-				'newspack-blocks/date',
-				'newspack-blocks/excerpt',
-				'newspack-blocks/featured-image',
-				'newspack-blocks/post-categories',
-				'newspack-blocks/post-tags',
-				'newspack-blocks/title',
-				'core/paragraph',
-			],
-		};
+		const { editingPost, blocksTree } = this.state;
+		const settings = {};
 		const classes = classNames( className, editingPost ? 'is-editing' : '' );
 		return (
 			<div className={ classes }>
@@ -120,21 +108,24 @@ class Edit extends Component {
 					</PanelBody>
 				</InspectorControls>
 				<section>
-					{ ( query || [] ).map( post => (
-						<article className={ post.id === editingPost ? 'is-editing' : '' }>
-							<Fragment>
-								<BlockEditorProvider
-									value={ blocksTree[ post.id ] }
-									onChange={ blocks => this.updateBlocks( blocks, post.id ) }
-									settings={ settings }
-								>
-									<WritingFlow>
-										<BlockList />
-									</WritingFlow>
-								</BlockEditorProvider>
-							</Fragment>
-						</article>
-					) ) }
+					{ ( query || [] ).map(
+						post =>
+							blocksTree[ post.id ] && (
+								<article className={ post.id === editingPost ? 'is-editing' : '' } key={ post.id }>
+									<Fragment>
+										<BlockEditorProvider
+											value={ blocksTree[ post.id ] }
+											onChange={ blocks => this.updateBlocks( blocks, post.id ) }
+											settings={ settings }
+										>
+											<WritingFlow>
+												<BlockList />
+											</WritingFlow>
+										</BlockEditorProvider>
+									</Fragment>
+								</article>
+							)
+					) }
 					{ ( ! query || ! query.length ) && <Placeholder>{ __( 'Loading posts' ) }</Placeholder> }
 				</section>
 			</div>

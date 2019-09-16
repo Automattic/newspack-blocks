@@ -43,10 +43,6 @@ export const settings = {
 				per_page: 3,
 			},
 		},
-		innerBlockAttributes: {
-			type: 'object',
-			default: {},
-		},
 		blocks: {
 			type: 'array',
 			default: [
