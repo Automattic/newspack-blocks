@@ -22,6 +22,7 @@ import {
 	RangeControl,
 	Toolbar,
 	ToggleControl,
+	withFallbackStyles,
 	Dashicon,
 	Placeholder,
 	Spinner,
@@ -38,9 +39,19 @@ const { decodeEntities } = wp.htmlEntities;
  */
 const MAX_POSTS_COLUMNS = 6;
 
+const applyFallbackStyles = withFallbackStyles( ( node, ownProps ) => {
+	const { textColor } = ownProps.attributes;
+	const editableNode = node.querySelector( '[contenteditable="true"]' );
+	//verify if editableNode is available, before using getComputedStyle.
+	const computedStyles = editableNode ? getComputedStyle( editableNode ) : null;
+	return {
+		fallbackTextColor: textColor || ! computedStyles ? undefined : computedStyles.color,
+	};
+} );
+
 class Edit extends Component {
 	renderPost = post => {
-		const { attributes } = this.props;
+		const { attributes, textColor } = this.props;
 		const {
 			showImage,
 			showCaption,
@@ -49,7 +60,6 @@ class Edit extends Component {
 			showAvatar,
 			showDate,
 			sectionHeader,
-			textColor,
 		} = attributes;
 		return (
 			<article className={ post.newspack_featured_image_src && 'post-has-image' } key={ post.id }>
@@ -114,6 +124,8 @@ class Edit extends Component {
 			setAttributes,
 			latestPosts,
 			isSelected,
+			textColor,
+			customTextColor,
 			setTextColor,
 		} = this.props;
 		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
@@ -136,7 +148,6 @@ class Edit extends Component {
 			mediaPosition,
 			singleMode,
 			tags,
-			textColor,
 		} = attributes;
 		return (
 			<Fragment>
@@ -284,6 +295,8 @@ class Edit extends Component {
 			latestPosts,
 			hasPosts,
 			categoriesList,
+			textColor,
+			customTextColor,
 		} = this.props; // variables getting pulled out of props
 		const {
 			showExcerpt,
@@ -299,10 +312,7 @@ class Edit extends Component {
 			typeScale,
 			imageScale,
 			sectionHeader,
-			textColor,
 		} = attributes;
-
-		const textClass = getColorClassName( 'color', textColor );
 
 		const classes = classNames( className, {
 			'is-grid': postLayout === 'grid',
@@ -311,8 +321,7 @@ class Edit extends Component {
 			[ `type-scale${ typeScale }` ]: typeScale !== '5',
 			[ `image-align${ mediaPosition }` ]: showImage,
 			[ `image-scale${ imageScale }` ]: imageScale !== '1' && showImage,
-			'has-text-color': textColor.color,
-			[ textClass ]: textClass,
+			'has-text-color': textColor || customTextColor,
 		} );
 
 		const blockControls = [
@@ -351,14 +360,12 @@ class Edit extends Component {
 			},
 		];
 
-		console.log( 'text color render: ', textColor );
-
 		return (
 			<Fragment>
 				<div
 					className={ classes }
 					style={ {
-						color: textColor,
+						color: textColor ? textColor.color : customTextColor,
 					} }
 				>
 					{ latestPosts && ( ! RichText.isEmpty( sectionHeader ) || isSelected ) && (
@@ -392,6 +399,7 @@ class Edit extends Component {
 
 export default compose( [
 	withColors( { textColor: 'color' } ),
+	applyFallbackStyles,
 	withSelect( ( select, props ) => {
 		const { postsToShow, author, categories, tags, single, singleMode } = props.attributes;
 		const { getAuthors, getEntityRecords } = select( 'core' );

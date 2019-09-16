@@ -153,6 +153,25 @@
 		display: block;
 		margin-right: 0.5em;
 	}
+
+	&.has-text-color {
+		.article-section-title,
+		.entry-title,
+		.entry-title a,
+		.entry-title a:visited,
+		.entry-meta,
+		.entry-meta a,
+		.entry-meta .byline a,
+		.entry-meta .byline a:visited {
+			color: inherit;
+		}
+	}
+
+	&.has-text-color {
+		.entry-meta span:not(.avatar) {
+			opacity: 0.9;
+		}
+	}
 }
 
 /* Some really rough font sizing */

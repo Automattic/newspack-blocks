@@ -64,13 +64,27 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	if ( isset( $attributes['className'] ) ) {
 		$classes .= ' ' . $attributes['className'];
 	}
+
+	if ( isset( $attributes['textColor'] ) ) {
+		$classes .= ' has-text-color';
+		if ( '' !== $attributes['textColor'] ) {
+			$classes .= ' has-' . $attributes['textColor'] . '-color';
+		}
+	}
+
+	$styles = '';
+
+	if ( '' !== $attributes['customTextColor'] ) {
+		$styles = 'color: ' . $attributes['customTextColor'] . ';';
+	}
+
 	$post_counter = 0;
 
 	ob_start();
 
 	if ( $article_query->have_posts() ) :
 		?>
-		<div class="<?php echo esc_attr( $classes ); ?>">
+		<div class="<?php echo esc_attr( $classes ); ?>" style="<?php echo esc_attr( $styles ); ?>">
 
 			<?php if ( '' !== $attributes['sectionHeader'] ) : ?>
 				<h2 class="article-section-title">
@@ -86,6 +100,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				$newspack_blocks_post_id[ get_the_ID() ] = true;
 				$post_counter++;
 				?>
+
 				<article <?php echo has_post_thumbnail() ? 'class="post-has-image"' : ''; ?>>
 					<?php if ( has_post_thumbnail() && $attributes['showImage'] ) : ?>
 
@@ -252,6 +267,14 @@ function newspack_blocks_register_homepage_articles() {
 				'singleMode'    => array(
 					'type'    => 'boolean',
 					'default' => false,
+				),
+				'textColor'       => array(
+					'type'    => 'string',
+					'default' => '',
+				),
+				'customTextColor' => array(
+					'type'    => 'string',
+					'default' => '',
 				),
 			),
 			'render_callback' => 'newspack_blocks_render_block_homepage_articles',
