@@ -22,7 +22,6 @@ import {
 	RangeControl,
 	Toolbar,
 	ToggleControl,
-	withFallbackStyles,
 	Dashicon,
 	Placeholder,
 	Spinner,
@@ -38,16 +37,6 @@ const { decodeEntities } = wp.htmlEntities;
  * Module Constants
  */
 const MAX_POSTS_COLUMNS = 6;
-
-const applyFallbackStyles = withFallbackStyles( ( node, ownProps ) => {
-	const { textColor } = ownProps.attributes;
-	const editableNode = node.querySelector( '[contenteditable="true"]' );
-	//verify if editableNode is available, before using getComputedStyle.
-	const computedStyles = editableNode ? getComputedStyle( editableNode ) : null;
-	return {
-		fallbackTextColor: textColor || ! computedStyles ? undefined : computedStyles.color,
-	};
-} );
 
 class Edit extends Component {
 	renderPost = post => {
@@ -399,7 +388,6 @@ class Edit extends Component {
 
 export default compose( [
 	withColors( { textColor: 'color' } ),
-	applyFallbackStyles,
 	withSelect( ( select, props ) => {
 		const { postsToShow, author, categories, tags, single, singleMode } = props.attributes;
 		const { getAuthors, getEntityRecords } = select( 'core' );
