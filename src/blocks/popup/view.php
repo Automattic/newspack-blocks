@@ -18,7 +18,7 @@ function newspack_blocks_render_block_popup( $attributes, $content ) {
 	?>
 	<div class="lightbox" role="button" tabindex="0" id="lightbox1">
 		<div class="wp-block-newspack-blocks-popup">
-			<?php echo wp_kses_post( $content ); ?>
+			<?php echo $content; ?>
 		</div>
 		<button on="tap:lightbox1.hide" class="lightbox-close">x</button>
 	</div>
@@ -44,6 +44,8 @@ function newspack_blocks_render_block_popup( $attributes, $content ) {
 	</amp-animation>
 	<?php
 	Newspack_Blocks::enqueue_view_assets( 'popup' );
+	wp_enqueue_script( 'amp-animation' );
+	wp_enqueue_script( 'amp-position-observer' );
 	return ob_get_clean();
 }
 
