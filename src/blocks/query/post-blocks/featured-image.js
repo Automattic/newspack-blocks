@@ -19,16 +19,7 @@ export const registerFeaturedImageBlock = () => registerBlockType( 'newspack-blo
 			<img src={ post.newspack_featured_image_src.thumbnail } width="150" height="150" />
 		)
 	},
-	save: ( { attributes } ) => {
-		const { post } = attributes;
-		if ( ! post.newspack_featured_image_src ) {
-			return null;
-		}
-
-		return (
-			<img src={ post.newspack_featured_image_src.thumbnail }  width="150" height="150" />
-		)
-	},
+	save: () => null,
 	attributes: {
 		post: {
 			type: 'object',

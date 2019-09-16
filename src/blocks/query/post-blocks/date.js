@@ -20,17 +20,7 @@ export const registerDateBlock = () => registerBlockType( 'newspack-blocks/date'
 
 		);
 	},
-	save: ( { attributes } ) => {
-		const { post } = attributes;
-		return (
-			<time className="entry-date published" key="pub-date">
-				{ moment( post.date_gmt )
-					.local()
-					.format( 'MMMM DD, Y' ) }
-			</time>
-
-		);
-	},
+	save: () => null,
 	attributes: {
 		post: {
 			type: 'object',

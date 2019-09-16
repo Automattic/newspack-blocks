@@ -7,6 +7,7 @@ import { QueryPanel } from '../../components/';
  * External dependencies
  */
 import classNames from 'classnames';
+import { debounce } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -19,6 +20,8 @@ import {
 	InspectorControls,
 	ObserveTyping,
 	WritingFlow,
+	SlotFillProvider,
+	DropZoneProvider,
 } from '@wordpress/block-editor';
 import { cloneBlock, serialize } from '@wordpress/blocks';
 import { Button, PanelBody, Placeholder } from '@wordpress/components';
@@ -30,9 +33,57 @@ class Edit extends Component {
 		this.state = {
 			editingPost: null,
 			localBlocks: {},
+			blocksTree: {},
 		};
-		this._blocks = props.attributes.blocks;
+		this.debouncedCreateBlockTree = debounce( this.createBlockTree.bind( this ), 250 );
+		this._isMounted = false;
 	}
+	componentDidMount() {
+		this._isMounted = true;
+	}
+	componentDidUpdate( prevProps ) {
+		const { allCategories, allTags, attributes, query } = this.props;
+		const { blocks } = attributes;
+		if ( prevProps.query !== query ) {
+			this.createBlockTree();
+		}
+	}
+	componentWillUnmount() {
+		this._isMounted = false;
+	}
+	createBlockTree = () => {
+		if ( ! this._isMounted ) {
+			return;
+		}
+		const { editingPost, blocksTree } = this.state;
+		const { allCategories, allTags, attributes, query } = this.props;
+		const { blocks } = attributes;
+		const newBlocksTree = ( query || [] ).reduce(
+			( accumulator, post ) => ( {
+				...accumulator,
+				[ post.id ]:
+					post.id === editingPost
+						? blocksTree[ post.id ]
+						: blocks.map( block => cloneBlock( block, { post, allTags, allCategories } ) ),
+			} ),
+			{}
+		);
+		this.setState( { blocksTree: newBlocksTree } );
+	};
+	updateBlocks = ( blocks, postId ) => {
+		if ( ! this._isMounted ) {
+			return;
+		}
+		const { setAttributes } = this.props;
+		const { blocksTree } = this.state;
+		this.setState(
+			{ blocksTree: { ...blocksTree, [ postId ]: blocks }, editingPost: postId },
+			() => {
+				setAttributes( { blocks } );
+				this.debouncedCreateBlockTree();
+			}
+		);
+	};
 	render = () => {
 		const {
 			attributes,
@@ -44,7 +95,7 @@ class Edit extends Component {
 			allCategories,
 		} = this.props;
 		const { criteria, blocks, innerBlockAttributes } = attributes;
-		const { editingPost, localBlocks } = this.state;
+		const { editingPost, localBlocks, blocksTree } = this.state;
 		const settings = {
 			allowedBlockTypes: [
 				'newspack-blocks/author',
@@ -73,23 +124,8 @@ class Edit extends Component {
 						<article className={ post.id === editingPost ? 'is-editing' : '' }>
 							<Fragment>
 								<BlockEditorProvider
-									value={
-										editingPost === post.id
-											? localBlocks
-											: blocks.map( block => cloneBlock( block, { post, allTags, allCategories } ) )
-									}
-									onChange={ blocks => {
-										console.log( 'change' );
-										this.setState( { editingPost: post.id, localBlocks: blocks }, () =>
-											setAttributes( { blocks } )
-										);
-									} }
-									onInput={ blocks => {
-										console.log( 'INPUT' );
-										this.setState( { editingPost: post.id, localBlocks: blocks }, () =>
-											setAttributes( { blocks } )
-										);
-									} }
+									value={ blocksTree[ post.id ] }
+									onChange={ blocks => this.updateBlocks( blocks, post.id ) }
 									settings={ settings }
 								>
 									<WritingFlow>

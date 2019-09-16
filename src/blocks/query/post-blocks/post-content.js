@@ -12,9 +12,7 @@ export const registerPostContentBlock = () => registerBlockType( 'newspack-block
 		const { post } = attributes;
 		return <RawHTML>{ post.content.rendered }</RawHTML>
 	},
-	save: ( { attributes } ) => {
-		return <RawHTML>{ post.content.rendered }</RawHTML>
-	},
+	save: () => null,
 	attributes: {
 		post: {
 			type: 'object',

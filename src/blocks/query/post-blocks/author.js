@@ -10,7 +10,6 @@ export const registerAuthorBlock = () => registerBlockType( 'newspack-blocks/aut
 	category: 'layout',
 	parent,
 	edit: ( { attributes } ) => {
-		console.log( post );
 		const { post } = attributes;
 		return (
 			<h3>
@@ -26,22 +25,7 @@ export const registerAuthorBlock = () => registerBlockType( 'newspack-blocks/aut
 			</h3>
 		);
 	},
-	save: ( { attributes } ) => {
-		const { post } = attributes;
-		return (
-			<h3>
-				<span className="byline">
-					{ __( 'by' ) }{' '}
-					<span className="author vcard">
-						<a className="url fn n" href="#">
-							{ post.newspack_author_info.display_name }
-						</a>
-					</span>
-				</span>
-				<RawHTML>{ post.newspack_author_info.avatar }</RawHTML>
-			</h3>
-		);
-	},
+	save: () => null,
 	attributes: {
 		post: {
 			type: 'object',

@@ -16,7 +16,7 @@ export const registerPostTagsBlock = () => registerBlockType( 'newspack-blocks/p
 	category: 'layout',
 	parent,
 	edit: Edit,
-	save: Edit,
+	save: () => null,
 	attributes: {
 		post: {
 			type: 'object',

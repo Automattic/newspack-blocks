@@ -16,7 +16,7 @@ export const registerPostCategoriesBlock = () => registerBlockType( 'newspack-bl
 	category: 'layout',
 	parent,
 	edit: Edit,
-	save: Edit,
+	save: () => null,
 	attributes: {
 		post: {
 			type: 'object',
