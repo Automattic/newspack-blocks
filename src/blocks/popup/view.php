@@ -6,6 +6,11 @@
  */
 
 /**
+ * The number of times the pop-up should be displayed.
+ */
+define( 'NEWSPACK_BLOCKS_POPUP_VIEW_LIMIT', 1 );
+
+/**
  * Renders the `newspack-blocks/popup` block on server.
  *
  * @param array  $attributes The block attributes.
@@ -14,19 +19,17 @@
  * @return string
  */
 function newspack_blocks_render_block_popup( $attributes, $content ) {
-	if ( ! is_single() ) {
+	// Only display popups for logged-out users viewing an article.
+	if ( is_user_logged_in() || ! is_single() ) {
 		return '<!-- Newspack pop-up suppressed -->';
 	}
 
-	if ( newspack_blocks_popup_get_user_visits() > 1000 ) {
-		return '<!-- Newspack pop-up already seen -->';
-	}
-
+	// The ID must be randomized. If there are two popups with the same ID on a page, only one pop-up will be able to close.
 	$element_id = 'lightbox' . rand(); // phpcs:ignore WordPress.WP.AlternativeFunctions.rand_rand
 
 	ob_start();
 	?>
-	<div class="lightbox" role="button" tabindex="0" id="<?php echo esc_attr( $element_id ); ?>">
+	<div amp-access="displayPopup" amp-access-hide class="lightbox" role="button" tabindex="0" id="<?php echo esc_attr( $element_id ); ?>">
 		<div class="wp-block-newspack-blocks-popup">
 			<?php echo $content; ?>
 		</div>
@@ -60,6 +63,93 @@ function newspack_blocks_render_block_popup( $attributes, $content ) {
 }
 
 /**
+ * Add amp-access header code.
+ */
+function newspack_blocks_popup_access() {
+	$endpoint = str_replace( 'http:', '//', get_rest_url( null, 'newspack-blocks/v1/reader' ) );
+	?>
+	<script id="amp-access" type="application/json">
+		{
+			"authorization": "<?php echo esc_url( $endpoint ); ?>?rid=READER_ID&url=CANONICAL_URL&RANDOM",
+			"pingback": "<?php echo esc_url( $endpoint ); ?>?rid=READER_ID&url=CANONICAL_URL&RANDOM",
+			"authorizationFallbackResponse": {
+				"displayPopup": true
+			}
+		}
+	</script>
+	<?php
+	wp_enqueue_script( 'amp-access' );
+	wp_enqueue_script( 'amp-analytics' );
+}
+add_action( 'wp_head', 'newspack_blocks_popup_access' );
+
+/**
+ * Register the 'reader' endpoint used by amp-access.
+ */
+function newspack_blocks_popup_register_reader_endpoint() {
+	register_rest_route(
+		'newspack-blocks/v1/',
+		'reader',
+		array(
+			'methods'  => 'GET',
+			'callback' => 'newspack_blocks_popup_reader_get_endpoint',
+		)
+	);
+	register_rest_route(
+		'newspack-blocks/v1/',
+		'reader',
+		array(
+			'methods'  => 'POST',
+			'callback' => 'newspack_blocks_popup_reader_post_endpoint',
+		)
+	);
+}
+add_action( 'rest_api_init', 'newspack_blocks_popup_register_reader_endpoint' );
+
+/**
+ * Handle GET requests to the reader endpoint.
+ *
+ * @param WP_REST_Request $request amp-access request.
+ * @return WP_REST_Response with info about reader.
+ */
+function newspack_blocks_popup_reader_get_endpoint( $request ) {
+	$reader   = isset( $request['rid'] ) ? $request['rid'] : false;
+	$response = array(
+		'currentViews' => 0,
+		'displayPopup' => true,
+	);
+
+	if ( ! $reader ) {
+		return rest_ensure_response( $response );
+	}
+
+	$response['currentViews'] = (int) get_transient( $reader . '-currentViews' );
+	$response['displayPopup'] = $response['currentViews'] < NEWSPACK_BLOCKS_POPUP_VIEW_LIMIT;
+	return rest_ensure_response( $response );
+}
+
+/**
+ * Handle POST requests to the reader endpoint.
+ *
+ * @param WP_REST_Request $request amp-access request.
+ * @return WP_REST_Response with updated info about reader.
+ */
+function newspack_blocks_popup_reader_post_endpoint( $request ) {
+	$reader = isset( $request['rid'] ) ? sanitize_title( $request['rid'] ) : false;
+	$url    = isset( $request['url'] ) ? esc_url_raw( $request['url'] ) : false;
+
+	if ( $reader && $url ) {
+		$post_id = url_to_postid( $url );
+		if ( $post_id && 'post' === get_post_type( $post_id ) ) {
+			$current_views = (int) get_transient( $reader . '-currentViews' );
+			set_transient( $reader . '-currentViews', $current_views + 1, WEEK_IN_SECONDS );
+		}
+	}
+
+	return newspack_blocks_popup_reader_get_endpoint( $request );
+}
+
+/**
  * Registers the `newspack-blocks/popup` block on server.
  */
 function newspack_blocks_register_popup() {
@@ -76,25 +166,3 @@ function newspack_blocks_register_popup() {
 	);
 }
 add_action( 'init', 'newspack_blocks_register_popup' );
-
-/**
- * Return the number of times the user has visited the site (for determining whether to show pop-ups).
- *
- * @return int The number of times.
- */
-function newspack_blocks_popup_get_user_visits() {
-	return (int) filter_input( INPUT_COOKIE, 'newspack_blocks_popup_user_visits', FILTER_SANITIZE_NUMBER_INT );
-}
-
-/**
- * Increment the visit count.
- */
-function newspack_blocks_popup_record_user_visit() {
-	if ( ! is_singular() ) {
-		return;
-	}
-
-	$num_visits = (int) newspack_blocks_popup_get_user_visits();
-	setcookie( 'newspack_blocks_popup_user_visits', 1 + $num_visits, time() + WEEK_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN, is_ssl() );
-}
-add_action( 'wp', 'newspack_blocks_popup_record_user_visit' );
