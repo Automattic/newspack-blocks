@@ -39,20 +39,14 @@ const MAX_POSTS_COLUMNS = 6;
 class Edit extends Component {
 	renderPost = post => {
 		const { attributes } = this.props;
-		const {
-			showImage,
-			showExcerpt,
-			showAuthor,
-			showAvatar,
-			showDate,
-			sectionHeader,
-			moreLink,
-		} = attributes;
+		const { showImage, showExcerpt, showAuthor, showAvatar, showDate, sectionHeader } = attributes;
 		return (
 			<article className={ post.newspack_featured_image_src && 'post-has-image' } key={ post.id }>
 				{ showImage && post.newspack_featured_image_src && (
 					<div className="post-thumbnail" key="thumbnail">
-						<img src={ post.newspack_featured_image_src.large } />
+						<a href="#">
+							<img src={ post.newspack_featured_image_src.large } />
+						</a>
 					</div>
 				) }
 				<div className="entry-wrapper">
@@ -101,6 +95,7 @@ class Edit extends Component {
 			attributes,
 			authorList,
 			categoriesList,
+			tagsList,
 			postList,
 			setAttributes,
 			latestPosts,
@@ -123,8 +118,8 @@ class Edit extends Component {
 			showAvatar,
 			postLayout,
 			mediaPosition,
-			moreLink,
 			singleMode,
+			tags,
 		} = attributes;
 		return (
 			<Fragment>
@@ -135,14 +130,17 @@ class Edit extends Component {
 							onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
 							authorList={ authorList }
 							postList={ postList }
+							tagsList={ tagsList }
 							singleMode={ singleMode }
 							categoriesList={ categoriesList }
 							selectedCategoryId={ categories }
 							selectedAuthorId={ author }
+							selectedTagId={ tags }
 							selectedSingleId={ single }
 							onCategoryChange={ value =>
 								setAttributes( { categories: '' !== value ? value : undefined } )
 							}
+							onTagChange={ value => setAttributes( { tags: '' !== value ? value : undefined } ) }
 							onAuthorChange={ value =>
 								setAttributes( { author: '' !== value ? value : undefined } )
 							}
@@ -162,13 +160,6 @@ class Edit extends Component {
 								! hasPosts ? MAX_POSTS_COLUMNS : Math.min( MAX_POSTS_COLUMNS, latestPosts.length )
 							}
 							required
-						/>
-					) }
-					{ ! singleMode && (
-						<ToggleControl
-							label={ __( 'Show "More" Link' ) }
-							checked={ moreLink }
-							onChange={ () => setAttributes( { moreLink: ! moreLink } ) }
 						/>
 					) }
 				</PanelBody>
@@ -270,7 +261,6 @@ class Edit extends Component {
 			typeScale,
 			imageScale,
 			sectionHeader,
-			moreLink,
 		} = attributes;
 
 		const classes = classNames( className, {
@@ -339,11 +329,6 @@ class Edit extends Component {
 						</Placeholder>
 					) }
 					{ latestPosts && latestPosts.map( post => this.renderPost( post ) ) }
-					{ latestPosts && moreLink && (
-						<a className="button" href="#">
-							{ __( 'More…' ) }
-						</a>
-					) }
 				</div>
 				<BlockControls>
 					<Toolbar controls={ blockControls } />
@@ -356,7 +341,7 @@ class Edit extends Component {
 }
 
 export default withSelect( ( select, props ) => {
-	const { postsToShow, author, categories, single, singleMode } = props.attributes;
+	const { postsToShow, author, categories, tags, single, singleMode } = props.attributes;
 	const { getAuthors, getEntityRecords } = select( 'core' );
 	const latestPostsQuery = pickBy(
 		singleMode
@@ -365,18 +350,23 @@ export default withSelect( ( select, props ) => {
 					per_page: postsToShow,
 					categories,
 					author,
+					tags,
 			  },
 		value => ! isUndefined( value )
 	);
 	const categoriesListQuery = {
 		per_page: 100,
 	};
+	const tagsListQuery = {
+		per_page: 1000,
+	};
 	const postsListQuery = {
-		per_page: 20,
+		per_page: 50,
 	};
 	return {
 		latestPosts: getEntityRecords( 'postType', 'post', latestPostsQuery ),
 		categoriesList: getEntityRecords( 'taxonomy', 'category', categoriesListQuery ),
+		tagsList: getEntityRecords( 'taxonomy', 'post_tag', tagsListQuery ),
 		authorList: getAuthors(),
 		postList: getEntityRecords( 'postType', 'post', postsListQuery ),
 	};

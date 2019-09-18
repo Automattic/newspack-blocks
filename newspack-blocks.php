@@ -7,14 +7,14 @@
  * Author URI:      YOUR SITE HERE
  * Text Domain:     newspack-blocks
  * Domain Path:     /languages
- * Version:         1.0.0-alpha.2
+ * Version:         1.0.0-alpha.4
  *
  * @package         Newspack_Blocks
  */
 
 define( 'NEWSPACK_BLOCKS__BLOCKS_DIRECTORY', 'dist/' );
 define( 'NEWSPACK_BLOCKS__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'NEWSPACK_BLOCKS__VERSION', '1.0.0-alpha.2' );
+define( 'NEWSPACK_BLOCKS__VERSION', '1.0.0-alpha.3' );
 /**
  * Newspack blocks functionality
  */
@@ -82,6 +82,21 @@ class Newspack_Blocks {
 	}
 
 	/**
+	 * Enqueue block styles stylesheet.
+	 */
+	public static function enqueue_block_styles_assets() {
+		$style_path = NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'block_styles' . ( is_rtl() ? '.rtl' : '' ) . '.css';
+		if ( file_exists( NEWSPACK_BLOCKS__PLUGIN_DIR . $style_path ) ) {
+			wp_enqueue_style(
+				'newspack-blocks-block-styles-stylesheet',
+				plugins_url( $style_path, __FILE__ ),
+				array(),
+				NEWSPACK_BLOCKS__VERSION
+			);
+		}
+	}
+
+	/**
 	 * Enqueue view scripts and styles for a single block.
 	 *
 	 * @param string $type The block's type.
@@ -96,6 +111,9 @@ class Newspack_Blocks {
 				array(),
 				NEWSPACK_BLOCKS__VERSION
 			);
+		}
+		if ( self::is_amp() ) {
+			return;
 		}
 		if ( file_exists( NEWSPACK_BLOCKS__PLUGIN_DIR . $script_path ) ) {
 			$dependencies = self::dependencies_from_path( NEWSPACK_BLOCKS__PLUGIN_DIR . "dist/{$type}/view.deps.json" );
@@ -161,6 +179,15 @@ class Newspack_Blocks {
 		}
 		return implode( $classes, ' ' );
 	}
+
+	/**
+	 * Checks whether the current view is served in AMP context.
+	 *
+	 * @return bool True if AMP, false otherwise.
+	 */
+	public static function is_amp() {
+		return ! is_admin() && function_exists( 'is_amp_endpoint' ) && is_amp_endpoint();
+	}
 }
 
 require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'class-newspack-blocks-api.php';
@@ -168,4 +195,4 @@ require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'class-newspack-blocks-api.php';
 Newspack_Blocks::manage_view_scripts();
 add_action( 'enqueue_block_editor_assets', array( 'Newspack_Blocks', 'enqueue_block_editor_assets' ) );
 add_filter( 'script_loader_tag', array( 'Newspack_Blocks', 'enqueue_sidebar_blocks_assets' ), 10, 2 );
-
+add_action( 'wp_enqueue_scripts', array( 'Newspack_Blocks', 'enqueue_block_styles_assets' ) );

@@ -1,5 +1,5 @@
-@import "sass/variables";
-@import "sass/mixins";
+@import "../../shared/sass/variables";
+@import "../../shared/sass/mixins";
 
 .wp-block-newspack-blocks-homepage-articles {
 	article {
@@ -24,7 +24,7 @@
 		list-style: none;
 
 		article {
-			width: 100%;
+			flex-basis: 100%;
 
 			@include media(tablet) {
 				margin-bottom: 1em;
@@ -32,10 +32,27 @@
 		}
 	}
 
+	@include media(mobile) {
+		&.columns-3 article,
+		&.columns-6 article {
+			flex-basis: calc( 33.333% - 16px );
+		}
+
+		&.columns-2 article,
+		&.columns-4 article,
+		&.columns-5 article {
+			flex-basis: calc( 50% - 16px);
+		}
+
+		&.columns-5 article:last-of-type:nth-child(odd) {
+			flex-grow: 1;
+		}
+	}
+
 	@include media(tablet) {
 		@for $i from 2 through 6 {
 			&.columns-#{ $i } article {
-				width: calc( ( 100% / #{$i} ) - 12px );
+				flex-basis: calc( ( 100% / #{$i} ) - 16px );
 			}
 		}
 	}
@@ -302,7 +319,7 @@
 
 		@for $i from 2 through 6 {
 			&.columns-#{ $i } article {
-				padding-right: calc( ( 12px * #{$i} ) / ( #{$i} - 1 ) );
+				padding-right: calc( ( 16px * #{$i} ) / ( #{$i} - 1 ) );
 			}
 		}
 

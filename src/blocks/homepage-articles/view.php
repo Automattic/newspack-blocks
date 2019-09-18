@@ -19,6 +19,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	}
 	$author        = isset( $attributes['author'] ) ? $attributes['author'] : '';
 	$categories    = isset( $attributes['categories'] ) ? $attributes['categories'] : '';
+	$tags          = isset( $attributes['tags'] ) ? $attributes['tags'] : '';
 	$single        = isset( $attributes['single'] ) ? $attributes['single'] : '';
 	$posts_to_show = intval( $attributes['postsToShow'] );
 	$single_mode   = intval( $attributes['singleMode'] );
@@ -27,6 +28,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		'post_status'         => 'publish',
 		'suppress_filters'    => false,
 		'cat'                 => $categories,
+		'tag_id'              => $tags,
 		'author'              => $author,
 		'ignore_sticky_posts' => true,
 	);
@@ -34,6 +36,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		$args['p'] = $single;
 	} else {
 		$args['cat']    = $categories;
+		$args['author'] = $author;
 		$args['author'] = $author;
 	}
 	$article_query = new WP_Query( $args );
@@ -86,7 +89,9 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				<article <?php echo has_post_thumbnail() ? 'class="post-has-image"' : ''; ?>>
 					<?php if ( has_post_thumbnail() && $attributes['showImage'] ) : ?>
 						<div class="post-thumbnail">
-							<?php the_post_thumbnail( 'large' ); ?>
+							<a href="<?php echo esc_url( get_permalink() ); ?>" rel="bookmark">
+								<?php the_post_thumbnail( 'large' ); ?>
+							</a>
 						</div><!-- .featured-image -->
 					<?php endif; ?>
 
@@ -151,17 +156,6 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				<?php
 			endwhile;
 			?>
-
-			<?php
-			if ( $attributes['moreLink'] ) {
-				$more_url = get_permalink( get_option( 'page_for_posts' ) );
-				if ( $categories ) {
-					$more_url = get_category_link( $categories );
-				}
-				echo '<a class="button" href="' . esc_url( $more_url ) . '">' . esc_html__( 'More', 'newspack-blocks' ) . '</a>';
-			}
-			?>
-
 			<?php wp_reset_postdata(); ?>
 		</div>
 		<?php
@@ -227,6 +221,9 @@ function newspack_blocks_register_homepage_articles() {
 				'categories'    => array(
 					'type' => 'string',
 				),
+				'tags'          => array(
+					'type' => 'string',
+				),
 				'single'        => array(
 					'type' => 'string',
 				),
@@ -241,10 +238,6 @@ function newspack_blocks_register_homepage_articles() {
 				'sectionHeader' => array(
 					'type'    => 'string',
 					'default' => '',
-				),
-				'moreLink'      => array(
-					'type'    => 'boolean',
-					'default' => false,
 				),
 				'singleMode'    => array(
 					'type'    => 'boolean',
