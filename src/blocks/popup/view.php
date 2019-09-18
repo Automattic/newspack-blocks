@@ -66,7 +66,7 @@ function newspack_blocks_render_block_popup( $attributes, $content ) {
  * Add amp-access header code.
  */
 function newspack_blocks_popup_access() {
-	$endpoint = str_replace( 'http:', '//', get_rest_url( null, 'newspack-blocks/v1/reader' ) );
+	$endpoint = str_replace( 'http://', '//', get_rest_url( null, 'newspack-blocks/v1/reader' ) );
 	?>
 	<script id="amp-access" type="application/json">
 		{
