@@ -199,7 +199,7 @@ class Edit extends Component {
 						value={ typeScale }
 						onChange={ value => setAttributes( { typeScale: value } ) }
 						min={ 1 }
-						max={ 8 }
+						max={ 10 }
 						beforeIcon="editor-textcolor"
 						afterIcon="editor-textcolor"
 						required
