@@ -114,7 +114,6 @@ class Edit extends Component {
 			latestPosts,
 			isSelected,
 			textColor,
-			customTextColor,
 			setTextColor,
 		} = this.props;
 		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
@@ -285,7 +284,6 @@ class Edit extends Component {
 			hasPosts,
 			categoriesList,
 			textColor,
-			customTextColor,
 		} = this.props; // variables getting pulled out of props
 		const {
 			showExcerpt,
@@ -310,7 +308,7 @@ class Edit extends Component {
 			[ `type-scale${ typeScale }` ]: typeScale !== '5',
 			[ `image-align${ mediaPosition }` ]: showImage,
 			[ `image-scale${ imageScale }` ]: imageScale !== '1' && showImage,
-			'has-text-color': textColor || customTextColor,
+			'has-text-color': textColor,
 		} );
 
 		const blockControls = [
@@ -354,7 +352,7 @@ class Edit extends Component {
 				<div
 					className={ classes }
 					style={ {
-						color: textColor ? textColor.color : customTextColor,
+						color: textColor.color,
 					} }
 				>
 					{ latestPosts && ( ! RichText.isEmpty( sectionHeader ) || isSelected ) && (
