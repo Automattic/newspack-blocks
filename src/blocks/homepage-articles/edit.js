@@ -27,7 +27,9 @@ import {
 	Spinner,
 } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
-import { withState } from '@wordpress/compose';
+import { withState, compose } from '@wordpress/compose';
+
+import { PanelColorSettings, withColors } from '@wordpress/block-editor';
 
 const { decodeEntities } = wp.htmlEntities;
 
@@ -111,6 +113,8 @@ class Edit extends Component {
 			setAttributes,
 			latestPosts,
 			isSelected,
+			textColor,
+			setTextColor,
 		} = this.props;
 		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
 		const {
@@ -227,6 +231,17 @@ class Edit extends Component {
 						required
 					/>
 				</PanelBody>
+				<PanelColorSettings
+					title={ __( 'Color Settings' ) }
+					initialOpen={ true }
+					colorSettings={ [
+						{
+							value: textColor.color,
+							onChange: setTextColor,
+							label: __( 'Text Color' ),
+						},
+					] }
+				/>
 				<PanelBody title={ __( 'Article Meta Settings' ) }>
 					<PanelRow>
 						<ToggleControl
@@ -268,6 +283,7 @@ class Edit extends Component {
 			latestPosts,
 			hasPosts,
 			categoriesList,
+			textColor,
 		} = this.props; // variables getting pulled out of props
 		const {
 			showExcerpt,
@@ -292,6 +308,7 @@ class Edit extends Component {
 			[ `type-scale${ typeScale }` ]: typeScale !== '5',
 			[ `image-align${ mediaPosition }` ]: showImage,
 			[ `image-scale${ imageScale }` ]: imageScale !== '1' && showImage,
+			'has-text-color': textColor,
 		} );
 
 		const blockControls = [
@@ -332,7 +349,12 @@ class Edit extends Component {
 
 		return (
 			<Fragment>
-				<div className={ classes }>
+				<div
+					className={ classes }
+					style={ {
+						color: textColor.color,
+					} }
+				>
 					{ latestPosts && ( ! RichText.isEmpty( sectionHeader ) || isSelected ) && (
 						<RichText
 							onChange={ value => setAttributes( { sectionHeader: value } ) }
@@ -362,34 +384,37 @@ class Edit extends Component {
 	}
 }
 
-export default withSelect( ( select, props ) => {
-	const { postsToShow, author, categories, tags, single, singleMode } = props.attributes;
-	const { getAuthors, getEntityRecords } = select( 'core' );
-	const latestPostsQuery = pickBy(
-		singleMode
-			? { include: single }
-			: {
-					per_page: postsToShow,
-					categories,
-					author,
-					tags,
-			  },
-		value => ! isUndefined( value )
-	);
-	const categoriesListQuery = {
-		per_page: 100,
-	};
-	const tagsListQuery = {
-		per_page: 1000,
-	};
-	const postsListQuery = {
-		per_page: 50,
-	};
-	return {
-		latestPosts: getEntityRecords( 'postType', 'post', latestPostsQuery ),
-		categoriesList: getEntityRecords( 'taxonomy', 'category', categoriesListQuery ),
-		tagsList: getEntityRecords( 'taxonomy', 'post_tag', tagsListQuery ),
-		authorList: getAuthors(),
-		postList: getEntityRecords( 'postType', 'post', postsListQuery ),
-	};
-} )( Edit );
+export default compose( [
+	withColors( { textColor: 'color' } ),
+	withSelect( ( select, props ) => {
+		const { postsToShow, author, categories, tags, single, singleMode } = props.attributes;
+		const { getAuthors, getEntityRecords } = select( 'core' );
+		const latestPostsQuery = pickBy(
+			singleMode
+				? { include: single }
+				: {
+						per_page: postsToShow,
+						categories,
+						author,
+						tags,
+				  },
+			value => ! isUndefined( value )
+		);
+		const categoriesListQuery = {
+			per_page: 100,
+		};
+		const tagsListQuery = {
+			per_page: 1000,
+		};
+		const postsListQuery = {
+			per_page: 50,
+		};
+		return {
+			latestPosts: getEntityRecords( 'postType', 'post', latestPostsQuery ),
+			categoriesList: getEntityRecords( 'taxonomy', 'category', categoriesListQuery ),
+			tagsList: getEntityRecords( 'taxonomy', 'post_tag', tagsListQuery ),
+			authorList: getAuthors(),
+			postList: getEntityRecords( 'postType', 'post', postsListQuery ),
+		};
+	} ),
+] )( Edit );
