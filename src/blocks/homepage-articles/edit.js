@@ -40,7 +40,7 @@ const MAX_POSTS_COLUMNS = 6;
 
 class Edit extends Component {
 	renderPost = post => {
-		const { attributes, textColor } = this.props;
+		const { attributes } = this.props;
 		const {
 			showImage,
 			showCaption,
