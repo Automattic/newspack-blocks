@@ -68,22 +68,7 @@ class Newspack_Blocks_API {
 		}
 
 		// Landscape image.
-		$landscape_large  = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-landscape-large' );
-		$landscape_medium = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-landscape-medium' );
-		$landscape_small  = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-landscape-small' );
-		$landscape_size   = 'newspack-article-block-landscape-tiny';
-
-		if ( 400 === $landscape_small[1] && 300 === $landscape_small[2] ) {
-			$landscape_size = 'newspack-article-block-landscape-small';
-		}
-
-		if ( 800 === $landscape_medium[1] && 600 === $landscape_medium[2] ) {
-			$landscape_size = 'newspack-article-block-landscape-medium';
-		}
-
-		if ( 1200 === $landscape_large[1] && 900 === $landscape_large[2] ) {
-			$landscape_size = 'newspack-article-block-landscape-large';
-		}
+		$landscape_size = newspack_blocks_image_size_for_orientation( 'landscape' );
 
 		$feat_img_array_landscape        = wp_get_attachment_image_src(
 			$object['featured_media'],
@@ -93,22 +78,7 @@ class Newspack_Blocks_API {
 		$featured_image_set['landscape'] = $feat_img_array_landscape[0];
 
 		// Portrait image.
-		$portrait_large  = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-portrait-large' );
-		$portrait_medium = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-portrait-medium' );
-		$portrait_small  = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-portrait-small' );
-		$portrait_size   = 'newspack-article-block-portrait-tiny';
-
-		if ( 300 === $portrait_small[1] && 400 === $portrait_small[2] ) {
-			$portrait_size = 'newspack-article-block-portrait-small';
-		}
-
-		if ( 600 === $portrait_medium[1] && 800 === $portrait_medium[2] ) {
-			$portrait_size = 'newspack-article-block-portrait-medium';
-		}
-
-		if ( 900 === $portrait_large[1] && 1200 === $portrait_large[2] ) {
-			$portrait_size = 'newspack-article-block-portrait-large';
-		}
+		$portrait_size = newspack_blocks_image_size_for_orientation( 'portrait' );
 
 		$feat_img_array_portrait        = wp_get_attachment_image_src(
 			$object['featured_media'],
@@ -118,22 +88,7 @@ class Newspack_Blocks_API {
 		$featured_image_set['portrait'] = $feat_img_array_portrait[0];
 
 		// Square image.
-		$square_large  = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-square-large' );
-		$square_medium = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-square-medium' );
-		$square_small  = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-square-small' );
-		$square_size   = 'newspack-article-block-square-tiny';
-
-		if ( 400 === $square_small[1] && 400 === $square_small[2] ) {
-			$square_size = 'newspack-article-block-square-small';
-		}
-
-		if ( 800 === $square_medium[1] && 800 === $square_medium[2] ) {
-			$square_size = 'newspack-article-block-square-medium';
-		}
-
-		if ( 1200 === $square_large[1] && 1200 === $square_large[2] ) {
-			$square_size = 'newspack-article-block-square-large';
-		}
+		$square_size = newspack_blocks_image_size_for_orientation( 'square' );
 
 		$feat_img_array_square        = wp_get_attachment_image_src(
 			$object['featured_media'],

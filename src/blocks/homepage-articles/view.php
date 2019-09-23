@@ -112,53 +112,11 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 								$image_size = 'newspack-article-block-landscape-tiny';
 
 								if ( 'landscape' === $attributes['imageShape'] ) {
-									$landscape_large  = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-landscape-large' );
-									$landscape_medium = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-landscape-medium' );
-									$landscape_small  = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-landscape-small' );
-
-									// Don't use an image size unless it's actually fully cropped.
-									if ( 400 === $landscape_small[1] && 300 === $landscape_small[2] ) {
-										$image_size = 'newspack-article-block-landscape-small';
-									}
-									if ( 600 === $landscape_medium[1] && 800 === $landscape_medium[2] ) {
-										$image_size = 'newspack-article-block-landscape-medium';
-									}
-									if ( 1200 === $landscape_large[1] && 900 === $landscape_large[2] ) {
-										$image_size = 'newspack-article-block-landscape-large';
-									}
+									$image_size = newspack_blocks_image_size_for_orientation( 'landscape' );
 								} elseif ( 'portrait' === $attributes['imageShape'] ) {
-
-									$portrait_large  = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-portrait-large' );
-									$portrait_medium = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-portrait-medium' );
-									$portrait_small  = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-portrait-small' );
-									$image_size      = 'newspack-article-block-portrait-tiny';
-
-									// Don't use an image size unless it's actually fully cropped.
-									if ( 300 === $portrait_small[1] && 400 === $portrait_small[2] ) {
-										$image_size = 'newspack-article-block-portrait-small';
-									}
-									if ( 600 === $portrait_medium[1] && 800 === $portrait_medium[2] ) {
-										$image_size = 'newspack-article-block-portrait-medium';
-									}
-									if ( 900 === $portrait_large[1] && 1200 === $portrait_large[2] ) {
-										$image_size = 'newspack-article-block-portrait-large';
-									}
+									$image_size = newspack_blocks_image_size_for_orientation( 'portrait' );
 								} else {
-									$square_large  = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-square-large' );
-									$square_medium = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-square-medium' );
-									$square_small  = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'newspack-article-block-square-small' );
-									$image_size    = 'newspack-article-block-square-tiny';
-
-									// Don't use an image size unless it's actually fully cropped.
-									if ( 400 === $square_small[1] && 400 === $square_small[2] ) {
-										$image_size = 'newspack-article-block-square-small';
-									}
-									if ( 800 === $square_medium[1] && 800 === $square_medium[2] ) {
-										$image_size = 'newspack-article-block-square-medium';
-									}
-									if ( 1200 === $square_large[1] && 1200 === $square_large[2] ) {
-										$image_size = 'newspack-article-block-square-large';
-									}
+									$image_size = newspack_blocks_image_size_for_orientation( 'square' );
 								}
 								the_post_thumbnail( $image_size );
 								?>
