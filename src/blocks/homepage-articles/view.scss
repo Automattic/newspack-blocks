@@ -63,6 +63,14 @@
 		margin: 0;
 	}
 
+	figcaption {
+		font-size: $font__size-xxs;
+	}
+
+	&.image-aligntop .post-thumbnail {
+		margin-bottom: 1em;
+	}
+
 	&.image-alignleft,
 	&.image-alignright {
 		.post-has-image {

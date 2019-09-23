@@ -24,6 +24,16 @@ class Newspack_Blocks_API {
 			)
 		);
 
+		register_rest_field(
+			array( 'post', 'page' ),
+			'newspack_featured_image_caption',
+			array(
+				'get_callback'    => array( 'Newspack_Blocks_API', 'newspack_blocks_get_image_caption' ),
+				'update_callback' => null,
+				'schema'          => null,
+			)
+		);
+
 		/* Add author info source */
 		register_rest_field(
 			'post',
@@ -85,6 +95,15 @@ class Newspack_Blocks_API {
 		$featured_image_set['full'] = $feat_img_array_full[0];
 
 		return $featured_image_set;
+	}
+
+	/**
+	 * Get thumbnail featured image captions for the rest field.
+	 *
+	 * @param Array $object  The object info.
+	 */
+	public static function newspack_blocks_get_image_caption( $object ) {
+		return (int) $object['featured_media'] > 0 ? trim( wp_get_attachment_caption( $object['featured_media'] ) ) : null;
 	}
 
 	/**

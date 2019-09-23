@@ -39,15 +39,26 @@ const MAX_POSTS_COLUMNS = 6;
 class Edit extends Component {
 	renderPost = post => {
 		const { attributes } = this.props;
-		const { showImage, showExcerpt, showAuthor, showAvatar, showDate, sectionHeader } = attributes;
+		const {
+			showImage,
+			showCaption,
+			showExcerpt,
+			showAuthor,
+			showAvatar,
+			showDate,
+			sectionHeader,
+		} = attributes;
 		return (
 			<article className={ post.newspack_featured_image_src && 'post-has-image' } key={ post.id }>
 				{ showImage && post.newspack_featured_image_src && (
-					<div className="post-thumbnail" key="thumbnail">
+					<figure className="post-thumbnail" key="thumbnail">
 						<a href="#">
 							<img src={ post.newspack_featured_image_src.large } />
 						</a>
-					</div>
+						{ showCaption && '' !== post.newspack_featured_image_caption && (
+							<figcaption>{ post.newspack_featured_image_caption }</figcaption>
+						) }
+					</figure>
 				) }
 				<div className="entry-wrapper">
 					{ RichText.isEmpty( sectionHeader ) ? (
@@ -110,6 +121,7 @@ class Edit extends Component {
 			sectionHeader,
 			columns,
 			showImage,
+			showCaption,
 			imageScale,
 			showExcerpt,
 			typeScale,
@@ -171,6 +183,16 @@ class Edit extends Component {
 							onChange={ () => setAttributes( { showImage: ! showImage } ) }
 						/>
 					</PanelRow>
+					{ showImage && (
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Show Featured Image Caption' ) }
+								checked={ showCaption }
+								onChange={ () => setAttributes( { showCaption: ! showCaption } ) }
+							/>
+						</PanelRow>
+					) }
+
 					{ showImage && mediaPosition !== 'top' && (
 						<RangeControl
 							className="image-scale-slider"
@@ -268,7 +290,7 @@ class Edit extends Component {
 			'show-image': showImage,
 			[ `columns-${ columns }` ]: postLayout === 'grid',
 			[ `type-scale${ typeScale }` ]: typeScale !== '5',
-			[ `image-align${ mediaPosition }` ]: mediaPosition !== 'top' && showImage,
+			[ `image-align${ mediaPosition }` ]: showImage,
 			[ `image-scale${ imageScale }` ]: imageScale !== '1' && showImage,
 		} );
 
