@@ -29,7 +29,7 @@ import {
 import { withSelect } from '@wordpress/data';
 import { withState, compose } from '@wordpress/compose';
 
-import { PanelColorSettings, withColors, getColorClassName } from '@wordpress/block-editor';
+import { PanelColorSettings, withColors } from '@wordpress/block-editor';
 
 const { decodeEntities } = wp.htmlEntities;
 
