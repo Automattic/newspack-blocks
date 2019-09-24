@@ -13,7 +13,7 @@ import { debounce } from 'lodash';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Component, Fragment, RawHTML } from '@wordpress/element';
+import { Component, Fragment as div, RawHTML } from '@wordpress/element';
 import {
 	BlockList,
 	BlockEditorProvider,
@@ -84,18 +84,22 @@ class Edit extends Component {
 		);
 	};
 	render = () => {
-		const {
-			attributes,
-			className,
-			isSelected,
-			query,
-			setAttributes,
-			allTags,
-			allCategories,
-		} = this.props;
-		const { criteria, blocks, innerBlockAttributes } = attributes;
-		const { editingPost, blocksTree } = this.state;
-		const settings = {};
+		const { attributes, className, query, setAttributes, allTags, allCategories } = this.props;
+		const { criteria, blocks } = attributes;
+		const { editingPost } = this.state;
+		const settings = {
+			allowedBlockTypes: [
+				'newspack-blocks/author',
+				'newspack-blocks/cover-image',
+				'newspack-blocks/date',
+				'newspack-blocks/excerpt',
+				'newspack-blocks/featured-image',
+				'newspack-blocks/post-categories',
+				'newspack-blocks/tags',
+				'newspack-blocks/title',
+				'core/paragraph'
+			],
+		};
 		const classes = classNames( className, editingPost ? 'is-editing' : '' );
 		return (
 			<div className={ classes }>
@@ -108,25 +112,45 @@ class Edit extends Component {
 					</PanelBody>
 				</InspectorControls>
 				<section>
-					{ ( query || [] ).map(
-						post =>
-							blocksTree[ post.id ] && (
-								<article className={ post.id === editingPost ? 'is-editing' : '' } key={ post.id }>
-									<Fragment>
-										<BlockEditorProvider
-											value={ blocksTree[ post.id ] }
-											onChange={ blocks => this.updateBlocks( blocks, post.id ) }
-											settings={ settings }
-										>
-											<WritingFlow>
-												<BlockList />
-											</WritingFlow>
-										</BlockEditorProvider>
-									</Fragment>
-								</article>
-							)
-					) }
-					{ ( ! query || ! query.length ) && <Placeholder>{ __( 'Loading posts' ) }</Placeholder> }
+					{ ( query || [] ).map( post => (
+						<article className={ post.id === editingPost ? 'is-editing' : '' }>e
+							{ post.id === editingPost && (
+								<div className="block-editor">
+									<Button
+										onClick={ () => {
+											this.setState( { editingPost: null }, () =>
+												setAttributes( { blocks: this._blocks } )
+											);
+										} }
+									>
+										{ __( 'Save' ) }
+									</Button>
+									<BlockEditorProvider
+										value={ blocks.map( block => cloneBlock( block, { post, allTags, allCategories } ) ) }
+										onChange={ blocks => ( this._blocks = blocks ) }
+										onEdit={ blocks => ( this._blocks = blocks ) }
+										settings={ settings }
+									>
+										<WritingFlow>
+											<BlockList />
+										</WritingFlow>
+									</BlockEditorProvider>
+								</div>
+							) }
+							{ post.id !== editingPost && (
+								<div>
+									{ ! editingPost && (
+										<Button onClick={ () => this.setState( { editingPost: post.id } ) }>
+											{ __( 'Edit' ) }
+										</Button>
+									) }
+									{ blocks.map( block => (
+										<RawHTML>{ serialize( cloneBlock( block, { post, allTags, allCategories } ) ) }</RawHTML>
+									) ) }
+								</div>
+							) }
+						</article>
+					) ) }
 				</section>
 			</div>
 		);

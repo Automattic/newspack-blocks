@@ -1,6 +1,6 @@
 import { registerBlockType } from '@wordpress/blocks';
 
-import { name } from '../index';
+import { name } from '../../index';
 const parent = `newspack-blocks/${ name }`;
 
 const Edit =  ( { attributes } ) => {
@@ -11,12 +11,12 @@ const Edit =  ( { attributes } ) => {
 	</ul>
 }
 
-export const registerPostCategoriesBlock = () => registerBlockType( 'newspack-blocks/post-categories', {
+export const registerCategoriesBlock = () => registerBlockType( 'newspack-blocks/post-categories', {
 	title: 'Post Categories',
 	category: 'layout',
 	parent,
 	edit: Edit,
-	save: () => null,
+	save: () => {},
 	attributes: {
 		post: {
 			type: 'object',

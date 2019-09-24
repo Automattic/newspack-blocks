@@ -142,7 +142,7 @@ class Newspack_Blocks {
 		if ( isset( $attributes['className'] ) ) {
 			array_push( $classes, $attributes['className'] );
 		}
-		return implode( $classes, ' ' );
+		return implode( ' ', $classes );
 	}
 }
 

@@ -45,62 +45,6 @@ function newspack_blocks_render_block_query( $attributes ) {
 }
 
 /**
- * Renders the `newspack-blocks/title` block on server.
- *
- * @param array $attributes The block attributes.
- *
- * @return string Returns the post content with latest posts added.
- */
-function newspack_blocks_render_block_title( $attributes ) {
-	ob_start();
-	?>
-	<h1><?php the_title(); ?></h1>
-	<?php
-	return ob_get_clean();
-}
-
-/**
- * Renders the `newspack-blocks/author` block on server.
- *
- * @param array $attributes The block attributes.
- *
- * @return string Returns the post content with latest posts added.
- */
-function newspack_blocks_render_block_author( $attributes ) {
-	ob_start();
-	?>
-	<h3>
-		<?php echo get_avatar( get_the_author_meta( 'ID' ) ); ?>
-		<span class="byline">
-			<?php
-			printf(
-				/* translators: %s: post author. */
-				esc_html_x( 'by %s', 'post author', 'newspack-blocks' ),
-				'<span class="author vcard"><a class="url fn n" href="' . esc_url( get_author_posts_url( get_the_author_meta( 'ID' ) ) ) . '">' . esc_html( get_the_author() ) . '</a></span>'
-			);
-			?>
-		</span><!-- .author-name -->
-	</h3>
-	<?php
-	return ob_get_clean();
-}
-
-/**
- * Renders the `newspack-blocks/excerpt` block on server.
- *
- * @param array $attributes The block attributes.
- *
- * @return string Returns the post content with latest posts added.
- */
-function newspack_blocks_render_block_excerpt( $attributes ) {
-	ob_start();
-	?>
-	<p><?php the_excerpt(); ?></p>
-	<?php
-	return ob_get_clean();
-}
-
-/**
  * Convert criteria object into args ready for use in WP_Query
  *
  * @param array $criteria A criteria object.
@@ -151,49 +95,13 @@ function newspack_blocks_register_query() {
 		)
 	);
 
-	register_block_type(
-		'newspack-blocks/title',
-		array(
-			'attributes'      => array(
-				'className' => array(
-					'type' => 'string',
-				),
-				'post'      => array(
-					'type' => 'object',
-				),
-			),
-			'render_callback' => 'newspack_blocks_render_block_title',
-		)
-	);
-
-	register_block_type(
-		'newspack-blocks/author',
-		array(
-			'attributes'      => array(
-				'className' => array(
-					'type' => 'string',
-				),
-				'post'      => array(
-					'type' => 'object',
-				),
-			),
-			'render_callback' => 'newspack_blocks_render_block_author',
-		)
-	);
-
-	register_block_type(
-		'newspack-blocks/excerpt',
-		array(
-			'attributes'      => array(
-				'className' => array(
-					'type' => 'string',
-				),
-				'post'      => array(
-					'type' => 'object',
-				),
-			),
-			'render_callback' => 'newspack_blocks_render_block_excerpt',
-		)
-	);
+	include_once( dirname( __FILE__ ) . '/field-blocks/author/author.php' );
+	include_once( dirname( __FILE__ ) . '/field-blocks/categories/categories.php' );
+	include_once( dirname( __FILE__ ) . '/field-blocks/date/date.php' );
+	include_once( dirname( __FILE__ ) . '/field-blocks/excerpt/excerpt.php' );
+	include_once( dirname( __FILE__ ) . '/field-blocks/featured-image/featured-image.php' );
+	include_once( dirname( __FILE__ ) . '/field-blocks/tags/tags.php' );
+	include_once( dirname( __FILE__ ) . '/field-blocks/title/title.php' );
 }
+
 add_action( 'init', 'newspack_blocks_register_query' );

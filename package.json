@@ -22,7 +22,9 @@
     "test": "tests"
   },
   "private": true,
-  "dependencies": {},
+  "dependencies": {
+    "@wordpress/block-library": "^2.8.0"
+  },
   "scripts": {
     "build:webpack": "calypso-build --config='./webpack.config.js'",
     "clean": "rm -rf dist/",

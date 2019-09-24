@@ -2,7 +2,7 @@ import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import moment from 'moment';
 
-import { name } from '../index';
+import { name } from '../../index';
 const parent = `newspack-blocks/${ name }`;
 
 export const registerDateBlock = () => registerBlockType( 'newspack-blocks/date', {

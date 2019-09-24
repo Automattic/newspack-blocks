@@ -2,7 +2,7 @@ import { registerBlockType } from '@wordpress/blocks';
 import { RawHTML } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
-import { name } from '../index';
+import { name } from '../../index';
 const parent = `newspack-blocks/${ name }`;
 
 export const registerFeaturedImageBlock = () => registerBlockType( 'newspack-blocks/featured-image', {
