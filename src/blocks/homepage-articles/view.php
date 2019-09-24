@@ -211,7 +211,7 @@ function newspack_blocks_register_homepage_articles() {
 				),
 				'showCaption'   => array(
 					'type'    => 'boolean',
-					'default' => true,
+					'default' => false,
 				),
 				'showAuthor'    => array(
 					'type'    => 'boolean',
