@@ -163,7 +163,8 @@
 		.entry-meta,
 		.entry-meta a,
 		.entry-meta .byline a,
-		.entry-meta .byline a:visited {
+		.entry-meta .byline a:visited,
+		figcaption {
 			color: inherit;
 		}
 	}
