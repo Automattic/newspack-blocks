@@ -108,16 +108,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 						<figure class="post-thumbnail">
 							<a href="<?php echo esc_url( get_permalink() ); ?>" rel="bookmark">
 								<?php
-
-								$image_size = 'newspack-article-block-landscape-tiny';
-
-								if ( 'landscape' === $attributes['imageShape'] ) {
-									$image_size = newspack_blocks_image_size_for_orientation( 'landscape' );
-								} elseif ( 'portrait' === $attributes['imageShape'] ) {
-									$image_size = newspack_blocks_image_size_for_orientation( 'portrait' );
-								} else {
-									$image_size = newspack_blocks_image_size_for_orientation( 'square' );
-								}
+								$image_size = newspack_blocks_image_size_for_orientation( $attributes['imageShape'] );
 								the_post_thumbnail( $image_size );
 								?>
 							</a>
