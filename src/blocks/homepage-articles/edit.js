@@ -404,7 +404,7 @@ export default compose( [
 			per_page: 100,
 		};
 		const tagsListQuery = {
-			per_page: 1000,
+			per_page: 100,
 		};
 		const postsListQuery = {
 			per_page: 50,
