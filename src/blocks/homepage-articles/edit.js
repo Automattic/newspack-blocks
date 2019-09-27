@@ -25,6 +25,7 @@ import {
 	Dashicon,
 	Placeholder,
 	Spinner,
+	BaseControl,
 } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 import { withState, compose } from '@wordpress/compose';
@@ -143,6 +144,58 @@ class Edit extends Component {
 			url,
 		} = attributes;
 
+		const fetchAuthorSuggestions = ( search ) => {
+			return apiFetch( {
+				path: addQueryArgs( '/wp/v2/users', {
+					search,
+					per_page: 20,
+					_fields: 'id,name',
+				} ),
+			} ).then( function( users ) {
+				return map( users, ( user ) => ( {
+					value: user.id,
+					label: decodeEntities( user.name ) || __( '(no name)' ),
+				} ) );
+			} );
+		};
+		const fetchSavedAuthor = ( userID ) => {
+			return apiFetch( {
+				path: '/wp/v2/users/' + userID,
+			} ).then( function( user ) {
+				return {
+					value: user.id,
+					label: decodeEntities( user.name ) || __( '(no name)' ),
+				};
+			});
+		};
+
+		const fetchCategorySuggestions = ( search ) => {
+			return apiFetch( {
+				path: addQueryArgs( '/wp/v2/categories', {
+					search,
+					per_page: 20,
+					_fields: 'id,name',
+					orderby: 'count',
+					order: 'desc',
+				} ),
+			} ).then( function( categories ) {
+				return map( categories, ( category ) => ( {
+					value: category.id,
+					label: decodeEntities( category.name ) || __( '(no name)' ),
+				} ) );
+			} );
+		};
+		const fetchSavedCategory = ( categoryID ) => {
+			return apiFetch( {
+				path: '/wp/v2/categories/' + categoryID,
+			} ).then( function( category ) {
+				return {
+					value: category.id,
+					label: decodeEntities( category.name ) || __( '(no name)' ),
+				};
+			});
+		};
+
 		const fetchTagSuggestions = ( search ) => {
 			return apiFetch( {
 				path: addQueryArgs( '/wp/v2/tags', {
@@ -159,7 +212,6 @@ class Edit extends Component {
 				} ) );
 			} );
 		};
-
 		const fetchSavedTag = ( tagID ) => {
 			return apiFetch( {
 				path: '/wp/v2/tags/' + tagID,
@@ -179,36 +231,42 @@ class Edit extends Component {
 							<QueryControls
 								numberOfItems={ postsToShow }
 								onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
-								authorList={ authorList }
 								postList={ postList }
-								tagsList={ tagsList }
 								singleMode={ singleMode }
-								categoriesList={ categoriesList }
-								selectedCategoryId={ categories }
-								selectedAuthorId={ author }
-								selectedTagId={ tags }
 								selectedSingleId={ single }
-								onCategoryChange={ value =>
-									setAttributes( { categories: '' !== value ? value : undefined } )
-								}
-								onTagChange={ value => setAttributes( { tags: '' !== value ? value : undefined } ) }
-								onAuthorChange={ value =>
-									setAttributes( { author: '' !== value ? value : undefined } )
-								}
 								onSingleChange={ value =>
 									setAttributes( { single: '' !== value ? value : undefined } )
 								}
 								onSingleModeChange={ value => setAttributes( { singleMode: value } ) }
 							/>
-							<div>
-								<label>{ __( 'Tag' ) }</label>
-								<AutocompleteDropdown
-									onSelect={ ( value ) => setAttributes( { tags: String( value ) } ) }
-									selectedItem={ tags }
-									fetchSuggestions={ fetchTagSuggestions }
-									fetchSavedInfo={ fetchSavedTag }
-								/>
-							</div>
+							{ ! singleMode && (
+								<Fragment>
+									<BaseControl label={ __( 'Author' ) } >
+										<AutocompleteDropdown
+											onSelect={ ( value ) => setAttributes( { author: String( value ) } ) }
+											selectedItem={ author }
+											fetchSuggestions={ fetchAuthorSuggestions }
+											fetchSavedInfo={ fetchSavedAuthor }
+										/>
+									</BaseControl>
+									<BaseControl label={ __( 'Category' ) } >
+										<AutocompleteDropdown
+											onSelect={ ( value ) => setAttributes( { categories: String( value ) } ) }
+											selectedItem={ categories }
+											fetchSuggestions={ fetchCategorySuggestions }
+											fetchSavedInfo={ fetchSavedCategory }
+										/>
+									</BaseControl>
+									<BaseControl label={ __( 'Tag' ) } >
+										<AutocompleteDropdown
+											onSelect={ ( value ) => setAttributes( { tags: String( value ) } ) }
+											selectedItem={ tags }
+											fetchSuggestions={ fetchTagSuggestions }
+											fetchSavedInfo={ fetchSavedTag }
+										/>
+									</BaseControl>
+								</Fragment>
+							) }
 						</Fragment>
 					) }
 					{ postLayout === 'grid' && (

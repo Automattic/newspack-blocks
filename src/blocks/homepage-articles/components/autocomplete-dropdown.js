@@ -17,11 +17,14 @@ import { withSelect } from '@wordpress/data';
 
 import './autocomplete-dropdown.scss';
 
-// Since URLInput is rendered in the context of other inputs, but should be
-// considered a separate modal node, prevent keyboard events from propagating
-// as being considered from the input.
 const stopEventPropagation = ( event ) => event.stopPropagation();
 
+
+/**
+ * An search field that autocompletes with a dropdown for selecting an element.
+ * This is heavily based on URLInput, and keyboard handling and accessibility is directly taken from that component.
+ * @see https://github.com/WordPress/gutenberg/tree/a32d813a6c4243dbf03725da1c7d961c62409f44/packages/block-editor/src/components/url-input
+ */
 class AutocompleteDropdown extends Component {
 	constructor( { autocompleteRef } ) {
 		super( ...arguments );
@@ -59,8 +62,6 @@ class AutocompleteDropdown extends Component {
 
 	componentDidUpdate() {
 		const { showSuggestions, selectedSuggestion } = this.state;
-		// only have to worry about scrolling selected suggestion into view
-		// when already expanded
 		if ( showSuggestions && selectedSuggestion !== null && ! this.scrollingIntoView ) {
 			this.scrollingIntoView = true;
 			scrollIntoView( this.suggestionNodes[ selectedSuggestion ], this.autocompleteRef.current, {
@@ -249,7 +250,7 @@ class AutocompleteDropdown extends Component {
 	}
 
 	render() {
-		const { value = '', instanceId, className, id, isFullWidth, hasBorder, selectedItem } = this.props;
+		const { instanceId, className, id, selectedItem } = this.props;
 		const { showSuggestions, suggestions, selectedSuggestion, loading, currentInput } = this.state;
 
 		const suggestionsListboxId = `block-editor-autocomplete-dropdown-input-suggestions-${ instanceId }`;
@@ -324,9 +325,6 @@ class AutocompleteDropdown extends Component {
 	}
 }
 
-/**
- * @see https://github.com/WordPress/gutenberg/blob/master/packages/block-editor/src/components/url-input/README.md
- */
 export default compose(
 	withSafeTimeout,
 	withSpokenMessages,
