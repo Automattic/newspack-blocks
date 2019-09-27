@@ -19,7 +19,6 @@ import './autocomplete-dropdown.scss';
 
 const stopEventPropagation = ( event ) => event.stopPropagation();
 
-
 /**
  * An search field that autocompletes with a dropdown for selecting an element.
  * This is heavily based on URLInput, and keyboard handling and accessibility is directly taken from that component.
