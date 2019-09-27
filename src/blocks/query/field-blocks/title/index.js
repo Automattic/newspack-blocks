@@ -8,8 +8,7 @@ export const registerTitleBlock = () => registerBlockType( 'newspack-blocks/titl
 	title: 'Title',
 	category: 'layout',
 	parent,
-	edit: ( { attributes } ) => {
-		const { currentPost, attributes } = props;
+	edit: ( { currentPost, attributes } ) => {
 		const thePost = attributes.post ? attributes.post : currentPost;
 		return <div className="wp-block-heading">
 			<h2><a href={thePost.link}>{ thePost.title.raw }</a></h2>

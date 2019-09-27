@@ -13,18 +13,15 @@ import { debounce } from 'lodash';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Component, Fragment as div, RawHTML } from '@wordpress/element';
+import { Component, Fragment } from '@wordpress/element';
 import {
 	BlockList,
 	BlockEditorProvider,
 	InspectorControls,
-	ObserveTyping,
 	WritingFlow,
-	SlotFillProvider,
-	DropZoneProvider,
 } from '@wordpress/block-editor';
-import { cloneBlock, serialize } from '@wordpress/blocks';
-import { Button, PanelBody, Placeholder } from '@wordpress/components';
+import { cloneBlock } from '@wordpress/blocks';
+import { PanelBody } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 
 class Edit extends Component {
@@ -40,8 +37,7 @@ class Edit extends Component {
 		this.createBlockTree();
 	}
 	componentDidUpdate( prevProps ) {
-		const { allCategories, allTags, attributes, query } = this.props;
-		const { blocks } = attributes;
+		const { query } = this.props;
 		if ( prevProps.query !== query ) {
 			this.createBlockTree();
 		}
@@ -84,22 +80,10 @@ class Edit extends Component {
 		);
 	};
 	render = () => {
-		const { attributes, className, query, setAttributes, allTags, allCategories } = this.props;
-		const { criteria, blocks } = attributes;
-		const { editingPost } = this.state;
-		const settings = {
-			allowedBlockTypes: [
-				'newspack-blocks/author',
-				'newspack-blocks/cover-image',
-				'newspack-blocks/date',
-				'newspack-blocks/excerpt',
-				'newspack-blocks/featured-image',
-				'newspack-blocks/post-categories',
-				'newspack-blocks/tags',
-				'newspack-blocks/title',
-				'core/paragraph'
-			],
-		};
+		const { attributes, className, query, setAttributes } = this.props;
+		const { criteria } = attributes;
+		const { editingPost, blocksTree } = this.state;
+		const settings = {};
 		const classes = classNames( className, editingPost ? 'is-editing' : '' );
 		return (
 			<div className={ classes }>
@@ -112,45 +96,24 @@ class Edit extends Component {
 					</PanelBody>
 				</InspectorControls>
 				<section>
-					{ ( query || [] ).map( post => (
-						<article className={ post.id === editingPost ? 'is-editing' : '' }>e
-							{ post.id === editingPost && (
-								<div className="block-editor">
-									<Button
-										onClick={ () => {
-											this.setState( { editingPost: null }, () =>
-												setAttributes( { blocks: this._blocks } )
-											);
-										} }
-									>
-										{ __( 'Save' ) }
-									</Button>
-									<BlockEditorProvider
-										value={ blocks.map( block => cloneBlock( block, { post, allTags, allCategories } ) ) }
-										onChange={ blocks => ( this._blocks = blocks ) }
-										onEdit={ blocks => ( this._blocks = blocks ) }
-										settings={ settings }
-									>
-										<WritingFlow>
-											<BlockList />
-										</WritingFlow>
-									</BlockEditorProvider>
-								</div>
-							) }
-							{ post.id !== editingPost && (
-								<div>
-									{ ! editingPost && (
-										<Button onClick={ () => this.setState( { editingPost: post.id } ) }>
-											{ __( 'Edit' ) }
-										</Button>
-									) }
-									{ blocks.map( block => (
-										<RawHTML>{ serialize( cloneBlock( block, { post, allTags, allCategories } ) ) }</RawHTML>
-									) ) }
-								</div>
-							) }
-						</article>
-					) ) }
+					{ ( query || [] ).map(
+						post =>
+							blocksTree[ post.id ] && (
+								<article className={ post.id === editingPost ? 'is-editing' : '' } key={ post.id }>
+									<Fragment>
+										<BlockEditorProvider
+											value={ blocksTree[ post.id ] }
+											onChange={ blocks => this.updateBlocks( blocks, post.id ) }
+											settings={ settings }
+										>
+											<WritingFlow>
+												<BlockList />
+											</WritingFlow>
+										</BlockEditorProvider>
+									</Fragment>
+								</article>
+							)
+					) }
 				</section>
 			</div>
 		);
