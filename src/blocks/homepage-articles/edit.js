@@ -299,6 +299,7 @@ class Edit extends Component {
 			typeScale,
 			imageScale,
 			sectionHeader,
+			showCaption,
 		} = attributes;
 
 		const classes = classNames( className, {
@@ -309,6 +310,7 @@ class Edit extends Component {
 			[ `image-align${ mediaPosition }` ]: showImage,
 			[ `image-scale${ imageScale }` ]: imageScale !== '1' && showImage,
 			'has-text-color': textColor,
+			'show-caption': showCaption,
 		} );
 
 		const blockControls = [
