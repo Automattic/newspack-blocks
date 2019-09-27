@@ -1,5 +1,5 @@
 import { registerBlockType } from '@wordpress/blocks';
-
+import { useEntityProp } from '@wordpress/core-data';
 import { name } from '../../index';
 const parent = `newspack-blocks/${ name }`;
 

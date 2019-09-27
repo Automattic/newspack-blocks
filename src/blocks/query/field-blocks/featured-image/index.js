@@ -1,5 +1,5 @@
 import { registerBlockType } from '@wordpress/blocks';
-import { RawHTML } from '@wordpress/element';
+import { useEntityProp } from '@wordpress/core-data';
 import { __ } from '@wordpress/i18n';
 
 import { name } from '../../index';
@@ -10,6 +10,7 @@ export const registerFeaturedImageBlock = () => registerBlockType( 'newspack-blo
 	category: 'layout',
 	parent,
 	edit: ( { attributes } ) => {
+		const [ featuredImageId ] = useEntityProp( 'postType', 'post', 'featured_media' );
 		const { post } = attributes;
 		if ( ! post.newspack_featured_image_src ) {
 			return null;

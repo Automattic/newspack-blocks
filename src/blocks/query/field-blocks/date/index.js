@@ -1,4 +1,5 @@
 import { registerBlockType } from '@wordpress/blocks';
+import { useEntityProp } from '@wordpress/core-data';
 import { __ } from '@wordpress/i18n';
 import moment from 'moment';
 
@@ -9,11 +10,11 @@ export const registerDateBlock = () => registerBlockType( 'newspack-blocks/date'
 	title: 'Date',
 	category: 'layout',
 	parent,
-	edit: ( { attributes } ) => {
-		const { post } = attributes;
+	edit: () => {
+		const [ date ] = useEntityProp( 'postType', 'post', 'date_gmt' );
 		return (
 			<time className="entry-date published" key="pub-date">
-				{ moment( post.date_gmt )
+				{ moment( date )
 					.local()
 					.format( 'MMMM DD, Y' ) }
 			</time>

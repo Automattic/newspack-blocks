@@ -1,4 +1,5 @@
 import { registerBlockType } from '@wordpress/blocks';
+import { useEntityProp } from '@wordpress/core-data';
 import { RawHTML } from '@wordpress/element';
 
 import { name } from '../../index';
@@ -8,8 +9,9 @@ export const registerExcerptBlock = () => registerBlockType( 'newspack-blocks/ex
 	title: 'Excerpt',
 	category: 'layout',
 	parent,
-	edit: ( { attributes } ) => {
-		return <RawHTML>{ attributes.post.excerpt.rendered }</RawHTML>
+	edit: ( ) => {
+		const [ excerpt ] = useEntityProp( 'postType', 'post', 'excerpt' );
+		return <RawHTML>{ excerpt }</RawHTML>
 	},
 	save: () => null,
 	attributes: {

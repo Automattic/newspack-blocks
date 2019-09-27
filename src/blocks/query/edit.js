@@ -22,6 +22,7 @@ import {
 } from '@wordpress/block-editor';
 import { cloneBlock } from '@wordpress/blocks';
 import { PanelBody } from '@wordpress/components';
+import { EntityProvider } from '@wordpress/core-data';
 import { withSelect } from '@wordpress/data';
 
 class Edit extends Component {
@@ -100,7 +101,7 @@ class Edit extends Component {
 						post =>
 							blocksTree[ post.id ] && (
 								<article className={ post.id === editingPost ? 'is-editing' : '' } key={ post.id }>
-									<Fragment>
+									<EntityProvider kind="postType" type="post" id={post.id} >
 										<BlockEditorProvider
 											value={ blocksTree[ post.id ] }
 											onChange={ blocks => this.updateBlocks( blocks, post.id ) }
@@ -110,7 +111,7 @@ class Edit extends Component {
 												<BlockList />
 											</WritingFlow>
 										</BlockEditorProvider>
-									</Fragment>
+									</EntityProvider>
 								</article>
 							)
 					) }

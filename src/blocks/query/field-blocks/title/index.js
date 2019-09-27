@@ -1,5 +1,5 @@
 import { registerBlockType } from '@wordpress/blocks';
-import { RawHTML } from '@wordpress/element';
+import { useEntityProp } from '@wordpress/core-data';
 
 import { name } from '../../index';
 const parent = `newspack-blocks/${ name }`;
@@ -8,10 +8,11 @@ export const registerTitleBlock = () => registerBlockType( 'newspack-blocks/titl
 	title: 'Title',
 	category: 'layout',
 	parent,
-	edit: ( { currentPost, attributes } ) => {
-		const thePost = attributes.post ? attributes.post : currentPost;
+	edit: () => {
+		const [ title ] = useEntityProp( 'postType', 'post', 'title' );
+		const [ link ] = useEntityProp( 'postType', 'post', 'link' );
 		return <div className="wp-block-heading">
-			<h2><a href={thePost.link}>{ thePost.title.raw }</a></h2>
+			<h2><a href={link}>{ title }</a></h2>
 		</div>;
 	},
 	save: () => null,
