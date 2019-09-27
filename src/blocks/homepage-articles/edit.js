@@ -29,7 +29,9 @@ import {
 import { withSelect } from '@wordpress/data';
 import { withState, compose } from '@wordpress/compose';
 
-import { PanelColorSettings, withColors } from '@wordpress/block-editor';
+import { PanelColorSettings, withColors, URLInput } from '@wordpress/block-editor';
+
+import AutocompleteDropdown from './components/autocomplete-dropdown.js';
 
 const { decodeEntities } = wp.htmlEntities;
 
@@ -136,35 +138,54 @@ class Edit extends Component {
 			mediaPosition,
 			singleMode,
 			tags,
+			url,
 		} = attributes;
 		return (
 			<Fragment>
 				<PanelBody title={ __( 'Display Settings' ) } initialOpen={ true }>
 					{ postsToShow && categoriesList && (
-						<QueryControls
-							numberOfItems={ postsToShow }
-							onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
-							authorList={ authorList }
-							postList={ postList }
-							tagsList={ tagsList }
-							singleMode={ singleMode }
-							categoriesList={ categoriesList }
-							selectedCategoryId={ categories }
-							selectedAuthorId={ author }
-							selectedTagId={ tags }
-							selectedSingleId={ single }
-							onCategoryChange={ value =>
-								setAttributes( { categories: '' !== value ? value : undefined } )
-							}
-							onTagChange={ value => setAttributes( { tags: '' !== value ? value : undefined } ) }
-							onAuthorChange={ value =>
-								setAttributes( { author: '' !== value ? value : undefined } )
-							}
-							onSingleChange={ value =>
-								setAttributes( { single: '' !== value ? value : undefined } )
-							}
-							onSingleModeChange={ value => setAttributes( { singleMode: value } ) }
-						/>
+						<Fragment>
+							<QueryControls
+								numberOfItems={ postsToShow }
+								onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
+								authorList={ authorList }
+								postList={ postList }
+								tagsList={ tagsList }
+								singleMode={ singleMode }
+								categoriesList={ categoriesList }
+								selectedCategoryId={ categories }
+								selectedAuthorId={ author }
+								selectedTagId={ tags }
+								selectedSingleId={ single }
+								onCategoryChange={ value =>
+									setAttributes( { categories: '' !== value ? value : undefined } )
+								}
+								onTagChange={ value => setAttributes( { tags: '' !== value ? value : undefined } ) }
+								onAuthorChange={ value =>
+									setAttributes( { author: '' !== value ? value : undefined } )
+								}
+								onSingleChange={ value =>
+									setAttributes( { single: '' !== value ? value : undefined } )
+								}
+								onSingleModeChange={ value => setAttributes( { singleMode: value } ) }
+							/>
+							<div>
+								TEST3
+								<AutocompleteDropdown
+									className="wp-block-button__inline-link-input"
+									/* eslint-disable jsx-a11y/no-autofocus */
+									// Disable Reason: The rule is meant to prevent enabling auto-focus, not disabling it.
+									autoFocus={ false }
+									/* eslint-enable jsx-a11y/no-autofocus */
+									onSelect={ ( value ) => setAttributes( { tags: value } ) }
+									disableSuggestions={ false }
+									id={ 'asdas' }
+									selectedItem={ tags }
+									isFullWidth
+									hasBorder
+								/>
+							</div>
+						</Fragment>
 					) }
 					{ postLayout === 'grid' && (
 						<RangeControl
@@ -404,7 +425,7 @@ export default compose( [
 			per_page: 100,
 		};
 		const tagsListQuery = {
-			per_page: 1000,
+			per_page: 100,
 		};
 		const postsListQuery = {
 			per_page: 50,
