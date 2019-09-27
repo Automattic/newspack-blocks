@@ -7,7 +7,7 @@ import QueryControls from './query-controls';
  * External dependencies
  */
 import classNames from 'classnames';
-import { isUndefined, pickBy } from 'lodash';
+import { isUndefined, pickBy, map } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -28,12 +28,14 @@ import {
 } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 import { withState, compose } from '@wordpress/compose';
+import apiFetch from '@wordpress/api-fetch';
+import { addQueryArgs } from '@wordpress/url';
+import { decodeEntities } from '@wordpress/html-entities';
 
 import { PanelColorSettings, withColors, URLInput } from '@wordpress/block-editor';
 
 import AutocompleteDropdown from './components/autocomplete-dropdown.js';
 
-const { decodeEntities } = wp.htmlEntities;
 
 /**
  * Module Constants
@@ -140,6 +142,35 @@ class Edit extends Component {
 			tags,
 			url,
 		} = attributes;
+
+		const fetchTagSuggestions = ( search ) => {
+			return apiFetch( {
+				path: addQueryArgs( '/wp/v2/tags', {
+					search,
+					per_page: 20,
+					_fields: 'id,name',
+					orderby: 'count',
+					order: 'desc',
+				} ),
+			} ).then( function( tags ) {
+				return map( tags, ( tag ) => ( {
+					value: tag.id,
+					label: decodeEntities( tag.name ) || __( '(no title)' ),
+				} ) );
+			} );
+		};
+
+		const fetchSavedTag = ( tagID ) => {
+			return apiFetch( {
+				path: '/wp/v2/tags/' + tagID,
+			} ).then( function( tag ) {
+				return {
+					value: tag.id,
+					label: decodeEntities( tag.name ) || __( '(no title)' ),
+				};
+			});
+		};
+
 		return (
 			<Fragment>
 				<PanelBody title={ __( 'Display Settings' ) } initialOpen={ true }>
@@ -170,19 +201,12 @@ class Edit extends Component {
 								onSingleModeChange={ value => setAttributes( { singleMode: value } ) }
 							/>
 							<div>
-								TEST3
+								<label>{ __( 'Tag' ) }</label>
 								<AutocompleteDropdown
-									className="wp-block-button__inline-link-input"
-									/* eslint-disable jsx-a11y/no-autofocus */
-									// Disable Reason: The rule is meant to prevent enabling auto-focus, not disabling it.
-									autoFocus={ false }
-									/* eslint-enable jsx-a11y/no-autofocus */
-									onSelect={ ( value ) => setAttributes( { tags: value } ) }
-									disableSuggestions={ false }
-									id={ 'asdas' }
+									onSelect={ ( value ) => setAttributes( { tags: String( value ) } ) }
 									selectedItem={ tags }
-									isFullWidth
-									hasBorder
+									fetchSuggestions={ fetchTagSuggestions }
+									fetchSavedInfo={ fetchSavedTag }
 								/>
 							</div>
 						</Fragment>

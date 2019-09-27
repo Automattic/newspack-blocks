@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { map, throttle } from 'lodash';
+import { throttle } from 'lodash';
 import classnames from 'classnames';
 import scrollIntoView from 'dom-scroll-into-view';
 
@@ -14,26 +14,8 @@ import { UP, DOWN, ENTER, TAB } from '@wordpress/keycodes';
 import { Spinner, withSpokenMessages, Popover } from '@wordpress/components';
 import { withInstanceId, withSafeTimeout, compose } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
-import apiFetch from '@wordpress/api-fetch';
-import { addQueryArgs } from '@wordpress/url';
-import { decodeEntities } from '@wordpress/html-entities';
 
-const fetchTagSuggestions = ( search ) => {
-	return apiFetch( {
-		path: addQueryArgs( '/wp/v2/tags', {
-			search,
-			per_page: 20,
-			_fields: 'id,name',
-			orderby: 'count',
-			order: 'desc',
-		} ),
-	} ).then(function(tags) {
-		return map( tags, ( tag ) => ( {
-			value: tag.id,
-			label: decodeEntities( tag.name ) || __( '(no title)' ),
-		} ) );
-	});
-};
+import './autocomplete-dropdown.scss';
 
 // Since URLInput is rendered in the context of other inputs, but should be
 // considered a separate modal node, prevent keyboard events from propagating
@@ -57,7 +39,22 @@ class AutocompleteDropdown extends Component {
 			showSuggestions: false,
 			selectedSuggestion: null,
 			currentInput: '',
+			loading: false,
 		};
+	}
+
+	componentDidMount() {
+		const { selectedItem, fetchSavedInfo } = this.props;
+		if ( !! selectedItem ) {
+			this.setState( { loading: true }, () => {
+				fetchSavedInfo( selectedItem ).then( ( item ) => {
+					this.setState( {
+						loading: false,
+						currentInput: item.label
+					} );
+				} );
+			} );
+		}
 	}
 
 	componentDidUpdate() {
@@ -87,14 +84,13 @@ class AutocompleteDropdown extends Component {
 	}
 
 	updateSuggestions( value ) {
-		const { fetchLinkSuggestions } = this.props;
-		if ( ! fetchLinkSuggestions ) {
+		const { fetchSuggestions } = this.props;
+		if ( ! fetchSuggestions ) {
 			return;
 		}
 
-		// Show the suggestions after typing at least 2 characters
-		// and also for URLs
-		if ( value.length < 2 || /^https?:/.test( value ) ) {
+		// Show the suggestions after typing at least 1 character.
+		if ( value.length < 1 ) {
 			this.setState( {
 				showSuggestions: false,
 				selectedSuggestion: null,
@@ -110,7 +106,7 @@ class AutocompleteDropdown extends Component {
 			loading: true,
 		} );
 
-		const request = fetchLinkSuggestions( value );
+		const request = fetchSuggestions( value );
 
 		request.then( ( suggestions ) => {
 			// A fetch Promise doesn't have an abort option. It's mimicked by
@@ -248,39 +244,28 @@ class AutocompleteDropdown extends Component {
 
 	resetSelection() {
 		const originalInputValue = this.state.currentInput;
-		this.handleOnClick( { value: null, label: originalInputValue } );
+		this.selectLink( { value: '', label: originalInputValue } );
 		this.updateSuggestions( originalInputValue );
 	}
 
-	static getDerivedStateFromProps( { disableSuggestions }, { showSuggestions } ) {
-		return {
-			showSuggestions: disableSuggestions === true ? false : showSuggestions,
-		};
-	}
-
 	render() {
-		const { value = '', autoFocus = true, instanceId, className, id, isFullWidth, hasBorder, selectedItem } = this.props;
+		const { value = '', instanceId, className, id, isFullWidth, hasBorder, selectedItem } = this.props;
 		const { showSuggestions, suggestions, selectedSuggestion, loading, currentInput } = this.state;
 
-		const suggestionsListboxId = `block-editor-url-input-suggestions-${ instanceId }`;
-		const suggestionOptionIdPrefix = `block-editor-url-input-suggestion-${ instanceId }`;
+		const suggestionsListboxId = `block-editor-autocomplete-dropdown-input-suggestions-${ instanceId }`;
+		const suggestionOptionIdPrefix = `block-editor-autocomplete-dropdown-input-suggestion-${ instanceId }`;
 
-		/* eslint-disable jsx-a11y/no-autofocus */
 		return (
-			<div className={ classnames( 'editor-url-input block-editor-url-input', className, {
-				'is-full-width': isFullWidth,
-				'has-border': hasBorder,
-			} ) }>				
+			<div className='editor-autocomplete-dropdown-input block-editor-autocomplete-dropdown-input'>				
 				<input
 					id={ id }
-					autoFocus={ autoFocus }
 					type="text"
-					aria-label={ __( 'URL' ) }
+					aria-label={ __( 'Type to search' ) }
 					required
 					value={ currentInput }
 					onChange={ this.onChange }
 					onInput={ stopEventPropagation }
-					placeholder={ __( 'Paste URL or type to search' ) }
+					placeholder={ __( 'Type to search' ) }
 					onKeyDown={ this.onKeyDown }
 					role="combobox"
 					aria-expanded={ showSuggestions }
@@ -307,8 +292,8 @@ class AutocompleteDropdown extends Component {
 					>
 						<div
 							className={ classnames(
-								'editor-url-input__suggestions',
-								'block-editor-url-input__suggestions',
+								'editor-autocomplete-dropdown-input__suggestions',
+								'block-editor-autocomplete-dropdown-input__suggestions',
 								`${ className }__suggestions`
 							) }
 							id={ suggestionsListboxId }
@@ -322,7 +307,7 @@ class AutocompleteDropdown extends Component {
 									tabIndex="-1"
 									id={ `${ suggestionOptionIdPrefix }-${ index }` }
 									ref={ this.bindSuggestionNode( index ) }
-									className={ classnames( 'editor-url-input__suggestion block-editor-url-input__suggestion', {
+									className={ classnames( 'editor-autocomplete-dropdown-input__suggestion block-editor-autocomplete-dropdown-input__suggestion', {
 										'is-selected': index === selectedSuggestion,
 									} ) }
 									onClick={ () => this.handleOnClick( suggestion ) }
@@ -336,7 +321,6 @@ class AutocompleteDropdown extends Component {
 				}
 			</div>
 		);
-		/* eslint-enable jsx-a11y/no-autofocus */
 	}
 }
 
@@ -346,11 +330,5 @@ class AutocompleteDropdown extends Component {
 export default compose(
 	withSafeTimeout,
 	withSpokenMessages,
-	withInstanceId,
-	withSelect( ( select ) => {
-		const { getSettings } = select( 'core/block-editor' );
-		return {
-			fetchLinkSuggestions: fetchTagSuggestions,
-		};
-	} )
+	withInstanceId
 )( AutocompleteDropdown );
