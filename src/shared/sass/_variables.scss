@@ -25,3 +25,18 @@ $font__line-height-heading: 1.2;
 $font__line-height-double: 2 * $font__line-height-heading;
 
 $color__border: #ccc;
+
+// Variables copied over from Gutenberg.
+
+$break-small: 600px;
+$break-medium: 782px;	// adminbar goes big
+
+$grid-size-large: 16px;
+$border-width: 1px;
+
+$block-padding: 14px; // Space between block footprint and focus boundaries. These are drawn outside the block footprint, and do not affect the size.
+$block-side-ui-width: 28px; // Width of the movers/drag handle UI.
+$block-side-ui-clearance: 2px; // Space between movers/drag handle UI, and block.
+$block-container-side-padding: $block-side-ui-width + $block-padding + 2 * $block-side-ui-clearance;
+$block-left-border-width: $border-width * 3;
+$default-block-margin: 28px; // This value provides a consistent, contiguous spacing between blocks (it's 2x $block-padding).
