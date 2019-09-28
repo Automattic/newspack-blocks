@@ -34,7 +34,16 @@ export const settings = {
 			max: 100,
 		},
 	},
-
+	getEditWrapperProps( attributes ) {
+		const { width } = attributes;
+		if ( Number.isFinite( width ) ) {
+			return {
+				style: {
+					flexBasis: 'calc(' + width + '% - 16px)',
+				},
+			};
+		}
+	},
 	edit,
 	save,
 };

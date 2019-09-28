@@ -5,7 +5,7 @@
 // This is sort of an experiment at making sure the editor looks as much like the end result as possible
 // Potentially the rules here can apply to all nested blocks and enable stacking, in which case it should be moved elsewhere
 // When using CSS grid, margins do not collapse on the container.
-.wp-block-newspack-blocks-custom-columns .editor-block-list__layout {
+[data-type="newspack-blocks/custom-columns"] .wp-block-newspack-blocks-custom-columns .editor-block-list__layout {
 	margin-left: 0;
 	margin-right: 0;
 
@@ -27,7 +27,7 @@
 	}
 }
 
-.wp-block-newspack-blocks-custom-columns {
+[data-type="newspack-blocks/custom-columns"] .wp-block-newspack-blocks-custom-columns {
 	display: block;
 
 	> .editor-inner-blocks > .editor-block-list__layout {
