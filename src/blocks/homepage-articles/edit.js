@@ -36,6 +36,7 @@ import { decodeEntities } from '@wordpress/html-entities';
 import { PanelColorSettings, withColors, URLInput } from '@wordpress/block-editor';
 
 import AutocompleteDropdown from './components/autocomplete-dropdown.js';
+import AutocompleteTokenField from './components/autocomplete-tokenfield.js';
 
 
 /**
@@ -263,6 +264,13 @@ class Edit extends Component {
 											selectedItem={ tags }
 											fetchSuggestions={ fetchTagSuggestions }
 											fetchSavedInfo={ fetchSavedTag }
+										/>
+									</BaseControl>
+									<BaseControl label={ __( 'Tag - tokens' ) } >
+										<AutocompleteTokenField
+											tokens={ tags || [] }
+											onChange={ ( tokens ) => setAttributes( { tags: tokens } ) }
+											fetchSuggestions={ fetchTagSuggestions }
 										/>
 									</BaseControl>
 								</Fragment>
