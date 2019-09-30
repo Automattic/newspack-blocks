@@ -2,9 +2,10 @@
 @import "../../shared/sass/mixins";
 
 .wp-block-newspack-blocks-homepage-articles {
+	margin-bottom: 1em;
+
 	article {
 		margin-bottom: 1.5em;
-		padding-bottom: 1.5em;
 		word-break: break-word;
 		overflow-wrap: break-word;
 	}
@@ -381,8 +382,8 @@
 	article {
 		border: solid rgba(0, 0, 0, 0.2);
 		border-width: 0 0 1px;
-		margin-bottom: 2em;
-		padding-bottom: 2em;
+		margin-bottom: 1em;
+		padding-bottom: 1em;
 	}
 
 	@include media(tablet) {
