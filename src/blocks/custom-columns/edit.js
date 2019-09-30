@@ -263,7 +263,7 @@ export default withDispatch( ( dispatch, ownProps, registry ) => ( {
 			innerBlocks = [
 				...getMappedColumnWidths( innerBlocks, widths ),
 				...times( newColumns - previousColumns, () => {
-					return createBlock( 'custom-column', {
+					return createBlock( 'newspack-blocks/custom-column', {
 						width: newColumnWidth,
 					} );
 				} ),
@@ -272,7 +272,7 @@ export default withDispatch( ( dispatch, ownProps, registry ) => ( {
 			innerBlocks = [
 				...innerBlocks,
 				...times( newColumns - previousColumns, () => {
-					return createBlock( 'custom-column' );
+					return createBlock( 'newspack-blocks/custom-column' );
 				} ),
 			];
 		} else {

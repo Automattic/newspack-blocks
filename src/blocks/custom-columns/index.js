@@ -14,7 +14,6 @@ import save from './save';
  * Style dependencies - will load in editor
  */
 import './editor.scss';
-import './view.scss';
 
 export const name = 'custom-columns';
 export const title = __( 'Newspack Custom Columns' );
