@@ -363,10 +363,6 @@
 		}
 		.entry-meta {
 			font-size: 0.6em;
-
-			@include media( tablet ) {
-				font-size: 0.7em;
-			}
 		}
 		.avatar {
 			height: 24px;
