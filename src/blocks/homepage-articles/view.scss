@@ -8,6 +8,10 @@
 		margin-bottom: 1.5em;
 		word-break: break-word;
 		overflow-wrap: break-word;
+
+		&:last-of-type {
+			margin-bottom: 0;
+		}
 	}
 
 	/* Section header */
@@ -384,6 +388,10 @@
 		border-width: 0 0 1px;
 		margin-bottom: 1em;
 		padding-bottom: 1em;
+
+		&:last-of-type {
+			margin-bottom: 0;
+		}
 	}
 
 	@include media(tablet) {
