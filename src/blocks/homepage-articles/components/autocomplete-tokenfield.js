@@ -1,9 +1,6 @@
-import { map } from 'lodash';
-
 import { Component } from '@wordpress/element';
 import { FormTokenField, Spinner } from '@wordpress/components';
 import { withState } from '@wordpress/compose';
-import { __ } from '@wordpress/i18n';
 
 import './autocomplete-tokenfield.scss';
 

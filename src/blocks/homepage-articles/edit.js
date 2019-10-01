@@ -35,7 +35,6 @@ import { decodeEntities } from '@wordpress/html-entities';
 
 import { PanelColorSettings, withColors, URLInput } from '@wordpress/block-editor';
 
-import AutocompleteDropdown from './components/autocomplete-dropdown.js';
 import AutocompleteTokenField from './components/autocomplete-tokenfield.js';
 
 
