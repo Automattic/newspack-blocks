@@ -4,8 +4,10 @@ import { withState } from '@wordpress/compose';
 
 import './autocomplete-tokenfield.scss';
 
+/**
+ * An multi-selecting, api-driven autocomplete input suitable for use in block attributes.
+ */
 class AutocompleteTokenField extends Component {
-
 	constructor( props ) {
 		super( props );
 		this.state = {
@@ -16,6 +18,10 @@ class AutocompleteTokenField extends Component {
 		};
 	}
 
+	/**
+	 * When the component loads, fetch information about the tokens so we can populate
+	 * the tokens with the correct labels.
+	 */
 	componentDidMount() {
 		const { tokens, fetchSavedInfo } = this.props;
 
@@ -38,10 +44,16 @@ class AutocompleteTokenField extends Component {
 		} );
 	}
 
+	/**
+	 * Clean up any unfinished autocomplete api call requests.
+	 */
 	componentWillUnmount() {
 		delete this.suggestionsRequest;
 	}
 
+	/**
+	 * Refresh the autocomplete dropdown.
+	 */
 	updateSuggestions( input ) {
 		const { fetchSuggestions } = this.props;
 		if ( ! fetchSuggestions ) {
@@ -80,10 +92,14 @@ class AutocompleteTokenField extends Component {
 		} );
 	}
 
+	/**
+	 * When a token is selected, we need to convert the string label into a recognized value suitable for saving as an attribute.
+	 *
+	 * @param array tokenStrings An array of token label strings.
+	 */
 	handleOnChange( tokenStrings ) {
 		const { onChange } = this.props;
 
-		// tokenStrings is an array of labels. We need to get the corresponding values for those labels.
 		const values = [];
 		tokenStrings.forEach( tokenString => {
 			if ( this.state.validValuesByLabel.hasOwnProperty( tokenString ) ) {
@@ -94,8 +110,12 @@ class AutocompleteTokenField extends Component {
 		onChange( values );
 	}
 
+	/**
+	 * To populate the tokens, we need to convert the values into a human-readable label.
+	 *
+	 * @return array An array of token label strings.
+	 */
 	getTokens() {
-		// The token prop is an array of values. We need to get the corresponding labels for those values.
 		const { tokens } = this.props;
 		const tokenLabels = [];
 		tokens.forEach( token => {
@@ -106,6 +126,9 @@ class AutocompleteTokenField extends Component {
 		return tokenLabels;
 	}
 
+	/**
+	 * Render.
+	 */
 	render() {
 		const { label = '' } = this.props;
 		const { suggestions, loading } = this.state;
