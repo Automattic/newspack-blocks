@@ -15,7 +15,25 @@ class AutocompleteTokenField extends Component {
 		};
 	}
 
-	// on componentdidmount get the details for the saved tokens.
+	componentDidMount() {
+		const { tokens, fetchSavedInfo } = this.props;
+
+		if ( ! tokens.length || ! fetchSavedInfo ) {
+			return;
+		}
+
+		fetchSavedInfo( tokens )
+			.then( results => {
+				const { validValuesByLabel, validValuesByValue }  = this.state;
+
+				results.forEach( suggestion => {
+					validValuesByLabel[ suggestion.label ] = suggestion.value;
+					validValuesByValue[ suggestion.value ] = suggestion.label;
+				} );
+
+				this.setState( { validValuesByLabel, validValuesByValue } );
+			} );
+	}
 
 	updateSuggestions( input ) {
 		const { fetchSuggestions } = this.props;
@@ -25,9 +43,8 @@ class AutocompleteTokenField extends Component {
 
 		fetchSuggestions( input )
 			.then( suggestions => { 
+				const { validValuesByLabel, validValuesByValue }  = this.state;
 				const currentSuggestions = []
-				const validValuesByLabel = this.state.validValuesByLabel;
-				const validValuesByValue = this.state.validValuesByValue;
 
 				suggestions.forEach( suggestion => {
 					currentSuggestions.push( suggestion.label );

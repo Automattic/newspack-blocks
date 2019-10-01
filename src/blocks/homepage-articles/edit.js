@@ -112,9 +112,6 @@ class Edit extends Component {
 	renderInspectorControls = () => {
 		const {
 			attributes,
-			authorList,
-			categoriesList,
-			tagsList,
 			postList,
 			setAttributes,
 			latestPosts,
@@ -124,7 +121,7 @@ class Edit extends Component {
 		} = this.props;
 		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
 		const {
-			author,
+			authors,
 			single,
 			postsToShow,
 			categories,
@@ -159,15 +156,18 @@ class Edit extends Component {
 				} ) );
 			} );
 		};
-		const fetchSavedAuthor = ( userID ) => {
+		const fetchSavedAuthors = ( userIDs ) => {
 			return apiFetch( {
-				path: '/wp/v2/users/' + userID,
-			} ).then( function( user ) {
-				return {
+				path: addQueryArgs( '/wp/v2/users', {
+					per_page: 100,
+					include: userIDs.join(','),
+				} ),
+			} ).then( function( users ) {
+				return map( users, ( user ) => ( {
 					value: user.id,
 					label: decodeEntities( user.name ) || __( '(no name)' ),
-				};
-			});
+				} ) );
+			} );
 		};
 
 		const fetchCategorySuggestions = ( search ) => {
@@ -186,15 +186,19 @@ class Edit extends Component {
 				} ) );
 			} );
 		};
-		const fetchSavedCategory = ( categoryID ) => {
+		const fetchSavedCategories = ( categoryIDs ) => {
 			return apiFetch( {
-				path: '/wp/v2/categories/' + categoryID,
-			} ).then( function( category ) {
-				return {
+				path: addQueryArgs( '/wp/v2/categories', {
+					per_page: 100,
+					_fields: 'id,name',
+					include: categoryIDs.join(','),
+				} ),
+			} ).then( function( categories ) {
+				return map( categories, ( category ) => ( {
 					value: category.id,
-					label: decodeEntities( category.name ) || __( '(no name)' ),
-				};
-			});
+					label: decodeEntities( category.name ) || __( '(no title)' ),
+				} ) );
+			} );
 		};
 
 		const fetchTagSuggestions = ( search ) => {
@@ -213,21 +217,25 @@ class Edit extends Component {
 				} ) );
 			} );
 		};
-		const fetchSavedTag = ( tagID ) => {
+		const fetchSavedTags = ( tagIDs ) => {
 			return apiFetch( {
-				path: '/wp/v2/tags/' + tagID,
-			} ).then( function( tag ) {
-				return {
+				path: addQueryArgs( '/wp/v2/tags', {
+					per_page: 100,
+					_fields: 'id,name',
+					include: tagIDs.join(','),
+				} ),
+			} ).then( function( tags ) {
+				return map( tags, ( tag ) => ( {
 					value: tag.id,
 					label: decodeEntities( tag.name ) || __( '(no title)' ),
-				};
-			});
+				} ) );
+			} );
 		};
 
 		return (
 			<Fragment>
 				<PanelBody title={ __( 'Display Settings' ) } initialOpen={ true }>
-					{ postsToShow && categoriesList && (
+					{ postsToShow && (
 						<Fragment>
 							<QueryControls
 								numberOfItems={ postsToShow }
@@ -243,34 +251,27 @@ class Edit extends Component {
 							{ ! singleMode && (
 								<Fragment>
 									<BaseControl label={ __( 'Author' ) } >
-										<AutocompleteDropdown
-											onSelect={ ( value ) => setAttributes( { author: String( value ) } ) }
-											selectedItem={ author }
+										<AutocompleteTokenField
+											tokens={ authors || [] }
+											onChange={ ( tokens ) => setAttributes( { authors: tokens } ) }
 											fetchSuggestions={ fetchAuthorSuggestions }
-											fetchSavedInfo={ fetchSavedAuthor }
+											fetchSavedInfo={ fetchSavedAuthors }
 										/>
 									</BaseControl>
 									<BaseControl label={ __( 'Category' ) } >
-										<AutocompleteDropdown
-											onSelect={ ( value ) => setAttributes( { categories: String( value ) } ) }
-											selectedItem={ categories }
+										<AutocompleteTokenField
+											tokens={ categories || [] }
+											onChange={ ( tokens ) => setAttributes( { categories: tokens } ) }
 											fetchSuggestions={ fetchCategorySuggestions }
-											fetchSavedInfo={ fetchSavedCategory }
+											fetchSavedInfo={ fetchSavedCategories }
 										/>
 									</BaseControl>
 									<BaseControl label={ __( 'Tag' ) } >
-										<AutocompleteDropdown
-											onSelect={ ( value ) => setAttributes( { tags: String( value ) } ) }
-											selectedItem={ tags }
-											fetchSuggestions={ fetchTagSuggestions }
-											fetchSavedInfo={ fetchSavedTag }
-										/>
-									</BaseControl>
-									<BaseControl label={ __( 'Tag - tokens' ) } >
 										<AutocompleteTokenField
 											tokens={ tags || [] }
 											onChange={ ( tokens ) => setAttributes( { tags: tokens } ) }
 											fetchSuggestions={ fetchTagSuggestions }
+											fetchSavedInfo={ fetchSavedTags }
 										/>
 									</BaseControl>
 								</Fragment>
@@ -393,7 +394,6 @@ class Edit extends Component {
 			isSelected,
 			latestPosts,
 			hasPosts,
-			categoriesList,
 			textColor,
 		} = this.props; // variables getting pulled out of props
 		const {
@@ -498,7 +498,7 @@ class Edit extends Component {
 export default compose( [
 	withColors( { textColor: 'color' } ),
 	withSelect( ( select, props ) => {
-		const { postsToShow, author, categories, tags, single, singleMode } = props.attributes;
+		const { postsToShow, authors, categories, tags, single, singleMode } = props.attributes;
 		const { getAuthors, getEntityRecords } = select( 'core' );
 		const latestPostsQuery = pickBy(
 			singleMode
@@ -506,25 +506,16 @@ export default compose( [
 				: {
 						per_page: postsToShow,
 						categories,
-						author,
+						author: authors,
 						tags,
 				  },
 			value => ! isUndefined( value )
 		);
-		const categoriesListQuery = {
-			per_page: 100,
-		};
-		const tagsListQuery = {
-			per_page: 100,
-		};
 		const postsListQuery = {
 			per_page: 50,
 		};
 		return {
 			latestPosts: getEntityRecords( 'postType', 'post', latestPostsQuery ),
-			categoriesList: getEntityRecords( 'taxonomy', 'category', categoriesListQuery ),
-			tagsList: getEntityRecords( 'taxonomy', 'post_tag', tagsListQuery ),
-			authorList: getAuthors(),
 			postList: getEntityRecords( 'postType', 'post', postsListQuery ),
 		};
 	} ),

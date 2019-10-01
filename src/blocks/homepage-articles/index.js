@@ -80,14 +80,14 @@ export const settings = {
 			type: 'string',
 			default: 'top',
 		},
-		author: {
-			type: 'string',
+		authors: {
+			type: 'array',
 		},
 		categories: {
-			type: 'string',
+			type: 'array',
 		},
 		tags: {
-			type: 'string',
+			type: 'array',
 		},
 		single: {
 			type: 'string',
