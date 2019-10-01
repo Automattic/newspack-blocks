@@ -33,7 +33,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
 
-import { PanelColorSettings, withColors, URLInput } from '@wordpress/block-editor';
+import { PanelColorSettings, withColors } from '@wordpress/block-editor';
 
 import AutocompleteTokenField from './components/autocomplete-tokenfield.js';
 
