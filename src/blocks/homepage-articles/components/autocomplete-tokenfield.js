@@ -3,6 +3,7 @@ import { map } from 'lodash';
 import { Component } from '@wordpress/element';
 import { FormTokenField } from '@wordpress/components';
 import { withState } from '@wordpress/compose';
+import { __ } from '@wordpress/i18n';
 
 class AutocompleteTokenField extends Component {
 
@@ -83,6 +84,7 @@ class AutocompleteTokenField extends Component {
 	}
 
 	render() {
+		const { label = '' } = this.props;
 		const { suggestions } = this.state;
 
 		return (
@@ -91,7 +93,7 @@ class AutocompleteTokenField extends Component {
 				suggestions={ suggestions }
 				onChange={ tokens => this.handleOnChange( tokens ) }
 				onInputChange={ input => this.updateSuggestions( input ) }
-				saveTransform={ this.saveTransform }
+				label={ label }
 			/>
 		);
 	}

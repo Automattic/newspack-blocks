@@ -250,28 +250,31 @@ class Edit extends Component {
 							/>
 							{ ! singleMode && (
 								<Fragment>
-									<BaseControl label={ __( 'Author' ) } >
+									<BaseControl>
 										<AutocompleteTokenField
 											tokens={ authors || [] }
 											onChange={ ( tokens ) => setAttributes( { authors: tokens } ) }
 											fetchSuggestions={ fetchAuthorSuggestions }
 											fetchSavedInfo={ fetchSavedAuthors }
+											label={ __( 'Author' ) }
 										/>
 									</BaseControl>
-									<BaseControl label={ __( 'Category' ) } >
+									<BaseControl>
 										<AutocompleteTokenField
 											tokens={ categories || [] }
 											onChange={ ( tokens ) => setAttributes( { categories: tokens } ) }
 											fetchSuggestions={ fetchCategorySuggestions }
 											fetchSavedInfo={ fetchSavedCategories }
+											label={ __( 'Category' ) }
 										/>
 									</BaseControl>
-									<BaseControl label={ __( 'Tag' ) } >
+									<BaseControl>
 										<AutocompleteTokenField
 											tokens={ tags || [] }
 											onChange={ ( tokens ) => setAttributes( { tags: tokens } ) }
 											fetchSuggestions={ fetchTagSuggestions }
 											fetchSavedInfo={ fetchSavedTags }
+											label={ __( 'Tag' ) }
 										/>
 									</BaseControl>
 								</Fragment>
