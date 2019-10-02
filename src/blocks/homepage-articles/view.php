@@ -244,13 +244,25 @@ function newspack_blocks_register_homepage_articles() {
 					'default' => 'top',
 				),
 				'authors'         => array(
-					'type' => 'array',
+					'type'    => 'array',
+					'default' => array(),
+					'items'   => array(
+						'type' => 'integer',
+					),
 				),
 				'categories'      => array(
-					'type' => 'array',
+					'type'    => 'array',
+					'default' => array(),
+					'items'   => array(
+						'type' => 'integer',
+					),
 				),
 				'tags'            => array(
-					'type' => 'array',
+					'type'    => 'array',
+					'default' => array(),
+					'items'   => array(
+						'type' => 'integer',
+					),
 				),
 				'single'          => array(
 					'type' => 'string',
