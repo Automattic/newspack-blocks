@@ -326,6 +326,12 @@ class Edit extends Component {
 				onClick: () => setAttributes( { postLayout: 'grid' } ),
 				isActive: postLayout === 'grid',
 			},
+			{
+				icon: 'slides',
+				title: __( 'Carousel View' ),
+				onClick: () => setAttributes( { postLayout: 'carousel' } ),
+				isActive: postLayout === 'carousel',
+			},
 		];
 
 		const blockControlsImages = [
@@ -374,7 +380,14 @@ class Edit extends Component {
 							<Spinner />
 						</Placeholder>
 					) }
-					{ latestPosts && latestPosts.map( post => this.renderPost( post ) ) }
+					{ 'carousel' !== postLayout &&
+						latestPosts &&
+						latestPosts.map( post => this.renderPost( post ) ) }
+					{ 'carousel' === postLayout && latestPosts && (
+						<Placeholder>
+							{ __( 'Carousel Display has no rendering in the editor.') }
+						</Placeholder>
+					) }
 				</div>
 				<BlockControls>
 					<Toolbar controls={ blockControls } />

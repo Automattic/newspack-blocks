@@ -1,5 +1,81 @@
-@import "../../shared/sass/variables";
-@import "../../shared/sass/mixins";
+@import '../../shared/sass/variables';
+@import '../../shared/sass/mixins';
+
+.wp-block-newspack-blocks-homepage-articles.is-carousel {
+	article {
+		max-width: 100%;
+		padding: 0;
+		position: relative;
+		.entry-wrapper {
+			position: absolute;
+			bottom: 0;
+			width: 100%;
+			background-color: rgba( 0, 0, 0, 0.5 );
+			color: white;
+			padding: 1em;
+		}
+	}
+	figure.post-thumbnail {
+		margin: 0;
+		height: 100%;
+		padding: 0;
+	}
+	p {
+		white-space: normal;
+	}
+	.swiper-pagination-bullets {
+		bottom: 0;
+		line-height: 24px;
+		padding: 10px 0 2px;
+		position: relative;
+		text-align: center;
+	}
+	.swiper-pagination-bullet {
+		background: black;
+		display: inline-block;
+		height: 16px;
+		opacity: 0.5;
+		transform: scale( 0.75 );
+		transition: opacity 250ms, transform 250ms;
+		width: 16px;
+		border-radius: 100%;
+		padding: 0;
+		margin: 0 4px;
+		&[selected] {
+			opacity: 1;
+			transform: scale( 1 );
+		}
+	}
+
+	.amp-carousel-button {
+		background-color: rgba( 0, 0, 0, 0.5 );
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: 24px;
+		border: 0;
+		border-radius: 4px;
+		box-shadow: none;
+		height: 48px;
+		margin: 0;
+		padding: 0;
+		transition: background-color 250ms;
+		width: 48px;
+		&:focus,
+		&:hover {
+			background-color: rgba( 0, 0, 0, 0.75 );
+		}
+		&:focus {
+			outline: thin dotted white;
+			outline-offset: -4px;
+		}
+	}
+	.amp-carousel-button-next {
+		background-image: url( "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='24'%20height='24'%20viewBox='0%200%2024%2024'%3E%3Cpath%20d='M5.88%204.12L13.76%2012l-7.88%207.88L8%2022l10-10L8%202z'%20fill='white'/%3E%3Cpath%20fill='none'%20d='M0 0h24v24H0z'/%3E%3C/svg%3E" );
+	}
+	.amp-carousel-button-prev {
+		background-image: url( "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='24'%20height='24'%20viewBox='0%200%2024%2024'%3E%3Cpath%20d='M18%204.12L10.12%2012%2018%2019.88%2015.88%2022l-10-10%2010-10z'%20fill='white'/%3E%3Cpath%20fill='none'%20d='M0 0h24v24H0z'/%3E%3C/svg%3E" );
+	}
+}
 
 .wp-block-newspack-blocks-homepage-articles {
 	article {
@@ -16,24 +92,7 @@
 		width: 100%; // make sure this isn't caught up in the flex styles.
 	}
 
-	/* Column styles */
-	&.is-grid {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: space-between;
-		padding: 0;
-		list-style: none;
-
-		article {
-			flex-basis: 100%;
-
-			@include media(tablet) {
-				margin-bottom: 1em;
-			}
-		}
-	}
-
-	@include media(mobile) {
+	@include media( mobile ) {
 		&.columns-3 article,
 		&.columns-6 article {
 			flex-basis: calc( 33.333% - 16px );
@@ -42,15 +101,15 @@
 		&.columns-2 article,
 		&.columns-4 article,
 		&.columns-5 article {
-			flex-basis: calc( 50% - 16px);
+			flex-basis: calc( 50% - 16px );
 		}
 
-		&.columns-5 article:last-of-type:nth-child(odd) {
+		&.columns-5 article:last-of-type:nth-child( odd ) {
 			flex-grow: 1;
 		}
 	}
 
-	@include media(tablet) {
+	@include media( tablet ) {
 		@for $i from 2 through 6 {
 			&.columns-#{ $i } article {
 				flex-basis: calc( ( 100% / #{$i} ) - 16px );
@@ -144,7 +203,7 @@
 		align-items: center;
 		margin-top: 0.5em;
 
-		.byline:not(:last-child) {
+		.byline:not( :last-child ) {
 			margin-right: 1.5em;
 		}
 	}
@@ -170,7 +229,7 @@
 	}
 
 	&.has-text-color {
-		.entry-meta span:not(.avatar) {
+		.entry-meta span:not( .avatar ) {
 			opacity: 0.8;
 		}
 	}
@@ -191,7 +250,7 @@
 			width: 1.8em;
 		}
 
-		@include media(tablet) {
+		@include media( tablet ) {
 			.entry-title {
 				font-size: 1.6em;
 			}
@@ -202,7 +261,7 @@
 		.entry-title {
 			font-size: 2.6em;
 		}
-		@include media(tablet) {
+		@include media( tablet ) {
 			.entry-title {
 				font-size: 3.6em;
 			}
@@ -211,7 +270,7 @@
 				width: 2.4em;
 			}
 		}
-		@include media(desktop) {
+		@include media( desktop ) {
 			.entry-title {
 				font-size: 4.8em;
 			}
@@ -222,7 +281,7 @@
 		.entry-title {
 			font-size: 2.4em;
 		}
-		@include media(tablet) {
+		@include media( tablet ) {
 			.entry-title {
 				font-size: 3.4em;
 			}
@@ -231,7 +290,7 @@
 				width: 2.4em;
 			}
 		}
-		@include media(desktop) {
+		@include media( desktop ) {
 			.entry-title {
 				font-size: 4.4em;
 			}
@@ -242,7 +301,7 @@
 		.entry-title {
 			font-size: 2.2em;
 		}
-		@include media(tablet) {
+		@include media( tablet ) {
 			.entry-title {
 				font-size: 3.2em;
 			}
@@ -251,9 +310,9 @@
 				width: 2.4em;
 			}
 		}
-		@include media(desktop) {
+		@include media( desktop ) {
 			.entry-title {
-				font-size: 4.0em;
+				font-size: 4em;
 			}
 		}
 	}
@@ -262,7 +321,7 @@
 		.entry-title {
 			font-size: 2em;
 		}
-		@include media( tablet) {
+		@include media( tablet ) {
 			.entry-title {
 				font-size: 2.8em;
 			}
@@ -271,7 +330,7 @@
 				width: 48px;
 			}
 		}
-		@include media(desktop) {
+		@include media( desktop ) {
 			.entry-title {
 				font-size: 3.6em;
 			}
@@ -282,7 +341,7 @@
 		.entry-title {
 			font-size: 1.8em;
 		}
-		@include media(tablet) {
+		@include media( tablet ) {
 			.entry-title {
 				font-size: 2.4em;
 			}
@@ -291,7 +350,7 @@
 				width: 44px;
 			}
 		}
-		@include media(desktop) {
+		@include media( desktop ) {
 			.entry-title {
 				font-size: 3em;
 			}
@@ -302,7 +361,7 @@
 		.entry-title {
 			font-size: 1.4em;
 		}
-		@include media(tablet) {
+		@include media( tablet ) {
 			.entry-title {
 				font-size: 2.2em;
 			}
@@ -311,7 +370,7 @@
 				width: 40px;
 			}
 		}
-		@include media(desktop) {
+		@include media( desktop ) {
 			.entry-title {
 				font-size: 2.4em;
 			}
@@ -334,7 +393,7 @@
 			height: 32px;
 			width: 32px;
 		}
-		@include media(tablet) {
+		@include media( tablet ) {
 			.entry-title {
 				font-size: 1.2em;
 			}
@@ -344,7 +403,7 @@
 	&.type-scale2 article {
 		.entry-title {
 			font-size: 0.9em;
-			@include media(tablet) {
+			@include media( tablet ) {
 				font-size: 1em;
 			}
 		}
@@ -379,14 +438,13 @@
 
 .wp-block-newspack-blocks-homepage-articles.is-style-borders {
 	article {
-		border: solid rgba(0, 0, 0, 0.2);
+		border: solid rgba( 0, 0, 0, 0.2 );
 		border-width: 0 0 1px;
 		margin-bottom: 2em;
 		padding-bottom: 2em;
 	}
 
-	@include media(tablet) {
-
+	@include media( tablet ) {
 		@for $i from 2 through 6 {
 			&.columns-#{ $i } article {
 				padding-right: calc( ( 16px * #{$i} ) / ( #{$i} - 1 ) );
@@ -401,11 +459,11 @@
 
 		&.is-grid article:last-of-type,
 		&.columns-1 article,
-		&.columns-2 article:nth-of-type(2n),
-		&.columns-3 article:nth-of-type(3n),
-		&.columns-4 article:nth-of-type(4n),
-		&.columns-5 article:nth-of-type(5n),
-		&.columns-6 article:nth-of-type(6n) {
+		&.columns-2 article:nth-of-type( 2n ),
+		&.columns-3 article:nth-of-type( 3n ),
+		&.columns-4 article:nth-of-type( 4n ),
+		&.columns-5 article:nth-of-type( 5n ),
+		&.columns-6 article:nth-of-type( 6n ) {
 			border: 0;
 		}
 	}
