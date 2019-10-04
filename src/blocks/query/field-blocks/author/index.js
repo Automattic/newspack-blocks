@@ -8,7 +8,6 @@ const parent = `newspack-blocks/${ name }`;
 
 const Edit = ( { attributes } ) => {
 	const [ newspack_author_info ] = useEntityProp( 'postType', 'post', 'author' );
-	console.log( newspack_author_info );
 	return (
 		<h3>
 			<span className="byline">

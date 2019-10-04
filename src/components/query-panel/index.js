@@ -10,13 +10,22 @@ class QueryPanel extends Component {
 
 	updateCriteria = ( key, value ) => {
 		const { criteria, onChange } = this.props;
-		const { per_page, categories, tags, search, author } = { ...criteria, [ key ]: value };
-		const sanitizedCriteria = { per_page: parseInt( per_page ) };
+		const { per_page, offset, categories, categories_exclude, tags, tags_exclude, search, author } = { ...criteria, [ key ]: value };
+		const sanitizedCriteria = {
+			per_page: parseInt( per_page ),
+			offset: parseInt( offset ),
+		};
 		if ( parseInt( categories ) > 0 ) {
 			sanitizedCriteria.categories = parseInt( categories );
 		}
+		if ( parseInt( categories_exclude ) > 0 ) {
+			sanitizedCriteria.categories_exclude = parseInt( categories_exclude );
+		}
 		if ( parseInt( tags ) > 0 ) {
 			sanitizedCriteria.tags = parseInt( tags );
+		}
+		if ( parseInt( tags_exclude ) > 0 ) {
+			sanitizedCriteria.tags_exclude = parseInt( tags_exclude );
 		}
 		if ( parseInt( author ) > 0 ) {
 			sanitizedCriteria.author = parseInt( author );
@@ -29,7 +38,7 @@ class QueryPanel extends Component {
 
 	render = () => {
 		const { criteria, authorList, categoryList, tagList, onChange } = this.props;
-		const { author, categories, per_page, tags, search } = criteria;
+		const { author, categories, categories_exclude, per_page, offset, tags, tags_exclude, search } = criteria;
 		const authorOptions = authorList.length
 			? [
 					{ label: __( 'Any author' ), value: '' },
@@ -60,6 +69,15 @@ class QueryPanel extends Component {
 				max={ 100 }
 				required
 			/>,
+			<RangeControl
+				key="query-panel-offset-control"
+				label={ __( 'Skip first number of items' ) }
+				value={ offset }
+				onChange={ value => this.updateCriteria( 'offset', value ) }
+				min={ 0 }
+				max={ 100 }
+				required
+			/>,
 			<SelectControl
 				key="query-panel-category-control"
 				label={ __( 'Category' ) }
@@ -68,11 +86,25 @@ class QueryPanel extends Component {
 				onChange={ value => this.updateCriteria( 'categories', value ) }
 			/>,
 			<SelectControl
+				key="query-panel-category-exclude-control"
+				label={ __( 'Exclude Category' ) }
+				value={ categories_exclude || '' }
+				options={ categoryOptions }
+				onChange={ value => this.updateCriteria( 'categories_exclude', value ) }
+			/>,
+			<SelectControl
 				key="query-panel-tag-control"
 				label={ __( 'Tag' ) }
 				value={ tags || '' }
 				options={ tagOptions }
 				onChange={ value => this.updateCriteria( 'tags', value ) }
+			/>,
+			<SelectControl
+				key="query-panel-tag-exclude-control"
+				label={ __( 'Exclude Tag' ) }
+				value={ tags_exclude || '' }
+				options={ tagOptions }
+				onChange={ value => this.updateCriteria( 'tags_exclude', value ) }
 			/>,
 			<SelectControl
 				key="query-panel-author-control"
@@ -96,9 +128,12 @@ QueryPanel.defaultProps = {
 	categoryOptions: [],
 	criteria: {
 		per_page: 3,
+		offset: 0,
 		author: '',
 		categories: '',
+		categories_exclude: '',
 		tags: '',
+		tags_exclude: '',
 		search: '',
 	},
 	tagOptions: [],

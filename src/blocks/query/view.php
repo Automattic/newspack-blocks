@@ -54,6 +54,7 @@ function newspack_blocks_render_block_query( $attributes ) {
 function newspack_blocks_criteria_to_args( $criteria ) {
 	$args = array(
 		'posts_per_page'      => ! empty( $criteria['per_page'] ) ? intval( $criteria['per_page'] ) : 3,
+		'offset'              => ! empty( $criteria['offset'] ) ? intval( $criteria['offset'] ) : 0,
 		'post_status'         => 'publish',
 		'suppress_filters'    => false,
 		'ignore_sticky_posts' => true,
@@ -64,8 +65,14 @@ function newspack_blocks_criteria_to_args( $criteria ) {
 	if ( ! empty( $criteria['categories'] ) ) {
 		$args['cat'] = intval( $criteria['categories'] );
 	}
+	if ( ! empty( $criteria['categories_exclude'] ) ) {
+		$args['category__not_in'] = array( intval( $criteria['categories_exclude'] ) );
+	}
 	if ( ! empty( $criteria['tags'] ) ) {
 		$args['tag_id'] = intval( $criteria['tags'] );
+	}
+	if ( ! empty( $criteria['tags_exclude'] ) ) {
+		$args['tag__not_in'] = array( intval( $criteria['tags_exclude'] ) );
 	}
 	if ( ! empty( $criteria['search'] ) ) {
 		$args['s'] = sanitize_text_field( $criteria['search'] );
@@ -95,13 +102,15 @@ function newspack_blocks_register_query() {
 		)
 	);
 
-	include_once( dirname( __FILE__ ) . '/field-blocks/author/author.php' );
-	include_once( dirname( __FILE__ ) . '/field-blocks/categories/categories.php' );
-	include_once( dirname( __FILE__ ) . '/field-blocks/date/date.php' );
-	include_once( dirname( __FILE__ ) . '/field-blocks/excerpt/excerpt.php' );
-	include_once( dirname( __FILE__ ) . '/field-blocks/featured-image/featured-image.php' );
-	include_once( dirname( __FILE__ ) . '/field-blocks/tags/tags.php' );
-	include_once( dirname( __FILE__ ) . '/field-blocks/title/title.php' );
+	$basePath = dirname( __FILE__ );
+
+	include_once( $basePath . '/field-blocks/author/author.php' );
+	include_once( $basePath . '/field-blocks/categories/categories.php' );
+	include_once( $basePath . '/field-blocks/date/date.php' );
+	include_once( $basePath . '/field-blocks/excerpt/excerpt.php' );
+	include_once( $basePath . '/field-blocks/featured-image/featured-image.php' );
+	include_once( $basePath . '/field-blocks/tags/tags.php' );
+	include_once( $basePath . '/field-blocks/title/title.php' );
 }
 
 add_action( 'init', 'newspack_blocks_register_query' );

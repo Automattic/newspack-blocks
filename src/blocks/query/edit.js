@@ -13,7 +13,7 @@ import { debounce } from 'lodash';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Component, Fragment } from '@wordpress/element';
+import { Component } from '@wordpress/element';
 import {
 	BlockList,
 	BlockEditorProvider,
@@ -45,7 +45,7 @@ class Edit extends Component {
 	}
 	createBlockTree = () => {
 		const { editingPost, blocksTree } = this.state;
-		const { allCategories, allTags, attributes, query } = this.props;
+		const { attributes, query } = this.props;
 		const { blocks } = attributes;
 		const newBlocksTree = ( query || [] ).reduce(
 			( accumulator, post ) => ( {
@@ -53,7 +53,7 @@ class Edit extends Component {
 				[ post.id ]:
 					post.id === editingPost
 						? blocksTree[ post.id ]
-						: blocks.map( block => cloneBlock( block, { post, allTags, allCategories } ) ),
+						: blocks.map( block => cloneBlock( block, { post } ) ),
 			} ),
 			{}
 		);
@@ -63,7 +63,7 @@ class Edit extends Component {
 		const { name, isValid, attributes, innerBlocks } = block;
 		return {
 			name,
-			attributes: { ...attributes, post: {}, allTags: [], allCategories: [] },
+			attributes: { ...attributes, post: {} },
 			innerBlocks: innerBlocks.map( this.cleanBlock ),
 			isValid,
 		};
@@ -81,7 +81,8 @@ class Edit extends Component {
 		);
 	};
 	render = () => {
-		const { attributes, className, query, setAttributes } = this.props;
+		const { attributes, className, query, setAttributes, testPost } = this.props;
+		console.log( { testPost } );
 		const { criteria } = attributes;
 		const { editingPost, blocksTree } = this.state;
 		const settings = {};
@@ -123,11 +124,9 @@ class Edit extends Component {
 export default withSelect( ( select, props ) => {
 	const { attributes } = props;
 	const { criteria } = attributes;
-	const { getEntityRecords } = select( 'core' );
-	const taxonomyCriteria = { per_page: -1, hide_empty: true };
+	const { getEntityRecords, getEntityRecord } = select( 'core' );
 	return {
 		query: getEntityRecords( 'postType', 'post', criteria ),
-		allTags: getEntityRecords( 'taxonomy', 'post_tag', taxonomyCriteria ),
-		allCategories: getEntityRecords( 'taxonomy', 'category', taxonomyCriteria ),
+		testPost: getEntityRecord( 'postType', 'post', 121),
 	};
 } )( Edit );

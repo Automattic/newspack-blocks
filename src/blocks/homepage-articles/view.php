@@ -17,6 +17,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	if ( ! $newspack_blocks_post_id ) {
 		$newspack_blocks_post_id = array();
 	}
+
 	$author        = isset( $attributes['author'] ) ? $attributes['author'] : '';
 	$categories    = isset( $attributes['categories'] ) ? $attributes['categories'] : '';
 	$single        = isset( $attributes['single'] ) ? $attributes['single'] : '';
