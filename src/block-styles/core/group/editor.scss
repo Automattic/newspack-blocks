@@ -1,0 +1,27 @@
+@import "../../../shared/sass/variables";
+@import "../../../shared/sass/mixins";
+
+@include media( tablet ) {
+	[data-type="core/group"]:not([data-align]) {
+		.wp-block-group {
+			position: relative;
+
+			&.is-style-alignleft,
+			&.is-style-alignright {
+				margin-bottom: 1em;
+				width: 50%;
+				z-index: 5;
+			}
+
+			&.is-style-alignleft {
+				float: left;
+				margin-right: 1em;
+			}
+
+			&.is-style-alignright {
+				float: right;
+				margin-left: 1em;
+			}
+		}
+	}
+}
