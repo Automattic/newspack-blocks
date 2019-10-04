@@ -1,7 +1,7 @@
 @import "../../../shared/sass/variables";
 @import "../../../shared/sass/mixins";
 
-@include media( tablet ) {
+@include media( mobile ) {
 	[data-type="core/group"]:not([data-align]) {
 		.wp-block-group {
 			position: relative;

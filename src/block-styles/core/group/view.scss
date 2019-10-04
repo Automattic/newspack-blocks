@@ -1,7 +1,7 @@
 @import "../../../shared/sass/variables";
 @import "../../../shared/sass/mixins";
 
-@include media( tablet ) {
+@include media( mobile ) {
 	.wp-block-group:not(.alignwide):not(.alignfull) {
 		&.is-style-alignleft {
 			float: left;
