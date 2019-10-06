@@ -71,11 +71,11 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		$classes .= ' ' . $attributes['className'];
 	}
 
-	if ( isset( $attributes['textColor'] ) ) {
+	if ( '' !== $attributes['textColor'] || '' !== $attributes['customTextColor'] ) {
 		$classes .= ' has-text-color';
-		if ( '' !== $attributes['textColor'] ) {
+	}
+	if ( '' !== $attributes['textColor'] ) {
 			$classes .= ' has-' . $attributes['textColor'] . '-color';
-		}
 	}
 
 	$styles = '';
