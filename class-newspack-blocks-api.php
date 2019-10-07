@@ -66,33 +66,36 @@ class Newspack_Blocks_API {
 		if ( 0 === $object['featured_media'] ) {
 			return;
 		}
-		$feat_img_array_thumbnail        = wp_get_attachment_image_src(
-			$object['featured_media'],
-			'thumbnail',
-			false
-		);
-		$featured_image_set['thumbnail'] = $feat_img_array_thumbnail[0];
 
-		$feat_img_array_medium        = wp_get_attachment_image_src(
-			$object['featured_media'],
-			'medium',
-			false
-		);
-		$featured_image_set['medium'] = $feat_img_array_medium[0];
+		// Landscape image.
+		$landscape_size = newspack_blocks_image_size_for_orientation( 'landscape' );
 
-		$feat_img_array_large        = wp_get_attachment_image_src(
+		$feat_img_array_landscape        = wp_get_attachment_image_src(
 			$object['featured_media'],
-			'large',
+			$landscape_size,
 			false
 		);
-		$featured_image_set['large'] = $feat_img_array_large[0];
+		$featured_image_set['landscape'] = $feat_img_array_landscape[0];
 
-		$feat_img_array_full        = wp_get_attachment_image_src(
+		// Portrait image.
+		$portrait_size = newspack_blocks_image_size_for_orientation( 'portrait' );
+
+		$feat_img_array_portrait        = wp_get_attachment_image_src(
 			$object['featured_media'],
-			'full',
+			$portrait_size,
 			false
 		);
-		$featured_image_set['full'] = $feat_img_array_full[0];
+		$featured_image_set['portrait'] = $feat_img_array_portrait[0];
+
+		// Square image.
+		$square_size = newspack_blocks_image_size_for_orientation( 'square' );
+
+		$feat_img_array_square        = wp_get_attachment_image_src(
+			$object['featured_media'],
+			$square_size,
+			false
+		);
+		$featured_image_set['square'] = $feat_img_array_square[0];
 
 		return $featured_image_set;
 	}
@@ -140,7 +143,6 @@ class Newspack_Blocks_API {
 
 		return $category_info;
 	}
-
 }
 
 add_action( 'rest_api_init', array( 'Newspack_Blocks_API', 'register_rest_fields' ) );

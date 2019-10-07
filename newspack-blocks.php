@@ -173,6 +173,104 @@ class Newspack_Blocks {
 	}
 }
 
+/**
+ * Add image sizes
+ */
+function newspack_blocks_image_sizes() {
+	add_image_size( 'newspack-article-block-landscape-large', 1200, 900, true );
+	add_image_size( 'newspack-article-block-portrait-large', 900, 1200, true );
+	add_image_size( 'newspack-article-block-square-large', 1200, 1200, true );
+
+	add_image_size( 'newspack-article-block-landscape-medium', 800, 600, true );
+	add_image_size( 'newspack-article-block-portrait-medium', 600, 800, true );
+	add_image_size( 'newspack-article-block-square-medium', 800, 800, true );
+
+	add_image_size( 'newspack-article-block-landscape-small', 400, 300, true );
+	add_image_size( 'newspack-article-block-portrait-small', 300, 400, true );
+	add_image_size( 'newspack-article-block-square-small', 400, 400, true );
+
+	add_image_size( 'newspack-article-block-landscape-tiny', 200, 150, true );
+	add_image_size( 'newspack-article-block-portrait-tiny', 150, 200, true );
+	add_image_size( 'newspack-article-block-square-tiny', 200, 200, true );
+}
+add_action( 'after_setup_theme', 'newspack_blocks_image_sizes' );
+
+/**
+ * Return the most appropriate thumbnail size to display.
+ *
+ * @param string $orientation The block's orientation settings: landscape|portrait|square.
+ *
+ * @return string Returns the thumbnail key to use.
+ */
+function newspack_blocks_image_size_for_orientation( $orientation = 'landscape' ) {
+	$sizes = array(
+		'landscape' => array(
+			'large'  => array(
+				1200,
+				900,
+			),
+			'medium' => array(
+				800,
+				600,
+			),
+			'small'  => array(
+				400,
+				300,
+			),
+			'tiny'   => array(
+				200,
+				150,
+			),
+		),
+		'portrait'  => array(
+			'large'  => array(
+				900,
+				1200,
+			),
+			'medium' => array(
+				600,
+				800,
+			),
+			'small'  => array(
+				300,
+				400,
+			),
+			'tiny'   => array(
+				150,
+				200,
+			),
+		),
+		'square'    => array(
+			'large'  => array(
+				1200,
+				1200,
+			),
+			'medium' => array(
+				800,
+				800,
+			),
+			'small'  => array(
+				400,
+				400,
+			),
+			'tiny'   => array(
+				200,
+				200,
+			),
+		),
+	);
+
+	foreach ( $sizes[ $orientation ] as $key => $dimensions ) {
+		$attachment = wp_get_attachment_image_src(
+			get_post_thumbnail_id( get_the_ID() ),
+			'newspack-article-block-' . $orientation . '-' . $key
+		);
+		if ( $dimensions[0] === $attachment[1] && $dimensions[1] === $attachment[2] ) {
+			return 'newspack-article-block-' . $orientation . '-' . $key;
+		}
+	}
+}
+
 require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'class-newspack-blocks-api.php';
 
 Newspack_Blocks::manage_view_scripts();

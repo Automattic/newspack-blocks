@@ -25,6 +25,8 @@ import {
 	Dashicon,
 	Placeholder,
 	Spinner,
+	Path,
+	SVG,
 } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 import { withState, compose } from '@wordpress/compose';
@@ -38,11 +40,35 @@ const { decodeEntities } = wp.htmlEntities;
  */
 const MAX_POSTS_COLUMNS = 6;
 
+/* From https://material.io/tools/icons */
+const landscapeIcon = (
+	<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+		<Path d="M0 0h24v24H0z" fill="none" />
+		<Path d="M19 5H5c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 12H5V7h14v10z" />
+	</SVG>
+);
+
+const portraitIcon = (
+	<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+		<Path d="M0 0h24v24H0z" fill="none" />
+		<Path d="M17 3H7c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H7V5h10v14z" />
+	</SVG>
+);
+
+const squareIcon = (
+	<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+		<path d="M0 0h24v24H0z" fill="none" />
+		<path d="M18 4H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H6V6h12v12z" />
+	</SVG>
+);
+
 class Edit extends Component {
 	renderPost = post => {
 		const { attributes } = this.props;
 		const {
 			showImage,
+			imageShape,
+			imageFileSize,
 			showCaption,
 			showExcerpt,
 			showAuthor,
@@ -55,7 +81,13 @@ class Edit extends Component {
 				{ showImage && post.newspack_featured_image_src && (
 					<figure className="post-thumbnail" key="thumbnail">
 						<a href="#">
-							<img src={ post.newspack_featured_image_src.large } />
+							{ imageShape === 'landscape' && (
+								<img src={ post.newspack_featured_image_src.landscape } />
+							) }
+							{ imageShape === 'portrait' && (
+								<img src={ post.newspack_featured_image_src.portrait } />
+							) }
+							{ imageShape === 'square' && <img src={ post.newspack_featured_image_src.square } /> }
 						</a>
 						{ showCaption && '' !== post.newspack_featured_image_caption && (
 							<figcaption>{ post.newspack_featured_image_caption }</figcaption>
@@ -289,6 +321,7 @@ class Edit extends Component {
 			showExcerpt,
 			showDate,
 			showImage,
+			imageShape,
 			showAuthor,
 			showAvatar,
 			postsToShow,
@@ -309,6 +342,7 @@ class Edit extends Component {
 			[ `type-scale${ typeScale }` ]: typeScale !== '5',
 			[ `image-align${ mediaPosition }` ]: showImage,
 			[ `image-scale${ imageScale }` ]: imageScale !== '1' && showImage,
+			[ `image-shape${ imageShape }` ]: imageShape !== 'landscape',
 			'has-text-color': textColor,
 			'show-caption': showCaption,
 		} );
@@ -349,6 +383,27 @@ class Edit extends Component {
 			},
 		];
 
+		const blockControlsImageShape = [
+			{
+				icon: landscapeIcon,
+				title: __( 'Landscape Image Shape' ),
+				isActive: imageShape === 'landscape',
+				onClick: () => setAttributes( { imageShape: 'landscape' } ),
+			},
+			{
+				icon: portraitIcon,
+				title: __( 'portrait Image Shape' ),
+				isActive: imageShape === 'portrait',
+				onClick: () => setAttributes( { imageShape: 'portrait' } ),
+			},
+			{
+				icon: squareIcon,
+				title: __( 'Square Image Shape' ),
+				isActive: imageShape === 'square',
+				onClick: () => setAttributes( { imageShape: 'square' } ),
+			},
+		];
+
 		return (
 			<Fragment>
 				<div
@@ -379,6 +434,7 @@ class Edit extends Component {
 				<BlockControls>
 					<Toolbar controls={ blockControls } />
 					{ showImage && <Toolbar controls={ blockControlsImages } /> }
+					{ showImage && <Toolbar controls={ blockControlsImageShape } /> }
 				</BlockControls>
 				<InspectorControls>{ this.renderInspectorControls() }</InspectorControls>
 			</Fragment>
