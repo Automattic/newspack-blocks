@@ -48,6 +48,7 @@ class Edit extends Component {
 			showAuthor,
 			showAvatar,
 			showDate,
+			showCategory,
 			sectionHeader,
 		} = attributes;
 		return (
@@ -63,6 +64,11 @@ class Edit extends Component {
 					</figure>
 				) }
 				<div className="entry-wrapper">
+					{ showCategory && post.newspack_category_info.length && (
+						<div className="cat-links">
+							<a href='#'>{ post.newspack_category_info }</a>
+						</div>
+					) }
 					{ RichText.isEmpty( sectionHeader ) ? (
 						<h2 className="entry-title" key="title">
 							<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
@@ -132,6 +138,7 @@ class Edit extends Component {
 			showDate,
 			showAuthor,
 			showAvatar,
+			showCategory,
 			postLayout,
 			mediaPosition,
 			singleMode,
@@ -248,6 +255,13 @@ class Edit extends Component {
 							label={ __( 'Show Date' ) }
 							checked={ showDate }
 							onChange={ () => setAttributes( { showDate: ! showDate } ) }
+						/>
+					</PanelRow>
+					<PanelRow>
+						<ToggleControl
+							label={ __( 'Show Category' ) }
+							checked={ showCategory }
+							onChange={ () => setAttributes( { showCategory: ! showCategory } ) }
 						/>
 					</PanelRow>
 					<PanelRow>

@@ -8,6 +8,7 @@
 		margin-bottom: 1.5em;
 		word-break: break-word;
 		overflow-wrap: break-word;
+		position: relative;
 
 		&:last-of-type {
 			margin-bottom: 0;
@@ -143,6 +144,10 @@
 	}
 
 	/* Article meta */
+	.cat-links {
+		margin-bottom: 1em;
+	}
+
 	.entry-meta {
 		display: flex;
 		flex-wrap: wrap;

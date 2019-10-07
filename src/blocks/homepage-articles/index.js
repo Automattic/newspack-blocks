@@ -64,6 +64,10 @@ export const settings = {
 			type: 'boolean',
 			default: true,
 		},
+		showCategory: {
+			type: 'boolean',
+			default: false,
+		},
 		postLayout: {
 			type: 'string',
 			default: 'list',
