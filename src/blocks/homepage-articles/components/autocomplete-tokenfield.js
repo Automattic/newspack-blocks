@@ -8,7 +8,6 @@ import { debounce } from 'lodash';
  */
 import { Component } from '@wordpress/element';
 import { FormTokenField, Spinner } from '@wordpress/components';
-import { withState } from '@wordpress/compose';
 
 /**
  * Internal dependencies
