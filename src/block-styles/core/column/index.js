@@ -15,7 +15,6 @@ addFilter( 'blocks.registerBlockType', 'newspack-blocks', ( settings, name ) => 
 			...settings,
 			getEditWrapperProps: attributes => {
 				const { width } = attributes;
-				console.log( 'hi from geteditwrapperprops', width );
 				if ( Number.isFinite( width ) ) {
 					return {
 						style: {
@@ -26,8 +25,6 @@ addFilter( 'blocks.registerBlockType', 'newspack-blocks', ( settings, name ) => 
 			},
 			save: ( { attributes } ) => {
 				const { verticalAlignment, width } = attributes;
-				console.log( 'hi from save', width );
-
 				const wrapperClasses = classnames( {
 					[ `is-vertically-aligned-${ verticalAlignment }` ]: verticalAlignment,
 				} );
