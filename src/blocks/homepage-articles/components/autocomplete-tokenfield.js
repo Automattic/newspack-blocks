@@ -23,8 +23,7 @@ class AutocompleteTokenField extends Component {
 		super( props );
 		this.state = {
 			suggestions: [],
-			validValuesByLabel: {},
-			validValuesByValue: {},
+			validValues: {},
 			loading: false,
 		};
 
@@ -45,14 +44,13 @@ class AutocompleteTokenField extends Component {
 		this.setState( { loading: true }, () => {
 			fetchSavedInfo( tokens )
 				.then( results => {
-					const { validValuesByLabel, validValuesByValue }  = this.state;
+					const { validValues }  = this.state;
 
 					results.forEach( suggestion => {
-						validValuesByLabel[ suggestion.label ] = suggestion.value;
-						validValuesByValue[ suggestion.value ] = suggestion.label;
+						validValues[ suggestion.value ] = suggestion.label;
 					} );
 
-					this.setState( { validValuesByLabel, validValuesByValue, loading: false } );
+					this.setState( { validValues, loading: false } );
 				} );
 		} );
 	}
@@ -63,6 +61,44 @@ class AutocompleteTokenField extends Component {
 	componentWillUnmount() {
 		delete this.suggestionsRequest;
 		this.debouncedUpdateSuggestions.cancel();
+	}
+
+	/**
+	 * Get a list of labels for input values.
+	 *
+	 * @param array values Array of values (ids, etc.).
+	 * @return array Array of valid labels corresponding to the values.
+	 */
+	getLabelsForValues( values ) {
+		const labels = [];
+		values.forEach( value => {
+			if ( this.state.validValues.hasOwnProperty( value ) ) {
+				labels.push( this.state.validValues[ value ] );
+			}
+		} );
+		return labels;
+	}
+
+	/**
+	 * Get a list of values for input labels.
+	 *
+	 * @param array labels Array of labels from the tokens.
+	 * @return array Array of valid values corresponding to the labels.
+	 */
+	getValuesForLabels( labels ) {
+		const { validValues } = this.state;
+		const validLabels = {}
+		for ( const key in validValues ) {
+			validLabels[ validValues[ key ] ] = key;
+		}
+
+		const values = [];
+		labels.forEach( label => {
+			if ( validLabels.hasOwnProperty( label ) ) {
+				values.push( validLabels[ label ] );
+			}
+		} );
+		return values;
 	}
 
 	/**
@@ -84,16 +120,15 @@ class AutocompleteTokenField extends Component {
 					return;
 				}
 
-				const { validValuesByLabel, validValuesByValue }  = this.state;
+				const { validValues }  = this.state;
 				const currentSuggestions = []
 
 				suggestions.forEach( suggestion => {
 					currentSuggestions.push( suggestion.label );
-					validValuesByLabel[ suggestion.label ] = suggestion.value;
-					validValuesByValue[ suggestion.value ] = suggestion.label;
+					validValues[ suggestion.value ] = suggestion.label;
 				} );
 
-				this.setState( { suggestions: currentSuggestions, validValuesByLabel, validValuesByValue, loading: false } );
+				this.setState( { suggestions: currentSuggestions, validValues, loading: false } );
 			} ).catch( () => {
 				if ( this.suggestionsRequest === request ) {
 					this.setState( {
@@ -113,15 +148,7 @@ class AutocompleteTokenField extends Component {
 	 */
 	handleOnChange( tokenStrings ) {
 		const { onChange } = this.props;
-
-		const values = [];
-		tokenStrings.forEach( tokenString => {
-			if ( this.state.validValuesByLabel.hasOwnProperty( tokenString ) ) {
-				values.push( this.state.validValuesByLabel[ tokenString ] );
-			}
-		} );
-
-		onChange( values );
+		onChange( this.getValuesForLabels( tokenStrings ) );
 	}
 
 	/**
@@ -131,13 +158,7 @@ class AutocompleteTokenField extends Component {
 	 */
 	getTokens() {
 		const { tokens } = this.props;
-		const tokenLabels = [];
-		tokens.forEach( token => {
-			if ( this.state.validValuesByValue.hasOwnProperty( token ) ) {
-				tokenLabels.push( this.state.validValuesByValue[ token ] );
-			}
-		} );
-		return tokenLabels;
+		return this.getLabelsForValues( tokens );
 	}
 
 	/**
