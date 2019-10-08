@@ -59,7 +59,7 @@ class Edit extends Component {
 						</Placeholder>
 					) }
 					{ latestPosts && (
-						<Placeholder>{ __( 'Carousel Display has no rendering in the editor.' ) }</Placeholder>
+						<Placeholder>{ __( 'Editor rendering of Carousel to come.' ) }</Placeholder>
 					) }
 				</div>
 				<InspectorControls>
