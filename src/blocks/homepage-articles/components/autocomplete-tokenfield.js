@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { debounce } from 'lodash';
+
+/**
  * WordPress dependencies
  */
 import { Component } from '@wordpress/element';
@@ -22,6 +27,8 @@ class AutocompleteTokenField extends Component {
 			validValuesByValue: {},
 			loading: false,
 		};
+
+		this.debouncedUpdateSuggestions = debounce( this.updateSuggestions, 500 )
 	}
 
 	/**
@@ -55,6 +62,7 @@ class AutocompleteTokenField extends Component {
 	 */
 	componentWillUnmount() {
 		delete this.suggestionsRequest;
+		this.debouncedUpdateSuggestions.cancel();
 	}
 
 	/**
@@ -145,7 +153,7 @@ class AutocompleteTokenField extends Component {
 					value={ this.getTokens() }
 					suggestions={ suggestions }
 					onChange={ tokens => this.handleOnChange( tokens ) }
-					onInputChange={ input => this.updateSuggestions( input ) }
+					onInputChange={ input => this.debouncedUpdateSuggestions( input ) }
 					label={ label }
 				/>
 				{ loading && <Spinner /> }
