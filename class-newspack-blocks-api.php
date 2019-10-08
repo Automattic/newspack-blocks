@@ -50,7 +50,7 @@ class Newspack_Blocks_API {
 			'post',
 			'newspack_category_info',
 			array(
-				'get_callback'    => array( 'Newspack_Blocks_API', 'newspack_blocks_get_first_category' ),
+				'get_callback'    => array( 'Newspack_Blocks_API', 'newspack_blocks_get_primary_category' ),
 				'update_callback' => null,
 				'schema'          => null,
 			)
@@ -129,19 +129,34 @@ class Newspack_Blocks_API {
 	}
 
 	/**
-	 * Get first category for the rest field.
+	 * Get primary category for the rest field.
 	 *
 	 * @param Array $object  The object info.
 	 */
-	public static function newspack_blocks_get_first_category( $object ) {
-		$categories_list = get_the_category( $object['id'] );
-		$category_info   = '';
+	public static function newspack_blocks_get_primary_category( $object ) {
+		$category = false;
 
-		if ( ! empty( $categories_list ) ) {
-			$category_info = '<a href="' . get_category_link( $categories_list[0]->term_id ) . '">' . $categories_list[0]->name . '</a>';
+		// Use Yoast primary category if set.
+		if ( class_exists( 'WPSEO_Primary_Term' ) ) {
+			$primary_term = new WPSEO_Primary_Term( 'category', $object['id'] );
+			$category_id = $primary_term->get_primary_term();
+			if ( $category_id ) {
+				$category = get_term( $category_id );
+			}
 		}
 
-		return $category_info;
+		if ( ! $category ) {
+			$categories_list = get_the_category( $object['id'] );
+			if ( ! empty( $categories_list ) ) {
+				$category = $categories_list[0];
+			}
+		}
+
+		if ( ! $category ) {
+			return '';
+		}
+
+		return $category->name;
 	}
 }
 

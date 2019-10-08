@@ -124,6 +124,38 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 					<div class="entry-wrapper">
 
+						<?php 
+						if ( $attributes['showCategory'] ) :
+							$category = false;
+
+							// Use Yoast primary category if set.
+							if ( class_exists( 'WPSEO_Primary_Term' ) ) {
+								$primary_term = new WPSEO_Primary_Term( 'category', get_the_ID() );
+								$category_id = $primary_term->get_primary_term();
+								if ( $category_id ) {
+									$category = get_term( $category_id );
+								}
+							}
+
+							if ( ! $category ) {
+								$categories_list = get_the_category();
+								if ( ! empty( $categories_list ) ) {
+									$category = $categories_list[0];
+								}
+							}
+
+							if ( $category ) :
+								?>
+								<div class='cat-links'>
+									<a href="<?php echo esc_url( get_category_link( $category->term_id ) ); ?>">
+										<?php echo esc_html( $category->name ); ?>
+									</a>
+								</div>
+								<?php
+							endif;
+						endif;
+						?>
+
 						<?php
 						if ( '' === $attributes['sectionHeader'] ) {
 							the_title( '<h2 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h2>' );
@@ -226,6 +258,10 @@ function newspack_blocks_register_homepage_articles() {
 				'showAvatar'    => array(
 					'type'    => 'boolean',
 					'default' => true,
+				),
+				'showCategory'  => array(
+					'type'    => 'boolean',
+					'default' => false,
 				),
 				'content'       => array(
 					'type' => 'string',
