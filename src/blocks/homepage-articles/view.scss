@@ -2,11 +2,17 @@
 @import "../../shared/sass/mixins";
 
 .wp-block-newspack-blocks-homepage-articles {
+	margin-bottom: 1em;
+
 	article {
 		margin-bottom: 1.5em;
-		padding-bottom: 1.5em;
 		word-break: break-word;
 		overflow-wrap: break-word;
+		position: relative;
+
+		&:last-of-type {
+			margin-bottom: 0;
+		}
 	}
 
 	/* Section header */
@@ -62,6 +68,11 @@
 
 	.post-thumbnail {
 		margin: 0;
+
+		img {
+			height: auto;
+			width: 100%;
+		}
 	}
 
 	figcaption {
@@ -138,6 +149,10 @@
 	}
 
 	/* Article meta */
+	.cat-links {
+		margin-bottom: 1em;
+	}
+
 	.entry-meta {
 		display: flex;
 		flex-wrap: wrap;
@@ -163,7 +178,8 @@
 		.entry-meta,
 		.entry-meta a,
 		.entry-meta .byline a,
-		.entry-meta .byline a:visited {
+		.entry-meta .byline a:visited,
+		figcaption {
 			color: inherit;
 		}
 	}
@@ -197,6 +213,18 @@
 		}
 	}
 
+	&.type-scale10,
+	&.type-scale9,
+	&.type-scale8 {
+		@include media(tablet) {
+			article .avatar {
+				height: 2.4em;
+				width: 2.4em;
+			}
+		}
+
+	}
+
 	&.type-scale10 article {
 		.entry-title {
 			font-size: 2.6em;
@@ -204,10 +232,6 @@
 		@include media(tablet) {
 			.entry-title {
 				font-size: 3.6em;
-			}
-			.avatar {
-				height: 2.4em;
-				width: 2.4em;
 			}
 		}
 		@include media(desktop) {
@@ -225,14 +249,10 @@
 			.entry-title {
 				font-size: 3.4em;
 			}
-			.avatar {
-				height: 2.4em;
-				width: 2.4em;
-			}
 		}
 		@include media(desktop) {
 			.entry-title {
-				font-size: 4.4em;
+				font-size: 4.2em;
 			}
 		}
 	}
@@ -243,16 +263,12 @@
 		}
 		@include media(tablet) {
 			.entry-title {
-				font-size: 3.2em;
-			}
-			.avatar {
-				height: 2.4em;
-				width: 2.4em;
+				font-size: 3.0em;
 			}
 		}
 		@include media(desktop) {
 			.entry-title {
-				font-size: 4.0em;
+				font-size: 3.6em;
 			}
 		}
 	}
@@ -263,7 +279,7 @@
 		}
 		@include media( tablet) {
 			.entry-title {
-				font-size: 2.8em;
+				font-size: 2.4em;
 			}
 			.avatar {
 				height: 48px;
@@ -272,18 +288,18 @@
 		}
 		@include media(desktop) {
 			.entry-title {
-				font-size: 3.6em;
+				font-size: 3em;
 			}
 		}
 	}
 
 	&.type-scale6 article {
 		.entry-title {
-			font-size: 1.8em;
+			font-size: 1.7em;
 		}
 		@include media(tablet) {
 			.entry-title {
-				font-size: 2.4em;
+				font-size: 2.0em;
 			}
 			.avatar {
 				height: 44px;
@@ -292,7 +308,7 @@
 		}
 		@include media(desktop) {
 			.entry-title {
-				font-size: 3em;
+				font-size: 2.4em;
 			}
 		}
 	}
@@ -303,7 +319,7 @@
 		}
 		@include media(tablet) {
 			.entry-title {
-				font-size: 2.2em;
+				font-size: 1.8em;
 			}
 			.avatar {
 				height: 40px;
@@ -312,7 +328,7 @@
 		}
 		@include media(desktop) {
 			.entry-title {
-				font-size: 2.4em;
+				font-size: 2.0em;
 			}
 		}
 	}
@@ -321,7 +337,10 @@
 
 	&.type-scale3 article {
 		.entry-title {
-			font-size: 1em;
+			font-size: 1.0em;
+			@include media( tablet ) {
+				font-size: 1.2em
+			}
 		}
 		.entry-wrapper p {
 			font-size: 0.8em;
@@ -333,23 +352,16 @@
 			height: 32px;
 			width: 32px;
 		}
-		@include media(tablet) {
-			.entry-title {
-				font-size: 1.2em;
-			}
-		}
 	}
 
 	&.type-scale2 article {
 		.entry-title {
-			font-size: 0.9em;
-			@include media(tablet) {
-				font-size: 1em;
+			font-size: 0.8em;
+			@include media( tablet ) {
+				font-size: 0.9em
 			}
 		}
-		.entry-wrapper p {
-			font-size: 0.8em;
-		}
+		.entry-wrapper p,
 		.entry-meta {
 			font-size: 0.7em;
 		}
@@ -360,12 +372,12 @@
 	}
 
 	&.type-scale1 article {
-		.entry-title {
-			font-size: 0.8em;
-		}
-		.entry-wrapper p,
-		.entry-meta {
+		.entry-title,
+		.entry-wrapper p {
 			font-size: 0.7em;
+		}
+		.entry-meta {
+			font-size: 0.6em;
 		}
 		.avatar {
 			height: 24px;
@@ -380,8 +392,12 @@
 	article {
 		border: solid rgba(0, 0, 0, 0.2);
 		border-width: 0 0 1px;
-		margin-bottom: 2em;
-		padding-bottom: 2em;
+		margin-bottom: 1em;
+		padding-bottom: 1em;
+
+		&:last-of-type {
+			margin-bottom: 0;
+		}
 	}
 
 	@include media(tablet) {

@@ -56,6 +56,10 @@ export const settings = {
 			type: 'boolean',
 			default: false,
 		},
+		imageShape: {
+			type: 'string',
+			default: 'landscape',
+		},
 		showAuthor: {
 			type: 'boolean',
 			default: true,
@@ -63,6 +67,10 @@ export const settings = {
 		showAvatar: {
 			type: 'boolean',
 			default: true,
+		},
+		showCategory: {
+			type: 'boolean',
+			default: false,
 		},
 		postLayout: {
 			type: 'string',
