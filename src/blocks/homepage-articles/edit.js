@@ -8,7 +8,7 @@ import AutocompleteTokenField from './components/autocomplete-tokenfield.js';
  * External dependencies
  */
 import classNames from 'classnames';
-import { isUndefined, pickBy, map } from 'lodash';
+import { isUndefined, pickBy } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -185,7 +185,7 @@ class Edit extends Component {
 					_fields: 'id,name',
 				} ),
 			} ).then( function( users ) {
-				return map( users, ( user ) => ( {
+				return users.map( user => ( { 
 					value: user.id,
 					label: decodeEntities( user.name ) || __( '(no name)' ),
 				} ) );
@@ -198,7 +198,7 @@ class Edit extends Component {
 					include: userIDs.join(','),
 				} ),
 			} ).then( function( users ) {
-				return map( users, ( user ) => ( {
+				return users.map( user => ( { 
 					value: user.id,
 					label: decodeEntities( user.name ) || __( '(no name)' ),
 				} ) );
@@ -215,9 +215,9 @@ class Edit extends Component {
 					order: 'desc',
 				} ),
 			} ).then( function( categories ) {
-				return map( categories, ( category ) => ( {
+				return categories.map( category => ( { 
 					value: category.id,
-					label: decodeEntities( category.name ) || __( '(no name)' ),
+					label: decodeEntities( category.name ) || __( '(no title)' ),
 				} ) );
 			} );
 		};
@@ -229,7 +229,7 @@ class Edit extends Component {
 					include: categoryIDs.join(','),
 				} ),
 			} ).then( function( categories ) {
-				return map( categories, ( category ) => ( {
+				return categories.map( category => ( { 
 					value: category.id,
 					label: decodeEntities( category.name ) || __( '(no title)' ),
 				} ) );
@@ -246,7 +246,7 @@ class Edit extends Component {
 					order: 'desc',
 				} ),
 			} ).then( function( tags ) {
-				return map( tags, ( tag ) => ( {
+				return tags.map( tag => ( {
 					value: tag.id,
 					label: decodeEntities( tag.name ) || __( '(no title)' ),
 				} ) );
@@ -260,7 +260,7 @@ class Edit extends Component {
 					include: tagIDs.join(','),
 				} ),
 			} ).then( function( tags ) {
-				return map( tags, ( tag ) => ( {
+				return tags.map( tag => ( {
 					value: tag.id,
 					label: decodeEntities( tag.name ) || __( '(no title)' ),
 				} ) );
