@@ -19,13 +19,16 @@ class QueryControls extends Component {
 			selectedTagId,
 			singleMode,
 			onSingleModeChange,
+			enableSingle,
 		} = this.props;
 		return [
-			<ToggleControl
-				checked={ singleMode }
-				onChange={ onSingleModeChange }
-				label={ __( 'Choose specific story' ) }
-			/>,
+			enableSingle && (
+				<ToggleControl
+					checked={ singleMode }
+					onChange={ onSingleModeChange }
+					label={ __( 'Choose specific story' ) }
+				/>
+			),
 			singleMode && (
 				<SelectControl
 					key="query-controls-single-post-select"
@@ -71,6 +74,7 @@ QueryControls.defaultProps = {
 	authorList: [],
 	postList: [],
 	tagsList: [],
+	enableSingle: true,
 };
 
 export default QueryControls;
