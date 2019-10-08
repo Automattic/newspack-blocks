@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import QueryControls from './query-controls';
+import AutocompleteTokenField from './components/autocomplete-tokenfield.js';
 
 /**
  * External dependencies
@@ -30,15 +31,11 @@ import {
 	SVG,
 } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
-import { withState, compose } from '@wordpress/compose';
+import { compose } from '@wordpress/compose';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
-
 import { PanelColorSettings, withColors } from '@wordpress/block-editor';
-
-import AutocompleteTokenField from './components/autocomplete-tokenfield.js';
-
 
 /**
  * Module Constants
