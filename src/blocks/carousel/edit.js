@@ -18,13 +18,10 @@ import { Component, Fragment, RawHTML } from '@wordpress/element';
 import { InspectorControls } from '@wordpress/editor';
 import {
 	PanelBody,
-	Toolbar,
-	ToggleControl,
-	Dashicon,
 	Placeholder,
+	RangeControl,
 	Spinner,
-	Path,
-	SVG,
+	ToggleControl,
 } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 import { withState, compose } from '@wordpress/compose';
@@ -46,7 +43,7 @@ class Edit extends Component {
 			categoriesList,
 			tagsList,
 		} = this.props; // variables getting pulled out of props
-		const { author, categories, postsToShow, tags } = attributes;
+		const { author, autoplay, categories, delay, postsToShow, tags } = attributes;
 		return (
 			<Fragment>
 				<div className={ className }>
@@ -86,6 +83,27 @@ class Edit extends Component {
 									setAttributes( { single: '' !== value ? value : undefined } )
 								}
 								onSingleModeChange={ value => setAttributes( { singleMode: value } ) }
+							/>
+						) }
+					</PanelBody>
+					<PanelBody title={ __( 'Slideshow Settings' ) } initialOpen={ true }>
+						<ToggleControl
+							label={ __( 'Autoplay' ) }
+							help={ __( 'Autoplay between slides' ) }
+							checked={ autoplay }
+							onChange={ autoplay => {
+								setAttributes( { autoplay } );
+							} }
+						/>
+						{ autoplay && (
+							<RangeControl
+								label={ __( 'Delay between transitions (in seconds)' ) }
+								value={ delay }
+								onChange={ delay => {
+									setAttributes( { delay } );
+								} }
+								min={ 1 }
+								max={ 5 }
 							/>
 						) }
 					</PanelBody>

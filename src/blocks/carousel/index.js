@@ -36,6 +36,14 @@ export const settings = {
 		className: {
 			type: 'string',
 		},
+		autoplay: {
+			type: 'boolean',
+			default: false,
+		},
+		delay: {
+			type: 'number',
+			default: 3,
+		},
 		postsToShow: {
 			type: 'integer',
 			default: 3,

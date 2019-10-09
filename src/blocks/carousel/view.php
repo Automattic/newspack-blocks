@@ -32,8 +32,10 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 	static $newspack_blocks_carousel_id = 0;
 	$newspack_blocks_carousel_id++;
 	$classes       = Newspack_Blocks::block_classes( 'carousel', $attributes );
+	$autoplay      = isset( $attributes['autoplay'] ) ? $attributes['autoplay'] : false;
 	$author        = isset( $attributes['author'] ) ? $attributes['author'] : '';
 	$categories    = isset( $attributes['categories'] ) ? $attributes['categories'] : '';
+	$delay         = isset( $attributes['delay'] ) ? absint( $attributes['delay'] ) : 3;
 	$tags          = isset( $attributes['tags'] ) ? $attributes['tags'] : '';
 	$posts_to_show = intval( $attributes['postsToShow'] );
 	$args          = array(
@@ -132,8 +134,6 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 		absint( $newspack_blocks_carousel_id ),
 		implode( '', $buttons )
 	);
-	$delay    = 3;
-	$autoplay = true;
 	$carousel = sprintf(
 		'<amp-carousel width="4" height="3" layout="responsive" type="slides" data-next-button-aria-label="%1$s" data-prev-button-aria-label="%2$s" controls loop %3$s id="wp-block-newspack-carousel__amp-carousel__%4$s" on="slideChange:wp-block-newspack-carousel__amp-pagination__%4$s.toggle(index=event.index, value=true)">%5$s</amp-carousel>',
 		esc_attr__( 'Next Slide', 'newspack-blocks' ),
@@ -171,8 +171,16 @@ function newspack_blocks_register_carousel() {
 				'author'      => array(
 					'type' => 'string',
 				),
+				'autoplay'    => array(
+					'type'    => 'boolean',
+					'default' => false,
+				),
 				'categories'  => array(
 					'type' => 'string',
+				),
+				'delay'       => array(
+					'type'    => 'integer',
+					'default' => 4,
 				),
 				'tags'        => array(
 					'type' => 'string',
