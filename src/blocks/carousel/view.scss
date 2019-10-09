@@ -11,6 +11,14 @@
 		overflow-wrap: break-word;
 		.entry-title {
 			font-size: 1.2em;
+
+			a {
+				&:active,
+				&:focus,
+				&:hover {
+					color: rgba( 255, 255, 255, 0.75 );
+				}
+			}
 		}
 		.entry-meta {
 			font-size: 0.8em;
@@ -30,12 +38,27 @@
 			}
 		}
 		.entry-wrapper {
-			position: absolute;
 			bottom: 0;
-			width: 100%;
 			background-color: rgba( 0, 0, 0, 0.5 );
 			color: white;
-			padding: 1em;
+			left: 0;
+			padding: 1.5em;
+			position: absolute;
+			right: 0;
+		}
+		.entry-meta {
+			color: inherit;
+			margin-bottom: 0;
+
+			a {
+				color: inherit;
+
+				&:active,
+				&:focus,
+				&:hover {
+					color: rgba( 255, 255, 255, 0.75 );
+				}
+			}
 		}
 	}
 	figure.post-thumbnail {
@@ -99,9 +122,11 @@
 	}
 	.amp-carousel-button-next {
 		background-image: url( "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='24'%20height='24'%20viewBox='0%200%2024%2024'%3E%3Cpath%20d='M5.88%204.12L13.76%2012l-7.88%207.88L8%2022l10-10L8%202z'%20fill='white'/%3E%3Cpath%20fill='none'%20d='M0 0h24v24H0z'/%3E%3C/svg%3E" );
+		cursor: pointer;
 	}
 	.amp-carousel-button-prev {
 		background-image: url( "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='24'%20height='24'%20viewBox='0%200%2024%2024'%3E%3Cpath%20d='M18%204.12L10.12%2012%2018%2019.88%2015.88%2022l-10-10%2010-10z'%20fill='white'/%3E%3Cpath%20fill='none'%20d='M0 0h24v24H0z'/%3E%3C/svg%3E" );
+		cursor: pointer;
 	}
 
 	/* Image styles */
