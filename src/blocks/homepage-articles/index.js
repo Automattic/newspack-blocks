@@ -108,10 +108,6 @@ export const settings = {
 			type: 'integer',
 			default: 3,
 		},
-		topPadding: {
-			type: 'integer',
-			default: 6,
-		},
 		sectionHeader: {
 			type: 'string',
 			default: '',

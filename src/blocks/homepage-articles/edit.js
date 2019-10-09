@@ -165,7 +165,6 @@ class Edit extends Component {
 			showImage,
 			showCaption,
 			imageScale,
-			topPadding,
 			showExcerpt,
 			typeScale,
 			showDate,
@@ -248,17 +247,6 @@ class Edit extends Component {
 							max={ 4 }
 							beforeIcon="images-alt2"
 							afterIcon="images-alt2"
-							required
-						/>
-					) }
-					{ showImage && mediaPosition === 'behind' && (
-						<RangeControl
-							className="top-padding-slider"
-							label={ __( 'Top padding' ) }
-							value={ topPadding }
-							onChange={ value => setAttributes( { topPadding: value } ) }
-							min={ 1 }
-							max={ 12 }
 							required
 						/>
 					) }
@@ -358,7 +346,6 @@ class Edit extends Component {
 			categories,
 			typeScale,
 			imageScale,
-			topPadding,
 			sectionHeader,
 			showCaption,
 		} = attributes;
@@ -373,7 +360,6 @@ class Edit extends Component {
 			[ `image-shape${ imageShape }` ]: imageShape !== 'landscape',
 			'has-text-color': textColor,
 			'show-caption': showCaption,
-			[ `top-padding${ topPadding }` ]: mediaPosition === 'behind' && showImage,
 		} );
 
 		const blockControls = [
