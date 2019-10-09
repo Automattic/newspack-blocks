@@ -124,6 +124,10 @@ export const settings = {
 			type: 'string',
 			default: '',
 		},
+		singleMode: {
+			type: 'boolean',
+			default: false,
+		},
 	},
 	supports: {
 		html: false,

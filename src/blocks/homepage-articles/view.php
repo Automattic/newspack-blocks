@@ -112,7 +112,18 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 							<a href="<?php echo esc_url( get_permalink() ); ?>" rel="bookmark">
 								<?php
 								$image_size = newspack_blocks_image_size_for_orientation( $attributes['imageShape'] );
-								the_post_thumbnail( $image_size );
+
+								// If the image position is behind, pass the object-fit setting to maintain styles with AMP.
+								if ( 'behind' === $attributes['mediaPosition'] ) {
+									the_post_thumbnail(
+										$image_size,
+										array(
+											'object-fit' => 'cover',
+										)
+									);
+								} else {
+									the_post_thumbnail( $image_size );
+								}
 								?>
 							</a>
 
@@ -124,7 +135,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 					<div class="entry-wrapper">
 
-						<?php 
+						<?php
 						if ( $attributes['showCategory'] ) :
 							$category = false;
 

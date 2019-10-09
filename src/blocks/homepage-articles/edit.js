@@ -98,7 +98,7 @@ class Edit extends Component {
 				<div className="entry-wrapper">
 					{ showCategory && post.newspack_category_info.length && (
 						<div className="cat-links">
-							<a href='#'>{ post.newspack_category_info }</a>
+							<a href="#">{ post.newspack_category_info }</a>
 						</div>
 					) }
 					{ RichText.isEmpty( sectionHeader ) ? (
@@ -226,6 +226,7 @@ class Edit extends Component {
 							onChange={ () => setAttributes( { showImage: ! showImage } ) }
 						/>
 					</PanelRow>
+
 					{ showImage && (
 						<PanelRow>
 							<ToggleControl
@@ -236,7 +237,7 @@ class Edit extends Component {
 						</PanelRow>
 					) }
 
-					{ showImage && mediaPosition !== 'top' && (
+					{ showImage && mediaPosition !== 'top' && mediaPosition !== 'behind' && (
 						<RangeControl
 							className="image-scale-slider"
 							label={ __( 'Featured Image Scale' ) }
@@ -394,6 +395,12 @@ class Edit extends Component {
 				title: __( 'Show media on right' ),
 				isActive: mediaPosition === 'right',
 				onClick: () => setAttributes( { mediaPosition: 'right' } ),
+			},
+			{
+				icon: 'format-image',
+				title: __( 'Show media behind' ),
+				isActive: mediaPosition === 'behind',
+				onClick: () => setAttributes( { mediaPosition: 'behind' } ),
 			},
 		];
 
