@@ -34,17 +34,17 @@
 			@include media( mobile ) {
 				border-bottom: 0;
 
+				&:not(:first-child) {
+					margin-left: 24px;
+				}
+
 				&:after {
-					border-right: 1px solid transparent;
+					border-right: 1px solid $color__border;
 					bottom: 0;
 					content: '';
 					position: absolute;
-					right: -16px;
+					right: -12px;
 					top: 0;
-				}
-
-				&:nth-child(odd):after {
-					border-color: $color__border;
 				}
 
 				&:last-child:after {
@@ -53,8 +53,12 @@
 			}
 
 			@include media( tablet ) {
+				&:not(:first-child) {
+					margin-left: 32px;
+				}
+
 				&:after {
-					border-color: $color__border;
+					right: -16px;
 				}
 			}
 		}
