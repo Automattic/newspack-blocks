@@ -69,13 +69,12 @@ class AutocompleteTokenField extends Component {
 	 * @return array Array of valid labels corresponding to the values.
 	 */
 	getLabelsForValues( values ) {
-		const labels = [];
-		values.forEach( value => {
-			if ( this.state.validValues.hasOwnProperty( value ) ) {
-				labels.push( this.state.validValues[ value ] );
-			}
-		} );
-		return labels;
+		const { validValues } = this.state;
+		return values.reduce(
+			( accumulator, value ) =>
+				validValues[ value ] ? [ ...accumulator, validValues[ value ] ] : accumulator,
+			[]
+		);
 	}
 
 	/**
@@ -86,18 +85,9 @@ class AutocompleteTokenField extends Component {
 	 */
 	getValuesForLabels( labels ) {
 		const { validValues } = this.state;
-		const validLabels = {}
-		for ( const key in validValues ) {
-			validLabels[ validValues[ key ] ] = key;
-		}
-
-		const values = [];
-		labels.forEach( label => {
-			if ( validLabels.hasOwnProperty( label ) ) {
-				values.push( validLabels[ label ] );
-			}
-		} );
-		return values;
+		return labels.map( label =>
+			Object.keys( validValues ).find( key => validValues[ key ] === label )
+		);
 	}
 
 	/**
