@@ -17,9 +17,9 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	if ( ! $newspack_blocks_post_id ) {
 		$newspack_blocks_post_id = array();
 	}
-	$author        = isset( $attributes['author'] ) ? $attributes['author'] : '';
-	$categories    = isset( $attributes['categories'] ) ? $attributes['categories'] : '';
-	$tags          = isset( $attributes['tags'] ) ? $attributes['tags'] : '';
+	$authors       = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
+	$categories    = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
+	$tags          = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
 	$single        = isset( $attributes['single'] ) ? $attributes['single'] : '';
 	$posts_to_show = intval( $attributes['postsToShow'] );
 	$single_mode   = intval( $attributes['singleMode'] );
@@ -27,17 +27,20 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		'posts_per_page'      => $posts_to_show + count( $newspack_blocks_post_id ),
 		'post_status'         => 'publish',
 		'suppress_filters'    => false,
-		'cat'                 => $categories,
-		'tag_id'              => $tags,
-		'author'              => $author,
 		'ignore_sticky_posts' => true,
 	);
 	if ( $single_mode ) {
 		$args['p'] = $single;
 	} else {
-		$args['cat']    = $categories;
-		$args['author'] = $author;
-		$args['author'] = $author;
+		if ( $authors ) {
+			$args['author__in'] = $authors;
+		}
+		if ( $categories ) {
+			$args['category__in'] = $categories;
+		}
+		if ( $tags ) {
+			$args['tag__in'] = $tags;
+		}
 	}
 	$article_query = new WP_Query( $args );
 
@@ -243,30 +246,30 @@ function newspack_blocks_register_homepage_articles() {
 		'newspack-blocks/homepage-articles',
 		array(
 			'attributes'      => array(
-				'className'     => array(
+				'className'       => array(
 					'type' => 'string',
 				),
-				'showExcerpt'   => array(
+				'showExcerpt'     => array(
 					'type'    => 'boolean',
 					'default' => true,
 				),
-				'showDate'      => array(
+				'showDate'        => array(
 					'type'    => 'boolean',
 					'default' => true,
 				),
-				'showImage'     => array(
+				'showImage'       => array(
 					'type'    => 'boolean',
 					'default' => true,
 				),
-				'showCaption'   => array(
+				'showCaption'     => array(
 					'type'    => 'boolean',
 					'default' => false,
 				),
-				'showAuthor'    => array(
+				'showAuthor'      => array(
 					'type'    => 'boolean',
 					'default' => true,
 				),
-				'showAvatar'    => array(
+				'showAvatar'      => array(
 					'type'    => 'boolean',
 					'default' => true,
 				),
@@ -274,42 +277,54 @@ function newspack_blocks_register_homepage_articles() {
 					'type'    => 'boolean',
 					'default' => false,
 				),
-				'content'       => array(
+				'content'         => array(
 					'type' => 'string',
 				),
-				'postLayout'    => array(
+				'postLayout'      => array(
 					'type'    => 'string',
 					'default' => 'list',
 				),
-				'columns'       => array(
+				'columns'         => array(
 					'type'    => 'integer',
 					'default' => 3,
 				),
-				'postsToShow'   => array(
+				'postsToShow'     => array(
 					'type'    => 'integer',
 					'default' => 3,
 				),
-				'mediaPosition' => array(
+				'mediaPosition'   => array(
 					'type'    => 'string',
 					'default' => 'top',
 				),
-				'author'        => array(
+				'authors'         => array(
+					'type'    => 'array',
+					'default' => array(),
+					'items'   => array(
+						'type' => 'integer',
+					),
+				),
+				'categories'      => array(
+					'type'    => 'array',
+					'default' => array(),
+					'items'   => array(
+						'type' => 'integer',
+					),
+				),
+				'tags'            => array(
+					'type'    => 'array',
+					'default' => array(),
+					'items'   => array(
+						'type' => 'integer',
+					),
+				),
+				'single'          => array(
 					'type' => 'string',
 				),
-				'categories'    => array(
-					'type' => 'string',
-				),
-				'tags'          => array(
-					'type' => 'string',
-				),
-				'single'        => array(
-					'type' => 'string',
-				),
-				'typeScale'     => array(
+				'typeScale'       => array(
 					'type'    => 'integer',
 					'default' => 4,
 				),
-				'imageScale'    => array(
+				'imageScale'      => array(
 					'type'    => 'integer',
 					'default' => 3,
 				),
@@ -317,11 +332,11 @@ function newspack_blocks_register_homepage_articles() {
 					'type'    => 'string',
 					'default' => 'landscape',
 				),
-				'sectionHeader' => array(
+				'sectionHeader'   => array(
 					'type'    => 'string',
 					'default' => '',
 				),
-				'singleMode'    => array(
+				'singleMode'      => array(
 					'type'    => 'boolean',
 					'default' => false,
 				),

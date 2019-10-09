@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import QueryControls from './query-controls';
+import AutocompleteTokenField from './components/autocomplete-tokenfield.js';
 
 /**
  * External dependencies
@@ -25,15 +26,16 @@ import {
 	Dashicon,
 	Placeholder,
 	Spinner,
+	BaseControl,
 	Path,
 	SVG,
 } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
-import { withState, compose } from '@wordpress/compose';
-
+import { compose } from '@wordpress/compose';
+import apiFetch from '@wordpress/api-fetch';
+import { addQueryArgs } from '@wordpress/url';
+import { decodeEntities } from '@wordpress/html-entities';
 import { PanelColorSettings, withColors } from '@wordpress/block-editor';
-
-const { decodeEntities } = wp.htmlEntities;
 
 /**
  * Module Constants
@@ -144,9 +146,6 @@ class Edit extends Component {
 	renderInspectorControls = () => {
 		const {
 			attributes,
-			authorList,
-			categoriesList,
-			tagsList,
 			postList,
 			setAttributes,
 			latestPosts,
@@ -156,7 +155,7 @@ class Edit extends Component {
 		} = this.props;
 		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
 		const {
-			author,
+			authors,
 			single,
 			postsToShow,
 			categories,
@@ -175,35 +174,147 @@ class Edit extends Component {
 			mediaPosition,
 			singleMode,
 			tags,
+			url,
 		} = attributes;
+
+		const fetchAuthorSuggestions = ( search ) => {
+			return apiFetch( {
+				path: addQueryArgs( '/wp/v2/users', {
+					search,
+					per_page: 20,
+					_fields: 'id,name',
+				} ),
+			} ).then( function( users ) {
+				return users.map( user => ( { 
+					value: user.id,
+					label: decodeEntities( user.name ) || __( '(no name)' ),
+				} ) );
+			} );
+		};
+		const fetchSavedAuthors = ( userIDs ) => {
+			return apiFetch( {
+				path: addQueryArgs( '/wp/v2/users', {
+					per_page: 100,
+					include: userIDs.join(','),
+				} ),
+			} ).then( function( users ) {
+				return users.map( user => ( { 
+					value: user.id,
+					label: decodeEntities( user.name ) || __( '(no name)' ),
+				} ) );
+			} );
+		};
+
+		const fetchCategorySuggestions = ( search ) => {
+			return apiFetch( {
+				path: addQueryArgs( '/wp/v2/categories', {
+					search,
+					per_page: 20,
+					_fields: 'id,name',
+					orderby: 'count',
+					order: 'desc',
+				} ),
+			} ).then( function( categories ) {
+				return categories.map( category => ( { 
+					value: category.id,
+					label: decodeEntities( category.name ) || __( '(no title)' ),
+				} ) );
+			} );
+		};
+		const fetchSavedCategories = ( categoryIDs ) => {
+			return apiFetch( {
+				path: addQueryArgs( '/wp/v2/categories', {
+					per_page: 100,
+					_fields: 'id,name',
+					include: categoryIDs.join(','),
+				} ),
+			} ).then( function( categories ) {
+				return categories.map( category => ( { 
+					value: category.id,
+					label: decodeEntities( category.name ) || __( '(no title)' ),
+				} ) );
+			} );
+		};
+
+		const fetchTagSuggestions = ( search ) => {
+			return apiFetch( {
+				path: addQueryArgs( '/wp/v2/tags', {
+					search,
+					per_page: 20,
+					_fields: 'id,name',
+					orderby: 'count',
+					order: 'desc',
+				} ),
+			} ).then( function( tags ) {
+				return tags.map( tag => ( {
+					value: tag.id,
+					label: decodeEntities( tag.name ) || __( '(no title)' ),
+				} ) );
+			} );
+		};
+		const fetchSavedTags = ( tagIDs ) => {
+			return apiFetch( {
+				path: addQueryArgs( '/wp/v2/tags', {
+					per_page: 100,
+					_fields: 'id,name',
+					include: tagIDs.join(','),
+				} ),
+			} ).then( function( tags ) {
+				return tags.map( tag => ( {
+					value: tag.id,
+					label: decodeEntities( tag.name ) || __( '(no title)' ),
+				} ) );
+			} );
+		};
+
 		return (
 			<Fragment>
 				<PanelBody title={ __( 'Display Settings' ) } initialOpen={ true }>
-					{ postsToShow && categoriesList && (
-						<QueryControls
-							numberOfItems={ postsToShow }
-							onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
-							authorList={ authorList }
-							postList={ postList }
-							tagsList={ tagsList }
-							singleMode={ singleMode }
-							categoriesList={ categoriesList }
-							selectedCategoryId={ categories }
-							selectedAuthorId={ author }
-							selectedTagId={ tags }
-							selectedSingleId={ single }
-							onCategoryChange={ value =>
-								setAttributes( { categories: '' !== value ? value : undefined } )
-							}
-							onTagChange={ value => setAttributes( { tags: '' !== value ? value : undefined } ) }
-							onAuthorChange={ value =>
-								setAttributes( { author: '' !== value ? value : undefined } )
-							}
-							onSingleChange={ value =>
-								setAttributes( { single: '' !== value ? value : undefined } )
-							}
-							onSingleModeChange={ value => setAttributes( { singleMode: value } ) }
-						/>
+					{ postsToShow && (
+						<Fragment>
+							<QueryControls
+								numberOfItems={ postsToShow }
+								onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
+								postList={ postList }
+								singleMode={ singleMode }
+								selectedSingleId={ single }
+								onSingleChange={ value =>
+									setAttributes( { single: '' !== value ? value : undefined } )
+								}
+								onSingleModeChange={ value => setAttributes( { singleMode: value } ) }
+							/>
+							{ ! singleMode && (
+								<Fragment>
+									<BaseControl>
+										<AutocompleteTokenField
+											tokens={ authors || [] }
+											onChange={ ( tokens ) => setAttributes( { authors: tokens } ) }
+											fetchSuggestions={ fetchAuthorSuggestions }
+											fetchSavedInfo={ fetchSavedAuthors }
+											label={ __( 'Author' ) }
+										/>
+									</BaseControl>
+									<BaseControl>
+										<AutocompleteTokenField
+											tokens={ categories || [] }
+											onChange={ ( tokens ) => setAttributes( { categories: tokens } ) }
+											fetchSuggestions={ fetchCategorySuggestions }
+											fetchSavedInfo={ fetchSavedCategories }
+											label={ __( 'Category' ) }
+										/>
+									</BaseControl>
+									<BaseControl>
+										<AutocompleteTokenField
+											tokens={ tags || [] }
+											onChange={ ( tokens ) => setAttributes( { tags: tokens } ) }
+											fetchSuggestions={ fetchTagSuggestions }
+											fetchSavedInfo={ fetchSavedTags }
+											label={ __( 'Tag' ) }
+										/>
+									</BaseControl>
+								</Fragment>
+							) }
+						</Fragment>
 					) }
 					{ postLayout === 'grid' && (
 						<RangeControl
@@ -329,7 +440,6 @@ class Edit extends Component {
 			isSelected,
 			latestPosts,
 			hasPosts,
-			categoriesList,
 			textColor,
 		} = this.props; // variables getting pulled out of props
 		const {
@@ -466,7 +576,7 @@ class Edit extends Component {
 export default compose( [
 	withColors( { textColor: 'color' } ),
 	withSelect( ( select, props ) => {
-		const { postsToShow, author, categories, tags, single, singleMode } = props.attributes;
+		const { postsToShow, authors, categories, tags, single, singleMode } = props.attributes;
 		const { getAuthors, getEntityRecords } = select( 'core' );
 		const latestPostsQuery = pickBy(
 			singleMode
@@ -474,25 +584,16 @@ export default compose( [
 				: {
 						per_page: postsToShow,
 						categories,
-						author,
+						author: authors,
 						tags,
 				  },
 			value => ! isUndefined( value )
 		);
-		const categoriesListQuery = {
-			per_page: 100,
-		};
-		const tagsListQuery = {
-			per_page: 100,
-		};
 		const postsListQuery = {
 			per_page: 50,
 		};
 		return {
 			latestPosts: getEntityRecords( 'postType', 'post', latestPostsQuery ),
-			categoriesList: getEntityRecords( 'taxonomy', 'category', categoriesListQuery ),
-			tagsList: getEntityRecords( 'taxonomy', 'post_tag', tagsListQuery ),
-			authorList: getAuthors(),
 			postList: getEntityRecords( 'postType', 'post', postsListQuery ),
 		};
 	} ),
