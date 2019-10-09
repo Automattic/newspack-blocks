@@ -1,5 +1,7 @@
+$primary_color: #36f;
+
 .wp-block-newspack-blocks-donate button[type='submit'] {
-	background: #2A7DE1;
+	background: $primary_color;
 	border: none;
 	border-radius: 5px;
 	box-sizing: border-box;
