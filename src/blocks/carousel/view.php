@@ -31,13 +31,19 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 	}
 	static $newspack_blocks_carousel_id = 0;
 	$newspack_blocks_carousel_id++;
-	$classes       = Newspack_Blocks::block_classes( 'carousel', $attributes );
 	$autoplay      = isset( $attributes['autoplay'] ) ? $attributes['autoplay'] : false;
 	$author        = isset( $attributes['author'] ) ? $attributes['author'] : '';
 	$categories    = isset( $attributes['categories'] ) ? $attributes['categories'] : '';
 	$delay         = isset( $attributes['delay'] ) ? absint( $attributes['delay'] ) : 3;
 	$tags          = isset( $attributes['tags'] ) ? $attributes['tags'] : '';
 	$posts_to_show = intval( $attributes['postsToShow'] );
+
+	$other = array();
+	if ( $autoplay ) {
+		$other[] = 'wp-block-newspack-blocks-carousel__autoplay-playing';
+	}
+	$classes = Newspack_Blocks::block_classes( 'carousel', $attributes, $other );
+
 	$args          = array(
 		'posts_per_page'      => $posts_to_show,
 		'post_status'         => 'publish',
@@ -148,9 +154,40 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 		esc_attr( $classes ),
 		absint( $newspack_blocks_carousel_id ),
 		$carousel,
-		'',
+		$autoplay ? newspack_blocks_carousel_block_autoplay_ui( $newspack_blocks_carousel_id ) : '',
 		$selector
 	);
+}
+
+/**
+ * Generate autoplay play/pause UI.
+ *
+ * @param int $block_ordinal The ordinal number of the block, used in unique ID.
+ *
+ * @return string Autoplay UI markup.
+ */
+function newspack_blocks_carousel_block_autoplay_ui( $block_ordinal = 0 ) {
+	$block_id        = sprintf(
+		'wp-block-newspack-carousel__%d',
+		absint( $block_ordinal )
+	);
+	$amp_carousel_id = sprintf(
+		'wp-block-newspack-carousel__amp-carousel__%d',
+		absint( $block_ordinal )
+	);
+	$autoplay_pause  = sprintf(
+		'<a aria-label="%s" class="amp-carousel-button-pause amp-carousel-button" role="button" on="tap:%s.toggleAutoplay(toggleOn=false),%s.toggleClass(class=wp-block-newspack-blocks-carousel__autoplay-playing,force=false)"></a>',
+		esc_attr__( 'Pause Slideshow', 'newspack-blocks' ),
+		esc_attr( $amp_carousel_id ),
+		esc_attr( $block_id )
+	);
+	$autoplay_play   = sprintf(
+		'<a aria-label="%s" class="amp-carousel-button-play amp-carousel-button" role="button" on="tap:%s.toggleAutoplay(toggleOn=true),%s.toggleClass(class=wp-block-newspack-blocks-carousel__autoplay-playing,force=true)"></a>',
+		esc_attr__( 'Play Slideshow', 'newspack-blocks' ),
+		esc_attr( $amp_carousel_id ),
+		esc_attr( $block_id )
+	);
+	return $autoplay_pause . $autoplay_play;
 }
 
 /**
