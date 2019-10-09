@@ -177,7 +177,7 @@ class Edit extends Component {
 			url,
 		} = attributes;
 
-		const fetchAuthorSuggestions = ( search ) => {
+		const fetchAuthorSuggestions = search => {
 			return apiFetch( {
 				path: addQueryArgs( '/wp/v2/users', {
 					search,
@@ -185,27 +185,27 @@ class Edit extends Component {
 					_fields: 'id,name',
 				} ),
 			} ).then( function( users ) {
-				return users.map( user => ( { 
+				return users.map( user => ( {
 					value: user.id,
 					label: decodeEntities( user.name ) || __( '(no name)' ),
 				} ) );
 			} );
 		};
-		const fetchSavedAuthors = ( userIDs ) => {
+		const fetchSavedAuthors = userIDs => {
 			return apiFetch( {
 				path: addQueryArgs( '/wp/v2/users', {
 					per_page: 100,
-					include: userIDs.join(','),
+					include: userIDs.join( ',' ),
 				} ),
 			} ).then( function( users ) {
-				return users.map( user => ( { 
+				return users.map( user => ( {
 					value: user.id,
 					label: decodeEntities( user.name ) || __( '(no name)' ),
 				} ) );
 			} );
 		};
 
-		const fetchCategorySuggestions = ( search ) => {
+		const fetchCategorySuggestions = search => {
 			return apiFetch( {
 				path: addQueryArgs( '/wp/v2/categories', {
 					search,
@@ -215,28 +215,28 @@ class Edit extends Component {
 					order: 'desc',
 				} ),
 			} ).then( function( categories ) {
-				return categories.map( category => ( { 
+				return categories.map( category => ( {
 					value: category.id,
 					label: decodeEntities( category.name ) || __( '(no title)' ),
 				} ) );
 			} );
 		};
-		const fetchSavedCategories = ( categoryIDs ) => {
+		const fetchSavedCategories = categoryIDs => {
 			return apiFetch( {
 				path: addQueryArgs( '/wp/v2/categories', {
 					per_page: 100,
 					_fields: 'id,name',
-					include: categoryIDs.join(','),
+					include: categoryIDs.join( ',' ),
 				} ),
 			} ).then( function( categories ) {
-				return categories.map( category => ( { 
+				return categories.map( category => ( {
 					value: category.id,
 					label: decodeEntities( category.name ) || __( '(no title)' ),
 				} ) );
 			} );
 		};
 
-		const fetchTagSuggestions = ( search ) => {
+		const fetchTagSuggestions = search => {
 			return apiFetch( {
 				path: addQueryArgs( '/wp/v2/tags', {
 					search,
@@ -252,12 +252,12 @@ class Edit extends Component {
 				} ) );
 			} );
 		};
-		const fetchSavedTags = ( tagIDs ) => {
+		const fetchSavedTags = tagIDs => {
 			return apiFetch( {
 				path: addQueryArgs( '/wp/v2/tags', {
 					per_page: 100,
 					_fields: 'id,name',
-					include: tagIDs.join(','),
+					include: tagIDs.join( ',' ),
 				} ),
 			} ).then( function( tags ) {
 				return tags.map( tag => ( {
@@ -288,7 +288,7 @@ class Edit extends Component {
 									<BaseControl>
 										<AutocompleteTokenField
 											tokens={ authors || [] }
-											onChange={ ( tokens ) => setAttributes( { authors: tokens } ) }
+											onChange={ tokens => setAttributes( { authors: tokens } ) }
 											fetchSuggestions={ fetchAuthorSuggestions }
 											fetchSavedInfo={ fetchSavedAuthors }
 											label={ __( 'Author' ) }
@@ -297,7 +297,7 @@ class Edit extends Component {
 									<BaseControl>
 										<AutocompleteTokenField
 											tokens={ categories || [] }
-											onChange={ ( tokens ) => setAttributes( { categories: tokens } ) }
+											onChange={ tokens => setAttributes( { categories: tokens } ) }
 											fetchSuggestions={ fetchCategorySuggestions }
 											fetchSavedInfo={ fetchSavedCategories }
 											label={ __( 'Category' ) }
@@ -306,7 +306,7 @@ class Edit extends Component {
 									<BaseControl>
 										<AutocompleteTokenField
 											tokens={ tags || [] }
-											onChange={ ( tokens ) => setAttributes( { tags: tokens } ) }
+											onChange={ tokens => setAttributes( { tags: tokens } ) }
 											fetchSuggestions={ fetchTagSuggestions }
 											fetchSavedInfo={ fetchSavedTags }
 											label={ __( 'Tag' ) }
@@ -468,7 +468,7 @@ class Edit extends Component {
 			[ `image-align${ mediaPosition }` ]: showImage,
 			[ `image-scale${ imageScale }` ]: imageScale !== '1' && showImage,
 			[ `image-shape${ imageShape }` ]: imageShape !== 'landscape',
-			'has-text-color': textColor,
+			'has-text-color': textColor.color !== '',
 			'show-caption': showCaption,
 		} );
 
