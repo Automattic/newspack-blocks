@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2019-10-10T00:13:00+00:00\n"
+"POT-Creation-Date: 2019-10-10T00:59:27+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.3.0\n"
 "X-Domain: newspack-blocks\n"
@@ -108,12 +108,20 @@ msgstr ""
 msgid "Not ready"
 msgstr ""
 
+#: src/blocks/donate/edit.js:275
+msgid "You have not set up your donation settings yet. You need to do that before you can use the Donate Block."
+msgstr ""
+
 #: src/blocks/donate/edit.js:281
 msgid "Set up donation settings."
 msgstr ""
 
 #: src/blocks/donate/edit.js:298
 msgid "Donate Block"
+msgstr ""
+
+#: src/blocks/donate/edit.js:300
+msgid "The Donate Block allows you to collect donations from readers. The fields are automatically defined based on your donation settings."
 msgstr ""
 
 #: src/blocks/donate/edit.js:306

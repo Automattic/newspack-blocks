@@ -274,7 +274,7 @@ class Edit extends Component {
 					label={ __( 'Not ready', 'newspack-blocks' ) }
 					instructions={ __(
 						'You have not set up your donation settings yet. You need to do that before you can use the Donate Block.',
-						'newspack'
+						'newspack-blocks'
 					) }
 				>
 					<ExternalLink href="/wp-admin/admin.php?page=newspack-donations-wizard#/">
@@ -299,7 +299,7 @@ class Edit extends Component {
 						<p>
 							{ __(
 								'The Donate Block allows you to collect donations from readers. The fields are automatically defined based on your donation settings.',
-								'newspack'
+								'newspack-blocks'
 							) }
 						</p>
 						<ExternalLink href="/wp-admin/admin.php?page=newspack-donations-wizard#/">
