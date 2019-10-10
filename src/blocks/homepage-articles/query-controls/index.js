@@ -29,10 +29,10 @@ class QueryControls extends Component {
 			singleMode && (
 				<SelectControl
 					key="query-controls-single-post-select"
-					label={ __( 'Display One Specific Post' ) }
+					label={ __( 'Display One Specific Post', 'newspack-blocks' ) }
 					value={ selectedSingleId }
 					options={ [
-						{ label: __( '-- Select Post --' ), value: '' },
+						{ label: __( '-- Select Post --', 'newspack-blocks' ), value: '' },
 						...( postList || [] ).map( post => ( { label: post.title.rendered, value: post.id } ) ),
 					] }
 					onChange={ onSingleChange }
@@ -42,10 +42,10 @@ class QueryControls extends Component {
 			! singleMode && onAuthorChange && (
 				<SelectControl
 					key="query-controls-author-select"
-					label={ __( 'Author' ) }
+					label={ __( 'Author', 'newspack-blocks' ) }
 					value={ selectedAuthorId }
 					options={ [
-						{ label: __( 'Any author' ), value: '' },
+						{ label: __( 'Any author', 'newspack-blocks' ), value: '' },
 						...( authorList || [] ).map( author => ( { label: author.name, value: author.id } ) ),
 					] }
 					onChange={ onAuthorChange }
@@ -54,10 +54,10 @@ class QueryControls extends Component {
 			! singleMode && onTagChange && (
 				<SelectControl
 					key="query-controls-tag-control"
-					label={ __( 'Tag' ) }
+					label={ __( 'Tag', 'newspack-blocks' ) }
 					value={ selectedTagId }
 					options={ [
-						{ label: __( 'All' ), value: '' },
+						{ label: __( 'All', 'newspack-blocks' ), value: '' },
 						...( tagsList || [] ).map( tag => ( { label: tag.name, value: tag.id } ) ),
 					] }
 					onChange={ onTagChange }

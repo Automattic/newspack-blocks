@@ -122,7 +122,7 @@ class Edit extends Component {
 
 						{ showAuthor && (
 							<span className="byline">
-								{ __( 'by' ) }{' '}
+								{ __( 'by', 'newspack-blocks' ) }{' '}
 								<span className="author vcard">
 									<a className="url fn n" href="#">
 										{ post.newspack_author_info.display_name }
@@ -187,7 +187,7 @@ class Edit extends Component {
 			} ).then( function( users ) {
 				return users.map( user => ( {
 					value: user.id,
-					label: decodeEntities( user.name ) || __( '(no name)' ),
+					label: decodeEntities( user.name ) || __( '(no name)', 'newspack-blocks' ),
 				} ) );
 			} );
 		};
@@ -200,7 +200,7 @@ class Edit extends Component {
 			} ).then( function( users ) {
 				return users.map( user => ( {
 					value: user.id,
-					label: decodeEntities( user.name ) || __( '(no name)' ),
+					label: decodeEntities( user.name ) || __( '(no name)', 'newspack-blocks' ),
 				} ) );
 			} );
 		};
@@ -217,7 +217,7 @@ class Edit extends Component {
 			} ).then( function( categories ) {
 				return categories.map( category => ( {
 					value: category.id,
-					label: decodeEntities( category.name ) || __( '(no title)' ),
+					label: decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' ),
 				} ) );
 			} );
 		};
@@ -231,7 +231,7 @@ class Edit extends Component {
 			} ).then( function( categories ) {
 				return categories.map( category => ( {
 					value: category.id,
-					label: decodeEntities( category.name ) || __( '(no title)' ),
+					label: decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' ),
 				} ) );
 			} );
 		};
@@ -248,7 +248,7 @@ class Edit extends Component {
 			} ).then( function( tags ) {
 				return tags.map( tag => ( {
 					value: tag.id,
-					label: decodeEntities( tag.name ) || __( '(no title)' ),
+					label: decodeEntities( tag.name ) || __( '(no title)', 'newspack-blocks' ),
 				} ) );
 			} );
 		};
@@ -262,14 +262,14 @@ class Edit extends Component {
 			} ).then( function( tags ) {
 				return tags.map( tag => ( {
 					value: tag.id,
-					label: decodeEntities( tag.name ) || __( '(no title)' ),
+					label: decodeEntities( tag.name ) || __( '(no title)', 'newspack-blocks' ),
 				} ) );
 			} );
 		};
 
 		return (
 			<Fragment>
-				<PanelBody title={ __( 'Display Settings' ) } initialOpen={ true }>
+				<PanelBody title={ __( 'Display Settings', 'newspack-blocks' ) } initialOpen={ true }>
 					{ postsToShow && (
 						<Fragment>
 							<QueryControls
@@ -291,7 +291,7 @@ class Edit extends Component {
 											onChange={ tokens => setAttributes( { authors: tokens } ) }
 											fetchSuggestions={ fetchAuthorSuggestions }
 											fetchSavedInfo={ fetchSavedAuthors }
-											label={ __( 'Author' ) }
+											label={ __( 'Author', 'newspack-blocks' ) }
 										/>
 									</BaseControl>
 									<BaseControl>
@@ -300,7 +300,7 @@ class Edit extends Component {
 											onChange={ tokens => setAttributes( { categories: tokens } ) }
 											fetchSuggestions={ fetchCategorySuggestions }
 											fetchSavedInfo={ fetchSavedCategories }
-											label={ __( 'Category' ) }
+											label={ __( 'Category', 'newspack-blocks' ) }
 										/>
 									</BaseControl>
 									<BaseControl>
@@ -309,7 +309,7 @@ class Edit extends Component {
 											onChange={ tokens => setAttributes( { tags: tokens } ) }
 											fetchSuggestions={ fetchTagSuggestions }
 											fetchSavedInfo={ fetchSavedTags }
-											label={ __( 'Tag' ) }
+											label={ __( 'Tag', 'newspack-blocks' ) }
 										/>
 									</BaseControl>
 								</Fragment>
@@ -318,7 +318,7 @@ class Edit extends Component {
 					) }
 					{ postLayout === 'grid' && (
 						<RangeControl
-							label={ __( 'Columns' ) }
+							label={ __( 'Columns', 'newspack-blocks' ) }
 							value={ columns }
 							onChange={ value => setAttributes( { columns: value } ) }
 							min={ 2 }
@@ -329,10 +329,10 @@ class Edit extends Component {
 						/>
 					) }
 				</PanelBody>
-				<PanelBody title={ __( 'Featured Image Settings' ) }>
+				<PanelBody title={ __( 'Featured Image Settings', 'newspack-blocks' ) }>
 					<PanelRow>
 						<ToggleControl
-							label={ __( 'Show Featured Image' ) }
+							label={ __( 'Show Featured Image', 'newspack-blocks' ) }
 							checked={ showImage }
 							onChange={ () => setAttributes( { showImage: ! showImage } ) }
 						/>
@@ -341,7 +341,7 @@ class Edit extends Component {
 					{ showImage && (
 						<PanelRow>
 							<ToggleControl
-								label={ __( 'Show Featured Image Caption' ) }
+								label={ __( 'Show Featured Image Caption', 'newspack-blocks' ) }
 								checked={ showCaption }
 								onChange={ () => setAttributes( { showCaption: ! showCaption } ) }
 							/>
@@ -351,7 +351,7 @@ class Edit extends Component {
 					{ showImage && mediaPosition !== 'top' && mediaPosition !== 'behind' && (
 						<RangeControl
 							className="image-scale-slider"
-							label={ __( 'Featured Image Scale' ) }
+							label={ __( 'Featured Image Scale', 'newspack-blocks' ) }
 							value={ imageScale }
 							onChange={ value => setAttributes( { imageScale: value } ) }
 							min={ 1 }
@@ -362,17 +362,17 @@ class Edit extends Component {
 						/>
 					) }
 				</PanelBody>
-				<PanelBody title={ __( 'Article Control Settings' ) }>
+				<PanelBody title={ __( 'Article Control Settings', 'newspack-blocks' ) }>
 					<PanelRow>
 						<ToggleControl
-							label={ __( 'Show Excerpt' ) }
+							label={ __( 'Show Excerpt', 'newspack-blocks' ) }
 							checked={ showExcerpt }
 							onChange={ () => setAttributes( { showExcerpt: ! showExcerpt } ) }
 						/>
 					</PanelRow>
 					<RangeControl
 						className="type-scale-slider"
-						label={ __( 'Type Scale' ) }
+						label={ __( 'Type Scale', 'newspack-blocks' ) }
 						value={ typeScale }
 						onChange={ value => setAttributes( { typeScale: value } ) }
 						min={ 1 }
@@ -383,34 +383,34 @@ class Edit extends Component {
 					/>
 				</PanelBody>
 				<PanelColorSettings
-					title={ __( 'Color Settings' ) }
+					title={ __( 'Color Settings', 'newspack-blocks' ) }
 					initialOpen={ true }
 					colorSettings={ [
 						{
 							value: textColor.color,
 							onChange: setTextColor,
-							label: __( 'Text Color' ),
+							label: __( 'Text Color', 'newspack-blocks' ),
 						},
 					] }
 				/>
-				<PanelBody title={ __( 'Article Meta Settings' ) }>
+				<PanelBody title={ __( 'Article Meta Settings', 'newspack-blocks' ) }>
 					<PanelRow>
 						<ToggleControl
-							label={ __( 'Show Date' ) }
+							label={ __( 'Show Date', 'newspack-blocks' ) }
 							checked={ showDate }
 							onChange={ () => setAttributes( { showDate: ! showDate } ) }
 						/>
 					</PanelRow>
 					<PanelRow>
 						<ToggleControl
-							label={ __( 'Show Category' ) }
+							label={ __( 'Show Category', 'newspack-blocks' ) }
 							checked={ showCategory }
 							onChange={ () => setAttributes( { showCategory: ! showCategory } ) }
 						/>
 					</PanelRow>
 					<PanelRow>
 						<ToggleControl
-							label={ __( 'Show Author' ) }
+							label={ __( 'Show Author', 'newspack-blocks' ) }
 							checked={ showAuthor }
 							onChange={ () => setAttributes( { showAuthor: ! showAuthor } ) }
 						/>
@@ -418,7 +418,7 @@ class Edit extends Component {
 					{ showAuthor && (
 						<PanelRow>
 							<ToggleControl
-								label={ __( 'Show Author Avatar' ) }
+								label={ __( 'Show Author Avatar', 'newspack-blocks' ) }
 								checked={ showAvatar }
 								onChange={ () => setAttributes( { showAvatar: ! showAvatar } ) }
 							/>
@@ -475,13 +475,13 @@ class Edit extends Component {
 		const blockControls = [
 			{
 				icon: 'list-view',
-				title: __( 'List View' ),
+				title: __( 'List View', 'newspack-blocks' ),
 				onClick: () => setAttributes( { postLayout: 'list' } ),
 				isActive: postLayout === 'list',
 			},
 			{
 				icon: 'grid-view',
-				title: __( 'Grid View' ),
+				title: __( 'Grid View', 'newspack-blocks' ),
 				onClick: () => setAttributes( { postLayout: 'grid' } ),
 				isActive: postLayout === 'grid',
 			},
@@ -490,25 +490,25 @@ class Edit extends Component {
 		const blockControlsImages = [
 			{
 				icon: 'align-none',
-				title: __( 'Show media on top' ),
+				title: __( 'Show media on top', 'newspack-blocks' ),
 				isActive: mediaPosition === 'top',
 				onClick: () => setAttributes( { mediaPosition: 'top' } ),
 			},
 			{
 				icon: 'align-pull-left',
-				title: __( 'Show media on left' ),
+				title: __( 'Show media on left', 'newspack-blocks' ),
 				isActive: mediaPosition === 'left',
 				onClick: () => setAttributes( { mediaPosition: 'left' } ),
 			},
 			{
 				icon: 'align-pull-right',
-				title: __( 'Show media on right' ),
+				title: __( 'Show media on right', 'newspack-blocks' ),
 				isActive: mediaPosition === 'right',
 				onClick: () => setAttributes( { mediaPosition: 'right' } ),
 			},
 			{
 				icon: 'format-image',
-				title: __( 'Show media behind' ),
+				title: __( 'Show media behind', 'newspack-blocks' ),
 				isActive: mediaPosition === 'behind',
 				onClick: () => setAttributes( { mediaPosition: 'behind' } ),
 			},
@@ -517,19 +517,19 @@ class Edit extends Component {
 		const blockControlsImageShape = [
 			{
 				icon: landscapeIcon,
-				title: __( 'Landscape Image Shape' ),
+				title: __( 'Landscape Image Shape', 'newspack-blocks' ),
 				isActive: imageShape === 'landscape',
 				onClick: () => setAttributes( { imageShape: 'landscape' } ),
 			},
 			{
 				icon: portraitIcon,
-				title: __( 'portrait Image Shape' ),
+				title: __( 'portrait Image Shape', 'newspack-blocks' ),
 				isActive: imageShape === 'portrait',
 				onClick: () => setAttributes( { imageShape: 'portrait' } ),
 			},
 			{
 				icon: squareIcon,
-				title: __( 'Square Image Shape' ),
+				title: __( 'Square Image Shape', 'newspack-blocks' ),
 				isActive: imageShape === 'square',
 				onClick: () => setAttributes( { imageShape: 'square' } ),
 			},
@@ -546,14 +546,14 @@ class Edit extends Component {
 					{ latestPosts && ( ! RichText.isEmpty( sectionHeader ) || isSelected ) && (
 						<RichText
 							onChange={ value => setAttributes( { sectionHeader: value } ) }
-							placeholder={ __( 'Write header…' ) }
+							placeholder={ __( 'Write header…', 'newspack-blocks' ) }
 							value={ sectionHeader }
 							tagName="h2"
 							className="article-section-title"
 						/>
 					) }
 					{ latestPosts && ! latestPosts.length && (
-						<Placeholder>{ __( 'Sorry, no posts were found.' ) }</Placeholder>
+						<Placeholder>{ __( 'Sorry, no posts were found.', 'newspack-blocks' ) }</Placeholder>
 					) }
 					{ ! latestPosts && (
 						<Placeholder>
