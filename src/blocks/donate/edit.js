@@ -86,9 +86,9 @@ class Edit extends Component {
 		const { currencySymbol, selectedFrequency, customDonationAmounts, error } = this.state;
 
 		const frequencies = {
-			once: __( 'Once', 'newspack-blocks' ),
-			month: __( 'Month', 'newspack-blocks' ),
-			year: __( 'Year', 'newspack-blocks' ),
+			once: __( 'One-time', 'newspack-blocks' ),
+			month: __( 'Monthly', 'newspack-blocks' ),
+			year: __( 'Annually', 'newspack-blocks' ),
 		};
 
 		return (
@@ -131,7 +131,7 @@ class Edit extends Component {
 						) ) }
 					</div>
 					<p className="wp-block-newspack-blocks-donate__thanks">
-						{ __( 'Your contribution is appreciated', 'newspack-blocks' ) }
+						{ __( 'Your contribution is appreciated.', 'newspack-blocks' ) }
 					</p>
 					<button type="submit" onClick={ evt => evt.preventDefault() }>
 						{ __( 'Donate now!', 'newspack-blocks' ) }
@@ -152,9 +152,9 @@ class Edit extends Component {
 		} = this.state;
 
 		const frequencies = {
-			once: __( 'Once', 'newspack-blocks' ),
-			month: __( 'Month', 'newspack-blocks' ),
-			year: __( 'Year', 'newspack-blocks' ),
+			once: __( 'One-time', 'newspack-blocks' ),
+			month: __( 'Monthly', 'newspack-blocks' ),
+			year: __( 'Annually', 'newspack-blocks' ),
 		};
 
 		return (
@@ -235,7 +235,7 @@ class Edit extends Component {
 						</div>
 					</div>
 					<p className="wp-block-newspack-blocks-donate__thanks">
-						{ __( 'Your contribution is appreciated', 'newspack-blocks' ) }
+						{ __( 'Your contribution is appreciated.', 'newspack-blocks' ) }
 					</p>
 					<button type="submit" onClick={ evt => evt.preventDefault() }>
 						{ __( 'Donate now!', 'newspack-blocks' ) }

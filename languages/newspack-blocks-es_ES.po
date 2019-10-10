@@ -1,0 +1,85 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Newspack Blocks 1.0.0-alpha.8\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/newspack-blocks\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2019-10-10T20:09:37+00:00\n"
+"PO-Revision-Date: 2019-10-10 13:10-0700\n"
+"Language: es\n"
+"X-Generator: Poedit 2.2.4\n"
+"X-Domain: newspack-blocks\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. Plugin Name of the plugin
+msgid "Newspack Blocks"
+msgstr "X"
+
+#. Plugin URI of the plugin
+msgid "PLUGIN SITE HERE"
+msgstr "X"
+
+#. Description of the plugin
+msgid "PLUGIN DESCRIPTION HERE"
+msgstr "X"
+
+#. Author of the plugin
+msgid "YOUR NAME HERE"
+msgstr "X"
+
+#. Author URI of the plugin
+msgid "YOUR SITE HERE"
+msgstr ""
+
+#: src/blocks/donate/view.php:28
+#: src/blocks/donate/edit.js:89
+#: src/blocks/donate/edit.js:155
+msgid "One-time"
+msgstr "Una vez"
+
+#: src/blocks/donate/view.php:29
+#: src/blocks/donate/edit.js:90
+#: src/blocks/donate/edit.js:156
+msgid "Monthly"
+msgstr "Mensual"
+
+#: src/blocks/donate/view.php:30
+#: src/blocks/donate/edit.js:91
+#: src/blocks/donate/edit.js:157
+msgid "Annually"
+msgstr "Anual"
+
+#: src/blocks/donate/view.php:73
+#: src/blocks/donate/view.php:164
+#: src/blocks/donate/edit.js:118
+#: src/blocks/donate/edit.js:220
+msgid "Donation amount"
+msgstr "Monto de la donación"
+
+#: src/blocks/donate/view.php:91
+#: src/blocks/donate/view.php:185
+#: src/blocks/donate/edit.js:134
+#: src/blocks/donate/edit.js:238
+msgid "Your contribution is appreciated."
+msgstr "Apreciamos tu contribución."
+
+#: src/blocks/donate/view.php:94
+#: src/blocks/donate/view.php:188
+#: src/blocks/donate/edit.js:137
+#: src/blocks/donate/edit.js:241
+msgid "Donate now!"
+msgstr "¡Dona ahora!"
+
+#: src/blocks/donate/view.php:158
+#: src/blocks/donate/edit.js:214
+msgid "Other"
+msgstr "Otro"
+
+#. translators: %s: post author.
+#: src/blocks/homepage-articles/view.php:199
+msgctxt "post author"
+msgid "by %s"
+msgstr "por %s"
