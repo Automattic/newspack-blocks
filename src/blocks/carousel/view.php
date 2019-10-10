@@ -13,22 +13,39 @@
  * @return string Returns the post content with latest posts added.
  */
 function newspack_blocks_render_block_carousel( $attributes ) {
-	if ( ! Newspack_Blocks::is_amp() ) {
-		wp_enqueue_script(
-			'amp-carousel',
-			'https://cdn.ampproject.org/v0/amp-carousel-0.1.js',
+	if ( ! wp_script_is( 'amp-runtime', 'registered' ) ) {
+		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+		wp_register_script(
+			'amp-runtime',
+			'https://cdn.ampproject.org/v0.js',
 			null,
-			NEWSPACK_BLOCKS__VERSION,
-			true
-		);
-		wp_enqueue_script(
-			'amp-selector',
-			'https://cdn.ampproject.org/v0/amp-selector-0.1.js',
 			null,
-			NEWSPACK_BLOCKS__VERSION,
 			true
 		);
 	}
+	if ( ! wp_script_is( 'amp-carousel', 'registered' ) ) {
+		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+		wp_register_script(
+			'amp-carousel',
+			'https://cdn.ampproject.org/v0/amp-carousel-latest.js',
+			array( 'amp-runtime' ),
+			null,
+			true
+		);
+	}
+	if ( ! wp_script_is( 'amp-selector', 'registered' ) ) {
+		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+		wp_register_script(
+			'amp-selector',
+			'https://cdn.ampproject.org/v0/amp-selector-latest.js',
+			array( 'amp-runtime' ),
+			null,
+			true
+		);
+	}
+
+	wp_enqueue_script( 'amp-carousel' );
+	wp_enqueue_script( 'amp-selector' );
 	static $newspack_blocks_carousel_id = 0;
 	$newspack_blocks_carousel_id++;
 	$autoplay      = isset( $attributes['autoplay'] ) ? $attributes['autoplay'] : false;
