@@ -288,4 +288,4 @@ add_action( 'wp_enqueue_scripts', array( 'Newspack_Blocks', 'enqueue_block_style
 function newspack_blocks_plugin_textdomain() {
 	load_plugin_textdomain( 'newspack-blocks', false, NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'languages/' );
 }
-add_action( 'plugins_loaded', 'plugin_textdomain' );
+add_action( 'plugins_loaded', 'newspack_blocks_plugin_textdomain' );
