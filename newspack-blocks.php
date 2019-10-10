@@ -18,6 +18,7 @@ define( 'NEWSPACK_BLOCKS__VERSION', '1.0.0-alpha.8' );
 /**
  * Newspack blocks functionality
  */
+
 class Newspack_Blocks {
 	/**
 	 * Enqueue block scripts and styles for editor.
@@ -33,6 +34,7 @@ class Newspack_Blocks {
 			NEWSPACK_BLOCKS__VERSION,
 			true
 		);
+		wp_set_script_translations( 'newspack-blocks-editor', 'newspack-blocks', NEWSPACK_BLOCKS__PLUGIN_DIR . 'languages/' );
 		wp_enqueue_style(
 			'newspack-blocks-editor',
 			$editor_style,
@@ -124,6 +126,7 @@ class Newspack_Blocks {
 				array(),
 				NEWSPACK_BLOCKS__VERSION
 			);
+			wp_set_script_translations( "newspack-blocks-{$type}", 'newspack-blocks', NEWSPACK_BLOCKS__PLUGIN_DIR . 'languages/' );
 		}
 	}
 
@@ -276,3 +279,13 @@ require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'class-newspack-blocks-api.php';
 Newspack_Blocks::manage_view_scripts();
 add_action( 'enqueue_block_editor_assets', array( 'Newspack_Blocks', 'enqueue_block_editor_assets' ) );
 add_action( 'wp_enqueue_scripts', array( 'Newspack_Blocks', 'enqueue_block_styles_assets' ) );
+
+/**
+ * Load language files
+ *
+ * @action plugins_loaded
+ */
+function newspack_blocks_plugin_textdomain() {
+	load_plugin_textdomain( 'newspack-blocks', false, NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'languages/' );
+}
+add_action( 'plugins_loaded', 'plugin_textdomain' );
