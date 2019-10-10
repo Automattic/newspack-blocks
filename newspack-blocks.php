@@ -286,6 +286,6 @@ add_action( 'wp_enqueue_scripts', array( 'Newspack_Blocks', 'enqueue_block_style
  * @action plugins_loaded
  */
 function newspack_blocks_plugin_textdomain() {
-	load_plugin_textdomain( 'newspack-blocks', false, NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'languages/' );
+	load_plugin_textdomain( 'newspack-blocks', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }
 add_action( 'plugins_loaded', 'newspack_blocks_plugin_textdomain' );
