@@ -217,7 +217,7 @@ function newspack_blocks_register_carousel() {
 				),
 				'delay'       => array(
 					'type'    => 'integer',
-					'default' => 4,
+					'default' => 5,
 				),
 				'tags'        => array(
 					'type' => 'string',
