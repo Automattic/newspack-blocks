@@ -45,7 +45,7 @@ class Newspack_Blocks {
 	 * Make sure we look in the enqueued JavaScript for strings needing translation.
 	 */
 	public static function set_script_translations() {
-		wp_set_script_translations( 'newspack-blocks-editor' );
+		wp_set_script_translations( 'newspack-blocks-editor', 'newspack-blocks' );
 	}
 
 	/**
