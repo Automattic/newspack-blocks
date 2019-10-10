@@ -16,7 +16,7 @@ import './editor.scss';
 import './view.scss';
 
 export const name = 'homepage-articles';
-export const title = __( 'Newspack Homepage Articles' );
+export const title = __( 'Newspack Homepage Articles', 'newspack-blocks' );
 
 /* From https://material.io/tools/icons */
 export const icon = (
@@ -30,11 +30,15 @@ export const settings = {
 	title,
 	icon,
 	category: 'newspack',
-	keywords: [ __( 'posts' ), __( 'articles' ), __( 'latest' ) ],
-	description: __( 'A block for displaying homepage articles.' ),
+	keywords: [
+		__( 'posts', 'newspack-blocks' ),
+		__( 'articles', 'newspack-blocks' ),
+		__( 'latest', 'newspack-blocks' ),
+	],
+	description: __( 'A block for displaying homepage articles.', 'newspack-blocks' ),
 	styles: [
-		{ name: 'default', label: _x( 'Default', 'block style' ), isDefault: true },
-		{ name: 'borders', label: _x( 'Borders', 'block style' ) },
+		{ name: 'default', label: _x( 'Default', 'block style', 'newspack-blocks' ), isDefault: true },
+		{ name: 'borders', label: _x( 'Borders', 'block style', 'newspack-blocks' ) },
 	],
 	attributes: {
 		className: {

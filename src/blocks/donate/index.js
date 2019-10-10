@@ -18,7 +18,7 @@ import './editor.scss';
 import './view.scss';
 
 export const name = 'donate';
-export const title = __( 'Donate' );
+export const title = __( 'Donate', 'newspack-blocks' );
 
 /* From https://material.io/tools/icons */
 export const icon = (
@@ -32,12 +32,16 @@ export const settings = {
 	title,
 	icon,
 	category: 'newspack',
-	keywords: [ __( 'donate' ), __( 'memberships' ), __( 'subscriptions' ) ],
-	description: __( 'Enable donations.' ),
+	keywords: [
+		__( 'donate', 'newspack-blocks' ),
+		__( 'memberships', 'newspack-blocks' ),
+		__( 'subscriptions', 'newspack-blocks' ),
+	],
+	description: __( 'Enable donations.', 'newspack-blocks' ),
 	attributes: {
 		className: {
 			type: 'string',
-		}
+		},
 	},
 	supports: {
 		html: false,

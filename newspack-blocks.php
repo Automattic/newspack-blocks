@@ -42,6 +42,13 @@ class Newspack_Blocks {
 	}
 
 	/**
+	 * Make sure we look in the enqueued JavaScript for strings needing translation.
+	 */
+	public static function set_script_translations() {
+		wp_set_script_translations( 'newspack-blocks-editor' );
+	}
+
+	/**
 	 * Enqueue block scripts and styles for view.
 	 */
 	public static function manage_view_scripts() {
@@ -276,3 +283,4 @@ require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'class-newspack-blocks-api.php';
 Newspack_Blocks::manage_view_scripts();
 add_action( 'enqueue_block_editor_assets', array( 'Newspack_Blocks', 'enqueue_block_editor_assets' ) );
 add_action( 'wp_enqueue_scripts', array( 'Newspack_Blocks', 'enqueue_block_styles_assets' ) );
+add_action( 'init', 'set_script_translations' );
