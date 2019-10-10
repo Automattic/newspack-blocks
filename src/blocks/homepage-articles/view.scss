@@ -280,14 +280,20 @@
 		.entry-meta {
 			font-size: 0.8em;
 		}
+
 		.avatar {
-			height: 1.8em;
-			width: 1.8em;
+			height: 25px;
+			width: 25px;
 		}
 
 		@include media(tablet) {
 			.entry-title {
 				font-size: 1.6em;
+			}
+
+			.avatar {
+				height: 40px;
+				width: 40px;
 			}
 		}
 	}
@@ -417,9 +423,6 @@
 	&.type-scale3 article {
 		.entry-title {
 			font-size: 1.0em;
-			@include media( tablet ) {
-				font-size: 1.2em
-			}
 		}
 		.entry-wrapper p {
 			font-size: 0.8em;
@@ -427,26 +430,36 @@
 		.entry-meta {
 			font-size: 0.7em;
 		}
-		.avatar {
-			height: 32px;
-			width: 32px;
+		@include media( tablet ) {
+			.entry-title {
+				font-size: 1.2em
+			}
+
+			.avatar {
+				height: 32px;
+				width: 32px;
+			}
 		}
 	}
 
 	&.type-scale2 article {
 		.entry-title {
 			font-size: 0.8em;
-			@include media( tablet ) {
-				font-size: 0.9em
-			}
 		}
 		.entry-wrapper p,
 		.entry-meta {
 			font-size: 0.7em;
 		}
-		.avatar {
-			height: 28px;
-			width: 28px;
+
+		@include media( tablet ) {
+			.entry-title {
+				font-size: 0.9em;
+			}
+
+			.avatar {
+				height: 28px;
+				width: 28px;
+			}
 		}
 	}
 
@@ -458,9 +471,11 @@
 		.entry-meta {
 			font-size: 0.6em;
 		}
-		.avatar {
-			height: 24px;
-			width: 24px;
+		@include media( tablet ) {
+			.avatar {
+				height: 24px;
+				width: 24px;
+			}
 		}
 	}
 }
