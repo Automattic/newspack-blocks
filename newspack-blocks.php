@@ -34,12 +34,18 @@ class Newspack_Blocks {
 			NEWSPACK_BLOCKS__VERSION,
 			true
 		);
-		wp_set_script_translations( 'newspack-blocks-editor', 'newspack-blocks', NEWSPACK_BLOCKS__PLUGIN_DIR . 'languages/' );
+
 		wp_enqueue_style(
 			'newspack-blocks-editor',
 			$editor_style,
 			array(),
 			NEWSPACK_BLOCKS__VERSION
+		);
+
+		wp_set_script_translations(
+			'newspack-blocks-editor',
+			'newspack-blocks',
+			plugin_dir_path( __FILE__ ) . 'languages'
 		);
 	}
 
@@ -126,7 +132,6 @@ class Newspack_Blocks {
 				array(),
 				NEWSPACK_BLOCKS__VERSION
 			);
-			wp_set_script_translations( "newspack-blocks-{$type}", 'newspack-blocks', NEWSPACK_BLOCKS__PLUGIN_DIR . 'languages/' );
 		}
 	}
 
