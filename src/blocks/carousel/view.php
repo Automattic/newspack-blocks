@@ -142,11 +142,11 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 
 							if ( $attributes['showCategory'] && $category ) :
 								?>
-								<div>
+								<span class="cat-links">
 									<a href="<?php echo esc_url( get_category_link( $category->term_id ) ); ?>">
 										<?php echo esc_html( $category->name ); ?>
 									</a>
-								</div>
+								</span>
 								<?php
 							endif;
 							?>

@@ -154,9 +154,9 @@ class Edit extends Component {
 													</span>
 												) }
 												{ showCategory && post.newspack_category_info.length && (
-													<div>
+													<span class="cat-links">
 														<a href="#">{ post.newspack_category_info }</a>
-													</div>
+													</span>
 												) }
 												{ showDate && (
 													<time className="entry-date published" key="pub-date">
