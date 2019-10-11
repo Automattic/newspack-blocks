@@ -63,6 +63,8 @@
 
 			a {
 				color: inherit;
+				font-weight: bold;
+				text-decoration: none;
 
 				&:active,
 				&:focus,
@@ -182,7 +184,8 @@
 		align-items: center;
 		margin-top: 0.5em;
 
-		.byline:not( :last-child ) {
+		.byline:not( :last-child ),
+		.byline + div:not( :last-child ) {
 			margin-right: 1.5em;
 		}
 	}
