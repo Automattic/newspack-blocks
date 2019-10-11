@@ -138,6 +138,11 @@ class Edit extends Component {
 														</a>
 													</span>
 												</span>
+												{ post.newspack_category_info.length && (
+													<div>
+														<a href="#">{ post.newspack_category_info }</a>
+													</div>
+												) }
 												<time className="entry-date published" key="pub-date">
 													{ moment( post.date_gmt )
 														.local()

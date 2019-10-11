@@ -117,6 +117,35 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 								?>
 							</span><!-- .author-name -->
 							<?php
+							$category = false;
+
+							// Use Yoast primary category if set.
+							if ( class_exists( 'WPSEO_Primary_Term' ) ) {
+								$primary_term = new WPSEO_Primary_Term( 'category', get_the_ID() );
+								$category_id  = $primary_term->get_primary_term();
+								if ( $category_id ) {
+									$category = get_term( $category_id );
+								}
+							}
+
+							if ( ! $category ) {
+								$categories_list = get_the_category();
+								if ( ! empty( $categories_list ) ) {
+									$category = $categories_list[0];
+								}
+							}
+
+							if ( $category ) :
+								?>
+								<div>
+									<a href="<?php echo esc_url( get_category_link( $category->term_id ) ); ?>">
+										<?php echo esc_html( $category->name ); ?>
+									</a>
+								</div>
+								<?php
+							endif;
+							?>
+							<?php
 							$time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
 							if ( get_the_time( 'U' ) !== get_the_modified_time( 'U' ) ) {
 								$time_string = '<time class="entry-date published" datetime="%1$s">%2$s</time><time class="updated" datetime="%3$s">%4$s</time>';
