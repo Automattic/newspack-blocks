@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { Path, SVG } from '@wordpress/components';
+import { createBlock } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -139,4 +140,37 @@ export const settings = {
 	},
 	edit,
 	save: () => null, // to use view.php
+	transforms: {
+		from: [
+			{
+				type: 'block',
+				blocks: [ 'core/latest-posts' ],
+				transform: ( { displayPostContent, displayPostDate, postLayout, columns, postsToShow } ) => {
+					return createBlock( 'newspack-blocks/homepage-articles', {
+						showExcerpt: displayPostContent,
+						showDate: displayPostDate,
+						postLayout,
+						columns,
+						postsToShow,
+						showAuthor: false,
+					} );
+				},
+			},
+		],
+		to: [
+			{
+				type: 'block',
+				blocks: [ 'core/latest-posts' ],
+				transform: ( { showExcerpt, showDate, postLayout, columns, postsToShow } ) => {
+					return createBlock( 'core/latest-posts', {
+						displayPostContent: showExcerpt,
+						displayPostDate: showDate,
+						postLayout,
+						columns,
+						postsToShow,
+					} );
+				},
+			},
+		],
+	},
 };
