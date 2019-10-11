@@ -15,6 +15,15 @@
 			font-size: 1.2em;
 
 			a {
+				/* autoprefixer: off */
+				-webkit-box-orient: vertical;
+				/* autoprefixer: on */
+				display: -webkit-box;
+				-webkit-line-clamp: 3;
+				max-height: 3.5625em;
+				overflow: hidden;
+				text-overflow: ellipsis;
+
 				&:active,
 				&:focus,
 				&:hover {
