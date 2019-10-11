@@ -145,7 +145,7 @@ export const settings = {
 			{
 				type: 'block',
 				blocks: [ 'core/latest-posts' ],
-				transform: ( { displayPostContent, displayPostDate, postLayout, columns, postsToShow } ) => {
+				transform: ( { displayPostContent, displayPostDate, postLayout, columns, postsToShow, categories } ) => {
 					return createBlock( 'newspack-blocks/homepage-articles', {
 						showExcerpt: displayPostContent,
 						showDate: displayPostDate,
@@ -153,6 +153,7 @@ export const settings = {
 						columns,
 						postsToShow,
 						showAuthor: false,
+						categories: categories ? [ categories ] : [],
 					} );
 				},
 			},
@@ -161,13 +162,14 @@ export const settings = {
 			{
 				type: 'block',
 				blocks: [ 'core/latest-posts' ],
-				transform: ( { showExcerpt, showDate, postLayout, columns, postsToShow } ) => {
+				transform: ( { showExcerpt, showDate, postLayout, columns, postsToShow, categories } ) => {
 					return createBlock( 'core/latest-posts', {
 						displayPostContent: showExcerpt,
 						displayPostDate: showDate,
 						postLayout,
 						columns,
 						postsToShow,
+						categories: categories[0] || '',
 					} );
 				},
 			},
