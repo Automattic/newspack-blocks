@@ -20,6 +20,7 @@ import { Component, createRef, Fragment, RawHTML } from '@wordpress/element';
 import { InspectorControls } from '@wordpress/editor';
 import {
 	PanelBody,
+	PanelRow,
 	Placeholder,
 	RangeControl,
 	Spinner,
@@ -55,12 +56,13 @@ class Edit extends Component {
 		this.swiperInstance = createSwiper(
 			this.carouselRef.current,
 			{
-				autoplay: autoplay && autoPlayState
-					? {
-							delay: delay * 1000,
-							disableOnInteraction: false,
-					  }
-					: false,
+				autoplay:
+					autoplay && autoPlayState
+						? {
+								delay: delay * 1000,
+								disableOnInteraction: false,
+						  }
+						: false,
 				effect: 'slide',
 				initialSlide: realIndex,
 				loop: true,
@@ -90,7 +92,18 @@ class Edit extends Component {
 			tagsList,
 		} = this.props;
 		const { autoPlayState } = this.state;
-		const { author, autoplay, categories, delay, postsToShow, tags } = attributes;
+		const {
+			author,
+			autoplay,
+			categories,
+			delay,
+			postsToShow,
+			showCategory,
+			showDate,
+			showAuthor,
+			showAvatar,
+			tags,
+		} = attributes;
 		const classes = classnames(
 			className,
 			'swiper-container',
@@ -124,30 +137,34 @@ class Edit extends Component {
 												<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
 											</h3>
 											<div className="entry-meta">
-												{ post.newspack_author_info.avatar && (
+												{ showAuthor && showAvatar && post.newspack_author_info.avatar && (
 													<span className="avatar author-avatar" key="author-avatar">
 														<RawHTML>{ post.newspack_author_info.avatar }</RawHTML>
 													</span>
 												) }
 
-												<span className="byline">
-													{ __( 'by' ) }{' '}
-													<span className="author vcard">
-														<a className="url fn n" href="#">
-															{ post.newspack_author_info.display_name }
-														</a>
+												{ showAuthor && (
+													<span className="byline">
+														{ __( 'by' ) }{' '}
+														<span className="author vcard">
+															<a className="url fn n" href="#">
+																{ post.newspack_author_info.display_name }
+															</a>
+														</span>
 													</span>
-												</span>
-												{ post.newspack_category_info.length && (
+												) }
+												{ showCategory && post.newspack_category_info.length && (
 													<div>
 														<a href="#">{ post.newspack_category_info }</a>
 													</div>
 												) }
-												<time className="entry-date published" key="pub-date">
-													{ moment( post.date_gmt )
-														.local()
-														.format( 'MMMM DD, Y' ) }
-												</time>
+												{ showDate && (
+													<time className="entry-date published" key="pub-date">
+														{ moment( post.date_gmt )
+															.local()
+															.format( 'MMMM DD, Y' ) }
+													</time>
+												) }
 											</div>
 										</div>
 									</article>
@@ -236,6 +253,38 @@ class Edit extends Component {
 								min={ 1 }
 								max={ 20 }
 							/>
+						) }
+					</PanelBody>
+					<PanelBody title={ __( 'Article Meta Settings', 'newspack-blocks' ) }>
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Show Date', 'newspack-blocks' ) }
+								checked={ showDate }
+								onChange={ () => setAttributes( { showDate: ! showDate } ) }
+							/>
+						</PanelRow>
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Show Category', 'newspack-blocks' ) }
+								checked={ showCategory }
+								onChange={ () => setAttributes( { showCategory: ! showCategory } ) }
+							/>
+						</PanelRow>
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Show Author', 'newspack-blocks' ) }
+								checked={ showAuthor }
+								onChange={ () => setAttributes( { showAuthor: ! showAuthor } ) }
+							/>
+						</PanelRow>
+						{ showAuthor && (
+							<PanelRow>
+								<ToggleControl
+									label={ __( 'Show Author Avatar', 'newspack-blocks' ) }
+									checked={ showAvatar }
+									onChange={ () => setAttributes( { showAvatar: ! showAvatar } ) }
+								/>
+							</PanelRow>
 						) }
 					</PanelBody>
 				</InspectorControls>

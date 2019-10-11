@@ -57,6 +57,22 @@ export const settings = {
 		tags: {
 			type: 'string',
 		},
+		showDate: {
+			type: 'boolean',
+			default: true,
+		},
+		showAuthor: {
+			type: 'boolean',
+			default: true,
+		},
+		showAvatar: {
+			type: 'boolean',
+			default: true,
+		},
+		showCategory: {
+			type: 'boolean',
+			default: false,
+		},
 	},
 	supports: {
 		html: false,

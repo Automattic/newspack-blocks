@@ -105,8 +105,12 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 					?>
 
 					<div class="entry-meta">
-
-							<?php echo get_avatar( get_the_author_meta( 'ID' ) ); ?>
+						<?php if ( $attributes['showAuthor'] ) : ?>
+							<?php
+							if ( $attributes['showAvatar'] ) {
+								echo get_avatar( get_the_author_meta( 'ID' ) );
+							}
+							?>
 							<span class="byline">
 								<?php
 								printf(
@@ -116,6 +120,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 								);
 								?>
 							</span><!-- .author-name -->
+						<?php endif; ?>
 							<?php
 							$category = false;
 
@@ -135,7 +140,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 								}
 							}
 
-							if ( $category ) :
+							if ( $attributes['showCategory'] && $category ) :
 								?>
 								<div>
 									<a href="<?php echo esc_url( get_category_link( $category->term_id ) ); ?>">
@@ -146,18 +151,20 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 							endif;
 							?>
 							<?php
-							$time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
-							if ( get_the_time( 'U' ) !== get_the_modified_time( 'U' ) ) {
-								$time_string = '<time class="entry-date published" datetime="%1$s">%2$s</time><time class="updated" datetime="%3$s">%4$s</time>';
+							if ( $attributes['showDate'] ) {
+								$time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
+								if ( get_the_time( 'U' ) !== get_the_modified_time( 'U' ) ) {
+									$time_string = '<time class="entry-date published" datetime="%1$s">%2$s</time><time class="updated" datetime="%3$s">%4$s</time>';
+								}
+								$time_string = sprintf(
+									$time_string,
+									esc_attr( get_the_date( DATE_W3C ) ),
+									esc_html( get_the_date() ),
+									esc_attr( get_the_modified_date( DATE_W3C ) ),
+									esc_html( get_the_modified_date() )
+								);
+								echo $time_string; // WPCS: XSS OK.
 							}
-							$time_string = sprintf(
-								$time_string,
-								esc_attr( get_the_date( DATE_W3C ) ),
-								esc_html( get_the_date() ),
-								esc_attr( get_the_modified_date( DATE_W3C ) ),
-								esc_html( get_the_modified_date() )
-							);
-							echo $time_string; // WPCS: XSS OK.
 							?>
 					</div><!-- .entry-meta -->
 				</div><!-- .entry-wrapper -->
@@ -244,29 +251,45 @@ function newspack_blocks_register_carousel() {
 		'newspack-blocks/carousel',
 		array(
 			'attributes'      => array(
-				'className'   => array(
+				'className'    => array(
 					'type' => 'string',
 				),
-				'postsToShow' => array(
+				'postsToShow'  => array(
 					'type'    => 'integer',
 					'default' => 3,
 				),
-				'author'      => array(
+				'author'       => array(
 					'type' => 'string',
 				),
-				'autoplay'    => array(
+				'autoplay'     => array(
 					'type'    => 'boolean',
 					'default' => false,
 				),
-				'categories'  => array(
+				'categories'   => array(
 					'type' => 'string',
 				),
-				'delay'       => array(
+				'delay'        => array(
 					'type'    => 'integer',
 					'default' => 5,
 				),
-				'tags'        => array(
+				'tags'         => array(
 					'type' => 'string',
+				),
+				'showAuthor'   => array(
+					'type'    => 'boolean',
+					'default' => true,
+				),
+				'showAvatar'   => array(
+					'type'    => 'boolean',
+					'default' => true,
+				),
+				'showCategory' => array(
+					'type'    => 'boolean',
+					'default' => false,
+				),
+				'showDate'     => array(
+					'type'    => 'boolean',
+					'default' => true,
 				),
 			),
 			'render_callback' => 'newspack_blocks_render_block_carousel',
