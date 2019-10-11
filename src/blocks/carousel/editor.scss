@@ -2,6 +2,15 @@
 	.entry-title {
 		color: white;
 	}
+	a {
+		color: inherit;
+
+		&:active,
+		&:focus,
+		&:hover {
+			color: rgba( 255, 255, 255, 0.75 );
+		}
+	}
 	.post-thumbnail img {
 		display: block;
 	}
@@ -23,6 +32,7 @@
 		}
 	}
 }
-.editor-block-list__layout .editor-block-list__block .wp-block-newspack-blocks-carousel .entry-title a {
+.editor-block-list__layout .editor-block-list__block .wp-block-newspack-blocks-carousel .entry-title a,
+.editor-block-list__layout .editor-block-list__block .wp-block-newspack-blocks-carousel .entry-meta .byline a {
 	color: inherit;
 }

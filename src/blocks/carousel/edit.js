@@ -133,6 +133,11 @@ class Edit extends Component {
 											) }
 										</figure>
 										<div className="entry-wrapper">
+											{ showCategory && post.newspack_category_info.length && (
+												<div class="cat-links">
+													<a href="#">{ post.newspack_category_info }</a>
+												</div>
+											) }
 											<h3 className="entry-title">
 												<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
 											</h3>
@@ -142,7 +147,6 @@ class Edit extends Component {
 														<RawHTML>{ post.newspack_author_info.avatar }</RawHTML>
 													</span>
 												) }
-
 												{ showAuthor && (
 													<span className="byline">
 														{ __( 'by' ) }{' '}
@@ -151,11 +155,6 @@ class Edit extends Component {
 																{ post.newspack_author_info.display_name }
 															</a>
 														</span>
-													</span>
-												) }
-												{ showCategory && post.newspack_category_info.length && (
-													<span class="cat-links">
-														<a href="#">{ post.newspack_category_info }</a>
 													</span>
 												) }
 												{ showDate && (
