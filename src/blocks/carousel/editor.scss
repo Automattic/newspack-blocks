@@ -1,0 +1,16 @@
+.wp-block-newspack-blocks-carousel {
+	.entry-title {
+		color: white;
+	}
+	.swiper-pagination-bullet.swiper-pagination-bullet-active {
+		opacity: 1;
+		transform: scale( 1 );
+	}
+	.amp-carousel-button.amp-carousel-button-prev,
+	.amp-carousel-button.amp-carousel-button-next {
+		margin-top: -24px;
+	}
+}
+.editor-block-list__layout .editor-block-list__block .wp-block-newspack-blocks-carousel .entry-title a {
+	color: inherit;
+}

@@ -12,8 +12,8 @@ import edit from './edit';
 /**
  * Style dependencies - will load in editor
  */
-import './editor.scss';
 import './view.scss';
+import './editor.scss';
 
 export const name = 'carousel';
 export const title = __( 'Articles Carousel' );

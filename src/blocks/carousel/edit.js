@@ -2,6 +2,8 @@
  * Internal dependencies
  */
 import QueryControls from '../homepage-articles/query-controls';
+import createSwiper from './create-swiper';
+import classnames from 'classnames';
 
 /**
  * External dependencies
@@ -14,7 +16,7 @@ import moment from 'moment';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Component, Fragment, RawHTML } from '@wordpress/element';
+import { Component, createRef, Fragment, RawHTML } from '@wordpress/element';
 import { InspectorControls } from '@wordpress/editor';
 import {
 	PanelBody,
@@ -31,6 +33,50 @@ import { PanelColorSettings, withColors } from '@wordpress/block-editor';
 const { decodeEntities } = wp.htmlEntities;
 
 class Edit extends Component {
+	constructor( props ) {
+		super( props );
+		this.state = {
+			autoPlayState: true,
+		};
+		this.carouselRef = createRef();
+		this.btnNextRef = createRef();
+		this.btnPrevRef = createRef();
+		this.paginationRef = createRef();
+	}
+	componentDidUpdate( prevProps ) {
+		const { attributes, latestPosts } = this.props;
+		const { autoPlayState } = this.state;
+		const { autoplay, delay } = attributes;
+		const realIndex =
+			this.swiperInstance && latestPosts && this.swiperInstance.realIndex < latestPosts.length
+				? this.swiperInstance.realIndex
+				: 0;
+		this.swiperInstance && this.swiperInstance.destroy( true, true );
+		this.swiperInstance = createSwiper(
+			this.carouselRef.current,
+			{
+				autoplay: autoplay && autoPlayState
+					? {
+							delay: delay * 1000,
+							disableOnInteraction: false,
+					  }
+					: false,
+				effect: 'slide',
+				initialSlide: realIndex,
+				loop: true,
+				navigation: {
+					nextEl: this.btnNextRef.current,
+					prevEl: this.btnPrevRef.current,
+				},
+				pagination: {
+					clickable: true,
+					el: this.paginationRef.current,
+					type: 'bullets',
+				},
+			},
+			{}
+		);
+	}
 	render() {
 		const {
 			attributes,
@@ -42,11 +88,17 @@ class Edit extends Component {
 			authorList,
 			categoriesList,
 			tagsList,
-		} = this.props; // variables getting pulled out of props
+		} = this.props;
+		const { autoPlayState } = this.state;
 		const { author, autoplay, categories, delay, postsToShow, tags } = attributes;
+		const classes = classnames(
+			className,
+			'swiper-container',
+			autoplay && autoPlayState && 'wp-block-newspack-blocks-carousel__autoplay-playing'
+		);
 		return (
 			<Fragment>
-				<div className={ className }>
+				<div className={ classes } ref={ this.carouselRef }>
 					{ latestPosts && ! latestPosts.length && (
 						<Placeholder>{ __( 'Sorry, no posts were found.' ) }</Placeholder>
 					) }
@@ -56,7 +108,81 @@ class Edit extends Component {
 						</Placeholder>
 					) }
 					{ latestPosts && (
-						<Placeholder>{ __( 'Editor rendering of Carousel to come.' ) }</Placeholder>
+						<Fragment>
+							<div class="swiper-wrapper">
+								{ latestPosts.map( post => (
+									<article className="post-has-image swiper-slide" key={ post.id }>
+										<figure className="post-thumbnail">
+											{ post.newspack_featured_image_src && (
+												<a href="#" rel="bookmark">
+													<img src={ post.newspack_featured_image_src.landscape } />
+												</a>
+											) }
+										</figure>
+										<div className="entry-wrapper">
+											<h3 className="entry-title">
+												<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
+											</h3>
+											<div className="entry-meta">
+												{ post.newspack_author_info.avatar && (
+													<span className="avatar author-avatar" key="author-avatar">
+														<RawHTML>{ post.newspack_author_info.avatar }</RawHTML>
+													</span>
+												) }
+
+												<span className="byline">
+													{ __( 'by' ) }{' '}
+													<span className="author vcard">
+														<a className="url fn n" href="#">
+															{ post.newspack_author_info.display_name }
+														</a>
+													</span>
+												</span>
+												<time className="entry-date published" key="pub-date">
+													{ moment( post.date_gmt )
+														.local()
+														.format( 'MMMM DD, Y' ) }
+												</time>
+											</div>
+										</div>
+									</article>
+								) ) }
+							</div>
+							<a
+								className="amp-carousel-button amp-carousel-button-prev swiper-button-prev"
+								ref={ this.btnPrevRef }
+								role="button"
+							/>
+							<a
+								className="amp-carousel-button amp-carousel-button-next swiper-button-next"
+								ref={ this.btnNextRef }
+								role="button"
+							/>
+							{ autoplay && (
+								<Fragment>
+									<a
+										className="amp-carousel-button-pause amp-carousel-button"
+										role="button"
+										onClick={ () => {
+											this.swiperInstance.autoplay.stop();
+											this.setState( { autoPlayState: false } );
+										} }
+									/>
+									<a
+										className="amp-carousel-button-play amp-carousel-button"
+										role="button"
+										onClick={ () => {
+											this.swiperInstance.autoplay.start();
+											this.setState( { autoPlayState: true } );
+										} }
+									/>
+								</Fragment>
+							) }
+							<div
+								className="swiper-pagination-bullets amp-pagination"
+								ref={ this.paginationRef }
+							/>
+						</Fragment>
 					) }
 				</div>
 				<InspectorControls>
