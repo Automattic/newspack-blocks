@@ -83,7 +83,11 @@
 	}
 
 	&.image-aligntop .post-thumbnail {
-		margin-bottom: 1em;
+		margin-bottom: 0.25em;
+
+		figcaption {
+			margin-bottom: 0.5em;
+		}
 	}
 
 	&.image-alignleft,
@@ -194,6 +198,10 @@
 		border-radius: 100%;
 		display: block;
 		margin-right: 0.5em;
+	}
+
+	p {
+		margin-top: 0.5em;
 	}
 
 	&.has-text-color {
