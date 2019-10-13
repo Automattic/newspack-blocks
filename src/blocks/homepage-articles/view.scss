@@ -303,6 +303,9 @@
 	&.type-scale10,
 	&.type-scale9,
 	&.type-scale8 {
+		.entry-title {
+			line-height: 1.1em;
+		}
 		@include media(tablet) {
 			article .avatar {
 				height: 2.4em;
