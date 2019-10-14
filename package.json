@@ -23,7 +23,9 @@
     "test": "tests"
   },
   "private": true,
-  "dependencies": {},
+  "dependencies": {
+    "swiper": "4.5.1"
+  },
   "scripts": {
     "build:webpack": "calypso-build --config='./webpack.config.js'",
     "clean": "rm -rf dist/",
