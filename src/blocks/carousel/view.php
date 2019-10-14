@@ -49,11 +49,11 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 	static $newspack_blocks_carousel_id = 0;
 	$newspack_blocks_carousel_id++;
 	$autoplay      = isset( $attributes['autoplay'] ) ? $attributes['autoplay'] : false;
-	$author        = isset( $attributes['author'] ) ? $attributes['author'] : '';
-	$categories    = isset( $attributes['categories'] ) ? $attributes['categories'] : '';
 	$delay         = isset( $attributes['delay'] ) ? absint( $attributes['delay'] ) : 3;
-	$tags          = isset( $attributes['tags'] ) ? $attributes['tags'] : '';
 	$posts_to_show = intval( $attributes['postsToShow'] );
+	$authors       = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
+	$categories    = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
+	$tags          = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
 
 	$other = array();
 	if ( $autoplay ) {
@@ -65,16 +65,22 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 		'posts_per_page'      => $posts_to_show,
 		'post_status'         => 'publish',
 		'suppress_filters'    => false,
-		'cat'                 => $categories,
-		'tag_id'              => $tags,
-		'author'              => $author,
 		'ignore_sticky_posts' => true,
-		'cat'                 => $categories,
-		'author'              => $author,
 		'meta_key'            => '_thumbnail_id', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 		'meta_value_num'      => 0,
 		'meta_compare'        => '>',
 	);
+
+	if ( $authors ) {
+		$args['author__in'] = $authors;
+	}
+	if ( $categories ) {
+		$args['category__in'] = $categories;
+	}
+	if ( $tags ) {
+		$args['tag__in'] = $tags;
+	}
+
 	$article_query = new WP_Query( $args );
 	$counter       = 0;
 	ob_start();
@@ -263,22 +269,34 @@ function newspack_blocks_register_carousel() {
 					'type'    => 'integer',
 					'default' => 3,
 				),
-				'author'       => array(
-					'type' => 'string',
+				'authors'      => array(
+					'type'    => 'array',
+					'default' => array(),
+					'items'   => array(
+						'type' => 'integer',
+					),
+				),
+				'categories'   => array(
+					'type'    => 'array',
+					'default' => array(),
+					'items'   => array(
+						'type' => 'integer',
+					),
+				),
+				'tags'         => array(
+					'type'    => 'array',
+					'default' => array(),
+					'items'   => array(
+						'type' => 'integer',
+					),
 				),
 				'autoplay'     => array(
 					'type'    => 'boolean',
 					'default' => false,
 				),
-				'categories'   => array(
-					'type' => 'string',
-				),
 				'delay'        => array(
 					'type'    => 'integer',
 					'default' => 5,
-				),
-				'tags'         => array(
-					'type' => 'string',
 				),
 				'showAuthor'   => array(
 					'type'    => 'boolean',

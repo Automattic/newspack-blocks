@@ -4,6 +4,7 @@
 import QueryControls from '../homepage-articles/query-controls';
 import createSwiper from './create-swiper';
 import classnames from 'classnames';
+import AutocompleteTokenField from '../homepage-articles/components/autocomplete-tokenfield.js';
 
 /**
  * External dependencies
@@ -25,13 +26,15 @@ import {
 	RangeControl,
 	Spinner,
 	ToggleControl,
+	BaseControl,
 } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 import { withState, compose } from '@wordpress/compose';
+import apiFetch from '@wordpress/api-fetch';
+import { addQueryArgs } from '@wordpress/url';
+import { decodeEntities } from '@wordpress/html-entities';
 
 import { PanelColorSettings, withColors } from '@wordpress/block-editor';
-
-const { decodeEntities } = wp.htmlEntities;
 
 class Edit extends Component {
 	constructor( props ) {
@@ -87,13 +90,10 @@ class Edit extends Component {
 			isSelected,
 			latestPosts,
 			hasPosts,
-			authorList,
-			categoriesList,
-			tagsList,
 		} = this.props;
 		const { autoPlayState } = this.state;
 		const {
-			author,
+			authors,
 			autoplay,
 			categories,
 			delay,
@@ -109,6 +109,97 @@ class Edit extends Component {
 			'swiper-container',
 			autoplay && autoPlayState && 'wp-block-newspack-blocks-carousel__autoplay-playing'
 		);
+
+		const fetchAuthorSuggestions = search => {
+			return apiFetch( {
+				path: addQueryArgs( '/wp/v2/users', {
+					search,
+					per_page: 20,
+					_fields: 'id,name',
+				} ),
+			} ).then( function( users ) {
+				return users.map( user => ( {
+					value: user.id,
+					label: decodeEntities( user.name ) || __( '(no name)', 'newspack-blocks' ),
+				} ) );
+			} );
+		};
+		const fetchSavedAuthors = userIDs => {
+			return apiFetch( {
+				path: addQueryArgs( '/wp/v2/users', {
+					per_page: 100,
+					include: userIDs.join( ',' ),
+				} ),
+			} ).then( function( users ) {
+				return users.map( user => ( {
+					value: user.id,
+					label: decodeEntities( user.name ) || __( '(no name)', 'newspack-blocks' ),
+				} ) );
+			} );
+		};
+
+		const fetchCategorySuggestions = search => {
+			return apiFetch( {
+				path: addQueryArgs( '/wp/v2/categories', {
+					search,
+					per_page: 20,
+					_fields: 'id,name',
+					orderby: 'count',
+					order: 'desc',
+				} ),
+			} ).then( function( categories ) {
+				return categories.map( category => ( {
+					value: category.id,
+					label: decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' ),
+				} ) );
+			} );
+		};
+		const fetchSavedCategories = categoryIDs => {
+			return apiFetch( {
+				path: addQueryArgs( '/wp/v2/categories', {
+					per_page: 100,
+					_fields: 'id,name',
+					include: categoryIDs.join( ',' ),
+				} ),
+			} ).then( function( categories ) {
+				return categories.map( category => ( {
+					value: category.id,
+					label: decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' ),
+				} ) );
+			} );
+		};
+
+		const fetchTagSuggestions = search => {
+			return apiFetch( {
+				path: addQueryArgs( '/wp/v2/tags', {
+					search,
+					per_page: 20,
+					_fields: 'id,name',
+					orderby: 'count',
+					order: 'desc',
+				} ),
+			} ).then( function( tags ) {
+				return tags.map( tag => ( {
+					value: tag.id,
+					label: decodeEntities( tag.name ) || __( '(no title)', 'newspack-blocks' ),
+				} ) );
+			} );
+		};
+		const fetchSavedTags = tagIDs => {
+			return apiFetch( {
+				path: addQueryArgs( '/wp/v2/tags', {
+					per_page: 100,
+					_fields: 'id,name',
+					include: tagIDs.join( ',' ),
+				} ),
+			} ).then( function( tags ) {
+				return tags.map( tag => ( {
+					value: tag.id,
+					label: decodeEntities( tag.name ) || __( '(no title)', 'newspack-blocks' ),
+				} ) );
+			} );
+		};
+
 		return (
 			<Fragment>
 				<div className={ classes } ref={ this.carouselRef }>
@@ -208,29 +299,45 @@ class Edit extends Component {
 				</div>
 				<InspectorControls>
 					<PanelBody title={ __( 'Display Settings' ) } initialOpen={ true }>
-						{ postsToShow && categoriesList && (
-							<QueryControls
-								enableSingle={ false }
-								numberOfItems={ postsToShow }
-								onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
-								authorList={ authorList }
-								tagsList={ tagsList }
-								categoriesList={ categoriesList }
-								selectedCategoryId={ categories }
-								selectedAuthorId={ author }
-								selectedTagId={ tags }
-								onCategoryChange={ value =>
-									setAttributes( { categories: '' !== value ? value : undefined } )
-								}
-								onTagChange={ value => setAttributes( { tags: '' !== value ? value : undefined } ) }
-								onAuthorChange={ value =>
-									setAttributes( { author: '' !== value ? value : undefined } )
-								}
-								onSingleChange={ value =>
-									setAttributes( { single: '' !== value ? value : undefined } )
-								}
-								onSingleModeChange={ value => setAttributes( { singleMode: value } ) }
-							/>
+						{ postsToShow && (
+							<Fragment>
+								<QueryControls
+									enableSingle={ false }
+									numberOfItems={ postsToShow }
+									onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
+									onSingleChange={ value =>
+										setAttributes( { single: '' !== value ? value : undefined } )
+									}
+									onSingleModeChange={ value => setAttributes( { singleMode: value } ) }
+								/>
+								<BaseControl>
+									<AutocompleteTokenField
+										tokens={ authors || [] }
+										onChange={ tokens => setAttributes( { authors: tokens } ) }
+										fetchSuggestions={ fetchAuthorSuggestions }
+										fetchSavedInfo={ fetchSavedAuthors }
+										label={ __( 'Author', 'newspack-blocks' ) }
+									/>
+								</BaseControl>
+								<BaseControl>
+									<AutocompleteTokenField
+										tokens={ categories || [] }
+										onChange={ tokens => setAttributes( { categories: tokens } ) }
+										fetchSuggestions={ fetchCategorySuggestions }
+										fetchSavedInfo={ fetchSavedCategories }
+										label={ __( 'Category', 'newspack-blocks' ) }
+									/>
+								</BaseControl>
+								<BaseControl>
+									<AutocompleteTokenField
+										tokens={ tags || [] }
+										onChange={ tokens => setAttributes( { tags: tokens } ) }
+										fetchSuggestions={ fetchTagSuggestions }
+										fetchSavedInfo={ fetchSavedTags }
+										label={ __( 'Tag', 'newspack-blocks' ) }
+									/>
+								</BaseControl>
+							</Fragment>
 						) }
 					</PanelBody>
 					<PanelBody title={ __( 'Slideshow Settings' ) } initialOpen={ true }>
@@ -294,28 +401,19 @@ class Edit extends Component {
 
 export default compose( [
 	withSelect( ( select, props ) => {
-		const { postsToShow, author, categories, tags } = props.attributes;
-		const { getAuthors, getEntityRecords } = select( 'core' );
+		const { postsToShow, authors, categories, tags } = props.attributes;
+		const { getEntityRecords } = select( 'core' );
 		const latestPostsQuery = pickBy(
 			{
 				per_page: postsToShow,
 				categories,
-				author,
+				author: authors,
 				tags,
 			},
 			value => ! isUndefined( value )
 		);
-		const categoriesListQuery = {
-			per_page: 100,
-		};
-		const tagsListQuery = {
-			per_page: 100,
-		};
 		return {
 			latestPosts: getEntityRecords( 'postType', 'post', latestPostsQuery ),
-			categoriesList: getEntityRecords( 'taxonomy', 'category', categoriesListQuery ),
-			tagsList: getEntityRecords( 'taxonomy', 'post_tag', tagsListQuery ),
-			authorList: getAuthors(),
 		};
 	} ),
 ] )( Edit );

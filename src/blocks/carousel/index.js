@@ -48,14 +48,14 @@ export const settings = {
 			type: 'integer',
 			default: 3,
 		},
-		author: {
-			type: 'string',
+		authors: {
+			type: 'array',
 		},
 		categories: {
-			type: 'string',
+			type: 'array',
 		},
 		tags: {
-			type: 'string',
+			type: 'array',
 		},
 		showDate: {
 			type: 'boolean',
