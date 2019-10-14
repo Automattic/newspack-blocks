@@ -71,6 +71,9 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 		'ignore_sticky_posts' => true,
 		'cat'                 => $categories,
 		'author'              => $author,
+		'meta_key'            => '_thumbnail_id', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+		'meta_value_num'      => 0,
+		'meta_compare'        => '>',
 	);
 	$article_query = new WP_Query( $args );
 	$counter       = 0;
@@ -84,7 +87,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 			$counter++;
 			?>
 
-			<article <?php echo has_post_thumbnail() ? 'class="post-has-image"' : ''; ?>>
+			<article class="post-has-image">
 				<figure class="post-thumbnail">
 					<a href="<?php echo esc_url( get_permalink() ); ?>" rel="bookmark">
 						<?php
