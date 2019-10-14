@@ -122,7 +122,7 @@ class Edit extends Component {
 					) }
 					{ latestPosts && (
 						<Fragment>
-							<div class="swiper-wrapper">
+							<div className="swiper-wrapper">
 								{ latestPosts.map( post => (
 									<article className="post-has-image swiper-slide" key={ post.id }>
 										<figure className="post-thumbnail">
@@ -134,7 +134,7 @@ class Edit extends Component {
 										</figure>
 										<div className="entry-wrapper">
 											{ showCategory && post.newspack_category_info.length && (
-												<div class="cat-links">
+												<div className="cat-links">
 													<a href="#">{ post.newspack_category_info }</a>
 												</div>
 											) }
