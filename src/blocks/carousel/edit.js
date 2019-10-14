@@ -123,7 +123,7 @@ class Edit extends Component {
 					{ latestPosts && (
 						<Fragment>
 							<div className="swiper-wrapper">
-								{ latestPosts.map( post => (
+								{ latestPosts.map( post => post.newspack_featured_image_src && (
 									<article className="post-has-image swiper-slide" key={ post.id }>
 										<figure className="post-thumbnail">
 											{ post.newspack_featured_image_src && (
