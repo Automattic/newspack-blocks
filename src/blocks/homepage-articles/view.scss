@@ -83,7 +83,11 @@
 	}
 
 	&.image-aligntop .post-thumbnail {
-		margin-bottom: 1em;
+		margin-bottom: 0.25em;
+
+		figcaption {
+			margin-bottom: 0.5em;
+		}
 	}
 
 	&.image-alignleft,
@@ -196,6 +200,10 @@
 		margin-right: 0.5em;
 	}
 
+	p {
+		margin-top: 0.5em;
+	}
+
 	&.has-text-color {
 		.article-section-title,
 		.entry-title,
@@ -301,6 +309,9 @@
 	&.type-scale10,
 	&.type-scale9,
 	&.type-scale8 {
+		.entry-title {
+			line-height: 1.1em;
+		}
 		@include media(tablet) {
 			article .avatar {
 				height: 2.4em;
