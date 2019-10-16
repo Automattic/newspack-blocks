@@ -32,16 +32,17 @@ const blocks = fs
   .readdirSync( blocksDir )
   .filter( block => fs.existsSync( path.join( __dirname, 'src', 'blocks', block, 'editor.js' ) ) );
 
+
 // Helps split up each block into its own folder with view and editor scripts and styles.
 // Also creates a script one that combines all editor scripts for all blocks.
 const blocksScripts = blocks.reduce( ( scripts, block ) => {
 	const viewScriptPath = path.join( __dirname, 'src', 'blocks', block, 'view.js' );
 	if ( fs.existsSync( viewScriptPath ) ) {
-		scripts[ block + '/view' ] = [ viewSetup, ...[ viewScriptPath ] ];
+		scripts[ 'src/blocks/' + block + '/dist/view' ] = [ viewSetup, ...[ viewScriptPath ] ];
 	}
 	const editorScriptPath = path.join( __dirname, 'src', 'blocks', block, 'editor.js' );
 	if ( fs.existsSync( editorScriptPath ) ) {
-		scripts[ block + '/editor' ] = [ editorSetup, ...[ editorScriptPath ] ];
+		scripts[ 'src/blocks/' + block + '/dist/editor' ] = [ editorSetup, ...[ editorScriptPath ] ];
 	}
 	return scripts;
 }, {} );
@@ -60,12 +61,14 @@ const webpackConfig = getBaseWebpackConfig(
 	{ WP: true },
 	{
 		entry: {
-			editor: combinedEditorScript,
-			block_styles: blockStylesScript,
+			'dist/editor': combinedEditorScript,
+			'dist/block_styles': blockStylesScript,
 			...blocksScripts,
 		},
-		'output-path': path.join( __dirname, 'dist' ),
-	}
+		'output-path': path.join( __dirname ),
+	},
 );
+
+console.log(webpackConfig);
 
 module.exports = webpackConfig;

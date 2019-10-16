@@ -238,10 +238,38 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	return $content;
 }
 
+function xx_dependencies_from_path( $path ) {
+	$dependencies = file_exists( $path )
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		? json_decode( file_get_contents( $path ) )
+		: array();
+	$dependencies[] = 'wp-polyfill';
+	return $dependencies;
+}
+
 /**
  * Registers the `newspack-blocks/homepage-articles` block on server.
  */
 function newspack_blocks_register_homepage_articles() {
+	$editor_script = plugins_url( 'dist/editor.js', __FILE__ );
+	$editor_script_file_base = plugin_dir_path( __FILE__ ) . 'dist/editor';
+	$dependencies  = xx_dependencies_from_path( $editor_script_file_base . '.deps.json' );
+	wp_register_script( 'newspack_blocks_homepage_articles_editor', $editor_script, $dependencies, filemtime( $editor_script_file_base . '.js' ) );
+
+	$view_script = plugins_url( 'dist/view.js', __FILE__ );
+	$view_script_file_base = plugin_dir_path( __FILE__ ) . 'dist/view';
+	$dependencies  = xx_dependencies_from_path( $view_script_file_base . '.deps.json' );
+	wp_register_script( 'newspack_blocks_homepage_articles_view', $view_script, $dependencies, filemtime( $view_script_file_base . '.js' ) );
+
+	$editor_style = plugins_url( 'dist/editor.css', __FILE__ );
+	$editor_style_file = plugin_dir_path( __FILE__ ) . 'dist/editor.css';
+	wp_register_style( 'newspack_blocks_homepage_articles_editor', $editor_style, array(), filemtime( $editor_style_file ) );
+
+	$view_style = plugins_url( 'dist/view.css', __FILE__ );
+	$view_style_file = plugin_dir_path( __FILE__ ) . 'dist/view.css';
+	wp_register_style( 'newspack_blocks_homepage_articles_view', $view_style, array(), filemtime( $view_style_file ) );
+
+
 	register_block_type(
 		'newspack-blocks/homepage-articles',
 		array(
@@ -350,6 +378,10 @@ function newspack_blocks_register_homepage_articles() {
 				),
 			),
 			'render_callback' => 'newspack_blocks_render_block_homepage_articles',
+			'editor_script'   => 'newspack_blocks_homepage_articles_editor',
+			'editor_style'    => 'newspack_blocks_homepage_articles_editor',
+			'view_script'     => 'newspack_blocks_homepage_articles_view',
+			'style'           => 'newspack_blocks_homepage_articles_view',
 		)
 	);
 }
