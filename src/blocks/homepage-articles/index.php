@@ -12,5 +12,6 @@
  * @package         Newspack_Blocks
  */
 
+require_once 'class-newspack-blocks-utils.php';
 require_once 'class-newspack-blocks-api.php';
 require_once 'view.php';
