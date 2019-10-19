@@ -3,6 +3,14 @@
 
 .wp-block-columns {
 
+	.wp-block-column {
+		margin-bottom: 32px;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
 	@include media( mobile ) {
 		flex-wrap: nowrap;
 		margin-left: -16px;
