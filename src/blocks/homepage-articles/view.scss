@@ -278,13 +278,9 @@
 			}
 
 			.entry-wrapper {
-				padding: 1em;
+				padding: 2em;
 				position: relative;
 				z-index: 2;
-
-				@include media( mobile ) {
-					padding: 2em;
-				}
 			}
 
 			.entry-wrapper,
