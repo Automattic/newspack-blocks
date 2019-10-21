@@ -15,7 +15,7 @@
 function newspack_blocks_render_block_excerpt( $attributes ) {
 	ob_start();
 	?>
-	<p><?php the_excerpt(); ?></p>
+	<?php the_excerpt(); ?>
 	<?php
 	return ob_get_clean();
 }
@@ -26,9 +26,6 @@ register_block_type(
 		'attributes'      => array(
 			'className' => array(
 				'type' => 'string',
-			),
-			'post'      => array(
-				'type' => 'object',
 			),
 		),
 		'render_callback' => 'newspack_blocks_render_block_excerpt',

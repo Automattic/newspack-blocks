@@ -32,17 +32,5 @@ export const registerFeaturedImageBlock = () => registerBlockType( 'newspack-blo
 	parent,
 	edit: Edit,
 	save: () => null,
-	attributes: {
-		post: {
-			type: 'object',
-			default: {
-				newspack_featured_image_src: {
-					full: 'https://placekitten.com/1920/1080',
-					large: 'https://placekitten.com/2180/720',
-					medium: 'https://placekitten.com/854/480',
-					thumbnail: 'https://placekitten.com/150/150',
-				}
-			},
-		},
-	},
+	attributes: {},
 } );;

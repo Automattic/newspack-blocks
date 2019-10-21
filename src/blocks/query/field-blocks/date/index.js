@@ -22,14 +22,6 @@ export const registerDateBlock = () => registerBlockType( 'newspack-blocks/date'
 		);
 	},
 	save: () => null,
-	attributes: {
-		post: {
-			type: 'object',
-			default: {
-				date_gmt: '1970-01-01 01:23:45'
-			},
-		},
-	},
 } );
 
 

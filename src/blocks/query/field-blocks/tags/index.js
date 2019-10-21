@@ -9,9 +9,7 @@ const Edit = withSelect( select => {
 		allTags:select( 'core' ).getEntityRecords( 'taxonomy', 'post_tag' ),
 	}
 } )( ( { allTags } ) => {
-	console.log( { allTags } );
 	const [ postTags ] = useEntityProp( 'postType', 'post', 'tags' );
-	console.log( { postTags } );
 	const tags = ( allTags || [] ).filter( t => postTags.includes( t.id ) );
 	return <ul>
 		{ tags.map( t => <li key={ t.id }><a href={ t.link }>{ t.name }</a></li> ) }
@@ -24,13 +22,4 @@ export const registerTagsBlock = () => registerBlockType( 'newspack-blocks/tags'
 	parent,
 	edit: Edit,
 	save: () => null,
-	attributes: {
-		post: {
-			type: 'object',
-			default: {
-				allTags: [],
-				tags: []
-			}
-		}
-	}
 } );

@@ -27,9 +27,6 @@ register_block_type(
 			'className' => array(
 				'type' => 'string',
 			),
-			'post'      => array(
-				'type' => 'object',
-			),
 		),
 		'render_callback' => 'newspack_blocks_render_block_featured_image',
 	)

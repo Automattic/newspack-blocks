@@ -22,8 +22,9 @@ import {
 } from '@wordpress/block-editor';
 import { cloneBlock } from '@wordpress/blocks';
 import { PanelBody } from '@wordpress/components';
+import { compose } from '@wordpress/compose';
 import { EntityProvider } from '@wordpress/core-data';
-import { withSelect } from '@wordpress/data';
+import { withSelect, withDispatch } from '@wordpress/data';
 
 class Edit extends Component {
 	constructor( props ) {
@@ -81,8 +82,17 @@ class Edit extends Component {
 		);
 	};
 	render = () => {
-		const { attributes, className, query, setAttributes, testPost } = this.props;
-		console.log( { testPost } );
+		const {
+			attributes,
+			className,
+			query,
+			setAttributes,
+			// testPost,
+			getOtherBlocksSeenPostIds,
+			seePostId,
+			clearSeenPostIds,
+			clientId,
+		} = this.props;
 		const { criteria } = attributes;
 		const { editingPost, blocksTree } = this.state;
 		const settings = {};
@@ -93,40 +103,59 @@ class Edit extends Component {
 					<PanelBody title={ __( 'Query Settings' ) } initialOpen={ true }>
 						<QueryPanel
 							criteria={ criteria }
-							onChange={ criteria => setAttributes( { criteria } ) }
-						/>
+							onChange={ criteria => {
+								clearSeenPostIds( clientId );
+								return setAttributes( { criteria } );
+							} } />
 					</PanelBody>
 				</InspectorControls>
 				<section>
-					{ ( query || [] ).map(
-						post =>
-							blocksTree[ post.id ] && (
-								<article className={ post.id === editingPost ? 'is-editing' : '' } key={ post.id }>
-									<EntityProvider kind="postType" type="post" id={post.id} >
-										<BlockEditorProvider
-											value={ blocksTree[ post.id ] }
-											onChange={ blocks => this.updateBlocks( blocks, post.id ) }
-											settings={ settings }
-										>
-											<WritingFlow>
-												<BlockList />
-											</WritingFlow>
-										</BlockEditorProvider>
-									</EntityProvider>
-								</article>
-							)
-					) }
+					{ ( query || [] ).map( post => {
+						if ( ! blocksTree[ post.id ] ) return null;
+						if ( getOtherBlocksSeenPostIds( clientId ).includes( post.id ) ) {
+							return null;
+						}
+						seePostId( post.id, clientId );
+
+						return <article className={ post.id === editingPost ? 'is-editing' : '' } key={ post.id }>
+							<EntityProvider kind="postType" type="post" id={ post.id }>
+								<BlockEditorProvider
+									value={ blocksTree[ post.id ] }
+									onChange={ blocks => this.updateBlocks( blocks, post.id ) }
+									settings={ settings }
+								>
+									<WritingFlow>
+										<BlockList />
+									</WritingFlow>
+								</BlockEditorProvider>
+							</EntityProvider>
+						</article>
+					} ) }
 				</section>
 			</div>
 		);
 	};
 }
-export default withSelect( ( select, props ) => {
-	const { attributes } = props;
-	const { criteria } = attributes;
-	const { getEntityRecords, getEntityRecord } = select( 'core' );
-	return {
-		query: getEntityRecords( 'postType', 'post', criteria ),
-		testPost: getEntityRecord( 'postType', 'post', 121),
-	};
-} )( Edit );
+
+export default compose(
+	withSelect( ( select, props ) => {
+		const { attributes } = props;
+		const { criteria } = attributes;
+		const { getEntityRecords, getEntityRecord } = select( 'core' );
+		const otherBlocksSeenPosts = select( 'newspack-blocks/query' ).getOtherBlocksSeenPostIds( props.clientId );
+		// We want to build our own critera that actually gets sent to the server
+		const shadowCriteria = {
+			...criteria,
+			per_page: criteria.per_page + otherBlocksSeenPosts.length
+		}
+		return {
+			query: getEntityRecords( 'postType', 'post', shadowCriteria ),
+			// testPost: getEntityRecord( 'postType', 'post', 121 ),
+			getOtherBlocksSeenPostIds: select( 'newspack-blocks/query' ).getOtherBlocksSeenPostIds,
+		};
+	} ),
+	withDispatch( dispatch => {
+		const { seePostId, clearSeenPostIds } = dispatch( 'newspack-blocks/query' );
+		return { seePostId, clearSeenPostIds };
+	} )
+)( Edit );

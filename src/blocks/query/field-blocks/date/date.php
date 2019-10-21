@@ -13,11 +13,21 @@
  * @return string Returns the post content with latest posts added.
  */
 function newspack_blocks_render_block_date( $attributes ) {
-	ob_start();
-	?>
-	<p><?php the_date(); ?></p>
-	<?php
-	return ob_get_clean();
+	$time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
+
+	if ( get_the_time( 'U' ) !== get_the_modified_time( 'U' ) ) {
+		$time_string = '<time class="entry-date published" datetime="%1$s">%2$s</time><time class="updated" datetime="%3$s">%4$s</time>';
+	}
+
+	$time_string = sprintf(
+		$time_string,
+		esc_attr( get_the_date( DATE_W3C ) ),
+		esc_html( get_the_date() ),
+		esc_attr( get_the_modified_date( DATE_W3C ) ),
+		esc_html( get_the_modified_date() )
+	);
+
+	return $time_string;
 }
 
 register_block_type(
@@ -26,9 +36,6 @@ register_block_type(
 		'attributes'      => array(
 			'className' => array(
 				'type' => 'string',
-			),
-			'post'      => array(
-				'type' => 'object',
 			),
 		),
 		'render_callback' => 'newspack_blocks_render_block_date',

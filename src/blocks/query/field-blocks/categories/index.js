@@ -22,12 +22,4 @@ export const registerCategoriesBlock = () => registerBlockType( 'newspack-blocks
 	parent,
 	edit: Edit,
 	save: () => {},
-	attributes: {
-		post: {
-			type: 'object',
-			default: {
-				categories: [ 1 ]
-			}
-		}
-	}
 } );

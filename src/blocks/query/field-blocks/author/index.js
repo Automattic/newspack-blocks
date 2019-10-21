@@ -4,6 +4,7 @@ import { RawHTML } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 import { name } from '../../index';
+import './author.scss';
 const parent = `newspack-blocks/${ name }`;
 
 const Edit = ( { attributes } ) => {
@@ -29,16 +30,4 @@ export const registerAuthorBlock = () => registerBlockType( 'newspack-blocks/aut
 	parent,
 	edit: Edit,
 	save: () => null,
-	attributes: {
-		post: {
-			type: 'object',
-			default: {
-				newspack_author_info: {
-					author_link: '#',
-					avatar: '',
-					display_name: 'William Shakespeare',
-				},
-			},
-		},
-	},
 } );

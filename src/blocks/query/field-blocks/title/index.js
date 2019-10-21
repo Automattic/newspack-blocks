@@ -16,14 +16,5 @@ export const registerTitleBlock = () => registerBlockType( 'newspack-blocks/titl
 		</div>;
 	},
 	save: () => null,
-	attributes: {
-		post: {
-			type: 'object',
-			default: {
-				title: {
-					raw: "Hello World"
-				}
-			}
-		}
-	}
+	attributes: {},
 } );

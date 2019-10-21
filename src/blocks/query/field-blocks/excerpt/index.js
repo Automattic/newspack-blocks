@@ -14,14 +14,4 @@ export const registerExcerptBlock = () => registerBlockType( 'newspack-blocks/ex
 		return <RawHTML>{ excerpt }</RawHTML>
 	},
 	save: () => null,
-	attributes: {
-		post: {
-			type: 'object',
-			default: {
-				excerpt: {
-					rendered: '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>'
-				}
-			}
-		}
-	}
 } );
