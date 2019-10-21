@@ -7,6 +7,7 @@
  * External dependencies
  */
 const fs = require( 'fs' );
+const isDevelopment = process.env.NODE_ENV !== 'production';
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const path = require( 'path' );
 
@@ -29,8 +30,13 @@ function blockScripts( type, inputDir, blocks ) {
 
 const blocksDir = path.join( __dirname, 'src', 'blocks' );
 const blocks = fs
-  .readdirSync( blocksDir )
-  .filter( block => fs.existsSync( path.join( __dirname, 'src', 'blocks', block, 'editor.js' ) ) );
+	.readdirSync( blocksDir )
+	.filter( block => fs.existsSync( path.join( __dirname, 'src', 'blocks', block, 'editor.js' ) ) )
+	.filter(
+		block =>
+			! fs.existsSync( path.join( __dirname, 'src', 'blocks', block, '_development' ) ) ||
+			isDevelopment
+	);
 
 // Helps split up each block into its own folder view script
 const viewBlocksScripts = blocks.reduce( ( viewBlocks, block ) => {
@@ -47,9 +53,7 @@ const editorScript = [
 	...blockScripts( 'editor', path.join( __dirname, 'src' ), blocks ),
 ];
 
-const blockStylesScript = [
-	path.join( __dirname, 'src', 'block-styles', 'view' ),
-];
+const blockStylesScript = [ path.join( __dirname, 'src', 'block-styles', 'view' ) ];
 
 const webpackConfig = getBaseWebpackConfig(
 	{ WP: true },

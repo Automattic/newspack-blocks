@@ -17,3 +17,5 @@ To get started with a new block:
 - Add the block slug to the `production` array in `src/setup/blocks.json`
 - If the block requires server-side code add the slug to the `$newspack_blocks_blocks` array in `newspack-blocks.php`
 - Execute `npm run build`. If all went smoothly, you should see a Newspack category in the block picker, and your block should appear within it.
+
+If you wish to create a block which will not be included in release builds, add an empty file named `_development` to `/src/blocks/{BLOCKNAME}/`. The block will be built when running `npm run build:webpack` but will be ignored when running `npm run release:archive`.
