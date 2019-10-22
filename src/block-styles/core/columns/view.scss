@@ -3,6 +3,14 @@
 
 .wp-block-columns {
 
+	.wp-block-column {
+		margin-bottom: 64px;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
 	@include media( mobile ) {
 		flex-wrap: nowrap;
 		margin-left: -16px;
@@ -58,7 +66,7 @@
 			&:after {
 				border: 0 solid $color__border;
 				border-top-width: 1px;
-				bottom: -1em;
+				bottom: -32px;
 				content: '';
 				left: 0;
 				position: absolute;
