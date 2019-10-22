@@ -476,6 +476,7 @@ class Edit extends Component {
 			imageScale,
 			sectionHeader,
 			showCaption,
+			showCategory,
 		} = attributes;
 
 		const classes = classNames( className, {
@@ -488,6 +489,7 @@ class Edit extends Component {
 			[ `image-shape${ imageShape }` ]: imageShape !== 'landscape',
 			'has-text-color': textColor.color !== '',
 			'show-caption': showCaption,
+			'show-category': showCategory,
 		} );
 
 		const blockControls = [
