@@ -233,6 +233,7 @@
 			.post-thumbnail {
 				bottom: 0;
 				left: 0;
+				overflow: hidden;
 				position: absolute;
 				right: 0;
 				top: 0;
@@ -242,6 +243,26 @@
 					object-fit: cover;
 					max-width: 1000%;
 					width: 100%;
+				}
+
+				figcaption {
+					bottom: 1em;
+					/* autoprefixer: ignore next */
+					-webkit-box-orient: vertical;
+					color: rgba(white, 0.9);
+					display: -webkit-box;
+					font-style: italic;
+					left: 0;
+					-webkit-line-clamp: 1;
+					margin: 0;
+					max-height: 1.6em;
+					overflow: hidden;
+					padding: 0 1em;
+					position: absolute;
+					right: 0;
+					text-align: right;
+					text-overflow: ellipsis;
+					z-index: 2;
 				}
 
 				&:after {
@@ -257,13 +278,9 @@
 			}
 
 			.entry-wrapper {
-				padding: 1em;
+				padding: 2em;
 				position: relative;
 				z-index: 2;
-
-				@include media( mobile ) {
-					padding: 2em;
-				}
 			}
 
 			.entry-wrapper,
