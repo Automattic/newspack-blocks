@@ -203,6 +203,8 @@ function newspack_blocks_image_sizes() {
 	add_image_size( 'newspack-article-block-landscape-tiny', 200, 150, true );
 	add_image_size( 'newspack-article-block-portrait-tiny', 150, 200, true );
 	add_image_size( 'newspack-article-block-square-tiny', 200, 200, true );
+
+	add_image_size( 'newspack-article-block-uncropped', 1200, 9999, false );
 }
 add_action( 'after_setup_theme', 'newspack_blocks_image_sizes' );
 
