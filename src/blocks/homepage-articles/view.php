@@ -114,7 +114,10 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 						<figure class="post-thumbnail">
 							<a href="<?php echo esc_url( get_permalink() ); ?>" rel="bookmark">
 								<?php
-								$image_size = newspack_blocks_image_size_for_orientation( $attributes['imageShape'] );
+								$image_size = 'newspack-article-block-uncropped';
+								if ( 'uncropped' !== $attributes['imageShape'] ) {
+									$image_size = newspack_blocks_image_size_for_orientation( $attributes['imageShape'] );
+								}
 
 								// If the image position is behind, pass the object-fit setting to maintain styles with AMP.
 								if ( 'behind' === $attributes['mediaPosition'] ) {
