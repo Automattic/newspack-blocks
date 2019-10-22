@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { Path, SVG } from '@wordpress/components';
+import { createBlock } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -16,7 +17,7 @@ import './editor.scss';
 import './view.scss';
 
 export const name = 'homepage-articles';
-export const title = __( 'Newspack Homepage Articles' );
+export const title = __( 'Newspack Homepage Articles', 'newspack-blocks' );
 
 /* From https://material.io/tools/icons */
 export const icon = (
@@ -30,11 +31,15 @@ export const settings = {
 	title,
 	icon,
 	category: 'newspack',
-	keywords: [ __( 'posts' ), __( 'articles' ), __( 'latest' ) ],
-	description: __( 'A block for displaying homepage articles.' ),
+	keywords: [
+		__( 'posts', 'newspack-blocks' ),
+		__( 'articles', 'newspack-blocks' ),
+		__( 'latest', 'newspack-blocks' ),
+	],
+	description: __( 'A block for displaying homepage articles.', 'newspack-blocks' ),
 	styles: [
-		{ name: 'default', label: _x( 'Default', 'block style' ), isDefault: true },
-		{ name: 'borders', label: _x( 'Borders', 'block style' ) },
+		{ name: 'default', label: _x( 'Default', 'block style', 'newspack-blocks' ), isDefault: true },
+		{ name: 'borders', label: _x( 'Borders', 'block style', 'newspack-blocks' ) },
 	],
 	attributes: {
 		className: {
@@ -52,6 +57,14 @@ export const settings = {
 			type: 'boolean',
 			default: true,
 		},
+		showCaption: {
+			type: 'boolean',
+			default: false,
+		},
+		imageShape: {
+			type: 'string',
+			default: 'landscape',
+		},
 		showAuthor: {
 			type: 'boolean',
 			default: true,
@@ -59,6 +72,10 @@ export const settings = {
 		showAvatar: {
 			type: 'boolean',
 			default: true,
+		},
+		showCategory: {
+			type: 'boolean',
+			default: false,
 		},
 		postLayout: {
 			type: 'string',
@@ -76,11 +93,14 @@ export const settings = {
 			type: 'string',
 			default: 'top',
 		},
-		author: {
-			type: 'string',
+		authors: {
+			type: 'array',
 		},
 		categories: {
-			type: 'string',
+			type: 'array',
+		},
+		tags: {
+			type: 'array',
 		},
 		single: {
 			type: 'string',
@@ -97,13 +117,21 @@ export const settings = {
 			type: 'string',
 			default: '',
 		},
-		moreLink: {
+		singleMode: {
 			type: 'boolean',
 			default: false,
 		},
+		textColor: {
+			type: 'string',
+			default: '',
+		},
+		customTextColor: {
+			type: 'string',
+			default: '',
+		},
 		singleMode: {
 			type: 'boolean',
-			default: false
+			default: false,
 		},
 	},
 	supports: {
@@ -112,4 +140,39 @@ export const settings = {
 	},
 	edit,
 	save: () => null, // to use view.php
+	transforms: {
+		from: [
+			{
+				type: 'block',
+				blocks: [ 'core/latest-posts' ],
+				transform: ( { displayPostContent, displayPostDate, postLayout, columns, postsToShow, categories } ) => {
+					return createBlock( 'newspack-blocks/homepage-articles', {
+						showExcerpt: displayPostContent,
+						showDate: displayPostDate,
+						postLayout,
+						columns,
+						postsToShow,
+						showAuthor: false,
+						categories: categories ? [ categories ] : [],
+					} );
+				},
+			},
+		],
+		to: [
+			{
+				type: 'block',
+				blocks: [ 'core/latest-posts' ],
+				transform: ( { showExcerpt, showDate, postLayout, columns, postsToShow, categories } ) => {
+					return createBlock( 'core/latest-posts', {
+						displayPostContent: showExcerpt,
+						displayPostDate: showDate,
+						postLayout,
+						columns,
+						postsToShow,
+						categories: categories[0] || '',
+					} );
+				},
+			},
+		],
+	},
 };

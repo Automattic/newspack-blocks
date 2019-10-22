@@ -1,11 +1,18 @@
-@import "sass/variables";
-@import "sass/mixins";
+@import "../../shared/sass/variables";
+@import "../../shared/sass/mixins";
 
 .wp-block-newspack-blocks-homepage-articles {
+	margin-bottom: 1em;
+
 	article {
 		margin-bottom: 1.5em;
 		word-break: break-word;
 		overflow-wrap: break-word;
+		position: relative;
+
+		&:last-of-type {
+			margin-bottom: 0;
+		}
 	}
 
 	/* Section header */
@@ -24,18 +31,38 @@
 		list-style: none;
 
 		article {
-			width: 100%;
+			flex-basis: 100%;
 
 			@include media(tablet) {
-				margin-bottom: 1em;
+				&:last-child,
+				& {
+					margin-bottom: 1em;
+				}
 			}
+		}
+	}
+
+	@include media(mobile) {
+		&.columns-3 article,
+		&.columns-6 article {
+			flex-basis: calc( 33.333% - 16px );
+		}
+
+		&.columns-2 article,
+		&.columns-4 article,
+		&.columns-5 article {
+			flex-basis: calc( 50% - 16px);
+		}
+
+		&.columns-5 article:last-of-type:nth-child(odd) {
+			flex-grow: 1;
 		}
 	}
 
 	@include media(tablet) {
 		@for $i from 2 through 6 {
 			&.columns-#{ $i } article {
-				width: calc( ( 100% / #{$i} ) - 12px );
+				flex-basis: calc( ( 100% / #{$i} ) - 16px );
 			}
 		}
 	}
@@ -44,6 +71,23 @@
 
 	.post-thumbnail {
 		margin: 0;
+
+		img {
+			height: auto;
+			width: 100%;
+		}
+	}
+
+	figcaption {
+		font-size: $font__size-xxs;
+	}
+
+	&.image-aligntop .post-thumbnail {
+		margin-bottom: 0.25em;
+
+		figcaption {
+			margin-bottom: 0.5em;
+		}
 	}
 
 	&.image-alignleft,
@@ -112,6 +156,33 @@
 	}
 
 	/* Article meta */
+	.cat-links {
+		font-size: $font__size-xxs;
+		font-weight: bold;
+		margin: 0 0 0.5em;
+
+		a {
+			text-decoration: none;
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	&.image-aligntop .post-has-image .cat-links {
+		background-color: #111;
+		left: 0;
+		padding: 0.3em 0.5em 0.25em;
+		position: absolute;
+		top: 0;
+
+		a {
+			color: #fff;
+			display: inline-block;
+		}
+	}
+
 	.entry-meta {
 		display: flex;
 		flex-wrap: wrap;
@@ -128,6 +199,100 @@
 		display: block;
 		margin-right: 0.5em;
 	}
+
+	p {
+		margin-top: 0.5em;
+	}
+
+	&.has-text-color {
+		.article-section-title,
+		.entry-title,
+		.entry-title a,
+		.entry-title a:visited,
+		.entry-meta,
+		.entry-meta a,
+		.entry-meta .byline a,
+		.entry-meta .byline a:visited,
+		figcaption {
+			color: inherit;
+		}
+	}
+
+	&.has-text-color {
+		.entry-meta span:not(.avatar) {
+			opacity: 0.8;
+		}
+	}
+
+	&.image-alignbehind {
+		.post-has-image {
+			display: flex;
+			align-items: flex-end;
+			position: relative;
+
+			.post-thumbnail {
+				bottom: 0;
+				left: 0;
+				overflow: hidden;
+				position: absolute;
+				right: 0;
+				top: 0;
+
+				img {
+					height: 100%;
+					object-fit: cover;
+					max-width: 1000%;
+					width: 100%;
+				}
+
+				figcaption {
+					bottom: 1em;
+					/* autoprefixer: ignore next */
+					-webkit-box-orient: vertical;
+					color: rgba(white, 0.9);
+					display: -webkit-box;
+					font-style: italic;
+					left: 0;
+					-webkit-line-clamp: 1;
+					margin: 0;
+					max-height: 1.6em;
+					overflow: hidden;
+					padding: 0 1em;
+					position: absolute;
+					right: 0;
+					text-align: right;
+					text-overflow: ellipsis;
+					z-index: 2;
+				}
+
+				&:after {
+					background: rgba( 0, 0, 0, 0.5 );
+					bottom: 0;
+					content: '';
+					left: 0;
+					position: absolute;
+					right: 0;
+					top: 0;
+					z-index: 1;
+				}
+			}
+
+			.entry-wrapper {
+				padding: 2em;
+				position: relative;
+				z-index: 2;
+			}
+
+			.entry-wrapper,
+			.entry-title a,
+			.entry-meta,
+			.entry-meta .byline a,
+			.cat-links a {
+				color: #fff;
+			}
+
+		}
+	}
 }
 
 /* Some really rough font sizing */
@@ -140,14 +305,67 @@
 		.entry-meta {
 			font-size: 0.8em;
 		}
+
 		.avatar {
-			height: 1.8em;
-			width: 1.8em;
+			height: 25px;
+			width: 25px;
 		}
 
 		@include media(tablet) {
 			.entry-title {
 				font-size: 1.6em;
+			}
+
+			.avatar {
+				height: 40px;
+				width: 40px;
+			}
+		}
+	}
+
+	&.type-scale10,
+	&.type-scale9,
+	&.type-scale8 {
+		.entry-title {
+			line-height: 1.1em;
+		}
+		@include media(tablet) {
+			article .avatar {
+				height: 2.4em;
+				width: 2.4em;
+			}
+		}
+
+	}
+
+	&.type-scale10 article {
+		.entry-title {
+			font-size: 2.6em;
+		}
+		@include media(tablet) {
+			.entry-title {
+				font-size: 3.6em;
+			}
+		}
+		@include media(desktop) {
+			.entry-title {
+				font-size: 4.8em;
+			}
+		}
+	}
+
+	&.type-scale9 article {
+		.entry-title {
+			font-size: 2.4em;
+		}
+		@include media(tablet) {
+			.entry-title {
+				font-size: 3.4em;
+			}
+		}
+		@include media(desktop) {
+			.entry-title {
+				font-size: 4.2em;
 			}
 		}
 	}
@@ -158,16 +376,12 @@
 		}
 		@include media(tablet) {
 			.entry-title {
-				font-size: 3.4em;
-			}
-			.avatar {
-				height: 2.4em;
-				width: 2.4em;
+				font-size: 3.0em;
 			}
 		}
 		@include media(desktop) {
 			.entry-title {
-				font-size: 4em;
+				font-size: 3.6em;
 			}
 		}
 	}
@@ -178,7 +392,7 @@
 		}
 		@include media( tablet) {
 			.entry-title {
-				font-size: 2.8em;
+				font-size: 2.4em;
 			}
 			.avatar {
 				height: 48px;
@@ -187,18 +401,18 @@
 		}
 		@include media(desktop) {
 			.entry-title {
-				font-size: 3.4em;
+				font-size: 3em;
 			}
 		}
 	}
 
 	&.type-scale6 article {
 		.entry-title {
-			font-size: 1.8em;
+			font-size: 1.7em;
 		}
 		@include media(tablet) {
 			.entry-title {
-				font-size: 2.4em;
+				font-size: 2.0em;
 			}
 			.avatar {
 				height: 44px;
@@ -207,7 +421,7 @@
 		}
 		@include media(desktop) {
 			.entry-title {
-				font-size: 3em;
+				font-size: 2.4em;
 			}
 		}
 	}
@@ -218,11 +432,16 @@
 		}
 		@include media(tablet) {
 			.entry-title {
-				font-size: 2.2em;
+				font-size: 1.8em;
 			}
 			.avatar {
 				height: 40px;
 				width: 40px;
+			}
+		}
+		@include media(desktop) {
+			.entry-title {
+				font-size: 2.0em;
 			}
 		}
 	}
@@ -231,7 +450,7 @@
 
 	&.type-scale3 article {
 		.entry-title {
-			font-size: 1em;
+			font-size: 1.0em;
 		}
 		.entry-wrapper p {
 			font-size: 0.8em;
@@ -239,37 +458,19 @@
 		.entry-meta {
 			font-size: 0.7em;
 		}
-		.avatar {
-			height: 32px;
-			width: 32px;
-		}
-		@include media(tablet) {
+		@include media( tablet ) {
 			.entry-title {
-				font-size: 1.2em;
+				font-size: 1.2em
+			}
+
+			.avatar {
+				height: 32px;
+				width: 32px;
 			}
 		}
 	}
 
 	&.type-scale2 article {
-		.entry-title {
-			font-size: 0.9em;
-			@include media(tablet) {
-				font-size: 1em;
-			}
-		}
-		.entry-wrapper p {
-			font-size: 0.8em;
-		}
-		.entry-meta {
-			font-size: 0.7em;
-		}
-		.avatar {
-			height: 28px;
-			width: 28px;
-		}
-	}
-
-	&.type-scale1 article {
 		.entry-title {
 			font-size: 0.8em;
 		}
@@ -277,9 +478,32 @@
 		.entry-meta {
 			font-size: 0.7em;
 		}
-		.avatar {
-			height: 24px;
-			width: 24px;
+
+		@include media( tablet ) {
+			.entry-title {
+				font-size: 0.9em;
+			}
+
+			.avatar {
+				height: 28px;
+				width: 28px;
+			}
+		}
+	}
+
+	&.type-scale1 article {
+		.entry-title,
+		.entry-wrapper p {
+			font-size: 0.7em;
+		}
+		.entry-meta {
+			font-size: 0.6em;
+		}
+		@include media( tablet ) {
+			.avatar {
+				height: 24px;
+				width: 24px;
+			}
 		}
 	}
 }
@@ -294,7 +518,11 @@
 		padding-bottom: 1em;
 
 		&:last-of-type {
-			border: 0;
+			margin-bottom: 0;
+
+			&:not(:first-of-type) {
+				border-bottom: 0;
+			}
 		}
 	}
 
@@ -302,7 +530,7 @@
 
 		@for $i from 2 through 6 {
 			&.columns-#{ $i } article {
-				padding-right: calc( ( 12px * #{$i} ) / ( #{$i} - 1 ) );
+				padding-right: calc( ( 16px * #{$i} ) / ( #{$i} - 1 ) );
 			}
 		}
 

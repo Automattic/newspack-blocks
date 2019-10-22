@@ -1,4 +1,4 @@
-$primary_color: #2A7DE1;
+$primary_color: #36f;
 
 .wp-block-newspack-blocks-donate {
 	position: relative;
@@ -58,7 +58,6 @@ $primary_color: #2A7DE1;
 			position: absolute;
 			top: 10em;
 			left: 2em;
-			color: $muriel-gray-300;
 		}
 
 		input.other-input {
@@ -107,8 +106,14 @@ $primary_color: #2A7DE1;
 	position: relative;
 	max-width: 200px;
 	background-color: $muriel-white;
-	border: 2px solid $primary_color;
 	border-radius: 3px;
+	border: 1px solid $muriel-gray-200;
+
+	&:focus-within {
+		border-color: $muriel-gray-800;
+		outline: thin solid rgba( $muriel-gray-800, 0.15 );
+		outline-offset: -4px;
+	}
 
 	.currency {
 		font-size: 16px;

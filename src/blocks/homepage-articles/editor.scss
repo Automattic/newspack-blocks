@@ -1,3 +1,5 @@
+@import "../../shared/sass/variables";
+
 .type-scale-slider,
 .image-scale-slider {
 	.dashicons-editor-textcolor,
@@ -13,6 +15,13 @@
 	}
 }
 
-.wp-block-newspack-blocks-homepage-articles .editor-rich-text {
-	width: 100%;
+.wp-block-newspack-blocks-homepage-articles {
+	.editor-rich-text {
+		width: 100%;
+	}
+
+	/* Article meta */
+	.cat-links {
+		font-size: $font__size-xs;
+	}
 }
