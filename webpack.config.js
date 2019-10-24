@@ -9,11 +9,9 @@
 const fs = require( 'fs' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const path = require( 'path' );
-
-/**
- * Internal dependencies
- */
-// const { workerCount } = require( './webpack.common' ); // todo: shard...
+const isDevelopment = process.env.NODE_ENV !== 'production';
+const blockListFile = process.env.npm_config_block_list || 'block-list.json';
+const blockList = JSON.parse( fs.readFileSync( blockListFile ) );
 
 /**
  * Internal variables
@@ -29,8 +27,9 @@ function blockScripts( type, inputDir, blocks ) {
 
 const blocksDir = path.join( __dirname, 'src', 'blocks' );
 const blocks = fs
-  .readdirSync( blocksDir )
-  .filter( block => fs.existsSync( path.join( __dirname, 'src', 'blocks', block, 'editor.js' ) ) );
+	.readdirSync( blocksDir )
+	.filter( block => isDevelopment || blockList.production.includes( block ) )
+	.filter( block => fs.existsSync( path.join( __dirname, 'src', 'blocks', block, 'editor.js' ) ) );
 
 // Helps split up each block into its own folder view script
 const viewBlocksScripts = blocks.reduce( ( viewBlocks, block ) => {
@@ -47,9 +46,7 @@ const editorScript = [
 	...blockScripts( 'editor', path.join( __dirname, 'src' ), blocks ),
 ];
 
-const blockStylesScript = [
-	path.join( __dirname, 'src', 'block-styles', 'view' ),
-];
+const blockStylesScript = [ path.join( __dirname, 'src', 'block-styles', 'view' ) ];
 
 const webpackConfig = getBaseWebpackConfig(
 	{ WP: true },
