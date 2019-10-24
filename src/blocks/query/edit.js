@@ -13,7 +13,7 @@ import { debounce } from 'lodash';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Component } from '@wordpress/element';
+import { Component, Fragment } from '@wordpress/element';
 import {
 	BlockList,
 	BlockEditorProvider,
@@ -35,15 +35,18 @@ class Edit extends Component {
 		};
 		this.debouncedCreateBlockTree = debounce( this.createBlockTree.bind( this ), 1000 );
 	}
+
 	componentDidMount() {
 		this.createBlockTree();
 	}
+
 	componentDidUpdate( prevProps ) {
 		const { query } = this.props;
 		if ( prevProps.query !== query ) {
 			this.createBlockTree();
 		}
 	}
+
 	createBlockTree = () => {
 		const { editingPost, blocksTree } = this.state;
 		const { attributes, query } = this.props;
@@ -69,6 +72,7 @@ class Edit extends Component {
 			isValid,
 		};
 	};
+
 	updateBlocks = ( blocks, postId ) => {
 		const { setAttributes } = this.props;
 		const { blocksTree } = this.state;
@@ -81,22 +85,28 @@ class Edit extends Component {
 			}
 		);
 	};
+
 	render = () => {
 		const {
 			attributes,
 			className,
 			query,
 			setAttributes,
-			// testPost,
-			getOtherBlocksSeenPostIds,
-			seePostId,
-			clearSeenPostIds,
 			clientId,
+			updateCriteria
 		} = this.props;
+
 		const { criteria } = attributes;
+
+		if ( ! query ) {
+			updateCriteria( clientId, criteria );
+			return null;
+		}
+
 		const { editingPost, blocksTree } = this.state;
 		const settings = {};
 		const classes = classNames( className, editingPost ? 'is-editing' : '' );
+
 		return (
 			<div className={ classes }>
 				<InspectorControls>
@@ -104,18 +114,14 @@ class Edit extends Component {
 						<QueryPanel
 							criteria={ criteria }
 							onChange={ criteria => {
-								clearSeenPostIds( clientId );
-								return setAttributes( { criteria } );
+								setAttributes( { criteria } );
+								updateCriteria( clientId, criteria );
 							} } />
 					</PanelBody>
 				</InspectorControls>
-				<section>
+				<Fragment>
 					{ ( query || [] ).map( post => {
 						if ( ! blocksTree[ post.id ] ) return null;
-						if ( getOtherBlocksSeenPostIds( clientId ).includes( post.id ) ) {
-							return null;
-						}
-						seePostId( post.id, clientId );
 
 						return <article className={ post.id === editingPost ? 'is-editing' : '' } key={ post.id }>
 							<EntityProvider kind="postType" type="post" id={ post.id }>
@@ -131,7 +137,7 @@ class Edit extends Component {
 							</EntityProvider>
 						</article>
 					} ) }
-				</section>
+				</Fragment>
 			</div>
 		);
 	};
@@ -139,23 +145,21 @@ class Edit extends Component {
 
 export default compose(
 	withSelect( ( select, props ) => {
-		const { attributes } = props;
+		const { attributes, clientId } = props;
 		const { criteria } = attributes;
-		const { getEntityRecords, getEntityRecord } = select( 'core' );
-		const otherBlocksSeenPosts = select( 'newspack-blocks/query' ).getOtherBlocksSeenPostIds( props.clientId );
-		// We want to build our own critera that actually gets sent to the server
-		const shadowCriteria = {
+		const displayedPostCount = select( 'newspack-blocks/query' ).countPostsInEarlierBlocks( clientId );
+		const shadowCritera = {
 			...criteria,
-			per_page: criteria.per_page + otherBlocksSeenPosts.length
+			per_page: 0 + criteria.per_page + displayedPostCount
 		}
+
 		return {
-			query: getEntityRecords( 'postType', 'post', shadowCriteria ),
-			// testPost: getEntityRecord( 'postType', 'post', 121 ),
-			getOtherBlocksSeenPostIds: select( 'newspack-blocks/query' ).getOtherBlocksSeenPostIds,
+			query: select( 'newspack-blocks/query' ).query( clientId, shadowCritera ),
 		};
 	} ),
-	withDispatch( dispatch => {
-		const { seePostId, clearSeenPostIds } = dispatch( 'newspack-blocks/query' );
-		return { seePostId, clearSeenPostIds };
+	withDispatch( ( dispatch ) => {
+		const { updateCriteria } = dispatch( 'newspack-blocks/query' );
+		return { updateCriteria };
 	} )
 )( Edit );
+

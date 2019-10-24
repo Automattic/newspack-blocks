@@ -15,11 +15,11 @@ const Edit = ( { attributes } ) => {
 				{ __( 'by' ) }{' '}
 				<span className="author vcard">
 					<a className="url fn n" href="#">
-						{ newspack_author_info.display_name }
+						{ ( newspack_author_info || {} ).display_name }
 					</a>
 				</span>
 			</span>
-			<RawHTML>{ newspack_author_info.avatar }</RawHTML>
+			<RawHTML>{ ( newspack_author_info || {} ).avatar }</RawHTML>
 		</h3>
 	);
 }

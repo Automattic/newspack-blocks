@@ -1,72 +1,160 @@
-import { registerStore } from '@wordpress/data';
+import apiFetch from '@wordpress/api-fetch';
+import { registerStore, select, subscribe, dispatch } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 
-import { omit } from 'lodash';
-
-const DEFAULT_STATE = {
-	blocks: {},
+const initialState = {
+	queryBlocks: [],              // list of Query blocks in the order they are on the page
+	criteria: {},                 // map of Query criteria to block clientId
+	postsByBlock: {},             // map of returned posts to block clientId
+	deDuplicatedPostsByBlock: {}, // map of processed posts to block clientId
 };
 
+const UPDATE_CRITERIA = 'UPDATE_CRITERIA';
+const REQUEST_POSTS = 'REQUEST_POSTS';
+const RECIEVE_POSTS = 'RECIEVE_POSTS';
+const UPDATE_BLOCKS = 'UPDATE_BLOCKS';
+
 const actions = {
-	/**
-	 * Log a post as displayed by a block
-	 *
-	 * @param {Number} id Post ID
-	 * @param {String} clientId client ID for the Block that is displaying the post
-	 */
-	seePostId( id, clientId ) {
+	updateCriteria( clientId, criteria ) {
 		return {
-			type: 'SEE_POST',
-			id,
-			clientId
+			type: UPDATE_CRITERIA,
+			clientId,
+			criteria
 		}
 	},
-	clearSeenPostIds( clientId ) {
+	requestPosts( postsRequest ) {
 		return {
-			type: 'CLEAR_SEEN_IDS',
-			clientId
+			type: REQUEST_POSTS,
+			postsRequest
 		}
+	},
+	receivePosts( clientId, posts ) {
+		return {
+			type: RECIEVE_POSTS,
+			clientId,
+			posts
+		}
+	},
+	updateBlocks( blocks ) {
+		return {
+			type: UPDATE_BLOCKS,
+			blocks
+		}
+	},
+}
+
+const sum = ( a, b ) => a + b;
+
+const selectors = {
+	query( state, clientId, criteria ) {
+		return state.deDuplicatedPostsByBlock[ clientId ] || [];
+	},
+	countPostsInEarlierBlocks( state, clientId ) {
+		const { queryBlocks, deDuplicatedPostsByBlock } = state;
+		const ourBlockIdx = queryBlocks.findIndex( b => b.clientId == clientId );
+		const earlierBlocks = queryBlocks.slice( 0, ourBlockIdx );
+		return earlierBlocks.map( b => deDuplicatedPostsByBlock[ b.clientId ].length ).reduce( sum, 0 );
+	},
+}
+
+// resolvers must yield an action that contains a promise we want to wait for
+const resolvers = {
+	* query( clientId, criteria ) {
+		const path = addQueryArgs( '/wp/v2/posts', {
+			...criteria,
+			context: 'edit'
+		} );
+
+		const postsFetch = apiFetch( { path } );
+		const posts = yield actions.requestPosts( postsFetch );
+		return actions.receivePosts( clientId, posts );
 	}
 }
 
-const selectors = {
-	getOtherBlocksSeenPostIds( state, clientId ) {
-		return Object.values( omit( state.blocks, clientId ) ).flat();
-	},
+// controls must match the action type and return a promise for a value that
+// will be returned to the resolver's yield
+const controls = {
+	REQUEST_POSTS( action ) {
+		// TODO track all requests and return Promise.all()?
+		return action.postsRequest;
+	}
 }
 
-const unique = ( arr ) => Array.from( new Set( arr ) )
+// Returns an array of all newspack-blocks/query blocks in the order they are on the page
+const getQueryBlocksInOrder = blocks => blocks.flatMap( block => {
+	const queryBlocks = [];
+	if ( block.name == "newspack-blocks/query" ) {
+		queryBlocks.push( block );
+	}
+	return queryBlocks.concat( getQueryBlocksInOrder( block.innerBlocks ) );
+} );
 
-const reducer = ( state = DEFAULT_STATE, action ) => {
+const deDuplicatePosts = ( state ) => {
+	const seenPostIds = new Set();
+	const { queryBlocks } = state;
+
+	return queryBlocks.reduce( ( deDuplicatedPostsByBlock , block ) => {
+		const rawPosts = state.postsByBlock[ block.clientId ] || [];
+		deDuplicatedPostsByBlock[ block.clientId ] = rawPosts.filter( post => {
+			if ( seenPostIds.has( post.id ) ) {
+				return false
+			}
+			seenPostIds.add( post.id );
+			return true;
+		} );
+		return deDuplicatedPostsByBlock;
+	}, {} );
+}
+
+const reducer = ( state = initialState, action ) => {
 	switch ( action.type ) {
-		case 'SEE_POST':
-			const newState = { ...state };
-			if ( ! newState.blocks[ action.clientId ] ) {
-				newState.blocks[ action.clientId ] = [];
-			}
-			return {
-				...newState,
-				blocks: {
-					...newState.blocks,
-					[ action.clientId ]: unique( [ ...newState.blocks[ action.clientId ], action.id ] ),
-				}
-			}
-		case 'CLEAR_SEEN_IDS' :
+		case UPDATE_CRITERIA:
 			return {
 				...state,
-				blocks: {
-					[ action.clientId ]: []
+				criteria: {
+					...state.criteria,
+					[ action.clientId ]: action.criteria
 				}
+			}
+
+		case RECIEVE_POSTS:
+			const newState = {
+				...state,
+				postsByBlock: {
+					...state.postsByBlock,
+					[ action.clientId ]: action.posts
+				}
+			}
+			newState.deDuplicatedPostsByBlock = deDuplicatePosts( newState );
+			return newState;
+		case UPDATE_BLOCKS:
+			return {
+				...state,
+				queryBlocks: getQueryBlocksInOrder( action.blocks )
 			}
 	}
 	return state;
 }
 
+let currentCount = 0;
+subscribe( () => {
+	const newCount = select( 'core/block-editor' ).getBlockCount();
+	var hasNewBlocks = newCount > currentCount;
+	currentCount = newCount;
+
+	if ( hasNewBlocks ) {
+		const newBlocks = select( 'core/block-editor' ).getBlocks();
+		dispatch( 'newspack-blocks/query' ).updateBlocks( newBlocks );
+	}
+} );
+
 const store = registerStore( 'newspack-blocks/query', {
 	reducer,
 	actions,
 	selectors,
-	controls: {},
-	resolvers: {}
+	resolvers,
+	controls,
+	initialState,
 } );
 
 export default store;
