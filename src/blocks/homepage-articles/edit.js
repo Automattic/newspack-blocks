@@ -564,7 +564,7 @@ class Edit extends Component {
 		return (
 			<Fragment>
 				<div
-					className={ classes }
+					className={ classes + ' wpnbha' }
 					style={ {
 						color: textColor.color,
 					} }

@@ -46,6 +46,8 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes );
 
+	$classes .= ' wpnbha';
+
 	if ( isset( $attributes['postLayout'] ) && 'grid' === $attributes['postLayout'] ) {
 		$classes .= ' is-grid';
 	}
