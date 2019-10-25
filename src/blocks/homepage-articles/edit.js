@@ -482,7 +482,7 @@ class Edit extends Component {
 		const classes = classNames( className, {
 			'is-grid': postLayout === 'grid',
 			'show-image': showImage,
-			[ `columns-${ columns }` ]: postLayout === 'grid',
+			[ `c-${ columns }` ]: postLayout === 'grid',
 			[ `ts-${ typeScale }` ]: typeScale !== '5',
 			[ `image-align${ mediaPosition }` ]: showImage,
 			[ `image-scale${ imageScale }` ]: imageScale !== '1' && showImage,

@@ -43,25 +43,25 @@
 	}
 
 	@include media(mobile) {
-		&.columns-3 article,
-		&.columns-6 article {
+		&.c-3 article,
+		&.c-6 article {
 			flex-basis: calc( 33.333% - 16px );
 		}
 
-		&.columns-2 article,
-		&.columns-4 article,
-		&.columns-5 article {
+		&.c-2 article,
+		&.c-4 article,
+		&.c-5 article {
 			flex-basis: calc( 50% - 16px);
 		}
 
-		&.columns-5 article:last-of-type:nth-child(odd) {
+		&.c-5 article:last-of-type:nth-child(odd) {
 			flex-grow: 1;
 		}
 	}
 
 	@include media(tablet) {
 		@for $i from 2 through 6 {
-			&.columns-#{ $i } article {
+			&.c-#{ $i } article {
 				flex-basis: calc( ( 100% / #{$i} ) - 16px );
 			}
 		}
@@ -519,7 +519,7 @@
 	@include media(tablet) {
 
 		@for $i from 2 through 6 {
-			&.columns-#{ $i } article {
+			&.c-#{ $i } article {
 				padding-right: calc( ( 16px * #{$i} ) / ( #{$i} - 1 ) );
 			}
 		}
@@ -531,12 +531,12 @@
 		}
 
 		&.is-grid article:last-of-type,
-		&.columns-1 article,
-		&.columns-2 article:nth-of-type(2n),
-		&.columns-3 article:nth-of-type(3n),
-		&.columns-4 article:nth-of-type(4n),
-		&.columns-5 article:nth-of-type(5n),
-		&.columns-6 article:nth-of-type(6n) {
+		&.c-1 article,
+		&.c-2 article:nth-of-type(2n),
+		&.c-3 article:nth-of-type(3n),
+		&.c-4 article:nth-of-type(4n),
+		&.c-5 article:nth-of-type(5n),
+		&.c-6 article:nth-of-type(6n) {
 			border: 0;
 		}
 	}

@@ -50,7 +50,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		$classes .= ' is-grid';
 	}
 	if ( isset( $attributes['columns'] ) && 'grid' === $attributes['postLayout'] ) {
-		$classes .= ' columns-' . $attributes['columns'];
+		$classes .= ' c-' . $attributes['columns'];
 	}
 	if ( $attributes['showImage'] ) {
 		$classes .= ' show-image';
