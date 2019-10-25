@@ -485,7 +485,7 @@ class Edit extends Component {
 			[ `columns-${ columns }` ]: postLayout === 'grid',
 			[ `type-scale${ typeScale }` ]: typeScale !== '5',
 			[ `image-align${ mediaPosition }` ]: showImage,
-			[ `image-scale${ imageScale }` ]: imageScale !== '1' && showImage,
+			[ `is-${ imageScale }` ]: imageScale !== '1' && showImage,
 			[ `image-shape${ imageShape }` ]: imageShape !== 'landscape',
 			'has-text-color': textColor.color !== '',
 			'show-caption': showCaption,

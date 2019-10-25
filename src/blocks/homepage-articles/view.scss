@@ -101,7 +101,8 @@
 			}
 		}
 
-		&.image-scale4 {
+		// Image scale
+		&.is-4 {
 			.post-thumbnail {
 				flex-basis: 75%;
 			}
@@ -110,9 +111,9 @@
 			}
 		}
 
-		// .image-scale3 is the default - 50%
+		// .is-3 is the default - 50%
 
-		&.image-scale2 {
+		&.is-2 {
 			.post-thumbnail {
 				flex-basis: 33%;
 			}
@@ -121,7 +122,7 @@
 			}
 		}
 
-		&.image-scale1 {
+		&.is-1 {
 			.post-thumbnail {
 				flex-basis: 25%;
 			}
