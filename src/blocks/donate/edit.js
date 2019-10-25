@@ -92,7 +92,7 @@ class Edit extends Component {
 		};
 
 		return (
-			<div className={ classNames( className, 'untiered' ) }>
+			<div className={ classNames( className, 'untiered wpbnbd' ) }>
 				<form>
 					<div className="wp-block-newspack-blocks-donate__options">
 						{ Object.keys( frequencies ).map( frequencySlug => (
@@ -158,7 +158,7 @@ class Edit extends Component {
 		};
 
 		return (
-			<div className={ classNames( className, 'tiered' ) }>
+			<div className={ classNames( className, 'tiered wpbnbd' ) }>
 				<form>
 					<div className="wp-block-newspack-blocks-donate__options">
 						<div className="wp-block-newspack-blocks-donate__frequencies">
