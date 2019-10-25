@@ -490,6 +490,7 @@ class Edit extends Component {
 			'has-text-color': textColor.color !== '',
 			'show-caption': showCaption,
 			'show-category': showCategory,
+			wpnbha: true,
 		} );
 
 		const blockControls = [

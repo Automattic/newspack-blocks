@@ -1,7 +1,7 @@
 @import "../../shared/sass/variables";
 @import "../../shared/sass/mixins";
 
-.wp-block-newspack-blocks-homepage-articles {
+.wpnbha {
 	margin-bottom: 1em;
 
 	article {
@@ -286,7 +286,7 @@
 }
 
 /* Some really rough font sizing */
-.wp-block-newspack-blocks-homepage-articles {
+.wpnbha {
 	/* 'Normal' size */
 	article {
 		.entry-title {
@@ -500,7 +500,7 @@
 
 /* Block styles */
 
-.wp-block-newspack-blocks-homepage-articles.is-style-borders {
+.wpnbha.is-style-borders {
 	article {
 		border: solid rgba(0, 0, 0, 0.2);
 		border-width: 0 0 1px;
