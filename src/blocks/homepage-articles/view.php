@@ -59,7 +59,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		$classes .= ' image-align' . $attributes['mediaPosition'];
 	}
 	if ( isset( $attributes['typeScale'] ) ) {
-		$classes .= ' type-scale' . $attributes['typeScale'];
+		$classes .= ' ts-' . $attributes['typeScale'];
 	}
 	if ( $attributes['showImage'] && isset( $attributes['imageScale'] ) ) {
 		$classes .= ' image-scale' . $attributes['imageScale'];
