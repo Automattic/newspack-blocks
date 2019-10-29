@@ -1,11 +1,13 @@
 $primary_color: #36f;
 
 .wp-block-newspack-blocks-donate {
-	position: relative;
-	width: 100%;
+	background: $muriel-white;
+	color: $muriel-gray-900;
+	font-size: 14px;
 	outline: 1px solid $muriel-gray-100;
 	outline-offset: -1px;
-	font-size: 14px;
+	position: relative;
+	width: 100%;
 
 	input[type='radio'] {
 		display: none;
@@ -161,14 +163,14 @@ $primary_color: #36f;
 		left: 0;
 
 		&:hover {
-			background: transparent;
+			background: $muriel-white;
 		}
 	}
 
 	input[type='radio']:checked {
 		& + .donation-frequency-label {
 			color: inherit;
-			background: transparent;
+			background: $muriel-white;
 			border-bottom-color: transparent;
 		}
 
