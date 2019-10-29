@@ -3,7 +3,8 @@ $primary_color: #36f;
 .wp-block-newspack-blocks-donate {
 	position: relative;
 	width: 100%;
-	background-color: $muriel-gray-0;
+	outline: 1px solid $muriel-gray-100;
+	outline-offset: -1px;
 	font-size: 14px;
 
 	input[type='radio'] {
@@ -39,18 +40,23 @@ $primary_color: #36f;
 		display: none;
 
 		.tier-select-label {
-			border: 1px solid $muriel-gray-200;
+			border: 1px solid $muriel-gray-100;
 			border-radius: 3px;
 			font-size: 16px;
 			margin-left: 25px;
 			padding-left: 1em;
 			padding-right: 1em;
+
+			&:hover {
+				background: $muriel-gray-0;
+			}
 		}
 
 		input[type='radio']:checked {
 			& + .tier-select-label {
-				color: $muriel-white;
 				background-color: $primary_color;
+				border-color: rgba( black, 0.25 );
+				color: $muriel-white;
 			}
 		}
 
@@ -107,7 +113,7 @@ $primary_color: #36f;
 	max-width: 200px;
 	background-color: $muriel-white;
 	border-radius: 3px;
-	border: 1px solid $muriel-gray-200;
+	border: 1px solid $muriel-gray-100;
 
 	&:focus-within {
 		border-color: $muriel-gray-800;
@@ -144,18 +150,26 @@ $primary_color: #36f;
 
 .wp-block-newspack-blocks-donate__frequency {
 	.donation-frequency-label {
-		width: 33.333%;
+		width: 33.3333%;
+		width: calc( 100% / 3 );
 		position: absolute;
 		top: 0;
-		border: 1px solid $muriel-gray-400;
+		background: $muriel-gray-0;
+		border: 1px solid $muriel-gray-100;
 		text-transform: uppercase;
 		color: $muriel-gray-500;
+		left: 0;
+
+		&:hover {
+			background: transparent;
+		}
 	}
 
 	input[type='radio']:checked {
 		& + .donation-frequency-label {
-			color: $muriel-white;
-			background-color: $muriel-gray-500;
+			color: inherit;
+			background: transparent;
+			border-bottom-color: transparent;
 		}
 
 		& ~ .wp-block-newspack-blocks-donate__tiers {
@@ -164,13 +178,15 @@ $primary_color: #36f;
 	}
 
 	&:nth-of-type(2) .donation-frequency-label {
-		left: 33.333%;
+		left: 33.3333%;
+		left: calc( 100% / 3 );
 		border-left: none;
 		border-right: none;
 	}
 
 	&:nth-of-type(3) .donation-frequency-label {
-		left: 66.666%;
+		left: 66.6667%;
+		left: calc( 100% / 3 * 2 );
 	}
 }
 
