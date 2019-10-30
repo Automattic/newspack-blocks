@@ -1,6 +1,6 @@
 $primary_color: #36f;
 
-.wp-block-newspack-blocks-donate {
+.wpbnbd {
 	background: $muriel-white;
 	color: $muriel-gray-900;
 	font-size: 14px;
@@ -36,7 +36,7 @@ $primary_color: #36f;
 	}
 }
 
-.wp-block-newspack-blocks-donate.tiered {
+.wpbnbd.tiered {
 	.wp-block-newspack-blocks-donate__tiers {
 		margin-top: 2em;
 		display: none;
@@ -92,7 +92,7 @@ $primary_color: #36f;
 	}
 }
 
-.wp-block-newspack-blocks-donate.untiered {
+.wpbnbd.untiered {
 	padding-top: 3em;
 
 	.input-container {
@@ -193,7 +193,7 @@ $primary_color: #36f;
 }
 
 @media screen and (max-width: 600px) {
-	.wp-block-newspack-blocks-donate {
+	.wpbnbd {
 		.donation-frequency-label {
 			font-size: 12px;
 			height: 42px;
