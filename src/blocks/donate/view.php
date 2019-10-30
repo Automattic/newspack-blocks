@@ -44,7 +44,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 	if ( ! $settings['tiered'] ) :
 
 		?>
-		<div class='wp-block-newspack-blocks-donate untiered'>
+		<div class='wp-block-newspack-blocks-donate wpbnbd untiered'>
 			<form>
 				<input type='hidden' name='newspack_donate' value='1' />
 				<div class='wp-block-newspack-blocks-donate__options'>
@@ -100,7 +100,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 	else :
 
 		?>
-		<div class='wp-block-newspack-blocks-donate tiered'>
+		<div class='wp-block-newspack-blocks-donate wpbnbd tiered'>
 			<form>
 				<input type='hidden' name='newspack_donate' value='1' />
 				<div class='wp-block-newspack-blocks-donate__options'>
