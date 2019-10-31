@@ -110,14 +110,12 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				$post_counter++;
 
 				$styles = '';
-
 				if ( 'behind' === $attributes['mediaPosition'] && $attributes['showImage'] && has_post_thumbnail() ) {
 					$styles = 'min-height: ' . $attributes['minHeight'] . 'px';
 				}
-
 				?>
 
-				<article <?php echo has_post_thumbnail() ? 'class="post-has-image"' : ''; ?> style="<?php echo esc_attr( $styles ); ?>">
+				<article <?php echo has_post_thumbnail() ? 'class="post-has-image"' : ''; ?> <?php echo $styles ? 'style="' . esc_attr( $styles ) . '"' : ''; ?>>
 
 					<?php if ( has_post_thumbnail() && $attributes['showImage'] && $attributes['imageShape'] ) : ?>
 
