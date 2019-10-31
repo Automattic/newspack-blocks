@@ -65,6 +65,10 @@ export const settings = {
 			type: 'string',
 			default: 'landscape',
 		},
+		paddingTop: {
+			type: 'integer',
+			default: 0,
+		},
 		showAuthor: {
 			type: 'boolean',
 			default: true,
@@ -145,7 +149,14 @@ export const settings = {
 			{
 				type: 'block',
 				blocks: [ 'core/latest-posts' ],
-				transform: ( { displayPostContent, displayPostDate, postLayout, columns, postsToShow, categories } ) => {
+				transform: ( {
+					displayPostContent,
+					displayPostDate,
+					postLayout,
+					columns,
+					postsToShow,
+					categories,
+				} ) => {
 					return createBlock( 'newspack-blocks/homepage-articles', {
 						showExcerpt: displayPostContent,
 						showDate: displayPostDate,
@@ -169,7 +180,7 @@ export const settings = {
 						postLayout,
 						columns,
 						postsToShow,
-						categories: categories[0] || '',
+						categories: categories[ 0 ] || '',
 					} );
 				},
 			},

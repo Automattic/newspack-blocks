@@ -108,9 +108,14 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				}
 				$newspack_blocks_post_id[ get_the_ID() ] = true;
 				$post_counter++;
+
+				$styles = '';
+				if ( 'behind' === $attributes['mediaPosition'] && $attributes['showImage'] && has_post_thumbnail() ) {
+					$styles = 'padding-top: ' . $attributes['paddingTop'] . 'vw';
+				}
 				?>
 
-				<article <?php echo has_post_thumbnail() ? 'class="post-has-image"' : ''; ?>>
+				<article <?php echo has_post_thumbnail() ? 'class="post-has-image"' : ''; ?> <?php echo $styles ? 'style="' . esc_attr( $styles ) . '"' : ''; ?>>
 
 					<?php if ( has_post_thumbnail() && $attributes['showImage'] && $attributes['imageShape'] ) : ?>
 
@@ -337,6 +342,10 @@ function newspack_blocks_register_homepage_articles() {
 				'imageShape'    => array(
 					'type'    => 'string',
 					'default' => 'landscape',
+				),
+				'paddingTop'      => array(
+					'type'    => 'integer',
+					'default' => 0,
 				),
 				'sectionHeader'   => array(
 					'type'    => 'string',

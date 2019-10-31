@@ -84,7 +84,8 @@ class Edit extends Component {
 		const {
 			showImage,
 			imageShape,
-			imageFileSize,
+			mediaPosition,
+			paddingTop,
 			showCaption,
 			showExcerpt,
 			showAuthor,
@@ -93,8 +94,21 @@ class Edit extends Component {
 			showCategory,
 			sectionHeader,
 		} = attributes;
+
+		const styles = {
+			paddingTop:
+				mediaPosition === 'behind' &&
+				showImage &&
+				post.newspack_featured_image_src &&
+				paddingTop + 'vw',
+		};
+
 		return (
-			<article className={ post.newspack_featured_image_src && 'post-has-image' } key={ post.id }>
+			<article
+				className={ post.newspack_featured_image_src && 'post-has-image' }
+				key={ post.id }
+				style={ styles }
+			>
 				{ showImage && post.newspack_featured_image_src && (
 					<figure className="post-thumbnail" key="thumbnail">
 						<a href="#">
@@ -172,6 +186,7 @@ class Edit extends Component {
 			setTextColor,
 		} = this.props;
 		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
+
 		const {
 			authors,
 			single,
@@ -182,6 +197,7 @@ class Edit extends Component {
 			showImage,
 			showCaption,
 			imageScale,
+			paddingTop,
 			showExcerpt,
 			typeScale,
 			showDate,
@@ -376,6 +392,17 @@ class Edit extends Component {
 							max={ 4 }
 							beforeIcon="images-alt2"
 							afterIcon="images-alt2"
+							required
+						/>
+					) }
+
+					{ showImage && mediaPosition === 'behind' && (
+						<RangeControl
+							label={ __( 'Top padding', 'newspack-blocks' ) }
+							value={ paddingTop }
+							onChange={ value => setAttributes( { paddingTop: value } ) }
+							min={ 0 }
+							max={ 50 }
 							required
 						/>
 					) }
