@@ -84,7 +84,8 @@ class Edit extends Component {
 		const {
 			showImage,
 			imageShape,
-			imageFileSize,
+			mediaPosition,
+			minHeight,
 			showCaption,
 			showExcerpt,
 			showAuthor,
@@ -93,8 +94,21 @@ class Edit extends Component {
 			showCategory,
 			sectionHeader,
 		} = attributes;
+
+		const styles = {
+			minHeight:
+				mediaPosition === 'behind' &&
+				showImage &&
+				post.newspack_featured_image_src &&
+				minHeight + 'vh',
+		};
+
 		return (
-			<article className={ post.newspack_featured_image_src && 'post-has-image' } key={ post.id }>
+			<article
+				className={ post.newspack_featured_image_src && 'post-has-image' }
+				key={ post.id }
+				style={ styles }
+			>
 				{ showImage && post.newspack_featured_image_src && (
 					<figure className="post-thumbnail" key="thumbnail">
 						<a href="#">
@@ -172,6 +186,7 @@ class Edit extends Component {
 			setTextColor,
 		} = this.props;
 		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
+
 		const {
 			authors,
 			single,
@@ -182,6 +197,7 @@ class Edit extends Component {
 			showImage,
 			showCaption,
 			imageScale,
+			minHeight,
 			showExcerpt,
 			typeScale,
 			showDate,
@@ -376,6 +392,17 @@ class Edit extends Component {
 							max={ 4 }
 							beforeIcon="images-alt2"
 							afterIcon="images-alt2"
+							required
+						/>
+					) }
+
+					{ showImage && mediaPosition === 'behind' && (
+						<RangeControl
+							label={ __( 'Minimum height', 'newspack-blocks' ) }
+							value={ minHeight }
+							onChange={ value => setAttributes( { minHeight: value } ) }
+							min={ 1 }
+							max={ 100 }
 							required
 						/>
 					) }
