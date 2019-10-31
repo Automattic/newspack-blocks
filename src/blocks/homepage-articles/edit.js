@@ -15,12 +15,13 @@ import moment from 'moment';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Component, Fragment, RawHTML } from '@wordpress/element';
+import { Component, Fragment, RawHTML, useState, useCallback } from '@wordpress/element';
 import { InspectorControls, RichText, BlockControls } from '@wordpress/editor';
 import {
 	PanelBody,
 	PanelRow,
 	RangeControl,
+	TextControl,
 	Toolbar,
 	ToggleControl,
 	Dashicon,
@@ -31,7 +32,7 @@ import {
 	SVG,
 } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
-import { compose } from '@wordpress/compose';
+import { compose, withInstanceId } from '@wordpress/compose';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -41,6 +42,7 @@ import { PanelColorSettings, withColors } from '@wordpress/block-editor';
  * Module Constants
  */
 const MAX_POSTS_COLUMNS = 6;
+const ARTICLE_MIN_HEIGHT = 100;
 
 /* From https://material.io/tools/icons */
 const landscapeIcon = (
@@ -78,13 +80,53 @@ const coverIcon = (
 	</SVG>
 );
 
+const ArticleHeightInput = withInstanceId( function( { value = '', instanceId, onChange } ) {
+	const [ temporaryInput, setTemporaryInput ] = useState( null );
+	const onChangeEvent = useCallback(
+		event => {
+			const unprocessedValue = event.target.value;
+			const inputValue = unprocessedValue !== '' ? parseInt( event.target.value, 10 ) : undefined;
+			if (
+				( isNaN( inputValue ) || inputValue < ARTICLE_MIN_HEIGHT ) &&
+				inputValue !== undefined
+			) {
+				setTemporaryInput( event.target.value );
+				return;
+			}
+			setTemporaryInput( null );
+			onChange( inputValue );
+		},
+		[ onChange, setTemporaryInput ]
+	);
+	const onBlurEvent = useCallback(() => {
+		if ( temporaryInput !== null ) {
+			setTemporaryInput( null );
+		}
+	}, [ temporaryInput, setTemporaryInput ]);
+	const inputId = `block-article-height-input-${ instanceId }`;
+	return (
+		<BaseControl label={ __( 'Minimum height in pixels', 'newspack-blocks' ) } id={ inputId }>
+			<input
+				type="number"
+				id={ inputId }
+				onChange={ onChangeEvent }
+				onBlur={ onBlurEvent }
+				value={ temporaryInput !== null ? temporaryInput : value }
+				min={ ARTICLE_MIN_HEIGHT }
+				step="1"
+			/>
+		</BaseControl>
+	);
+} );
+
 class Edit extends Component {
 	renderPost = post => {
 		const { attributes } = this.props;
 		const {
 			showImage,
 			imageShape,
-			imageFileSize,
+			mediaPosition,
+			minHeight,
 			showCaption,
 			showExcerpt,
 			showAuthor,
@@ -93,8 +135,22 @@ class Edit extends Component {
 			showCategory,
 			sectionHeader,
 		} = attributes;
+		const { temporaryMinHeight } = this.state;
+
+		const styles = {
+			minHeight:
+				mediaPosition === 'behind' &&
+				showImage &&
+				post.newspack_featured_image_src &&
+				( temporaryMinHeight || minHeight ),
+		};
+
 		return (
-			<article className={ post.newspack_featured_image_src && 'post-has-image' } key={ post.id }>
+			<article
+				className={ post.newspack_featured_image_src && 'post-has-image' }
+				key={ post.id }
+				style={ styles }
+			>
 				{ showImage && post.newspack_featured_image_src && (
 					<figure className="post-thumbnail" key="thumbnail">
 						<a href="#">
@@ -161,6 +217,13 @@ class Edit extends Component {
 		);
 	};
 
+	constructor() {
+		super( ...arguments );
+		this.state = {
+			temporaryMinHeight: null,
+		};
+	}
+
 	renderInspectorControls = () => {
 		const {
 			attributes,
@@ -172,6 +235,7 @@ class Edit extends Component {
 			setTextColor,
 		} = this.props;
 		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
+
 		const {
 			authors,
 			single,
@@ -182,6 +246,7 @@ class Edit extends Component {
 			showImage,
 			showCaption,
 			imageScale,
+			minHeight,
 			showExcerpt,
 			typeScale,
 			showDate,
@@ -194,6 +259,8 @@ class Edit extends Component {
 			tags,
 			url,
 		} = attributes;
+
+		const { temporaryMinHeight } = this.state;
 
 		const fetchAuthorSuggestions = search => {
 			return apiFetch( {
@@ -377,6 +444,17 @@ class Edit extends Component {
 							beforeIcon="images-alt2"
 							afterIcon="images-alt2"
 							required
+						/>
+					) }
+
+					{ showImage && mediaPosition === 'behind' && (
+						<ArticleHeightInput
+							value={ temporaryMinHeight || minHeight }
+							onChange={ value => {
+								setAttributes( {
+									minHeight: value,
+								} );
+							} }
 						/>
 					) }
 				</PanelBody>
@@ -624,4 +702,5 @@ export default compose( [
 			postList: getEntityRecords( 'postType', 'post', postsListQuery ),
 		};
 	} ),
+	withInstanceId,
 ] )( Edit );
