@@ -111,7 +111,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 				$styles = '';
 				if ( 'behind' === $attributes['mediaPosition'] && $attributes['showImage'] && has_post_thumbnail() ) {
-					$styles = 'padding-top: ' . $attributes['paddingTop'] . 'vw';
+					$styles = 'padding-top: ' . $attributes['paddingTop'] . 'vh';
 				}
 				?>
 

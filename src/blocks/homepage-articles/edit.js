@@ -100,7 +100,7 @@ class Edit extends Component {
 				mediaPosition === 'behind' &&
 				showImage &&
 				post.newspack_featured_image_src &&
-				paddingTop + 'vw',
+				paddingTop + 'vh',
 		};
 
 		return (
@@ -402,7 +402,7 @@ class Edit extends Component {
 							value={ paddingTop }
 							onChange={ value => setAttributes( { paddingTop: value } ) }
 							min={ 0 }
-							max={ 50 }
+							max={ 100 }
 							required
 						/>
 					) }
