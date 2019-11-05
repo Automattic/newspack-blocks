@@ -8,9 +8,7 @@ const parent = `newspack-blocks/${ name }`;
 
 const Edit = withSelect( select => {
 	const { getMedia } = select( 'core' );
-	return {
-		getMedia,
-	}
+	return { getMedia }
 } )( ( { attributes, getMedia } ) => {
 	const [ featuredImageId ] = useEntityProp( 'postType', 'post', 'featured_media' );
 	if ( ! featuredImageId ) {

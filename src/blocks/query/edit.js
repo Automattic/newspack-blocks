@@ -63,6 +63,7 @@ class Edit extends Component {
 		);
 		this.setState( { blocksTree: newBlocksTree } );
 	};
+
 	cleanBlock = block => {
 		const { name, isValid, attributes, innerBlocks } = block;
 		return {
@@ -97,11 +98,6 @@ class Edit extends Component {
 		} = this.props;
 
 		const { criteria } = attributes;
-
-		if ( ! query ) {
-			updateCriteria( clientId, criteria );
-			return null;
-		}
 
 		const { editingPost, blocksTree } = this.state;
 		const settings = {};

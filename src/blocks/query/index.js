@@ -43,6 +43,7 @@ export const settings = {
 			type: 'object',
 			default: {
 				per_page: 3,
+				offset: 0,
 			},
 		},
 		blocks: {

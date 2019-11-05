@@ -1,6 +1,7 @@
 import apiFetch from '@wordpress/api-fetch';
 import { registerStore, select, subscribe, dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
+import { sum } from 'lodash';
 
 const initialState = {
 	queryBlocks: [],              // list of Query blocks in the order they are on the page
@@ -43,7 +44,6 @@ const actions = {
 	},
 }
 
-const sum = ( a, b ) => a + b;
 
 const selectors = {
 	query( state, clientId, criteria ) {
@@ -53,7 +53,7 @@ const selectors = {
 		const { queryBlocks, deDuplicatedPostsByBlock } = state;
 		const ourBlockIdx = queryBlocks.findIndex( b => b.clientId == clientId );
 		const earlierBlocks = queryBlocks.slice( 0, ourBlockIdx );
-		return earlierBlocks.map( b => deDuplicatedPostsByBlock[ b.clientId ].length ).reduce( sum, 0 );
+		return sum( earlierBlocks.map( b => deDuplicatedPostsByBlock[ b.clientId ].length ) );
 	},
 }
 
@@ -80,7 +80,14 @@ const controls = {
 	}
 }
 
-// Returns an array of all newspack-blocks/query blocks in the order they are on the page
+/**
+ * Returns an array of all newspack-blocks/query blocks in the order they are on
+ * the page. This is needed to be able to show the editor blocks in the order
+ * that PHP will render them.
+ *
+ * @param {Block[]} blocks
+ * @return {Block[]}
+ */
 const getQueryBlocksInOrder = blocks => blocks.flatMap( block => {
 	const queryBlocks = [];
 	if ( block.name == "newspack-blocks/query" ) {
@@ -91,10 +98,10 @@ const getQueryBlocksInOrder = blocks => blocks.flatMap( block => {
 
 const deDuplicatePosts = ( state ) => {
 	const seenPostIds = new Set();
-	const { queryBlocks } = state;
+	const { queryBlocks, postsByBlock } = state;
 
 	return queryBlocks.reduce( ( deDuplicatedPostsByBlock , block ) => {
-		const rawPosts = state.postsByBlock[ block.clientId ] || [];
+		const rawPosts = postsByBlock[ block.clientId ] || [];
 		deDuplicatedPostsByBlock[ block.clientId ] = rawPosts.filter( post => {
 			if ( seenPostIds.has( post.id ) ) {
 				return false
@@ -136,11 +143,12 @@ const reducer = ( state = initialState, action ) => {
 	return state;
 }
 
-let currentCount = 0;
+let currentBlocksIds;
 subscribe( () => {
-	const newCount = select( 'core/block-editor' ).getBlockCount();
-	var hasNewBlocks = newCount > currentCount;
-	currentCount = newCount;
+	const newBlocksIds = select( 'core/block-editor' ).getClientIdsWithDescendants();
+	// I don't know why this works but it does, I guess getClientIdsWithDescendants is memoized?
+	const hasNewBlocks = newBlocksIds != currentBlocksIds;
+	currentBlocksIds = newBlocksIds;
 
 	if ( hasNewBlocks ) {
 		const newBlocks = select( 'core/block-editor' ).getBlocks();

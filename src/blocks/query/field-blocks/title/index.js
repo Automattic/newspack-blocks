@@ -9,10 +9,10 @@ export const registerTitleBlock = () => registerBlockType( 'newspack-blocks/titl
 	category: 'layout',
 	parent,
 	edit: () => {
-		const [ title ] = useEntityProp( 'postType', 'post', 'title' );
+		const [ title, setTitle ] = useEntityProp( 'postType', 'post', 'title' );
 		const [ link ] = useEntityProp( 'postType', 'post', 'link' );
 		return <div className="wp-block-heading">
-			<h2><a href={link}>{ title }</a></h2>
+			<h2><a href={ link }>{ title }</a></h2>
 		</div>;
 	},
 	save: () => null,
