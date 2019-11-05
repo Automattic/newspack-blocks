@@ -7,14 +7,14 @@
  * Author URI:      YOUR SITE HERE
  * Text Domain:     newspack-blocks
  * Domain Path:     /languages
- * Version:         1.0.0-alpha.12
+ * Version:         1.0.0-alpha.14
  *
  * @package         Newspack_Blocks
  */
 
 define( 'NEWSPACK_BLOCKS__BLOCKS_DIRECTORY', 'dist/' );
 define( 'NEWSPACK_BLOCKS__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'NEWSPACK_BLOCKS__VERSION', '1.0.0-alpha.12' );
+define( 'NEWSPACK_BLOCKS__VERSION', '1.0.0-alpha.14' );
 /**
  * Newspack blocks functionality
  */
@@ -204,6 +204,8 @@ function newspack_blocks_image_sizes() {
 	add_image_size( 'newspack-article-block-landscape-tiny', 200, 150, true );
 	add_image_size( 'newspack-article-block-portrait-tiny', 150, 200, true );
 	add_image_size( 'newspack-article-block-square-tiny', 200, 200, true );
+
+	add_image_size( 'newspack-article-block-uncropped', 1200, 9999, false );
 }
 add_action( 'after_setup_theme', 'newspack_blocks_image_sizes' );
 

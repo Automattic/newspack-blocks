@@ -44,7 +44,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	}
 	$article_query = new WP_Query( $args );
 
-	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes );
+	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes, array( 'wpnbha' ) );
 
 	if ( isset( $attributes['postLayout'] ) && 'grid' === $attributes['postLayout'] ) {
 		$classes .= ' is-grid';
@@ -59,13 +59,16 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		$classes .= ' image-align' . $attributes['mediaPosition'];
 	}
 	if ( isset( $attributes['typeScale'] ) ) {
-		$classes .= ' type-scale' . $attributes['typeScale'];
+		$classes .= ' ts-' . $attributes['typeScale'];
 	}
 	if ( $attributes['showImage'] && isset( $attributes['imageScale'] ) ) {
-		$classes .= ' image-scale' . $attributes['imageScale'];
+		$classes .= ' is-' . $attributes['imageScale'];
 	}
 	if ( $attributes['showCaption'] ) {
 		$classes .= ' show-caption';
+	}
+	if ( $attributes['showCategory'] ) {
+		$classes .= ' show-category';
 	}
 	if ( isset( $attributes['className'] ) ) {
 		$classes .= ' ' . $attributes['className'];
@@ -114,7 +117,10 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 						<figure class="post-thumbnail">
 							<a href="<?php echo esc_url( get_permalink() ); ?>" rel="bookmark">
 								<?php
-								$image_size = newspack_blocks_image_size_for_orientation( $attributes['imageShape'] );
+								$image_size = 'newspack-article-block-uncropped';
+								if ( 'uncropped' !== $attributes['imageShape'] ) {
+									$image_size = newspack_blocks_image_size_for_orientation( $attributes['imageShape'] );
+								}
 
 								// If the image position is behind, pass the object-fit setting to maintain styles with AMP.
 								if ( 'behind' === $attributes['mediaPosition'] ) {

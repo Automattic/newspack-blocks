@@ -64,6 +64,13 @@ const squareIcon = (
 	</SVG>
 );
 
+const uncroppedIcon = (
+	<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+		<Path d="M0 0h24v24H0z" fill="none" />
+		<Path d="M3 5v4h2V5h4V3H5c-1.1 0-2 .9-2 2zm2 10H3v4c0 1.1.9 2 2 2h4v-2H5v-4zm14 4h-4v2h4c1.1 0 2-.9 2-2v-4h-2v4zm0-16h-4v2h4v4h2V5c0-1.1-.9-2-2-2z" />
+	</SVG>
+);
+
 const coverIcon = (
 	<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
 		<Path d="M0 0h24v24H0z" fill="none" />
@@ -98,6 +105,10 @@ class Edit extends Component {
 								<img src={ post.newspack_featured_image_src.portrait } />
 							) }
 							{ imageShape === 'square' && <img src={ post.newspack_featured_image_src.square } /> }
+
+							{ imageShape === 'uncropped' && (
+								<img src={ post.newspack_featured_image_src.uncropped } />
+							) }
 						</a>
 						{ showCaption && '' !== post.newspack_featured_image_caption && (
 							<figcaption>{ post.newspack_featured_image_caption }</figcaption>
@@ -465,18 +476,21 @@ class Edit extends Component {
 			imageScale,
 			sectionHeader,
 			showCaption,
+			showCategory,
 		} = attributes;
 
 		const classes = classNames( className, {
 			'is-grid': postLayout === 'grid',
 			'show-image': showImage,
 			[ `columns-${ columns }` ]: postLayout === 'grid',
-			[ `type-scale${ typeScale }` ]: typeScale !== '5',
+			[ `ts-${ typeScale }` ]: typeScale !== '5',
 			[ `image-align${ mediaPosition }` ]: showImage,
-			[ `image-scale${ imageScale }` ]: imageScale !== '1' && showImage,
+			[ `is-${ imageScale }` ]: imageScale !== '1' && showImage,
 			[ `image-shape${ imageShape }` ]: imageShape !== 'landscape',
 			'has-text-color': textColor.color !== '',
 			'show-caption': showCaption,
+			'show-category': showCategory,
+			wpnbha: true,
 		} );
 
 		const blockControls = [
@@ -539,6 +553,12 @@ class Edit extends Component {
 				title: __( 'Square Image Shape', 'newspack-blocks' ),
 				isActive: imageShape === 'square',
 				onClick: () => setAttributes( { imageShape: 'square' } ),
+			},
+			{
+				icon: uncroppedIcon,
+				title: __( 'Uncropped', 'newspack-blocks' ),
+				isActive: imageShape === 'uncropped',
+				onClick: () => setAttributes( { imageShape: 'uncropped' } ),
 			},
 		];
 
