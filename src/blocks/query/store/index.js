@@ -44,7 +44,6 @@ const actions = {
 	},
 }
 
-
 const selectors = {
 	query( state, clientId, criteria ) {
 		return state.deDuplicatedPostsByBlock[ clientId ] || [];

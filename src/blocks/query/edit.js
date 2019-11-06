@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { QueryPanel } from '../../components/';
+import { QueryPanel } from '../../components';
 
 /**
  * External dependencies
@@ -94,7 +94,7 @@ class Edit extends Component {
 			query,
 			setAttributes,
 			clientId,
-			updateCriteria
+			updateCriteria,
 		} = this.props;
 
 		const { criteria } = attributes;
@@ -112,26 +112,28 @@ class Edit extends Component {
 							onChange={ criteria => {
 								setAttributes( { criteria } );
 								updateCriteria( clientId, criteria );
-							} } />
+							} }
+						/>
 					</PanelBody>
 				</InspectorControls>
 				<Fragment>
 					{ ( query || [] ).map( post => {
 						if ( ! blocksTree[ post.id ] ) return null;
-
-						return <article className={ post.id === editingPost ? 'is-editing' : '' } key={ post.id }>
-							<EntityProvider kind="postType" type="post" id={ post.id }>
-								<BlockEditorProvider
-									value={ blocksTree[ post.id ] }
-									onChange={ blocks => this.updateBlocks( blocks, post.id ) }
-									settings={ settings }
-								>
-									<WritingFlow>
-										<BlockList />
-									</WritingFlow>
-								</BlockEditorProvider>
-							</EntityProvider>
-						</article>
+						return (
+							<article className={ post.id === editingPost ? 'is-editing' : '' } key={ post.id }>
+								<EntityProvider kind="postType" type="post" id={ post.id }>
+									<BlockEditorProvider
+										value={ blocksTree[ post.id ] }
+										onChange={ blocks => this.updateBlocks( blocks, post.id ) }
+										settings={ settings }
+									>
+										<WritingFlow>
+											<BlockList />
+										</WritingFlow>
+									</BlockEditorProvider>
+								</EntityProvider>
+							</article>
+						);
 					} ) }
 				</Fragment>
 			</div>
@@ -143,19 +145,22 @@ export default compose(
 	withSelect( ( select, props ) => {
 		const { attributes, clientId } = props;
 		const { criteria } = attributes;
-		const displayedPostCount = select( 'newspack-blocks/query' ).countPostsInEarlierBlocks( clientId );
+		const { countPostsInEarlierBlocks, query } = select( 'newspack-blocks/query' );
+		const displayedPostCount = countPostsInEarlierBlocks( clientId );
 		const shadowCritera = {
 			...criteria,
-			per_page: 0 + criteria.per_page + displayedPostCount
-		}
+			per_page: 0 + criteria.per_page + displayedPostCount,
+		};
 
 		return {
-			query: select( 'newspack-blocks/query' ).query( clientId, shadowCritera ),
+			query: query( clientId, shadowCritera ),
+			authors: select( 'core' ).getAuthors(),
+			categories: select( 'core' ).getEntityRecords( 'taxonomy', 'category', { per_page: 100 } ),
+			tags: select( 'core' ).getEntityRecords( 'taxonomy', 'post_tag', { per_page: 100 } ),
 		};
 	} ),
-	withDispatch( ( dispatch ) => {
+	withDispatch( dispatch => {
 		const { updateCriteria } = dispatch( 'newspack-blocks/query' );
 		return { updateCriteria };
 	} )
 )( Edit );
-
