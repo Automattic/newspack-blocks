@@ -20,11 +20,13 @@ import {
 	InspectorControls,
 	WritingFlow,
 } from '@wordpress/block-editor';
-import { cloneBlock } from '@wordpress/blocks';
+import { cloneBlock, createBlock } from '@wordpress/blocks';
 import { PanelBody } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
 import { EntityProvider } from '@wordpress/core-data';
 import { withSelect, withDispatch } from '@wordpress/data';
+
+const defaultFields = [ 'newspack-blocks/title', 'newspack-blocks/date', 'newspack-blocks/author'];
 
 class Edit extends Component {
 	constructor( props ) {
@@ -38,6 +40,7 @@ class Edit extends Component {
 
 	componentDidMount() {
 		this.createBlockTree();
+		this.updateBlocks( defaultFields.map( f => createBlock( f ) ) );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -154,9 +157,6 @@ export default compose(
 
 		return {
 			query: query( clientId, shadowCritera ),
-			authors: select( 'core' ).getAuthors(),
-			categories: select( 'core' ).getEntityRecords( 'taxonomy', 'category', { per_page: 100 } ),
-			tags: select( 'core' ).getEntityRecords( 'taxonomy', 'post_tag', { per_page: 100 } ),
 		};
 	} ),
 	withDispatch( dispatch => {

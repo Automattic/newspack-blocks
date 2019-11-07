@@ -109,19 +109,13 @@ class Newspack_Blocks_Query {
 			'ignore_sticky_posts' => true,
 		);
 		if ( ! empty( $criteria['author'] ) ) {
-			$args['author'] = $criteria['author'];
+			$args['author'] = implode( ",", $criteria['author'] );
 		}
 		if ( ! empty( $criteria['categories'] ) ) {
-			$args['cat'] = intval( $criteria['categories'] );
-		}
-		if ( ! empty( $criteria['categories_exclude'] ) ) {
-			$args['category__not_in'] = array( intval( $criteria['categories_exclude'] ) );
+			$args['cat'] = implode( ",", $criteria['categories'] );
 		}
 		if ( ! empty( $criteria['tags'] ) ) {
-			$args['tag_id'] = intval( $criteria['tags'] );
-		}
-		if ( ! empty( $criteria['tags_exclude'] ) ) {
-			$args['tag__not_in'] = array( intval( $criteria['tags_exclude'] ) );
+			$args['tag_in'] = intval( $criteria['tags'] );
 		}
 		if ( ! empty( $criteria['search'] ) ) {
 			$args['s'] = sanitize_text_field( $criteria['search'] );
