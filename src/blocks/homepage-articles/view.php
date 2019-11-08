@@ -197,19 +197,55 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 							<div class="entry-meta">
 
-								<?php if ( $attributes['showAuthor'] ) : ?>
-									<?php
+								<?php
+								if ( $attributes['showAuthor'] ) :
 									if ( $attributes['showAvatar'] ) {
-										echo get_avatar( get_the_author_meta( 'ID' ) );
+										if ( function_exists( 'coauthors_posts_links' ) ) {
+											$authors = get_coauthors();
+
+											foreach ( $authors as $author ) {
+												echo wp_kses_post( coauthors_get_avatar( $author, 48 ) );
+											}
+										} else {
+											echo get_avatar( get_the_author_meta( 'ID' ) );
+										}
 									}
 									?>
 									<span class="byline">
 										<?php
-										printf(
-											/* translators: %s: post author. */
-											esc_html_x( 'by %s', 'post author', 'newspack-blocks' ),
-											'<span class="author vcard"><a class="url fn n" href="' . esc_url( get_author_posts_url( get_the_author_meta( 'ID' ) ) ) . '">' . esc_html( get_the_author() ) . '</a></span>'
-										);
+										if ( function_exists( 'coauthors_posts_links' ) ) :
+											echo esc_html_x( 'by', 'post author', 'newspack-blocks' ) . ' ';
+
+											$authors      = get_coauthors();
+											$author_count = count( $authors );
+											$i            = 1;
+
+											foreach ( $authors as $author ) {
+												$i++;
+												if ( $author_count === $i ) :
+													/* translators: separates last two author names; needs a space on either side. */
+													$sep = esc_html__( ' and ', 'newspack-blocks' );
+												elseif ( $author_count > $i ) :
+													/* translators: separates all but the last two author names; needs a space at the end. */
+													$sep = esc_html__( ', ', 'newspack-blocks' );
+												else :
+													$sep = '';
+												endif;
+												printf(
+													/* translators: 1: author link. 2: author name. 3. variable seperator (comma, 'and', or empty) */
+													'<span class="author vcard"><a class="url fn n" href="%1$s">%2$s</a></span>%3$s ',
+													esc_url( get_author_posts_url( $author->ID, $author->user_nicename ) ),
+													esc_html( $author->display_name ),
+													esc_html( $sep )
+												);
+											}
+										else :
+											printf(
+												/* translators: %s: post author. */
+												esc_html_x( 'by %s', 'post author', 'newspack-blocks' ),
+												'<span class="author vcard"><a class="url fn n" href="' . esc_url( get_author_posts_url( get_the_author_meta( 'ID' ) ) ) . '">' . esc_html( get_the_author() ) . '</a></span>'
+											);
+										endif;
 										?>
 									</span><!-- .author-name -->
 									<?php
