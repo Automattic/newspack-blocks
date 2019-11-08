@@ -81,7 +81,14 @@ class Newspack_Blocks_Query {
 							'attrs'        => $block['attributes'],
 							'innerContent' => array(),
 						);
-						echo wp_kses_post( render_block( $block_data ) );
+
+						$allowed_html         = wp_kses_allowed_html( 'post' );
+						$allowed_html['time'] = array(
+							'class'    => true,
+							'datetime' => true,
+						);
+
+						echo wp_kses( render_block( $block_data ), $allowed_html );
 					}
 					?>
 					</div>
