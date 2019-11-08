@@ -110,11 +110,18 @@ class Newspack_Blocks_Query {
 	private function newspack_blocks_criteria_to_args( $criteria ) {
 		$args = array(
 			'posts_per_page'      => ! empty( $criteria['per_page'] ) ? intval( $criteria['per_page'] ) : 3,
-			'offset'              => ! empty( $criteria['offset'] ) ? intval( $criteria['offset'] ) : 0,
 			'post_status'         => 'publish',
 			'suppress_filters'    => false,
 			'ignore_sticky_posts' => true,
 		);
+
+		if ( $criteria[ 'singleMode' ] == 1 ) {
+			unset( $args['posts_per_page'] );
+			$args[ 'p' ] = $criteria[ 'singleId' ];
+			return( $args );
+		}
+
+
 		if ( ! empty( $criteria['author'] ) ) {
 			$args['author'] = implode( ",", $criteria['author'] );
 		}

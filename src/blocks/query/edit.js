@@ -98,6 +98,7 @@ class Edit extends Component {
 			setAttributes,
 			clientId,
 			updateCriteria,
+			postList,
 		} = this.props;
 
 		const { criteria } = attributes;
@@ -112,6 +113,7 @@ class Edit extends Component {
 					<PanelBody title={ __( 'Query Settings' ) } initialOpen={ true }>
 						<QueryPanel
 							criteria={ criteria }
+							postList={ postList }
 							onChange={ criteria => {
 								setAttributes( { criteria } );
 								updateCriteria( clientId, criteria );
@@ -149,14 +151,16 @@ export default compose(
 		const { attributes, clientId } = props;
 		const { criteria } = attributes;
 		const { countPostsInEarlierBlocks, query } = select( 'newspack-blocks/query' );
-		const displayedPostCount = countPostsInEarlierBlocks( clientId );
-		const shadowCritera = {
+		const { getEntityRecords } = select( 'core' );
+
+		const queryParams = {
 			...criteria,
-			per_page: 0 + criteria.per_page + displayedPostCount,
+			per_page: 0 + criteria.per_page + countPostsInEarlierBlocks( clientId ),
 		};
 
 		return {
-			query: query( clientId, shadowCritera ),
+			query: query( clientId, queryParams ),
+			postList: getEntityRecords( 'postType', 'post', { per_page: 50 } ),
 		};
 	} ),
 	withDispatch( dispatch => {

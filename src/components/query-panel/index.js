@@ -9,6 +9,8 @@ import AutocompleteTokenField from '../../blocks/homepage-articles/components/au
  */
 import apiFetch from '@wordpress/api-fetch';
 import { BaseControl } from '@wordpress/components';
+import { compose } from '@wordpress/compose';
+import { withSelect, withDispatch } from '@wordpress/data';
 import { Component, Fragment } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
@@ -110,7 +112,7 @@ const fetchSavedTags = async tagIDs => {
 export default class QueryPanel extends Component {
 	updateCriteria = newCriteria => {
 		const { criteria, onChange } = this.props;
-		const { per_page, offset, categories, tags, search, author } = { ...criteria, ...newCriteria };
+		const { per_page, offset, categories, tags, search, author, singleMode, singleId } = { ...criteria, ...newCriteria };
 
 		const sanitizedCriteria = {
 			per_page: parseInt( per_page ),
@@ -133,23 +135,30 @@ export default class QueryPanel extends Component {
 			sanitizedCriteria.search = search;
 		}
 
+		if ( singleMode ) {
+			sanitizedCriteria.singleMode = singleMode;
+			sanitizedCriteria.singleId = parseInt( singleId );
+		} else {
+			sanitizedCriteria.singleMode = false;
+		}
+
 		return onChange( sanitizedCriteria );
 	};
 
 	render = () => {
-		const { criteria } = this.props;
-		const { author, per_page, singleMode, categories, tags } = criteria;
+		const { criteria, postList } = this.props;
+		const { author, per_page, singleMode, singleId, categories, tags } = criteria;
 
 		return (
 			<Fragment>
 				<QueryControls
 					numberOfItems={ per_page }
 					onNumberOfItemsChange={ per_page => this.updateCriteria( { per_page } ) }
-					postList={ criteria }
+					postList={ postList }
 					singleMode={ singleMode }
-					selectedSingleId={ singleMode }
-					onSingleChange={ value => setAttributes( { single: '' !== value ? value : undefined } ) }
-					onSingleModeChange={ value => setAttributes( { singleMode: value } ) }
+					selectedSingleId={ singleId }
+					onSingleChange={ singleId => this.updateCriteria( { singleId } ) }
+					onSingleModeChange={ singleMode => this.updateCriteria( { singleMode } ) }
 				/>
 				{ ! singleMode && (
 					<Fragment>
@@ -191,6 +200,8 @@ QueryPanel.defaultProps = {
 	criteria: {
 		per_page: 3,
 		offset: 0,
+		singleMode: false,
+		singleId: 0,
 		author: [],
 		categories: [],
 		tags: [],

@@ -59,14 +59,19 @@ const selectors = {
 // resolvers must yield an action that contains a promise we want to wait for
 const resolvers = {
 	* query( clientId, criteria ) {
-		const path = addQueryArgs( '/wp/v2/posts', {
-			...criteria,
-			context: 'edit'
-		} );
-
-		const postsFetch = apiFetch( { path } );
-		const posts = yield actions.requestPosts( postsFetch );
-		return actions.receivePosts( clientId, posts );
+		if ( criteria.singleMode && ! isNaN( criteria.singleId ) ) {
+			const singlePostFetch = apiFetch( {
+				path: `/wp/v2/posts/${ criteria.singleId }?context=edit`
+			} )
+			.then( singlePost => [ singlePost ] );
+			const singlePost = yield actions.requestPosts( singlePostFetch );
+			return actions.receivePosts( clientId, singlePost );
+		} else {
+			const multiPostPath = addQueryArgs( '/wp/v2/posts', { ...criteria, context: 'edit' } );
+			const postsFetch = apiFetch( { path: multiPostPath } );
+			const posts = yield actions.requestPosts( postsFetch );
+			return actions.receivePosts( clientId, posts );
+		}
 	}
 }
 
