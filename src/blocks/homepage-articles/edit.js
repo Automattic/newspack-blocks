@@ -93,6 +93,9 @@ class Edit extends Component {
 			showCategory,
 			sectionHeader,
 		} = attributes;
+
+		const authorNumber = post.newspack_author_info.length;
+
 		return (
 			<article className={ post.newspack_featured_image_src && 'post-has-image' } key={ post.id }>
 				{ showImage && post.newspack_featured_image_src && (
@@ -115,6 +118,7 @@ class Edit extends Component {
 						) }
 					</figure>
 				) }
+
 				<div className="entry-wrapper">
 					{ showCategory && post.newspack_category_info.length && (
 						<div className="cat-links">
@@ -131,21 +135,30 @@ class Edit extends Component {
 						</h3>
 					) }
 					{ showExcerpt && <RawHTML key="excerpt">{ post.excerpt.rendered }</RawHTML> }
-					<div className="entry-meta">
-						{ showAuthor && post.newspack_author_info.avatar && showAvatar && (
-							<span className="avatar author-avatar" key="author-avatar">
-								<RawHTML>{ post.newspack_author_info.avatar }</RawHTML>
-							</span>
-						) }
 
+					<div className="entry-meta">
+						{ showAuthor &&
+							post.newspack_author_info.some( item => item.hasOwnProperty( 'avatar' ) ) &&
+							showAvatar &&
+							post.newspack_author_info.map( ( author, key ) => (
+								<span className="avatar author-avatar">
+									<RawHTML key={ author.id }>{ author.avatar }</RawHTML>
+								</span>
+							) ) }
 						{ showAuthor && (
 							<span className="byline">
-								{ __( 'by', 'newspack-blocks' ) }{' '}
-								<span className="author vcard">
-									<a className="url fn n" href="#">
-										{ post.newspack_author_info.display_name }
-									</a>
-								</span>
+								{ __( 'by', 'newspack-blocks' ) + ' ' }
+								{ post.newspack_author_info.map( ( author, key ) => (
+									<span className="author vcard">
+										<a className="url fn n" href="#">
+											{ author.display_name }
+										</a>
+										{ authorNumber > key + 1 &&
+											authorNumber !== key + 2 &&
+											__( ',', 'newspack-blocks' ) + ' ' }
+										{ authorNumber == key + 2 && ' ' + __( 'and', 'newspack-blocks' ) + ' ' }
+									</span>
+								) ) }
 							</span>
 						) }
 						{ showDate && (

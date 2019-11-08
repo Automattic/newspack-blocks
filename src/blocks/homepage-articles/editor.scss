@@ -24,4 +24,12 @@
 	.cat-links {
 		font-size: $font__size-xs;
 	}
+
+	span.avatar {
+		display: inline-block;
+		margin-right: 0.5em;
+		div {
+			display: inline;
+		}
+	}
 }
