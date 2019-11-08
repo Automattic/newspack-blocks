@@ -13,17 +13,14 @@ export const registerDateBlock = () => registerBlockType( 'newspack-blocks/date'
 	edit: () => {
 		const [ date ] = useEntityProp( 'postType', 'post', 'date_gmt' );
 		return (
-			<time className="entry-date published" key="pub-date">
-				{ moment( date )
-					.local()
-					.format( 'MMMM DD, Y' ) }
-			</time>
-
+			<span className="posted-on">
+				<time className="entry-date published" key="pub-date">
+					{ moment( date )
+						.local()
+						.format( 'MMMM DD, Y' ) }
+				</time>
+			</span>
 		);
 	},
 	save: () => null,
 } );
-
-
-
-
