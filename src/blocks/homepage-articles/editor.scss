@@ -24,4 +24,13 @@
 	.cat-links {
 		font-size: $font__size-xs;
 	}
+
+	/* Article excerpt */
+	.excerpt-contain {
+		display: inline;
+
+		p {
+			margin: 0.5em 0;
+		}
+	}
 }
