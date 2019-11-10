@@ -404,6 +404,10 @@ class Edit extends Component {
 					{ showImage && mediaPosition === 'behind' && (
 						<RangeControl
 							label={ __( 'Minimum height', 'newspack-blocks' ) }
+							help={ __(
+								"Sets a minimum height for the block, using a percentage of the screen's current height.",
+								'newspack-blocks'
+							) }
 							value={ minHeight }
 							onChange={ value => setAttributes( { minHeight: value } ) }
 							min={ 0 }
