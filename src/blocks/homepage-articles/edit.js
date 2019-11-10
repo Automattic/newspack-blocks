@@ -149,7 +149,11 @@ class Edit extends Component {
 							<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
 						</h3>
 					) }
-					{ showExcerpt && <RawHTML key="excerpt">{ post.excerpt.rendered }</RawHTML> }
+					{ showExcerpt && (
+						<RawHTML key="excerpt" className="excerpt-contain">
+							{ post.excerpt.rendered }
+						</RawHTML>
+					) }
 					<div className="entry-meta">
 						{ showAuthor && post.newspack_author_info.avatar && showAvatar && (
 							<span className="avatar author-avatar" key="author-avatar">
