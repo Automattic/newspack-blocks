@@ -4,7 +4,7 @@
 .wp-block-columns {
 
 	.wp-block-column {
-		margin-bottom: 64px;
+		margin-bottom: 32px;
 
 		&:last-child {
 			margin-bottom: 0;
@@ -62,6 +62,11 @@
 	&.is-style-borders {
 		.wp-block-column {
 			position: relative;
+			margin-bottom: 64px;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
 
 			&:after {
 				border: 0 solid $color__border;
@@ -78,6 +83,8 @@
 			}
 
 			@include media( mobile ) {
+				margin-bottom: 0;
+
 				&:after {
 					border-right-width: 1px;
 					border-top-width: 0;
