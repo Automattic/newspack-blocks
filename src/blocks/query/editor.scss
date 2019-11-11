@@ -10,9 +10,10 @@
 		height: auto;
 	}
 
-	/* Categories */
- 	.article-section-categories {
-		.cat-links {
+	/* Categories, Tags */
+ 	.article-section-categories,
+	.article-section-tags {
+ 		span[class$="-links"] {
 			&:before {
 				content: ", ";
 			}
