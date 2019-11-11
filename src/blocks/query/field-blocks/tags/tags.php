@@ -18,7 +18,7 @@ function newspack_blocks_render_block_tags( $attributes ) {
 	<div class="article-section-tags">
 		<?php
 		/* translators: used between list items, there is a space after the comma. */
-		$tags_list = get_the_tag_list( '', esc_html__( ', ', 'newspack-blocks' ) );
+		$tags_list = get_the_tag_list( '', '<span class="comma">' . esc_html__( ', ', 'newspack-blocks' ) . '</span>' );
 		if ( $tags_list ) {
 			printf(
 				/* translators: 1: posted in label, only visible to screen readers. 2: list of tags. */

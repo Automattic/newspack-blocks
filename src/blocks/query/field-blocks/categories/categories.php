@@ -18,7 +18,7 @@ function newspack_blocks_render_block_categories( $attributes ) {
 	<div class="article-section-categories">
 		<?php
 		/* translators: used between list items, there is a space after the comma. */
-		$categories_list = get_the_category_list( esc_html__( ', ', 'newspack-blocks' ) );
+		$categories_list = get_the_category_list( '<span class="comma">' . esc_html__( ', ', 'newspack-blocks' ) . '</span>' );
 		if ( $categories_list ) {
 			printf(
 				/* translators: 1: posted in label, only visible to screen readers. 2: list of categories. */
