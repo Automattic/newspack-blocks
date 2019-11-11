@@ -130,11 +130,23 @@ class Newspack_Blocks_API {
 			$authors = get_coauthors();
 
 			foreach ( $authors as $author ) {
+				// Check if this is a guest author post type.
+				if ( 'guest-author' === get_post_type( $author->ID ) ) {
+					// If yes, make sure the author actually has an avatar set; otherwise, coauthors_get_avatar returns a featured image.
+					if ( get_post_thumbnail_id( $author->ID ) ) {
+						$author_avatar = coauthors_get_avatar( $author, 48 );
+					} else {
+						// If there is no avatar, force it to return the current fallback image.
+						$author_avatar = get_avatar( ' ' );
+					}
+				} else {
+					$author_avatar = coauthors_get_avatar( $author, 48 );
+				}
 				$author_data[] = array(
 					/* Get the author name */
 					'display_name' => esc_html( $author->display_name ),
 					/* Get the author avatar */
-					'avatar'       => wp_kses_post( coauthors_get_avatar( $author, 48 ) ),
+					'avatar'       => wp_kses_post( $author_avatar ),
 				);
 			}
 		else :
