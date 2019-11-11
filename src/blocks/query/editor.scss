@@ -9,4 +9,17 @@
 	.edit-post-visual-editor, .block-editor-writing-flow__click-redirect {
 		height: auto;
 	}
+
+	/* Categories */
+ 	.article-section-categories {
+		.cat-links {
+			&:before {
+				content: ", ";
+			}
+
+			&:first-of-type:before {
+				content: "";
+			}
+		}
+	}
 }
