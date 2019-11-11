@@ -20,7 +20,7 @@ export const registerExcerptBlock = () => registerBlockType( 'newspack-blocks/ex
 	parent,
 	edit: ( ) => {
 		const [ excerpt ] = useEntityProp( 'postType', 'post', 'excerpt' );
-		return <RawHTML>{ excerpt }</RawHTML>
+		return <RawHTML className="article-section-excerpt">{ excerpt }</RawHTML>
 	},
 	save: () => null,
 } );
