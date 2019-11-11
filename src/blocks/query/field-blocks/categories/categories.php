@@ -24,8 +24,8 @@ function newspack_blocks_render_block_categories( $attributes ) {
 				/* translators: 1: posted in label, only visible to screen readers. 2: list of categories. */
 				'<span class="cat-links"><span class="screen-reader-text">%1$s</span>%2$s</span>',
 				esc_html__( 'Posted in', 'newspack-blocks' ),
-				esc_html( $categories_list )
-			);
+				$categories_list
+			); // WPCS: XSS OK.
 		}
 		?>
 	</div>
