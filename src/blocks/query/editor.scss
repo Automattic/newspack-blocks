@@ -11,9 +11,9 @@
 	}
 
 	/* Categories, Tags */
- 	.article-section-categories,
-	.article-section-tags {
- 		span[class$="-links"] {
+	.cat-links,
+ 	.tags-links {
+ 		span {
 			&:before {
 				content: ", ";
 			}

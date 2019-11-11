@@ -19,9 +19,9 @@ const Edit = withSelect( select => {
 } )( ( { allTags } ) => {
 	const [ postTags ] = useEntityProp( 'postType', 'post', 'tags' );
 	const tags = ( allTags || [] ).filter( t => postTags.includes( t.id ) );
-	return <div className="article-section-tags">
-		{ tags.map( t => <span className="tags-links" key={ t.id }><a href={ t.link }>{ t.name }</a></span> ) }
-	</div>
+	return <span className="tags-links">
+		{ tags.map( t => <span key={ t.id }><a href={ t.link }>{ t.name }</a></span> ) }
+	</span>
 } )
 
 export const registerTagsBlock = () => registerBlockType( 'newspack-blocks/tags', {

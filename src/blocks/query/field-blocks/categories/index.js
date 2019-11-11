@@ -19,9 +19,9 @@ const Edit = withSelect( select => {
 } )( ( { allCategories } ) => {
 	const [ postCategories ] = useEntityProp( 'postType', 'post', 'categories' );
 	const categories = ( allCategories || [] ).filter( c => postCategories.includes( c.id ) );
-	return <div className="article-section-categories">
-		{ categories.map( c => <span className="cat-links" key={ c.id }><a href={ c.link }>{ c.name }</a></span> ) }
-	</div>
+	return <span className="cat-links">
+		{ categories.map( c => <span key={ c.id }><a href={ c.link }>{ c.name }</a></span> ) }
+	</span>
 } );
 
 export const registerCategoriesBlock = () => registerBlockType( 'newspack-blocks/post-categories', {
