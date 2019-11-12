@@ -15,7 +15,7 @@
 function newspack_blocks_render_block_excerpt( $attributes ) {
 	ob_start();
 	?>
-	<div class="article-section-excerpt">
+	<div class="entry-summary">
 		<?php the_excerpt(); ?>
 	</div>
 	<?php
