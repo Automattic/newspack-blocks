@@ -15,7 +15,7 @@
 function newspack_blocks_render_block_author( $attributes ) {
 	ob_start();
 	?>
-	<div class="article-section-author">
+	<div class="author-byline">
 		<?php echo get_avatar( get_the_author_meta( 'ID' ) ); ?>
 		<span class="byline">
 			<?php

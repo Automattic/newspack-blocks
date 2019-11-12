@@ -19,7 +19,7 @@ const Edit = ( { attributes } ) => {
 	const [ newspack_author_info ] = useEntityProp( 'postType', 'post', 'newspack_author_info' );
 
 	return (
-		<div class="article-section-author">
+		<div class="author-byline">
 			<RawHTML>{ ( newspack_author_info || {} ).avatar }</RawHTML>
 			<span className="byline">
 				{ __( 'by' ) }{' '}
