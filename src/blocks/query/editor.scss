@@ -1,9 +1,6 @@
 .wp-block-newspack-blocks-query {
-	&.is-editing article {
-		/* opacity: 0.2; */
-		&.is-editing {
-			opacity: 1;
-		}
+	> article {
+		padding: 14px;
 	}
 
 	.edit-post-visual-editor, .block-editor-writing-flow__click-redirect {

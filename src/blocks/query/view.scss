@@ -2,11 +2,11 @@
 @import "field-blocks/date/date";
 
 .wp-block-newspack-blocks-query {
-	article {
-		border-bottom: 1px solid black;
-		padding: 1em;
-	}
-	.is-edit-area {
-		background: lightgray;
+	.entry-wrapper {
+		margin-bottom: 1.5em;
+
+		&:last-of-type {
+			margin-bottom: 0;
+		}
 	}
 }
