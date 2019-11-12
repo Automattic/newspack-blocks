@@ -2,13 +2,6 @@
 @import "../../sass/mixins";
 
 .wp-block-newspack-blocks-query {
-	/* Section header */
-	.article-section-title {
-		font-size: $font__size-sm;
-		margin-bottom: 0.5em;
-		width: 100%; // make sure this isn't caught up in the flex styles.
-	}
-
 	.article-section-author {
 		align-items: center;
 		display: flex;

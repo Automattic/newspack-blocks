@@ -13,7 +13,7 @@
  * @return string Returns the post content with latest posts added.
  */
 function newspack_blocks_render_block_title( $attributes ) {
-	return the_title( '<h2 class="article-section-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h2>' );
+	return the_title( '<h2 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h2>' );
 }
 
 register_block_type(
