@@ -28,7 +28,7 @@ const Edit = withSelect( select => {
 		return null;
 	}
 	return (
-		<img src={ thumbnail.source_url } width={ thumbnail.width } height={ thumbnail.height} />
+		<figure className="post-thumbnail"><img src={ thumbnail.source_url } width={ thumbnail.width } height={ thumbnail.height} /></figure>
 	)
 } )
 

@@ -15,7 +15,9 @@
 function newspack_blocks_render_block_featured_image( $attributes ) {
 	ob_start();
 	?>
-	<p><?php the_post_thumbnail(); ?></p>
+	<figure class="post-thumbnail">
+		<?php the_post_thumbnail(); ?>
+	</figure>
 	<?php
 	return ob_get_clean();
 }
