@@ -8,5 +8,22 @@
 		&:last-of-type {
 			margin-bottom: 0;
 		}
+
+		> * {
+			margin-bottom: 0.75em;
+			margin-top: 0.75em;
+
+			&:first-child {
+				margin-top: 0;
+			}
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+
+		> span {
+			display: inline-block;
+		}
 	}
 }
