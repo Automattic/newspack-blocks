@@ -4,66 +4,194 @@
 import { __ } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import { QueryControls as BaseControl, SelectControl, ToggleControl } from '@wordpress/components';
+import apiFetch from '@wordpress/api-fetch';
+import { addQueryArgs } from '@wordpress/url';
+import { decodeEntities } from '@wordpress/html-entities';
+
+import AutocompleteTokenField from '../components/autocomplete-tokenfield.js';
 
 class QueryControls extends Component {
+
+	fetchPostSuggestions = search => {
+		return apiFetch( {
+			path: addQueryArgs( '/wp/v2/search', {
+				search,
+				per_page: 20,
+				_fields: 'id,title',
+			} ),
+		} ).then( function( posts ) {
+			const result = posts.map( post => ( {
+				value: post.id,
+				label: decodeEntities( post.title.rendered ) || __( '(no title)', 'newspack-blocks' ),
+			} ) );
+			console.log( result );
+			return result;
+		} );
+	};
+	fetchSavedPosts = postIDs => {
+		return apiFetch( {
+			path: addQueryArgs( '/wp/v2/posts', {
+				per_page: 100,
+				include: postIDs.join( ',' ),
+			} ),
+		} ).then( function( posts ) {
+			return posts.map( post => ( {
+				value: post.id,
+				label: decodeEntities( post.title.rendered ) || __( '(no title)', 'newspack-blocks' ),
+			} ) );
+		} );
+	};
+
+	fetchAuthorSuggestions = search => {
+		return apiFetch( {
+			path: addQueryArgs( '/wp/v2/users', {
+				search,
+				per_page: 20,
+				_fields: 'id,name',
+			} ),
+		} ).then( function( users ) {
+			return users.map( user => ( {
+				value: user.id,
+				label: decodeEntities( user.name ) || __( '(no name)', 'newspack-blocks' ),
+			} ) );
+		} );
+	};
+	fetchSavedAuthors = userIDs => {
+		return apiFetch( {
+			path: addQueryArgs( '/wp/v2/users', {
+				per_page: 100,
+				include: userIDs.join( ',' ),
+			} ),
+		} ).then( function( users ) {
+			return users.map( user => ( {
+				value: user.id,
+				label: decodeEntities( user.name ) || __( '(no name)', 'newspack-blocks' ),
+			} ) );
+		} );
+	};
+
+	fetchCategorySuggestions = search => {
+		return apiFetch( {
+			path: addQueryArgs( '/wp/v2/categories', {
+				search,
+				per_page: 20,
+				_fields: 'id,name',
+				orderby: 'count',
+				order: 'desc',
+			} ),
+		} ).then( function( categories ) {
+			return categories.map( category => ( {
+				value: category.id,
+				label: decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' ),
+			} ) );
+		} );
+	};
+	fetchSavedCategories = categoryIDs => {
+		return apiFetch( {
+			path: addQueryArgs( '/wp/v2/categories', {
+				per_page: 100,
+				_fields: 'id,name',
+				include: categoryIDs.join( ',' ),
+			} ),
+		} ).then( function( categories ) {
+			return categories.map( category => ( {
+				value: category.id,
+				label: decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' ),
+			} ) );
+		} );
+	};
+
+	fetchTagSuggestions = search => {
+		return apiFetch( {
+			path: addQueryArgs( '/wp/v2/tags', {
+				search,
+				per_page: 20,
+				_fields: 'id,name',
+				orderby: 'count',
+				order: 'desc',
+			} ),
+		} ).then( function( tags ) {
+			return tags.map( tag => ( {
+				value: tag.id,
+				label: decodeEntities( tag.name ) || __( '(no title)', 'newspack-blocks' ),
+			} ) );
+		} );
+	};
+	fetchSavedTags = tagIDs => {
+		return apiFetch( {
+			path: addQueryArgs( '/wp/v2/tags', {
+				per_page: 100,
+				_fields: 'id,name',
+				include: tagIDs.join( ',' ),
+			} ),
+		} ).then( function( tags ) {
+			return tags.map( tag => ( {
+				value: tag.id,
+				label: decodeEntities( tag.name ) || __( '(no title)', 'newspack-blocks' ),
+			} ) );
+		} );
+	};
+
 	render = () => {
 		const {
-			authorList,
-			postList,
-			tagsList,
-			onAuthorChange,
-			onSingleChange,
-			onTagChange,
-			selectedSingleId,
-			selectedAuthorId,
-			selectedTagId,
-			singleMode,
-			onSingleModeChange,
-			enableSingle,
+			numberOfItems,
+			onNumberOfItemsChange,
+			specificMode,
+			onSpecificModeChange,
+			specificPosts,
+			onSpecificPostsChange,
+			authors,
+			onAuthorsChange,
+			categories,
+			onCategoriesChange,
+			tags,
+			onTagsChange,
+			enableSpecific, //Todo remember carousel gallery uses this and adjust.
 		} = this.props;
+
 		return [
-			enableSingle && (
+			enableSpecific && (
 				<ToggleControl
-					checked={ singleMode }
-					onChange={ onSingleModeChange }
-					label={ __( 'Choose specific story' ) }
+					checked={ specificMode }
+					onChange={ onSpecificModeChange }
+					label={ __( 'Choose specific stories', 'newspack-blocks' ) }
 				/>
 			),
-			singleMode && (
-				<SelectControl
-					key="query-controls-single-post-select"
-					label={ __( 'Display One Specific Post', 'newspack-blocks' ) }
-					value={ selectedSingleId }
-					options={ [
-						{ label: __( '-- Select Post --', 'newspack-blocks' ), value: '' },
-						...( postList || [] ).map( post => ( { label: post.title.rendered, value: post.id } ) ),
-					] }
-					onChange={ onSingleChange }
+			specificMode && (
+				<AutocompleteTokenField
+					tokens={ specificPosts || [] }
+					onChange={ onSpecificPostsChange }
+					fetchSuggestions={ this.fetchPostSuggestions }
+					fetchSavedInfo={ this.fetchSavedPosts }
+					label={ __( 'Posts', 'newspack-blocks' ) }
 				/>
 			),
-			! singleMode && <BaseControl { ...this.props } />,
-			! singleMode && onAuthorChange && (
-				<SelectControl
-					key="query-controls-author-select"
-					label={ __( 'Author', 'newspack-blocks' ) }
-					value={ selectedAuthorId }
-					options={ [
-						{ label: __( 'Any author', 'newspack-blocks' ), value: '' },
-						...( authorList || [] ).map( author => ( { label: author.name, value: author.id } ) ),
-					] }
-					onChange={ onAuthorChange }
+			! specificMode && <BaseControl { ...this.props } />,
+			! specificMode && onAuthorsChange && (
+				<AutocompleteTokenField
+					tokens={ authors || [] }
+					onChange={ onAuthorsChange }
+					fetchSuggestions={ this.fetchAuthorSuggestions }
+					fetchSavedInfo={ this.fetchSavedAuthors }
+					label={ __( 'Authors', 'newspack-blocks' ) }
 				/>
 			),
-			! singleMode && onTagChange && (
-				<SelectControl
-					key="query-controls-tag-control"
-					label={ __( 'Tag', 'newspack-blocks' ) }
-					value={ selectedTagId }
-					options={ [
-						{ label: __( 'All', 'newspack-blocks' ), value: '' },
-						...( tagsList || [] ).map( tag => ( { label: tag.name, value: tag.id } ) ),
-					] }
-					onChange={ onTagChange }
+			! specificMode && onCategoriesChange && (
+				<AutocompleteTokenField
+					tokens={ categories || [] }
+					onChange={ onCategoriesChange }
+					fetchSuggestions={ this.fetchCategorySuggestions }
+					fetchSavedInfo={ this.fetchSavedCategories }
+					label={ __( 'Categories', 'newspack-blocks' ) }
+					/>
+			),
+			! specificMode && onTagsChange && (
+				<AutocompleteTokenField
+					tokens={ tags || [] }
+					onChange={ onTagsChange }
+					fetchSuggestions={ this.fetchTagSuggestions }
+					fetchSavedInfo={ this.fetchSavedTags }
+					label={ __( 'Tags', 'newspack-blocks' ) }
 				/>
 			),
 		];
@@ -71,10 +199,11 @@ class QueryControls extends Component {
 }
 
 QueryControls.defaultProps = {
-	authorList: [],
-	postList: [],
-	tagsList: [],
-	enableSingle: true,
+	enableSpecific: true,
+	specificPosts: [],
+	authors: [],
+	categories: [],
+	tags: [],
 };
 
 export default QueryControls;

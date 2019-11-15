@@ -328,8 +328,12 @@ function newspack_blocks_register_homepage_articles() {
 						'type' => 'integer',
 					),
 				),
-				'single'          => array(
-					'type' => 'string',
+				'specificPosts'   => array(
+					'type'    => 'array',
+					'default' => array(),
+					'items'   => array(
+						'type' => 'integer',
+					),
 				),
 				'typeScale'       => array(
 					'type'    => 'integer',
@@ -351,7 +355,7 @@ function newspack_blocks_register_homepage_articles() {
 					'type'    => 'string',
 					'default' => '',
 				),
-				'singleMode'      => array(
+				'specificMode'    => array(
 					'type'    => 'boolean',
 					'default' => false,
 				),

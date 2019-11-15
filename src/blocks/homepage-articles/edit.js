@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import QueryControls from './query-controls';
-import AutocompleteTokenField from './components/autocomplete-tokenfield.js';
 
 /**
  * External dependencies
@@ -32,7 +31,6 @@ import {
 } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
-import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
 import { PanelColorSettings, withColors } from '@wordpress/block-editor';
@@ -187,7 +185,6 @@ class Edit extends Component {
 	renderInspectorControls = () => {
 		const {
 			attributes,
-			postList,
 			setAttributes,
 			latestPosts,
 			isSelected,
@@ -198,7 +195,7 @@ class Edit extends Component {
 
 		const {
 			authors,
-			single,
+			specificPosts,
 			postsToShow,
 			categories,
 			sectionHeader,
@@ -215,149 +212,29 @@ class Edit extends Component {
 			showCategory,
 			postLayout,
 			mediaPosition,
-			singleMode,
+			specificMode,
 			tags,
 			url,
 		} = attributes;
-
-		const fetchAuthorSuggestions = search => {
-			return apiFetch( {
-				path: addQueryArgs( '/wp/v2/users', {
-					search,
-					per_page: 20,
-					_fields: 'id,name',
-				} ),
-			} ).then( function( users ) {
-				return users.map( user => ( {
-					value: user.id,
-					label: decodeEntities( user.name ) || __( '(no name)', 'newspack-blocks' ),
-				} ) );
-			} );
-		};
-		const fetchSavedAuthors = userIDs => {
-			return apiFetch( {
-				path: addQueryArgs( '/wp/v2/users', {
-					per_page: 100,
-					include: userIDs.join( ',' ),
-				} ),
-			} ).then( function( users ) {
-				return users.map( user => ( {
-					value: user.id,
-					label: decodeEntities( user.name ) || __( '(no name)', 'newspack-blocks' ),
-				} ) );
-			} );
-		};
-
-		const fetchCategorySuggestions = search => {
-			return apiFetch( {
-				path: addQueryArgs( '/wp/v2/categories', {
-					search,
-					per_page: 20,
-					_fields: 'id,name',
-					orderby: 'count',
-					order: 'desc',
-				} ),
-			} ).then( function( categories ) {
-				return categories.map( category => ( {
-					value: category.id,
-					label: decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' ),
-				} ) );
-			} );
-		};
-		const fetchSavedCategories = categoryIDs => {
-			return apiFetch( {
-				path: addQueryArgs( '/wp/v2/categories', {
-					per_page: 100,
-					_fields: 'id,name',
-					include: categoryIDs.join( ',' ),
-				} ),
-			} ).then( function( categories ) {
-				return categories.map( category => ( {
-					value: category.id,
-					label: decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' ),
-				} ) );
-			} );
-		};
-
-		const fetchTagSuggestions = search => {
-			return apiFetch( {
-				path: addQueryArgs( '/wp/v2/tags', {
-					search,
-					per_page: 20,
-					_fields: 'id,name',
-					orderby: 'count',
-					order: 'desc',
-				} ),
-			} ).then( function( tags ) {
-				return tags.map( tag => ( {
-					value: tag.id,
-					label: decodeEntities( tag.name ) || __( '(no title)', 'newspack-blocks' ),
-				} ) );
-			} );
-		};
-		const fetchSavedTags = tagIDs => {
-			return apiFetch( {
-				path: addQueryArgs( '/wp/v2/tags', {
-					per_page: 100,
-					_fields: 'id,name',
-					include: tagIDs.join( ',' ),
-				} ),
-			} ).then( function( tags ) {
-				return tags.map( tag => ( {
-					value: tag.id,
-					label: decodeEntities( tag.name ) || __( '(no title)', 'newspack-blocks' ),
-				} ) );
-			} );
-		};
 
 		return (
 			<Fragment>
 				<PanelBody title={ __( 'Display Settings', 'newspack-blocks' ) } initialOpen={ true }>
 					{ postsToShow && (
-						<Fragment>
-							<QueryControls
-								numberOfItems={ postsToShow }
-								onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
-								postList={ postList }
-								singleMode={ singleMode }
-								selectedSingleId={ single }
-								onSingleChange={ value =>
-									setAttributes( { single: '' !== value ? value : undefined } )
-								}
-								onSingleModeChange={ value => setAttributes( { singleMode: value } ) }
-							/>
-							{ ! singleMode && (
-								<Fragment>
-									<BaseControl>
-										<AutocompleteTokenField
-											tokens={ authors || [] }
-											onChange={ tokens => setAttributes( { authors: tokens } ) }
-											fetchSuggestions={ fetchAuthorSuggestions }
-											fetchSavedInfo={ fetchSavedAuthors }
-											label={ __( 'Author', 'newspack-blocks' ) }
-										/>
-									</BaseControl>
-									<BaseControl>
-										<AutocompleteTokenField
-											tokens={ categories || [] }
-											onChange={ tokens => setAttributes( { categories: tokens } ) }
-											fetchSuggestions={ fetchCategorySuggestions }
-											fetchSavedInfo={ fetchSavedCategories }
-											label={ __( 'Category', 'newspack-blocks' ) }
-										/>
-									</BaseControl>
-									<BaseControl>
-										<AutocompleteTokenField
-											tokens={ tags || [] }
-											onChange={ tokens => setAttributes( { tags: tokens } ) }
-											fetchSuggestions={ fetchTagSuggestions }
-											fetchSavedInfo={ fetchSavedTags }
-											label={ __( 'Tag', 'newspack-blocks' ) }
-										/>
-									</BaseControl>
-								</Fragment>
-							) }
-						</Fragment>
+						<QueryControls
+							numberOfItems={ postsToShow }
+							onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
+							specificMode={ specificMode }
+							onSpecificModeChange={ value => setAttributes( { specificMode: value } ) }
+							specificPosts={ specificPosts }
+							onSpecificPostsChange={ value => setAttributes( { specificPosts: value } ) }
+							authors={ authors }
+							onAuthorsChange={ value => setAttributes( { authors: value } ) }
+							categories={ categories }
+							onCategoriesChange={ value => setAttributes( { categories: value } ) }
+							tags={ tags }
+							onTagsChange={ value => setAttributes( { tags: value } ) }
+						/>
 					) }
 					{ postLayout === 'grid' && (
 						<RangeControl
@@ -639,11 +516,14 @@ class Edit extends Component {
 export default compose( [
 	withColors( { textColor: 'color' } ),
 	withSelect( ( select, props ) => {
-		const { postsToShow, authors, categories, tags, single, singleMode } = props.attributes;
+		const { postsToShow, authors, categories, tags, specificPosts, specificMode } = props.attributes;
 		const { getAuthors, getEntityRecords } = select( 'core' );
 		const latestPostsQuery = pickBy(
-			singleMode
-				? { include: single }
+			specificMode && specificPosts
+				? { 
+					include: specificPosts,
+					orderby: 'include' 
+				}
 				: {
 						per_page: postsToShow,
 						categories,
@@ -657,7 +537,6 @@ export default compose( [
 		};
 		return {
 			latestPosts: getEntityRecords( 'postType', 'post', latestPostsQuery ),
-			postList: getEntityRecords( 'postType', 'post', postsListQuery ),
 		};
 	} ),
 ] )( Edit );
