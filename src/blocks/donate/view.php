@@ -193,7 +193,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 
 	endif;
 
-	return ob_get_clean();
+	return apply_filters( 'newspack_blocks_donate_block_html', ob_get_clean() );
 }
 
 /**
