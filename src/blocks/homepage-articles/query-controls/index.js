@@ -8,6 +8,9 @@ import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
 
+/**
+ * Internal dependencies.
+ */
 import AutocompleteTokenField from '../components/autocomplete-tokenfield.js';
 
 class QueryControls extends Component {
@@ -148,7 +151,7 @@ class QueryControls extends Component {
 			onCategoriesChange,
 			tags,
 			onTagsChange,
-			enableSpecific, //Todo remember carousel gallery uses this and adjust.
+			enableSpecific,
 		} = this.props;
 
 		return [
