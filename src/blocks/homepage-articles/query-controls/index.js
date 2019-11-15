@@ -18,13 +18,13 @@ class QueryControls extends Component {
 				search,
 				per_page: 20,
 				_fields: 'id,title',
+				type: 'post',
 			} ),
 		} ).then( function( posts ) {
 			const result = posts.map( post => ( {
 				value: post.id,
-				label: decodeEntities( post.title.rendered ) || __( '(no title)', 'newspack-blocks' ),
+				label: decodeEntities( post.title ) || __( '(no title)', 'newspack-blocks' ),
 			} ) );
-			console.log( result );
 			return result;
 		} );
 	};
@@ -33,6 +33,7 @@ class QueryControls extends Component {
 			path: addQueryArgs( '/wp/v2/posts', {
 				per_page: 100,
 				include: postIDs.join( ',' ),
+				_fields: 'id,title',
 			} ),
 		} ).then( function( posts ) {
 			return posts.map( post => ( {
@@ -61,6 +62,7 @@ class QueryControls extends Component {
 			path: addQueryArgs( '/wp/v2/users', {
 				per_page: 100,
 				include: userIDs.join( ',' ),
+				_fields: 'id,name',
 			} ),
 		} ).then( function( users ) {
 			return users.map( user => ( {

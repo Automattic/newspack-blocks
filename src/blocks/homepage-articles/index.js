@@ -106,7 +106,7 @@ export const settings = {
 		tags: {
 			type: 'array',
 		},
-		specific: {
+		specificPosts: {
 			type: 'array',
 		},
 		typeScale: {
