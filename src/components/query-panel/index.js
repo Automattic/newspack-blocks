@@ -9,8 +9,6 @@ import AutocompleteTokenField from '../../blocks/homepage-articles/components/au
  */
 import apiFetch from '@wordpress/api-fetch';
 import { BaseControl } from '@wordpress/components';
-import { compose } from '@wordpress/compose';
-import { withSelect, withDispatch } from '@wordpress/data';
 import { Component, Fragment } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';

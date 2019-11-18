@@ -21,7 +21,7 @@ import {
 	WritingFlow,
 } from '@wordpress/block-editor';
 import { cloneBlock, createBlock } from '@wordpress/blocks';
-import { PanelBody } from '@wordpress/components';
+import { PanelBody, Placeholder, Spinner } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
 import { EntityProvider } from '@wordpress/core-data';
 import { withSelect, withDispatch } from '@wordpress/data';
@@ -122,7 +122,15 @@ class Edit extends Component {
 					</PanelBody>
 				</InspectorControls>
 				<Fragment>
-					{ ( query || [] ).map( post => {
+					{ ! query && (
+						<Placeholder>
+							<Spinner />
+						</Placeholder>
+					) }
+					{ query && ! query.length && (
+						<Placeholder>{ __( 'Sorry, no posts were found.', 'newspack-blocks' ) }</Placeholder>
+					) }
+					{ query && !! query.length && query.map( post => {
 						if ( ! blocksTree[ post.id ] ) return null;
 						return (
 							<article className={ post.id === editingPost ? 'is-editing' : '' } key={ post.id }>
