@@ -125,14 +125,38 @@ class Newspack_Blocks_API {
 	 * @param Array $object  The object info.
 	 */
 	public static function newspack_blocks_get_author_info( $object ) {
-		$author_data = array(
-			/* Get the author name */
-			'display_name' => get_the_author_meta( 'display_name', $object['author'] ),
-			/* Get the author link */
-			'author_link'  => get_author_posts_url( $object['author'] ),
-			/* Get the author avatar */
-			'avatar'       => get_avatar( $object['author'], 48 ),
-		);
+
+		if ( function_exists( 'coauthors_posts_links' ) ) :
+			$authors = get_coauthors();
+
+			foreach ( $authors as $author ) {
+				// Check if this is a guest author post type.
+				if ( 'guest-author' === get_post_type( $author->ID ) ) {
+					// If yes, make sure the author actually has an avatar set; otherwise, coauthors_get_avatar returns a featured image.
+					if ( get_post_thumbnail_id( $author->ID ) ) {
+						$author_avatar = coauthors_get_avatar( $author, 48 );
+					} else {
+						// If there is no avatar, force it to return the current fallback image.
+						$author_avatar = get_avatar( ' ' );
+					}
+				} else {
+					$author_avatar = coauthors_get_avatar( $author, 48 );
+				}
+				$author_data[] = array(
+					/* Get the author name */
+					'display_name' => esc_html( $author->display_name ),
+					/* Get the author avatar */
+					'avatar'       => wp_kses_post( $author_avatar ),
+				);
+			}
+		else :
+			$author_data[] = array(
+				/* Get the author name */
+				'display_name' => get_the_author_meta( 'display_name', $object['author'] ),
+				/* Get the author avatar */
+				'avatar'       => get_avatar( $object['author'], 48 ),
+			);
+		endif;
 
 		/* Return the author data */
 		return $author_data;

@@ -107,6 +107,9 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 					continue;
 				}
 				$newspack_blocks_post_id[ get_the_ID() ] = true;
+
+				$authors = newspack_blocks_prepare_authors();
+
 				$post_counter++;
 
 				$styles = '';
@@ -197,20 +200,15 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 							<div class="entry-meta">
 
-								<?php if ( $attributes['showAuthor'] ) : ?>
-									<?php
-									if ( $attributes['showAvatar'] ) {
-										echo get_avatar( get_the_author_meta( 'ID' ) );
-									}
+								<?php
+								if ( $attributes['showAuthor'] && $attributes['showAvatar'] ) :
+									echo wp_kses_post( newspack_blocks_format_avatars( $authors ) );
+								endif;
+
+								if ( $attributes['showAuthor'] ) :
 									?>
 									<span class="byline">
-										<?php
-										printf(
-											/* translators: %s: post author. */
-											esc_html_x( 'by %s', 'post author', 'newspack-blocks' ),
-											'<span class="author vcard"><a class="url fn n" href="' . esc_url( get_author_posts_url( get_the_author_meta( 'ID' ) ) ) . '">' . esc_html( get_the_author() ) . '</a></span>'
-										);
-										?>
+										<?php echo wp_kses_post( newspack_blocks_format_byline( $authors ) ); ?>
 									</span><!-- .author-name -->
 									<?php
 								endif;
@@ -369,3 +367,94 @@ function newspack_blocks_register_homepage_articles() {
 	);
 }
 add_action( 'init', 'newspack_blocks_register_homepage_articles' );
+
+/**
+ * Prepare an array of authors, taking presence of CoAuthors Plus into account.
+ *
+ * @return array Array of WP_User objects.
+ */
+function newspack_blocks_prepare_authors() {
+	if ( function_exists( 'coauthors_posts_links' ) ) {
+		$authors = get_coauthors();
+		foreach ( $authors as $author ) {
+			// Check if this is a guest author post type.
+			if ( 'guest-author' === get_post_type( $author->ID ) ) {
+				// If yes, make sure the author actually has an avatar set; otherwise, coauthors_get_avatar returns a featured image.
+				if ( get_post_thumbnail_id( $author->ID ) ) {
+					$author->avatar = coauthors_get_avatar( $author, 48 );
+				} else {
+					// If there is no avatar, force it to return the current fallback image.
+					$author->avatar = get_avatar( ' ' );
+				}
+			} else {
+				$author->avatar = coauthors_get_avatar( $author, 48 );
+			}
+			$author->url = get_author_posts_url( $author->ID, $author->user_nicename );
+		}
+		return $authors;
+	}
+	$id = get_the_author_meta( 'ID' );
+	return array(
+		(object) array(
+			'ID'            => $id,
+			'avatar'        => get_avatar( $id, 48 ),
+			'url'           => get_author_posts_url( $id ),
+			'user_nicename' => get_the_author(),
+			'display_name'  => get_the_author_meta( 'display_name' ),
+		),
+	);
+}
+
+/**
+ * Renders author avatar markup.
+ *
+ * @param array $author_info Author info array.
+ *
+ * @return string Returns formatted Avatar markup
+ */
+function newspack_blocks_format_avatars( $author_info ) {
+	$elements = array_map(
+		function( $author ) {
+			return sprintf( '<a href="%s">%s</a>', $author->url, $author->avatar );
+		},
+		$author_info
+	);
+	return implode( '', $elements );
+}
+/**
+ * Renders byline markup.
+ *
+ * @param array $author_info Author info array.
+ *
+ * @return string Returns byline markup.
+ */
+function newspack_blocks_format_byline( $author_info ) {
+	$index    = -1;
+	$elements = array_merge(
+		array(
+			esc_html_x( 'by', 'post author', 'newspack-blocks' ) . ' ',
+		),
+		array_reduce(
+			$author_info,
+			function( $accumulator, $author ) use ( $author_info, &$index ) {
+				$index ++;
+				$penultimate = count( $author_info ) - 2;
+				return array_merge(
+					$accumulator,
+					array(
+						sprintf(
+							/* translators: 1: author link. 2: author name. 3. variable seperator (comma, 'and', or empty) */
+							'<span class="author vcard"><a class="url fn n" href="%1$s">%2$s</a></span>',
+							esc_url( get_author_posts_url( $author->ID, $author->user_nicename ) ),
+							esc_html( $author->display_name )
+						),
+						( $index < $penultimate ) ? ', ' : '',
+						( count( $author_info ) > 1 && $penultimate === $index ) ? esc_html_x( ' and ', 'post author', 'newspack-blocks' ) : '',
+					)
+				);
+			},
+			array()
+		)
+	);
+	return implode( '', $elements );
+}

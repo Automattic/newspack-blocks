@@ -108,6 +108,8 @@ class Edit extends Component {
 				minHeight / 5 + 'vh',
 		};
 
+		const authorNumber = post.newspack_author_info.length;
+
 		return (
 			<article
 				className={ post.newspack_featured_image_src && 'post-has-image' }
@@ -134,6 +136,7 @@ class Edit extends Component {
 						) }
 					</figure>
 				) }
+
 				<div className="entry-wrapper">
 					{ showCategory && post.newspack_category_info.length && (
 						<div className="cat-links">
@@ -155,22 +158,8 @@ class Edit extends Component {
 						</RawHTML>
 					) }
 					<div className="entry-meta">
-						{ showAuthor && post.newspack_author_info.avatar && showAvatar && (
-							<span className="avatar author-avatar" key="author-avatar">
-								<RawHTML>{ post.newspack_author_info.avatar }</RawHTML>
-							</span>
-						) }
-
-						{ showAuthor && (
-							<span className="byline">
-								{ __( 'by', 'newspack-blocks' ) }{' '}
-								<span className="author vcard">
-									<a className="url fn n" href="#">
-										{ post.newspack_author_info.display_name }
-									</a>
-								</span>
-							</span>
-						) }
+						{ showAuthor && showAvatar && this.formatAvatars( post.newspack_author_info ) }
+						{ showAuthor && this.formatByline( post.newspack_author_info ) }
 						{ showDate && (
 							<time className="entry-date published" key="pub-date">
 								{ moment( post.date_gmt )
@@ -183,6 +172,35 @@ class Edit extends Component {
 			</article>
 		);
 	};
+
+	formatAvatars = authorInfo =>
+		authorInfo.map( author => (
+			<span className="avatar author-avatar">
+				<a className="url fn n" href="#">
+					<RawHTML key={ author.id }>{ author.avatar }</RawHTML>
+				</a>
+			</span>
+		) );
+
+	formatByline = authorInfo => (
+		<span className="byline">
+			{ __( 'by', 'newspack-blocks' ) }{' '}
+			{ authorInfo.reduce( ( accumulator, author, index ) => {
+				return [
+					...accumulator,
+					<span className="author vcard" key={ author.id }>
+						<a className="url fn n" href="#">
+							{ author.display_name }
+						</a>
+					</span>,
+					index < authorInfo.length - 2 && ', ',
+					authorInfo.length > 1 &&
+						index === authorInfo.length - 2 &&
+						__( ' and ', 'newspack-blocks' ),
+				];
+			}, [] ) }
+		</span>
+	);
 
 	renderInspectorControls = () => {
 		const {

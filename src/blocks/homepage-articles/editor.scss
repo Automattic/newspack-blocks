@@ -25,6 +25,14 @@
 		font-size: $font__size-xs;
 	}
 
+	span.avatar {
+		display: inline-block;
+		margin-right: 0.5em;
+		div {
+			display: inline;
+		}
+	}
+
 	/* Article excerpt */
 	.excerpt-contain p {
 		margin: 0.5em 0;
