@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import QueryControls from './components/query-controls';
+import QueryControls from '../../components/query-controls';
 
 /**
  * External dependencies
