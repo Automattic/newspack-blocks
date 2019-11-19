@@ -35,6 +35,7 @@ class Edit extends Component {
 			editingPost: null,
 			blocksTree: {},
 		};
+		this.props.updateCriteria( this.props.clientId, this.props.attributes.criteria );
 		this.debouncedCreateBlockTree = debounce( this.createBlockTree.bind( this ), 1000 );
 	}
 
@@ -167,7 +168,7 @@ export default compose(
 		};
 
 		return {
-			query: query( clientId, queryParams ),
+			query: query( clientId, criteria ),
 			postList: getEntityRecords( 'postType', 'post', { per_page: 50 } ),
 		};
 	} ),

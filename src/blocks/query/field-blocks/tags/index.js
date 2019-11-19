@@ -14,10 +14,11 @@ const icon = (
 
 const Edit = withSelect( select => {
 	return {
-		allTags:select( 'core' ).getEntityRecords( 'taxonomy', 'post_tag' ),
+		allTags: select( 'core' ).getEntityRecords( 'taxonomy', 'post_tag' ),
 	}
 } )( ( { allTags } ) => {
 	const [ postTags ] = useEntityProp( 'postType', 'post', 'tags' );
+	console.log( { postTags } );
 	const tags = ( allTags || [] ).filter( t => postTags.includes( t.id ) );
 	return <span className="tags-links">
 		{ tags.map( t => <span key={ t.id }><a href={ t.link }>{ t.name }</a></span> ) }
