@@ -242,8 +242,22 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				</article>
 				<?php
 			endwhile;
+
+			if ( $attributes['moreButton'] ) :
+				$more_url = get_permalink( get_option( 'page_for_posts' ) );
+				if ( $categories ) :
+					$more_url = get_category_link( $categories );
+				endif;
+
+				printf(
+					'<a class="button" href="%1$s">%2$s</a>',
+					esc_url( $more_url ),
+					esc_html__( 'More', 'newspack-blocks' )
+				);
+			endif;
+
+			wp_reset_postdata();
 			?>
-			<?php wp_reset_postdata(); ?>
 		</div>
 		<?php
 		endif;
@@ -350,6 +364,10 @@ function newspack_blocks_register_homepage_articles() {
 						'default' => 3,
 					),
 					'mobileStack'     => array(
+						'type'    => 'boolean',
+						'default' => false,
+					),
+					'moreButton'      => array(
 						'type'    => 'boolean',
 						'default' => false,
 					),

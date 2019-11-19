@@ -69,6 +69,10 @@ export const settings = {
 			type: 'integer',
 			default: 0,
 		},
+		moreButton: {
+			type: 'boolean',
+			default: false,
+		},
 		showAuthor: {
 			type: 'boolean',
 			default: true,
@@ -136,6 +140,10 @@ export const settings = {
 		customTextColor: {
 			type: 'string',
 			default: '',
+		},
+		singleMode: {
+			type: 'boolean',
+			default: false,
 		},
 	},
 	supports: {
