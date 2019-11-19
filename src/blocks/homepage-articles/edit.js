@@ -223,6 +223,7 @@ class Edit extends Component {
 			imageScale,
 			mobileStack,
 			minHeight,
+			moreButton,
 			showExcerpt,
 			typeScale,
 			showDate,
@@ -265,6 +266,13 @@ class Edit extends Component {
 								! hasPosts ? MAX_POSTS_COLUMNS : Math.min( MAX_POSTS_COLUMNS, latestPosts.length )
 							}
 							required
+						/>
+					) }
+					{ ! singleMode && (
+						<ToggleControl
+							label={ __( 'Show "More" Button' ) }
+							checked={ moreButton }
+							onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
 						/>
 					) }
 				</PanelBody>
@@ -415,6 +423,7 @@ class Edit extends Component {
 			postsToShow,
 			postLayout,
 			mediaPosition,
+			moreButton,
 			columns,
 			categories,
 			typeScale,
@@ -535,6 +544,11 @@ class Edit extends Component {
 						</Placeholder>
 					) }
 					{ latestPosts && latestPosts.map( post => this.renderPost( post ) ) }
+					{ latestPosts && moreButton && (
+						<button className="button" type="button">
+							{ __( 'More…' ) }
+						</button>
+					) }
 				</div>
 				<BlockControls>
 					<Toolbar controls={ blockControls } />
