@@ -519,7 +519,7 @@ export default compose( [
 		const { postsToShow, authors, categories, tags, specificPosts, specificMode } = props.attributes;
 		const { getAuthors, getEntityRecords } = select( 'core' );
 		const latestPostsQuery = pickBy(
-			specificMode && specificPosts
+			specificMode && specificPosts && specificPosts.length
 				? { 
 					include: specificPosts,
 					orderby: 'include' 
