@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import QueryControls from '../homepage-articles/query-controls';
+import QueryControls from '../homepage-articles/components/query-controls';
 import createSwiper from './create-swiper';
 import classnames from 'classnames';
 

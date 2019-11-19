@@ -11,7 +11,7 @@ import { decodeEntities } from '@wordpress/html-entities';
 /**
  * Internal dependencies.
  */
-import AutocompleteTokenField from '../components/autocomplete-tokenfield.js';
+import AutocompleteTokenField from './autocomplete-tokenfield';
 
 class QueryControls extends Component {
 
