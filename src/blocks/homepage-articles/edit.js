@@ -224,6 +224,7 @@ class Edit extends Component {
 			showImage,
 			showCaption,
 			imageScale,
+			mobileStack,
 			minHeight,
 			showExcerpt,
 			typeScale,
@@ -410,17 +411,26 @@ class Edit extends Component {
 					) }
 
 					{ showImage && mediaPosition !== 'top' && mediaPosition !== 'behind' && (
-						<RangeControl
-							className="image-scale-slider"
-							label={ __( 'Featured Image Scale', 'newspack-blocks' ) }
-							value={ imageScale }
-							onChange={ value => setAttributes( { imageScale: value } ) }
-							min={ 1 }
-							max={ 4 }
-							beforeIcon="images-alt2"
-							afterIcon="images-alt2"
-							required
-						/>
+						<Fragment>
+							<RangeControl
+								className="image-scale-slider"
+								label={ __( 'Featured Image Scale', 'newspack-blocks' ) }
+								value={ imageScale }
+								onChange={ value => setAttributes( { imageScale: value } ) }
+								min={ 1 }
+								max={ 4 }
+								beforeIcon="images-alt2"
+								afterIcon="images-alt2"
+								required
+							/>
+							<PanelRow>
+								<ToggleControl
+									label={ __( 'Stack on mobile', 'newspack-blocks' ) }
+									checked={ mobileStack }
+									onChange={ () => setAttributes( { mobileStack: ! mobileStack } ) }
+								/>
+							</PanelRow>
+						</Fragment>
 					) }
 
 					{ showImage && mediaPosition === 'behind' && (
@@ -532,6 +542,7 @@ class Edit extends Component {
 			categories,
 			typeScale,
 			imageScale,
+			mobileStack,
 			sectionHeader,
 			showCaption,
 			showCategory,
@@ -544,6 +555,7 @@ class Edit extends Component {
 			[ `ts-${ typeScale }` ]: typeScale !== '5',
 			[ `image-align${ mediaPosition }` ]: showImage,
 			[ `is-${ imageScale }` ]: imageScale !== '1' && showImage,
+			'mobile-stack': mobileStack,
 			[ `image-shape${ imageShape }` ]: imageShape !== 'landscape',
 			'has-text-color': textColor.color !== '',
 			'show-caption': showCaption,

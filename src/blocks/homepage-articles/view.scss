@@ -103,8 +103,16 @@
 			}
 		}
 
+		&.mobile-stack .post-has-image {
+			display: block;
+		}
+
 		// Image scale
 		@include media(mobile) {
+			&.mobile-stack .post-has-image {
+				display: flex;
+			}
+
 			&.is-4 {
 				.post-thumbnail {
 					flex-basis: 75%;

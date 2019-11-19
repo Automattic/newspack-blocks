@@ -117,6 +117,10 @@ export const settings = {
 			type: 'integer',
 			default: 3,
 		},
+		mobileStack: {
+			type: 'boolean',
+			default: false,
+		},
 		sectionHeader: {
 			type: 'string',
 			default: '',
