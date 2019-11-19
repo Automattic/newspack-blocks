@@ -85,11 +85,29 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				* As a result we render the same standards-based markup for all requests.
 				*/
 				echo Newspack_Blocks::template_inc( __DIR__ . '/templates/articles-list.php', [
-					'article_query' => $article_query,
-					'attributes'    => $attributes,
+					'articles_rest_url' => $articles_rest_url,
+					'article_query'     => $article_query,
+					'attributes'        => $attributes,
 				] );
 				?>
 			</div>
+			<?php
+
+			if ( $attributes['moreButton'] ) :
+				$more_url = get_permalink( get_option( 'page_for_posts' ) );
+				if ( $categories ) :
+					$more_url = get_category_link( $categories );
+				endif;
+
+				printf(
+					'<a class="button" href="%1$s">%2$s</a>',
+					esc_url( $more_url ),
+					esc_html__( 'More', 'newspack-blocks' )
+				);
+			endif;
+
+			wp_reset_postdata();
+			?>
 		</div>
 	<?php
 	endif;
