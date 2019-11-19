@@ -17,21 +17,23 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	if ( ! $newspack_blocks_post_id ) {
 		$newspack_blocks_post_id = array();
 	}
-	$authors       = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
-	$categories    = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
-	$tags          = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
-	$single        = isset( $attributes['single'] ) ? $attributes['single'] : '';
-	$posts_to_show = intval( $attributes['postsToShow'] );
-	$single_mode   = intval( $attributes['singleMode'] );
-	$args          = array(
-		'posts_per_page'      => $posts_to_show + count( $newspack_blocks_post_id ),
+	$authors        = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
+	$categories     = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
+	$tags           = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
+	$specific_posts = isset( $attributes['specificPosts'] ) ? $attributes['specificPosts'] : array();
+	$posts_to_show  = intval( $attributes['postsToShow'] );
+	$specific_mode  = intval( $attributes['specificMode'] );
+	$args           = array(
 		'post_status'         => 'publish',
 		'suppress_filters'    => false,
 		'ignore_sticky_posts' => true,
 	);
-	if ( $single_mode ) {
-		$args['p'] = $single;
+	if ( $specific_mode && $specific_posts ) {
+		$args['post__in'] = $specific_posts;
+		$args['orderby']  = 'post__in';
 	} else {
+		$args['posts_per_page'] = $posts_to_show + count( $newspack_blocks_post_id );
+
 		if ( $authors ) {
 			$args['author__in'] = $authors;
 		}
@@ -103,7 +105,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			endif;
 			while ( $article_query->have_posts() ) :
 				$article_query->the_post();
-				if ( isset( $newspack_blocks_post_id[ get_the_ID() ] ) || $post_counter >= $posts_to_show ) {
+				if ( ! $attributes['specificMode'] && ( isset( $newspack_blocks_post_id[ get_the_ID() ] ) || $post_counter >= $posts_to_show ) ) {
 					continue;
 				}
 				$newspack_blocks_post_id[ get_the_ID() ] = true;
@@ -326,8 +328,12 @@ function newspack_blocks_register_homepage_articles() {
 						'type' => 'integer',
 					),
 				),
-				'single'          => array(
-					'type' => 'string',
+				'specificPosts'   => array(
+					'type'    => 'array',
+					'default' => array(),
+					'items'   => array(
+						'type' => 'integer',
+					),
 				),
 				'typeScale'       => array(
 					'type'    => 'integer',
@@ -349,7 +355,7 @@ function newspack_blocks_register_homepage_articles() {
 					'type'    => 'string',
 					'default' => '',
 				),
-				'singleMode'      => array(
+				'specificMode'    => array(
 					'type'    => 'boolean',
 					'default' => false,
 				),

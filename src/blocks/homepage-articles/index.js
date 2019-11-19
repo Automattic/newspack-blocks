@@ -106,8 +106,8 @@ export const settings = {
 		tags: {
 			type: 'array',
 		},
-		single: {
-			type: 'string',
+		specificPosts: {
+			type: 'array',
 		},
 		typeScale: {
 			type: 'integer',
@@ -121,7 +121,7 @@ export const settings = {
 			type: 'string',
 			default: '',
 		},
-		singleMode: {
+		specificMode: {
 			type: 'boolean',
 			default: false,
 		},
@@ -132,10 +132,6 @@ export const settings = {
 		customTextColor: {
 			type: 'string',
 			default: '',
-		},
-		singleMode: {
-			type: 'boolean',
-			default: false,
 		},
 	},
 	supports: {
