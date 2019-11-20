@@ -136,7 +136,8 @@ export const settings = {
 	},
 	supports: {
 		html: false,
-		align: false,
+		align: [ 'wide', 'full' ],
+		default: '',
 	},
 	edit,
 	save: () => null, // to use view.php
