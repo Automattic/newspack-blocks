@@ -66,6 +66,9 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	if ( $attributes['showImage'] && isset( $attributes['imageScale'] ) ) {
 		$classes .= ' is-' . $attributes['imageScale'];
 	}
+	if ( $attributes['showImage'] && $attributes['mobileStack'] ) {
+		$classes .= ' mobile-stack';
+	}
 	if ( $attributes['showCaption'] ) {
 		$classes .= ' show-caption';
 	}
@@ -342,6 +345,10 @@ function newspack_blocks_register_homepage_articles() {
 				'imageScale'      => array(
 					'type'    => 'integer',
 					'default' => 3,
+				),
+				'mobileStack'     => array(
+					'type'    => 'boolean',
+					'default' => false,
 				),
 				'imageShape'    => array(
 					'type'    => 'string',

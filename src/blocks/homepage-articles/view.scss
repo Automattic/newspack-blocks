@@ -95,31 +95,41 @@
 		.post-has-image {
 			display: flex;
 
-			.post-thumbnail,
-			.entry-wrapper {
-				flex-basis: 50%;
-			}
-		}
-
-		// Image scale
-		&.is-4 {
-			.post-thumbnail {
-				flex-basis: 75%;
-			}
-			.entry-wrapper {
-				flex-basis: 25%;
-			}
-		}
-
-		// .is-3 is the default - 50%
-
-		&.is-2 {
 			.post-thumbnail {
 				flex-basis: 33%;
 			}
 			.entry-wrapper {
 				flex-basis: 67%;
 			}
+		}
+
+		&.mobile-stack .post-has-image {
+			display: block;
+		}
+
+		// Image scale
+		@include media(mobile) {
+			&.mobile-stack .post-has-image {
+				display: flex;
+			}
+
+			&.is-4 {
+				.post-thumbnail {
+					flex-basis: 75%;
+				}
+				.entry-wrapper {
+					flex-basis: 25%;
+				}
+			}
+
+			&.is-3 {
+				.post-thumbnail,
+				.entry-wrapper {
+					flex-basis: 50%;
+				}
+			}
+
+			// is-2 matches the mobile default above
 		}
 
 		&.is-1 {
