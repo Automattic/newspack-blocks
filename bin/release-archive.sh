@@ -20,3 +20,5 @@ zip=assets/release/$name.zip
 mkdir -p assets/release
 rm -rf $zip
 zip -r $zip . -x node_modules/\* .git/\* .github/\* .gitignore .DS_Store vendor/\* assets/\* src/blocks\*
+
+# todo: include only blocks listed in config file
