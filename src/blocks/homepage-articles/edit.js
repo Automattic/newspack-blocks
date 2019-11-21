@@ -289,17 +289,6 @@ class Edit extends Component {
 
 					{ showImage && mediaPosition !== 'top' && mediaPosition !== 'behind' && (
 						<Fragment>
-							<RangeControl
-								className="image-scale-slider"
-								label={ __( 'Featured Image Scale', 'newspack-blocks' ) }
-								value={ imageScale }
-								onChange={ value => setAttributes( { imageScale: value } ) }
-								min={ 1 }
-								max={ 4 }
-								beforeIcon="images-alt2"
-								afterIcon="images-alt2"
-								required
-							/>
 							<PanelRow>
 								<ToggleControl
 									label={ __( 'Stack on mobile', 'newspack-blocks' ) }
@@ -307,6 +296,17 @@ class Edit extends Component {
 									onChange={ () => setAttributes( { mobileStack: ! mobileStack } ) }
 								/>
 							</PanelRow>
+							<RangeControl
+								className="image-scale-slider"
+								label={ __( 'Featured Image Scale', 'newspack-blocks' ) }
+								value={ imageScale }
+								onChange={ value => setAttributes( { imageScale: value } ) }
+								min={ 1 }
+								max={ 4 }
+								beforeIcon="format-image"
+								afterIcon="format-image"
+								required
+							/>
 						</Fragment>
 					) }
 
@@ -554,9 +554,9 @@ export default compose( [
 		const { getAuthors, getEntityRecords } = select( 'core' );
 		const latestPostsQuery = pickBy(
 			specificMode && specificPosts && specificPosts.length
-				? { 
+				? {
 					include: specificPosts,
-					orderby: 'include' 
+					orderby: 'include'
 				}
 				: {
 						per_page: postsToShow,
