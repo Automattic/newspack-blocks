@@ -162,11 +162,6 @@ export default compose(
 		const { countPostsInEarlierBlocks, query } = select( 'newspack-blocks/query' );
 		const { getEntityRecords } = select( 'core' );
 
-		const queryParams = {
-			...criteria,
-			per_page: 0 + criteria.per_page + countPostsInEarlierBlocks( clientId ),
-		};
-
 		return {
 			query: query( clientId, criteria ),
 			postList: getEntityRecords( 'postType', 'post', { per_page: 50 } ),

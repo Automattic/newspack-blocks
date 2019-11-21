@@ -10,13 +10,15 @@ import { __ } from '@wordpress/i18n';
 import { InnerBlocks } from '@wordpress/block-editor';
 import edit from './edit';
 
-import store from './store';
+import { registerQueryStore } from './store';
 
 /**
  * Style dependencies
  */
 import './editor.scss';
 import './view.scss';
+
+registerQueryStore();
 
 export const name = 'query';
 export const title = __( 'Query' );

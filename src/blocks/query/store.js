@@ -3,6 +3,9 @@ import { registerStore, select, subscribe, dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { sum } from 'lodash';
 
+
+const STORE_NAMESPACE = 'newspack-blocks/query';
+
 const initialState = {
 	queryBlocks: [],              // list of Query blocks in the order they are on the page
 	criteria: {},                 // map of Query criteria to block clientId
@@ -13,7 +16,7 @@ const initialState = {
 
 const UPDATE_CRITERIA = 'UPDATE_CRITERIA';
 const REQUEST_POSTS = 'REQUEST_POSTS';
-const RECIEVE_POSTS = 'RECIEVE_POSTS';
+const RECEIVE_POSTS = 'RECEIVE_POSTS';
 const UPDATE_BLOCKS = 'UPDATE_BLOCKS';
 
 const actions = {
@@ -33,7 +36,7 @@ const actions = {
 	},
 	receivePosts( clientId, posts ) {
 		return {
-			type: RECIEVE_POSTS,
+			type: RECEIVE_POSTS,
 			clientId,
 			posts
 		}
@@ -62,6 +65,9 @@ const selectors = {
 	query( state, clientId, criteria ) {
 		return state.deDuplicatedPostsByBlock[ clientId ] || [];
 	},
+	allQueryBlocksOnPage( state ) {
+		return state.queryBlocks;
+	},
 	countPostsInEarlierBlocks( state, clientId ) {
 		const { queryBlocks, deDuplicatedPostsByBlock } = state;
 		const earlierBlocks = blocksBefore( queryBlocks, clientId );
@@ -84,30 +90,30 @@ const selectors = {
 const resolvers = {
 	* query( clientId, criteria ) {
 		let postFetch;
-		const prevPromises = select( 'newspack-blocks/query' ).pendingRequestsForEarlierBlocks( clientId ) ;
+		const prevPromises = select( STORE_NAMESPACE ).pendingRequestsForEarlierBlocks( clientId ) ;
 
 		if ( criteria.singleMode && ! isNaN( criteria.singleId ) ) {
 			postFetch = Promise.all( prevPromises )
 				.then( () => apiFetch( {
-					path: `/wp/v2/posts/${ criteria.singleId }?context=edit`
+					path: `/wp/v2/posts/${ criteria.singleId }?context=edit&_fields=id`
 				} ) )
 				.then( singlePost => [ singlePost ] );
 		} else {
 			// Wait for any other posts to display so we can correctly count earlier blocks
 			postFetch = Promise.all( prevPromises ).then( () => {
-				const earlierBlockCount = select( 'newspack-blocks/query' ).countPostsInEarlierBlocks( clientId );
+				const earlierBlockCount = select( STORE_NAMESPACE ).countPostsInEarlierBlocks( clientId );
 				const queryParams = {
 					...criteria,
 					per_page: 0 + criteria.per_page + earlierBlockCount
 				}
 
 				return apiFetch( {
-					path: addQueryArgs( '/wp/v2/posts', { ...queryParams, context: 'edit' } )
+					path: addQueryArgs( '/wp/v2/posts', { ...queryParams, context: 'edit', '_fields': 'id' } )
 				} );
 			} )
 		}
 
-		dispatch( 'newspack-blocks/query' ).requestPosts( clientId, postFetch )
+		dispatch( STORE_NAMESPACE ).requestPosts( clientId, postFetch );
 		const posts = yield actions.requestPosts( clientId, postFetch );
 		return actions.receivePosts( clientId, posts );
 	}
@@ -152,12 +158,17 @@ const deDuplicatePosts = ( state ) => {
 		const { singleMode, per_page } = criteria[ clientId ];
 
 		// Force a single post not to de-duplicate
-		if ( singleMode && rawPosts.length ) {
-			const singlePost = rawPosts[0];
-			seenPostIds.add( singlePost.id );
+		if ( singleMode ) {
+			let deDuplicatedPost = [];
+			if ( rawPosts.length ) {
+				const singlePost = rawPosts[0];
+				seenPostIds.add( singlePost.id );
+				deDuplicatedPost = [ singlePost ];
+			}
+
 			return {
 				...deDuplicatedPostsByBlock,
-				[ clientId ]: [ singlePost ]
+				[ clientId ]: deDuplicatedPost
 			}
 		}
 
@@ -199,21 +210,22 @@ const reducer = ( state = initialState, action ) => {
 					[ action.clientId ]: action.postsRequest,
 				},
 			}
-		case RECIEVE_POSTS:
-			const newState = {
+		case RECEIVE_POSTS:
+			const receivePostsState = {
 				...state,
 				postsByBlock: {
 					...state.postsByBlock,
 					[ action.clientId ]: action.posts
 				}
 			}
-			newState.deDuplicatedPostsByBlock = deDuplicatePosts( newState );
-			return newState;
+			receivePostsState.deDuplicatedPostsByBlock = deDuplicatePosts( receivePostsState );
+			return receivePostsState;
 		case UPDATE_BLOCKS:
-			return {
+			const updateBlocksState = {
 				...state,
 				queryBlocks: getQueryBlocksInOrder( action.blocks )
-			}
+			};
+			return updateBlocksState;
 	}
 	return state;
 }
@@ -222,16 +234,21 @@ let currentBlocksIds;
 subscribe( () => {
 	const newBlocksIds = select( 'core/block-editor' ).getClientIdsWithDescendants();
 	// I don't know why this works but it does, I guess getClientIdsWithDescendants is memoized?
-	const hasNewBlocks = newBlocksIds != currentBlocksIds;
+	const blocksChanged = newBlocksIds != currentBlocksIds;
 	currentBlocksIds = newBlocksIds;
 
-	if ( hasNewBlocks ) {
+	if ( blocksChanged ) {
 		const newBlocks = select( 'core/block-editor' ).getBlocks();
-		dispatch( 'newspack-blocks/query' ).updateBlocks( newBlocks );
+		dispatch( STORE_NAMESPACE ).updateBlocks( newBlocks );
+		select( STORE_NAMESPACE ).allQueryBlocksOnPage().forEach( ( block, idx ) => {
+			const { clientId, attributes } = block;
+			const { criteria } = attributes;
+			select( STORE_NAMESPACE ).query( clientId, { ...criteria, '_skip_memoization': clientId + idx } );
+		} );
 	}
 } );
 
-const store = registerStore( 'newspack-blocks/query', {
+export const registerQueryStore = () => registerStore( STORE_NAMESPACE, {
 	reducer,
 	actions,
 	selectors,
@@ -239,5 +256,3 @@ const store = registerStore( 'newspack-blocks/query', {
 	controls,
 	initialState,
 } );
-
-export default store;
