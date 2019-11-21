@@ -17,3 +17,15 @@ To get started with a new block:
 - Add the block slug to the `production` array in `src/setup/blocks.json`
 - If the block requires server-side code add the slug to the `$newspack_blocks_blocks` array in `newspack-blocks.php`
 - Execute `npm run build`. If all went smoothly, you should see a Newspack category in the block picker, and your block should appear within it.
+
+
+## Release
+
+To make a distributable plugin archive, you can run one of the `release:` tasks via `npm run release:…`.
+
+- `npm run release:archive` builds the project with a default configuration (found in [config/newspack-blocks.json](./config/newspack-blocks.json))
+- `npm run release:all` will make a release for each configuration found in the config directory.
+
+The result of any release is always a ZIP file placed into `assets/release` directory. Its name corresponds to the build configuration that was used to generate it. 
+
+You can read more about configuration files and see examples in the [config](./config/) directory.
