@@ -27,6 +27,7 @@
     "swiper": "4.5.1"
   },
   "scripts": {
+    "start": "calypso-build --config='./webpack.config.js' --watch",
     "build:webpack": "calypso-build --config='./webpack.config.js'",
     "clean": "rm -rf dist/",
     "test": "echo \"Error: no test specified\" && exit 1",
