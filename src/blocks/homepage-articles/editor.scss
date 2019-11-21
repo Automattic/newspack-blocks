@@ -2,16 +2,16 @@
 
 .type-scale-slider,
 .image-scale-slider {
-	.dashicons-editor-textcolor,
-	.dashicons-images-alt2 {
-		height: 24px;
-		width: 24px;
-	}
-
-	label + .dashicons-editor-textcolor,
-	label + .dashicons-images-alt2 {
+	.dashicon {
 		height: 16px;
 		width: 16px;
+	}
+
+	input + .dashicon {
+		height: 24px;
+		margin-left: 10px;
+		margin-right: 0;
+		width: 24px;
 	}
 }
 
