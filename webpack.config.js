@@ -10,14 +10,21 @@ const fs = require( 'fs' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const path = require( 'path' );
 const isDevelopment = process.env.NODE_ENV !== 'production';
-const blockListFile = process.env.npm_config_block_list || 'block-list.json';
-const blockList = JSON.parse( fs.readFileSync( blockListFile ) );
+const buildConfigFile = process.env.BUILD_CONFIG || 'config/newspack-blocks.json';
+const buildConfig = JSON.parse( fs.readFileSync( buildConfigFile ) );
 
 /**
  * Internal variables
  */
 const editorSetup = path.join( __dirname, 'src', 'setup', 'editor' );
 const viewSetup = path.join( __dirname, 'src', 'setup', 'view' );
+
+if ( isDevelopment ) {
+	console.log( 'Development build contains all blocks present in the repository.' );
+} else {
+	console.log( 'Using build configuration: ' + buildConfigFile );
+	console.log( 'Blocks included:', buildConfig.blocks );
+}
 
 function blockScripts( type, inputDir, blocks ) {
 	return blocks
@@ -28,7 +35,7 @@ function blockScripts( type, inputDir, blocks ) {
 const blocksDir = path.join( __dirname, 'src', 'blocks' );
 const blocks = fs
 	.readdirSync( blocksDir )
-	.filter( block => isDevelopment || blockList.production.includes( block ) )
+	.filter( block => isDevelopment || buildConfig.blocks.includes( block ) )
 	.filter( block => fs.existsSync( path.join( __dirname, 'src', 'blocks', block, 'editor.js' ) ) );
 
 // Helps split up each block into its own folder view script
