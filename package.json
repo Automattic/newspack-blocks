@@ -27,12 +27,12 @@
     "swiper": "4.5.1"
   },
   "scripts": {
-    "start": "npm run dev:webpack",
-    "dev:webpack": "calypso-build --watch",
-    "build:webpack": "calypso-build --watch --config='./webpack.config.js'",
+    "start": "npm run dev",
+    "dev": "calypso-build --watch --config='./webpack.config.js'",
+    "build": "calypso-build --config='./webpack.config.js'",
     "clean": "rm -rf dist/",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "release:archive": "run-p \"clean\" && NODE_ENV=production run-p \"build:webpack\" && mkdir -p assets/release && zip -r assets/release/newspack-blocks.zip . -x node_modules/\\* .git/\\* .github/\\* .gitignore .DS_Store vendor/\\*"
+    "release:archive": "run-p \"clean\" && NODE_ENV=production run-p \"build\" && mkdir -p assets/release && zip -r assets/release/newspack-blocks.zip . -x node_modules/\\* .git/\\* .github/\\* .gitignore .DS_Store vendor/\\*"
   },
   "repository": {
     "type": "git",
