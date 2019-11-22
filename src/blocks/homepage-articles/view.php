@@ -13,6 +13,64 @@
  * @return string Returns the post content with latest posts added.
  */
 function newspack_blocks_render_block_homepage_articles( $attributes ) {
+	if ( ! wp_script_is( 'amp-runtime', 'registered' ) ) {
+		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+		wp_register_script(
+			'amp-runtime',
+			'https://cdn.ampproject.org/v0.js',
+			null,
+			null,
+			true
+		);
+	}
+
+	if ( ! wp_script_is( 'amp-list', 'registered' ) ) {
+		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+		wp_register_script(
+			'amp-list',
+			'https://cdn.ampproject.org/v0/amp-list-0.1.js',
+			array( 'amp-runtime' ),
+			null,
+			true
+		);
+	}
+	if ( ! wp_script_is( 'amp-bind', 'registered' ) ) {
+		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+		wp_register_script(
+			'amp-bind',
+			'https://cdn.ampproject.org/v0/amp-bind-0.1.js',
+			array( 'amp-runtime' ),
+			null,
+			true
+		);
+	}
+	if ( ! wp_script_is( 'amp-form', 'registered' ) ) {
+		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+		wp_register_script(
+			'amp-form',
+			'https://cdn.ampproject.org/v0/amp-form-0.1.js',
+			array( 'amp-runtime' ),
+			null,
+			true
+		);
+	}
+
+	if ( ! wp_script_is( 'amp-mustach', 'registered' ) ) {
+		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+		wp_register_script(
+			'amp-mustache',
+			'https://cdn.ampproject.org/v0/amp-mustache-0.2.js',
+			array( 'amp-runtime' ),
+			null,
+			true
+		);
+	}
+
+	wp_enqueue_script( 'amp-list' );
+	wp_enqueue_script( 'amp-bind' );
+	wp_enqueue_script( 'amp-form' );
+	wp_enqueue_script( 'amp-mustache' );
+
 	global $newspack_blocks_post_id;
 	if ( ! $newspack_blocks_post_id ) {
 		$newspack_blocks_post_id = array();
@@ -249,11 +307,36 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 					$more_url = get_category_link( $categories );
 				endif;
 
-				printf(
-					'<a class="button" href="%1$s">%2$s</a>',
-					esc_url( $more_url ),
-					esc_html__( 'More', 'newspack-blocks' )
-				);
+				?>
+					<amp-list
+						src="//wpdev.local/wp-json/wp/v2/posts?per_page=3"
+						width="auto"
+						height="100px"
+						binding="refresh"
+						items="."
+						load-more="manual"
+						load-more-bookmark="next">
+
+						<template type="amp-mustache">
+							<div>{{title.rendered}}</div>
+						</template>
+						<div fallback>
+							FALLBACK
+						</div>
+						<div placeholder>
+							PLACEHOLDER
+						</div>
+						<amp-list-load-more load-more-failed>
+							ERROR
+						</amp-list-load-more>
+						<amp-list-load-more load-more-end>
+							END
+						</amp-list-load-more>
+					</amp-list>
+					<amp-list-load-more load-more-button class="amp-visible">
+						<button load-more-clickable>More</button>
+					</amp-list-load-more>
+				<?php
 			endif;
 
 			wp_reset_postdata();
