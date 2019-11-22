@@ -164,186 +164,237 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				</h2>
 			<?php
 			endif;
-			while ( $article_query->have_posts() ) :
-				$article_query->the_post();
-				if ( ! $attributes['specificMode'] && ( isset( $newspack_blocks_post_id[ get_the_ID() ] ) || $post_counter >= $posts_to_show ) ) {
-					continue;
-				}
-				$newspack_blocks_post_id[ get_the_ID() ] = true;
 
-				$authors = newspack_blocks_prepare_authors();
+			$rest_url = add_query_arg(
+				[
+					'per_page' => $posts_to_show + count( $newspack_blocks_post_id ),
+				],
+				rest_url( '/wp/v2/newspack-articles-block/articles' )
+			);
+			?>
+			<amp-list
+				src="<?php echo esc_url( $rest_url ); ?>"
+				width="auto"
+				height="100px"
+				binding="refresh"
+				load-more="manual"
+				load-more-bookmark="next">
 
-				$post_counter++;
-
-				$styles = '';
-				if ( 'behind' === $attributes['mediaPosition'] && $attributes['showImage'] && has_post_thumbnail() ) {
-					$styles = 'min-height: ' . $attributes['minHeight'] . 'vh; padding-top: ' . ( $attributes['minHeight'] / 5 ) . 'vh;';
-				}
-				?>
-
-				<article <?php echo has_post_thumbnail() ? 'class="post-has-image"' : ''; ?> <?php echo $styles ? 'style="' . esc_attr( $styles ) . '"' : ''; ?>>
-
-					<?php if ( has_post_thumbnail() && $attributes['showImage'] && $attributes['imageShape'] ) : ?>
-
-						<figure class="post-thumbnail">
-							<a href="<?php echo esc_url( get_permalink() ); ?>" rel="bookmark">
-								<?php
-								$image_size = 'newspack-article-block-uncropped';
-								if ( 'uncropped' !== $attributes['imageShape'] ) {
-									$image_size = newspack_blocks_image_size_for_orientation( $attributes['imageShape'] );
-								}
-
-								// If the image position is behind, pass the object-fit setting to maintain styles with AMP.
-								if ( 'behind' === $attributes['mediaPosition'] ) {
-									the_post_thumbnail(
-										$image_size,
-										array(
-											'object-fit' => 'cover',
-										)
-									);
-								} else {
-									the_post_thumbnail( $image_size );
-								}
-								?>
-							</a>
-
-							<?php if ( $attributes['showCaption'] && '' !== get_the_post_thumbnail_caption() ) : ?>
-								<figcaption><?php the_post_thumbnail_caption(); ?>
+				<template type="amp-mustache">
+					<article>
+						<div class="entry-wrapper">
+							<?php if ( empty( $attributes['sectionHeader'] ) ) : ?>
+								<h2 class="entry-title"><a href="{{ guild.rendered }}" rel="bookmark">{{{ title.rendered }}}</a></h2>
+							<?php else : ?>
+								<h3 class="entry-title"><a href="{{ guild.rendered }}" rel="bookmark">{{{ title.rendered }}}</a></h3>
 							<?php endif; ?>
-						</figure><!-- .featured-image -->
-					<?php endif; ?>
 
-					<div class="entry-wrapper">
+							<?php if ( $attributes['showExcerpt'] ) : ?>
+								{{{ excerpt.rendered }}}
+							<?php endif; ?>
 
-						<?php
-						if ( $attributes['showCategory'] ) :
-							$category = false;
+							<?php if ( $attributes['showAuthor'] || $attributes['showDate'] ) : ?>
+								<div class="entry-meta">
 
-							// Use Yoast primary category if set.
-							if ( class_exists( 'WPSEO_Primary_Term' ) ) {
-								$primary_term = new WPSEO_Primary_Term( 'category', get_the_ID() );
-								$category_id = $primary_term->get_primary_term();
-								if ( $category_id ) {
-									$category = get_term( $category_id );
-								}
-							}
+									<?php
+									if ( $attributes['showAuthor'] && $attributes['showAvatar'] ) : ?>
+										{{#newspack_author_info}}
+											<a href="{{ url }}">{{{ avatar }}}</a>
+										{{/newspack_author_info}}
+									<?php
+									endif;
 
-							if ( ! $category ) {
-								$categories_list = get_the_category();
-								if ( ! empty( $categories_list ) ) {
-									$category = $categories_list[0];
-								}
-							}
+									if ( $attributes['showAuthor'] ) :
+										?>
+										<span class="byline">
+											<?php echo esc_html_x( 'by', 'post author', 'newspack-blocks' ) . ' '; ?>
+											{{#newspack_author_info}}
+												{{ #url }}
+													<span class="author vcard"><a class="url fn n" href="{{ url }}">{{ display_name }}</a> </span>
+												{{ /url }}
+												{{ ^url }}
+													<span class="author vcard">{{ display_name }} </span>
+												{{ /url }}
+											{{/newspack_author_info}}
+										</span><!-- .author-name -->
+									<?php
+									endif;
 
-							if ( $category ) :
-								?>
-								<div class='cat-links'>
-									<a href="<?php echo esc_url( get_category_link( $category->term_id ) ); ?>">
-										<?php echo esc_html( $category->name ); ?>
-									</a>
-								</div>
-								<?php
-							endif;
-						endif;
-						?>
+									if ( $attributes['showDate'] ) :
+										$time_string = '<time class="entry-date published updated" datetime="{{ date }}">{{ date }}</time>';
 
-						<?php
-						if ( '' === $attributes['sectionHeader'] ) {
-							the_title( '<h2 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h2>' );
-						} else {
-							the_title( '<h3 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h3>' );
+										if ( get_the_time( 'U' ) !== get_the_modified_time( 'U' ) ) :
+											$time_string = '<time class="entry-date published" datetime="{{ date }}">{{ date }}</time><time class="updated" datetime="{{ modified }}">{{ modified }}</time>';
+										endif;
+
+										echo $time_string; // WPCS: XSS OK.
+									endif;
+									?>
+								</div><!-- .entry-meta -->
+							<?php endif; ?>
+						</div><!-- .entry-wrapper -->
+					</article>
+				</template>
+				<div placeholder>
+					<?php
+					while ( $article_query->have_posts() ) :
+						$article_query->the_post();
+						if ( isset( $newspack_blocks_post_id[ get_the_ID() ] ) || $post_counter >= $posts_to_show ) {
+							continue;
+						}
+						$newspack_blocks_post_id[ get_the_ID() ] = true;
+
+						$authors = newspack_blocks_prepare_authors();
+
+						$post_counter++;
+
+						$styles = '';
+						if ( 'behind' === $attributes['mediaPosition'] && $attributes['showImage'] && has_post_thumbnail() ) {
+							$styles = 'min-height: ' . $attributes['minHeight'] . 'vh; padding-top: ' . ( $attributes['minHeight'] / 5 ) . 'vh;';
 						}
 						?>
 
-						<?php if ( $attributes['showExcerpt'] ) : ?>
-							<?php the_excerpt(); ?>
-						<?php endif; ?>
+						<article <?php echo has_post_thumbnail() ? 'class="post-has-image"' : ''; ?> <?php echo $styles ? 'style="' . esc_attr( $styles ) . '"' : ''; ?>>
 
-						<?php if ( $attributes['showAuthor'] || $attributes['showDate'] ) : ?>
+							<?php if ( has_post_thumbnail() && $attributes['showImage'] && $attributes['imageShape'] ) : ?>
 
-							<div class="entry-meta">
+								<figure class="post-thumbnail">
+									<a href="<?php echo esc_url( get_permalink() ); ?>" rel="bookmark">
+										<?php
+										$image_size = 'newspack-article-block-uncropped';
+										if ( 'uncropped' !== $attributes['imageShape'] ) {
+											$image_size = newspack_blocks_image_size_for_orientation( $attributes['imageShape'] );
+										}
+
+										// If the image position is behind, pass the object-fit setting to maintain styles with AMP.
+										if ( 'behind' === $attributes['mediaPosition'] ) {
+											the_post_thumbnail(
+												$image_size,
+												array(
+													'object-fit' => 'cover',
+												)
+											);
+										} else {
+											the_post_thumbnail( $image_size );
+										}
+										?>
+									</a>
+
+									<?php if ( $attributes['showCaption'] && '' !== get_the_post_thumbnail_caption() ) : ?>
+										<figcaption><?php the_post_thumbnail_caption(); ?>
+									<?php endif; ?>
+								</figure><!-- .featured-image -->
+							<?php endif; ?>
+
+							<div class="entry-wrapper">
 
 								<?php
-								if ( $attributes['showAuthor'] && $attributes['showAvatar'] ) :
-									echo wp_kses_post( newspack_blocks_format_avatars( $authors ) );
-								endif;
+								if ( $attributes['showCategory'] ) :
+									$category = false;
 
-								if ( $attributes['showAuthor'] ) :
-									?>
-									<span class="byline">
-										<?php echo wp_kses_post( newspack_blocks_format_byline( $authors ) ); ?>
-									</span><!-- .author-name -->
-									<?php
-								endif;
-
-								if ( $attributes['showDate'] ) {
-									$time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
-
-									if ( get_the_time( 'U' ) !== get_the_modified_time( 'U' ) ) {
-										$time_string = '<time class="entry-date published" datetime="%1$s">%2$s</time><time class="updated" datetime="%3$s">%4$s</time>';
+									// Use Yoast primary category if set.
+									if ( class_exists( 'WPSEO_Primary_Term' ) ) {
+										$primary_term = new WPSEO_Primary_Term( 'category', get_the_ID() );
+										$category_id = $primary_term->get_primary_term();
+										if ( $category_id ) {
+											$category = get_term( $category_id );
+										}
 									}
 
-									$time_string = sprintf(
-										$time_string,
-										esc_attr( get_the_date( DATE_W3C ) ),
-										esc_html( get_the_date() ),
-										esc_attr( get_the_modified_date( DATE_W3C ) ),
-										esc_html( get_the_modified_date() )
-									);
+									if ( ! $category ) {
+										$categories_list = get_the_category();
+										if ( ! empty( $categories_list ) ) {
+											$category = $categories_list[0];
+										}
+									}
 
-									echo $time_string; // WPCS: XSS OK.
+									if ( $category ) :
+										?>
+										<div class='cat-links'>
+											<a href="<?php echo esc_url( get_category_link( $category->term_id ) ); ?>">
+												<?php echo esc_html( $category->name ); ?>
+											</a>
+										</div>
+										<?php
+									endif;
+								endif;
+								?>
+
+								<?php
+								if ( '' === $attributes['sectionHeader'] ) {
+									the_title( '<h2 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h2>' );
+								} else {
+									the_title( '<h3 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h3>' );
 								}
 								?>
-							</div><!-- .entry-meta -->
-						<?php endif; ?>
-					</div><!-- .entry-wrapper -->
-				</article>
-				<?php
-			endwhile;
 
-			if ( $attributes['moreButton'] ) :
-				$rest_url = add_query_arg(
-					[
-						'per_page' => $posts_to_show + count( $newspack_blocks_post_id ),
-					],
-					rest_url( '/wp/v2/newspack-articles-block/articles' )
-				);
-				?>
-				<amp-list
-					src="<?php echo esc_url( $rest_url ); ?>"
-					width="auto"
-					height="100px"
-					binding="refresh"
-					load-more="manual"
-					load-more-bookmark="next">
+								<?php if ( $attributes['showExcerpt'] ) : ?>
+									<?php the_excerpt(); ?>
+								<?php endif; ?>
 
-					<template type="amp-mustache">
-						{{{html}}}
-					</template>
-					<div fallback>
-						FALLBACK
-					</div>
-					<div placeholder>
-						PLACEHOLDER
-					</div>
-					<amp-list-load-more load-more-failed>
-						ERROR
-					</amp-list-load-more>
-					<amp-list-load-more load-more-end>
-						END
-					</amp-list-load-more>
-					<amp-list-load-more load-more-button class="amp-visible">
-						<button load-more-clickable><?php _e( 'More' ); ?></button>
-					</amp-list-load-more>
-				</amp-list>
-				<?php
-			endif;
+								<?php if ( $attributes['showAuthor'] || $attributes['showDate'] ) : ?>
 
-			wp_reset_postdata();
-			?>
-		</div>
-		<?php
+									<div class="entry-meta">
+
+										<?php
+										if ( $attributes['showAuthor'] && $attributes['showAvatar'] ) :
+											echo wp_kses_post( newspack_blocks_format_avatars( $authors ) );
+										endif;
+
+										if ( $attributes['showAuthor'] ) :
+											?>
+											<span class="byline">
+												<?php echo wp_kses_post( newspack_blocks_format_byline( $authors ) ); ?>
+											</span><!-- .author-name -->
+											<?php
+										endif;
+
+										if ( $attributes['showDate'] ) {
+											$time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
+
+											if ( get_the_time( 'U' ) !== get_the_modified_time( 'U' ) ) {
+												$time_string = '<time class="entry-date published" datetime="%1$s">%2$s</time><time class="updated" datetime="%3$s">%4$s</time>';
+											}
+
+											$time_string = sprintf(
+												$time_string,
+												esc_attr( get_the_date( DATE_W3C ) ),
+												esc_html( get_the_date() ),
+												esc_attr( get_the_modified_date( DATE_W3C ) ),
+												esc_html( get_the_modified_date() )
+											);
+
+											echo $time_string; // WPCS: XSS OK.
+										}
+										?>
+									</div><!-- .entry-meta -->
+								<?php endif; ?>
+							</div><!-- .entry-wrapper -->
+						</article>
+					<?php endwhile;?>
+				</div>
+
+				<div fallback>
+					FALLBACK
+				</div>
+				<amp-list-load-more load-more-failed>
+					ERROR
+				</amp-list-load-more>
+				<amp-list-load-more load-more-end>
+					END
+				</amp-list-load-more>
+				<amp-list-load-more load-more-button class="amp-visible">
+					<button load-more-clickable><?php _e( 'More' ); ?></button>
+				</amp-list-load-more>
+			</amp-list>
+			<?php
 		endif;
+
+		wp_reset_postdata();
+		?>
+	</div>
+	<?php
+
 	$content = ob_get_clean();
 	Newspack_Blocks::enqueue_view_assets( 'homepage-articles' );
 	return $content;
