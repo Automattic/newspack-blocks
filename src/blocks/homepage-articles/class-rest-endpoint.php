@@ -10,7 +10,6 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 	public function __construct() {
 		$this->namespace = 'wp/v2';
 		$this->rest_base = 'newspack-articles-block';
-		$this->plugin_version = 'v1';
 	}
 
 	/**
@@ -21,7 +20,7 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
-			'/' . $this->rest_base . '/' . $this->plugin_version . '/articles',
+			'/' . $this->rest_base . '/articles',
 			array(
 				array(
 					'methods'             => WP_REST_Server::READABLE,
