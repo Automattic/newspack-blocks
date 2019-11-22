@@ -302,9 +302,15 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			endwhile;
 
 			if ( $attributes['moreButton'] ) :
+				$rest_url = add_query_arg(
+					[
+						'per_page' => $posts_to_show + count( $newspack_blocks_post_id ),
+					],
+					rest_url( '/wp/v2/newspack-articles-block/articles' )
+				);
 				?>
 				<amp-list
-					src="<?php echo esc_url( rest_url( '/wp/v2/newspack-articles-block/articles' ) ); ?>"
+					src="<?php echo esc_url( $rest_url ); ?>"
 					width="auto"
 					height="100px"
 					binding="refresh"

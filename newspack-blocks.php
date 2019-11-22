@@ -287,7 +287,13 @@ function newspack_blocks_image_size_for_orientation( $orientation = 'landscape' 
 require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'class-newspack-blocks-api.php';
 
 // REST Controller for Articles Block
-require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/homepage-articles/class-rest-endpoint.php';
+require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/homepage-articles/class-wp-rest-newspack-articles-controller.php';
+
+function newspack_articles_block_register_rest_routes() {
+	$articles_controller = new WP_REST_Newspack_Articles_Controller();
+	$articles_controller->register_routes();
+}
+add_action( 'rest_api_init', 'newspack_articles_block_register_rest_routes' );
 
 Newspack_Blocks::manage_view_scripts();
 add_action( 'enqueue_block_editor_assets', array( 'Newspack_Blocks', 'enqueue_block_editor_assets' ) );
