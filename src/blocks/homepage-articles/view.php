@@ -55,7 +55,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		);
 	}
 
-	if ( ! wp_script_is( 'amp-mustach', 'registered' ) ) {
+	if ( ! wp_script_is( 'amp-mustache', 'registered' ) ) {
 		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 		wp_register_script(
 			'amp-mustache',
