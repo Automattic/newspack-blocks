@@ -94,39 +94,34 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			<?php
 
 			if ( $attributes['moreButton'] ) :
-				$more_url = get_permalink( get_option( 'page_for_posts' ) );
-				if ( $categories ) :
-					$more_url = get_category_link( $categories );
-				endif;
-
 				?>
-					<amp-list
-						src="/wp-json/wp/v2/newspack-articles-block/articles"
-						width="auto"
-						height="100px"
-						binding="refresh"
-						load-more="manual"
-						load-more-bookmark="next">
+				<amp-list
+					src="<?php echo esc_url( rest_url( '/wp/v2/newspack-articles-block/articles' ) ); ?>"
+					width="auto"
+					height="100px"
+					binding="refresh"
+					load-more="manual"
+					load-more-bookmark="next">
 
-						<template type="amp-mustache">
-							{{{html}}}
-						</template>
-						<div fallback>
-							FALLBACK
-						</div>
-						<div placeholder>
-							PLACEHOLDER
-						</div>
-						<amp-list-load-more load-more-failed>
-							ERROR
-						</amp-list-load-more>
-						<amp-list-load-more load-more-end>
-							END
-						</amp-list-load-more>
-						<amp-list-load-more load-more-button class="amp-visible">
-							<button load-more-clickable>More</button>
-						</amp-list-load-more>
-					</amp-list>
+					<template type="amp-mustache">
+						{{{html}}}
+					</template>
+					<div fallback>
+						FALLBACK
+					</div>
+					<div placeholder>
+						PLACEHOLDER
+					</div>
+					<amp-list-load-more load-more-failed>
+						ERROR
+					</amp-list-load-more>
+					<amp-list-load-more load-more-end>
+						END
+					</amp-list-load-more>
+					<amp-list-load-more load-more-button class="amp-visible">
+						<button load-more-clickable><?php _e( 'More' ); ?></button>
+					</amp-list-load-more>
+				</amp-list>
 				<?php
 			endif;
 
