@@ -5,9 +5,17 @@ This plugin is meant to serve as a container for most Newspack Gutenberg blocks.
 
 To get set up for block development, run `composer install && npm install`
 
-To build blocks, run `npm run build:webpack`
+### Generating Builds
 
-To clean out the built blocks, run `npm run clean`
+To generate a build of the current blocks, run `npm run build:webpack`.
+
+To clean out the built blocks, run `npm run clean`.
+
+### Developing
+
+To work on Block development and have Webpack watch your files for changes run: `npm start`.
+
+### Building new Blocks
 
 To get started with a new block:
 
