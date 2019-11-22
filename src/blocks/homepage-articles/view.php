@@ -99,11 +99,36 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 					$more_url = get_category_link( $categories );
 				endif;
 
-				printf(
-					'<a class="button" href="%1$s">%2$s</a>',
-					esc_url( $more_url ),
-					esc_html__( 'More', 'newspack-blocks' )
-				);
+				?>
+					<amp-list
+						src="//wpdev.local/wp-json/wp/v2/posts?per_page=3"
+						width="auto"
+						height="100px"
+						binding="refresh"
+						items="."
+						load-more="manual"
+						load-more-bookmark="next">
+
+						<template type="amp-mustache">
+							<div>{{title.rendered}}</div>
+						</template>
+						<div fallback>
+							FALLBACK
+						</div>
+						<div placeholder>
+							PLACEHOLDER
+						</div>
+						<amp-list-load-more load-more-failed>
+							ERROR
+						</amp-list-load-more>
+						<amp-list-load-more load-more-end>
+							END
+						</amp-list-load-more>
+					</amp-list>
+					<amp-list-load-more load-more-button class="amp-visible">
+						<button load-more-clickable>More</button>
+					</amp-list-load-more>
+				<?php
 			endif;
 
 			wp_reset_postdata();
