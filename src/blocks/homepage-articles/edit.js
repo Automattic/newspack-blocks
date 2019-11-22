@@ -544,12 +544,14 @@ class Edit extends Component {
 						</Placeholder>
 					) }
 					{ latestPosts && latestPosts.map( post => this.renderPost( post ) ) }
-					{ latestPosts && moreButton && (
-						<button className="button" type="button">
-							{ __( 'More…' ) }
-						</button>
-					) }
 				</div>
+
+				{ latestPosts && moreButton && (
+					<button className="button" type="button">
+						{ __( 'More…' ) }
+					</button>
+				) }
+
 				<BlockControls>
 					<Toolbar controls={ blockControls } />
 					{ showImage && <Toolbar controls={ blockControlsImages } /> }
