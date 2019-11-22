@@ -26,12 +26,12 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_articles' ),
 					'args' => array(
-						// 'url' => array(
-						// 	'validate_callback' => 'wp_http_validate_url',
-						// 	'sanitize_callback' => 'esc_url_raw',
-						// ),
+						'page' => array(
+							// 'validate_callback' => 'wp_http_validate_url',
+							// 'sanitize_callback' => 'esc_url_raw',
+						),
 					),
-					'permission_callback' => array( $this, 'get_remote_url_permissions_check' ),
+					'permission_callback' => array( $this, 'get_articles_permissions_check' ),
 				),
 			)
 		);
@@ -39,6 +39,9 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 
 
 	public function get_articles( $request ) {
+		$page = $request->get_param( 'page') ?? 1;
+		$next_page = $page + 1;
+
 		$items = array_map(function($item) {
 			return [
 				'html' => "<article>Random string of <strong>HTML</strong> $item</article>",
@@ -47,12 +50,12 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 
 		return rest_ensure_response( [
 			'items' => $items,
-			'next' => 2,
+			'next' => get_rest_url(null, $this->namespace . '/' . $this->rest_base . '/articles?page=' . $next_page),
 		] );
 	}
 
 
-	public function get_remote_url_permissions_check() {
+	public function get_articles_permissions_check() {
 		return true;
 	}
 }
