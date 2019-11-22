@@ -39,12 +39,14 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 
 
 	public function get_articles( $request ) {
-		$html = array_map(function($item) {
-			return "<article>Random string of <strong>HTML</strong> $item</article>";
+		$items = array_map(function($item) {
+			return [
+				'html' => "<article>Random string of <strong>HTML</strong> $item</article>",
+			];
 		}, [1,2,3,4,5,6,7,8,9,10]);
 
 		return rest_ensure_response( [
-			'html' => implode('',$html),
+			'items' => $items,
 			'next' => 2,
 		] );
 	}
