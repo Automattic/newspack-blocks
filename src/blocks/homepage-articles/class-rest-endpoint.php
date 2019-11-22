@@ -48,9 +48,11 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 			];
 		}, [1,2,3,4,5,6,7,8,9,10]);
 
+		$next_url = add_query_arg('page',$next_page, get_rest_url(null, $this->namespace . '/' . $this->rest_base . '/articles?page=' . $next_page));
+
 		return rest_ensure_response( [
 			'items' => $items,
-			'next' => get_rest_url(null, $this->namespace . '/' . $this->rest_base . '/articles?page=' . $next_page),
+			'next' => $next_url,
 		] );
 	}
 
