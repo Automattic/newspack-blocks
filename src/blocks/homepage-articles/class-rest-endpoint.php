@@ -8,8 +8,9 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 	 * @access public
 	 */
 	public function __construct() {
-		$this->namespace = 'v2';
+		$this->namespace = 'wp/v2';
 		$this->rest_base = 'newspack-articles-block';
+		$this->plugin_version = 'v1';
 	}
 
 	/**
@@ -20,7 +21,7 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
-			'/' . $this->rest_base . '/articles',
+			'/' . $this->rest_base . '/' . $this->plugin_version . '/articles',
 			array(
 				array(
 					'methods'             => WP_REST_Server::READABLE,
@@ -39,7 +40,14 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 
 
 	public function get_articles( $request ) {
-		return rest_ensure_response( ['some article data here'] );
+		$html = array_map(function($item) {
+			return "<article>Random string of <strong>HTML</strong> $item</article>";
+		}, [1,2,3,4,5,6,7,8,9,10]);
+
+		return rest_ensure_response( [
+			'html' => implode('',$html),
+			'next' => 2,
+		] );
 	}
 
 
