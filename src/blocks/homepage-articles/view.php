@@ -383,9 +383,12 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				<amp-list-load-more load-more-end>
 					END
 				</amp-list-load-more>
+
+				<?php if ( $attributes['moreButton'] ) : ?>
 				<amp-list-load-more load-more-button class="amp-visible">
 					<button load-more-clickable><?php _e( 'More' ); ?></button>
 				</amp-list-load-more>
+				<?php endif; ?>
 			</amp-list>
 			<?php
 		endif;
