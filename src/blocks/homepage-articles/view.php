@@ -309,7 +309,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 				?>
 					<amp-list
-						src="//wpdev.local/wp-json/wp/v2/newspack-articles-block/articles"
+						src="/wp-json/wp/v2/newspack-articles-block/articles"
 						width="auto"
 						height="100px"
 						binding="refresh"
