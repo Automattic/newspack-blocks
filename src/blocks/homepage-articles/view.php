@@ -181,8 +181,32 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				load-more-bookmark="next">
 
 				<template type="amp-mustache">
-					<article>
+					<article {{ #newspack_featured_image_src }}class="post-has-image"{{ /newspack_featured_image_src }} <?php echo $styles ? 'style="' . esc_attr( $styles ) . '"' : ''; ?>>
+						<?php if ( $attributes['showImage'] && $attributes['imageShape'] ) : ?>
+							{{ #newspack_featured_image_src }}
+							<figure class="post-thumbnail">
+								<a href="{{ link }}" rel="bookmark">
+									<img src="{{ newspack_featured_image_src }}" alt="">
+								</a>
+								{{ newspack_featured_image_caption }}
+							</figure><!-- .featured-image -->
+
+							<?php if ( $attributes['showCaption'] ) : ?>
+								{{ #newspack_featured_image_caption }}
+								<figcaption>{{ newspack_featured_image_caption }}</figcaption>
+								{{ /newspack_featured_image_caption }}
+							<?php endif; ?>
+							{{ /newspack_featured_image_src }}
+						<?php endif; ?>
+
 						<div class="entry-wrapper">
+							<?php
+							if ( $attributes['showCategory'] ) : ?>
+								{{ #newspack_category_info }}
+								<div class="cat-links">{{ newspack_category_info }}</div>
+								{{ /newspack_category_info }}
+							<?php endif; ?>
+
 							<?php if ( empty( $attributes['sectionHeader'] ) ) : ?>
 								<h2 class="entry-title"><a href="{{ guild.rendered }}" rel="bookmark">{{{ title.rendered }}}</a></h2>
 							<?php else : ?>
@@ -281,7 +305,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 									</a>
 
 									<?php if ( $attributes['showCaption'] && '' !== get_the_post_thumbnail_caption() ) : ?>
-										<figcaption><?php the_post_thumbnail_caption(); ?>
+										<figcaption><?php the_post_thumbnail_caption(); ?></figcaption>
 									<?php endif; ?>
 								</figure><!-- .featured-image -->
 							<?php endif; ?>
@@ -321,11 +345,11 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 								?>
 
 								<?php
-								if ( '' === $attributes['sectionHeader'] ) {
+								if ( '' === $attributes['sectionHeader'] ) :
 									the_title( '<h2 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h2>' );
-								} else {
+								else :
 									the_title( '<h3 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h3>' );
-								}
+								endif;
 								?>
 
 								<?php if ( $attributes['showExcerpt'] ) : ?>
@@ -349,23 +373,21 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 											<?php
 										endif;
 
-										if ( $attributes['showDate'] ) {
+										if ( $attributes['showDate'] ) :
 											$time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
 
-											if ( get_the_time( 'U' ) !== get_the_modified_time( 'U' ) ) {
+											if ( get_the_time( 'U' ) !== get_the_modified_time( 'U' ) ) :
 												$time_string = '<time class="entry-date published" datetime="%1$s">%2$s</time><time class="updated" datetime="%3$s">%4$s</time>';
-											}
+											endif;
 
-											$time_string = sprintf(
+											printf(
 												$time_string,
 												esc_attr( get_the_date( DATE_W3C ) ),
 												esc_html( get_the_date() ),
 												esc_attr( get_the_modified_date( DATE_W3C ) ),
 												esc_html( get_the_modified_date() )
 											);
-
-											echo $time_string; // WPCS: XSS OK.
-										}
+										endif;
 										?>
 									</div><!-- .entry-meta -->
 								<?php endif; ?>
