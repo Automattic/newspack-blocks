@@ -52,7 +52,7 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 
 		return rest_ensure_response( [
 			'items' => $items,
-			'next' => $next_url,
+			'next' => str_replace(get_site_url(), '', $next_url),
 		] );
 	}
 
