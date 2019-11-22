@@ -286,6 +286,9 @@ function newspack_blocks_image_size_for_orientation( $orientation = 'landscape' 
 
 require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'class-newspack-blocks-api.php';
 
+// REST Controller for Articles Block
+require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/homepage-articles/class-rest-endpoint.php';
+
 Newspack_Blocks::manage_view_scripts();
 add_action( 'enqueue_block_editor_assets', array( 'Newspack_Blocks', 'enqueue_block_editor_assets' ) );
 add_action( 'wp_enqueue_scripts', array( 'Newspack_Blocks', 'enqueue_block_styles_assets' ) );
