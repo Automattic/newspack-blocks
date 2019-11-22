@@ -7,7 +7,7 @@ To get set up for block development, run `composer install && npm install`
 
 ### Generating Builds
 
-To generate a build of the current blocks, run `npm run build:webpack`.
+To generate a build of the current blocks, run `npm run build`.
 
 To clean out the built blocks, run `npm run clean`.
 
