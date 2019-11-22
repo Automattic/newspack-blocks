@@ -309,16 +309,15 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 				?>
 					<amp-list
-						src="//wpdev.local/wp-json/wp/v2/posts?per_page=3"
+						src="//wpdev.local/wp-json/wp/v2/newspack-articles-block/articles"
 						width="auto"
 						height="100px"
 						binding="refresh"
-						items="."
 						load-more="manual"
 						load-more-bookmark="next">
 
 						<template type="amp-mustache">
-							<div>{{title.rendered}}</div>
+							{{{html}}}
 						</template>
 						<div fallback>
 							FALLBACK
@@ -332,10 +331,10 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 						<amp-list-load-more load-more-end>
 							END
 						</amp-list-load-more>
+						<amp-list-load-more load-more-button class="amp-visible">
+							<button load-more-clickable>More</button>
+						</amp-list-load-more>
 					</amp-list>
-					<amp-list-load-more load-more-button class="amp-visible">
-						<button load-more-clickable>More</button>
-					</amp-list-load-more>
 				<?php
 			endif;
 
