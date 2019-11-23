@@ -177,8 +177,11 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				width="auto"
 				height="100px"
 				binding="refresh"
+				<?php if ( $attributes['moreButton'] ) : ?>
 				load-more="manual"
-				load-more-bookmark="next">
+				load-more-bookmark="next"
+				<?php endif; ?>
+			>
 
 				<template type="amp-mustache">
 					<article {{ #newspack_featured_image_src }}class="post-has-image"{{ /newspack_featured_image_src }} <?php echo $styles ? 'style="' . esc_attr( $styles ) . '"' : ''; ?>>
@@ -397,7 +400,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				</div>
 
 				<div fallback>
-					FALLBACK
+					FALLBACK (Should be the same as Placeholder probably)
 				</div>
 				<amp-list-load-more load-more-failed>
 					ERROR

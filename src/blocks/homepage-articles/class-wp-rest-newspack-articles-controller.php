@@ -45,18 +45,18 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Posts_Controller {
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function get_items( $request ) {
+		$page     = $request->get_param( 'page' );
 		$response = parent::get_items( $request );
 
-		$params                        = $request->get_params();
-		$params['__amp_source_origin'] = false;
-		$params['offset']              = $request->get_param( 'offset' ) + $request->get_param( 'per_page' );
+		$response->data = [ 'items' => $response->data ];
 
-		$next_url = add_query_arg( $params, rest_url( $this->namespace . '/' . $this->rest_base . '/articles' ) );
+		if ( $page < $response->headers['X-WP-TotalPages'] ) {
+			$params                        = $request->get_params();
+			$params['__amp_source_origin'] = false;
+			$params['page']                = $page + 1;
 
-		$response->data = [
-			'items' => $response->data,
-			'next'  => $next_url,
-		];
+			$response->data['next'] = add_query_arg( $params, rest_url( $this->namespace . '/' . $this->rest_base . '/articles' ) );
+		}
 
 		return $response;
 	}
