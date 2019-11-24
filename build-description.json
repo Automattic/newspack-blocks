@@ -1,0 +1,6 @@
+{
+  "blocks": {
+    "development": [ "carousel", "donate", "homepage-articles" ],
+    "production": [ "carousel", "donate", "homepage-articles" ]
+  }
+}
