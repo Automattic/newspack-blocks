@@ -2,5 +2,9 @@
   "blocks": {
     "development": [ "carousel", "donate", "homepage-articles" ],
     "production": [ "carousel", "donate", "homepage-articles" ]
+  },
+  "block_extensions": {
+    "development": [ "core:column", "core:columns", "core:group" ],
+    "production": [ "core:column", "core:columns", "core:group" ]
   }
 }

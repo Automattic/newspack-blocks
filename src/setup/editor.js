@@ -3,4 +3,3 @@
  */
 import './public-path';
 import './category';
-import './block-extensions';

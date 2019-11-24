@@ -21,6 +21,9 @@ const buildDescription = _.assign( baseBuildDescription, customBuildDescription 
 const blockList = isDevelopment
 	? buildDescription.blocks.development
 	: buildDescription.blocks.production;
+const blockExtensionList = isDevelopment
+	? buildDescription.block_extensions.development
+	: buildDescription.block_extensions.production;
 
 /**
  * Internal variables
@@ -28,16 +31,34 @@ const blockList = isDevelopment
 const editorSetup = path.join( __dirname, 'src', 'setup', 'editor' );
 const viewSetup = path.join( __dirname, 'src', 'setup', 'view' );
 
-function blockScripts( type, inputDir, blocks ) {
-	return blocks
-		.map( block => path.join( inputDir, 'blocks', block, `${ type }.js` ) )
-		.filter( fs.existsSync );
-}
-
 const blocks = fs
 	.readdirSync( path.join( __dirname, 'src', 'blocks' ) )
 	.filter( block => blockList.includes( block ) )
 	.filter( block => fs.existsSync( path.join( __dirname, 'src', 'blocks', block, 'editor.js' ) ) );
+
+const blockScripts = blocks
+	.map( block => path.join( path.join( __dirname, 'src' ), 'blocks', block, 'editor.js' ) )
+	.filter( fs.existsSync );
+
+const blockExtensionEditorScripts = fs
+	.readdirSync( path.join( __dirname, 'src', 'block-extensions' ) )
+	.filter( blockExtension =>
+		fs.existsSync( path.join( __dirname, 'src', 'block-extensions', blockExtension, 'editor.js' ) )
+	)
+	.filter( blockExtension => blockExtensionList.includes( blockExtension ) )
+	.map( blockExtension =>
+		path.join( __dirname, 'src', 'block-extensions', blockExtension, 'editor.js' )
+	);
+
+const blockExtensionViewScripts = fs
+	.readdirSync( path.join( __dirname, 'src', 'block-extensions' ) )
+	.filter( blockExtension =>
+		fs.existsSync( path.join( __dirname, 'src', 'block-extensions', blockExtension, 'view.js' ) )
+	)
+	.filter( blockExtension => blockExtensionList.includes( blockExtension ) )
+	.map( blockExtension =>
+		path.join( __dirname, 'src', 'block-extensions', blockExtension, 'view.js' )
+	);
 
 // Helps split up each block into its own folder view script
 const viewBlocksScripts = blocks.reduce( ( viewBlocks, block ) => {
@@ -49,19 +70,14 @@ const viewBlocksScripts = blocks.reduce( ( viewBlocks, block ) => {
 }, {} );
 
 // Combines all the different blocks into one editor.js script
-const editorScript = [
-	editorSetup,
-	...blockScripts( 'editor', path.join( __dirname, 'src' ), blocks ),
-];
-
-const blockExtensionsScript = [ path.join( __dirname, 'src', 'block-extensions', 'view' ) ];
+const editorScript = [ editorSetup, ...blockExtensionEditorScripts, ...blockScripts ];
 
 const webpackConfig = getBaseWebpackConfig(
 	{ WP: true },
 	{
 		entry: {
 			editor: editorScript,
-			block_extensions: blockExtensionsScript,
+			block_extensions: blockExtensionViewScripts,
 			...viewBlocksScripts,
 		},
 		'output-path': path.join( __dirname, 'dist' ),
