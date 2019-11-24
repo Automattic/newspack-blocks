@@ -19,20 +19,25 @@ const customBuildDescription = process.env.npm_config_build_description
 	: {};
 const buildDescription = _.assign( baseBuildDescription, customBuildDescription );
 
+// Get lists  of blocks and block extensions to build.
 const blockList = isDevelopment
-	? buildDescription.blocks.development
-	: buildDescription.blocks.production;
+	? buildDescription.blocks_development
+	: buildDescription.blocks_production;
+
 const blockExtensionList = isDevelopment
-	? buildDescription.block_extensions.development
-	: buildDescription.block_extensions.production;
+	? buildDescription.block_extensions_development
+	: buildDescription.block_extensions_production;
 
-const editorSetup = _.has( buildDescription, 'setup.editor' ) && buildDescription.setup.editor
-	? path.join( __dirname, buildDescription.setup.editor )
-	: null;
-const viewSetup = _.has( buildDescription, 'setup.view' ) && buildDescription.setup.view
-	? path.join( __dirname, buildDescription.setup.view )
+// Get paths to Editor and View setup entry points.
+const editorSetup = _.has( buildDescription, 'setup_editor' ) && buildDescription.setup_editor
+	? path.join( __dirname, buildDescription.setup_editor )
 	: null;
 
+const viewSetup = _.has( buildDescription, 'setup_view' ) && buildDescription.setup_view
+	? path.join( __dirname, buildDescription.setup_view )
+	: null;
+
+// Get editor and view script paths for all blocks.
 const blocks = fs
 	.readdirSync( path.join( __dirname, 'src', 'blocks' ) )
 	.filter( block => blockList.includes( block ) )
@@ -42,6 +47,15 @@ const blockScripts = blocks
 	.map( block => path.join( path.join( __dirname, 'src' ), 'blocks', block, 'editor.js' ) )
 	.filter( fs.existsSync );
 
+const viewBlocksScripts = blocks.reduce( ( viewBlocks, block ) => {
+	const viewScriptPath = path.join( __dirname, 'src', 'blocks', block, 'view.js' );
+	if ( fs.existsSync( viewScriptPath ) ) {
+		viewBlocks[ block + '/view' ] = [ viewSetup, ...[ viewScriptPath ] ].filter( obj => obj );
+	}
+	return viewBlocks;
+}, {} );
+
+// Get editor and view script paths for all block extensions.
 const blockExtensionEditorScripts = fs
 	.readdirSync( path.join( __dirname, 'src', 'block-extensions' ) )
 	.filter( blockExtension =>
@@ -62,15 +76,6 @@ const blockExtensionViewScripts = fs
 		path.join( __dirname, 'src', 'block-extensions', blockExtension, 'view.js' )
 	);
 
-// Helps split up each block into its own folder view script
-const viewBlocksScripts = blocks.reduce( ( viewBlocks, block ) => {
-	const viewScriptPath = path.join( __dirname, 'src', 'blocks', block, 'view.js' );
-	if ( fs.existsSync( viewScriptPath ) ) {
-		viewBlocks[ block + '/view' ] = [ viewSetup, ...[ viewScriptPath ] ].filter( obj => obj );
-	}
-	return viewBlocks;
-}, {} );
-
 // Combines all the different blocks into one editor.js script
 const editorScript = [ editorSetup, ...blockExtensionEditorScripts, ...blockScripts ].filter(
 	obj => obj
@@ -81,6 +86,7 @@ const entry = {
 	...viewBlocksScripts,
 };
 
+// If block extensions is an empty array webpack will throw an error.
 if ( blockExtensionViewScripts.length > 0 ) {
 	entry.block_extensions = blockExtensionViewScripts;
 }
