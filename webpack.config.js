@@ -54,14 +54,14 @@ const editorScript = [
 	...blockScripts( 'editor', path.join( __dirname, 'src' ), blocks ),
 ];
 
-const blockStylesScript = [ path.join( __dirname, 'src', 'block-styles', 'view' ) ];
+const blockExtensionsScript = [ path.join( __dirname, 'src', 'block-extensions', 'view' ) ];
 
 const webpackConfig = getBaseWebpackConfig(
 	{ WP: true },
 	{
 		entry: {
 			editor: editorScript,
-			block_styles: blockStylesScript,
+			block_extensions: blockExtensionsScript,
 			...viewBlocksScripts,
 		},
 		'output-path': path.join( __dirname, 'dist' ),

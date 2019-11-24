@@ -92,11 +92,11 @@ class Newspack_Blocks {
 	/**
 	 * Enqueue block styles stylesheet.
 	 */
-	public static function enqueue_block_styles_assets() {
-		$style_path = NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'block_styles' . ( is_rtl() ? '.rtl' : '' ) . '.css';
+	public static function enqueue_block_extensions_assets() {
+		$style_path = NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'block_extensions' . ( is_rtl() ? '.rtl' : '' ) . '.css';
 		if ( file_exists( NEWSPACK_BLOCKS__PLUGIN_DIR . $style_path ) ) {
 			wp_enqueue_style(
-				'newspack-blocks-block-styles-stylesheet',
+				'newspack-blocks-block-extensions-stylesheet',
 				plugins_url( $style_path, __FILE__ ),
 				array(),
 				NEWSPACK_BLOCKS__VERSION
@@ -288,7 +288,7 @@ require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'class-newspack-blocks-api.php';
 
 Newspack_Blocks::manage_view_scripts();
 add_action( 'enqueue_block_editor_assets', array( 'Newspack_Blocks', 'enqueue_block_editor_assets' ) );
-add_action( 'wp_enqueue_scripts', array( 'Newspack_Blocks', 'enqueue_block_styles_assets' ) );
+add_action( 'wp_enqueue_scripts', array( 'Newspack_Blocks', 'enqueue_block_extensions_assets' ) );
 
 /**
  * Load language files
