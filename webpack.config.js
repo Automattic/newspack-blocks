@@ -29,13 +29,15 @@ const blockExtensionList = isDevelopment
 	: buildDescription.block_extensions_production;
 
 // Get paths to Editor and View setup entry points.
-const editorSetup = _.has( buildDescription, 'setup_editor' ) && buildDescription.setup_editor
-	? path.join( __dirname, buildDescription.setup_editor )
-	: null;
+const editorSetup =
+	_.has( buildDescription, 'setup_editor' ) && buildDescription.setup_editor
+		? path.join( __dirname, buildDescription.setup_editor )
+		: null;
 
-const viewSetup = _.has( buildDescription, 'setup_view' ) && buildDescription.setup_view
-	? path.join( __dirname, buildDescription.setup_view )
-	: null;
+const viewSetup =
+	_.has( buildDescription, 'setup_view' ) && buildDescription.setup_view
+		? path.join( __dirname, buildDescription.setup_view )
+		: null;
 
 // Get editor and view script paths for all blocks.
 const blocks = fs
@@ -61,7 +63,12 @@ const blockExtensionEditorScripts = fs
 	.filter( blockExtension =>
 		fs.existsSync( path.join( __dirname, 'src', 'block-extensions', blockExtension, 'editor.js' ) )
 	)
-	.filter( blockExtension => blockExtensionList.includes( blockExtension ) )
+	.filter(
+		// Since slashes are illegal in directory names, replace / with : allowing use of the real block tags (e.g. core/image)
+		blockExtension =>
+			blockExtensionList.includes( blockExtension ) ||
+			blockExtensionList.includes( blockExtension.replace( ':', '/' ) )
+	)
 	.map( blockExtension =>
 		path.join( __dirname, 'src', 'block-extensions', blockExtension, 'editor.js' )
 	);
@@ -71,7 +78,11 @@ const blockExtensionViewScripts = fs
 	.filter( blockExtension =>
 		fs.existsSync( path.join( __dirname, 'src', 'block-extensions', blockExtension, 'view.js' ) )
 	)
-	.filter( blockExtension => blockExtensionList.includes( blockExtension ) )
+	.filter(
+		blockExtension =>
+			blockExtensionList.includes( blockExtension ) ||
+			blockExtensionList.includes( blockExtension.replace( ':', '/' ) )
+	)
 	.map( blockExtension =>
 		path.join( __dirname, 'src', 'block-extensions', blockExtension, 'view.js' )
 	);

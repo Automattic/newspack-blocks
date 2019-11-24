@@ -1,8 +1,8 @@
 {
   "blocks_development": [ "carousel", "donate", "homepage-articles" ],
   "blocks_production": [ "carousel", "donate", "homepage-articles" ],
-  "block_extensions_development": [ "core:column", "core:columns", "core:group" ],
-  "block-extensions_production": [ "core:column", "core:columns", "core:group" ],
+  "block_extensions_development": [ "core/column", "core/columns", "core/group" ],
+  "block-extensions_production": [ "core/column", "core/columns", "core/group" ],
   "setup_editor": "src/setup/editor",
   "setup_view": "src/setup/view"
 }
