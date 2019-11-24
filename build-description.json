@@ -6,5 +6,9 @@
   "block_extensions": {
     "development": [ "core:column", "core:columns", "core:group" ],
     "production": [ "core:column", "core:columns", "core:group" ]
+  },
+  "setup": {
+    "editor": "src/setup/editor",
+    "view": "src/setup/view"
   }
 }

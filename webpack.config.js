@@ -18,6 +18,7 @@ const customBuildDescription = process.env.npm_config_build_description
 	? JSON.parse( fs.readFileSync( process.env.npm_config_build_description ) )
 	: {};
 const buildDescription = _.assign( baseBuildDescription, customBuildDescription );
+
 const blockList = isDevelopment
 	? buildDescription.blocks.development
 	: buildDescription.blocks.production;
@@ -25,11 +26,12 @@ const blockExtensionList = isDevelopment
 	? buildDescription.block_extensions.development
 	: buildDescription.block_extensions.production;
 
-/**
- * Internal variables
- */
-const editorSetup = path.join( __dirname, 'src', 'setup', 'editor' );
-const viewSetup = path.join( __dirname, 'src', 'setup', 'view' );
+const editorSetup = _.has( buildDescription, 'setup.editor' ) && buildDescription.setup.editor
+	? path.join( __dirname, buildDescription.setup.editor )
+	: null;
+const viewSetup = _.has( buildDescription, 'setup.view' ) && buildDescription.setup.view
+	? path.join( __dirname, buildDescription.setup.view )
+	: null;
 
 const blocks = fs
 	.readdirSync( path.join( __dirname, 'src', 'blocks' ) )
@@ -64,22 +66,29 @@ const blockExtensionViewScripts = fs
 const viewBlocksScripts = blocks.reduce( ( viewBlocks, block ) => {
 	const viewScriptPath = path.join( __dirname, 'src', 'blocks', block, 'view.js' );
 	if ( fs.existsSync( viewScriptPath ) ) {
-		viewBlocks[ block + '/view' ] = [ viewSetup, ...[ viewScriptPath ] ];
+		viewBlocks[ block + '/view' ] = [ viewSetup, ...[ viewScriptPath ] ].filter( obj => obj );
 	}
 	return viewBlocks;
 }, {} );
 
 // Combines all the different blocks into one editor.js script
-const editorScript = [ editorSetup, ...blockExtensionEditorScripts, ...blockScripts ];
+const editorScript = [ editorSetup, ...blockExtensionEditorScripts, ...blockScripts ].filter(
+	obj => obj
+);
+
+const entry = {
+	editor: editorScript,
+	...viewBlocksScripts,
+};
+
+if ( blockExtensionViewScripts.length > 0 ) {
+	entry.block_extensions = blockExtensionViewScripts;
+}
 
 const webpackConfig = getBaseWebpackConfig(
 	{ WP: true },
 	{
-		entry: {
-			editor: editorScript,
-			block_extensions: blockExtensionViewScripts,
-			...viewBlocksScripts,
-		},
+		entry,
 		'output-path': path.join( __dirname, 'dist' ),
 	}
 );
