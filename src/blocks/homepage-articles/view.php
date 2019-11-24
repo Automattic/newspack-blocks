@@ -257,7 +257,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
  */
 function newspack_blocks_register_homepage_articles() {
 	register_block_type(
-		'newspack-blocks/homepage-articles',
+		apply_filters( 'newspack_blocks_homepage_articles_type', 'newspack-blocks/homepage-articles' ),
 		array(
 			'attributes'      => array(
 				'className'       => array(
