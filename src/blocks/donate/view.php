@@ -201,7 +201,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
  */
 function newspack_blocks_register_donate() {
 	register_block_type(
-		'newspack-blocks/donate',
+		apply_filters( 'newspack_blocks_donate_type', 'newspack-blocks/donate' ),
 		array(
 			'attributes'      => array(
 				'className' => array(
