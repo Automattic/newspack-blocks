@@ -78,6 +78,10 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 					<?php
 				endif;
 				?>
+				<?php echo newspack_template_inc(__DIR__ . '/article.php', array(
+					'attributes' => $attributes,
+					'styles' => $styles,
+				)); ?>
 				<?php
 				/*
 				* We are not using an AMP-based renderer on AMP requests because it has limitations
