@@ -12,7 +12,7 @@
  *
  * @return string Returns the post content with latest posts added.
  */
-function newspack_blocks_render_block_homepage_articles( $attributes ) {
+function newspack_blocks_render_block_homepage_posts( $attributes ) {
 	global $newspack_blocks_post_id;
 	if ( ! $newspack_blocks_post_id ) {
 		$newspack_blocks_post_id = array();
@@ -44,9 +44,9 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			$args['tag__in'] = $tags;
 		}
 	}
-	$article_query = new WP_Query( $args );
+	$post_query = new WP_Query( $args );
 
-	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes, array( 'wpnbha' ) );
+	$classes = Newspack_Blocks::block_classes( 'homepage-posts', $attributes, array( 'wpnbha' ) );
 
 	if ( isset( $attributes['postLayout'] ) && 'grid' === $attributes['postLayout'] ) {
 		$classes .= ' is-grid';
@@ -96,18 +96,18 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 	ob_start();
 
-	if ( $article_query->have_posts() ) :
+	if ( $post_query->have_posts() ) :
 		?>
 		<div class="<?php echo esc_attr( $classes ); ?>" style="<?php echo esc_attr( $styles ); ?>">
 
 			<?php if ( '' !== $attributes['sectionHeader'] ) : ?>
-				<h2 class="article-section-title">
+				<h2 class="post-section-title">
 					<span><?php echo wp_kses_post( $attributes['sectionHeader'] ); ?></span>
 				</h2>
 			<?php
 			endif;
-			while ( $article_query->have_posts() ) :
-				$article_query->the_post();
+			while ( $post_query->have_posts() ) :
+				$post_query->the_post();
 				if ( ! $attributes['specificMode'] && ( isset( $newspack_blocks_post_id[ get_the_ID() ] ) || $post_counter >= $posts_to_show ) ) {
 					continue;
 				}
@@ -130,7 +130,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 						<figure class="post-thumbnail">
 							<a href="<?php echo esc_url( get_permalink() ); ?>" rel="bookmark">
 								<?php
-								$image_size = 'newspack-article-block-uncropped';
+								$image_size = 'newspack-post-block-uncropped';
 								if ( 'uncropped' !== $attributes['imageShape'] ) {
 									$image_size = newspack_blocks_image_size_for_orientation( $attributes['imageShape'] );
 								}
@@ -248,16 +248,16 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		<?php
 		endif;
 	$content = ob_get_clean();
-	Newspack_Blocks::enqueue_view_assets( 'homepage-articles' );
+	Newspack_Blocks::enqueue_view_assets( 'homepage-posts' );
 	return $content;
 }
 
 /**
- * Registers the `newspack-blocks/homepage-articles` block on server.
+ * Registers the `newspack-blocks/homepage-posts` block on server.
  */
-function newspack_blocks_register_homepage_articles() {
+function newspack_blocks_register_homepage_posts() {
 	register_block_type(
-		'newspack-blocks/homepage-articles',
+		'newspack-blocks/homepage-posts',
 		array(
 			'attributes'      => array(
 				'className'       => array(
@@ -375,11 +375,11 @@ function newspack_blocks_register_homepage_articles() {
 					'default' => '',
 				),
 			),
-			'render_callback' => 'newspack_blocks_render_block_homepage_articles',
+			'render_callback' => 'newspack_blocks_render_block_homepage_posts',
 		)
 	);
 }
-add_action( 'init', 'newspack_blocks_register_homepage_articles' );
+add_action( 'init', 'newspack_blocks_register_homepage_posts' );
 
 /**
  * Prepare an array of authors, taking presence of CoAuthors Plus into account.

@@ -79,7 +79,7 @@ msgid "Other"
 msgstr ""
 
 #. translators: %s: post author.
-#: src/blocks/homepage-articles/view.php:199
+#: src/blocks/homepage-posts/view.php:199
 msgctxt "post author"
 msgid "by %s"
 msgstr ""
@@ -136,32 +136,32 @@ msgstr ""
 msgid "Enable donations."
 msgstr ""
 
-#: src/blocks/homepage-articles/index.js:19
-msgid "Newspack Homepage Articles"
+#: src/blocks/homepage-posts/index.js:19
+msgid "Newspack Homepage Posts"
 msgstr ""
 
-#: src/blocks/homepage-articles/index.js:34
+#: src/blocks/homepage-posts/index.js:34
 msgid "posts"
 msgstr ""
 
-#: src/blocks/homepage-articles/index.js:35
-msgid "articles"
+#: src/blocks/homepage-posts/index.js:35
+msgid "posts"
 msgstr ""
 
-#: src/blocks/homepage-articles/index.js:36
+#: src/blocks/homepage-posts/index.js:36
 msgid "latest"
 msgstr ""
 
-#: src/blocks/homepage-articles/index.js:38
-msgid "A block for displaying homepage articles."
+#: src/blocks/homepage-posts/index.js:38
+msgid "A block for displaying homepage posts."
 msgstr ""
 
-#: src/blocks/homepage-articles/index.js:40
+#: src/blocks/homepage-posts/index.js:40
 msgctxt "block style"
 msgid "Default"
 msgstr ""
 
-#: src/blocks/homepage-articles/index.js:41
+#: src/blocks/homepage-posts/index.js:41
 msgctxt "block style"
 msgid "Borders"
 msgstr ""

@@ -16,7 +16,7 @@
 	}
 
 	/* Section header */
-	.article-section-title {
+	.post-section-title {
 		font-size: $font__size-sm;
 		margin-bottom: 0.5em;
 		width: 100%; // make sure this isn't caught up in the flex styles.
@@ -166,7 +166,7 @@
 		}
 	}
 
-	/* Article meta */
+	/* Post meta */
 	.cat-links {
 		font-size: $font__size-xxs;
 		font-weight: bold;
@@ -203,7 +203,7 @@
 	}
 
 	&.has-text-color {
-		.article-section-title,
+		.post-section-title,
 		.entry-title,
 		.entry-title a,
 		.entry-title a:visited,

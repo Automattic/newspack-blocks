@@ -16,8 +16,8 @@ import edit from './edit';
 import './editor.scss';
 import './view.scss';
 
-export const name = 'homepage-articles';
-export const title = __( 'Newspack Homepage Articles', 'newspack-blocks' );
+export const name = 'homepage-posts';
+export const title = __( 'Newspack Homepage Posts', 'newspack-blocks' );
 
 /* From https://material.io/tools/icons */
 export const icon = (
@@ -33,10 +33,10 @@ export const settings = {
 	category: 'newspack',
 	keywords: [
 		__( 'posts', 'newspack-blocks' ),
-		__( 'articles', 'newspack-blocks' ),
+		__( 'posts', 'newspack-blocks' ),
 		__( 'latest', 'newspack-blocks' ),
 	],
-	description: __( 'A block for displaying homepage articles.', 'newspack-blocks' ),
+	description: __( 'A block for displaying homepage posts.', 'newspack-blocks' ),
 	styles: [
 		{ name: 'default', label: _x( 'Default', 'block style', 'newspack-blocks' ), isDefault: true },
 		{ name: 'borders', label: _x( 'Borders', 'block style', 'newspack-blocks' ) },
@@ -158,7 +158,7 @@ export const settings = {
 					postsToShow,
 					categories,
 				} ) => {
-					return createBlock( 'newspack-blocks/homepage-articles', {
+					return createBlock( 'newspack-blocks/homepage-posts', {
 						showExcerpt: displayPostContent,
 						showDate: displayPostDate,
 						postLayout,

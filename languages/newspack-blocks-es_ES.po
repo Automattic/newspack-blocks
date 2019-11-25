@@ -79,7 +79,7 @@ msgid "Other"
 msgstr "Otro"
 
 #. translators: %s: post author.
-#: src/blocks/homepage-articles/view.php:199
+#: src/blocks/homepage-posts/view.php:199
 msgctxt "post author"
 msgid "by %s"
 msgstr "por %s"

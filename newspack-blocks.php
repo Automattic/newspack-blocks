@@ -188,23 +188,23 @@ class Newspack_Blocks {
  * Add image sizes
  */
 function newspack_blocks_image_sizes() {
-	add_image_size( 'newspack-article-block-landscape-large', 1200, 900, true );
-	add_image_size( 'newspack-article-block-portrait-large', 900, 1200, true );
-	add_image_size( 'newspack-article-block-square-large', 1200, 1200, true );
+	add_image_size( 'newspack-post-block-landscape-large', 1200, 900, true );
+	add_image_size( 'newspack-post-block-portrait-large', 900, 1200, true );
+	add_image_size( 'newspack-post-block-square-large', 1200, 1200, true );
 
-	add_image_size( 'newspack-article-block-landscape-medium', 800, 600, true );
-	add_image_size( 'newspack-article-block-portrait-medium', 600, 800, true );
-	add_image_size( 'newspack-article-block-square-medium', 800, 800, true );
+	add_image_size( 'newspack-post-block-landscape-medium', 800, 600, true );
+	add_image_size( 'newspack-post-block-portrait-medium', 600, 800, true );
+	add_image_size( 'newspack-post-block-square-medium', 800, 800, true );
 
-	add_image_size( 'newspack-article-block-landscape-small', 400, 300, true );
-	add_image_size( 'newspack-article-block-portrait-small', 300, 400, true );
-	add_image_size( 'newspack-article-block-square-small', 400, 400, true );
+	add_image_size( 'newspack-post-block-landscape-small', 400, 300, true );
+	add_image_size( 'newspack-post-block-portrait-small', 300, 400, true );
+	add_image_size( 'newspack-post-block-square-small', 400, 400, true );
 
-	add_image_size( 'newspack-article-block-landscape-tiny', 200, 150, true );
-	add_image_size( 'newspack-article-block-portrait-tiny', 150, 200, true );
-	add_image_size( 'newspack-article-block-square-tiny', 200, 200, true );
+	add_image_size( 'newspack-post-block-landscape-tiny', 200, 150, true );
+	add_image_size( 'newspack-post-block-portrait-tiny', 150, 200, true );
+	add_image_size( 'newspack-post-block-square-tiny', 200, 200, true );
 
-	add_image_size( 'newspack-article-block-uncropped', 1200, 9999, false );
+	add_image_size( 'newspack-post-block-uncropped', 1200, 9999, false );
 }
 add_action( 'after_setup_theme', 'newspack_blocks_image_sizes' );
 
@@ -276,10 +276,10 @@ function newspack_blocks_image_size_for_orientation( $orientation = 'landscape' 
 	foreach ( $sizes[ $orientation ] as $key => $dimensions ) {
 		$attachment = wp_get_attachment_image_src(
 			get_post_thumbnail_id( get_the_ID() ),
-			'newspack-article-block-' . $orientation . '-' . $key
+			'newspack-post-block-' . $orientation . '-' . $key
 		);
 		if ( $dimensions[0] === $attachment[1] && $dimensions[1] === $attachment[2] ) {
-			return 'newspack-article-block-' . $orientation . '-' . $key;
+			return 'newspack-post-block-' . $orientation . '-' . $key;
 		}
 	}
 }

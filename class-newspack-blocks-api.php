@@ -98,7 +98,7 @@ class Newspack_Blocks_API {
 		$featured_image_set['square'] = $feat_img_array_square[0];
 
 		// Uncropped image.
-		$uncropped_size = 'newspack-article-block-uncropped';
+		$uncropped_size = 'newspack-post-block-uncropped';
 
 		$feat_img_array_uncropped        = wp_get_attachment_image_src(
 			$object['featured_media'],
