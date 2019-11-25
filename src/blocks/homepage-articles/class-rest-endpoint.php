@@ -43,46 +43,13 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 		$attributes = $request->get_param( 'attributes') ?? [];
 		$next_page = $page + 1;
 
-		// TODO: DRY up usage with `view.php`
-		global $newspack_blocks_post_id;
-		if ( ! $newspack_blocks_post_id ) {
-			$newspack_blocks_post_id = array();
-		}
-		$authors        = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
-		$categories     = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
-		$tags           = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
-		$specific_posts = isset( $attributes['specificPosts'] ) ? $attributes['specificPosts'] : array();
-		$posts_to_show  = intval( $attributes['postsToShow'] );
-		$specific_mode  = intval( $attributes['specificMode'] );
+		$article_query_args = newspack_build_articles_query($attributes);
 
-		// Default args
-		$args           = array(
-			'post_status'         => 'publish',
-			'suppress_filters'    => false,
-			'ignore_sticky_posts' => true,
-		);
+		// Append custom paginatino arg for REST API endpoint
+		$article_query_args['paged'] = $page;
 
-		if ( $specific_mode && $specific_posts ) {
-			$args['post__in'] = $specific_posts;
-			$args['orderby']  = 'post__in';
-		} else {
-			$args['posts_per_page'] = $posts_to_show + count( $newspack_blocks_post_id );
-
-			if ( $authors ) {
-				$args['author__in'] = $authors;
-			}
-			if ( $categories ) {
-				$args['category__in'] = $categories;
-			}
-			if ( $tags ) {
-				$args['tag__in'] = $tags;
-			}
-		}
-
-		// Custom arg for endpoint
-		$args['paged'] = $page;
-
-		$article_query = new WP_Query( $args );
+		// Run Query
+		$article_query = new WP_Query($article_query_args);
 
 		$next_page_out_of_bounds = $next_page > $article_query->max_num_pages;
 
