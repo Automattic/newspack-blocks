@@ -27,8 +27,8 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 					'callback'            => array( $this, 'get_articles' ),
 					'args' => array(
 						'page' => array(
-							// 'validate_callback' => 'wp_http_validate_url',
-							// 'sanitize_callback' => 'esc_url_raw',
+							'validate_callback' => 'is_numeric',
+							'sanitize_callback' => 'absint',
 						),
 					),
 					'permission_callback' => array( $this, 'get_articles_permissions_check' ),
