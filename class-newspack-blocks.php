@@ -165,5 +165,81 @@ class Newspack_Blocks {
 	 */
 	public static function is_amp() {
 		return ! is_admin() && function_exists( 'is_amp_endpoint' ) && is_amp_endpoint();
-    }
+	}
+
+	/**
+	 * Return the most appropriate thumbnail size to display.
+	 *
+	 * @param string $orientation The block's orientation settings: landscape|portrait|square.
+	 *
+	 * @return string Returns the thumbnail key to use.
+	 */
+	public static function image_size_for_orientation( $orientation = 'landscape' ) {
+		$sizes = array(
+			'landscape' => array(
+				'large'  => array(
+					1200,
+					900,
+				),
+				'medium' => array(
+					800,
+					600,
+				),
+				'small'  => array(
+					400,
+					300,
+				),
+				'tiny'   => array(
+					200,
+					150,
+				),
+			),
+			'portrait'  => array(
+				'large'  => array(
+					900,
+					1200,
+				),
+				'medium' => array(
+					600,
+					800,
+				),
+				'small'  => array(
+					300,
+					400,
+				),
+				'tiny'   => array(
+					150,
+					200,
+				),
+			),
+			'square'    => array(
+				'large'  => array(
+					1200,
+					1200,
+				),
+				'medium' => array(
+					800,
+					800,
+				),
+				'small'  => array(
+					400,
+					400,
+				),
+				'tiny'   => array(
+					200,
+					200,
+				),
+			),
+		);
+
+		foreach ( $sizes[ $orientation ] as $key => $dimensions ) {
+			$attachment = wp_get_attachment_image_src(
+				get_post_thumbnail_id( get_the_ID() ),
+				'newspack-article-block-' . $orientation . '-' . $key
+			);
+			if ( $dimensions[0] === $attachment[1] && $dimensions[1] === $attachment[2] ) {
+				return 'newspack-article-block-' . $orientation . '-' . $key;
+			}
+		}
+	}
 }
