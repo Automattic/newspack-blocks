@@ -284,13 +284,13 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				</div>
 
 				<div fallback>
-					FALLBACK (Should be the same as Placeholder probably)
+					Fallback
 				</div>
 				<amp-list-load-more load-more-failed>
-					ERROR
+					<p><?php esc_html_e('Unable to load posts at this time.');?></p>
 				</amp-list-load-more>
 				<amp-list-load-more load-more-end>
-					END
+					<p><?php esc_html_e('No more posts.');?></p>
 				</amp-list-load-more>
 
 				<?php if ( $attributes['moreButton'] ) : ?>
