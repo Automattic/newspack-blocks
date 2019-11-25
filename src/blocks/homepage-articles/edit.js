@@ -235,6 +235,7 @@ class Edit extends Component {
 			specificMode,
 			tags,
 			url,
+			singleMode,
 		} = attributes;
 
 		return (
