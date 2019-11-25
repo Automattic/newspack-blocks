@@ -17,6 +17,8 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 	$article_query = new WP_Query( Newspack_Blocks::build_articles_query( $attributes ) );
 
+
+
 	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes, array( 'wpnbha' ) );
 
 	if ( isset( $attributes['postLayout'] ) && 'grid' === $attributes['postLayout'] ) {
@@ -116,12 +118,15 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 						<p><?php esc_html_e('Unable to load articles at this time.');?></p>
 					</amp-list-load-more>
 
+					<?php if ( $attributes['moreButton'] ) : ?>
 					<amp-list-load-more load-more-button class="amp-visible">
 						<button load-more-clickable><?php _e( 'Load more articles' ); ?></button>
 					</amp-list-load-more>
+					<?php endif; ?>
 				</amp-list>
-				<?php
-			endif;
+
+			<?php
+
 
 			wp_reset_postdata();
 			?>
