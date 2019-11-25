@@ -37,3 +37,32 @@ function newspack_blocks_plugin_textdomain() {
 	load_plugin_textdomain( 'newspack-blocks', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }
 add_action( 'plugins_loaded', 'newspack_blocks_plugin_textdomain' );
+
+/**
+ * Loads a template with given data in scope.
+ *
+ * @param string $template full path to the template to be included
+ * @param array  $data          data to be passed into the template to be included
+ */
+function newspack_template_inc( $template, $data = array() ) {
+	if ( ! strpos( $template, '.php' ) ) {
+		$template = $template . '.php';
+	}
+
+	if (!is_file($template)) {
+		throw new Exception("File at path $template not found");
+	}
+
+	// Optionally provided an assoc array of data to pass to tempalte
+	// and it will be extracted into variables
+	if ( is_array( $data ) ) {
+		extract( $data );
+	}
+
+	ob_start();
+	include $template;
+	$var = ob_get_contents();
+	ob_end_clean();
+
+	return $var;
+}
