@@ -165,8 +165,6 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			<?php
 			endif;
 
-
-
 			$amp_list_url = add_query_arg(
 				array(
 					'attributes' => $attributes,
@@ -200,13 +198,13 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 						?>
 					</div>
 					<amp-list-load-more load-more-failed>
-						<p><?php esc_html_e('Unable to load posts at this time.');?></p>
+						<p><?php esc_html_e('Unable to load articles at this time.');?></p>
 					</amp-list-load-more>
 					<amp-list-load-more load-more-end>
-						<p><?php esc_html_e('No more posts.');?></p>
+						<p><?php esc_html_e('No more articles.');?></p>
 					</amp-list-load-more>
 					<amp-list-load-more load-more-button class="amp-visible">
-						<button load-more-clickable><?php _e( 'More' ); ?></button>
+						<button load-more-clickable><?php _e( 'Load more articles' ); ?></button>
 					</amp-list-load-more>
 				</amp-list>
 				<?php
