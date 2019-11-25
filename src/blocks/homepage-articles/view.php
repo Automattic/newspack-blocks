@@ -178,8 +178,9 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				?>
 				<amp-list
 					src="<?php echo esc_url( $amp_list_url ); ?>"
-					width="auto"
-					height="100px"
+					layout="responsive"
+					width="0"
+					height="0"
 					binding="refresh"
 					load-more="manual"
 					load-more-bookmark="next">
