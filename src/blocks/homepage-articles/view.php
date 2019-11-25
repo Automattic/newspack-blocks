@@ -72,9 +72,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	wp_enqueue_script( 'amp-form' );
 	wp_enqueue_script( 'amp-mustache' );
 
-	$article_query = new WP_Query( newspack_build_articles_query($attributes) );
-
-
+	$article_query = new WP_Query( newspack_build_articles_query( $attributes ) );
 
 	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes, array( 'wpnbha' ) );
 
@@ -122,7 +120,12 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		$styles = 'color: ' . $attributes['customTextColor'] . ';';
 	}
 
-	$post_counter = 0;
+	$amp_list_url = add_query_arg(
+		array(
+			'attributes' => $attributes,
+		),
+		rest_url( '/wp/v2/newspack-articles-block/articles' )
+	);
 
 	ob_start();
 
@@ -134,65 +137,52 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				<h2 class="article-section-title">
 					<span><?php echo wp_kses_post( $attributes['sectionHeader'] ); ?></span>
 				</h2>
-			<?php
-			endif;
+			<?php endif; ?>
 
-			$amp_list_url = add_query_arg(
-				array(
-					'attributes' => $attributes,
-				),
-				rest_url( '/wp/v2/newspack-articles-block/articles' )
-			);?>
-				<amp-list
-					src="<?php echo esc_url( $amp_list_url ); ?>"
-					layout="responsive"
-					width="0"
-					height="0"
-					binding="refresh"
-					load-more="manual"
-					load-more-bookmark="next">
+			<amp-list
+				src="<?php echo esc_url( $amp_list_url ); ?>"
+				layout="responsive"
+				width="0"
+				height="0"
+				binding="refresh"
+				load-more="manual"
+				load-more-bookmark="next">
 
-					<template type="amp-mustache">
-						{{{html}}}
-					</template>
-					<div fallback>
-						<?php
-						echo newspack_template_inc(__DIR__ . '/articles-loop.php', array(
-							'attributes' => $attributes,
-							'article_query' => $article_query,
-							'posts_to_show' => $posts_to_show,
-							'post_counter' => $post_counter,
-							'specific_mode' => $attributes['specificMode'],
-						));
-						?>
-					</div>
-					<amp-list-load-more load-more-failed>
-						<p><?php esc_html_e('Unable to load articles at this time.');?></p>
-					</amp-list-load-more>
+				<template type="amp-mustache">
+					{{{html}}}
+				</template>
+				<div fallback>
+					<?php
+					echo newspack_template_inc(__DIR__ . '/articles-loop.php', array(
+						'attributes'    => $attributes,
+						'article_query' => $article_query,
+					) );
+					?>
+				</div>
+				<amp-list-load-more load-more-failed>
+					<p><?php esc_html_e('Unable to load articles at this time.');?></p>
+				</amp-list-load-more>
 
-					<?php if ( $attributes['moreButton'] ) : ?>
-					<amp-list-load-more load-more-button class="amp-visible">
-						<button load-more-clickable><?php _e( 'Load more articles' ); ?></button>
-					</amp-list-load-more>
-					<?php endif; ?>
-				</amp-list>
-
-			<?php
-
-
-			wp_reset_postdata();
-			?>
+				<?php if ( $attributes['moreButton'] ) : ?>
+				<amp-list-load-more load-more-button class="amp-visible">
+					<button load-more-clickable><?php _e( 'Load more articles' ); ?></button>
+				</amp-list-load-more>
+				<?php endif; ?>
+			</amp-list>
 		</div>
 		<?php
-		endif;
+	endif;
+
 	$content = ob_get_clean();
 	Newspack_Blocks::enqueue_view_assets( 'homepage-articles' );
+
 	return $content;
 }
 
 
 function newspack_build_articles_query($attributes) {
-    global $newspack_blocks_post_id;
+	global $newspack_blocks_post_id;
+
 	if ( ! $newspack_blocks_post_id ) {
 		$newspack_blocks_post_id = array();
 	}
