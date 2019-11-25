@@ -13,6 +13,7 @@
  * @return string Returns the post content with latest posts added.
  */
 function newspack_blocks_render_block_homepage_articles( $attributes ) {
+
 	if ( ! wp_script_is( 'amp-runtime', 'registered' ) ) {
 		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 		wp_register_script(
@@ -72,6 +73,8 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	wp_enqueue_script( 'amp-mustache' );
 
 	$article_query = new WP_Query( newspack_build_articles_query($attributes) );
+
+
 
 	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes, array( 'wpnbha' ) );
 
@@ -139,10 +142,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 					'attributes' => $attributes,
 				),
 				rest_url( '/wp/v2/newspack-articles-block/articles' )
-			);
-
-			if ( $attributes['moreButton'] ) :
-				?>
+			);?>
 				<amp-list
 					src="<?php echo esc_url( $amp_list_url ); ?>"
 					layout="responsive"
@@ -170,12 +170,15 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 						<p><?php esc_html_e('Unable to load articles at this time.');?></p>
 					</amp-list-load-more>
 
+					<?php if ( $attributes['moreButton'] ) : ?>
 					<amp-list-load-more load-more-button class="amp-visible">
 						<button load-more-clickable><?php _e( 'Load more articles' ); ?></button>
 					</amp-list-load-more>
+					<?php endif; ?>
 				</amp-list>
-				<?php
-			endif;
+
+			<?php
+
 
 			wp_reset_postdata();
 			?>
