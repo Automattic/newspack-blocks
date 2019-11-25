@@ -16,7 +16,7 @@ import edit from './edit';
 import './editor.scss';
 import './view.scss';
 
-export const name = 'homepage-posts';
+export const name = 'homepage-articles';
 export const title = __( 'Newspack Homepage Posts', 'newspack-blocks' );
 
 /* From https://material.io/tools/icons */

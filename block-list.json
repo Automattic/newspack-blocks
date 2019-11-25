@@ -1,3 +1,3 @@
 {
-  "production": [ "carousel", "donate", "homepage-posts" ]
+  "production": [ "carousel", "donate", "homepage-articles" ]
 }
