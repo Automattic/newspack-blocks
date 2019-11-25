@@ -171,19 +171,11 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				}
 				$newspack_blocks_post_id[ get_the_ID() ] = true;
 
-				$authors = newspack_blocks_prepare_authors();
-
 				$post_counter++;
-
-				$styles = '';
-				if ( 'behind' === $attributes['mediaPosition'] && $attributes['showImage'] && has_post_thumbnail() ) {
-					$styles = 'min-height: ' . $attributes['minHeight'] . 'vh; padding-top: ' . ( $attributes['minHeight'] / 5 ) . 'vh;';
-				}
 				?>
 
 				<?php echo newspack_template_inc(__DIR__ . '/article.php', array(
 					'attributes' => $attributes,
-					'styles' => $styles,
 				)); ?>
 
 				<?php
