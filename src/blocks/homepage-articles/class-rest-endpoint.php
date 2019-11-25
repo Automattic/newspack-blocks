@@ -84,7 +84,7 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 
 		$article_query = new WP_Query( $args );
 
-		$max_pages = $article_query->max_num_pages;
+		$next_page_out_of_bounds = $next_page > $article_query->max_num_pages;
 
 		// Defaults
 		$items = [];
@@ -99,7 +99,7 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 		endwhile;
 
 		// Don't provide next URL if the next page is out of bounds
-		if ($next_page <= $max_pages) {
+		if (!$next_page_out_of_bounds) {
 			$next_url = add_query_arg(array(
 				'page' => $next_page,
 				'attributes' => $attributes,
