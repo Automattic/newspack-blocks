@@ -165,13 +165,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			<?php
 			endif;
 
-			echo newspack_template_inc(__DIR__ . '/articles-loop.php', array(
-				'attributes' => $attributes,
-				'article_query' => $article_query,
-				'posts_to_show' => $posts_to_show,
-				'post_counter' => $post_counter,
-				'specific_mode' => $attributes['specificMode'],
-			));
+
 
 			$amp_list_url = add_query_arg(
 				array(
@@ -194,7 +188,15 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 						{{{html}}}
 					</template>
 					<div fallback>
-						Fallback
+						<?php
+						echo newspack_template_inc(__DIR__ . '/articles-loop.php', array(
+							'attributes' => $attributes,
+							'article_query' => $article_query,
+							'posts_to_show' => $posts_to_show,
+							'post_counter' => $post_counter,
+							'specific_mode' => $attributes['specificMode'],
+						));
+						?>
 					</div>
 					<amp-list-load-more load-more-failed>
 						<p><?php esc_html_e('Unable to load posts at this time.');?></p>
