@@ -1,7 +1,7 @@
 <?php
 while ( $article_query->have_posts() ) :
     $article_query->the_post();
-    if ( ! $attributes['specificMode'] && ( isset( $newspack_blocks_post_id[ get_the_ID() ] ) || $post_counter >= $posts_to_show ) ) {
+    if ( ! $specific_mode && ( isset( $newspack_blocks_post_id[ get_the_ID() ] ) || $post_counter >= $posts_to_show ) ) {
         continue;
     }
     $newspack_blocks_post_id[ get_the_ID() ] = true;
