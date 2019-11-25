@@ -17,8 +17,6 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 	$article_query = new WP_Query( Newspack_Blocks::build_articles_query( $attributes ) );
 
-
-
 	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes, array( 'wpnbha' ) );
 
 	if ( isset( $attributes['postLayout'] ) && 'grid' === $attributes['postLayout'] ) {
@@ -65,83 +63,69 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		$styles = 'color: ' . $attributes['customTextColor'] . ';';
 	}
 
-	$post_counter = 0;
+	$amp_list_url = add_query_arg(
+		array(
+			'attributes' => $attributes,
+		),
+		rest_url( '/wp/v2/newspack-articles-block/articles' )
+	);
 
 	ob_start();
 
 	if ( $article_query->have_posts() ) :
 		?>
-		<div>
-			<div data-posts-container class="<?php echo esc_attr( $classes ); ?>" style="<?php echo esc_attr( $styles ); ?>">
-				<?php if ( '' !== $attributes['sectionHeader'] ) : ?>
-					<h2 class="article-section-title">
-						<span><?php echo wp_kses_post( $attributes['sectionHeader'] ); ?></span>
-					</h2>
+		<div class="<?php echo esc_attr( $classes ); ?>" style="<?php echo esc_attr( $styles ); ?>">
+
+			<?php if ( '' !== $attributes['sectionHeader'] ) : ?>
+				<h2 class="article-section-title">
+					<span><?php echo wp_kses_post( $attributes['sectionHeader'] ); ?></span>
+				</h2>
+			<?php endif; ?>
+
+			<amp-list
+				src="<?php echo esc_url( $amp_list_url ); ?>"
+				layout="responsive"
+				width="0"
+				height="0"
+				binding="refresh"
+				load-more="manual"
+				load-more-bookmark="next">
+
+				<template type="amp-mustache">
+					{{{html}}}
+				</template>
+				<div fallback>
 					<?php
-				endif;
-				?>
-				<?php echo newspack_template_inc(__DIR__ . '/article.php', array(
-					'attributes' => $attributes,
-				)); ?>
-				<?php
-				/*
-				* We are not using an AMP-based renderer on AMP requests because it has limitations
-				* around dynamically calculating the height of the the article list on load.
-				* As a result we render the same standards-based markup for all requests.
-				*/
-				echo Newspack_Blocks::template_inc( __DIR__ . '/templates/articles-list.php', [
-					'articles_rest_url' => $articles_rest_url,
-					'article_query'     => $article_query,
-					'attributes'        => $attributes,
-				] );
-				?>
-			</div>
-			<?php
+					echo newspack_template_inc(__DIR__ . '/articles-loop.php', array(
+						'attributes'    => $attributes,
+						'article_query' => $article_query,
+					) );
+					?>
+				</div>
+				<amp-list-load-more load-more-failed>
+					<p><?php esc_html_e('Unable to load articles at this time.');?></p>
+				</amp-list-load-more>
 
-			if ( $attributes['moreButton'] ) :
-				?>
-				<amp-list
-					src="<?php echo esc_url( rest_url( '/wp/v2/newspack-articles-block/articles' ) ); ?>"
-					width="auto"
-					height="100px"
-					binding="refresh"
-					load-more="manual"
-					load-more-bookmark="next">
-
-					<template type="amp-mustache">
-						{{{html}}}
-					</template>
-					<div fallback>
-						Fallback
-					</div>
-					<amp-list-load-more load-more-failed>
-						<p><?php esc_html_e('Unable to load articles at this time.');?></p>
-					</amp-list-load-more>
-
-					<?php if ( $attributes['moreButton'] ) : ?>
-					<amp-list-load-more load-more-button class="amp-visible">
-						<button load-more-clickable><?php _e( 'Load more articles' ); ?></button>
-					</amp-list-load-more>
-					<?php endif; ?>
-				</amp-list>
-
-			<?php
-
-
-			wp_reset_postdata();
-			?>
+				<?php if ( $attributes['moreButton'] ) : ?>
+				<amp-list-load-more load-more-button class="amp-visible">
+					<button load-more-clickable><?php _e( 'Load more articles' ); ?></button>
+				</amp-list-load-more>
+				<?php endif; ?>
+			</amp-list>
 		</div>
-	<?php
+		<?php
 	endif;
 
 	$content = ob_get_clean();
 	Newspack_Blocks::enqueue_view_assets( 'homepage-articles' );
+
 	return $content;
 }
 
 
 function newspack_build_articles_query($attributes) {
-    global $newspack_blocks_post_id;
+	global $newspack_blocks_post_id;
+
 	if ( ! $newspack_blocks_post_id ) {
 		$newspack_blocks_post_id = array();
 	}
