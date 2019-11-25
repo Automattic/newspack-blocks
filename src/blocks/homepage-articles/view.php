@@ -96,17 +96,10 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			</div>
 			<?php
 
-			$amp_list_url = add_query_arg(
-				array(
-					'attributes' => $attributes,
-				),
-				rest_url( '/wp/v2/newspack-articles-block/articles' )
-			);
-
 			if ( $attributes['moreButton'] ) :
 				?>
 				<amp-list
-					src="<?php echo esc_url( $amp_list_url ); ?>"
+					src="<?php echo esc_url( rest_url( '/wp/v2/newspack-articles-block/articles' ) ); ?>"
 					width="auto"
 					height="100px"
 					binding="refresh"
