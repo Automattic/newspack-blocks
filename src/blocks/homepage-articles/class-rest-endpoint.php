@@ -27,7 +27,7 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 					'callback'            => array( $this, 'get_articles' ),
 					'args' => array(
 						'page' => array(
-							'validate_callback' => 'is_numeric',
+							'validate_callback' => array($this, 'validate_page'),
 							'sanitize_callback' => 'absint',
 						),
 						'attributes' => array(
@@ -39,6 +39,10 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 				),
 			)
 		);
+	}
+
+	public function validate_page($page) {
+		return is_numeric($page);
 	}
 
 	public function validate_attributes($attributes) {
