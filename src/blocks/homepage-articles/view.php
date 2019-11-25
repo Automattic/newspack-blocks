@@ -80,7 +80,6 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				?>
 				<?php echo newspack_template_inc(__DIR__ . '/article.php', array(
 					'attributes' => $attributes,
-					'styles' => $styles,
 				)); ?>
 				<?php
 				/*
