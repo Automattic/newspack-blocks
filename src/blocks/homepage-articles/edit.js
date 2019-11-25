@@ -237,6 +237,7 @@ class Edit extends Component {
 			specificMode,
 			tags,
 			url,
+			singleMode,
 		} = attributes;
 
 		const imageSizeOptions = [
