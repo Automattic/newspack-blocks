@@ -39,8 +39,8 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 
 
 	public function get_articles( $request ) {
-		$ppp = get_option('posts_per_page');
 		$page = $request->get_param( 'page') ?? 1;
+		$attributes = $request->get_param( 'attributes') ?? [];
 		$next_page = $page + 1;
 
 		$args           = array(
@@ -52,20 +52,19 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 
 		$article_query = new WP_Query( $args );
 
-		$html = newspack_template_inc(__DIR__ . '/articles-loop.php', array(
+		$items = [];
+
+		// The Loop
+		while ( $article_query->have_posts() ) : $article_query->the_post();
+			$items[]['html'] = newspack_template_inc(__DIR__ . '/article.php', array(
+				'attributes' => $attributes,
+			));
+		endwhile;
+
+		$next_url = add_query_arg(array(
+			'page' => $next_page,
 			'attributes' => $attributes,
-			'article_query' => $article_query,
-			'posts_to_show' => $posts_to_show,
-			'post_counter' => $post_counter,
-		));
-
-		$items = array_map(function($item) {
-			return [
-				'html' => "<article>Random string of <strong>HTML</strong> $item</article>",
-			];
-		}, [1,2,3,4,5,6,7,8,9,10]);
-
-		$next_url = add_query_arg('page',$next_page, get_rest_url(null, $this->namespace . '/' . $this->rest_base . '/articles?page=' . $next_page));
+		), get_rest_url(null, $this->namespace . '/' . $this->rest_base . '/articles?page=' . $next_page));
 
 		return rest_ensure_response( [
 			'items' => $items,
