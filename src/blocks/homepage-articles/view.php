@@ -170,6 +170,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				'article_query' => $article_query,
 				'posts_to_show' => $posts_to_show,
 				'post_counter' => $post_counter,
+				'specific_mode' => $attributes['specificMode'],
 			));
 
 			if ( $attributes['moreButton'] ) :

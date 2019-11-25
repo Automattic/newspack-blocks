@@ -39,8 +39,25 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 
 
 	public function get_articles( $request ) {
+		$ppp = get_option('posts_per_page');
 		$page = $request->get_param( 'page') ?? 1;
 		$next_page = $page + 1;
+
+		$args           = array(
+			'post_status'         => 'publish',
+			'suppress_filters'    => false,
+			'ignore_sticky_posts' => true,
+			'paged'               => $page,
+		);
+
+		$article_query = new WP_Query( $args );
+
+		$html = newspack_template_inc(__DIR__ . '/articles-loop.php', array(
+			'attributes' => $attributes,
+			'article_query' => $article_query,
+			'posts_to_show' => $posts_to_show,
+			'post_counter' => $post_counter,
+		));
 
 		$items = array_map(function($item) {
 			return [
