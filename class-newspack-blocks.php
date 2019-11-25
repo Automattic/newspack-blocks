@@ -242,4 +242,27 @@ class Newspack_Blocks {
 			}
 		}
 	}
+
+	/**
+	 * Registers image sizes required for Newspack Blocks.
+	 */
+	public static function add_image_sizes() {
+		add_image_size( 'newspack-article-block-landscape-large', 1200, 900, true );
+		add_image_size( 'newspack-article-block-portrait-large', 900, 1200, true );
+		add_image_size( 'newspack-article-block-square-large', 1200, 1200, true );
+
+		add_image_size( 'newspack-article-block-landscape-medium', 800, 600, true );
+		add_image_size( 'newspack-article-block-portrait-medium', 600, 800, true );
+		add_image_size( 'newspack-article-block-square-medium', 800, 800, true );
+
+		add_image_size( 'newspack-article-block-landscape-small', 400, 300, true );
+		add_image_size( 'newspack-article-block-portrait-small', 300, 400, true );
+		add_image_size( 'newspack-article-block-square-small', 400, 400, true );
+
+		add_image_size( 'newspack-article-block-landscape-tiny', 200, 150, true );
+		add_image_size( 'newspack-article-block-portrait-tiny', 150, 200, true );
+		add_image_size( 'newspack-article-block-square-tiny', 200, 200, true );
+
+		add_image_size( 'newspack-article-block-uncropped', 1200, 9999, false );
+	}
 }
