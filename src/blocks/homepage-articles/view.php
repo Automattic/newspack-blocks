@@ -200,9 +200,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 					<amp-list-load-more load-more-failed>
 						<p><?php esc_html_e('Unable to load articles at this time.');?></p>
 					</amp-list-load-more>
-					<amp-list-load-more load-more-end>
-						<p><?php esc_html_e('No more articles.');?></p>
-					</amp-list-load-more>
+
 					<amp-list-load-more load-more-button class="amp-visible">
 						<button load-more-clickable><?php _e( 'Load more articles' ); ?></button>
 					</amp-list-load-more>
