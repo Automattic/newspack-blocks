@@ -137,7 +137,7 @@ msgid "Enable donations."
 msgstr ""
 
 #: src/blocks/homepage-articles/index.js:19
-msgid "Newspack Homepage Articles"
+msgid "Homepage Posts"
 msgstr ""
 
 #: src/blocks/homepage-articles/index.js:34
@@ -145,7 +145,7 @@ msgid "posts"
 msgstr ""
 
 #: src/blocks/homepage-articles/index.js:35
-msgid "articles"
+msgid "posts"
 msgstr ""
 
 #: src/blocks/homepage-articles/index.js:36
@@ -153,7 +153,7 @@ msgid "latest"
 msgstr ""
 
 #: src/blocks/homepage-articles/index.js:38
-msgid "A block for displaying homepage articles."
+msgid "A block for displaying homepage posts."
 msgstr ""
 
 #: src/blocks/homepage-articles/index.js:40
