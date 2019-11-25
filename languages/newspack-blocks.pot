@@ -2,16 +2,16 @@
 # This file is distributed under the same license as the Newspack Blocks plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Newspack Blocks 1.0.0-alpha.8\n"
+"Project-Id-Version: Newspack Blocks 1.0.0-alpha.17\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/newspack-blocks\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2019-10-10T20:09:37+00:00\n"
+"POT-Creation-Date: 2019-11-25T18:51:48+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.3.0\n"
+"X-Generator: WP-CLI 2.3.0-alpha-d72f134\n"
 "X-Domain: newspack-blocks\n"
 
 #. Plugin Name of the plugin
@@ -34,134 +34,419 @@ msgstr ""
 msgid "YOUR SITE HERE"
 msgstr ""
 
+#: assets/release/newspack-blocks/src/blocks/homepage-articles/view.php:448
+#: src/blocks/homepage-articles/view.php:448
+msgctxt "post author"
+msgid "by"
+msgstr ""
+
+#: assets/release/newspack-blocks/src/blocks/homepage-articles/view.php:465
+#: src/blocks/homepage-articles/view.php:465
+msgctxt "post author"
+msgid " and "
+msgstr ""
+
+#: assets/release/newspack-blocks/src/blocks/donate/view.php:28
 #: src/blocks/donate/view.php:28
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/donate/edit.js:89
+#: assets/release/newspack-blocks/src/blocks/donate/edit.js:155
 #: src/blocks/donate/edit.js:89
 #: src/blocks/donate/edit.js:155
 msgid "One-time"
 msgstr ""
 
+#: assets/release/newspack-blocks/src/blocks/donate/view.php:29
 #: src/blocks/donate/view.php:29
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/donate/edit.js:90
+#: assets/release/newspack-blocks/src/blocks/donate/edit.js:156
 #: src/blocks/donate/edit.js:90
 #: src/blocks/donate/edit.js:156
 msgid "Monthly"
 msgstr ""
 
+#: assets/release/newspack-blocks/src/blocks/donate/view.php:30
 #: src/blocks/donate/view.php:30
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/donate/edit.js:91
+#: assets/release/newspack-blocks/src/blocks/donate/edit.js:157
 #: src/blocks/donate/edit.js:91
 #: src/blocks/donate/edit.js:157
 msgid "Annually"
 msgstr ""
 
+#: assets/release/newspack-blocks/src/blocks/donate/view.php:73
+#: assets/release/newspack-blocks/src/blocks/donate/view.php:164
 #: src/blocks/donate/view.php:73
 #: src/blocks/donate/view.php:164
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/donate/edit.js:118
+#: assets/release/newspack-blocks/src/blocks/donate/edit.js:220
 #: src/blocks/donate/edit.js:118
 #: src/blocks/donate/edit.js:220
 msgid "Donation amount"
 msgstr ""
 
+#: assets/release/newspack-blocks/src/blocks/donate/view.php:91
+#: assets/release/newspack-blocks/src/blocks/donate/view.php:185
 #: src/blocks/donate/view.php:91
 #: src/blocks/donate/view.php:185
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/donate/edit.js:134
+#: assets/release/newspack-blocks/src/blocks/donate/edit.js:238
 #: src/blocks/donate/edit.js:134
 #: src/blocks/donate/edit.js:238
 msgid "Your contribution is appreciated."
 msgstr ""
 
+#: assets/release/newspack-blocks/src/blocks/donate/view.php:94
+#: assets/release/newspack-blocks/src/blocks/donate/view.php:188
 #: src/blocks/donate/view.php:94
 #: src/blocks/donate/view.php:188
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/donate/edit.js:137
+#: assets/release/newspack-blocks/src/blocks/donate/edit.js:241
 #: src/blocks/donate/edit.js:137
 #: src/blocks/donate/edit.js:241
 msgid "Donate now!"
 msgstr ""
 
+#: assets/release/newspack-blocks/src/blocks/donate/view.php:158
 #: src/blocks/donate/view.php:158
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/donate/edit.js:214
 #: src/blocks/donate/edit.js:214
 msgid "Other"
 msgstr ""
 
 #. translators: %s: post author.
-#: src/blocks/homepage-articles/view.php:199
+#: assets/release/newspack-blocks/src/blocks/carousel/view.php:157
+#: src/blocks/carousel/view.php:157
 msgctxt "post author"
 msgid "by %s"
 msgstr ""
 
-#: src/blocks/donate/edit.js:260
-msgid "Error"
+#. translators: %d: Slide number.
+#: assets/release/newspack-blocks/src/blocks/carousel/view.php:192
+#: src/blocks/carousel/view.php:192
+msgid "Go to slide %d"
 msgstr ""
 
-#: src/blocks/donate/edit.js:264
-msgid "Go to donation settings to troubleshoot."
+#: assets/release/newspack-blocks/src/blocks/carousel/view.php:209
+#: src/blocks/carousel/view.php:209
+msgid "Next Slide"
 msgstr ""
 
-#: src/blocks/donate/edit.js:274
-msgid "Not ready"
+#: assets/release/newspack-blocks/src/blocks/carousel/view.php:210
+#: src/blocks/carousel/view.php:210
+msgid "Previous Slide"
 msgstr ""
 
-#: src/blocks/donate/edit.js:275
-msgid "You have not set up your donation settings yet. You need to do that before you can use the Donate Block."
+#: assets/release/newspack-blocks/src/blocks/carousel/view.php:244
+#: src/blocks/carousel/view.php:244
+msgid "Pause Slideshow"
 msgstr ""
 
-#: src/blocks/donate/edit.js:281
-msgid "Set up donation settings."
+#: assets/release/newspack-blocks/src/blocks/carousel/view.php:250
+#: src/blocks/carousel/view.php:250
+msgid "Play Slideshow"
 msgstr ""
 
-#: src/blocks/donate/edit.js:298
-msgid "Donate Block"
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "(no title)"
 msgstr ""
 
-#: src/blocks/donate/edit.js:300
-msgid "The Donate Block allows you to collect donations from readers. The fields are automatically defined based on your donation settings."
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "(no name)"
 msgstr ""
 
-#: src/blocks/donate/edit.js:306
-msgid "Edit donation settings."
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Choose specific stories"
 msgstr ""
 
-#: src/blocks/donate/index.js:21
-msgid "Donate"
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Posts"
 msgstr ""
 
-#: src/blocks/donate/index.js:36
-msgid "donate"
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Authors"
 msgstr ""
 
-#: src/blocks/donate/index.js:37
-msgid "memberships"
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Categories"
 msgstr ""
 
-#: src/blocks/donate/index.js:38
-msgid "subscriptions"
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Tags"
 msgstr ""
 
-#: src/blocks/donate/index.js:40
-msgid "Enable donations."
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/carousel/edit.js:244
+#: src/blocks/carousel/edit.js:244
+msgid "Article Meta Settings"
 msgstr ""
 
-#: src/blocks/homepage-articles/index.js:19
-msgid "Homepage Posts"
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/carousel/edit.js:247
+#: src/blocks/carousel/edit.js:247
+msgid "Show Date"
 msgstr ""
 
-#: src/blocks/homepage-articles/index.js:34
-msgid "posts"
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/carousel/edit.js:254
+#: src/blocks/carousel/edit.js:254
+msgid "Show Category"
 msgstr ""
 
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/carousel/edit.js:261
+#: src/blocks/carousel/edit.js:261
+msgid "Show Author"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/carousel/edit.js:269
+#: src/blocks/carousel/edit.js:269
+msgid "Show Author Avatar"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "by"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid " and "
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Display Settings"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Columns"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Featured Image Settings"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Show Featured Image"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Show Featured Image Caption"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Stack on mobile"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Featured Image Scale"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Minimum height"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Sets a minimum height for the block, using a percentage of the screen's current height."
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Article Control Settings"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Show Excerpt"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Type Scale"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Color Settings"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Text Color"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "List View"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Grid View"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Show media on top"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Show media on left"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Show media on right"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Show media behind"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Landscape Image Shape"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "portrait Image Shape"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Square Image Shape"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Uncropped"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Write header…"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+msgid "Sorry, no posts were found."
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/homepage-articles/index.js:20
+msgid "Newspack Homepage Articles"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/homepage-articles/index.js:35
 #: src/blocks/homepage-articles/index.js:35
 msgid "posts"
 msgstr ""
 
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/homepage-articles/index.js:36
 #: src/blocks/homepage-articles/index.js:36
+msgid "articles"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/homepage-articles/index.js:37
+#: src/blocks/homepage-articles/index.js:37
 msgid "latest"
 msgstr ""
 
-#: src/blocks/homepage-articles/index.js:38
-msgid "A block for displaying homepage posts."
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/homepage-articles/index.js:39
+msgid "A block for displaying homepage articles."
 msgstr ""
 
-#: src/blocks/homepage-articles/index.js:40
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/homepage-articles/index.js:41
+#: src/blocks/homepage-articles/index.js:41
 msgctxt "block style"
 msgid "Default"
 msgstr ""
 
-#: src/blocks/homepage-articles/index.js:41
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/homepage-articles/index.js:42
+#: src/blocks/homepage-articles/index.js:42
 msgctxt "block style"
 msgid "Borders"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/donate/edit.js:260
+#: src/blocks/donate/edit.js:260
+msgid "Error"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/donate/edit.js:264
+#: src/blocks/donate/edit.js:264
+msgid "Go to donation settings to troubleshoot."
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/donate/edit.js:298
+#: src/blocks/donate/edit.js:298
+msgid "Donate Block"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/donate/edit.js:300
+#: src/blocks/donate/edit.js:300
+msgid "The Donate Block allows you to collect donations from readers. The fields are automatically defined based on your donation settings."
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/donate/edit.js:306
+#: src/blocks/donate/edit.js:306
+msgid "Edit donation settings."
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/donate/edit.js:274
+#: src/blocks/donate/edit.js:274
+msgid "Not ready"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/donate/edit.js:275
+#: src/blocks/donate/edit.js:275
+msgid "You have not set up your donation settings yet. You need to do that before you can use the Donate Block."
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/donate/edit.js:281
+#: src/blocks/donate/edit.js:281
+msgid "Set up donation settings."
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/donate/index.js:21
+#: src/blocks/donate/index.js:21
+msgid "Donate"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/donate/index.js:36
+#: src/blocks/donate/index.js:36
+msgid "donate"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/donate/index.js:37
+#: src/blocks/donate/index.js:37
+msgid "memberships"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/donate/index.js:38
+#: src/blocks/donate/index.js:38
+msgid "subscriptions"
+msgstr ""
+
+#: assets/release/newspack-blocks/dist/editor.js:12
+#: assets/release/newspack-blocks/src/blocks/donate/index.js:40
+#: src/blocks/donate/index.js:40
+msgid "Enable donations."
+msgstr ""
+
+#: src/blocks/homepage-articles/index.js:20
+msgid "Homepage Posts"
+msgstr ""
+
+#: src/blocks/homepage-articles/index.js:39
+msgid "A block for displaying homepage posts."
 msgstr ""
