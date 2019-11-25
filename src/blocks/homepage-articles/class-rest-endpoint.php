@@ -52,7 +52,12 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 
 		$article_query = new WP_Query( $args );
 
+		$max_pages = $article_query->max_num_pages;
+
+		// Defaults
 		$items = [];
+		$next_url = '';
+
 
 		// The Loop
 		while ( $article_query->have_posts() ) : $article_query->the_post();
@@ -61,10 +66,13 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 			));
 		endwhile;
 
-		$next_url = add_query_arg(array(
-			'page' => $next_page,
-			'attributes' => $attributes,
-		), get_rest_url(null, $this->namespace . '/' . $this->rest_base . '/articles?page=' . $next_page));
+		// Don't provide next URL if the next page is out of bounds
+		if ($next_page <= $max_pages) {
+			$next_url = add_query_arg(array(
+				'page' => $next_page,
+				'attributes' => $attributes,
+			), get_rest_url(null, $this->namespace . '/' . $this->rest_base . '/articles'));
+		}
 
 		return rest_ensure_response( [
 			'items' => $items,
