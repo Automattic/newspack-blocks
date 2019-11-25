@@ -325,7 +325,7 @@ class Edit extends Component {
 						/>
 					) }
 				</PanelBody>
-				<PanelBody title={ __( 'Article Control Settings', 'newspack-blocks' ) }>
+				<PanelBody title={ __( 'Post Control Settings', 'newspack-blocks' ) }>
 					<PanelRow>
 						<ToggleControl
 							label={ __( 'Show Excerpt', 'newspack-blocks' ) }
@@ -356,7 +356,7 @@ class Edit extends Component {
 						},
 					] }
 				/>
-				<PanelBody title={ __( 'Article Meta Settings', 'newspack-blocks' ) }>
+				<PanelBody title={ __( 'Post Meta Settings', 'newspack-blocks' ) }>
 					<PanelRow>
 						<ToggleControl
 							label={ __( 'Show Date', 'newspack-blocks' ) }
