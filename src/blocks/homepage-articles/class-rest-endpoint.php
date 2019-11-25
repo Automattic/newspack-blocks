@@ -30,11 +30,26 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 							'validate_callback' => 'is_numeric',
 							'sanitize_callback' => 'absint',
 						),
+						'attributes' => array(
+							'validate_callback' => array($this, 'validate_attributes'),
+							// 'sanitize_callback' => 'absint',
+						),
 					),
 					'permission_callback' => array( $this, 'get_articles_permissions_check' ),
 				),
 			)
 		);
+	}
+
+	public function validate_attributes($attributes) {
+		if (!is_array($attributes)) {
+			return false;
+		}
+
+		$block_json = json_decode( file_get_contents(__DIR__ . '/block.json'), true);
+
+		// TODO validate attributes against those stored in Block JSON
+		return true;
 	}
 
 
