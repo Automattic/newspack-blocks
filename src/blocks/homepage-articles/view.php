@@ -77,7 +77,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 	// If this is an AMP request then these script are already included
 	// so no need to re-enqueue
-	if (!is_amp()) {
+	if (!Newspack_Blocks::is_amp()) {
 		newspack_blocks_enqueue_amp_scripts();
 	}
 
