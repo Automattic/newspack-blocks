@@ -95,8 +95,11 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 	 */
 	public function get_items( $request ) {
 		$page       = $request->get_param( 'page' ) ?? 1;
-		$attributes = $request->get_param( 'attributes' ) ?? [];
 		$next_page  = $page + 1;
+		$attributes = wp_parse_args(
+			$request->get_param( 'attributes' ) ?? [],
+			wp_list_pluck( $this->get_attribute_schema(), 'default' )
+		);
 
 		$article_query_args = newspack_build_articles_query( $attributes );
 
@@ -114,7 +117,7 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 		while ( $article_query->have_posts() ) {
 			$article_query->the_post();
 
-			$items[]['html'] = newspack_template_inc(
+			$items[]['html'] = newspack_blocks_template_inc(
 				__DIR__ . '/article.php',
 				[
 					'attributes' => $attributes,

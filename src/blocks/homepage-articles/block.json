@@ -2,7 +2,8 @@
   "name": "homepage-articles",
   "attributes": {
     "className": {
-      "type": "string"
+      "type": "string",
+      "default": ""
     },
     "showExcerpt": {
       "type": "boolean",
@@ -61,16 +62,20 @@
       "default": "top"
     },
     "authors": {
-      "type": "array"
+      "type": "array",
+      "default": []
     },
     "categories": {
-      "type": "array"
+      "type": "array",
+      "default": []
     },
     "tags": {
-      "type": "array"
+      "type": "array",
+      "default": []
     },
     "specificPosts": {
-      "type": "array"
+      "type": "array",
+      "default": []
     },
     "typeScale": {
       "type": "integer",
