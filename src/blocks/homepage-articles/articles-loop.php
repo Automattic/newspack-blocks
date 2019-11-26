@@ -24,7 +24,7 @@ while ( $article_query->have_posts() ) {
 
 	$post_counter++;
 
-	echo newspack_template_inc( __DIR__ . '/article.php', array(
+	echo newspack_blocks_template_inc( __DIR__ . '/article.php', array(
 		'attributes' => $attributes,
 	) );
 }

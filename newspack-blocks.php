@@ -51,7 +51,7 @@ add_action( 'plugins_loaded', 'newspack_blocks_plugin_textdomain' );
  * @param array  $data          Data to be passed into the template to be included.
  * @return string
  */
-function newspack_template_inc( $template, $data = array() ) {
+function newspack_blocks_template_inc( $template, $data = array() ) {
 	if ( ! strpos( $template, '.php' ) ) {
 		$template = $template . '.php';
 	}
