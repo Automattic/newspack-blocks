@@ -124,7 +124,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		array(
 			'attributes' => $attributes,
 		),
-		rest_url( '/wp/v2/newspack-articles-block/articles' )
+		rest_url( '/newspack-blocks/v1/articles' )
 	);
 
 	ob_start();

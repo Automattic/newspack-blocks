@@ -9,7 +9,7 @@
  * @global array     $attributes
  * @global array     $newspack_blocks_post_id
  */
-global $article_query, $attributes, $newspack_blocks_post_id;
+global $attributes, $newspack_blocks_post_id;
 
 $post_counter = 0;
 while ( $article_query->have_posts() ) {
