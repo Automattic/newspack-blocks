@@ -16,7 +16,7 @@ function newspack_blocks_enqueue_amp_scripts() {
 
 	foreach ( $amp_scripts as $handle => $src ) {
 		if ( ! wp_script_is( $handle, 'registered' ) ) {
-			$deps = 'amp-runtime' === $handle ? [] : ['amp-runtime'];
+			$deps = 'amp-runtime' === $handle ? [] : [ 'amp-runtime' ];
 			// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 			wp_register_script( $handle, $src, $deps, null, true );
 		}
@@ -27,7 +27,6 @@ function newspack_blocks_enqueue_amp_scripts() {
 	wp_enqueue_script( 'amp-form' );
 	wp_enqueue_script( 'amp-mustache' );
 }
-
 
 /**
  * Renders the `newspack-blocks/author-bio` block on server.
@@ -40,7 +39,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 	// If this is an AMP request then these script are already included
 	// so no need to re-enqueue
-	if (!Newspack_Blocks::is_amp()) {
+	if ( ! Newspack_Blocks::is_amp() ) {
 		newspack_blocks_enqueue_amp_scripts();
 	}
 
@@ -83,7 +82,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		$classes .= ' has-text-color';
 	}
 	if ( '' !== $attributes['textColor'] ) {
-			$classes .= ' has-' . $attributes['textColor'] . '-color';
+		$classes .= ' has-' . $attributes['textColor'] . '-color';
 	}
 
 	$styles = '';
@@ -115,10 +114,10 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			// We are not using an AMP-based renderer on AMP requests because it has limitatoins
 			// around dynamically calculating the height of the the article list on load.
 			// As a result we render the same standards-based markup for all requests.
-			echo newspack_blocks_template_inc(__DIR__ . '/articles-list.php', array(
+			echo newspack_blocks_template_inc( __DIR__ . '/articles-list.php', array(
 				'articles_rest_url' => $articles_rest_url,
-				'article_query' 	=> $article_query,
-				'attributes'		=> $attributes,
+				'article_query'     => $article_query,
+				'attributes'        => $attributes,
 			) );
 			?>
 
@@ -133,7 +132,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				<button type="button" data-load-more-btn><?php _e( 'Load more articles' ); ?></button>
 			<?php endif; ?>
 		</div>
-		<?php
+	<?php
 	endif;
 
 	$content = ob_get_clean();
@@ -142,8 +141,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	return $content;
 }
 
-
-function newspack_build_articles_query($attributes) {
+function newspack_build_articles_query( $attributes ) {
 	global $newspack_blocks_post_id;
 
 	if ( ! $newspack_blocks_post_id ) {
@@ -176,6 +174,7 @@ function newspack_build_articles_query($attributes) {
 			$args['tag__in'] = $tags;
 		}
 	}
+
 	return $args;
 }
 
@@ -225,9 +224,11 @@ function newspack_blocks_prepare_authors() {
 			}
 			$author->url = get_author_posts_url( $author->ID, $author->user_nicename );
 		}
+
 		return $authors;
 	}
 	$id = get_the_author_meta( 'ID' );
+
 	return array(
 		(object) array(
 			'ID'            => $id,
@@ -248,13 +249,15 @@ function newspack_blocks_prepare_authors() {
  */
 function newspack_blocks_format_avatars( $author_info ) {
 	$elements = array_map(
-		function( $author ) {
+		function ( $author ) {
 			return sprintf( '<a href="%s">%s</a>', $author->url, $author->avatar );
 		},
 		$author_info
 	);
+
 	return implode( '', $elements );
 }
+
 /**
  * Renders byline markup.
  *
@@ -270,9 +273,10 @@ function newspack_blocks_format_byline( $author_info ) {
 		),
 		array_reduce(
 			$author_info,
-			function( $accumulator, $author ) use ( $author_info, &$index ) {
+			function ( $accumulator, $author ) use ( $author_info, &$index ) {
 				$index ++;
 				$penultimate = count( $author_info ) - 2;
+
 				return array_merge(
 					$accumulator,
 					array(
@@ -290,5 +294,6 @@ function newspack_blocks_format_byline( $author_info ) {
 			array()
 		)
 	);
+
 	return implode( '', $elements );
 }
