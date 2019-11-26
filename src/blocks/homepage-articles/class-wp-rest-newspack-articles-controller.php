@@ -38,53 +38,11 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 				[
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_items' ],
-					'args'                => [
-						'page'       => [
-							'type' => 'integer',
-						],
-						'attributes' => [
-							'validate_callback' => [ $this, 'validate_attributes' ],
-							'sanitize_callback' => [ $this, 'sanitize_attributes' ],
-						],
-					],
+					'args'                => $this->get_attribute_schema(),
 					'permission_callback' => '__return_true',
 				],
 			]
 		);
-	}
-
-	/**
-	 * Validates block attributes.
-	 *
-	 * @param array $attributes Block attributes to validate.
-	 * @return bool
-	 */
-	public function validate_attributes( $attributes ) {
-		$schema = $this->get_attribute_schema();
-
-		foreach ( $attributes as $param => $value ) {
-			if ( ! rest_validate_value_from_schema( $value, $schema[ $param ], $param ) ) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	/**
-	 * Sanitizes block attributes.
-	 *
-	 * @param array $attributes Block attributes to sanitize.
-	 * @return array Sanitized block attributes.
-	 */
-	public function sanitize_attributes( $attributes ) {
-		$schema = $this->get_attribute_schema();
-
-		foreach ( $attributes as $param => $value ) {
-			$attributes[ $param ] = rest_sanitize_value_from_schema( $value, $schema[ $param ] );
-		}
-
-		return $attributes;
 	}
 
 	/**
@@ -97,7 +55,7 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 		$page       = $request->get_param( 'page' ) ?? 1;
 		$next_page  = $page + 1;
 		$attributes = wp_parse_args(
-			$request->get_param( 'attributes' ) ?? [],
+			$request->get_params() ?? [],
 			wp_list_pluck( $this->get_attribute_schema(), 'default' )
 		);
 
@@ -128,10 +86,7 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 		// Provide next URL if there are more pages.
 		if ( $next_page <= $article_query->max_num_pages ) {
 			$next_url = add_query_arg(
-				[
-					'page'       => $next_page,
-					'attributes' => $attributes,
-				],
+				array_merge( $attributes, [ 'page' => $next_page ] ),
 				rest_url( $this->namespace . '/' . $this->rest_base )
 			);
 		}
@@ -144,6 +99,7 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 
 	/**
 	 * Sets up and returns attribute schema.
+	 *
 	 * @return array
 	 */
 	public function get_attribute_schema() {
