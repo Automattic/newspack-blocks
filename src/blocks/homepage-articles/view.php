@@ -148,22 +148,25 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				</h2>
 			<?php endif; ?>
 
+			<?php
+			// We are not using an AMP-based renderer on AMP requests because it has limitatoins
+			// around dynamically calculating the height of the the article list on load.
+			// As a result we render the same standards-based markup for all requests.
+			echo newspack_blocks_template_inc(__DIR__ . '/articles-list.php', array(
+				'articles_rest_url' => $articles_rest_url,
+				'article_query' 	=> $article_query,
+				'attributes'		=> $attributes,
+			) );
+			?>
 
 			<?php
-				if ( Newspack_Blocks::is_amp() || ( defined('WP_DEV_AMP_MODE') && true === WP_DEV_AMP_MODE ) ) {
-					echo newspack_blocks_template_inc(__DIR__ . '/articles-list-amp.php', array(
-						'articles_rest_url' => $articles_rest_url,
-						'article_query' 	=> $article_query,
-						'attributes'		=> $attributes,
-					) );
-				} else {
-					echo newspack_blocks_template_inc(__DIR__ . '/articles-list.php', array(
-						'articles_rest_url' => $articles_rest_url,
-						'article_query' 	=> $article_query,
-						'attributes'		=> $attributes,
-					) );
-				}
-			?>
+			// AMP-requests cannot contain client-side scripting (eg: JavaScript). As a result
+			// we do not display the "More" button on AMP-requests. This feature is deliberately
+			// disabled.
+			// See: paYJgx-jW-p2
+			if ( ! Newspack_Blocks::is_amp() ) : ?>
+				<button type="button" data-load-more-btn><?php _e( 'Load more articles' ); ?></button>
+			<?php endif; ?>
 		</div>
 		<?php
 	endif;

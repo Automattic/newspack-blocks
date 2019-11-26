@@ -5,4 +5,3 @@
     ) );
 ?>
 
-<button type="button" data-load-more-btn><?php _e( 'Load more articles' ); ?></button>
