@@ -97,7 +97,9 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			// AMP-requests cannot contain client-side scripting (eg: JavaScript). As a result
 			// we do not display the "More" button on AMP-requests. This feature is deliberately
 			// disabled.
-			// See: paYJgx-jW-p2
+			// See:
+			// * https://github.com/Automattic/newspack-blocks/pull/226#issuecomment-558695909
+			// * paYJgx-jW-p2
 			if ( ! Newspack_Blocks::is_amp() ) : ?>
 				<button type="button" data-load-more-btn><?php _e( 'Load more articles' ); ?></button>
 			<?php endif; ?>
