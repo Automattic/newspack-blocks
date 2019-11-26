@@ -5,6 +5,8 @@
  * @package WordPress
  */
 
+define('ARTICLES_AMP_MODE', true);
+
 /**
  * Renders the `newspack-blocks/author-bio` block on server.
  *
@@ -63,7 +65,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		$styles = 'color: ' . $attributes['customTextColor'] . ';';
 	}
 
-	$amp_list_url = add_query_arg(
+	$articles_rest_url = add_query_arg(
 		array(
 			'attributes' => $attributes,
 		),
@@ -82,36 +84,18 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				</h2>
 			<?php endif; ?>
 
-			<amp-list
-				src="<?php echo esc_url( $amp_list_url ); ?>"
-				layout="responsive"
-				width="0"
-				height="0"
-				binding="refresh"
-				load-more="manual"
-				load-more-bookmark="next">
 
-				<template type="amp-mustache">
-					{{{html}}}
-				</template>
-				<div fallback>
-					<?php
-					echo newspack_template_inc(__DIR__ . '/articles-loop.php', array(
-						'attributes'    => $attributes,
-						'article_query' => $article_query,
+			<?php
+				if ( defined('ARTICLES_AMP_MODE') && true === ARTICLES_AMP_MODE) {
+					echo newspack_template_inc(__DIR__ . '/articles-amp.php', array(
+						'articles_rest_url' => $articles_rest_url,
+						'article_query' 	=> $article_query,
+						'attributes'		=> $attributes,
 					) );
-					?>
-				</div>
-				<amp-list-load-more load-more-failed>
-					<p><?php esc_html_e('Unable to load articles at this time.');?></p>
-				</amp-list-load-more>
-
-				<?php if ( $attributes['moreButton'] ) : ?>
-				<amp-list-load-more load-more-button class="amp-visible">
-					<button load-more-clickable><?php _e( 'Load more articles' ); ?></button>
-				</amp-list-load-more>
-				<?php endif; ?>
-			</amp-list>
+				} else {
+					// Standards based render
+				}
+			?>
 		</div>
 		<?php
 	endif;
