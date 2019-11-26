@@ -1,10 +1,11 @@
 <?php
 /**
- * Server-side rendering of the `newspack-blocks/author-bio` block.
- *
- * @package WordPress
+ * Server-side rendering of the `newspack-blocks/homepage-posts` block.
  */
 
+/**
+ * Registers and enqueues AMP scripts.
+ */
 function newspack_blocks_enqueue_amp_scripts() {
 	$amp_scripts = [
 		'amp-runtime'  => 'https://cdn.ampproject.org/v0.js',
@@ -108,26 +109,28 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				<h2 class="article-section-title">
 					<span><?php echo wp_kses_post( $attributes['sectionHeader'] ); ?></span>
 				</h2>
-			<?php endif; ?>
-
 			<?php
-			// We are not using an AMP-based renderer on AMP requests because it has limitatoins
-			// around dynamically calculating the height of the the article list on load.
-			// As a result we render the same standards-based markup for all requests.
+			endif;
+
+			/*
+			 * We are not using an AMP-based renderer on AMP requests because it has limitations
+			 * around dynamically calculating the height of the the article list on load.
+			 * As a result we render the same standards-based markup for all requests.
+			 */
 			echo newspack_blocks_template_inc( __DIR__ . '/articles-list.php', [
 				'articles_rest_url' => $articles_rest_url,
 				'article_query'     => $article_query,
 				'attributes'        => $attributes,
 			] );
-			?>
 
-			<?php
-			// AMP-requests cannot contain client-side scripting (eg: JavaScript). As a result
-			// we do not display the "More" button on AMP-requests. This feature is deliberately
-			// disabled.
-			// See:
-			// * https://github.com/Automattic/newspack-blocks/pull/226#issuecomment-558695909
-			// * paYJgx-jW-p2
+			/*
+			 * AMP-requests cannot contain client-side scripting (eg: JavaScript). As a result
+			 * we do not display the "More" button on AMP-requests. This feature is deliberately
+			 * disabled.
+			 *
+			 * @see https://github.com/Automattic/newspack-blocks/pull/226#issuecomment-558695909
+			 * @see https://wp.me/paYJgx-jW
+			 */
 			if ( ! Newspack_Blocks::is_amp() ) : ?>
 				<button type="button" data-load-more-btn><?php _e( 'Load more articles' ); ?></button>
 			<?php endif; ?>
@@ -141,6 +144,13 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	return $content;
 }
 
+/**
+ * Builds and returns query args based on block attributes.
+ *
+ * @param array $attributes
+ *
+ * @return array
+ */
 function newspack_build_articles_query( $attributes ) {
 	global $newspack_blocks_post_id;
 
