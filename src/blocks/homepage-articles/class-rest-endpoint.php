@@ -27,12 +27,11 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 					'callback'            => array( $this, 'get_articles' ),
 					'args' => array(
 						'page' => array(
-							'validate_callback' => array($this, 'validate_page'),
-							'sanitize_callback' => 'absint',
+							'type' => 'integer',
 						),
 						'attributes' => array(
-							'validate_callback' => array($this, 'validate_attributes'),
-							// 'sanitize_callback' => 'absint',
+							'validate_callback' => array( $this, 'validate_attributes' ),
+							'sanitize_callback' => [ $this, 'sanitize_attributes' ],
 						),
 					),
 					'permission_callback' => array( $this, 'get_articles_permissions_check' ),
@@ -41,19 +40,38 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 		);
 	}
 
-	public function validate_page($page) {
-		return is_numeric($page);
-	}
+	/**
+	 * Validates block attributes.
+	 *
+	 * @param array $attributes Block attributes to validate.
+	 * @return bool
+	 */
+	public function validate_attributes( $attributes ) {
+		$block = json_decode( file_get_contents( __DIR__ . '/block.json' ), true );
 
-	public function validate_attributes($attributes) {
-		if (!is_array($attributes)) {
-			return false;
+		foreach ( $attributes as $param => $value ) {
+			if ( ! rest_validate_value_from_schema( $value, $block['attributes'][ $param ], $param ) ) {
+				return false;
+			}
 		}
 
-		$block_json = json_decode( file_get_contents(__DIR__ . '/block.json'), true);
-
-		// TODO validate attributes against those stored in Block JSON
 		return true;
+	}
+
+	/**
+	 * Sanitizes block attributes.
+	 *
+	 * @param array $attributes Block attributes to sanitize.
+	 * @return array Sanitized block attributes.
+	 */
+	public function sanitize_attributes( $attributes ) {
+		$block = json_decode( file_get_contents( __DIR__ . '/block.json' ), true );
+
+		foreach ( $attributes as $param => $value ) {
+			$attributes[ $param ] = rest_sanitize_value_from_schema( $value, $block['attributes'][ $param ] );
+		}
+
+		return $attributes;
 	}
 
 
