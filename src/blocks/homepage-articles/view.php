@@ -130,8 +130,8 @@ function newspack_build_articles_query( $attributes ) {
 	$categories     = $attributes['categories'] ?? [];
 	$tags           = $attributes['tags'] ?? [];
 	$specific_posts = $attributes['specificPosts'] ?? [];
-	$posts_to_show  = intval( $attributes['postsToShow'] );
-	$specific_mode  = intval( $attributes['specificMode'] );
+	$posts_to_show  = intval( $attributes['postsToShow'] ?? 3 );
+	$specific_mode  = intval( $attributes['specificMode'] ?? 0 );
 	$args           = [
 		'post_status'         => 'publish',
 		'suppress_filters'    => false,
