@@ -9,14 +9,17 @@
  * @global array     $attributes
  * @global array     $newspack_blocks_post_id
  */
-global $attributes, $newspack_blocks_post_id;
+global $newspack_blocks_post_id;
 
 $post_counter = 0;
+
+
 while ( $article_query->have_posts() ) {
 	$article_query->the_post();
 	if ( ! $attributes['specificMode'] && ( isset( $newspack_blocks_post_id[ get_the_ID() ] ) || $post_counter >= $attributes['postsToShow'] ) ) {
 		continue;
-	}
+    }
+
 	$newspack_blocks_post_id[ get_the_ID() ] = true;
 
 	$post_counter++;
