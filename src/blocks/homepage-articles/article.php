@@ -20,7 +20,7 @@ if ( 'uncropped' !== $attributes['imageShape'] ) {
 $thumbnail_args = '';
 // If the image position is behind, pass the object-fit setting to maintain styles with AMP.
 if ( 'behind' === $attributes['mediaPosition'] ) {
-	$thumbnail_args = array( 'object-fit' => 'cover' );
+	$thumbnail_args = [ 'object-fit' => 'cover' ];
 }
 
 $category = false;

@@ -45,7 +45,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 	$article_query = new WP_Query( newspack_build_articles_query( $attributes ) );
 
-	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes, array( 'wpnbha' ) );
+	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes, [ 'wpnbha' ] );
 
 	if ( isset( $attributes['postLayout'] ) && 'grid' === $attributes['postLayout'] ) {
 		$classes .= ' is-grid';
@@ -92,9 +92,9 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	}
 
 	$articles_rest_url = add_query_arg(
-		array(
+		[
 			'attributes' => $attributes,
-		),
+		],
 		rest_url( '/newspack-blocks/v1/articles' )
 	);
 
@@ -114,11 +114,11 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			// We are not using an AMP-based renderer on AMP requests because it has limitatoins
 			// around dynamically calculating the height of the the article list on load.
 			// As a result we render the same standards-based markup for all requests.
-			echo newspack_blocks_template_inc( __DIR__ . '/articles-list.php', array(
+			echo newspack_blocks_template_inc( __DIR__ . '/articles-list.php', [
 				'articles_rest_url' => $articles_rest_url,
 				'article_query'     => $article_query,
 				'attributes'        => $attributes,
-			) );
+			] );
 			?>
 
 			<?php
@@ -145,19 +145,19 @@ function newspack_build_articles_query( $attributes ) {
 	global $newspack_blocks_post_id;
 
 	if ( ! $newspack_blocks_post_id ) {
-		$newspack_blocks_post_id = array();
+		$newspack_blocks_post_id = [];
 	}
-	$authors        = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
-	$categories     = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
-	$tags           = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
-	$specific_posts = isset( $attributes['specificPosts'] ) ? $attributes['specificPosts'] : array();
+	$authors        = $attributes['authors'] ?? [];
+	$categories     = $attributes['categories'] ?? [];
+	$tags           = $attributes['tags'] ?? [];
+	$specific_posts = $attributes['specificPosts'] ?? [];
 	$posts_to_show  = intval( $attributes['postsToShow'] );
 	$specific_mode  = intval( $attributes['specificMode'] );
-	$args           = array(
+	$args           = [
 		'post_status'         => 'publish',
 		'suppress_filters'    => false,
 		'ignore_sticky_posts' => true,
-	);
+	];
 	if ( $specific_mode && $specific_posts ) {
 		$args['post__in'] = $specific_posts;
 		$args['orderby']  = 'post__in';
@@ -229,15 +229,15 @@ function newspack_blocks_prepare_authors() {
 	}
 	$id = get_the_author_meta( 'ID' );
 
-	return array(
-		(object) array(
+	return [
+		(object) [
 			'ID'            => $id,
 			'avatar'        => get_avatar( $id, 48 ),
 			'url'           => get_author_posts_url( $id ),
 			'user_nicename' => get_the_author(),
 			'display_name'  => get_the_author_meta( 'display_name' ),
-		),
-	);
+		],
+	];
 }
 
 /**
@@ -268,9 +268,9 @@ function newspack_blocks_format_avatars( $author_info ) {
 function newspack_blocks_format_byline( $author_info ) {
 	$index    = -1;
 	$elements = array_merge(
-		array(
+		[
 			esc_html_x( 'by', 'post author', 'newspack-blocks' ) . ' ',
-		),
+		],
 		array_reduce(
 			$author_info,
 			function ( $accumulator, $author ) use ( $author_info, &$index ) {
@@ -279,7 +279,7 @@ function newspack_blocks_format_byline( $author_info ) {
 
 				return array_merge(
 					$accumulator,
-					array(
+					[
 						sprintf(
 							/* translators: 1: author link. 2: author name. 3. variable seperator (comma, 'and', or empty) */
 							'<span class="author vcard"><a class="url fn n" href="%1$s">%2$s</a></span>',
@@ -288,10 +288,10 @@ function newspack_blocks_format_byline( $author_info ) {
 						),
 						( $index < $penultimate ) ? ', ' : '',
 						( count( $author_info ) > 1 && $penultimate === $index ) ? esc_html_x( ' and ', 'post author', 'newspack-blocks' ) : '',
-					)
+					]
 				);
 			},
-			array()
+			[]
 		)
 	);
 
