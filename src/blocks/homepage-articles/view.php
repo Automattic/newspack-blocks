@@ -5,16 +5,7 @@
  * @package WordPress
  */
 
-
-/**
- * Renders the `newspack-blocks/author-bio` block on server.
- *
- * @param array $attributes The block attributes.
- *
- * @return string Returns the post content with latest posts added.
- */
-function newspack_blocks_render_block_homepage_articles( $attributes ) {
-
+function newspack_blocks_enqueue_amp_scripts() {
 	if ( ! wp_script_is( 'amp-runtime', 'registered' ) ) {
 		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 		wp_register_script(
@@ -72,6 +63,23 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	wp_enqueue_script( 'amp-bind' );
 	wp_enqueue_script( 'amp-form' );
 	wp_enqueue_script( 'amp-mustache' );
+}
+
+
+/**
+ * Renders the `newspack-blocks/author-bio` block on server.
+ *
+ * @param array $attributes The block attributes.
+ *
+ * @return string Returns the post content with latest posts added.
+ */
+function newspack_blocks_render_block_homepage_articles( $attributes ) {
+
+	// If this is an AMP request then these script are already included
+	// so no need to re-enqueue
+	if (!is_amp()) {
+		newspack_blocks_enqueue_amp_scripts();
+	}
 
 	$article_query = new WP_Query( newspack_build_articles_query( $attributes ) );
 
