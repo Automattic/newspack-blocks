@@ -5,7 +5,6 @@
  * @package WordPress
  */
 
-
 /**
  * Renders the `newspack-blocks/author-bio` block on server.
  *
