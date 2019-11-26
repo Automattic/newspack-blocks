@@ -6,57 +6,20 @@
  */
 
 function newspack_blocks_enqueue_amp_scripts() {
-	if ( ! wp_script_is( 'amp-runtime', 'registered' ) ) {
-		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
-		wp_register_script(
-			'amp-runtime',
-			'https://cdn.ampproject.org/v0.js',
-			null,
-			null,
-			true
-		);
-	}
+	$amp_scripts = [
+		'amp-runtime'  => 'https://cdn.ampproject.org/v0.js',
+		'amp-list'     => 'https://cdn.ampproject.org/v0/amp-list-0.1.js',
+		'amp-bind'     => 'https://cdn.ampproject.org/v0/amp-bind-0.1.js',
+		'amp-form'     => 'https://cdn.ampproject.org/v0/amp-form-0.1.js',
+		'amp-mustache' => 'https://cdn.ampproject.org/v0/amp-mustache-0.2.js',
+	];
 
-	if ( ! wp_script_is( 'amp-list', 'registered' ) ) {
-		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
-		wp_register_script(
-			'amp-list',
-			'https://cdn.ampproject.org/v0/amp-list-0.1.js',
-			array( 'amp-runtime' ),
-			null,
-			true
-		);
-	}
-	if ( ! wp_script_is( 'amp-bind', 'registered' ) ) {
-		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
-		wp_register_script(
-			'amp-bind',
-			'https://cdn.ampproject.org/v0/amp-bind-0.1.js',
-			array( 'amp-runtime' ),
-			null,
-			true
-		);
-	}
-	if ( ! wp_script_is( 'amp-form', 'registered' ) ) {
-		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
-		wp_register_script(
-			'amp-form',
-			'https://cdn.ampproject.org/v0/amp-form-0.1.js',
-			array( 'amp-runtime' ),
-			null,
-			true
-		);
-	}
-
-	if ( ! wp_script_is( 'amp-mustache', 'registered' ) ) {
-		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
-		wp_register_script(
-			'amp-mustache',
-			'https://cdn.ampproject.org/v0/amp-mustache-0.2.js',
-			array( 'amp-runtime' ),
-			null,
-			true
-		);
+	foreach ( $amp_scripts as $handle => $src ) {
+		if ( ! wp_script_is( $handle, 'registered' ) ) {
+			$deps = 'amp-runtime' === $handle ? [] : ['amp-runtime'];
+			// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+			wp_register_script( $handle, $src, $deps, null, true );
+		}
 	}
 
 	wp_enqueue_script( 'amp-list' );
