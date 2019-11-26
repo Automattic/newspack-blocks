@@ -5,6 +5,7 @@
  * @package WordPress
  */
 
+
 /**
  * Renders the `newspack-blocks/author-bio` block on server.
  *
@@ -54,7 +55,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		$classes .= ' has-text-color';
 	}
 	if ( '' !== $attributes['textColor'] ) {
-			$classes .= ' has-' . $attributes['textColor'] . '-color';
+		$classes .= ' has-' . $attributes['textColor'] . '-color';
 	}
 
 	$styles = '';
@@ -86,10 +87,10 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			// We are not using an AMP-based renderer on AMP requests because it has limitatoins
 			// around dynamically calculating the height of the the article list on load.
 			// As a result we render the same standards-based markup for all requests.
-			echo newspack_blocks_template_inc(__DIR__ . '/articles-list.php', array(
+			echo newspack_blocks_template_inc( __DIR__ . '/articles-list.php', array(
 				'articles_rest_url' => $articles_rest_url,
-				'article_query' 	=> $article_query,
-				'attributes'		=> $attributes,
+				'article_query'     => $article_query,
+				'attributes'        => $attributes,
 			) );
 			?>
 
@@ -104,7 +105,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				<button type="button" data-load-more-btn><?php _e( 'Load more articles' ); ?></button>
 			<?php endif; ?>
 		</div>
-		<?php
+	<?php
 	endif;
 
 	$content = ob_get_clean();
@@ -113,8 +114,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	return $content;
 }
 
-
-function newspack_build_articles_query($attributes) {
+function newspack_build_articles_query( $attributes ) {
 	global $newspack_blocks_post_id;
 
 	if ( ! $newspack_blocks_post_id ) {
@@ -147,6 +147,7 @@ function newspack_build_articles_query($attributes) {
 			$args['tag__in'] = $tags;
 		}
 	}
+
 	return $args;
 }
 
@@ -173,6 +174,48 @@ function newspack_blocks_register_homepage_articles() {
 add_action( 'init', 'newspack_blocks_register_homepage_articles' );
 
 /**
+<<<<<<< HEAD
+=======
+ * Prepare an array of authors, taking presence of CoAuthors Plus into account.
+ *
+ * @return array Array of WP_User objects.
+ */
+function newspack_blocks_prepare_authors() {
+	if ( function_exists( 'coauthors_posts_links' ) ) {
+		$authors = get_coauthors();
+		foreach ( $authors as $author ) {
+			// Check if this is a guest author post type.
+			if ( 'guest-author' === get_post_type( $author->ID ) ) {
+				// If yes, make sure the author actually has an avatar set; otherwise, coauthors_get_avatar returns a featured image.
+				if ( get_post_thumbnail_id( $author->ID ) ) {
+					$author->avatar = coauthors_get_avatar( $author, 48 );
+				} else {
+					// If there is no avatar, force it to return the current fallback image.
+					$author->avatar = get_avatar( ' ' );
+				}
+			} else {
+				$author->avatar = coauthors_get_avatar( $author, 48 );
+			}
+			$author->url = get_author_posts_url( $author->ID, $author->user_nicename );
+		}
+
+		return $authors;
+	}
+	$id = get_the_author_meta( 'ID' );
+
+	return array(
+		(object) array(
+			'ID'            => $id,
+			'avatar'        => get_avatar( $id, 48 ),
+			'url'           => get_author_posts_url( $id ),
+			'user_nicename' => get_the_author(),
+			'display_name'  => get_the_author_meta( 'display_name' ),
+		),
+	);
+}
+
+/**
+>>>>>>> phpcs spacing
  * Renders author avatar markup.
  *
  * @param array $author_info Author info array.
@@ -181,13 +224,15 @@ add_action( 'init', 'newspack_blocks_register_homepage_articles' );
  */
 function newspack_blocks_format_avatars( $author_info ) {
 	$elements = array_map(
-		function( $author ) {
+		function ( $author ) {
 			return sprintf( '<a href="%s">%s</a>', $author->url, $author->avatar );
 		},
 		$author_info
 	);
+
 	return implode( '', $elements );
 }
+
 /**
  * Renders byline markup.
  *
@@ -203,9 +248,10 @@ function newspack_blocks_format_byline( $author_info ) {
 		),
 		array_reduce(
 			$author_info,
-			function( $accumulator, $author ) use ( $author_info, &$index ) {
+			function ( $accumulator, $author ) use ( $author_info, &$index ) {
 				$index ++;
 				$penultimate = count( $author_info ) - 2;
+
 				return array_merge(
 					$accumulator,
 					array(
@@ -223,5 +269,6 @@ function newspack_blocks_format_byline( $author_info ) {
 			array()
 		)
 	);
+
 	return implode( '', $elements );
 }
