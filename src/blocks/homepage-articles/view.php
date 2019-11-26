@@ -61,12 +61,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		$styles = 'color: ' . $attributes['customTextColor'] . ';';
 	}
 
-	$articles_rest_url = add_query_arg(
-		[
-			'attributes' => $attributes,
-		],
-		rest_url( '/newspack-blocks/v1/articles' )
-	);
+	$articles_rest_url = add_query_arg( $attributes, rest_url( '/newspack-blocks/v1/articles' ) );
 
 	ob_start();
 
