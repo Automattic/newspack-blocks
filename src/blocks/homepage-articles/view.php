@@ -5,7 +5,6 @@
  * @package WordPress
  */
 
-define('ARTICLES_AMP_MODE', true);
 
 /**
  * Renders the `newspack-blocks/author-bio` block on server.
@@ -143,7 +142,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 
 			<?php
-				if ( defined('ARTICLES_AMP_MODE') && true === ARTICLES_AMP_MODE) {
+				if ( Newspack_Blocks::is_amp() || ( defined('WP_DEV_AMP_MODE') && true === WP_DEV_AMP_MODE ) ) {
 					echo newspack_template_inc(__DIR__ . '/articles-amp.php', array(
 						'articles_rest_url' => $articles_rest_url,
 						'article_query' 	=> $article_query,
