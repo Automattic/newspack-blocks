@@ -16,23 +16,31 @@ import './view.scss';
 /**
  * Load More Button Handling
  */
-const loadMoreBtn = document.querySelector( '[data-load-more-btn]' );
+const page = document.getElementById( 'page' );
 const loadMoreBtnURLAttr = 'data-load-more-url';
-const loadMoreLoadingText = document.querySelector( '[data-load-more-loading-text]' );
-const postsContainer = document.querySelector( '[data-posts-container]');
-
-if ( loadMoreBtn ) {
-  loadMoreBtn.addEventListener( 'click', handleLoadMoreBtnClick );
-}
-
 let isFetching = false;
 
-function handleLoadMoreBtnClick() {
-  if ( isFetching ) {
+if ( page ) {
+  page.addEventListener( 'click', handlePageClick );
+}
+
+function handlePageClick( event ) {
+  const isLoadMoreBtnClick = !!event.target.hasAttribute( loadMoreBtnURLAttr );
+
+  if ( isLoadMoreBtnClick ) {
+    handleLoadMoreBtnClick( event.target );
+  }
+}
+
+function handleLoadMoreBtnClick( loadMoreBtn ) {
+  if ( isFetching || !loadMoreBtn ) {
     return false;
   }
 
-  const loadMoreURL = this.getAttribute( loadMoreBtnURLAttr );
+  const loadMoreURL = loadMoreBtn.getAttribute( loadMoreBtnURLAttr );
+  const blockWrapper = loadMoreBtn.parentElement;
+  const loadMoreLoadingText = blockWrapper.querySelector( '[data-load-more-loading-text]' );
+  const postsContainer = blockWrapper.querySelector( '[data-posts-container]' );
 
   loadMoreBtn.setAttribute( 'hidden', '' );
   loadMoreBtn.setAttribute( 'disabled', '' );
@@ -42,7 +50,7 @@ function handleLoadMoreBtnClick() {
 
   apiFetch( { url: loadMoreURL } )
     .then(( data ) => {
-      renderPosts( data.items );
+      renderPosts( postsContainer, data.items );
 
       loadMoreBtn.setAttribute( loadMoreBtnURLAttr, data.next );
 
@@ -59,8 +67,8 @@ function handleLoadMoreBtnClick() {
     });
 };
 
-function renderPosts( items ) {
+function renderPosts( targetEl, items ) {
   const postsHTML = items.map( item => item.html ).join( '' );
 
-  postsContainer.insertAdjacentHTML( 'beforeend', postsHTML );
+  targetEl.insertAdjacentHTML( 'beforeend', postsHTML );
 }
