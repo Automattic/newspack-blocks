@@ -139,22 +139,6 @@ class Newspack_Blocks {
 	}
 
 	/**
-	 * Parse generated .deps.json file and return array of dependencies to be enqueued.
-	 *
-	 * @param string $path Path to the generated dependencies file.
-	 *
-	 * @return array Array of dependencides.
-	 */
-	public static function dependencies_from_path( $path ) {
-		$dependencies = file_exists( $path )
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-			? json_decode( file_get_contents( $path ) )
-			: array();
-		$dependencies[] = 'wp-polyfill';
-		return $dependencies;
-	}
-
-	/**
 	 * Utility to assemble the class for a server-side rendered block.
 	 *
 	 * @param string $type The block type.
