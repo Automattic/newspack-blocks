@@ -21,6 +21,9 @@ const loadMoreBtnURLAttr = 'data-load-more-url';
 let isFetching = false;
 
 if ( page ) {
+  /**
+   * Listen for clicks on the parent "page" element.
+   */
   page.addEventListener( 'click', handlePageClick );
 }
 
@@ -37,14 +40,18 @@ function handleLoadMoreBtnClick( loadMoreBtn ) {
     return false;
   }
 
+  /**
+   * Set elements from scope determined by the clicked "Load more" button.
+   */
+  const blockWrapper = loadMoreBtn.parentElement; // scope root element
   const loadMoreURL = loadMoreBtn.getAttribute( loadMoreBtnURLAttr );
-  const blockWrapper = loadMoreBtn.parentElement;
   const loadMoreLoadingText = blockWrapper.querySelector( '[data-load-more-loading-text]' );
+  const loadMoreErrorText = blockWrapper.querySelector( '[data-load-more-error-text]' );
   const postsContainer = blockWrapper.querySelector( '[data-posts-container]' );
 
-  loadMoreBtn.setAttribute( 'hidden', '' );
-  loadMoreBtn.setAttribute( 'disabled', '' );
-  loadMoreLoadingText.removeAttribute( 'hidden' )
+  hideEl(loadMoreBtn);
+  hideEl(loadMoreErrorText);
+  showEl(loadMoreLoadingText);
 
   isFetching = true;
 
@@ -53,15 +60,15 @@ function handleLoadMoreBtnClick( loadMoreBtn ) {
       renderPosts( postsContainer, data.items );
 
       loadMoreBtn.setAttribute( loadMoreBtnURLAttr, data.next );
-
-      loadMoreLoadingText.setAttribute( 'hidden', '' );
-      loadMoreBtn.removeAttribute( 'hidden' );
-      loadMoreBtn.removeAttribute( 'disabled' );
+      hideEl(loadMoreLoadingText);
+      showEl(loadMoreBtn);
 
       isFetching = false;
     })
-    .catch(( error ) => {
-      console.log( 'Something went wrong!' );
+    .catch(() => {
+      hideEl(loadMoreLoadingText)
+      showEl(loadMoreErrorText);
+      showEl(loadMoreBtn);
 
       isFetching = false;
     });
@@ -71,4 +78,12 @@ function renderPosts( targetEl, items ) {
   const postsHTML = items.map( item => item.html ).join( '' );
 
   targetEl.insertAdjacentHTML( 'beforeend', postsHTML );
+};
+
+function hideEl(el) {
+  return el.setAttribute( 'hidden', '');
+};
+
+function showEl(el) {
+  return el.removeAttribute( 'hidden' );
 }
