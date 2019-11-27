@@ -22,81 +22,82 @@ let isFetching = false;
 let isEndOfData = false;
 
 if ( page ) {
-  /**
-   * Listen for clicks on the parent "page" element.
-   */
-  page.addEventListener( 'click', handlePageClick );
+	/**
+	 * Listen for clicks on the parent "page" element.
+	 */
+	page.addEventListener( 'click', handlePageClick );
 }
 
 function handlePageClick( event ) {
-  const isLoadMoreBtnClick = !!event.target.hasAttribute( loadMoreBtnURLAttr );
+	const isLoadMoreBtnClick = !!event.target.hasAttribute( loadMoreBtnURLAttr );
 
-  if ( isLoadMoreBtnClick ) {
-    handleLoadMoreBtnClick( event.target );
-  }
+	if ( isLoadMoreBtnClick ) {
+		handleLoadMoreBtnClick( event.target );
+	}
 }
 
 function handleLoadMoreBtnClick( loadMoreBtn ) {
-  if ( !loadMoreBtn || isFetching || isEndOfData ) {
-    return false;
-  }
+	if ( !loadMoreBtn || isFetching || isEndOfData ) {
+		return false;
+	}
 
-  /**
-   * Set elements from scope determined by the clicked "Load more" button.
-   */
-  const blockWrapper = loadMoreBtn.parentElement; // scope root element
-  const postsContainer = blockWrapper.querySelector( '[data-posts-container]' );
-  const loadMoreLoadingText = blockWrapper.querySelector( '[data-load-more-loading-text]' );
-  const loadMoreErrorText = blockWrapper.querySelector( '[data-load-more-error-text]' );
-  const loadMoreEODText = blockWrapper.querySelector( '[data-load-more-eod-text]' );
+	/**
+	 * Set elements from scope determined by the clicked "Load more" button.
+	 */
+	const blockWrapper = loadMoreBtn.parentElement; // scope root element
+	const postsContainer = blockWrapper.querySelector( '[data-posts-container]' );
+	const loadMoreLoadingText = blockWrapper.querySelector( '[data-load-more-loading-text]' );
+	const loadMoreErrorText = blockWrapper.querySelector( '[data-load-more-error-text]' );
+	const loadMoreEODText = blockWrapper.querySelector( '[data-load-more-eod-text]' );
 
-  const loadMoreURL = loadMoreBtn.getAttribute( loadMoreBtnURLAttr );
+	const loadMoreURL = loadMoreBtn.getAttribute( loadMoreBtnURLAttr );
 
-  hideEl( loadMoreBtn );
-  hideEl( loadMoreErrorText );
-  showEl( loadMoreLoadingText );
+	hideEl( loadMoreBtn );
+	hideEl( loadMoreErrorText );
+	showEl( loadMoreLoadingText );
 
-  isFetching = true;
+	isFetching = true;
 
-  apiFetch( { url: loadMoreURL } )
-    .then(( data ) => {
-      renderPosts( postsContainer, data.items );
+	apiFetch( { url: loadMoreURL } )
+		.then( ( data ) => {
+			renderPosts( postsContainer, data.items );
 
-      if ( data.next ) {
-        loadMoreBtn.setAttribute( loadMoreBtnURLAttr, data.next );
-        showEl( loadMoreBtn );
-      } else {
-        hideEl( loadMoreBtn );
-        showEl( loadMoreEODText );
+			if ( data.next ) {
+				loadMoreBtn.setAttribute( loadMoreBtnURLAttr, data.next );
+				showEl( loadMoreBtn );
+			} else {
+				hideEl( loadMoreBtn );
+				showEl( loadMoreEODText );
 
-        isEndOfData = true;
-      }
+				isEndOfData = true;
+			}
 
-      hideEl( loadMoreLoadingText );
+			hideEl( loadMoreLoadingText );
 
-      isFetching = false;
-    })
-    .catch( (error) => {
-      console.error( error );
+			isFetching = false;
+		} )
+		.catch( ( error ) => {
+			console.error( error );
 
-      hideEl( loadMoreLoadingText )
-      showEl( loadMoreErrorText );
-      showEl( loadMoreBtn );
+			hideEl( loadMoreLoadingText )
+			showEl( loadMoreErrorText );
+			showEl( loadMoreBtn );
 
-      isFetching = false;
-    });
+			isFetching = false;
+		} );
 };
 
 function renderPosts( targetEl, items ) {
-  const postsHTML = items.map( item => item.html ).join( '' );
+	const postsHTML = items.map( item => item.html ).join( '' );
 
-  targetEl.insertAdjacentHTML( 'beforeend', postsHTML );
+	targetEl.insertAdjacentHTML( 'beforeend', postsHTML );
 };
 
 function hideEl( el ) {
-  return el.setAttribute( 'hidden', '');
+	console.log( el.outerHTML );
+	return el.setAttribute( 'hidden', '' );
 };
 
 function showEl( el ) {
-  return el.removeAttribute( 'hidden' );
+	return el.removeAttribute( 'hidden' );
 }
