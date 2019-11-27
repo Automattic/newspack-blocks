@@ -59,7 +59,8 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 	if ( $autoplay ) {
 		$other[] = 'wp-block-newspack-blocks-carousel__autoplay-playing';
 	}
-	$classes = Newspack_Blocks::block_classes( 'carousel', $attributes, $other );
+	$newspack_blocks = Newspack_Blocks::get_instance();
+	$classes         = $newspack_blocks->block_classes( 'carousel', $attributes, $other );
 
 	$args          = array(
 		'posts_per_page'      => $posts_to_show,

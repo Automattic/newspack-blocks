@@ -67,8 +67,11 @@ class Newspack_Blocks_API {
 			return;
 		}
 
+		// Newspack=_Blocks handler.
+		$newspack_blocks = Newspack_Blocks::get_instance();
+
 		// Landscape image.
-		$landscape_size = Newspack_Blocks::image_size_for_orientation( 'landscape' );
+		$landscape_size = $newspack_blocks->image_size_for_orientation( 'landscape' );
 
 		$feat_img_array_landscape        = wp_get_attachment_image_src(
 			$object['featured_media'],
@@ -78,7 +81,7 @@ class Newspack_Blocks_API {
 		$featured_image_set['landscape'] = $feat_img_array_landscape[0];
 
 		// Portrait image.
-		$portrait_size = Newspack_Blocks::image_size_for_orientation( 'portrait' );
+		$portrait_size = $newspack_blocks->image_size_for_orientation( 'portrait' );
 
 		$feat_img_array_portrait        = wp_get_attachment_image_src(
 			$object['featured_media'],
@@ -88,7 +91,7 @@ class Newspack_Blocks_API {
 		$featured_image_set['portrait'] = $feat_img_array_portrait[0];
 
 		// Square image.
-		$square_size = Newspack_Blocks::image_size_for_orientation( 'square' );
+		$square_size = $newspack_blocks->image_size_for_orientation( 'square' );
 
 		$feat_img_array_square        = wp_get_attachment_image_src(
 			$object['featured_media'],

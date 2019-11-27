@@ -9,13 +9,32 @@
  * Newspack blocks functionality
  */
 class Newspack_Blocks {
+	/**
+	 * Class instance.
+	 *
+	 * @var Newspack_Blocks
+	 */
+	private static $instance = null;
+
+	/**
+	 * Creates instance.
+	 *
+	 * @return Newspack_Blocks
+	 */
+	public static function get_instance() {
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
 
 	/**
 	 * Gather dependencies and paths needed for script enqueuing.
 	 *
 	 * @param string $script_path Path to the script relative to plugin root.
 	 *
-	 * @return array Associative array including dependency array, version, and web path to the script. Returns false if script doesn't exist.
+	 * @return array|boolean Associative array including dependency array, version, and web path to the script. Returns false if script doesn't exist.
 	 */
 	public static function script_enqueue_helper( $script_path ) {
 		$local_path = NEWSPACK_BLOCKS__PLUGIN_DIR . $script_path;
@@ -39,7 +58,7 @@ class Newspack_Blocks {
 	/**
 	 * Enqueue block scripts and styles for editor.
 	 */
-	public static function enqueue_block_editor_assets() {
+	public function enqueue_block_editor_assets() {
 		$script_data = self::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.js' );
 
 		if ( $script_data ) {
@@ -111,7 +130,7 @@ class Newspack_Blocks {
 	/**
 	 * Enqueue block styles stylesheet.
 	 */
-	public static function enqueue_block_styles_assets() {
+	public function enqueue_block_styles_assets() {
 		$style_path = NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'block_styles' . ( is_rtl() ? '.rtl' : '' ) . '.css';
 		if ( file_exists( NEWSPACK_BLOCKS__PLUGIN_DIR . $style_path ) ) {
 			wp_enqueue_style(
@@ -162,7 +181,7 @@ class Newspack_Blocks {
 	 *
 	 * @return string Class list separated by spaces.
 	 */
-	public static function block_classes( $type, $attributes = array(), $extra = array() ) {
+	public function block_classes( $type, $attributes = array(), $extra = array() ) {
 		$align   = isset( $attributes['align'] ) ? $attributes['align'] : 'center';
 		$classes = array(
 			"wp-block-newspack-blocks-{$type}",
@@ -193,7 +212,7 @@ class Newspack_Blocks {
 	 *
 	 * @return string Returns the thumbnail key to use.
 	 */
-	public static function image_size_for_orientation( $orientation = 'landscape' ) {
+	public function image_size_for_orientation( $orientation = 'landscape' ) {
 		$sizes = array(
 			'landscape' => array(
 				'large'  => array(
@@ -265,7 +284,7 @@ class Newspack_Blocks {
 	/**
 	 * Registers image sizes required for Newspack Blocks.
 	 */
-	public static function add_image_sizes() {
+	public function add_image_sizes() {
 		add_image_size( 'newspack-article-block-landscape-large', 1200, 900, true );
 		add_image_size( 'newspack-article-block-portrait-large', 900, 1200, true );
 		add_image_size( 'newspack-article-block-square-large', 1200, 1200, true );

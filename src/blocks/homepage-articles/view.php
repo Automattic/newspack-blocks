@@ -46,7 +46,9 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	}
 	$article_query = new WP_Query( $args );
 
-	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes, array( 'wpnbha' ) );
+	// Newspack=_Blocks handler.
+	$newspack_blocks = Newspack_Blocks::get_instance();
+	$classes         = $newspack_blocks->block_classes( 'homepage-articles', $attributes, array( 'wpnbha' ) );
 
 	if ( isset( $attributes['postLayout'] ) && 'grid' === $attributes['postLayout'] ) {
 		$classes .= ' is-grid';
@@ -132,7 +134,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 								<?php
 								$image_size = 'newspack-article-block-uncropped';
 								if ( 'uncropped' !== $attributes['imageShape'] ) {
-									$image_size = Newspack_Blocks::image_size_for_orientation( $attributes['imageShape'] );
+									$image_size = $newspack_blocks->image_size_for_orientation( $attributes['imageShape'] );
 								}
 
 								// If the image position is behind, pass the object-fit setting to maintain styles with AMP.
@@ -248,7 +250,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		<?php
 		endif;
 	$content = ob_get_clean();
-	Newspack_Blocks::enqueue_view_assets( 'homepage-articles' );
+	$newspack_blocks->enqueue_view_assets( 'homepage-articles' );
 	return $content;
 }
 
