@@ -18,9 +18,9 @@ import './view.scss';
 import metadata from './block.json';
 const { name, attributes } = metadata;
 
+// Name must be exported separately.
 export { name };
 
-export const name = 'homepage-articles';
 export const title = __( 'Homepage Posts', 'newspack-blocks' );
 
 /* From https://material.io/tools/icons */
