@@ -18,7 +18,7 @@ import './view.scss';
  */
 const loadMoreBtn = document.querySelector( '[data-load-more-btn]' );
 const loadMoreBtnURLAttr = 'data-load-more-url';
-const loadMoreLoadingText = document.querySelector( '[data-load-more-loading-text' );
+const loadMoreLoadingText = document.querySelector( '[data-load-more-loading-text]' );
 const postsContainer = document.querySelector( '[data-posts-container]');
 
 if ( loadMoreBtn ) {
