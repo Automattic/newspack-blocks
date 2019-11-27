@@ -1,5 +1,6 @@
 {
   "name": "homepage-articles",
+  "category": "newspack",
   "attributes": {
     "className": {
       "type": "string",

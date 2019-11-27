@@ -16,7 +16,7 @@ import edit from './edit';
 import './editor.scss';
 import './view.scss';
 import metadata from './block.json';
-const { name, attributes } = metadata;
+const { name, attributes, category } = metadata;
 
 // Name must be exported separately.
 export { name };
@@ -35,7 +35,7 @@ export const settings = {
 	title,
 	icon,
 	attributes,
-	category: "newspack",
+	category,
 	keywords: [
 		__( 'posts', 'newspack-blocks' ),
 		__( 'articles', 'newspack-blocks' ),
