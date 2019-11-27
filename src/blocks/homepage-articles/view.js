@@ -18,6 +18,7 @@ import './view.scss';
  */
 const loadMoreBtn = document.querySelector( '[data-load-more-btn]' );
 const loadMoreBtnURLAttr = 'data-load-more-url';
+const loadMoreLoadingText = document.querySelector( '[data-load-more-loading-text' );
 const postsContainer = document.querySelector( '[data-posts-container]');
 
 if ( loadMoreBtn ) {
@@ -27,10 +28,19 @@ if ( loadMoreBtn ) {
 function handleLoadMoreBtnClick() {
   const loadMoreURL = this.getAttribute( loadMoreBtnURLAttr );
 
+  loadMoreBtn.setAttribute( 'hidden', '' );
+  loadMoreBtn.setAttribute( 'disabled', '' );
+  loadMoreLoadingText.removeAttribute( 'hidden' )
+
   apiFetch( { url: loadMoreURL } )
     .then(( data ) => {
       renderPosts( data.items );
+
       loadMoreBtn.setAttribute( loadMoreBtnURLAttr, data.next );
+
+      loadMoreLoadingText.setAttribute( 'hidden', '' );
+      loadMoreBtn.removeAttribute( 'hidden' );
+      loadMoreBtn.removeAttribute( 'disabled' );
     })
     .catch(( error ) => {
       console.log( 'Something went wrong!' );
