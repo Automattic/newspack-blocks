@@ -299,6 +299,7 @@ class Edit extends Component {
 							label={ __( 'Show "More" Button' ) }
 							checked={ moreButton }
 							onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
+							help={ __('Only available for non-AMP requests.', 'newspack-blocks') }
 						/>
 					) }
 				</PanelBody>
