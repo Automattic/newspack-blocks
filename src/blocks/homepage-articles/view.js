@@ -48,6 +48,7 @@ function handleLoadMoreBtnClick( loadMoreBtn ) {
   const postsContainer = blockWrapper.querySelector( '[data-posts-container]' );
   const loadMoreLoadingText = blockWrapper.querySelector( '[data-load-more-loading-text]' );
   const loadMoreErrorText = blockWrapper.querySelector( '[data-load-more-error-text]' );
+  const loadMoreEODText = blockWrapper.querySelector( '[data-load-more-eod-text]' );
 
   const loadMoreURL = loadMoreBtn.getAttribute( loadMoreBtnURLAttr );
 
@@ -61,20 +62,23 @@ function handleLoadMoreBtnClick( loadMoreBtn ) {
     .then(( data ) => {
       renderPosts( postsContainer, data.items );
 
-      if ( next ) {
+      if ( data.next ) {
         loadMoreBtn.setAttribute( loadMoreBtnURLAttr, data.next );
+        showEl( loadMoreBtn );
       } else {
         hideEl( loadMoreBtn );
+        showEl( loadMoreEODText );
 
         isEndOfData = true;
       }
 
       hideEl( loadMoreLoadingText );
-      showEl( loadMoreBtn );
 
       isFetching = false;
     })
-    .catch( () => {
+    .catch( (error) => {
+      console.error( error );
+
       hideEl( loadMoreLoadingText )
       showEl( loadMoreErrorText );
       showEl( loadMoreBtn );

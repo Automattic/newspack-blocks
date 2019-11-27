@@ -106,8 +106,9 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 			if ( ! Newspack_Blocks::is_amp() && $has_more_pages ) : ?>
 				<button type="button" data-load-more-url="<?php echo $articles_rest_url ?>"><?php _e( 'Load more articles' ); ?></button>
-				<p data-load-more-loading-text hidden>Loading...</p>
-				<p data-load-more-error-text hidden>Something went wrong. Please refresh the page and/or try again.</p>
+				<p data-load-more-loading-text hidden><?php _e( 'Loading...' ); ?></p>
+				<p data-load-more-error-text hidden><?php _e( 'Something went wrong. Please refresh the page and/or try again.'); ?></p>
+				<p data-load-more-eod-text hidden><?php _e( 'No more posts to load!' ); ?></p>
 			<?php endif; ?>
 		</div>
 	<?php
