@@ -67,7 +67,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 	if ( $article_query->have_posts() ) :
 		?>
-		<div class="<?php echo esc_attr( $classes ); ?>" style="<?php echo esc_attr( $styles ); ?>">
+		<div>
 
 			<?php if ( '' !== $attributes['sectionHeader'] ) : ?>
 				<h2 class="article-section-title">
@@ -76,16 +76,22 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			<?php
 			endif;
 
-			/*
-			 * We are not using an AMP-based renderer on AMP requests because it has limitations
-			 * around dynamically calculating the height of the the article list on load.
-			 * As a result we render the same standards-based markup for all requests.
-			 */
-			echo newspack_blocks_template_inc( __DIR__ . '/articles-list.php', [
-				'articles_rest_url' => $articles_rest_url,
-				'article_query'     => $article_query,
-				'attributes'        => $attributes,
-			] );
+			?>
+			<div id="posts-container" class="<?php echo esc_attr( $classes ); ?>" style="<?php echo esc_attr( $styles ); ?>">
+				<?php
+				/*
+				* We are not using an AMP-based renderer on AMP requests because it has limitations
+				* around dynamically calculating the height of the the article list on load.
+				* As a result we render the same standards-based markup for all requests.
+				*/
+				echo newspack_blocks_template_inc( __DIR__ . '/articles-list.php', [
+					'articles_rest_url' => $articles_rest_url,
+					'article_query'     => $article_query,
+					'attributes'        => $attributes,
+				] );
+				?>
+			</div>
+			<?php
 
 			/*
 			 * AMP-requests cannot contain client-side scripting (eg: JavaScript). As a result
@@ -99,7 +105,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			$has_more_pages = (++$page) <= $article_query->max_num_pages;
 
 			if ( ! Newspack_Blocks::is_amp() && $has_more_pages ) : ?>
-				<button type="button" data-load-more-btn><?php _e( 'Load more articles' ); ?></button>
+				<button type="button" id="load-more-button" data-load-more-url="<?php echo $articles_rest_url ?>" data-load-more-btn><?php _e( 'Load more articles' ); ?></button>
 			<?php endif; ?>
 		</div>
 	<?php
