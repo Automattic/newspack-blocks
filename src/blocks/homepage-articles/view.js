@@ -40,7 +40,7 @@ function handleLoadMoreButtonClick() {
 };
 
 function renderPosts( items ) {
-  const postsHTML = items.map( item => item.html );
+  const postsHTML = items.map( item => item.html ).join( '' );
 
   postsContainer.insertAdjacentHTML( 'beforeend', postsHTML );
 }
