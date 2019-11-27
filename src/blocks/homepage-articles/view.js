@@ -19,6 +19,7 @@ import './view.scss';
 const page = document.getElementById( 'page' );
 const loadMoreBtnURLAttr = 'data-load-more-url';
 let isFetching = false;
+let isEndOfData = false;
 
 if ( page ) {
   /**
@@ -36,7 +37,7 @@ function handlePageClick( event ) {
 }
 
 function handleLoadMoreBtnClick( loadMoreBtn ) {
-  if ( isFetching || !loadMoreBtn ) {
+  if ( !loadMoreBtn || isFetching || isEndOfData ) {
     return false;
   }
 
@@ -49,9 +50,9 @@ function handleLoadMoreBtnClick( loadMoreBtn ) {
   const loadMoreErrorText = blockWrapper.querySelector( '[data-load-more-error-text]' );
   const postsContainer = blockWrapper.querySelector( '[data-posts-container]' );
 
-  hideEl(loadMoreBtn);
-  hideEl(loadMoreErrorText);
-  showEl(loadMoreLoadingText);
+  hideEl( loadMoreBtn );
+  hideEl( loadMoreErrorText );
+  showEl( loadMoreLoadingText );
 
   isFetching = true;
 
@@ -59,16 +60,23 @@ function handleLoadMoreBtnClick( loadMoreBtn ) {
     .then(( data ) => {
       renderPosts( postsContainer, data.items );
 
-      loadMoreBtn.setAttribute( loadMoreBtnURLAttr, data.next );
-      hideEl(loadMoreLoadingText);
-      showEl(loadMoreBtn);
+      if ( next ) {
+        loadMoreBtn.setAttribute( loadMoreBtnURLAttr, data.next );
+      } else {
+        hideEl( loadMoreBtn );
+
+        isEndOfData = true;
+      }
+
+      hideEl( loadMoreLoadingText );
+      showEl( loadMoreBtn );
 
       isFetching = false;
     })
-    .catch(() => {
-      hideEl(loadMoreLoadingText)
-      showEl(loadMoreErrorText);
-      showEl(loadMoreBtn);
+    .catch( () => {
+      hideEl( loadMoreLoadingText )
+      showEl( loadMoreErrorText );
+      showEl( loadMoreBtn );
 
       isFetching = false;
     });
@@ -80,10 +88,10 @@ function renderPosts( targetEl, items ) {
   targetEl.insertAdjacentHTML( 'beforeend', postsHTML );
 };
 
-function hideEl(el) {
+function hideEl( el ) {
   return el.setAttribute( 'hidden', '');
 };
 
-function showEl(el) {
+function showEl( el ) {
   return el.removeAttribute( 'hidden' );
 }
