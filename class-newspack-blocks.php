@@ -40,7 +40,7 @@ class Newspack_Blocks {
 	 * Enqueue block scripts and styles for editor.
 	 */
 	public static function enqueue_block_editor_assets() {
-		$script_data = self::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.js' );
+		$script_data = static::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.js' );
 
 		if ( $script_data ) {
 			wp_enqueue_script(
@@ -138,10 +138,10 @@ class Newspack_Blocks {
 				NEWSPACK_BLOCKS__VERSION
 			);
 		}
-		if ( self::is_amp() ) {
+		if ( static::is_amp() ) {
 			return;
 		}
-		$script_data = self::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $type . '/view.js' );
+		$script_data = static::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $type . '/view.js' );
 		if ( $script_data ) {
 			wp_enqueue_script(
 				"newspack-blocks-{$type}",
