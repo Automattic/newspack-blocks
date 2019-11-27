@@ -45,10 +45,11 @@ function handleLoadMoreBtnClick( loadMoreBtn ) {
    * Set elements from scope determined by the clicked "Load more" button.
    */
   const blockWrapper = loadMoreBtn.parentElement; // scope root element
-  const loadMoreURL = loadMoreBtn.getAttribute( loadMoreBtnURLAttr );
+  const postsContainer = blockWrapper.querySelector( '[data-posts-container]' );
   const loadMoreLoadingText = blockWrapper.querySelector( '[data-load-more-loading-text]' );
   const loadMoreErrorText = blockWrapper.querySelector( '[data-load-more-error-text]' );
-  const postsContainer = blockWrapper.querySelector( '[data-posts-container]' );
+
+  const loadMoreURL = loadMoreBtn.getAttribute( loadMoreBtnURLAttr );
 
   hideEl( loadMoreBtn );
   hideEl( loadMoreErrorText );
