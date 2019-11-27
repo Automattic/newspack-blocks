@@ -20,7 +20,7 @@ if ( 'uncropped' !== $attributes['imageShape'] ) {
 $thumbnail_args = '';
 // If the image position is behind, pass the object-fit setting to maintain styles with AMP.
 if ( 'behind' === $attributes['mediaPosition'] ) {
-	$thumbnail_args = [ 'object-fit' => 'cover' ];
+	$thumbnail_args = array( 'object-fit' => 'cover' );
 }
 
 $category = false;
@@ -62,7 +62,7 @@ if ( ! $category ) {
 					<?php echo esc_html( $category->name ); ?>
 				</a>
 			</div>
-		<?php
+			<?php
 		endif;
 
 		if ( '' === $attributes['sectionHeader'] ) :
@@ -75,18 +75,19 @@ if ( ! $category ) {
 			the_excerpt();
 		endif;
 
-		if ( $attributes['showAuthor'] || $attributes['showDate'] ) : ?>
+		if ( $attributes['showAuthor'] || $attributes['showDate'] ) :
+			?>
 			<div class="entry-meta">
 				<?php
 				if ( $attributes['showAuthor'] ) :
 					if ( $attributes['showAvatar'] ) :
 						echo wp_kses_post( newspack_blocks_format_avatars( $authors ) );
 					endif;
-				?>
+					?>
 					<span class="byline">
 						<?php echo wp_kses_post( newspack_blocks_format_byline( $authors ) ); ?>
 					</span><!-- .author-name -->
-				<?php
+					<?php
 				endif;
 
 				if ( $attributes['showDate'] ) :
