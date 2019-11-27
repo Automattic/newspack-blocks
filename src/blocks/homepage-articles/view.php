@@ -136,7 +136,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			$has_more_pages = (++$page) <= $article_query->max_num_pages;
 
 			if ( ! Newspack_Blocks::is_amp() && $has_more_pages ) : ?>
-				<button type="button" data-load-more-url="<?php echo $articles_rest_url ?>" data-load-more-btn><?php _e( 'Load more articles' ); ?></button>
+				<button type="button" data-load-more-url="<?php echo $articles_rest_url ?>"><?php _e( 'Load more articles' ); ?></button>
 				<div data-load-more-loading-text hidden>Loading...</div>
 			<?php endif; ?>
 		</div>
