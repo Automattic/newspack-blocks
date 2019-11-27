@@ -3,8 +3,7 @@ import { registerStore, select, subscribe, dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { sum } from 'lodash';
 
-
-const STORE_NAMESPACE = 'newspack-blocks/query';
+export const STORE_NAMESPACE = 'newspack-blocks/query';
 
 const initialState = {
 	queryBlocks: [],              // list of Query blocks in the order they are on the page

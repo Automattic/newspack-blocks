@@ -115,6 +115,8 @@ export default class QueryPanel extends Component {
 		const sanitizedCriteria = {
 			per_page: parseInt( per_page ),
 			offset: parseInt( offset ),
+			singleMode: !! singleMode,
+			singleId: parseInt( singleId ),
 		};
 
 		if ( author ) {
@@ -131,13 +133,6 @@ export default class QueryPanel extends Component {
 
 		if ( search && search.trim().length > 0 ) {
 			sanitizedCriteria.search = search;
-		}
-
-		if ( singleMode ) {
-			sanitizedCriteria.singleMode = singleMode;
-			sanitizedCriteria.singleId = parseInt( singleId );
-		} else {
-			sanitizedCriteria.singleMode = false;
 		}
 
 		return onChange( sanitizedCriteria );

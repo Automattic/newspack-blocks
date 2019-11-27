@@ -5,7 +5,7 @@
  * @package WordPress
  */
 $basePath = dirname( __FILE__ );
-include_once( 'field-blocks/author/author.php' );
+include_once( $basePath . '/field-blocks/author/author.php' );
 include_once( $basePath . '/field-blocks/categories/categories.php' );
 include_once( $basePath . '/field-blocks/date/date.php' );
 include_once( $basePath . '/field-blocks/excerpt/excerpt.php' );
@@ -54,7 +54,7 @@ class Newspack_Blocks_Query {
 	public function newspack_blocks_render_block_query( $attributes ) {
 		$blocks = ! empty( $attributes['blocks'] ) ? $attributes['blocks'] : array();
 		$args = $this->newspack_blocks_criteria_to_args( $attributes['criteria'] );
-		$args['per_page'] = $args['per_page'] + count( self::$displayedPostIds );
+		$args['posts_per_page'] = $args['posts_per_page'] + count( self::$displayedPostIds );
 
 		$query = new WP_Query( $args );
 
@@ -108,19 +108,20 @@ class Newspack_Blocks_Query {
 	 * @return array Return an array of args.
 	 */
 	private function newspack_blocks_criteria_to_args( $criteria ) {
+		if ( $criteria[ 'singleMode' ] == 1 ) {
+			$args = array(
+				'post_status' => 'publish',
+				'p' => $criteria[ 'singleId' ],
+			);
+			return $args;
+		}
+
 		$args = array(
 			'posts_per_page'      => ! empty( $criteria['per_page'] ) ? intval( $criteria['per_page'] ) : 3,
 			'post_status'         => 'publish',
 			'suppress_filters'    => false,
 			'ignore_sticky_posts' => true,
 		);
-
-		if ( $criteria[ 'singleMode' ] == 1 ) {
-			unset( $args['posts_per_page'] );
-			$args[ 'p' ] = $criteria[ 'singleId' ];
-			return( $args );
-		}
-
 
 		if ( ! empty( $criteria['author'] ) ) {
 			$args['author'] = implode( ",", $criteria['author'] );

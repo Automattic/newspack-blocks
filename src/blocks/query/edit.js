@@ -159,11 +159,11 @@ export default compose(
 	withSelect( ( select, props ) => {
 		const { attributes, clientId } = props;
 		const { criteria } = attributes;
-		const { countPostsInEarlierBlocks, query } = select( 'newspack-blocks/query' );
+		const { query } = select( 'newspack-blocks/query' );
 		const { getEntityRecords } = select( 'core' );
 
 		return {
-			query: query( clientId, criteria ),
+			query: query( clientId, { ...criteria, } ),
 			postList: getEntityRecords( 'postType', 'post', { per_page: 50 } ),
 		};
 	} ),
