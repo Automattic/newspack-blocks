@@ -36,7 +36,7 @@ class Newspack_Blocks {
 	 *
 	 * @return array|boolean Associative array including dependency array, version, and web path to the script. Returns false if script doesn't exist.
 	 */
-	public static function script_enqueue_helper( $script_path ) {
+	public function script_enqueue_helper( $script_path ) {
 		$local_path = NEWSPACK_BLOCKS__PLUGIN_DIR . $script_path;
 		if ( ! file_exists( $local_path ) ) {
 			return false;
@@ -59,7 +59,7 @@ class Newspack_Blocks {
 	 * Enqueue block scripts and styles for editor.
 	 */
 	public function enqueue_block_editor_assets() {
-		$script_data = self::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.js' );
+		$script_data = $this->script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.js' );
 
 		if ( $script_data ) {
 			wp_enqueue_script(
@@ -160,7 +160,7 @@ class Newspack_Blocks {
 		if ( self::is_amp() ) {
 			return;
 		}
-		$script_data = self::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $type . '/view.js' );
+		$script_data = self::get_instance()->script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $type . '/view.js' );
 		if ( $script_data ) {
 			wp_enqueue_script(
 				"newspack-blocks-{$type}",
