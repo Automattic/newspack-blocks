@@ -126,7 +126,10 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			 * @see https://github.com/Automattic/newspack-blocks/pull/226#issuecomment-558695909
 			 * @see https://wp.me/paYJgx-jW
 			 */
-			if ( ! Newspack_Blocks::is_amp() ) : ?>
+			$page = $article_query->paged ?? 1;
+			$has_more_pages = (++$page) <= $article_query->max_num_pages;
+
+			if ( ! Newspack_Blocks::is_amp() && $has_more_pages ) : ?>
 				<button type="button" data-load-more-btn><?php _e( 'Load more articles' ); ?></button>
 			<?php endif; ?>
 		</div>
