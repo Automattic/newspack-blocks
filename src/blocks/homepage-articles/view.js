@@ -25,12 +25,20 @@ if ( loadMoreBtn ) {
   loadMoreBtn.addEventListener( 'click', handleLoadMoreBtnClick );
 }
 
+let isFetching = false;
+
 function handleLoadMoreBtnClick() {
+  if ( isFetching ) {
+    return false;
+  }
+
   const loadMoreURL = this.getAttribute( loadMoreBtnURLAttr );
 
   loadMoreBtn.setAttribute( 'hidden', '' );
   loadMoreBtn.setAttribute( 'disabled', '' );
   loadMoreLoadingText.removeAttribute( 'hidden' )
+
+  isFetching = true;
 
   apiFetch( { url: loadMoreURL } )
     .then(( data ) => {
@@ -41,9 +49,13 @@ function handleLoadMoreBtnClick() {
       loadMoreLoadingText.setAttribute( 'hidden', '' );
       loadMoreBtn.removeAttribute( 'hidden' );
       loadMoreBtn.removeAttribute( 'disabled' );
+
+      isFetching = false;
     })
     .catch(( error ) => {
       console.log( 'Something went wrong!' );
+
+      isFetching = false;
     });
 };
 
