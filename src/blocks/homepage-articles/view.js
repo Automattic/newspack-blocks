@@ -12,9 +12,9 @@ import './view.scss';
 /**
  * Load More Button Handling
  */
-const loadMoreButton = document.getElementById( 'load-more-button' );
+const loadMoreButton = document.querySelector( '[data-load-more-btn]' );
 const loadMoreButtonURLAttribute = 'data-load-more-url';
-const postsContainer = document.getElementById( 'posts-container');
+const postsContainer = document.querySelector( '[data-posts-container]');
 
 if ( loadMoreButton ) {
   loadMoreButton.addEventListener( 'click', handleLoadMoreButtonClick );
