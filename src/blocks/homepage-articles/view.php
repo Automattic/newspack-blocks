@@ -77,7 +77,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			endif;
 
 			?>
-			<div id="posts-container" class="<?php echo esc_attr( $classes ); ?>" style="<?php echo esc_attr( $styles ); ?>">
+			<div data-posts-container class="<?php echo esc_attr( $classes ); ?>" style="<?php echo esc_attr( $styles ); ?>">
 				<?php
 				/*
 				* We are not using an AMP-based renderer on AMP requests because it has limitations
@@ -105,7 +105,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			$has_more_pages = (++$page) <= $article_query->max_num_pages;
 
 			if ( ! Newspack_Blocks::is_amp() && $has_more_pages ) : ?>
-				<button type="button" id="load-more-button" data-load-more-url="<?php echo $articles_rest_url ?>" data-load-more-btn><?php _e( 'Load more articles' ); ?></button>
+				<button type="button" data-load-more-url="<?php echo $articles_rest_url ?>" data-load-more-btn><?php _e( 'Load more articles' ); ?></button>
 			<?php endif; ?>
 		</div>
 	<?php
