@@ -14,7 +14,7 @@ if ( 'behind' === $attributes['mediaPosition'] && $attributes['showImage'] && ha
 
 $image_size = 'newspack-article-block-uncropped';
 if ( 'uncropped' !== $attributes['imageShape'] ) {
-	$image_size = newspack_blocks_image_size_for_orientation( $attributes['imageShape'] );
+	$image_size = Newspack_Blocks::image_size_for_orientation( $attributes['imageShape'] );
 }
 
 $thumbnail_args = '';
