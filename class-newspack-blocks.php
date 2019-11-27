@@ -1,8 +1,13 @@
 <?php
 /**
  * Newspack blocks functionality
+ *
+ * @package Newspack_Blocks
  */
 
+/**
+ * Newspack blocks functionality
+ */
 class Newspack_Blocks {
 	/**
 	 * Enqueue block scripts and styles for editor.
@@ -150,10 +155,11 @@ class Newspack_Blocks {
 	}
 
 	/**
-	 * Utility to assemble the class for a server-side rendered bloc
+	 * Utility to assemble the class for a server-side rendered block.
 	 *
 	 * @param string $type The block type.
 	 * @param array  $attributes Block attributes.
+	 * @param array  $extra Additional classes to be added to the class list.
 	 *
 	 * @return string Class list separated by spaces.
 	 */
