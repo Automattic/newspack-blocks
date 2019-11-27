@@ -8,14 +8,22 @@ class Newspack_Blocks {
 	 * Enqueue block scripts and styles for editor.
 	 */
 	public static function enqueue_block_editor_assets() {
+		$asset_path = NEWSPACK_BLOCKS__PLUGIN_DIR . NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.asset.php';
+		$asset      = file_exists( $asset_path )
+			? require $asset_path
+			: array(
+				'dependencies' => array(),
+				'version'      => '1.0',
+			);
+
 		$editor_script = plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.js', __FILE__ );
 		$editor_style  = plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.css', __FILE__ );
-		$dependencies  = self::dependencies_from_path( NEWSPACK_BLOCKS__PLUGIN_DIR . 'dist/editor.deps.json' );
+
 		wp_enqueue_script(
 			'newspack-blocks-editor',
 			$editor_script,
-			$dependencies,
-			NEWSPACK_BLOCKS__VERSION,
+			$asset['dependencies'],
+			$asset['version'],
 			true
 		);
 
@@ -108,13 +116,19 @@ class Newspack_Blocks {
 			return;
 		}
 		if ( file_exists( NEWSPACK_BLOCKS__PLUGIN_DIR . $script_path ) ) {
-			$dependencies = self::dependencies_from_path( NEWSPACK_BLOCKS__PLUGIN_DIR . "dist/{$type}/view.deps.json" );
+			$asset_path = NEWSPACK_BLOCKS__PLUGIN_DIR . "dist/{$type}/view.asset.php";
+			$asset      = file_exists( $asset_path )
+				? require $asset_path
+				: array(
+					'dependencies' => array(),
+					'version'      => '1.0',
+				);
 			wp_enqueue_script(
 				"newspack-blocks-{$type}",
 				plugins_url( $script_path, __FILE__ ),
-				$dependencies,
-				array(),
-				NEWSPACK_BLOCKS__VERSION
+				$asset['dependencies'],
+				$asset['version'],
+				true
 			);
 		}
 	}
