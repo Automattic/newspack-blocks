@@ -1,11 +1,17 @@
-//alert( "hello!");
+/**
+ * VIEW
+ * JavaScript used on front of site.
+ */
 
 /**
  * Style dependencies
  */
-
 import './view.scss';
 
+
+/**
+ * Load More Button Handling
+ */
 const loadMoreButton = document.getElementById( 'load-more-button' );
 const loadMoreButtonURLAttribute = 'data-load-more-url';
 const postsContainer = document.getElementById( 'posts-container');
