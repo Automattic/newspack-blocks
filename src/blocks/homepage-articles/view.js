@@ -16,12 +16,10 @@ import './view.scss';
 /**
  * Load More Button Handling
  */
-document
-	.querySelectorAll( '[data-load-more-btn]' )
-	.forEach( makeLoadMoreHandler )
+document.querySelectorAll( '[data-load-more-btn]' ).forEach( makeLoadMoreHandler );
 
 function makeLoadMoreHandler( btnEl ) {
-	if ( !btnEl ) {
+	if ( ! btnEl ) {
 		return null;
 	}
 
@@ -49,7 +47,7 @@ function makeLoadMoreHandler( btnEl ) {
 		isFetching = true;
 
 		apiFetch( { url: btnEl.getAttribute( btnURLAttr ) } )
-			.then( ( data ) => {
+			.then( data => {
 				renderPosts( postsContainerEl, data.items );
 
 				/**
@@ -69,38 +67,36 @@ function makeLoadMoreHandler( btnEl ) {
 
 				isFetching = false;
 			} )
-			.catch( ( error ) => {
-				// console.error( error );
-
-				hideEl( loadingEl )
+			.catch( error => {
+				hideEl( loadingEl );
 				showEl( errorEl );
 				showEl( btnEl );
 
 				isFetching = false;
 			} );
 	} );
-};
+}
 
 function renderPosts( targetEl, items ) {
-	if ( !targetEl || !items || items.length === 0 ) {
+	if ( ! targetEl || ! items || ! items.length ) {
 		return null;
 	}
 
-	const postsHTML = items.map( item => item.html || "" ).join( '' );
+	const postsHTML = items.map( item => item.html || '' ).join( '' );
 
 	return targetEl.insertAdjacentHTML( 'beforeend', postsHTML );
-};
+}
 
 function hideEl( el ) {
-	if ( !el ) {
+	if ( ! el ) {
 		return null;
 	}
 
 	return el.setAttribute( 'hidden', '' );
-};
+}
 
 function showEl( el ) {
-	if ( !el ) {
+	if ( ! el ) {
 		return null;
 	}
 
