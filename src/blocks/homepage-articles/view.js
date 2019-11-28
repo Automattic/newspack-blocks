@@ -16,88 +16,93 @@ import './view.scss';
 /**
  * Load More Button Handling
  */
-const page = document.getElementById( 'page' );
-const loadMoreBtnURLAttr = 'data-load-more-url';
-let isFetching = false;
-let isEndOfData = false;
+document
+	.querySelectorAll( '[data-load-more-btn]' )
+	.forEach( makeLoadMoreHandler )
 
-if ( page ) {
-	/**
-	 * Listen for clicks on the parent "page" element.
-	 */
-	page.addEventListener( 'click', handlePageClick );
-}
-
-function handlePageClick( event ) {
-	const isLoadMoreBtnClick = !!event.target.hasAttribute( loadMoreBtnURLAttr );
-
-	if ( isLoadMoreBtnClick ) {
-		handleLoadMoreBtnClick( event.target );
-	}
-}
-
-function handleLoadMoreBtnClick( loadMoreBtn ) {
-	if ( !loadMoreBtn || isFetching || isEndOfData ) {
-		return false;
+function makeLoadMoreHandler( btnEl ) {
+	if ( !btnEl ) {
+		return null;
 	}
 
-	/**
-	 * Set elements from scope determined by the clicked "Load more" button.
-	 */
-	const blockWrapper = loadMoreBtn.parentElement; // scope root element
-	const postsContainer = blockWrapper.querySelector( '[data-posts-container]' );
-	const loadMoreLoadingText = blockWrapper.querySelector( '[data-load-more-loading-text]' );
-	const loadMoreErrorText = blockWrapper.querySelector( '[data-load-more-error-text]' );
-	const loadMoreEODText = blockWrapper.querySelector( '[data-load-more-eod-text]' );
+	const btnURLAttr = 'data-load-more-url';
+	let isFetching = false;
+	let isEndOfData = false;
 
-	const loadMoreURL = loadMoreBtn.getAttribute( loadMoreBtnURLAttr );
+	btnEl.addEventListener( 'click', function() {
+		if ( isFetching || isEndOfData ) {
+			return false;
+		}
 
-	hideEl( loadMoreBtn );
-	hideEl( loadMoreErrorText );
-	showEl( loadMoreLoadingText );
+		/**
+		 * Set elements from scope determined by the clicked "Load more" button.
+		 */
+		const blockWrapperEl = btnEl.parentElement; // scope root element
+		const postsContainerEl = blockWrapperEl.querySelector( '[data-posts-container]' );
+		const loadingEl = blockWrapperEl.querySelector( '[data-load-more-loading-text]' );
+		const errorEl = blockWrapperEl.querySelector( '[data-load-more-error-text]' );
 
-	isFetching = true;
+		hideEl( btnEl );
+		hideEl( errorEl );
+		showEl( loadingEl );
 
-	apiFetch( { url: loadMoreURL } )
-		.then( ( data ) => {
-			renderPosts( postsContainer, data.items );
+		isFetching = true;
 
-			if ( data.next ) {
-				loadMoreBtn.setAttribute( loadMoreBtnURLAttr, data.next );
-				showEl( loadMoreBtn );
-			} else {
-				hideEl( loadMoreBtn );
-				showEl( loadMoreEODText );
+		apiFetch( { url: btnEl.getAttribute( btnURLAttr ) } )
+			.then( ( data ) => {
+				renderPosts( postsContainerEl, data.items );
 
-				isEndOfData = true;
-			}
+				/**
+				 * "next" field should be falsy if there's no more posts to load -
+				 * we're determining the button visibility based on that value.
+				 */
+				if ( data.next ) {
+					btnEl.setAttribute( btnURLAttr, data.next );
+					showEl( btnEl );
+				} else {
+					hideEl( btnEl );
 
-			hideEl( loadMoreLoadingText );
+					isEndOfData = true;
+				}
 
-			isFetching = false;
-		} )
-		.catch( ( error ) => {
-			console.error( error );
+				hideEl( loadingEl );
 
-			hideEl( loadMoreLoadingText )
-			showEl( loadMoreErrorText );
-			showEl( loadMoreBtn );
+				isFetching = false;
+			} )
+			.catch( ( error ) => {
+				// console.error( error );
 
-			isFetching = false;
-		} );
+				hideEl( loadingEl )
+				showEl( errorEl );
+				showEl( btnEl );
+
+				isFetching = false;
+			} );
+	} );
 };
 
 function renderPosts( targetEl, items ) {
-	const postsHTML = items.map( item => item.html ).join( '' );
+	if ( !targetEl || !items || items.length === 0 ) {
+		return null;
+	}
 
-	targetEl.insertAdjacentHTML( 'beforeend', postsHTML );
+	const postsHTML = items.map( item => item.html || "" ).join( '' );
+
+	return targetEl.insertAdjacentHTML( 'beforeend', postsHTML );
 };
 
 function hideEl( el ) {
-	console.log( el.outerHTML );
+	if ( !el ) {
+		return null;
+	}
+
 	return el.setAttribute( 'hidden', '' );
 };
 
 function showEl( el ) {
+	if ( !el ) {
+		return null;
+	}
+
 	return el.removeAttribute( 'hidden' );
 }
