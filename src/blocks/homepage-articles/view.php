@@ -136,9 +136,15 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			$has_more_pages = (++$page) <= $article_query->max_num_pages;
 
 			if ( ! Newspack_Blocks::is_amp() && $has_more_pages ) : ?>
-				<button type="button" data-load-more-btn data-load-more-url="<?php echo $articles_rest_url ?>"><?php _e( 'Load more articles' ); ?></button>
-				<p data-load-more-loading-text hidden><?php _e( 'Loading...' ); ?></p>
-				<p data-load-more-error-text hidden><?php _e( 'Something went wrong. Please refresh the page and/or try again.'); ?></p>
+				<button type="button" data-load-more-btn data-load-more-url="<?php echo esc_url( $articles_rest_url ) ?>">
+					<?php _e( 'Load more articles' ); ?>
+				</button>
+				<p data-load-more-loading-text hidden>
+					<?php _e( 'Loading...' ); ?>
+				</p>
+				<p data-load-more-error-text hidden>
+					<?php _e( 'Something went wrong. Please refresh the page and/or try again.'); ?>
+				</p>
 			<?php endif; ?>
 		</div>
 	<?php
