@@ -129,17 +129,18 @@ class Newspack_Blocks {
 	 * @param string $type The block's type.
 	 */
 	public static function enqueue_view_assets( $type ) {
-		$style_path = apply_filters(
+		$style_path = NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $type . '/view' . ( is_rtl() ? '.rtl' : '' ) . '.css';
+		$plugin_url = apply_filters(
 			'newspack_blocks_enqueue_view_assets',
-			NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $type . '/view' . ( is_rtl() ? '.rtl' : '' ) . '.css',
+			plugins_url( $style_path, __FILE__ ),
 			$type,
 			is_rtl()
 		);
 
-		if ( file_exists( NEWSPACK_BLOCKS__PLUGIN_DIR . $style_path ) ) {
+		if ( $plugin_url ) {
 			wp_enqueue_style(
 				"newspack-blocks-{$type}",
-				plugins_url( $style_path, __FILE__ ),
+				$plugin_url,
 				array(),
 				NEWSPACK_BLOCKS__VERSION
 			);
