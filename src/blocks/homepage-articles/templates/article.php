@@ -5,7 +5,7 @@
  * @global array $attributes Block attributes.
  */
 
-$authors = newspack_blocks_prepare_authors();
+$newspack_blocks_authors = Newspack_Blocks::prepare_authors();
 $styles = '';
 if ( 'behind' === $attributes['mediaPosition'] && $attributes['showImage'] && has_post_thumbnail() ) {
 	$styles = 'min-height: ' . $attributes['minHeight'] . 'vh; padding-top: ' . ( $attributes['minHeight'] / 5 ) . 'vh;';
@@ -71,11 +71,11 @@ if ( ! $category ) {
 				<?php
 				if ( $attributes['showAuthor'] ) :
 					if ( $attributes['showAvatar'] ) :
-						echo wp_kses_post( newspack_blocks_format_avatars( $authors ) );
+						echo wp_kses_post( newspack_blocks_format_avatars( $newspack_blocks_authors ) );
 					endif;
 					?>
 					<span class="byline">
-						<?php echo wp_kses_post( newspack_blocks_format_byline( $authors ) ); ?>
+						<?php echo wp_kses_post( newspack_blocks_format_byline( $newspack_blocks_authors ) ); ?>
 					</span><!-- .author-name -->
 					<?php
 				endif;

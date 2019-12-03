@@ -357,4 +357,41 @@ class Newspack_Blocks {
 		ob_end_clean();
 		return $contents;
 	}
+
+	/**
+	 * Prepare an array of authors, taking presence of CoAuthors Plus into account.
+	 *
+	 * @return array Array of WP_User objects.
+	 */
+	public static function prepare_authors() {
+		if ( function_exists( 'coauthors_posts_links' ) ) {
+			$authors = get_coauthors();
+			foreach ( $authors as $author ) {
+				// Check if this is a guest author post type.
+				if ( 'guest-author' === get_post_type( $author->ID ) ) {
+					// If yes, make sure the author actually has an avatar set; otherwise, coauthors_get_avatar returns a featured image.
+					if ( get_post_thumbnail_id( $author->ID ) ) {
+						$author->avatar = coauthors_get_avatar( $author, 48 );
+					} else {
+						// If there is no avatar, force it to return the current fallback image.
+						$author->avatar = get_avatar( ' ' );
+					}
+				} else {
+					$author->avatar = coauthors_get_avatar( $author, 48 );
+				}
+				$author->url = get_author_posts_url( $author->ID, $author->user_nicename );
+			}
+			return $authors;
+		}
+		$id = get_the_author_meta( 'ID' );
+		return array(
+			(object) array(
+				'ID'            => $id,
+				'avatar'        => get_avatar( $id, 48 ),
+				'url'           => get_author_posts_url( $id ),
+				'user_nicename' => get_the_author(),
+				'display_name'  => get_the_author_meta( 'display_name' ),
+			),
+		);
+	}
 }
