@@ -99,7 +99,7 @@ call_user_func(
 							$time_string = '<time class="entry-date published" datetime="%1$s">%2$s</time><time class="updated" datetime="%3$s">%4$s</time>';
 						endif;
 						printf(
-							esc_attr( $time_string ),
+							wp_kses_post( $time_string ),
 							esc_attr( get_the_date( DATE_W3C ) ),
 							esc_html( get_the_date() ),
 							esc_attr( get_the_modified_date( DATE_W3C ) ),
