@@ -169,17 +169,18 @@ class Newspack_Blocks {
 	 * @return string Class list separated by spaces.
 	 */
 	public static function block_classes( $type, $attributes = array(), $extra = array() ) {
-		$align   = isset( $attributes['align'] ) ? $attributes['align'] : 'center';
-		$classes = array(
-			"wp-block-newspack-blocks-{$type}",
-			"align{$align}",
-		);
+		$classes = [ "wp-block-newspack-blocks-{$type}" ];
+
+		if ( ! empty( $attributes['align'] ) ) {
+			$classes[] = 'align' . $attributes['align'];
+		}
 		if ( isset( $attributes['className'] ) ) {
 			array_push( $classes, $attributes['className'] );
 		}
 		if ( is_array( $extra ) && ! empty( $extra ) ) {
 			$classes = array_merge( $classes, $extra );
 		}
+
 		return implode( $classes, ' ' );
 	}
 
