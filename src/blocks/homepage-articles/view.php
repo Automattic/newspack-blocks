@@ -86,33 +86,11 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				* As a result we render the same standards-based markup for all requests.
 				*/
 				echo Newspack_Blocks::template_inc( __DIR__ . '/templates/articles-list.php', [
-					'article_query'     => $article_query,
-					'attributes'        => $attributes,
+					'article_query' => $article_query,
+					'attributes'    => $attributes,
 				] );
 				?>
 			</div>
-			<?php
-			/*
-			 * AMP-requests cannot contain client-side scripting (eg: JavaScript). As a result
-			 * we do not display the "More" button on AMP-requests. This feature is deliberately
-			 * disabled.
-			 *
-			 * @see https://github.com/Automattic/newspack-blocks/pull/226#issuecomment-558695909
-			 * @see https://wp.me/paYJgx-jW
-			 */
-			$page = $article_query->paged ?? 1;
-			$has_more_pages = (++$page) <= $article_query->max_num_pages;
-			if ( ! Newspack_Blocks::is_amp() && $has_more_pages ) : ?>
-				<button type="button" data-load-more-btn data-load-more-url="<?php echo esc_url( $articles_rest_url ) ?>">
-					<?php _e( 'Load more articles' ); ?>
-				</button>
-				<p data-load-more-loading-text hidden>
-					<?php _e( 'Loading...' ); ?>
-				</p>
-				<p data-load-more-error-text hidden>
-					<?php _e( 'Something went wrong. Please refresh the page and/or try again.'); ?>
-				</p>
-			<?php endif; ?>
 		</div>
 	<?php
 	endif;

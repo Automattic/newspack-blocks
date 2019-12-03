@@ -89,7 +89,7 @@ call_user_func(
 						endif;
 						?>
 						<span class="byline">
-							<?php echo wp_kses_post( newspack_blocks_format_byline( $newspack_blocks_authors ) ); ?>
+							<?php echo wp_kses_post( newspack_blocks_format_byline( $authors ) ); ?>
 						</span><!-- .author-name -->
 						<?php
 					endif;
