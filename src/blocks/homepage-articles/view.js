@@ -66,6 +66,10 @@ function buildLoadMoreHandler( btnEl ) {
 
 		apiFetch( { url: btnEl.getAttribute( btnURLAttr ) } )
 			.then( data => {
+				if ( ! isDataValid( data ) ) {
+					throw new Error( 'Invalid response data' );
+				}
+
 				renderPosts( postsContainerEl, data.items );
 
 				/**
@@ -85,7 +89,7 @@ function buildLoadMoreHandler( btnEl ) {
 
 				isFetching = false;
 			} )
-			.catch( error => {
+			.catch( () => {
 				hideEl( loadingEl );
 				showEl( errorEl );
 				showEl( btnEl );
@@ -93,30 +97,103 @@ function buildLoadMoreHandler( btnEl ) {
 				isFetching = false;
 			} );
 	};
-}
 
-function renderPosts( targetEl, items ) {
-	if ( ! targetEl || ! items || ! items.length ) {
-		return null;
+  /**
+	 * Validates the posts endpoint schema:
+	 * {
+	 * 	"type": "object",
+	 * 	"properties": {
+	 * 		"items": {
+	 * 			"type": "array",
+	 * 			"items": {
+	 * 				"type": "object",
+	 * 				"properties": {
+	 * 					"html": {
+	 * 						"type": "string"
+	 * 					}
+	 * 				},
+	 * 				"required": ["html"]
+	 * 			},
+	 * 			"required": ["items"]
+	 * 		},
+	 * 		"next": {
+	 * 			"type": ["string", "null"]
+	 * 		}
+	 * 	},
+	 * 	"required": ["items", "next"]
+	 * }
+	 *
+	 * @param {Object} data posts endpoint payload
+	 */
+	function isDataValid( data ) {
+		if (
+			data &&
+			hasOwnProp( data, 'items' ) &&
+			hasOwnProp( data, 'next' ) &&
+			Array.isArray( data.items ) &&
+			data.items.length &&
+			hasOwnProp( data.items[ 0 ], 'html' ) &&
+			typeof data.items[ 0 ].html === 'string'
+		) {
+			return true;
+		}
+
+		return false;
 	}
 
-	const postsHTML = items.map( item => item.html || '' ).join( '' );
+	/**
+	 * Renders posts' HTML string into target element.
+	 *
+	 * @param {DOMElement} targetEl
+   * @param {Array.<{html: String}>} items
+	 */
+	function renderPosts( targetEl, items ) {
+		if ( ! targetEl || ! items || ! items.length ) {
+			return null;
+		}
 
-	return targetEl.insertAdjacentHTML( 'beforeend', postsHTML );
-}
+		const postsHTML = items.map( item => item.html || '' ).join( '' );
 
-function hideEl( el ) {
-	if ( ! el ) {
-		return null;
+		return targetEl.insertAdjacentHTML( 'beforeend', postsHTML );
 	}
 
-	return el.setAttribute( 'hidden', '' );
-}
+	/**
+	 * Adds the 'hidden' attribute to given DOM element.
+	 *
+	 * @param {DOMElement} el
+	 */
+	function hideEl( el ) {
+		if ( ! el ) {
+			return null;
+		}
 
-function showEl( el ) {
-	if ( ! el ) {
-		return null;
+		return el.setAttribute( 'hidden', '' );
 	}
 
-	return el.removeAttribute( 'hidden' );
+	/**
+	 * Removes the 'hidden' attribute from given DOM element.
+	 *
+	 * @param {DOMElement} el
+	 */
+	function showEl( el ) {
+		if ( ! el ) {
+			return null;
+		}
+
+		return el.removeAttribute( 'hidden' );
+	}
+}
+
+/**
+ * Checks if object has own property.
+ *
+ * @param {Object} obj
+ * @param {String} prop
+ */
+function hasOwnProp( obj, prop ) {
+	if ( ! obj || ! prop ) {
+		return false;
+	}
+
+	return Object.prototype.hasOwnProperty.call( obj, prop );
 }
