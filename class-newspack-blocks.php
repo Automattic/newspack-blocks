@@ -346,11 +346,6 @@ class Newspack_Blocks {
 		if ( ! is_file( $template ) ) {
 			return '';
 		}
-		// Optionally provided an assoc array of data to pass to template
-		// and it will be extracted into variables
-		if ( is_array( $data ) ) {
-			extract( $data );
-		}
 		ob_start();
 		include $template;
 		$contents = ob_get_contents();
