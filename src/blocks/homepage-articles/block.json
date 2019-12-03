@@ -1,5 +1,5 @@
 {
-  "name": "homepage-articles",
+  "name": "newspack-blocks/homepage-articles",
   "category": "newspack",
   "attributes": {
     "className": {
