@@ -65,7 +65,7 @@
     "authors": {
       "type": "array",
       "default": [],
-       "items": { "type": "integer" }
+      "items": { "type": "integer" }
     },
     "categories": {
       "type": "array",
@@ -75,11 +75,12 @@
     "tags": {
       "type": "array",
       "default": [],
-       "items": { "type": "integer" }
+      "items": { "type": "integer" }
     },
     "specificPosts": {
       "type": "array",
-      "default": []
+      "default": [],
+      "items": { "type": "integer" }
     },
     "typeScale": {
       "type": "integer",
