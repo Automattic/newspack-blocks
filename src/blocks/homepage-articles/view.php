@@ -210,7 +210,7 @@ function newspack_blocks_register_homepage_articles() {
 	);
 
 	register_block_type(
-		apply_filters( 'newspack_blocks_block_name', $block['name'] ),
+		apply_filters( 'newspack_blocks_block_name', 'newspack-blocks/' . $block['name'] ),
 		apply_filters(
 			'newspack_blocks_block_args',
 			[
