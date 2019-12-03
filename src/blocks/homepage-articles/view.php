@@ -70,15 +70,14 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	if ( $article_query->have_posts() ) :
 		?>
 		<div>
-
-			<?php if ( '' !== $attributes['sectionHeader'] ) : ?>
-				<h2 class="article-section-title">
-					<span><?php echo wp_kses_post( $attributes['sectionHeader'] ); ?></span>
-				</h2>
-			<?php
-			endif;
-			?>
 			<div data-posts-container class="<?php echo esc_attr( $classes ); ?>" style="<?php echo esc_attr( $styles ); ?>">
+				<?php if ( '' !== $attributes['sectionHeader'] ) : ?>
+					<h2 class="article-section-title">
+						<span><?php echo wp_kses_post( $attributes['sectionHeader'] ); ?></span>
+					</h2>
+					<?php
+				endif;
+				?>
 				<?php
 				/*
 				* We are not using an AMP-based renderer on AMP requests because it has limitations
