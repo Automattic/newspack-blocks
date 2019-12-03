@@ -50,138 +50,148 @@ function buildLoadMoreHandler( btnEl ) {
 	const loadingEl = blockWrapperEl.querySelector( '[data-load-more-loading-text]' );
 	const errorEl = blockWrapperEl.querySelector( '[data-load-more-error-text]' );
 
+	/**
+	 * Set initial state flags
+	 */
 	let isFetching = false;
 	let isEndOfData = false;
 
 	return () => {
+		/**
+		 * Early return if still fetching or no more posts to render.
+		 */
 		if ( isFetching || isEndOfData ) {
 			return false;
 		}
 
+		isFetching = true;
+
+		/**
+		 * Set elements visibility for fetching state.
+		 */
 		hideEl( btnEl );
 		hideEl( errorEl );
 		showEl( loadingEl );
 
-		isFetching = true;
-
 		apiFetch( { url: btnEl.getAttribute( btnURLAttr ) } )
 			.then( data => {
-				if ( ! isDataValid( data ) ) {
+				/**
+				 * Validate received data
+				 */
+				if ( ! isPostsDataValid( data ) ) {
 					throw new Error( 'Invalid response data' );
 				}
 
-				renderPosts( postsContainerEl, data.items );
+				renderPosts( data.items );
 
 				/**
-				 * "next" field should be falsy if there's no more posts to load -
+				 * "next" field should be falsy if there are no more posts to load -
 				 * we're determining the button visibility based on that value.
 				 */
 				if ( data.next ) {
+					/**
+					 * Save next URL as button's attribute.
+					 */
 					btnEl.setAttribute( btnURLAttr, data.next );
+
 					showEl( btnEl );
 				} else {
-					hideEl( btnEl );
-
 					isEndOfData = true;
+
+					/**
+					 * Hide button if no more data is available.
+					 */
+					hideEl( btnEl );
 				}
 
-				hideEl( loadingEl );
-
 				isFetching = false;
+
+				hideEl( loadingEl );
 			} )
 			.catch( () => {
+				isFetching = false;
+
+				/**
+				 * Display error message and keep the button visible to enable retrying.
+				 */
 				hideEl( loadingEl );
 				showEl( errorEl );
 				showEl( btnEl );
-
-				isFetching = false;
 			} );
 	};
 
-  /**
-	 * Validates the posts endpoint schema:
-	 * {
-	 * 	"type": "object",
-	 * 	"properties": {
-	 * 		"items": {
-	 * 			"type": "array",
-	 * 			"items": {
-	 * 				"type": "object",
-	 * 				"properties": {
-	 * 					"html": {
-	 * 						"type": "string"
-	 * 					}
-	 * 				},
-	 * 				"required": ["html"]
-	 * 			},
-	 * 			"required": ["items"]
-	 * 		},
-	 * 		"next": {
-	 * 			"type": ["string", "null"]
-	 * 		}
-	 * 	},
-	 * 	"required": ["items", "next"]
-	 * }
-	 *
-	 * @param {Object} data posts endpoint payload
-	 */
-	function isDataValid( data ) {
-		if (
-			data &&
-			hasOwnProp( data, 'items' ) &&
-			hasOwnProp( data, 'next' ) &&
-			Array.isArray( data.items ) &&
-			data.items.length &&
-			hasOwnProp( data.items[ 0 ], 'html' ) &&
-			typeof data.items[ 0 ].html === 'string'
-		) {
-			return true;
-		}
-
-		return false;
-	}
-
 	/**
-	 * Renders posts' HTML string into target element.
+	 * Concatenates & renders posts' HTML string into dedicated container.
 	 *
 	 * @param {DOMElement} targetEl
-   * @param {Array.<{html: String}>} items
+	 * @param {Array.<{html: String}>} items
 	 */
-	function renderPosts( targetEl, items ) {
-		if ( ! targetEl || ! items || ! items.length ) {
-			return null;
-		}
-
+	function renderPosts( items ) {
 		const postsHTML = items.map( item => item.html || '' ).join( '' );
 
-		return targetEl.insertAdjacentHTML( 'beforeend', postsHTML );
+		return postsContainerEl.insertAdjacentHTML( 'beforeend', postsHTML );
+	}
+}
+
+/**
+ * Validates the "Load more" posts endpoint schema:
+ * {
+ * 	"type": "object",
+ * 	"properties": {
+ * 		"items": {
+ * 			"type": "array",
+ * 			"items": {
+ * 				"type": "object",
+ * 				"properties": {
+ * 					"html": {
+ * 						"type": "string"
+ * 					}
+ * 				},
+ * 				"required": ["html"]
+ * 			},
+ * 			"required": ["items"]
+ * 		},
+ * 		"next": {
+ * 			"type": ["string", "null"]
+ * 		}
+ * 	},
+ * 	"required": ["items", "next"]
+ * }
+ *
+ * @param {Object} data posts endpoint payload
+ */
+function isPostsDataValid( data ) {
+	if (
+		data &&
+		hasOwnProp( data, 'items' ) &&
+		hasOwnProp( data, 'next' ) &&
+		Array.isArray( data.items ) &&
+		data.items.length &&
+		hasOwnProp( data.items[ 0 ], 'html' ) &&
+		typeof data.items[ 0 ].html === 'string'
+	) {
+		return true;
 	}
 
-	/**
-	 * Adds the 'hidden' attribute to given DOM element.
-	 *
-	 * @param {DOMElement} el
-	 */
-	function hideEl( el ) {
-		if ( ! el ) {
-			return null;
-		}
+	return false;
+}
 
-		return el.setAttribute( 'hidden', '' );
-	}
+/**
+ * Adds the 'hidden' attribute to given DOM element.
+ *
+ * @param {DOMElement} el
+ */
+function hideEl( el ) {
+	return el.setAttribute( 'hidden', '' );
+}
 
-	/**
-	 * Removes the 'hidden' attribute from given DOM element.
-	 *
-	 * @param {DOMElement} el
-	 */
-	function showEl( el ) {
-		if ( ! el ) {
-			return null;
-		}
-
-		return el.removeAttribute( 'hidden' );
-	}
+/**
+ * Removes the 'hidden' attribute from given DOM element.
+ *
+ * @param {DOMElement} el
+ */
+function showEl( el ) {
+	return el.removeAttribute( 'hidden' );
 }
 
 /**
@@ -191,9 +201,5 @@ function buildLoadMoreHandler( btnEl ) {
  * @param {String} prop
  */
 function hasOwnProp( obj, prop ) {
-	if ( ! obj || ! prop ) {
-		return false;
-	}
-
 	return Object.prototype.hasOwnProperty.call( obj, prop );
 }
