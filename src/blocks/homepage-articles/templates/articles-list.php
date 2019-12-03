@@ -9,13 +9,11 @@
 
 call_user_func(
 	function( $data ) {
-		echo wp_kses_post(
-			Newspack_Blocks::template_inc(
-				__DIR__ . '/articles-loop.php',
-				array(
-					'attributes'    => $data['attributes'],
-					'article_query' => $data['article_query'],
-				)
+		echo Newspack_Blocks::template_inc( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			__DIR__ . '/articles-loop.php',
+			array(
+				'attributes'    => $data['attributes'],
+				'article_query' => $data['article_query'],
 			)
 		);
 	},

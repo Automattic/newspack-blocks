@@ -21,7 +21,7 @@ call_user_func(
 			}
 			$newspack_blocks_post_id[ get_the_ID() ] = true;
 			$post_counter++;
-			echo wp_kses_post( Newspack_Blocks::template_inc( __DIR__ . '/article.php', array( 'attributes' => $attributes ) ) );
+			echo Newspack_Blocks::template_inc( __DIR__ . '/article.php', array( 'attributes' => $attributes ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 		wp_reset_postdata();
 	},
