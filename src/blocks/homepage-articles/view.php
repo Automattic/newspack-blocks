@@ -4,18 +4,16 @@
  */
 
 /**
- * Renders the `newspack-blocks/author-bio` block on server.
+ * Renders the `newspack-blocks/homepage-posts` block on server.
  *
  * @param array $attributes The block attributes.
  *
  * @return string Returns the post content with latest posts added.
  */
 function newspack_blocks_render_block_homepage_articles( $attributes ) {
-	$posts_to_show = intval( $attributes['postsToShow'] );
-
 	$article_query = new WP_Query( Newspack_Blocks::build_articles_query( $attributes ) );
 
-	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes, [ 'wpnbha' ] );
+	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes, [ 'wpnbha' ] ); // phpcs:ignore PHPCompatibility.Syntax.NewShortArray.Found
 
 	if ( isset( $attributes['postLayout'] ) && 'grid' === $attributes['postLayout'] ) {
 		$classes .= ' is-grid';
@@ -65,30 +63,28 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 	ob_start();
 
-	if ( $article_query->have_posts() ) :
-		?>
+	if ( $article_query->have_posts() ) : ?>
 		<div>
-
-			<?php if ( '' !== $attributes['sectionHeader'] ) : ?>
-				<h2 class="article-section-title">
-					<span><?php echo wp_kses_post( $attributes['sectionHeader'] ); ?></span>
-				</h2>
-			<?php
-			endif;
-
-			?>
 			<div data-posts-container class="<?php echo esc_attr( $classes ); ?>" style="<?php echo esc_attr( $styles ); ?>">
+				<?php if ( '' !== $attributes['sectionHeader'] ) : ?>
+					<h2 class="article-section-title">
+						<span><?php echo wp_kses_post( $attributes['sectionHeader'] ); ?></span>
+					</h2>
+				<?php endif; ?>
 				<?php
 				/*
 				* We are not using an AMP-based renderer on AMP requests because it has limitations
 				* around dynamically calculating the height of the the article list on load.
 				* As a result we render the same standards-based markup for all requests.
 				*/
-				echo newspack_blocks_template_inc( __DIR__ . '/articles-list.php', [
-					'articles_rest_url' => $articles_rest_url,
-					'article_query'     => $article_query,
-					'attributes'        => $attributes,
-				] );
+				echo Newspack_Blocks::template_inc(
+					__DIR__ . '/templates/articles-list.php',
+					[ // phpcs:ignore PHPCompatibility.Syntax.NewShortArray.Found
+						'articles_rest_url' => $articles_rest_url,
+						'article_query'     => $article_query,
+						'attributes'        => $attributes,
+					] // phpcs:ignore PHPCompatibility.Syntax.NewShortArray.Found
+				);
 				?>
 			</div>
 			<?php
@@ -101,20 +97,21 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			 * @see https://github.com/Automattic/newspack-blocks/pull/226#issuecomment-558695909
 			 * @see https://wp.me/paYJgx-jW
 			 */
-			$page = $article_query->paged ?? 1;
+			$page = $article_query->paged ?? 1; // phpcs:ignore PHPCompatibility.Operators.NewOperators.t_coalesceFound
 			$has_more_pages = (++$page) <= $article_query->max_num_pages;
 
 			if ( ! Newspack_Blocks::is_amp() && $has_more_pages ) : ?>
 				<button type="button" data-load-more-btn data-load-more-url="<?php echo esc_url( $articles_rest_url ) ?>">
-					<?php _e( 'Load more articles' ); ?>
+					<?php _e( 'Load more articles', 'newspack-blocks' ); ?>
 				</button>
 				<p data-load-more-loading-text hidden>
-					<?php _e( 'Loading...' ); ?>
+					<?php _e( 'Loading...', 'newspack-blocks' ); ?>
 				</p>
 				<p data-load-more-error-text hidden>
-					<?php _e( 'Something went wrong. Please refresh the page and/or try again.'); ?>
+					<?php _e( 'Something went wrong. Please refresh the page and/or try again.', 'newspack-blocks' ); ?>
 				</p>
 			<?php endif; ?>
+
 		</div>
 	<?php
 	endif;
@@ -123,50 +120,6 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	Newspack_Blocks::enqueue_view_assets( 'homepage-articles' );
 
 	return $content;
-}
-
-/**
- * Builds and returns query args based on block attributes.
- *
- * @param array $attributes
- *
- * @return array
- */
-function newspack_build_articles_query( $attributes ) {
-	global $newspack_blocks_post_id;
-
-	if ( ! $newspack_blocks_post_id ) {
-		$newspack_blocks_post_id = [];
-	}
-	$authors        = $attributes['authors'] ?? [];
-	$categories     = $attributes['categories'] ?? [];
-	$tags           = $attributes['tags'] ?? [];
-	$specific_posts = $attributes['specificPosts'] ?? [];
-	$posts_to_show  = intval( $attributes['postsToShow'] ?? 3 );
-	$specific_mode  = intval( $attributes['specificMode'] ?? 0 );
-	$args           = [
-		'post_status'         => 'publish',
-		'suppress_filters'    => false,
-		'ignore_sticky_posts' => true,
-	];
-	if ( $specific_mode && $specific_posts ) {
-		$args['post__in'] = $specific_posts;
-		$args['orderby']  = 'post__in';
-	} else {
-		$args['posts_per_page'] = $posts_to_show + count( $newspack_blocks_post_id );
-
-		if ( $authors ) {
-			$args['author__in'] = $authors;
-		}
-		if ( $categories ) {
-			$args['category__in'] = $categories;
-		}
-		if ( $tags ) {
-			$args['tag__in'] = $tags;
-		}
-	}
-
-	return $args;
 }
 
 /**
@@ -191,49 +144,8 @@ function newspack_blocks_register_homepage_articles() {
 }
 add_action( 'init', 'newspack_blocks_register_homepage_articles' );
 
-/**
-<<<<<<< HEAD
-=======
- * Prepare an array of authors, taking presence of CoAuthors Plus into account.
- *
- * @return array Array of WP_User objects.
- */
-function newspack_blocks_prepare_authors() {
-	if ( function_exists( 'coauthors_posts_links' ) ) {
-		$authors = get_coauthors();
-		foreach ( $authors as $author ) {
-			// Check if this is a guest author post type.
-			if ( 'guest-author' === get_post_type( $author->ID ) ) {
-				// If yes, make sure the author actually has an avatar set; otherwise, coauthors_get_avatar returns a featured image.
-				if ( get_post_thumbnail_id( $author->ID ) ) {
-					$author->avatar = coauthors_get_avatar( $author, 48 );
-				} else {
-					// If there is no avatar, force it to return the current fallback image.
-					$author->avatar = get_avatar( ' ' );
-				}
-			} else {
-				$author->avatar = coauthors_get_avatar( $author, 48 );
-			}
-			$author->url = get_author_posts_url( $author->ID, $author->user_nicename );
-		}
-
-		return $authors;
-	}
-	$id = get_the_author_meta( 'ID' );
-
-	return [
-		(object) [
-			'ID'            => $id,
-			'avatar'        => get_avatar( $id, 48 ),
-			'url'           => get_author_posts_url( $id ),
-			'user_nicename' => get_the_author(),
-			'display_name'  => get_the_author_meta( 'display_name' ),
-		],
-	];
-}
 
 /**
->>>>>>> phpcs spacing
  * Renders author avatar markup.
  *
  * @param array $author_info Author info array.
@@ -261,9 +173,9 @@ function newspack_blocks_format_avatars( $author_info ) {
 function newspack_blocks_format_byline( $author_info ) {
 	$index    = -1;
 	$elements = array_merge(
-		[
+		[ // phpcs:ignore PHPCompatibility.Syntax.NewShortArray.Found
 			esc_html_x( 'by', 'post author', 'newspack-blocks' ) . ' ',
-		],
+		], // phpcs:ignore PHPCompatibility.Syntax.NewShortArray.Found
 		array_reduce(
 			$author_info,
 			function ( $accumulator, $author ) use ( $author_info, &$index ) {
@@ -272,7 +184,7 @@ function newspack_blocks_format_byline( $author_info ) {
 
 				return array_merge(
 					$accumulator,
-					[
+					[ // phpcs:ignore PHPCompatibility.Syntax.NewShortArray.Found
 						sprintf(
 							/* translators: 1: author link. 2: author name. 3. variable seperator (comma, 'and', or empty) */
 							'<span class="author vcard"><a class="url fn n" href="%1$s">%2$s</a></span>',
@@ -281,10 +193,10 @@ function newspack_blocks_format_byline( $author_info ) {
 						),
 						( $index < $penultimate ) ? ', ' : '',
 						( count( $author_info ) > 1 && $penultimate === $index ) ? esc_html_x( ' and ', 'post author', 'newspack-blocks' ) : '',
-					]
+					] // phpcs:ignore PHPCompatibility.Syntax.NewShortArray.Found
 				);
 			},
-			[]
+			[] // phpcs:ignore PHPCompatibility.Syntax.NewShortArray.Found
 		)
 	);
 
