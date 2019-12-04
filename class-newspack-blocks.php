@@ -390,4 +390,31 @@ class Newspack_Blocks {
 			),
 		);
 	}
+
+	/**
+	 * Generate Homepage Articles endpoint URL from attributes and page number.
+	 *
+	 * @param $attributes Array of block attributes.
+	 * @param $page Page number.
+	 * @return string The endpoint URL.
+	 */
+	public static function generate_homepage_articles_endpoint_url( $attributes, $page ) {
+		$block = json_decode(
+			file_get_contents( __DIR__ . '/src/blocks/homepage-articles/block.json' ), // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+			true
+		);
+		$schema = $block['attributes'];
+		foreach ( $attributes as $key => $value ) {
+			if ( ! $value && $schema[ $key ]['type'] === 'boolean' ) {
+				$attributes[ $key ] = '0';
+			}
+		}
+		return add_query_arg(
+			array_merge(
+				$attributes,
+				array( "page" => $page )
+			),
+			rest_url( '/newspack-blocks/v1/articles' )
+		);
+	}
 }
