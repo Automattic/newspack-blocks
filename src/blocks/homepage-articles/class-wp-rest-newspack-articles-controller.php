@@ -59,7 +59,7 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 			wp_list_pluck( $this->get_attribute_schema(), 'default' )
 		);
 
-		$article_query_args = newspack_build_articles_query( $attributes );
+		$article_query_args = Newspack_Blocks::build_articles_query( $attributes );
 
 		// Append custom pagination arg for REST API endpoint.
 		$article_query_args['paged'] = $page;
@@ -74,9 +74,8 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 		// The Loop.
 		while ( $article_query->have_posts() ) {
 			$article_query->the_post();
-
-			$items[]['html'] = newspack_blocks_template_inc(
-				__DIR__ . '/article.php',
+			$items[]['html'] = Newspack_Blocks::template_inc(
+				__DIR__ . '/templates/article.php',
 				[
 					'attributes' => $attributes,
 				]
