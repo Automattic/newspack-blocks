@@ -21,7 +21,7 @@ const btnURLAttr = 'data-load-more-url';
 document.querySelectorAll( '[data-load-more-btn]' ).forEach( attachLoadMoreHandler );
 
 /**
- * Attaches an event handler to the Load more button
+ * Attaches an event handler to the Load more button.
  * @param {DOMElement} btnEl the button that was clicked
  */
 function attachLoadMoreHandler( btnEl ) {
@@ -51,7 +51,7 @@ function buildLoadMoreHandler( btnEl ) {
 	const errorEl = blockWrapperEl.querySelector( '[data-load-more-error-text]' );
 
 	/**
-	 * Set initial state flags
+	 * Set initial state flags.
 	 */
 	let isFetching = false;
 	let isEndOfData = false;
@@ -76,13 +76,17 @@ function buildLoadMoreHandler( btnEl ) {
 		apiFetch( { url: btnEl.getAttribute( btnURLAttr ) } )
 			.then( data => {
 				/**
-				 * Validate received data
+				 * Validate received data.
 				 */
 				if ( ! isPostsDataValid( data ) ) {
 					throw new Error( 'Invalid response data' );
 				}
 
-				renderPosts( data.items );
+				/**
+				 * Render posts' HTML from string.
+				 */
+				const postsHTML = data.items.map( item => item.html ).join( '' );
+				postsContainerEl.insertAdjacentHTML( 'beforeend', postsHTML );
 
 				/**
 				 * "next" field should be falsy if there are no more posts to load -
@@ -119,18 +123,6 @@ function buildLoadMoreHandler( btnEl ) {
 				showEl( btnEl );
 			} );
 	};
-
-	/**
-	 * Concatenates & renders posts' HTML string into dedicated container.
-	 *
-	 * @param {DOMElement} targetEl
-	 * @param {Array.<{html: String}>} items
-	 */
-	function renderPosts( items ) {
-		const postsHTML = items.map( item => item.html || '' ).join( '' );
-
-		return postsContainerEl.insertAdjacentHTML( 'beforeend', postsHTML );
-	}
 }
 
 /**
