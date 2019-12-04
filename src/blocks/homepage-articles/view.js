@@ -14,6 +14,7 @@ import apiFetch from '@wordpress/api-fetch';
 import './view.scss';
 
 const btnURLAttr = 'data-load-more-url';
+const fetchRetryCount = 3;
 
 /**
  * Load More Button Handling
@@ -73,7 +74,7 @@ function buildLoadMoreHandler( btnEl ) {
 		hideEl( errorEl );
 		showEl( loadingEl );
 
-		apiFetch( { url: btnEl.getAttribute( btnURLAttr ) } )
+		apiFetchWithRetry( { url: btnEl.getAttribute( btnURLAttr ) }, fetchRetryCount )
 			.then( data => {
 				/**
 				 * Validate received data.
@@ -117,6 +118,23 @@ function buildLoadMoreHandler( btnEl ) {
 				showEl( btnEl );
 			} );
 	};
+}
+
+/**
+ * Wrapper for api-fetch that performs given number of retries when error
+ * occurs.
+ *
+ * @param {Object} options api-fetch options
+ * @param {Number} n retry count before throwing
+ */
+function apiFetchWithRetry( options, n ) {
+	return apiFetch( options ).catch( error => {
+		if ( n === 1 ) {
+			throw error;
+		}
+
+		return apiFetchWithRetry( options, n - 1 );
+	} );
 }
 
 /**
