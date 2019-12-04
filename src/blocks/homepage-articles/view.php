@@ -59,7 +59,13 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		$styles = 'color: ' . $attributes['customTextColor'] . ';';
 	}
 
-	$articles_rest_url = Newspack_Blocks::generate_homepage_articles_endpoint_url( $attributes, 2 );
+	$articles_rest_url = add_query_arg(
+		array_merge(
+			array_map( function( $attribute ) { return $attribute === false ? '0' : $attribute; }, $attributes ),
+			[ 'page' => 2 ] // phpcs:ignore PHPCompatibility.Syntax.NewShortArray.Found
+		),
+		rest_url( '/newspack-blocks/v1/articles' )
+	);
 
 	ob_start();
 

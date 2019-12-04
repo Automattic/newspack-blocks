@@ -83,7 +83,13 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 
 		// Provide next URL if there are more pages.
 		if ( $next_page <= $article_query->max_num_pages ) {
-			$next_url = Newspack_Blocks::generate_homepage_articles_endpoint_url( $attributes, $next_page );
+			$next_url = add_query_arg(
+				array_merge(
+					array_map( function( $attribute ) { return $attribute === false ? '0' : $attribute; }, $attributes ),
+					[ 'page' => $next_page ] // phpcs:ignore PHPCompatibility.Syntax.NewShortArray.Found
+				),
+				rest_url( '/newspack-blocks/v1/articles' )
+			);
 		}
 
 		return rest_ensure_response( [
