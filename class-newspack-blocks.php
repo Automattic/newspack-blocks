@@ -332,4 +332,62 @@ class Newspack_Blocks {
 		}
 		return $args;
 	}
+
+	/**
+	 * Loads a template with given data in scope.
+	 *
+	 * @param string $template full Path to the template to be included.
+	 * @param array  $data          Data to be passed into the template to be included.
+	 * @return string
+	 */
+	public static function template_inc( $template, $data = array() ) {
+		if ( ! strpos( $template, '.php' ) ) {
+			$template = $template . '.php';
+		}
+		if ( ! is_file( $template ) ) {
+			return '';
+		}
+		ob_start();
+		include $template;
+		$contents = ob_get_contents();
+		ob_end_clean();
+		return $contents;
+	}
+
+	/**
+	 * Prepare an array of authors, taking presence of CoAuthors Plus into account.
+	 *
+	 * @return array Array of WP_User objects.
+	 */
+	public static function prepare_authors() {
+		if ( function_exists( 'coauthors_posts_links' ) ) {
+			$authors = get_coauthors();
+			foreach ( $authors as $author ) {
+				// Check if this is a guest author post type.
+				if ( 'guest-author' === get_post_type( $author->ID ) ) {
+					// If yes, make sure the author actually has an avatar set; otherwise, coauthors_get_avatar returns a featured image.
+					if ( get_post_thumbnail_id( $author->ID ) ) {
+						$author->avatar = coauthors_get_avatar( $author, 48 );
+					} else {
+						// If there is no avatar, force it to return the current fallback image.
+						$author->avatar = get_avatar( ' ' );
+					}
+				} else {
+					$author->avatar = coauthors_get_avatar( $author, 48 );
+				}
+				$author->url = get_author_posts_url( $author->ID, $author->user_nicename );
+			}
+			return $authors;
+		}
+		$id = get_the_author_meta( 'ID' );
+		return array(
+			(object) array(
+				'ID'            => $id,
+				'avatar'        => get_avatar( $id, 48 ),
+				'url'           => get_author_posts_url( $id ),
+				'user_nicename' => get_the_author(),
+				'display_name'  => get_the_author_meta( 'display_name' ),
+			),
+		);
+	}
 }
