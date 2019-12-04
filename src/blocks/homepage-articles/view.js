@@ -88,24 +88,18 @@ function buildLoadMoreHandler( btnEl ) {
 				const postsHTML = data.items.map( item => item.html ).join( '' );
 				postsContainerEl.insertAdjacentHTML( 'beforeend', postsHTML );
 
-				/**
-				 * "next" field should be falsy if there are no more posts to load -
-				 * we're determining the button visibility based on that value.
-				 */
 				if ( data.next ) {
 					/**
 					 * Save next URL as button's attribute.
 					 */
 					btnEl.setAttribute( btnURLAttr, data.next );
 
+					/**
+					 * Unhide button since there are more posts available.
+					 */
 					showEl( btnEl );
 				} else {
 					isEndOfData = true;
-
-					/**
-					 * Hide button if no more data is available.
-					 */
-					hideEl( btnEl );
 				}
 
 				isFetching = false;
@@ -169,21 +163,23 @@ function isPostsDataValid( data ) {
 }
 
 /**
- * Adds the 'hidden' attribute to given DOM element.
+ * Hides given DOM element.
  *
  * @param {DOMElement} el
  */
 function hideEl( el ) {
-	return el.setAttribute( 'hidden', '' );
+	el.style.display = 'none';
+	el.setAttribute( 'hidden', '' );
 }
 
 /**
- * Removes the 'hidden' attribute from given DOM element.
+ * Unhides given DOM element.
  *
  * @param {DOMElement} el
  */
 function showEl( el ) {
-	return el.removeAttribute( 'hidden' );
+	el.style.display = '';
+	el.removeAttribute( 'hidden' );
 }
 
 /**
