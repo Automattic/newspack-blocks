@@ -1,6 +1,8 @@
 <?php
 /**
  * Server-side rendering of the `newspack-blocks/homepage-posts` block.
+ *
+ * @package WordPress
  */
 
 /**
@@ -13,7 +15,7 @@
 function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	$article_query = new WP_Query( Newspack_Blocks::build_articles_query( $attributes ) );
 
-	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes, [ 'wpnbha' ] ); // phpcs:ignore PHPCompatibility.Syntax.NewShortArray.Found
+	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes, [ 'wpnbha' ] );
 
 	if ( isset( $attributes['postLayout'] ) && 'grid' === $attributes['postLayout'] ) {
 		$classes .= ' is-grid';
@@ -61,8 +63,13 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 	$articles_rest_url = add_query_arg(
 		array_merge(
-			array_map( function( $attribute ) { return $attribute === false ? '0' : $attribute; }, $attributes ),
-			[ 'page' => 2 ] // phpcs:ignore PHPCompatibility.Syntax.NewShortArray.Found
+			array_map(
+				function( $attribute ) {
+					return false === $attribute ? '0' : $attribute;
+				},
+				$attributes
+			),
+			[ 'page' => 2 ]
 		),
 		rest_url( '/newspack-blocks/v1/articles' )
 	);
@@ -78,18 +85,20 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 					</h2>
 				<?php endif; ?>
 				<?php
+
 				/*
 				* We are not using an AMP-based renderer on AMP requests because it has limitations
 				* around dynamically calculating the height of the the article list on load.
 				* As a result we render the same standards-based markup for all requests.
 				*/
+
 				echo Newspack_Blocks::template_inc(
 					__DIR__ . '/templates/articles-list.php',
-					[ // phpcs:ignore PHPCompatibility.Syntax.NewShortArray.Found
+					[
 						'articles_rest_url' => $articles_rest_url,
 						'article_query'     => $article_query,
 						'attributes'        => $attributes,
-					] // phpcs:ignore PHPCompatibility.Syntax.NewShortArray.Found
+					]
 				);
 				?>
 			</div>
@@ -103,11 +112,12 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			 * @see https://github.com/Automattic/newspack-blocks/pull/226#issuecomment-558695909
 			 * @see https://wp.me/paYJgx-jW
 			 */
-			$page = $article_query->paged ?? 1; // phpcs:ignore PHPCompatibility.Operators.NewOperators.t_coalesceFound
-			$has_more_pages = (++$page) <= $article_query->max_num_pages;
+			$page = $article_query->paged ?? 1;
+
+			$has_more_pages = ( ++$page ) <= $article_query->max_num_pages;
 
 			if ( ! Newspack_Blocks::is_amp() && $has_more_pages ) : ?>
-				<button type="button" data-load-more-btn data-load-more-url="<?php echo esc_url( $articles_rest_url ) ?>">
+				<button type="button" data-load-more-btn data-load-more-url="<?php echo esc_url( $articles_rest_url ); ?>">
 					<?php _e( 'Load more articles', 'newspack-blocks' ); ?>
 				</button>
 				<p data-load-more-loading-text hidden>
@@ -119,7 +129,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			<?php endif; ?>
 
 		</div>
-	<?php
+		<?php
 	endif;
 
 	$content = ob_get_clean();
@@ -179,9 +189,9 @@ function newspack_blocks_format_avatars( $author_info ) {
 function newspack_blocks_format_byline( $author_info ) {
 	$index    = -1;
 	$elements = array_merge(
-		[ // phpcs:ignore PHPCompatibility.Syntax.NewShortArray.Found
+		[
 			esc_html_x( 'by', 'post author', 'newspack-blocks' ) . ' ',
-		], // phpcs:ignore PHPCompatibility.Syntax.NewShortArray.Found
+		],
 		array_reduce(
 			$author_info,
 			function ( $accumulator, $author ) use ( $author_info, &$index ) {
@@ -190,7 +200,7 @@ function newspack_blocks_format_byline( $author_info ) {
 
 				return array_merge(
 					$accumulator,
-					[ // phpcs:ignore PHPCompatibility.Syntax.NewShortArray.Found
+					[
 						sprintf(
 							/* translators: 1: author link. 2: author name. 3. variable seperator (comma, 'and', or empty) */
 							'<span class="author vcard"><a class="url fn n" href="%1$s">%2$s</a></span>',
@@ -199,10 +209,10 @@ function newspack_blocks_format_byline( $author_info ) {
 						),
 						( $index < $penultimate ) ? ', ' : '',
 						( count( $author_info ) > 1 && $penultimate === $index ) ? esc_html_x( ' and ', 'post author', 'newspack-blocks' ) : '',
-					] // phpcs:ignore PHPCompatibility.Syntax.NewShortArray.Found
+					]
 				);
 			},
-			[] // phpcs:ignore PHPCompatibility.Syntax.NewShortArray.Found
+			[]
 		)
 	);
 
