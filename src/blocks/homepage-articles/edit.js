@@ -296,7 +296,7 @@ class Edit extends Component {
 					) }
 					{ ! singleMode && (
 						<ToggleControl
-							label={ __( 'Show "More" Button' ) }
+							label={ __( 'Show "More" Button', 'newspack-blocks' ) }
 							checked={ moreButton }
 							onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
 							help={ __('Only available for non-AMP requests.', 'newspack-blocks') }
@@ -584,7 +584,7 @@ class Edit extends Component {
 
 				{ latestPosts && moreButton && (
 					<button className="button" type="button">
-						{ __( 'More…' ) }
+						{ __( 'More…', 'newspack-blocks' ) }
 					</button>
 				) }
 
