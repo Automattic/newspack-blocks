@@ -58,7 +58,6 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 			$request->get_params() ?? [],
 			wp_list_pluck( $this->get_attribute_schema(), 'default' )
 		);
-
 		$article_query_args = Newspack_Blocks::build_articles_query( $attributes );
 
 		// Append custom pagination arg for REST API endpoint.
@@ -85,8 +84,11 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 		// Provide next URL if there are more pages.
 		if ( $next_page <= $article_query->max_num_pages ) {
 			$next_url = add_query_arg(
-				array_merge( $attributes, [ 'page' => $next_page ] ),
-				rest_url( $this->namespace . '/' . $this->rest_base )
+				array_merge(
+					array_map( function( $attribute ) { return $attribute === false ? '0' : $attribute; }, $attributes ),
+					[ 'page' => $next_page ] // phpcs:ignore PHPCompatibility.Syntax.NewShortArray.Found
+				),
+				rest_url( '/newspack-blocks/v1/articles' )
 			);
 		}
 
