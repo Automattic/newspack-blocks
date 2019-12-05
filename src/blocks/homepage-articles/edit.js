@@ -237,7 +237,6 @@ class Edit extends Component {
 			specificMode,
 			tags,
 			url,
-			singleMode,
 		} = attributes;
 
 		const imageSizeOptions = [
@@ -294,7 +293,7 @@ class Edit extends Component {
 							required
 						/>
 					) }
-					{ ! singleMode && (
+					{ ! specificMode && (
 						<ToggleControl
 							label={ __( 'Show "More" Button', 'newspack-blocks' ) }
 							checked={ moreButton }
@@ -468,6 +467,7 @@ class Edit extends Component {
 			sectionHeader,
 			showCaption,
 			showCategory,
+			specificMode,
 		} = attributes;
 
 		const classes = classNames( className, {
@@ -582,7 +582,7 @@ class Edit extends Component {
 					{ latestPosts && latestPosts.map( post => this.renderPost( post ) ) }
 				</div>
 
-				{ latestPosts && moreButton && (
+				{ ! specificMode && latestPosts && moreButton && (
 					<button className="button" type="button">
 						{ __( 'More…', 'newspack-blocks' ) }
 					</button>
