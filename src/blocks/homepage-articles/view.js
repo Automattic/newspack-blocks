@@ -126,9 +126,7 @@ function buildLoadMoreHandler( btnEl ) {
 function apiFetchWithRetry( options, n ) {
 	const xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = () => {
-
-		// Only run if the request is complete.
-		if ( xhr.readyState !== 4 ) {
+		if ( xhr.readyState !== 4 || n === 0 ) {
 			return;
 		}
 
