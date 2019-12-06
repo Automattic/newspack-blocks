@@ -94,11 +94,21 @@ function buildLoadMoreHandler( btnEl ) {
 			showEl( btnEl );
 		};
 
+		const requestURL = new URL( btnEl.getAttribute( btnURLAttr ) );
+		requestURL.searchParams.set( 'exclude_ids', getRenderedPostsIds() );
+
 		fetchWithRetry(
-			{ url: btnEl.getAttribute( btnURLAttr ), onSuccess, onError },
+			{ url: requestURL.toString(), onSuccess, onError },
 			fetchRetryCount
 		);
 	};
+}
+
+function getRenderedPostsIds() {
+	const postEls = document.querySelectorAll( 'article[data-post-id]' );
+	const postIds = Array.from( postEls ).map( el => el.getAttribute( 'data-post-id' ) );
+
+	return [ ...new Set( postIds ) ]; // returns unique IDs
 }
 
 /**
