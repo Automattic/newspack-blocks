@@ -4,11 +4,6 @@
  */
 
 /**
- * WordPress dependencies
- */
-import apiFetch from '@wordpress/api-fetch';
-
-/**
  * Style dependencies
  */
 import './view.scss';
@@ -75,15 +70,11 @@ function buildLoadMoreHandler( btnEl ) {
 		hideEl( errorEl );
 		showEl( loadingEl );
 
-		apiFetchWithRetry( { url: btnEl.getAttribute( btnURLAttr ) }, fetchRetryCount )
-			.then( data => {
-				/**
-				 * Validate received data.
-				 */
-				if ( ! isPostsDataValid( data ) ) {
-					throw new Error( 'Invalid response data' );
-				}
-
+		const onSuccess = ( data ) => {
+			/**
+			 * Validate received data.
+			 */
+			if ( isPostsDataValid( data ) ) {
 				/**
 				 * Render posts' HTML from string.
 				 */
@@ -107,35 +98,55 @@ function buildLoadMoreHandler( btnEl ) {
 				isFetching = false;
 
 				hideEl( loadingEl );
-			} )
-			.catch( () => {
-				isFetching = false;
+			}
+		};
 
-				/**
-				 * Display error message and keep the button visible to enable retrying.
-				 */
-				hideEl( loadingEl );
-				showEl( errorEl );
-				showEl( btnEl );
-			} );
+		const onError = () => {
+			isFetching = false;
+
+			/**
+			 * Display error message and keep the button visible to enable retrying.
+			 */
+			hideEl( loadingEl );
+			showEl( errorEl );
+			showEl( btnEl );
+		};
+
+		apiFetchWithRetry( { url: btnEl.getAttribute( btnURLAttr ), onSuccess, onError }, fetchRetryCount );
 	};
 }
 
 /**
- * Wrapper for api-fetch that performs given number of retries when error
+ * Wrapper for XMLHttpRequest that performs given number of retries when error
  * occurs.
  *
- * @param {Object} options api-fetch options
+ * @param {Object} options XMLHttpRequest options
  * @param {Number} n retry count before throwing
  */
 function apiFetchWithRetry( options, n ) {
-	return apiFetch( options ).catch( error => {
-		if ( n === 1 ) {
-			throw error;
+	const xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = () => {
+
+		// Only run if the request is complete.
+		if ( xhr.readyState !== 4 ) {
+			return;
 		}
 
-		return apiFetchWithRetry( options, n - 1 );
-	} );
+		// Process our return data.
+		if ( xhr.status >= 200 && xhr.status < 300 ) {
+			// What do when the request is successful
+			const data = JSON.parse( xhr.responseText );
+
+			options.onSuccess( data );
+			return;
+		}
+
+		options.onError();
+
+		apiFetchWithRetry( options, n -1 );
+	};
+	xhr.open( 'GET', options.url );
+	xhr.send();
 }
 
 /**
