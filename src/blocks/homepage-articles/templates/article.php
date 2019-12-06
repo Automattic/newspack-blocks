@@ -42,7 +42,7 @@ call_user_func(
 			}
 		}
 		?>
-	<article
+	<article data-post-id="<?php the_id(); ?>"
 		<?php if ( has_post_thumbnail() ) : ?>
 		class="post-has-image"
 		<?php endif; ?>
