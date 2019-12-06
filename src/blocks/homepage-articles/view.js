@@ -70,7 +70,7 @@ function buildLoadMoreHandler( btnEl ) {
 		hideEl( errorEl );
 		showEl( loadingEl );
 
-		const onSuccess = ( data ) => {
+		const onSuccess = data => {
 			/**
 			 * Validate received data.
 			 */
@@ -112,7 +112,10 @@ function buildLoadMoreHandler( btnEl ) {
 			showEl( btnEl );
 		};
 
-		apiFetchWithRetry( { url: btnEl.getAttribute( btnURLAttr ), onSuccess, onError }, fetchRetryCount );
+		apiFetchWithRetry(
+			{ url: btnEl.getAttribute( btnURLAttr ), onSuccess, onError },
+			fetchRetryCount
+		);
 	};
 }
 
@@ -141,7 +144,7 @@ function apiFetchWithRetry( options, n ) {
 
 		options.onError();
 
-		apiFetchWithRetry( options, n -1 );
+		apiFetchWithRetry( options, n - 1 );
 	};
 	xhr.open( 'GET', options.url );
 	xhr.send();
