@@ -81,12 +81,17 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 		// The Loop.
 		while ( $article_query->have_posts() ) {
 			$article_query->the_post();
-			$items[]['html'] = Newspack_Blocks::template_inc(
+			$html = Newspack_Blocks::template_inc(
 				__DIR__ . '/templates/article.php',
 				[
 					'attributes' => $attributes,
 				]
 			);
+
+			if ( $request->get_param( 'amp' ) ) {
+				$html = $this->generate_amp_partial( $html );
+			}
+			$items[]['html'] = $html;
 		}
 
 		// Provide next URL if there are more pages.
@@ -99,7 +104,10 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 						},
 						$attributes
 					),
-					[ 'page' => $next_page ] // phpcs:ignore PHPCompatibility.Syntax.NewShortArray.Found
+					[
+						'page' => $next_page,
+						'amp'  => $request->get_param( 'amp' ),
+					]
 				),
 				rest_url( '/newspack-blocks/v1/articles' )
 			);
@@ -139,5 +147,29 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 			);
 		}
 		return $this->attribute_schema;
+	}
+
+	/**
+	 * Use AMP Plugin functions to render markup as valid AMP.
+	 *
+	 * @param string $html Markup to convert to AMP.
+	 * @return string
+	 */
+	public function generate_amp_partial( $html ) {
+		$dom = AMP_DOM_Utils::get_dom_from_content( $html );
+
+		AMP_Content_Sanitizer::sanitize_document(
+			$dom,
+			amp_get_content_sanitizers(),
+			[
+				'use_document_element' => false,
+			]
+		);
+		foreach ( iterator_to_array( $dom->getElementsByTagName( 'noscript' ) ) as $noscript ) {
+			$noscript->parentNode->removeChild( $noscript ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar
+		}
+		$markup = AMP_DOM_Utils::get_content_from_dom( $dom );
+		$markup = preg_replace( '/<!--(.|\s)*?-->/', '', $markup );
+		return $markup;
 	}
 }
