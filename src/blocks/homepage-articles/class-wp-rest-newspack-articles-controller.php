@@ -165,11 +165,10 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 				'use_document_element' => false,
 			]
 		);
-		foreach ( iterator_to_array( $dom->getElementsByTagName( 'noscript' ) ) as $noscript ) {
-			$noscript->parentNode->removeChild( $noscript ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar
+		$xpath = new DOMXPath( $dom );
+		foreach ( iterator_to_array( $xpath->query( '//noscript | //comment()' ) ) as $node ) {
+			$node->parentNode->removeChild( $node ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar
 		}
-		$markup = AMP_DOM_Utils::get_content_from_dom( $dom );
-		$markup = preg_replace( '/<!--(.|\s)*?-->/', '', $markup );
-		return $markup;
+		return AMP_DOM_Utils::get_content_from_dom( $dom );
 	}
 }
