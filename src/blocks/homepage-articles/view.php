@@ -60,12 +60,11 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	if ( '' !== $attributes['customTextColor'] ) {
 		$styles = 'color: ' . $attributes['customTextColor'] . ';';
 	}
-
 	$articles_rest_url = add_query_arg(
 		array_merge(
 			array_map(
 				function( $attribute ) {
-					return false === $attribute ? '0' : $attribute;
+					return false === $attribute ? '0' : str_replace( '#', '%23', $attribute );
 				},
 				$attributes
 			),
