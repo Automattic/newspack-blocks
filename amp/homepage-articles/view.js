@@ -61,7 +61,6 @@ function buildLoadMoreHandler( btnEl ) {
 		showEl( loadingEl );
 
 		const onSuccess = data => {
-			console.log( data );
 			/**
 			 * Validate received data.
 			 */
