@@ -112,7 +112,7 @@ function buildLoadMoreHandler( btnEl ) {
 			showEl( btnEl );
 		};
 
-		apiFetchWithRetry(
+		fetchWithRetry(
 			{ url: btnEl.getAttribute( btnURLAttr ), onSuccess, onError },
 			fetchRetryCount
 		);
@@ -126,26 +126,39 @@ function buildLoadMoreHandler( btnEl ) {
  * @param {Object} options XMLHttpRequest options
  * @param {Number} n retry count before throwing
  */
-function apiFetchWithRetry( options, n ) {
+function fetchWithRetry( options, n ) {
 	const xhr = new XMLHttpRequest();
+
 	xhr.onreadystatechange = () => {
-		if ( xhr.readyState !== 4 || n === 0 ) {
+		/**
+		 * Return if the request is completed.
+		 */
+		if ( xhr.readyState !== 4 ) {
 			return;
 		}
 
-		// Process our return data.
+		/**
+		 * Call onSuccess with parsed JSON if the request is successful.
+		 */
 		if ( xhr.status >= 200 && xhr.status < 300 ) {
-			// What do when the request is successful
 			const data = JSON.parse( xhr.responseText );
 
-			options.onSuccess( data );
-			return;
+			return options.onSuccess( data );
 		}
 
-		options.onError();
+		/**
+		 * Call onError if the request has failed n + 1 times (or if n is undefined).
+		 */
+		if ( ! n ) {
+			return options.onError();
+		}
 
-		apiFetchWithRetry( options, n - 1 );
+		/**
+		 * Retry fetching if request has failed and n > 0.
+		 */
+		return fetchWithRetry( options, n - 1 );
 	};
+
 	xhr.open( 'GET', options.url );
 	xhr.send();
 }
