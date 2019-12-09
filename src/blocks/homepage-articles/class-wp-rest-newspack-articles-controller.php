@@ -1,6 +1,8 @@
 <?php
 /**
  * WP_REST_Newspack_Articles_Controller file.
+ *
+ * @package WordPress
  */
 
 /**
@@ -101,17 +103,24 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 		if ( $next_page <= $article_query->max_num_pages ) {
 			$next_url = add_query_arg(
 				array_merge(
-					array_map( function( $attribute ) { return $attribute === false ? '0' : $attribute; }, $attributes ),
+					array_map(
+						function( $attribute ) {
+							return false === $attribute ? '0' : $attribute;
+						},
+						$attributes
+					),
 					[ 'page' => $next_page ] // phpcs:ignore PHPCompatibility.Syntax.NewShortArray.Found
 				),
 				rest_url( '/newspack-blocks/v1/articles' )
 			);
 		}
 
-		return rest_ensure_response( [
-			'items' => $items,
-			'next'  => $next_url,
-		] );
+		return rest_ensure_response(
+			[
+				'items' => $items,
+				'next'  => $next_url,
+			]
+		);
 	}
 
 	/**
@@ -122,9 +131,10 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 	public function get_attribute_schema() {
 		if ( empty( $this->attribute_schema ) ) {
 			$block_json = json_decode(
-				file_get_contents( __DIR__ . '/block.json' ),
+				file_get_contents( __DIR__ . '/block.json' ), // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 				true
 			);
+
 			$this->attribute_schema = array_merge(
 				$block_json['attributes'],
 				[
