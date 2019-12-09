@@ -95,17 +95,25 @@ function buildLoadMoreHandler( btnEl ) {
 		};
 
 		const requestURL = new URL( btnEl.getAttribute( btnURLAttr ) );
+
+		/**
+		 * Set currenty rendered posts' IDs as a query param.
+		 * E.g. https://query-url?exclude_ids=1,2,3
+		 */
 		requestURL.searchParams.set( 'exclude_ids', getRenderedPostsIds().join( ',' ) );
 
 		fetchWithRetry( { url: requestURL.toString(), onSuccess, onError }, fetchRetryCount );
 	};
 }
 
+/**
+ * Returns unique IDs for posts that are currently in the DOM.
+ */
 function getRenderedPostsIds() {
 	const postEls = document.querySelectorAll( 'article[data-post-id]' );
 	const postIds = Array.from( postEls ).map( el => el.getAttribute( 'data-post-id' ) );
 
-	return [ ...new Set( postIds ) ]; // returns unique IDs
+	return [ ...new Set( postIds ) ]; // Make values unique with Set
 }
 
 /**
