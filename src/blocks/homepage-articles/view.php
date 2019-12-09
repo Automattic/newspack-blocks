@@ -91,7 +91,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 	if ( $article_query->have_posts() ) : ?>
 		<?php if ( Newspack_Blocks::is_amp() ) : ?>
-			<amp-script layout="container" src="https://newspack1.ngrok.io/wp-content/plugins/newspack-blocks/amp/homepage-articles/view.js">
+			<amp-script layout="container" src="<?php echo esc_url( plugins_url( '/newspack-blocks/amp/homepage-articles/view.js' ) ); ?>">
 		<?php endif; ?>
 		<div
 			class="<?php echo esc_attr( $classes ); ?>"
