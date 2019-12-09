@@ -33,7 +33,7 @@ function buildLoadMoreHandler( btnEl ) {
 	 * Set elements from scope determined by the clicked "Load more" button.
 	 */
 	const blockWrapperEl = btnEl.parentNode; // scope root element
-	const postsContainerEl = blockWrapperEl.querySelector( '[data-posts-container]' );
+	const postsContainerEl = document.querySelector( '[data-posts-container]' );
 	const loadingEl = blockWrapperEl.querySelector( '[data-load-more-loading-text]' );
 	const errorEl = blockWrapperEl.querySelector( '[data-load-more-error-text]' );
 
@@ -72,7 +72,7 @@ function buildLoadMoreHandler( btnEl ) {
 				const postsHTML = data.items.map( item => item.html ).join( '' );
 				const ampLayout = document.createElement( 'amp-layout' );
 				ampLayout.innerHTML = postsHTML;
-				blockWrapperEl.insertBefore( ampLayout, btnEl );
+				postsContainerEl.appendChild( ampLayout );
 
 				if ( data.next ) {
 					/**
