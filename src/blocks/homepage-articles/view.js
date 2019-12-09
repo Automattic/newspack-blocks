@@ -95,12 +95,9 @@ function buildLoadMoreHandler( btnEl ) {
 		};
 
 		const requestURL = new URL( btnEl.getAttribute( btnURLAttr ) );
-		requestURL.searchParams.set( 'exclude_ids', getRenderedPostsIds() );
+		requestURL.searchParams.set( 'exclude_ids', getRenderedPostsIds().join( ',' ) );
 
-		fetchWithRetry(
-			{ url: requestURL.toString(), onSuccess, onError },
-			fetchRetryCount
-		);
+		fetchWithRetry( { url: requestURL.toString(), onSuccess, onError }, fetchRetryCount );
 	};
 }
 
