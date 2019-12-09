@@ -98,6 +98,9 @@ call_user_func(
 										'srcset' => true,
 									),
 									'noscript' => array(),
+									'a' => array(
+										'href'  => true,
+									),
 								)
 							);
 						endif;
