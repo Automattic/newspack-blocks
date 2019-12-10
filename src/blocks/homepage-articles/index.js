@@ -5,9 +5,14 @@ import { Path, SVG } from '@wordpress/components';
 import { createBlock } from '@wordpress/blocks';
 
 /**
+ * WordPress dependencies
+ */
+import { applyFilters } from '@wordpress/hooks';
+import { __, _x } from '@wordpress/i18n';
+
+/**
  * Internal dependencies
  */
-import { __, _x } from '@wordpress/i18n';
 import edit from './edit';
 
 /**
@@ -59,14 +64,14 @@ export const settings = {
 				type: 'block',
 				blocks: [ 'core/latest-posts' ],
 				transform: ( {
-					displayPostContent,
-					displayPostDate,
-					postLayout,
-					columns,
-					postsToShow,
-					categories,
+				     displayPostContent,
+				     displayPostDate,
+				     postLayout,
+				     columns,
+				     postsToShow,
+				     categories,
 				} ) => {
-					return createBlock( 'newspack-blocks/homepage-articles', {
+					return createBlock( applyFilters( 'blocks.transforms_from_name', 'newspack-blocks/homepage-articles' ), {
 						showExcerpt: displayPostContent,
 						showDate: displayPostDate,
 						postLayout,
