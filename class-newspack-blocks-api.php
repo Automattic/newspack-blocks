@@ -61,13 +61,13 @@ class Newspack_Blocks_API {
 	 * Get thumbnail featured image source for the rest field.
 	 *
 	 * @param array $object The object info.
-	 * @return array Featured image.
+	 * @return array | bool Featured image if available, false if not.
 	 */
 	public static function newspack_blocks_get_image_src( $object ) {
 		$featured_image_set = [];
 
 		if ( 0 === $object['featured_media'] ) {
-			return $featured_image_set;
+			return false;
 		}
 
 		// Landscape image.
