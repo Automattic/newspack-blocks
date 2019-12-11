@@ -477,6 +477,7 @@ class Edit extends Component {
 			postLayout,
 			mediaPosition,
 			moreButton,
+			moreButtonText,
 			columns,
 			categories,
 			typeScale,
@@ -602,12 +603,14 @@ class Edit extends Component {
 
 				{ ! specificMode && latestPosts && moreButton && (
 					<div className="editor-styles-wrapper">
-						<button
-							className="wp-block-button__link"
-							type="button"
-						>
-							{ __( 'More…', 'newspack-blocks' ) }
-						</button>
+						<div className="wp-block-button">
+							<button className="wp-block-button__link" type="button">
+								{ moreButtonText && moreButtonText.length
+									? moreButtonText
+									: __( 'Load more articles', 'newspack-blocks' )
+								}
+							</button>
+						</div>
 					</div>
 				) }
 
