@@ -1,6 +1,8 @@
 <?php
 /**
  * WP_REST_Newspack_Articles_Controller file.
+ *
+ * @package WordPress
  */
 
 /**
@@ -52,27 +54,43 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function get_items( $request ) {
-		$page       = $request->get_param( 'page' ) ?? 1;
-		$next_page  = $page + 1;
-		$attributes = wp_parse_args(
+		$page        = $request->get_param( 'page' ) ?? 1;
+		$exclude_ids = $request->get_param( 'exclude_ids' ) ?? [];
+		$next_page   = $page + 1;
+		$attributes  = wp_parse_args(
 			$request->get_params() ?? [],
 			wp_list_pluck( $this->get_attribute_schema(), 'default' )
 		);
+
 		$article_query_args = Newspack_Blocks::build_articles_query( $attributes );
 
 		// Append custom pagination arg for REST API endpoint.
 		$article_query_args['paged'] = $page;
 
+		$query = array_merge(
+			$article_query_args,
+			[
+				'posts_per_page' => $article_query_args['posts_per_page'] + count( $exclude_ids ),
+			]
+		);
+
 		// Run Query.
-		$article_query = new WP_Query( $article_query_args );
+		$article_query = new WP_Query( $query );
 
 		// Defaults.
 		$items    = [];
 		$next_url = '';
 
 		// The Loop.
+		$post_counter = 0;
 		while ( $article_query->have_posts() ) {
 			$article_query->the_post();
+			if ( in_array( get_the_id(), $exclude_ids, true ) ) {
+				continue;
+			}
+			if ( ++$post_counter > $article_query_args['posts_per_page'] ) {
+				continue;
+			}
 			$items[]['html'] = Newspack_Blocks::template_inc(
 				__DIR__ . '/templates/article.php',
 				[
@@ -85,17 +103,24 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 		if ( $next_page <= $article_query->max_num_pages ) {
 			$next_url = add_query_arg(
 				array_merge(
-					array_map( function( $attribute ) { return $attribute === false ? '0' : $attribute; }, $attributes ),
+					array_map(
+						function( $attribute ) {
+							return false === $attribute ? '0' : $attribute;
+						},
+						$attributes
+					),
 					[ 'page' => $next_page ] // phpcs:ignore PHPCompatibility.Syntax.NewShortArray.Found
 				),
 				rest_url( '/newspack-blocks/v1/articles' )
 			);
 		}
 
-		return rest_ensure_response( [
-			'items' => $items,
-			'next'  => $next_url,
-		] );
+		return rest_ensure_response(
+			[
+				'items' => $items,
+				'next'  => $next_url,
+			]
+		);
 	}
 
 	/**
@@ -106,12 +131,23 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 	public function get_attribute_schema() {
 		if ( empty( $this->attribute_schema ) ) {
 			$block_json = json_decode(
-				file_get_contents( __DIR__ . '/block.json' ),
+				file_get_contents( __DIR__ . '/block.json' ), // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 				true
 			);
-			$this->attribute_schema = $block_json['attributes'];
-		}
 
+			$this->attribute_schema = array_merge(
+				$block_json['attributes'],
+				[
+					'exclude_ids' => [
+						'type'    => 'array',
+						'default' => [],
+						'items'   => [
+							'type' => 'integer',
+						],
+					],
+				]
+			);
+		}
 		return $this->attribute_schema;
 	}
 }
