@@ -601,9 +601,14 @@ class Edit extends Component {
 				</div>
 
 				{ ! specificMode && latestPosts && moreButton && (
-					<button className="button" type="button">
-						{ __( 'More…', 'newspack-blocks' ) }
-					</button>
+					<div className="editor-styles-wrapper">
+						<button
+							className="wp-block-button__link"
+							type="button"
+						>
+							{ __( 'More…', 'newspack-blocks' ) }
+						</button>
+					</div>
 				) }
 
 				<BlockControls>
