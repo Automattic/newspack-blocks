@@ -325,9 +325,9 @@ class Edit extends Component {
 							{ moreButton && (
 								<TextControl
 									value={ moreButtonText }
-									label={ __( 'Button description', 'newspack-blocks' ) }
+									label={ __( 'Button text', 'newspack-blocks' ) }
 									onChange={ ( moreButtonText ) => setAttributes( { moreButtonText } ) }
-									placeholder={ __( 'Load more articles', 'newspack-blocks' ) }
+									placeholder={ __( 'Load more posts', 'newspack-blocks' ) }
 								/>
 							) }
 						</div>
@@ -620,7 +620,7 @@ class Edit extends Component {
 							<button className="wp-block-button__link" type="button">
 								{ moreButtonText && moreButtonText.length
 									? moreButtonText
-									: __( 'Load more articles', 'newspack-blocks' )
+									: __( 'Load more posts', 'newspack-blocks' )
 								}
 							</button>
 						</div>

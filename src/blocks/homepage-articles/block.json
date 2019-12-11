@@ -35,8 +35,8 @@
       "default": false
     },
     "moreButtonText": {
-	  "type": "string",
-	  "default": ""
+      "type": "string",
+      "default": ""
     },
     "showAuthor": {
       "type": "boolean",

@@ -120,10 +120,10 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				?>
 				<button type="button" data-load-more-btn data-load-more-url="<?php echo esc_url( $articles_rest_url ); ?>">
 				<?php
-				if ( isset( $attributes['moreButtonText'] ) && ! empty( $attributes['moreButtonText'] ) ) {
+				if ( ! empty( $attributes['moreButtonText'] ) ) {
 					echo esc_html( $attributes['moreButtonText'] );
 				} else {
-					esc_html_e( 'Load more articles', 'newspack-blocks' );
+					esc_html_e( 'Load more posts', 'newspack-blocks' );
 				}
 				?>
 				</button>
