@@ -30,6 +30,7 @@ import {
 	BaseControl,
 	Path,
 	SVG,
+	TextControl,
 } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
@@ -238,6 +239,7 @@ class Edit extends Component {
 			mobileStack,
 			minHeight,
 			moreButton,
+			moreButtonText,
 			showExcerpt,
 			typeScale,
 			showDate,
@@ -312,12 +314,23 @@ class Edit extends Component {
 						/>
 					) }
 					{ ! specificMode && (
-						<ToggleControl
-							label={ __( 'Show "More" Button', 'newspack-blocks' ) }
-							checked={ moreButton }
-							onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
-							help={ __( 'Only available for non-AMP requests.', 'newspack-blocks' ) }
-						/>
+						<div>
+							<ToggleControl
+								label={ __( 'Show "More" Button', 'newspack-blocks' ) }
+								checked={ moreButton }
+								onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
+								help={ __('Only available for non-AMP requests.', 'newspack-blocks') }
+							/>
+
+							{ moreButton && (
+								<TextControl
+									value={ moreButtonText }
+									label={ __( 'Button description', 'newspack-blocks' ) }
+									onChange={ ( moreButtonText ) => setAttributes( { moreButtonText } ) }
+									placeholder={ __( 'Load more articles', 'newspack-blocks' ) }
+								/>
+							) }
+						</div>
 					) }
 				</PanelBody>
 				<PanelBody title={ __( 'Featured Image Settings', 'newspack-blocks' ) }>
