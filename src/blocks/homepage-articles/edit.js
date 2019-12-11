@@ -109,7 +109,7 @@ class Edit extends Component {
 		};
 
 		const authorNumber = post.newspack_author_info.length;
-
+		const postTitle = this.titleForPost( post );
 		return (
 			<article
 				className={ post.newspack_featured_image_src ? 'post-has-image' : null }
@@ -145,11 +145,11 @@ class Edit extends Component {
 					) }
 					{ RichText.isEmpty( sectionHeader ) ? (
 						<h2 className="entry-title" key="title">
-							<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
+							<a href="#">{ postTitle }</a>
 						</h2>
 					) : (
 						<h3 className="entry-title" key="title">
-							<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
+							<a href="#">{ postTitle }</a>
 						</h3>
 					) }
 					{ showExcerpt && (
@@ -171,6 +171,18 @@ class Edit extends Component {
 				</div>
 			</article>
 		);
+	};
+
+	titleForPost = post => {
+		if ( ! post.title ) {
+			return '';
+		}
+		if ( typeof post.title === 'string' ) {
+			return decodeEntities( post.title.trim() );
+		}
+		if ( typeof post.title === 'object' && post.title.rendered ) {
+			return decodeEntities( post.title.rendered.trim() );
+		}
 	};
 
 	formatAvatars = authorInfo =>
@@ -240,27 +252,33 @@ class Edit extends Component {
 		} = attributes;
 
 		const imageSizeOptions = [
-		{
-			value: 1,
-			label: /* translators: label for small size option */ __( 'Small', 'newspack-blocks' ),
-			shortName: /* translators: abbreviation for small size */ __( 'S', 'newspack-blocks' ),
-		},
-		{
-			value: 2,
-			label: /* translators: label for medium size option */ __( 'Medium', 'newspack-blocks' ),
-			shortName: /* translators: abbreviation for medium size */ __( 'M', 'newspack-blocks' ),
-		},
-		{
-			value: 3,
-			label: /* translators: label for large size option */ __( 'Large', 'newspack-blocks' ),
-			shortName: /* translators: abbreviation for large size */ __( 'L', 'newspack-blocks' ),
-		},
-		{
-			value: 4,
-			label: /* translators: label for extra large size option */ __( 'Extra Large', 'newspack-blocks' ),
-			shortName: /* translators: abbreviation for extra large size */ __( 'XL', 'newspack-blocks' ),
-		},
-	];
+			{
+				value: 1,
+				label: /* translators: label for small size option */ __( 'Small', 'newspack-blocks' ),
+				shortName: /* translators: abbreviation for small size */ __( 'S', 'newspack-blocks' ),
+			},
+			{
+				value: 2,
+				label: /* translators: label for medium size option */ __( 'Medium', 'newspack-blocks' ),
+				shortName: /* translators: abbreviation for medium size */ __( 'M', 'newspack-blocks' ),
+			},
+			{
+				value: 3,
+				label: /* translators: label for large size option */ __( 'Large', 'newspack-blocks' ),
+				shortName: /* translators: abbreviation for large size */ __( 'L', 'newspack-blocks' ),
+			},
+			{
+				value: 4,
+				label: /* translators: label for extra large size option */ __(
+					'Extra Large',
+					'newspack-blocks'
+				),
+				shortName: /* translators: abbreviation for extra large size */ __(
+					'XL',
+					'newspack-blocks'
+				),
+			},
+		];
 
 		return (
 			<Fragment>
@@ -298,7 +316,7 @@ class Edit extends Component {
 							label={ __( 'Show "More" Button', 'newspack-blocks' ) }
 							checked={ moreButton }
 							onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
-							help={ __('Only available for non-AMP requests.', 'newspack-blocks') }
+							help={ __( 'Only available for non-AMP requests.', 'newspack-blocks' ) }
 						/>
 					) }
 				</PanelBody>
@@ -333,7 +351,7 @@ class Edit extends Component {
 							<BaseControl label={ __( 'Featured Image Size', 'newspack-blocks' ) }>
 								<PanelRow>
 									<ButtonGroup aria-label={ __( 'Featured Image Size', 'newspack-blocks' ) }>
-										{ imageSizeOptions.map( ( option ) => {
+										{ imageSizeOptions.map( option => {
 											const isCurrent = imageScale === option.value;
 											return (
 												<Button
@@ -602,14 +620,21 @@ class Edit extends Component {
 export default compose( [
 	withColors( { textColor: 'color' } ),
 	withSelect( ( select, props ) => {
-		const { postsToShow, authors, categories, tags, specificPosts, specificMode } = props.attributes;
+		const {
+			postsToShow,
+			authors,
+			categories,
+			tags,
+			specificPosts,
+			specificMode,
+		} = props.attributes;
 		const { getAuthors, getEntityRecords } = select( 'core' );
 		const latestPostsQuery = pickBy(
 			specificMode && specificPosts && specificPosts.length
 				? {
-					include: specificPosts,
-					orderby: 'include'
-				}
+						include: specificPosts,
+						orderby: 'include',
+				  }
 				: {
 						per_page: postsToShow,
 						categories,
