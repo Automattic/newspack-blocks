@@ -109,7 +109,7 @@ class Edit extends Component {
 		};
 
 		const authorNumber = post.newspack_author_info.length;
-
+		const postTitle =  this.titleForPost( post );
 		return (
 			<article
 				className={ post.newspack_featured_image_src ? 'post-has-image' : null }
@@ -145,11 +145,11 @@ class Edit extends Component {
 					) }
 					{ RichText.isEmpty( sectionHeader ) ? (
 						<h2 className="entry-title" key="title">
-							<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
+							<a href="#">{ postTitle }</a>
 						</h2>
 					) : (
 						<h3 className="entry-title" key="title">
-							<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
+							<a href="#">{ postTitle }</a>
 						</h3>
 					) }
 					{ showExcerpt && (
@@ -171,6 +171,18 @@ class Edit extends Component {
 				</div>
 			</article>
 		);
+	};
+
+	titleForPost = post => {
+		if ( ! post.title ) {
+			return '';
+		}
+		if ( typeof post.title === 'string' ) {
+			return decodeEntities( post.title.trim() );
+		}
+		if ( typeof post.title === 'object' && post.title.rendered ) {
+			return decodeEntities( post.title.rendered.trim() );
+		}
 	};
 
 	formatAvatars = authorInfo =>
