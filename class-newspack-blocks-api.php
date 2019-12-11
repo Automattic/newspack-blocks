@@ -18,9 +18,8 @@ class Newspack_Blocks_API {
 			array( 'post', 'page' ),
 			'newspack_featured_image_src',
 			array(
-				'get_callback'    => array( 'Newspack_Blocks_API', 'newspack_blocks_get_image_src' ),
-				'update_callback' => null,
-				'schema'          => null,
+				'get_callback' => array( 'Newspack_Blocks_API', 'newspack_blocks_get_image_src' ),
+				'schema'       => array( 'context' => array( 'edit' ) ),
 			)
 		);
 
@@ -28,9 +27,8 @@ class Newspack_Blocks_API {
 			array( 'post', 'page' ),
 			'newspack_featured_image_caption',
 			array(
-				'get_callback'    => array( 'Newspack_Blocks_API', 'newspack_blocks_get_image_caption' ),
-				'update_callback' => null,
-				'schema'          => null,
+				'get_callback' => array( 'Newspack_Blocks_API', 'newspack_blocks_get_image_caption' ),
+				'schema'       => array( 'context' => array( 'edit' ) ),
 			)
 		);
 
@@ -39,9 +37,8 @@ class Newspack_Blocks_API {
 			'post',
 			'newspack_author_info',
 			array(
-				'get_callback'    => array( 'Newspack_Blocks_API', 'newspack_blocks_get_author_info' ),
-				'update_callback' => null,
-				'schema'          => null,
+				'get_callback' => array( 'Newspack_Blocks_API', 'newspack_blocks_get_author_info' ),
+				'schema'       => array( 'context' => array( 'edit' ) ),
 			)
 		);
 
@@ -50,9 +47,8 @@ class Newspack_Blocks_API {
 			'post',
 			'newspack_category_info',
 			array(
-				'get_callback'    => array( 'Newspack_Blocks_API', 'newspack_blocks_get_primary_category' ),
-				'update_callback' => null,
-				'schema'          => null,
+				'get_callback' => array( 'Newspack_Blocks_API', 'newspack_blocks_get_primary_category' ),
+				'schema'       => array( 'context' => array( 'edit' ) ),
 			)
 		);
 	}
