@@ -77,8 +77,8 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	ob_start();
 
 	if ( $article_query->have_posts() ) : ?>
-		<div>
-			<div data-posts-container class="<?php echo esc_attr( $classes ); ?>" style="<?php echo esc_attr( $styles ); ?>">
+		<div  class="<?php echo esc_attr( $classes ); ?>" style="<?php echo esc_attr( $styles ); ?>">
+			<div data-posts-container>
 				<?php if ( '' !== $attributes['sectionHeader'] ) : ?>
 					<h2 class="article-section-title">
 						<span><?php echo wp_kses_post( $attributes['sectionHeader'] ); ?></span>
