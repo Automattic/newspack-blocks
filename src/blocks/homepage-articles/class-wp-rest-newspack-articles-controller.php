@@ -64,13 +64,10 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 
 		$article_query_args = Newspack_Blocks::build_articles_query( $attributes );
 
-		// Append custom pagination arg for REST API endpoint.
-		$article_query_args['paged'] = $page;
-
 		$query = array_merge(
 			$article_query_args,
 			[
-				'posts_per_page' => $article_query_args['posts_per_page'] + count( $exclude_ids ),
+				'post__not_in' => $exclude_ids,
 			]
 		);
 
@@ -85,12 +82,6 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 		$post_counter = 0;
 		while ( $article_query->have_posts() ) {
 			$article_query->the_post();
-			if ( in_array( get_the_id(), $exclude_ids, true ) ) {
-				continue;
-			}
-			if ( ++$post_counter > $article_query_args['posts_per_page'] ) {
-				continue;
-			}
 			$items[]['html'] = Newspack_Blocks::template_inc(
 				__DIR__ . '/templates/article.php',
 				[
