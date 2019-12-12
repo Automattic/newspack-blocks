@@ -119,7 +119,13 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			if ( ! Newspack_Blocks::is_amp() && $has_more_pages && boolval( $attributes['moreButton'] ) ) :
 				?>
 				<button type="button" data-load-more-btn data-load-more-url="<?php echo esc_url( $articles_rest_url ); ?>">
-					<?php _e( 'Load more articles', 'newspack-blocks' ); ?>
+				<?php
+				if ( ! empty( $attributes['moreButtonText'] ) ) {
+					echo esc_html( $attributes['moreButtonText'] );
+				} else {
+					esc_html_e( 'Load more posts', 'newspack-blocks' );
+				}
+				?>
 				</button>
 				<p data-load-more-loading-text hidden>
 					<?php _e( 'Loading...', 'newspack-blocks' ); ?>

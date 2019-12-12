@@ -238,6 +238,7 @@ class Edit extends Component {
 			mobileStack,
 			minHeight,
 			moreButton,
+			moreButtonText,
 			showExcerpt,
 			typeScale,
 			showDate,
@@ -477,6 +478,7 @@ class Edit extends Component {
 			postLayout,
 			mediaPosition,
 			moreButton,
+			moreButtonText,
 			columns,
 			categories,
 			typeScale,
@@ -603,9 +605,18 @@ class Edit extends Component {
 				</div>
 
 				{ ! specificMode && latestPosts && moreButton && (
-					<button className="button" type="button">
-						{ __( 'More…', 'newspack-blocks' ) }
-					</button>
+					<div className="editor-styles-wrapper">
+						<div className="wp-block-button">
+							<RichText
+								placeholder={ __( 'Load more posts', 'newspack-blocks' ) }
+								value={ moreButtonText }
+								onChange={ value => setAttributes( { moreButtonText: value } ) }
+								className="wp-block-button__link"
+								keepPlaceholderOnFocus
+								allowedFormats={ [] }
+							/>
+						</div>
+					</div>
 				) }
 
 				<BlockControls>
