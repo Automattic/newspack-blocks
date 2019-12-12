@@ -314,23 +314,12 @@ class Edit extends Component {
 						/>
 					) }
 					{ ! specificMode && (
-						<Fragment>
-							<ToggleControl
-								label={ __( 'Show "More" Button', 'newspack-blocks' ) }
-								checked={ moreButton }
-								onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
-								help={ __('Only available for non-AMP requests.', 'newspack-blocks') }
-							/>
-
-							{ moreButton && (
-								<TextControl
-									value={ moreButtonText }
-									label={ __( 'Button text', 'newspack-blocks' ) }
-									onChange={ ( moreButtonText ) => setAttributes( { moreButtonText } ) }
-									placeholder={ __( 'Load more posts', 'newspack-blocks' ) }
-								/>
-							) }
-						</Fragment>
+						<ToggleControl
+							label={ __( 'Show "More" Button', 'newspack-blocks' ) }
+							checked={ moreButton }
+							onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
+							help={ __( 'Only available for non-AMP requests.', 'newspack-blocks' ) }
+						/>
 					) }
 				</PanelBody>
 				<PanelBody title={ __( 'Featured Image Settings', 'newspack-blocks' ) }>
@@ -617,12 +606,14 @@ class Edit extends Component {
 				{ ! specificMode && latestPosts && moreButton && (
 					<div className="editor-styles-wrapper">
 						<div className="wp-block-button">
-							<button className="wp-block-button__link" type="button">
-								{ moreButtonText && moreButtonText.length
-									? moreButtonText
-									: __( 'Load more posts', 'newspack-blocks' )
-								}
-							</button>
+							<RichText
+								placeholder={ __( 'Load more posts', 'newspack-blocks' ) }
+								value={ moreButtonText }
+								onChange={ value => setAttributes( { moreButtonText: value } ) }
+								className="wp-block-button__link"
+								keepPlaceholderOnFocus
+								allowedFormats={ [] }
+							/>
 						</div>
 					</div>
 				) }
