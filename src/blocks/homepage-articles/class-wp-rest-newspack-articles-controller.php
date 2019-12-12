@@ -79,7 +79,6 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 		$next_url = '';
 
 		// The Loop.
-		$post_counter = 0;
 		while ( $article_query->have_posts() ) {
 			$article_query->the_post();
 			$items[]['html'] = Newspack_Blocks::template_inc(
