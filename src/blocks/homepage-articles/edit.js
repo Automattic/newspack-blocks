@@ -30,7 +30,6 @@ import {
 	BaseControl,
 	Path,
 	SVG,
-	TextControl,
 } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
