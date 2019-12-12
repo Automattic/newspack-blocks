@@ -314,7 +314,7 @@ class Edit extends Component {
 						/>
 					) }
 					{ ! specificMode && (
-						<div>
+						<Fragment>
 							<ToggleControl
 								label={ __( 'Show "More" Button', 'newspack-blocks' ) }
 								checked={ moreButton }
@@ -330,7 +330,7 @@ class Edit extends Component {
 									placeholder={ __( 'Load more posts', 'newspack-blocks' ) }
 								/>
 							) }
-						</div>
+						</Fragment>
 					) }
 				</PanelBody>
 				<PanelBody title={ __( 'Featured Image Settings', 'newspack-blocks' ) }>
