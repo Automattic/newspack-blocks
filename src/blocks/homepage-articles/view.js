@@ -62,44 +62,50 @@ function buildLoadMoreHandler( btnEl ) {
 		hideEl( errorEl );
 		showEl( loadingEl );
 
-		const onSuccess = data => {
-			// Validate received data.
-			if ( isPostsDataValid( data ) ) {
-				// Render posts' HTML from string.
-				const postsHTML = data.items.map( item => item.html ).join( '' );
-				postsContainerEl.insertAdjacentHTML( 'beforeend', postsHTML );
-
-				if ( data.next ) {
-					// Save next URL as button's attribute.
-					btnEl.setAttribute( btnURLAttr, data.next );
-
-					// Unhide button since there are more posts available.
-					showEl( btnEl );
-				} else {
-					isEndOfData = true;
-				}
-
-				isFetching = false;
-
-				hideEl( loadingEl );
-			}
-		};
-
-		const onError = () => {
-			isFetching = false;
-
-			// Display error message and keep the button visible to enable retrying.
-			hideEl( loadingEl );
-			showEl( errorEl );
-			showEl( btnEl );
-		};
-
 		const requestURL = new URL( btnEl.getAttribute( btnURLAttr ) );
 
 		// Set currenty rendered posts' IDs as a query param (e.g. exclude_ids=1,2,3)
 		requestURL.searchParams.set( 'exclude_ids', getRenderedPostsIds().join( ',' ) );
 
 		fetchWithRetry( { url: requestURL.toString(), onSuccess, onError }, fetchRetryCount );
+
+		function onSuccess( data ) {
+			// Validate received data.
+			if ( ! isPostsDataValid( data ) ) {
+				return onError();
+			}
+
+			if ( data.items.length ) {
+				// Render posts' HTML from string.
+				const postsHTML = data.items.map( item => item.html ).join( '' );
+				postsContainerEl.insertAdjacentHTML( 'beforeend', postsHTML );
+			}
+
+			if ( data.next ) {
+				// Save next URL as button's attribute.
+				btnEl.setAttribute( btnURLAttr, data.next );
+
+				// Unhide button since there are more posts available.
+				showEl( btnEl );
+			}
+
+			if ( ! data.items.length || ! data.next ) {
+				isEndOfData = true;
+			}
+
+			isFetching = false;
+
+			hideEl( loadingEl );
+		}
+
+		function onError() {
+			isFetching = false;
+
+			// Display error message and keep the button visible to enable retrying.
+			hideEl( loadingEl );
+			showEl( errorEl );
+			showEl( btnEl );
+		}
 	};
 }
 
@@ -177,19 +183,26 @@ function fetchWithRetry( options, n ) {
  * @param {Object} data posts endpoint payload
  */
 function isPostsDataValid( data ) {
+	let isValid = false;
+
 	if (
 		data &&
 		hasOwnProp( data, 'items' ) &&
-		hasOwnProp( data, 'next' ) &&
 		Array.isArray( data.items ) &&
-		data.items.length &&
-		hasOwnProp( data.items[ 0 ], 'html' ) &&
-		typeof data.items[ 0 ].html === 'string'
+		hasOwnProp( data, 'next' ) &&
+		typeof data.next === 'string'
 	) {
-		return true;
+		isValid = true;
+
+		if (
+			data.items.length &&
+			! ( hasOwnProp( data.items[ 0 ], 'html' ) && typeof data.items[ 0 ].html === 'string' )
+		) {
+			isValid = false;
+		}
 	}
 
-	return false;
+	return isValid;
 }
 
 /**
