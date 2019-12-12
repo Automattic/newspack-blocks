@@ -11,6 +11,13 @@
 class Newspack_Blocks {
 
 	/**
+	 * Add hooks and filters.
+	 */
+	public static function init() {
+		add_action( 'after_setup_theme', [ __CLASS__, 'add_image_sizes' ] );
+	}
+
+	/**
 	 * Gather dependencies and paths needed for script enqueuing.
 	 *
 	 * @param string $script_path Path to the script relative to plugin root.
@@ -267,6 +274,8 @@ class Newspack_Blocks {
 				return 'newspack-article-block-' . $orientation . '-' . $key;
 			}
 		}
+
+		return 'large';
 	}
 
 	/**
@@ -391,3 +400,4 @@ class Newspack_Blocks {
 		);
 	}
 }
+Newspack_Blocks::init();
