@@ -31,8 +31,6 @@ function newspack_articles_block_register_rest_routes() {
 }
 add_action( 'rest_api_init', 'newspack_articles_block_register_rest_routes' );
 
-add_action( 'after_setup_theme', array( 'Newspack_Blocks', 'add_image_sizes' ) );
-
 Newspack_Blocks::manage_view_scripts();
 add_action( 'enqueue_block_editor_assets', array( 'Newspack_Blocks', 'enqueue_block_editor_assets' ) );
 add_action( 'wp_enqueue_scripts', array( 'Newspack_Blocks', 'enqueue_block_styles_assets' ) );
