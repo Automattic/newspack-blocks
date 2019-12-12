@@ -267,6 +267,8 @@ class Newspack_Blocks {
 				return 'newspack-article-block-' . $orientation . '-' . $key;
 			}
 		}
+
+		return 'large';
 	}
 
 	/**
