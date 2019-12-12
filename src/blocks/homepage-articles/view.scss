@@ -190,6 +190,10 @@
 		.byline:not(:last-child) {
 			margin-right: 1.5em;
 		}
+
+		.updated:not(.published) {
+			display: none;
+		}
 	}
 
 	.avatar {
