@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import QueryControls from '../../components/query-controls';
-
+import { STORE_NAMESPACE } from './store';
 /**
  * External dependencies
  */
@@ -31,7 +31,7 @@ import {
 	Path,
 	SVG,
 } from '@wordpress/components';
-import { withSelect } from '@wordpress/data';
+import { withDispatch, withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -79,6 +79,32 @@ const coverIcon = (
 );
 
 class Edit extends Component {
+	constructor( props ) {
+		super( props );
+		const {
+			postsToShow,
+			authors,
+			categories,
+			tags,
+			specificPosts,
+			specificMode,
+		} = props.attributes;
+		const latestPostsQuery = pickBy(
+			specificMode && specificPosts && specificPosts.length
+				? {
+						include: specificPosts,
+						orderby: 'include',
+				  }
+				: {
+						per_page: postsToShow,
+						categories,
+						author: authors,
+						tags,
+				  },
+			value => ! isUndefined( value )
+		);
+		props.updateCriteria( props.clientId, { ...latestPostsQuery } );
+	}
 	renderPost = post => {
 		const { attributes } = this.props;
 		const {
@@ -214,7 +240,7 @@ class Edit extends Component {
 		</span>
 	);
 
-	renderInspectorControls = () => {
+	renderInspectorControls = updateCriteria => {
 		const {
 			attributes,
 			setAttributes,
@@ -222,6 +248,7 @@ class Edit extends Component {
 			isSelected,
 			textColor,
 			setTextColor,
+			clientId,
 		} = this.props;
 		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
 
@@ -281,30 +308,53 @@ class Edit extends Component {
 			},
 		];
 
+		const updateAttrAndCriteria = attr => {
+			const { postsToShow, authors, categories, tags, specificPosts, specificMode } = {
+				...attributes,
+				...attr,
+			};
+			const latestPostsQuery = pickBy(
+				specificMode && specificPosts && specificPosts.length
+					? {
+							include: specificPosts,
+							orderby: 'include',
+					  }
+					: {
+							per_page: postsToShow,
+							categories,
+							author: authors,
+							tags,
+					  },
+				value => ! isUndefined( value )
+			);
+			updateCriteria( latestPostsQuery );
+			setAttributes( attr );
+		};
+
 		return (
 			<Fragment>
 				<PanelBody title={ __( 'Display Settings', 'newspack-blocks' ) } initialOpen={ true }>
 					{ postsToShow && (
 						<QueryControls
 							numberOfItems={ postsToShow }
-							onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
+							onNumberOfItemsChange={ value => updateAttrAndCriteria( { postsToShow: value } ) }
 							specificMode={ specificMode }
-							onSpecificModeChange={ value => setAttributes( { specificMode: value } ) }
+							onSpecificModeChange={ value => updateAttrAndCriteria( { specificMode: value } ) }
 							specificPosts={ specificPosts }
-							onSpecificPostsChange={ value => setAttributes( { specificPosts: value } ) }
+							onSpecificPostsChange={ value => updateAttrAndCriteria( { specificPosts: value } ) }
 							authors={ authors }
-							onAuthorsChange={ value => setAttributes( { authors: value } ) }
+							onAuthorsChange={ value => updateAttrAndCriteria( { authors: value } ) }
 							categories={ categories }
-							onCategoriesChange={ value => setAttributes( { categories: value } ) }
+							onCategoriesChange={ value => updateAttrAndCriteria( { categories: value } ) }
 							tags={ tags }
-							onTagsChange={ value => setAttributes( { tags: value } ) }
+							onTagsChange={ value => updateAttrAndCriteria( { tags: value } ) }
 						/>
 					) }
 					{ postLayout === 'grid' && (
 						<RangeControl
 							label={ __( 'Columns', 'newspack-blocks' ) }
 							value={ columns }
-							onChange={ value => setAttributes( { columns: value } ) }
+							onChange={ value => updateAttrAndCriteria( { columns: value } ) }
 							min={ 2 }
 							max={
 								! hasPosts ? MAX_POSTS_COLUMNS : Math.min( MAX_POSTS_COLUMNS, latestPosts.length )
@@ -316,7 +366,7 @@ class Edit extends Component {
 						<ToggleControl
 							label={ __( 'Show "More" Button', 'newspack-blocks' ) }
 							checked={ moreButton }
-							onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
+							onChange={ () => updateAttrAndCriteria( { moreButton: ! moreButton } ) }
 							help={ __( 'Only available for non-AMP requests.', 'newspack-blocks' ) }
 						/>
 					) }
@@ -326,7 +376,7 @@ class Edit extends Component {
 						<ToggleControl
 							label={ __( 'Show Featured Image', 'newspack-blocks' ) }
 							checked={ showImage }
-							onChange={ () => setAttributes( { showImage: ! showImage } ) }
+							onChange={ () => updateAttrAndCriteria( { showImage: ! showImage } ) }
 						/>
 					</PanelRow>
 
@@ -335,7 +385,7 @@ class Edit extends Component {
 							<ToggleControl
 								label={ __( 'Show Featured Image Caption', 'newspack-blocks' ) }
 								checked={ showCaption }
-								onChange={ () => setAttributes( { showCaption: ! showCaption } ) }
+								onChange={ () => updateAttrAndCriteria( { showCaption: ! showCaption } ) }
 							/>
 						</PanelRow>
 					) }
@@ -346,7 +396,7 @@ class Edit extends Component {
 								<ToggleControl
 									label={ __( 'Stack on mobile', 'newspack-blocks' ) }
 									checked={ mobileStack }
-									onChange={ () => setAttributes( { mobileStack: ! mobileStack } ) }
+									onChange={ () => updateAttrAndCriteria( { mobileStack: ! mobileStack } ) }
 								/>
 							</PanelRow>
 							<BaseControl label={ __( 'Featured Image Size', 'newspack-blocks' ) }>
@@ -360,7 +410,7 @@ class Edit extends Component {
 													isPrimary={ isCurrent }
 													aria-pressed={ isCurrent }
 													aria-label={ option.label }
-													onClick={ () => setAttributes( { imageScale: option.value } ) }
+													onClick={ () => updateAttrAndCriteria( { imageScale: option.value } ) }
 												>
 													{ option.shortName }
 												</Button>
@@ -380,7 +430,7 @@ class Edit extends Component {
 								'newspack-blocks'
 							) }
 							value={ minHeight }
-							onChange={ value => setAttributes( { minHeight: value } ) }
+							onChange={ value => updateAttrAndCriteria( { minHeight: value } ) }
 							min={ 0 }
 							max={ 100 }
 							required
@@ -392,14 +442,14 @@ class Edit extends Component {
 						<ToggleControl
 							label={ __( 'Show Excerpt', 'newspack-blocks' ) }
 							checked={ showExcerpt }
-							onChange={ () => setAttributes( { showExcerpt: ! showExcerpt } ) }
+							onChange={ () => updateAttrAndCriteria( { showExcerpt: ! showExcerpt } ) }
 						/>
 					</PanelRow>
 					<RangeControl
 						className="type-scale-slider"
 						label={ __( 'Type Scale', 'newspack-blocks' ) }
 						value={ typeScale }
-						onChange={ value => setAttributes( { typeScale: value } ) }
+						onChange={ value => updateAttrAndCriteria( { typeScale: value } ) }
 						min={ 1 }
 						max={ 10 }
 						beforeIcon="editor-textcolor"
@@ -423,21 +473,21 @@ class Edit extends Component {
 						<ToggleControl
 							label={ __( 'Show Date', 'newspack-blocks' ) }
 							checked={ showDate }
-							onChange={ () => setAttributes( { showDate: ! showDate } ) }
+							onChange={ () => updateAttrAndCriteria( { showDate: ! showDate } ) }
 						/>
 					</PanelRow>
 					<PanelRow>
 						<ToggleControl
 							label={ __( 'Show Category', 'newspack-blocks' ) }
 							checked={ showCategory }
-							onChange={ () => setAttributes( { showCategory: ! showCategory } ) }
+							onChange={ () => updateAttrAndCriteria( { showCategory: ! showCategory } ) }
 						/>
 					</PanelRow>
 					<PanelRow>
 						<ToggleControl
 							label={ __( 'Show Author', 'newspack-blocks' ) }
 							checked={ showAuthor }
-							onChange={ () => setAttributes( { showAuthor: ! showAuthor } ) }
+							onChange={ () => updateAttrAndCriteria( { showAuthor: ! showAuthor } ) }
 						/>
 					</PanelRow>
 					{ showAuthor && (
@@ -445,7 +495,7 @@ class Edit extends Component {
 							<ToggleControl
 								label={ __( 'Show Author Avatar', 'newspack-blocks' ) }
 								checked={ showAvatar }
-								onChange={ () => setAttributes( { showAvatar: ! showAvatar } ) }
+								onChange={ () => updateAttrAndCriteria( { showAvatar: ! showAvatar } ) }
 							/>
 						</PanelRow>
 					) }
@@ -466,6 +516,8 @@ class Edit extends Component {
 			latestPosts,
 			hasPosts,
 			textColor,
+			clientId,
+			updateCriteria,
 		} = this.props; // variables getting pulled out of props
 		const {
 			showExcerpt,
@@ -624,7 +676,9 @@ class Edit extends Component {
 					{ showImage && <Toolbar controls={ blockControlsImages } /> }
 					{ showImage && <Toolbar controls={ blockControlsImageShape } /> }
 				</BlockControls>
-				<InspectorControls>{ this.renderInspectorControls() }</InspectorControls>
+				<InspectorControls>
+					{ this.renderInspectorControls( criteria => updateCriteria( clientId, criteria ) ) }
+				</InspectorControls>
 			</Fragment>
 		);
 	}
@@ -641,7 +695,9 @@ export default compose( [
 			specificPosts,
 			specificMode,
 		} = props.attributes;
+		const { clientId } = props;
 		const { getAuthors, getEntityRecords } = select( 'core' );
+		const { query } = select( STORE_NAMESPACE );
 		const latestPostsQuery = pickBy(
 			specificMode && specificPosts && specificPosts.length
 				? {
@@ -659,8 +715,16 @@ export default compose( [
 		const postsListQuery = {
 			per_page: 50,
 		};
+		const latestPosts = query( clientId, { ...latestPostsQuery } );
+		// console.log( { latestPosts } );
 		return {
-			latestPosts: getEntityRecords( 'postType', 'post', latestPostsQuery ),
+			// latestPosts: getEntityRecords( 'postType', 'post', latestPostsQuery ),
+			// latestPosts: query( clientId, { ...latestPostsQuery } ),
+			latestPosts,
 		};
+	} ),
+	withDispatch( dispatch => {
+		const { updateCriteria } = dispatch( STORE_NAMESPACE );
+		return { updateCriteria };
 	} ),
 ] )( Edit );
