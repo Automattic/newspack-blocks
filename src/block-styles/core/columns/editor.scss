@@ -22,7 +22,7 @@
 	}
 
 	&.is-style-borders {
-		[data-type="core/column"] {
+		& > .editor-inner-blocks > .editor-block-list__layout > [data-type="core/column"] {
 			border-bottom: 1px solid $color__border;
 			position: relative;
 
