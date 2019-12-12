@@ -580,24 +580,26 @@ class Edit extends Component {
 						color: textColor.color,
 					} }
 				>
-					{ latestPosts && ( ! RichText.isEmpty( sectionHeader ) || isSelected ) && (
-						<RichText
-							onChange={ value => setAttributes( { sectionHeader: value } ) }
-							placeholder={ __( 'Write header…', 'newspack-blocks' ) }
-							value={ sectionHeader }
-							tagName="h2"
-							className="article-section-title"
-						/>
-					) }
-					{ latestPosts && ! latestPosts.length && (
-						<Placeholder>{ __( 'Sorry, no posts were found.', 'newspack-blocks' ) }</Placeholder>
-					) }
-					{ ! latestPosts && (
-						<Placeholder>
-							<Spinner />
-						</Placeholder>
-					) }
-					{ latestPosts && latestPosts.map( post => this.renderPost( post ) ) }
+					<div>
+						{ latestPosts && ( ! RichText.isEmpty( sectionHeader ) || isSelected ) && (
+							<RichText
+								onChange={ value => setAttributes( { sectionHeader: value } ) }
+								placeholder={ __( 'Write header…', 'newspack-blocks' ) }
+								value={ sectionHeader }
+								tagName="h2"
+								className="article-section-title"
+							/>
+						) }
+						{ latestPosts && ! latestPosts.length && (
+							<Placeholder>{ __( 'Sorry, no posts were found.', 'newspack-blocks' ) }</Placeholder>
+						) }
+						{ ! latestPosts && (
+							<Placeholder>
+								<Spinner />
+							</Placeholder>
+						) }
+						{ latestPosts && latestPosts.map( post => this.renderPost( post ) ) }
+					</div>
 				</div>
 
 				{ ! specificMode && latestPosts && moreButton && (
