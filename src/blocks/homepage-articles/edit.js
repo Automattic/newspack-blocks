@@ -15,7 +15,13 @@ import moment from 'moment';
  */
 import { __ } from '@wordpress/i18n';
 import { Component, Fragment, RawHTML } from '@wordpress/element';
-import { InspectorControls, RichText, BlockControls } from '@wordpress/editor';
+import {
+	BlockControls,
+	InspectorControls,
+	PanelColorSettings,
+	RichText,
+	withColors,
+} from '@wordpress/block-editor';
 import {
 	Button,
 	ButtonGroup,
@@ -35,7 +41,6 @@ import { withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
-import { PanelColorSettings, withColors } from '@wordpress/block-editor';
 
 /**
  * Module Constants
@@ -187,9 +192,9 @@ class Edit extends Component {
 
 	formatAvatars = authorInfo =>
 		authorInfo.map( author => (
-			<span className="avatar author-avatar">
+			<span className="avatar author-avatar" key={ author.id }>
 				<a className="url fn n" href="#">
-					<RawHTML key={ author.id }>{ author.avatar }</RawHTML>
+					<RawHTML>{ author.avatar }</RawHTML>
 				</a>
 			</span>
 		) );
@@ -360,6 +365,7 @@ class Edit extends Component {
 													isPrimary={ isCurrent }
 													aria-pressed={ isCurrent }
 													aria-label={ option.label }
+													key={ option.value }
 													onClick={ () => setAttributes( { imageScale: option.value } ) }
 												>
 													{ option.shortName }

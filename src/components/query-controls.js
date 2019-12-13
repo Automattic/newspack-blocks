@@ -157,6 +157,7 @@ class QueryControls extends Component {
 		return [
 			enableSpecific && (
 				<ToggleControl
+					key='specificMode'
 					checked={ specificMode }
 					onChange={ onSpecificModeChange }
 					label={ __( 'Choose specific stories', 'newspack-blocks' ) }
@@ -164,6 +165,7 @@ class QueryControls extends Component {
 			),
 			specificMode && (
 				<AutocompleteTokenField
+					key='posts'
 					tokens={ specificPosts || [] }
 					onChange={ onSpecificPostsChange }
 					fetchSuggestions={ this.fetchPostSuggestions }
@@ -171,9 +173,10 @@ class QueryControls extends Component {
 					label={ __( 'Posts', 'newspack-blocks' ) }
 				/>
 			),
-			! specificMode && <BaseControl { ...this.props } />,
+			! specificMode && <BaseControl key='queryControls' { ...this.props } />,
 			! specificMode && onAuthorsChange && (
 				<AutocompleteTokenField
+					key='authors'
 					tokens={ authors || [] }
 					onChange={ onAuthorsChange }
 					fetchSuggestions={ this.fetchAuthorSuggestions }
@@ -183,6 +186,7 @@ class QueryControls extends Component {
 			),
 			! specificMode && onCategoriesChange && (
 				<AutocompleteTokenField
+					key='categories'
 					tokens={ categories || [] }
 					onChange={ onCategoriesChange }
 					fetchSuggestions={ this.fetchCategorySuggestions }
@@ -192,6 +196,7 @@ class QueryControls extends Component {
 			),
 			! specificMode && onTagsChange && (
 				<AutocompleteTokenField
+					key='tags'
 					tokens={ tags || [] }
 					onChange={ onTagsChange }
 					fetchSuggestions={ this.fetchTagSuggestions }
