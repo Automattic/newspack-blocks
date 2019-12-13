@@ -187,9 +187,9 @@ class Edit extends Component {
 
 	formatAvatars = authorInfo =>
 		authorInfo.map( author => (
-			<span className="avatar author-avatar">
+			<span className="avatar author-avatar" key={ author.id }>
 				<a className="url fn n" href="#">
-					<RawHTML key={ author.id }>{ author.avatar }</RawHTML>
+					<RawHTML>{ author.avatar }</RawHTML>
 				</a>
 			</span>
 		) );

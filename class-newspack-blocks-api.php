@@ -169,6 +169,8 @@ class Newspack_Blocks_API {
 					'display_name' => esc_html( $author->display_name ),
 					/* Get the author avatar */
 					'avatar'       => wp_kses_post( $author_avatar ),
+					/* Get the author ID */
+					'id'           => $author->ID,
 				);
 			}
 		else :
@@ -177,6 +179,8 @@ class Newspack_Blocks_API {
 				'display_name' => get_the_author_meta( 'display_name', $object['author'] ),
 				/* Get the author avatar */
 				'avatar'       => get_avatar( $object['author'], 48 ),
+				/* Get the author ID */
+				'id'           => $author->ID,
 			);
 		endif;
 
