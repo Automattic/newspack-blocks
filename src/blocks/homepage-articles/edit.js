@@ -360,6 +360,7 @@ class Edit extends Component {
 													isPrimary={ isCurrent }
 													aria-pressed={ isCurrent }
 													aria-label={ option.label }
+													key={ option.value }
 													onClick={ () => setAttributes( { imageScale: option.value } ) }
 												>
 													{ option.shortName }
