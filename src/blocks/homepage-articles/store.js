@@ -95,32 +95,25 @@ const selectors = {
 const resolvers = {
 	*query( clientId, criteria ) {
 		let postFetch;
-		const prevPromises = select( STORE_NAMESPACE ).pendingRequestsForEarlierBlocks( clientId );
 
-		if ( criteria.singleMode && ! isNaN( criteria.singleId ) ) {
-			postFetch = Promise.all( prevPromises )
-				.then( () =>
-					apiFetch( {
-						path: `/wp/v2/posts/${ criteria.singleId }?context=edit`,
-					} )
-				)
-				.then( singlePost => [ singlePost ] );
-		} else {
-			// Wait for any other posts to display so we can correctly count earlier blocks
-			postFetch = Promise.all( prevPromises ).then( () => {
-				const earlierBlockCount = select( STORE_NAMESPACE ).countPostsInEarlierBlocks( clientId );
-				const queryParams = {
-					...criteria,
-					per_page: criteria.per_page + earlierBlockCount,
-				};
+		// Resolve specific mode queries immediately
+		const specificMode = !! criteria.include;
+		const prevPromises = specificMode
+			? []
+			: select( STORE_NAMESPACE ).pendingRequestsForEarlierBlocks( clientId );
 
-				console.log( 'path ', addQueryArgs( '/wp/v2/posts', { ...queryParams, context: 'edit' } ) );
+		postFetch = Promise.all( prevPromises ).then( () => {
+			const earlierBlockCount = select( STORE_NAMESPACE ).countPostsInEarlierBlocks( clientId );
+			const queryParams = {
+				...criteria,
+				per_page: criteria.per_page + earlierBlockCount,
+			};
 
-				return apiFetch( {
-					path: addQueryArgs( '/wp/v2/posts', { ...queryParams, context: 'edit' } ),
-				} );
+			return apiFetch( {
+				path: addQueryArgs( '/wp/v2/posts', { ...queryParams, context: 'edit' } ),
 			} );
-		}
+		} );
+		// }
 
 		dispatch( STORE_NAMESPACE ).requestPosts( clientId, postFetch );
 		const posts = yield actions.requestPosts( clientId, postFetch );
@@ -165,20 +158,17 @@ const deDuplicatePosts = state => {
 			return [];
 		}
 
-		const { singleMode, per_page } = criteria[ clientId ];
+		const { include, per_page } = criteria[ clientId ];
 
-		// Force a single post not to de-duplicate
-		if ( singleMode ) {
-			let deDuplicatedPost = [];
-			if ( rawPosts.length ) {
-				const singlePost = rawPosts[ 0 ];
-				seenPostIds.add( singlePost.id );
-				deDuplicatedPost = [ singlePost ];
-			}
+		const specificMode = include && include.length > 0;
+
+		// Force a specific posts not to de-duplicate, but also log them to not show up in other queries
+		if ( specificMode ) {
+			rawPosts.forEach( p => seenPostIds.add( p.id ) );
 
 			return {
 				...deDuplicatedPostsByBlock,
-				[ clientId ]: deDuplicatedPost,
+				[ clientId ]: rawPosts,
 			};
 		}
 
@@ -229,7 +219,6 @@ const reducer = ( state = initialState, action ) => {
 				},
 			};
 			receivePostsState.deDuplicatedPostsByBlock = deDuplicatePosts( receivePostsState );
-			console.log( { receivePostsState } );
 			return receivePostsState;
 		case UPDATE_BLOCKS:
 			const updateBlocksState = {
