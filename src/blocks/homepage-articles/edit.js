@@ -654,7 +654,7 @@ export default compose( [
 			specificPosts,
 			specificMode,
 		} = props.attributes;
-		const { getAuthors, getEntityRecords } = select( 'core' );
+		const { getEntityRecords } = select( 'core' );
 		const latestPostsQuery = pickBy(
 			specificMode && specificPosts && specificPosts.length
 				? {
@@ -670,9 +670,6 @@ export default compose( [
 				  },
 			value => ! isUndefined( value )
 		);
-		const postsListQuery = {
-			per_page: 50,
-		};
 		return {
 			latestPosts: getEntityRecords( 'postType', 'post', latestPostsQuery ),
 		};
