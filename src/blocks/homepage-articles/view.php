@@ -74,6 +74,16 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		rest_url( '/newspack-blocks/v1/articles' )
 	);
 
+	$page = $article_query->paged ?? 1;
+
+	$has_more_pages = ( ++$page ) <= $article_query->max_num_pages;
+
+	$has_load_more_button = ! Newspack_Blocks::is_amp() && $has_more_pages && boolval( $attributes['moreButton'] );
+
+	if ( $has_load_more_button ) {
+		$classes .= ' has-load-more-button';
+	}
+
 	ob_start();
 
 	if ( $article_query->have_posts() ) : ?>
@@ -112,11 +122,8 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			 * @see https://github.com/Automattic/newspack-blocks/pull/226#issuecomment-558695909
 			 * @see https://wp.me/paYJgx-jW
 			 */
-			$page = $article_query->paged ?? 1;
 
-			$has_more_pages = ( ++$page ) <= $article_query->max_num_pages;
-
-			if ( ! Newspack_Blocks::is_amp() && $has_more_pages && boolval( $attributes['moreButton'] ) ) :
+			if ( $has_load_more_button ) :
 				?>
 				<button type="button" data-load-more-btn data-load-more-url="<?php echo esc_url( $articles_rest_url ); ?>">
 				<?php
