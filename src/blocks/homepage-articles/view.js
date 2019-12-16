@@ -44,8 +44,6 @@ function buildLoadMoreHandler( blockWrapperEl ) {
 		return;
 	}
 	const postsContainerEl = blockWrapperEl.querySelector( '[data-posts-container]' );
-	const loadingEl = blockWrapperEl.querySelector( '[data-load-more-loading-text]' );
-	const errorEl = blockWrapperEl.querySelector( '[data-load-more-error-text]' );
 
 	// Set initial state flags.
 	let isFetching = false;
@@ -59,10 +57,8 @@ function buildLoadMoreHandler( blockWrapperEl ) {
 
 		isFetching = true;
 
-		// Set elements visibility for fetching state.
-		hideEl( btnEl );
-		hideEl( errorEl );
-		showEl( loadingEl );
+		blockWrapperEl.classList.remove( 'is-error' );
+		blockWrapperEl.classList.add( 'is-loading' );
 
 		const requestURL = new URL( btnEl.getAttribute( btnURLAttr ) );
 
@@ -86,27 +82,23 @@ function buildLoadMoreHandler( blockWrapperEl ) {
 			if ( data.next ) {
 				// Save next URL as button's attribute.
 				btnEl.setAttribute( btnURLAttr, data.next );
-
-				// Unhide button since there are more posts available.
-				showEl( btnEl );
 			}
 
 			if ( ! data.items.length || ! data.next ) {
 				isEndOfData = true;
+				blockWrapperEl.classList.add( 'is-end-of-data' );
 			}
 
 			isFetching = false;
 
-			hideEl( loadingEl );
+			blockWrapperEl.classList.remove( 'is-loading' );
 		}
 
 		function onError() {
 			isFetching = false;
 
-			// Display error message and keep the button visible to enable retrying.
-			hideEl( loadingEl );
-			showEl( errorEl );
-			showEl( btnEl );
+			blockWrapperEl.classList.remove( 'is-loading' );
+			blockWrapperEl.classList.add( 'is-error' );
 		}
 	} );
 }
@@ -205,26 +197,6 @@ function isPostsDataValid( data ) {
 	}
 
 	return isValid;
-}
-
-/**
- * Hides given DOM element.
- *
- * @param {DOMElement} el
- */
-function hideEl( el ) {
-	el.style.display = 'none';
-	el.setAttribute( 'hidden', '' );
-}
-
-/**
- * Unhides given DOM element.
- *
- * @param {DOMElement} el
- */
-function showEl( el ) {
-	el.style.display = '';
-	el.removeAttribute( 'hidden' );
 }
 
 /**

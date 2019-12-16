@@ -134,10 +134,10 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				}
 				?>
 				</button>
-				<p data-load-more-loading-text hidden>
+				<p data-load-more-loading-text class='homepage-articles-load-more-loading'>
 					<?php _e( 'Loading...', 'newspack-blocks' ); ?>
 				</p>
-				<p data-load-more-error-text hidden>
+				<p data-load-more-error-text class='homepage-articles-load-more-error'>
 					<?php _e( 'Something went wrong. Please refresh the page and/or try again.', 'newspack-blocks' ); ?>
 				</p>
 			<?php endif; ?>
