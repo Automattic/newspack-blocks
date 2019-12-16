@@ -217,18 +217,25 @@ function isPostsDataValid( data ) {
 
 /**
  * Get DOM elements from the Homepage Articles block scope. Returns elements
- * from all blocks if parentBlock is not specified.
+ * from all HA blocks if parentBlock is not specified.
  *
  * @param {string} childSelector Selector of block's child element
  * @param {Element} [parentBlock] Parent block of queried child element
  * @returns {Element|Element[]} Element(s) from the block scope
  */
 function getBlockEl( childSelector, parentBlock ) {
+	const { blockSelector } = config;
+
 	if ( parentBlock ) {
-		return parentBlock.querySelector( childSelector );
+		// Check if it's a valid Homepage Articles block
+		if ( parentBlock.hasAttribute( blockSelector.replace( /\[|\]/g, '' ) ) ) {
+			return parentBlock.querySelector( childSelector );
+		}
+
+		return null;
 	}
 
-	return document.querySelectorAll( config.blockSelector + ' ' + childSelector );
+	return document.querySelectorAll( blockSelector + ' ' + childSelector );
 }
 
 /**
