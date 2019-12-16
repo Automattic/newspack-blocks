@@ -15,20 +15,20 @@ const fetchRetryCount = 3;
  * Load More Button Handling
  */
 
-document.querySelectorAll( '[data-load-more-btn]' ).forEach( attachLoadMoreHandler );
+document.querySelectorAll( '.wp-block-newspack-blocks-homepage-articles.has-load-more-button' ).forEach( attachLoadMoreHandler );
 
 /**
  * Attaches an event handler to the Load more button.
  * @param {DOMElement} btnEl the button that was clicked
  */
-function attachLoadMoreHandler( btnEl ) {
-	if ( ! btnEl ) {
+function attachLoadMoreHandler( blockEl ) {
+
+	if ( ! blockEl ) {
 		return null;
 	}
 
-	const handler = buildLoadMoreHandler( btnEl );
+	buildLoadMoreHandler( blockEl );
 
-	btnEl.addEventListener( 'click', handler );
 }
 
 /**
@@ -38,9 +38,11 @@ function attachLoadMoreHandler( btnEl ) {
  *
  * @param {DOMElement} btnEl the button that was clicked
  */
-function buildLoadMoreHandler( btnEl ) {
-	// Set elements from scope determined by the clicked "Load more" button.
-	const blockWrapperEl = btnEl.parentElement; // scope root element
+function buildLoadMoreHandler( blockWrapperEl ) {
+	const btnEl = blockWrapperEl.querySelector( 'button[data-load-more-btn]' );
+	if ( ! btnEl ) {
+		return;
+	}
 	const postsContainerEl = blockWrapperEl.querySelector( '[data-posts-container]' );
 	const loadingEl = blockWrapperEl.querySelector( '[data-load-more-loading-text]' );
 	const errorEl = blockWrapperEl.querySelector( '[data-load-more-error-text]' );
@@ -49,7 +51,7 @@ function buildLoadMoreHandler( btnEl ) {
 	let isFetching = false;
 	let isEndOfData = false;
 
-	return () => {
+	btnEl.addEventListener( 'click', () => {
 		// Early return if still fetching or no more posts to render.
 		if ( isFetching || isEndOfData ) {
 			return false;
@@ -106,7 +108,7 @@ function buildLoadMoreHandler( btnEl ) {
 			showEl( errorEl );
 			showEl( btnEl );
 		}
-	};
+	} );
 }
 
 /**
