@@ -254,6 +254,7 @@ class Edit extends Component {
 			mediaPosition,
 			specificMode,
 			tags,
+			tagExclusions,
 			url,
 		} = attributes;
 
@@ -303,6 +304,8 @@ class Edit extends Component {
 							onCategoriesChange={ value => setAttributes( { categories: value } ) }
 							tags={ tags }
 							onTagsChange={ value => setAttributes( { tags: value } ) }
+							tagExclusions={ tagExclusions }
+							onTagExclusionsChange={ value => setAttributes( { tagExclusions: value } ) }
 						/>
 					) }
 					{ postLayout === 'grid' && (
@@ -644,6 +647,7 @@ export default compose( [
 			authors,
 			categories,
 			tags,
+			tagExclusions,
 			specificPosts,
 			specificMode,
 		} = props.attributes;
@@ -659,6 +663,7 @@ export default compose( [
 						categories,
 						author: authors,
 						tags,
+						tags_exclude: tagExclusions,
 				  },
 			value => ! isUndefined( value )
 		);

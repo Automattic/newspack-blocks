@@ -180,7 +180,7 @@ class Newspack_Blocks_API {
 				/* Get the author avatar */
 				'avatar'       => get_avatar( $object['author'], 48 ),
 				/* Get the author ID */
-				'id'           => $author->ID,
+				'id'           => $object['author'],
 			);
 		endif;
 

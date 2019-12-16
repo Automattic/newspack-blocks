@@ -151,6 +151,8 @@ class QueryControls extends Component {
 			onCategoriesChange,
 			tags,
 			onTagsChange,
+			tagExclusions,
+			onTagExclusionsChange,
 			enableSpecific,
 		} = this.props;
 
@@ -204,6 +206,16 @@ class QueryControls extends Component {
 					label={ __( 'Tags', 'newspack-blocks' ) }
 				/>
 			),
+			! specificMode && onTagExclusionsChange && (
+				<AutocompleteTokenField
+					key='tag-exclusion'
+					tokens={ tagExclusions || [] }
+					onChange={ onTagExclusionsChange }
+					fetchSuggestions={ this.fetchTagSuggestions }
+					fetchSavedInfo={ this.fetchSavedTags }
+					label={ __( 'Excluded Tags', 'newspack-blocks' ) }
+				/>
+			),
 		];
 	};
 }
@@ -214,6 +226,7 @@ QueryControls.defaultProps = {
 	authors: [],
 	categories: [],
 	tags: [],
+	tagExclusions: [],
 };
 
 export default QueryControls;
