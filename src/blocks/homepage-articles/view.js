@@ -107,8 +107,8 @@ function buildLoadMoreHandler( blockWrapperEl ) {
  * Returns unique IDs for posts that are currently in the DOM.
  */
 function getRenderedPostsIds() {
-	const postEls = document.querySelectorAll( 'article[data-post-id]' );
-	const postIds = Array.from( postEls ).map( el => el.getAttribute( 'data-post-id' ) );
+	const postEls = document.querySelectorAll( 'article[data-homepage-articles-post-id]' );
+	const postIds = Array.from( postEls ).map( el => el.getAttribute( 'data-homepage-articles-post-id' ) );
 
 	return [ ...new Set( postIds ) ]; // Make values unique with Set
 }
