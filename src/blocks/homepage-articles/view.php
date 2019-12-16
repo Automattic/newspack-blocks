@@ -80,14 +80,16 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 	$has_load_more_button = ! Newspack_Blocks::is_amp() && $has_more_pages && boolval( $attributes['moreButton'] );
 
-	if ( $has_load_more_button ) {
-		$classes .= ' has-load-more-button';
-	}
-
 	ob_start();
 
 	if ( $article_query->have_posts() ) : ?>
-		<div  class="<?php echo esc_attr( $classes ); ?>" style="<?php echo esc_attr( $styles ); ?>">
+		<div
+			class="<?php echo esc_attr( $classes ); ?>"
+			style="<?php echo esc_attr( $styles ); ?>"
+			<?php if ( $has_load_more_button ) : ?>
+				data-has-load-more-button
+			<?php endif; ?>
+			>
 			<div data-posts-container>
 				<?php if ( '' !== $attributes['sectionHeader'] ) : ?>
 					<h2 class="article-section-title">
@@ -134,10 +136,10 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				}
 				?>
 				</button>
-				<p data-load-more-loading-text class='homepage-articles-load-more-loading'>
+				<p data-load-more-loading-text>
 					<?php _e( 'Loading...', 'newspack-blocks' ); ?>
 				</p>
-				<p data-load-more-error-text class='homepage-articles-load-more-error'>
+				<p data-load-more-error-text>
 					<?php _e( 'Something went wrong. Please refresh the page and/or try again.', 'newspack-blocks' ); ?>
 				</p>
 			<?php endif; ?>

@@ -557,7 +557,7 @@
 		}
 	}
 
-	.homepage-articles-load-more-loading, .homepage-articles-load-more-error {
+	[data-load-more-loading-text], [data-load-more-error-text] {
 		display: none;
 	}
 
@@ -565,11 +565,11 @@
 		display: none;
 	}
 
-	&.is-loading .homepage-articles-load-more-loading {
+	&.is-loading [data-load-more-loading-text] {
 		display: block;
 	}
 
-	&.is-error .homepage-articles-load-more-error {
+	&.is-error [data-load-more-error-text] {
 		display: block;
 	}
 }
