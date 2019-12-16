@@ -330,13 +330,13 @@ class Newspack_Blocks {
 			$args['orderby']  = 'post__in';
 		} else {
 			$args['posts_per_page'] = $posts_to_show + count( $newspack_blocks_post_id );
-			if ( $authors ) {
+			if ( $authors && count( $authors ) ) {
 				$args['author__in'] = $authors;
 			}
-			if ( $categories ) {
+			if ( $categories && count( $categories ) ) {
 				$args['category__in'] = $categories;
 			}
-			if ( $tags ) {
+			if ( $tags && count( $tags ) ) {
 				$args['tag__in'] = $tags;
 			}
 			if ( $tag_exclusions && count( $tag_exclusions ) ) {
