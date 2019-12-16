@@ -8,14 +8,24 @@
  */
 import './view.scss';
 
-const btnURLAttr = 'data-load-more-url';
-const fetchRetryCount = 3;
+const config = {
+	blockSelector: '[data-wp-block-newspack-blocks-homepage-articles]',
+	postsSelector: '[data-posts]',
+	postSelector: `[data-post-id]`,
+	buttonSelector: '[data-next]',
+	loadingSelector: '[data-loading]',
+	errorSelector: '[data-error]',
+	postIdAttribute: 'data-post-id',
+	nextUrlAttribute: 'data-next',
+	excludeIdsParamName: 'exclude_ids',
+	fetchRetryCount: 3,
+};
 
 /**
  * Load More Button Handling
  */
 
-document.querySelectorAll( '[data-load-more-btn]' ).forEach( attachLoadMoreHandler );
+getBlockEl( config.buttonSelector ).forEach( attachLoadMoreHandler );
 
 /**
  * Attaches an event handler to the Load more button.
@@ -40,10 +50,10 @@ function attachLoadMoreHandler( btnEl ) {
  */
 function buildLoadMoreHandler( btnEl ) {
 	// Set elements from scope determined by the clicked "Load more" button.
-	const blockWrapperEl = btnEl.parentElement; // scope root element
-	const postsContainerEl = blockWrapperEl.querySelector( '[data-posts-container]' );
-	const loadingEl = blockWrapperEl.querySelector( '[data-load-more-loading-text]' );
-	const errorEl = blockWrapperEl.querySelector( '[data-load-more-error-text]' );
+	const blockEl = btnEl.parentElement;
+	const postsEl = getBlockEl( config.postsSelector, blockEl );
+	const loadingEl = getBlockEl( config.loadingSelector, blockEl );
+	const errorEl = getBlockEl( config.errorSelector, blockEl );
 
 	// Set initial state flags.
 	let isFetching = false;
@@ -62,12 +72,12 @@ function buildLoadMoreHandler( btnEl ) {
 		hideEl( errorEl );
 		showEl( loadingEl );
 
-		const requestURL = new URL( btnEl.getAttribute( btnURLAttr ) );
+		const requestURL = new URL( btnEl.getAttribute( config.nextUrlAttribute ) );
 
 		// Set currenty rendered posts' IDs as a query param (e.g. exclude_ids=1,2,3)
-		requestURL.searchParams.set( 'exclude_ids', getRenderedPostsIds().join( ',' ) );
+		requestURL.searchParams.set( config.excludeIdsParamName, getRenderedPostsIds().join( ',' ) );
 
-		fetchWithRetry( { url: requestURL.toString(), onSuccess, onError }, fetchRetryCount );
+		fetchWithRetry( { url: requestURL.toString(), onSuccess, onError }, config.fetchRetryCount );
 
 		function onSuccess( data ) {
 			// Validate received data.
@@ -78,12 +88,12 @@ function buildLoadMoreHandler( btnEl ) {
 			if ( data.items.length ) {
 				// Render posts' HTML from string.
 				const postsHTML = data.items.map( item => item.html ).join( '' );
-				postsContainerEl.insertAdjacentHTML( 'beforeend', postsHTML );
+				postsEl.insertAdjacentHTML( 'beforeend', postsHTML );
 			}
 
 			if ( data.next ) {
 				// Save next URL as button's attribute.
-				btnEl.setAttribute( btnURLAttr, data.next );
+				btnEl.setAttribute( config.nextUrlAttribute, data.next );
 
 				// Unhide button since there are more posts available.
 				showEl( btnEl );
@@ -113,8 +123,8 @@ function buildLoadMoreHandler( btnEl ) {
  * Returns unique IDs for posts that are currently in the DOM.
  */
 function getRenderedPostsIds() {
-	const postEls = document.querySelectorAll( 'article[data-post-id]' );
-	const postIds = Array.from( postEls ).map( el => el.getAttribute( 'data-post-id' ) );
+	const postEls = getBlockEl( config.postSelector );
+	const postIds = Array.from( postEls ).map( el => el.getAttribute( config.postIdAttribute ) );
 
 	return [ ...new Set( postIds ) ]; // Make values unique with Set
 }
@@ -203,6 +213,22 @@ function isPostsDataValid( data ) {
 	}
 
 	return isValid;
+}
+
+/**
+ * Get DOM elements from the Homepage Articles block scope. Returns elements
+ * from all blocks if parentBlock is not specified.
+ *
+ * @param {string} childSelector Selector of block's child element
+ * @param {Element} [parentBlock] Parent block of queried child element
+ * @returns {Element|Element[]} Element(s) from the block scope
+ */
+function getBlockEl( childSelector, parentBlock ) {
+	if ( parentBlock ) {
+		return parentBlock.querySelector( childSelector );
+	}
+
+	return document.querySelectorAll( config.blockSelector + ' ' + childSelector );
 }
 
 /**
