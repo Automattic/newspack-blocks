@@ -56,14 +56,15 @@
 			flex-basis: calc( 50% - 16px );
 		}
 
-		&.columns-5 article:last-of-type:nth-child( odd ) {
-			flex-grow: 1;
+		&.columns-5 article:last-of-type {
+			flex-basis: 100%;
 		}
 	}
 
 	@include media( tablet ) {
 		@for $i from 2 through 6 {
-			&.columns-#{ $i } article {
+			&.columns-#{ $i } article,
+			&.columns-#{ $i } article:last-of-type {
 				flex-basis: calc( ( 100% / #{$i} ) - 16px );
 			}
 		}
