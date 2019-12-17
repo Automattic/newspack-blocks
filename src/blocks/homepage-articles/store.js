@@ -4,8 +4,9 @@ import { addQueryArgs } from '@wordpress/url';
 import { sum } from 'lodash';
 
 import metadata from './block.json';
-const { name } = metadata;
+import { queryCriteriaFromAttributes } from './edit';
 
+const { name } = metadata;
 export const STORE_NAMESPACE = name;
 const blockName = `newspack-blocks/${ name }`;
 
@@ -66,7 +67,7 @@ const blocksBefore = ( orderedBlocks, clientId ) => {
 
 const selectors = {
 	query( state, clientId, criteria ) {
-		return state.deDuplicatedPostsByBlock[ clientId ] || [];
+		return state.deDuplicatedPostsByBlock[ clientId ];
 	},
 	allQueryBlocksOnPage( state ) {
 		return state.queryBlocks;
@@ -113,7 +114,6 @@ const resolvers = {
 				path: addQueryArgs( '/wp/v2/posts', { ...queryParams, context: 'edit' } ),
 			} );
 		} );
-		// }
 
 		dispatch( STORE_NAMESPACE ).requestPosts( clientId, postFetch );
 		const posts = yield actions.requestPosts( clientId, postFetch );
@@ -155,7 +155,7 @@ const deDuplicatePosts = state => {
 		const rawPosts = postsByBlock[ clientId ] || [];
 
 		if ( ! criteria[ clientId ] ) {
-			return [];
+			return deDuplicatedPostsByBlock;
 		}
 
 		const { include, per_page } = criteria[ clientId ];
@@ -242,7 +242,7 @@ export const registerQueryStore = () => {
 
 	const { getClientIdsWithDescendants, getBlocks } = select( 'core/block-editor' );
 	const { allQueryBlocksOnPage, query } = select( STORE_NAMESPACE );
-	const { updateBlocks } = dispatch( STORE_NAMESPACE );
+	const { updateBlocks, updateCriteria } = dispatch( STORE_NAMESPACE );
 
 	let currentBlocksIds;
 	subscribe( () => {
@@ -254,12 +254,9 @@ export const registerQueryStore = () => {
 		if ( blocksChanged ) {
 			updateBlocks( getBlocks() );
 			allQueryBlocksOnPage().forEach( ( block, idx ) => {
-				if ( block.attributes.criteria ) {
-					query( block.clientId, {
-						...block.attributes.criteria,
-						_skip_memoization: block.clientId + idx,
-					} );
-				}
+				const criteria = queryCriteriaFromAttributes( block.attributes );
+				updateCriteria( block.clientId, criteria );
+				query( block.clientId, { ...criteria, _skip_memoization: block.clientId + idx } );
 			} );
 		}
 	} );

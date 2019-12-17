@@ -76,7 +76,7 @@ const coverIcon = (
 	</SVG>
 );
 
-const queryCriteriaFromAttributes = attributes => {
+export const queryCriteriaFromAttributes = attributes => {
 	const { postsToShow, authors, categories, tags, specificPosts, specificMode } = attributes;
 	const latestPostsQuery = pickBy(
 		specificMode && specificPosts && specificPosts.length
@@ -97,11 +97,6 @@ const queryCriteriaFromAttributes = attributes => {
 };
 
 class Edit extends Component {
-	constructor( props ) {
-		super( props );
-		props.updateCriteria( props.clientId, queryCriteriaFromAttributes( props.attributes ) );
-	}
-
 	renderPost = post => {
 		const { attributes } = this.props;
 		const {
@@ -237,7 +232,15 @@ class Edit extends Component {
 	);
 
 	renderInspectorControls = () => {
-		const { attributes, setAttributes, latestPosts, textColor, setTextColor } = this.props;
+		const {
+			attributes,
+			setAttributes,
+			latestPosts,
+			textColor,
+			setTextColor,
+			updateCriteria,
+			clientId,
+		} = this.props;
 		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
 
 		const {
@@ -470,15 +473,7 @@ class Edit extends Component {
 		/**
 		 * Constants
 		 */
-		const {
-			attributes,
-			className,
-			setAttributes,
-			isSelected,
-			latestPosts,
-			textColor,
-			clientId,
-		} = this.props; // variables getting pulled out of props
+		const { attributes, className, setAttributes, isSelected, latestPosts, textColor } = this.props; // variables getting pulled out of props
 		const {
 			showImage,
 			imageShape,
@@ -636,17 +631,26 @@ class Edit extends Component {
 	}
 }
 
+let cacheBust = 0;
+
 export default compose( [
 	withColors( { textColor: 'color' } ),
 	withSelect( ( select, props ) => {
-		const { clientId } = props;
+		const { attributes, clientId } = props;
 		const { query } = select( STORE_NAMESPACE );
-		const latestPostsQuery = queryCriteriaFromAttributes( props.attributes );
-		const latestPosts = query( clientId, latestPostsQuery );
+		const latestPosts = query( clientId, queryCriteriaFromAttributes( attributes ) );
+		console.log( latestPosts );
 		return { latestPosts };
 	} ),
-	withDispatch( dispatch => {
+	withDispatch( ( dispatch, props ) => {
 		const { updateCriteria } = dispatch( STORE_NAMESPACE );
-		return { updateCriteria };
+		// return { updateCriteria };
+		return {
+			updateCriteria: ( clientId, criteria ) =>
+				updateCriteria( clientId, {
+					...criteria,
+					_cacheBust: cacheBust++,
+				} ),
+		};
 	} ),
 ] )( Edit );
