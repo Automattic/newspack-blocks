@@ -81,6 +81,11 @@
       "default": [],
       "items": { "type": "integer" }
     },
+    "tagExclusions": {
+      "type": "array",
+      "default": [],
+      "items": { "type": "integer" }
+    },
     "specificPosts": {
       "type": "array",
       "default": [],

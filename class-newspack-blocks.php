@@ -316,6 +316,7 @@ class Newspack_Blocks {
 		$authors        = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
 		$categories     = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
 		$tags           = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
+		$tag_exclusions = isset( $attributes['tagExclusions'] ) ? $attributes['tagExclusions'] : array();
 		$specific_posts = isset( $attributes['specificPosts'] ) ? $attributes['specificPosts'] : array();
 		$posts_to_show  = intval( $attributes['postsToShow'] );
 		$specific_mode  = intval( $attributes['specificMode'] );
@@ -329,14 +330,17 @@ class Newspack_Blocks {
 			$args['orderby']  = 'post__in';
 		} else {
 			$args['posts_per_page'] = $posts_to_show + count( $newspack_blocks_post_id );
-			if ( $authors ) {
+			if ( $authors && count( $authors ) ) {
 				$args['author__in'] = $authors;
 			}
-			if ( $categories ) {
+			if ( $categories && count( $categories ) ) {
 				$args['category__in'] = $categories;
 			}
-			if ( $tags ) {
+			if ( $tags && count( $tags ) ) {
 				$args['tag__in'] = $tags;
+			}
+			if ( $tag_exclusions && count( $tag_exclusions ) ) {
+				$args['tag__not_in'] = $tag_exclusions;
 			}
 		}
 		return $args;
