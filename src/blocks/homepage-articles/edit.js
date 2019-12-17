@@ -93,6 +93,7 @@ class Edit extends Component {
 			minHeight,
 			showCaption,
 			showExcerpt,
+			showSubtitle,
 			showAuthor,
 			showAvatar,
 			showDate,
@@ -156,6 +157,18 @@ class Edit extends Component {
 						<h3 className="entry-title" key="title">
 							<a href="#">{ postTitle }</a>
 						</h3>
+					) }
+					{ showSubtitle && (
+						<RawHTML
+							key="subtitle"
+							className={classNames(
+								'newspack-post-subtitle',
+								'newspack-post-subtitle--in-homepage-block',
+								RichText.isEmpty( sectionHeader ) && 'newspack-post-subtitle--small'
+							)}
+						>
+							{ post.meta.newspack_post_subtitle || '' }
+						</RawHTML>
 					) }
 					{ showExcerpt && (
 						<RawHTML key="excerpt" className="excerpt-contain">
@@ -245,6 +258,7 @@ class Edit extends Component {
 			moreButton,
 			moreButtonText,
 			showExcerpt,
+			showSubtitle,
 			typeScale,
 			showDate,
 			showAuthor,
@@ -401,6 +415,13 @@ class Edit extends Component {
 							onChange={ () => setAttributes( { showExcerpt: ! showExcerpt } ) }
 						/>
 					</PanelRow>
+					<PanelRow>
+						<ToggleControl
+							label={ __( 'Show Subtitle', 'newspack-blocks' ) }
+							checked={ showSubtitle }
+							onChange={ () => setAttributes( { showSubtitle: ! showSubtitle} ) }
+						/>
+					</PanelRow>
 					<RangeControl
 						className="type-scale-slider"
 						label={ __( 'Type Scale', 'newspack-blocks' ) }
@@ -475,6 +496,7 @@ class Edit extends Component {
 		} = this.props; // variables getting pulled out of props
 		const {
 			showExcerpt,
+			showSubtitle,
 			showDate,
 			showImage,
 			imageShape,
