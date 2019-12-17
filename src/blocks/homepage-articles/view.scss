@@ -558,3 +558,14 @@
 		}
 	}
 }
+
+/* Styles for the Subtitle, as part of the the Block */
+.newspack-post-subtitle {
+	&--in-homepage-block {
+		margin-bottom: 0;
+		font-style: italic;
+	}
+	&--small {
+		font-size: 0.8em;
+	}
+}

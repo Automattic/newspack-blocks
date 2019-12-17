@@ -71,11 +71,18 @@ call_user_func(
 				</div>
 				<?php
 			endif;
-			if ( '' === $attributes['sectionHeader'] ) :
+
+			$is_section_header = '' === $attributes['sectionHeader'];
+			if ( $is_section_header ) :
 				the_title( '<h2 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h2>' );
 			else :
 				the_title( '<h3 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h3>' );
 			endif;
+			?>
+			<div class="newspack-post-subtitle newspack-post-subtitle--in-homepage-block <?php echo $is_section_header ? 'newspack-post-subtitle--small' : '' ?>">
+				<?php echo get_post_meta(get_the_ID(), 'newspack_post_subtitle', true); ?>
+			</div>
+			<?php
 			if ( $attributes['showExcerpt'] ) :
 				the_excerpt();
 			endif;
