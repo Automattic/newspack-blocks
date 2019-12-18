@@ -34,7 +34,7 @@
     "dev": "calypso-build --watch --config='./webpack.config.js'",
     "build": "calypso-build --config='./webpack.config.js'",
     "lint": "npm-run-all --parallel lint:*",
-    "lint:js": "eslint --ext .js,.jsx . src",
+    "lint:js": "eslint --ext .js,.jsx src",
     "lint:scss": "stylelint \"**/*.scss\" --syntax scss",
     "clean": "rm -rf dist/",
     "test": "echo \"Error: no test specified\" && exit 1",
