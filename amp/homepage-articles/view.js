@@ -59,8 +59,17 @@ function buildLoadMoreHandler( btnEl ) {
 		hideEl( btnEl );
 		hideEl( errorEl );
 		showEl( loadingEl );
-
+		AMP.getState( 'newspackHomepagePosts.exclude_ids' ).then( function( exclude_ids ) {
+			const requestURL = new URL( btnEl.getAttribute( btnURLAttr ) );
+			requestURL.searchParams.set( 'exclude_ids', JSON.parse( exclude_ids ).join( ',' ) );
+			apiFetchWithRetry( { url: requestURL.toString(), onSuccess, onError }, fetchRetryCount );
+		} );
 		const onSuccess = data => {
+			AMP.getState( 'newspackHomepagePosts.exclude_ids' ).then( function( exclude_ids ) {
+				AMP.setState( {
+					newspackHomepagePosts: { exclude_ids: JSON.parse( exclude_ids ).concat( data.ids ) },
+				} );
+			} );
 			/**
 			 * Validate received data.
 			 */
@@ -103,11 +112,6 @@ function buildLoadMoreHandler( btnEl ) {
 			showEl( errorEl );
 			showEl( btnEl );
 		};
-
-		apiFetchWithRetry(
-			{ url: btnEl.getAttribute( btnURLAttr ), onSuccess, onError },
-			fetchRetryCount
-		);
 	};
 }
 
