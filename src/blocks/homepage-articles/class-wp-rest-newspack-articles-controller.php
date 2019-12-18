@@ -76,6 +76,7 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 
 		// Defaults.
 		$items    = [];
+		$ids      = [];
 		$next_url = '';
 
 		// The Loop.
@@ -92,6 +93,7 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 				$html = $this->generate_amp_partial( $html );
 			}
 			$items[]['html'] = $html;
+			$ids[]           = get_the_ID();
 		}
 
 		// Provide next URL if there are more pages.
@@ -116,6 +118,7 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 		return rest_ensure_response(
 			[
 				'items' => $items,
+				'ids'   => $ids,
 				'next'  => $next_url,
 			]
 		);
