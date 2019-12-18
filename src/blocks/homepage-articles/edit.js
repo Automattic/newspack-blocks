@@ -78,7 +78,7 @@ const coverIcon = (
 
 export const queryCriteriaFromAttributes = attributes => {
 	const { postsToShow, authors, categories, tags, specificPosts, specificMode } = attributes;
-	const latestPostsQuery = pickBy(
+	const criteria = pickBy(
 		specificMode && specificPosts && specificPosts.length
 			? {
 					include: specificPosts,
@@ -93,10 +93,21 @@ export const queryCriteriaFromAttributes = attributes => {
 			  },
 		value => ! isUndefined( value )
 	);
-	return latestPostsQuery;
+	return criteria;
 };
 
 class Edit extends Component {
+	constructor( props ) {
+		super( props );
+		this.state = { latestPosts: undefined };
+	}
+
+	componentDidUpdate( prevProps ) {
+		const { latestPosts } = this.props;
+		if ( latestPosts !== prevProps.latestPosts ) {
+			this.setState( { latestPosts } );
+		}
+	}
 	renderPost = post => {
 		const { attributes } = this.props;
 		const {
@@ -232,10 +243,10 @@ class Edit extends Component {
 	);
 
 	renderInspectorControls = () => {
+		const { latestPosts } = this.state;
 		const {
 			attributes,
 			setAttributes,
-			latestPosts,
 			textColor,
 			setTextColor,
 			updateCriteria,
@@ -302,17 +313,50 @@ class Edit extends Component {
 					{ postsToShow && (
 						<QueryControls
 							numberOfItems={ postsToShow }
-							onNumberOfItemsChange={ postsToShow => setAttributes( { postsToShow } ) }
+							onNumberOfItemsChange={ postsToShow => {
+								updateCriteria(
+									clientId,
+									queryCriteriaFromAttributes( { ...attributes, postsToShow } )
+								);
+								setAttributes( { postsToShow } );
+							} }
 							specificMode={ specificMode }
-							onSpecificModeChange={ specificMode => setAttributes( { specificMode } ) }
+							onSpecificModeChange={ specificMode => {
+								updateCriteria(
+									clientId,
+									queryCriteriaFromAttributes( { ...attributes, specificMode } )
+								);
+								setAttributes( { specificMode } );
+							} }
 							specificPosts={ specificPosts }
-							onSpecificPostsChange={ specificPosts => setAttributes( { specificPosts } ) }
+							onSpecificPostsChange={ specificPosts => {
+								updateCriteria(
+									clientId,
+									queryCriteriaFromAttributes( { ...attributes, specificPosts } )
+								);
+								setAttributes( { specificPosts } );
+							} }
 							authors={ authors }
-							onAuthorsChange={ authors => setAttributes( { authors } ) }
+							onAuthorsChange={ authors => {
+								updateCriteria(
+									clientId,
+									queryCriteriaFromAttributes( { ...attributes, authors } )
+								);
+								setAttributes( { authors } );
+							} }
 							categories={ categories }
-							onCategoriesChange={ categories => setAttributes( { categories } ) }
+							onCategoriesChange={ categories => {
+								updateCriteria(
+									clientId,
+									queryCriteriaFromAttributes( { ...attributes, categories } )
+								);
+								setAttributes( { categories } );
+							} }
 							tags={ tags }
-							onTagsChange={ tags => setAttributes( { tags } ) }
+							onTagsChange={ tags => {
+								updateCriteria( clientId, queryCriteriaFromAttributes( { ...attributes, tags } ) );
+								setAttributes( { tags } );
+							} }
 						/>
 					) }
 					{ postLayout === 'grid' && (
@@ -473,7 +517,8 @@ class Edit extends Component {
 		/**
 		 * Constants
 		 */
-		const { attributes, className, setAttributes, isSelected, latestPosts, textColor } = this.props; // variables getting pulled out of props
+		const { latestPosts } = this.state;
+		const { attributes, className, setAttributes, isSelected, textColor } = this.props; // variables getting pulled out of props
 		const {
 			showImage,
 			imageShape,
@@ -639,18 +684,24 @@ export default compose( [
 		const { attributes, clientId } = props;
 		const { query } = select( STORE_NAMESPACE );
 		const latestPosts = query( clientId, queryCriteriaFromAttributes( attributes ) );
-		console.log( latestPosts );
-		return { latestPosts };
+		return {
+			latestPosts,
+			query,
+		};
 	} ),
 	withDispatch( ( dispatch, props ) => {
 		const { updateCriteria } = dispatch( STORE_NAMESPACE );
-		// return { updateCriteria };
+		const { query } = props;
+		const wrappedUpdate = ( clientId, criteria ) => {
+			const cacheBustedCriteria = {
+				...criteria,
+				cacheBust: clientId + cacheBust++,
+			};
+			updateCriteria( clientId, criteria );
+			query( clientId, cacheBustedCriteria );
+		};
 		return {
-			updateCriteria: ( clientId, criteria ) =>
-				updateCriteria( clientId, {
-					...criteria,
-					_cacheBust: cacheBust++,
-				} ),
+			updateCriteria: wrappedUpdate,
 		};
 	} ),
 ] )( Edit );
