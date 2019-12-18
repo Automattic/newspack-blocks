@@ -228,3 +228,31 @@ function newspack_blocks_format_byline( $author_info ) {
 
 	return implode( '', $elements );
 }
+
+
+/**
+ * Inject amp-state containing all post IDs visible on page load.
+ */
+function newspack_blocks_inject_amp_state() {
+	if ( ! Newspack_Blocks::is_amp() ) {
+		return;
+	}
+	global $newspack_blocks_post_id;
+	if ( ! $newspack_blocks_post_id || ! count( $newspack_blocks_post_id ) ) {
+		return;
+	}
+	$post_ids = implode( ', ', array_keys( $newspack_blocks_post_id ) );
+	ob_start();
+	?>
+	<amp-state id='newspackHomepagePosts'>
+		<script type="application/json">
+			{
+				"exclude_ids": [ <?php echo esc_attr( $post_ids ); ?> ]
+			}
+		</script>
+	</amp-state>
+	<?php
+	echo ob_get_clean(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+
+add_action( 'wp_footer', 'newspack_blocks_inject_amp_state' );
