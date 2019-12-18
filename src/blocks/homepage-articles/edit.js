@@ -410,16 +410,16 @@ class Edit extends Component {
 				<PanelBody title={ __( 'Post Control Settings', 'newspack-blocks' ) }>
 					<PanelRow>
 						<ToggleControl
-							label={ __( 'Show Excerpt', 'newspack-blocks' ) }
-							checked={ showExcerpt }
-							onChange={ () => setAttributes( { showExcerpt: ! showExcerpt } ) }
+							label={ __( 'Show Subtitle', 'newspack-blocks' ) }
+							checked={ showSubtitle }
+							onChange={ () => setAttributes( { showSubtitle: ! showSubtitle} ) }
 						/>
 					</PanelRow>
 					<PanelRow>
 						<ToggleControl
-							label={ __( 'Show Subtitle', 'newspack-blocks' ) }
-							checked={ showSubtitle }
-							onChange={ () => setAttributes( { showSubtitle: ! showSubtitle} ) }
+							label={ __( 'Show Excerpt', 'newspack-blocks' ) }
+							checked={ showExcerpt }
+							onChange={ () => setAttributes( { showExcerpt: ! showExcerpt } ) }
 						/>
 					</PanelRow>
 					<RangeControl
