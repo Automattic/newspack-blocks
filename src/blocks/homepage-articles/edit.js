@@ -166,11 +166,7 @@ class Edit extends Component {
 					{ IS_SUBTITLE_SUPPORTED_IN_THEME && showSubtitle && (
 						<RawHTML
 							key="subtitle"
-							className={classNames(
-								'newspack-post-subtitle',
-								'newspack-post-subtitle--in-homepage-block',
-								RichText.isEmpty( sectionHeader ) && 'newspack-post-subtitle--small'
-							)}
+							className="newspack-post-subtitle newspack-post-subtitle--in-homepage-block"
 						>
 							{ post.meta.newspack_post_subtitle || '' }
 						</RawHTML>

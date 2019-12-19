@@ -342,15 +342,20 @@
 				width: 2.4em;
 			}
 		}
+	}
 
+	&.ts-10,
+	&.ts-9,
+	&.ts-8,
+	&.ts-7 {
+		.newspack-post-subtitle {
+			font-size: 1.4em;
+		}
 	}
 
 	&.ts-10 article {
 		.entry-title {
 			font-size: 2.6em;
-		}
-		.newspack-post-subtitle {
-			font-size: 2.3em;
 		}
 		@include media(tablet) {
 			.entry-title {
@@ -368,9 +373,6 @@
 		.entry-title {
 			font-size: 2.4em;
 		}
-		.newspack-post-subtitle {
-			font-size: 2.1em;
-		}
 		@include media(tablet) {
 			.entry-title {
 				font-size: 3.4em;
@@ -387,9 +389,6 @@
 		.entry-title {
 			font-size: 2.2em;
 		}
-		.newspack-post-subtitle {
-			font-size: 1.9em;
-		}
 		@include media(tablet) {
 			.entry-title {
 				font-size: 3.0em;
@@ -405,9 +404,6 @@
 	&.ts-7 article {
 		.entry-title {
 			font-size: 2em;
-		}
-		.newspack-post-subtitle {
-			font-size: 1.7em;
 		}
 		@include media( tablet) {
 			.entry-title {
@@ -477,9 +473,7 @@
 		.entry-title {
 			font-size: 1.0em;
 		}
-		.newspack-post-subtitle {
-			font-size: 0.8em;
-		}
+		.newspack-post-subtitle,
 		.entry-wrapper p {
 			font-size: 0.8em;
 		}
@@ -503,7 +497,7 @@
 			font-size: 0.8em;
 		}
 		.newspack-post-subtitle {
-			font-size: 0.6em;
+			font-size: 0.7em;
 		}
 		.entry-wrapper p,
 		.entry-meta {
@@ -528,7 +522,7 @@
 			font-size: 0.7em;
 		}
 		.newspack-post-subtitle {
-			font-size: 0.5em;
+			font-size: 0.7em;
 		}
 		.entry-meta {
 			font-size: 0.6em;
@@ -589,10 +583,9 @@
 /* Styles for the Subtitle, as part of the the Block */
 .newspack-post-subtitle {
 	&--in-homepage-block {
+		margin-top: 0.3em;
 		margin-bottom: 0;
+		line-height: 1.4em;
 		font-style: italic;
-	}
-	&--small {
-		font-size: 0.8em;
 	}
 }
