@@ -5,46 +5,96 @@ msgstr ""
 "Project-Id-Version: Newspack Blocks 1.0.0-alpha.20\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/newspack-"
 "blocks\n"
+"POT-Creation-Date: 2019-12-19 09:29-0800\n"
+"PO-Revision-Date: 2019-12-19 09:31-0800\n"
+"Last-Translator: \n"
 "Language-Team: \n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2019-12-19T00:13:04+00:00\n"
-"PO-Revision-Date: 2019-12-18 16:18-0800\n"
 "X-Generator: Poedit 2.2.4\n"
 "X-Domain: newspack-blocks\n"
-"Last-Translator: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language: es\n"
 
-#. Plugin Name of the plugin
-msgid "Newspack Blocks"
+#: src/blocks/carousel/edit.js:114
+msgid "Sorry, no posts were found."
 msgstr ""
 
-#. Plugin URI of the plugin
-msgid "PLUGIN SITE HERE"
+#: src/blocks/carousel/edit.js:150
+msgid "by"
+msgstr "por"
+
+#: src/blocks/carousel/edit.js:208 src/blocks/homepage-articles/edit.js:292
+msgid "Display Settings"
 msgstr ""
 
-#. Description of the plugin
-msgid "PLUGIN DESCRIPTION HERE"
+#: src/blocks/carousel/edit.js:223
+msgid "Slideshow Settings"
 msgstr ""
 
-#. Author of the plugin
-msgid "YOUR NAME HERE"
+#: src/blocks/carousel/edit.js:225
+msgid "Autoplay"
 msgstr ""
 
-#. Author URI of the plugin
-msgid "YOUR SITE HERE"
+#: src/blocks/carousel/edit.js:226
+msgid "Autoplay between slides"
+msgstr ""
+
+#: src/blocks/carousel/edit.js:234
+msgid "Delay between transitions (in seconds)"
+msgstr ""
+
+#: src/blocks/carousel/edit.js:244
+msgid "Article Meta Settings"
+msgstr ""
+
+#: src/blocks/carousel/edit.js:247 src/blocks/homepage-articles/edit.js:433
+msgid "Show Date"
+msgstr ""
+
+#: src/blocks/carousel/edit.js:254 src/blocks/homepage-articles/edit.js:440
+msgid "Show Category"
+msgstr ""
+
+#: src/blocks/carousel/edit.js:261 src/blocks/homepage-articles/edit.js:447
+msgid "Show Author"
+msgstr ""
+
+#: src/blocks/carousel/edit.js:269 src/blocks/homepage-articles/edit.js:455
+msgid "Show Author Avatar"
+msgstr ""
+
+#: src/blocks/carousel/index.js:19
+msgid "Articles Carousel"
+msgstr ""
+
+#: src/blocks/carousel/index.js:33 src/blocks/homepage-articles/index.js:45
+msgid "posts"
+msgstr ""
+
+#: src/blocks/carousel/index.js:33
+msgid "slideshow"
+msgstr ""
+
+#: src/blocks/carousel/index.js:33
+msgid "carousel"
+msgstr ""
+
+#: src/blocks/carousel/index.js:34
+msgid "A carousel of articles."
 msgstr ""
 
 #. translators: %s: post author.
 #: src/blocks/carousel/view.php:157
+#, php-format
 msgctxt "post author"
 msgid "by %s"
 msgstr "por %s"
 
 #. translators: %d: Slide number.
 #: src/blocks/carousel/view.php:192
+#, php-format
 msgid "Go to slide %d"
 msgstr ""
 
@@ -64,81 +114,39 @@ msgstr ""
 msgid "Play Slideshow"
 msgstr ""
 
-#: src/blocks/donate/view.php:28 src/blocks/donate/edit.js:89
-#: src/blocks/donate/edit.js:155
+#: src/blocks/donate/edit.js:89 src/blocks/donate/edit.js:155
+#: src/blocks/donate/view.php:28
 msgid "One-time"
 msgstr "Una vez"
 
-#: src/blocks/donate/view.php:29 src/blocks/donate/edit.js:90
-#: src/blocks/donate/edit.js:156
+#: src/blocks/donate/edit.js:90 src/blocks/donate/edit.js:156
+#: src/blocks/donate/view.php:29
 msgid "Monthly"
 msgstr "Mensual"
 
-#: src/blocks/donate/view.php:30 src/blocks/donate/edit.js:91
-#: src/blocks/donate/edit.js:157
+#: src/blocks/donate/edit.js:91 src/blocks/donate/edit.js:157
+#: src/blocks/donate/view.php:30
 msgid "Annually"
 msgstr "Anual"
 
-#: src/blocks/donate/view.php:73 src/blocks/donate/view.php:164
 #: src/blocks/donate/edit.js:118 src/blocks/donate/edit.js:220
+#: src/blocks/donate/view.php:73 src/blocks/donate/view.php:164
 msgid "Donation amount"
 msgstr "Monto de la donación"
 
-#: src/blocks/donate/view.php:91 src/blocks/donate/view.php:185
 #: src/blocks/donate/edit.js:134 src/blocks/donate/edit.js:238
+#: src/blocks/donate/view.php:91 src/blocks/donate/view.php:185
 msgid "Your contribution is appreciated."
 msgstr "Apreciamos tu contribución."
 
-#: src/blocks/donate/view.php:94 src/blocks/donate/view.php:188
 #: src/blocks/donate/edit.js:137 src/blocks/donate/edit.js:241
+#: src/blocks/donate/view.php:94 src/blocks/donate/view.php:188
 msgid "Donate now!"
 msgstr "¡Dona ahora!"
 
-#: src/blocks/donate/view.php:158 src/blocks/donate/edit.js:214
+#: src/blocks/donate/edit.js:214 src/blocks/donate/view.php:158
 msgid "Other"
 msgstr "Otro"
-
-#: src/blocks/homepage-articles/view.php:126
-msgid "Load more posts"
-msgstr ""
-
-#: src/blocks/homepage-articles/view.php:131
-msgid "Loading..."
-msgstr ""
-
-#: src/blocks/homepage-articles/view.php:134
-msgid "Something went wrong. Please refresh the page and/or try again."
-msgstr ""
-
-#: src/blocks/homepage-articles/view.php:200
-msgctxt "post author"
-msgid "by"
-msgstr "por"
-
-#: src/blocks/homepage-articles/view.php:218
-msgctxt "post author"
-msgid " and "
-msgstr "y"
-
-#: src/blocks/carousel/edit.js:244
-msgid "Article Meta Settings"
-msgstr ""
-
-#: src/blocks/carousel/edit.js:247
-msgid "Show Date"
-msgstr ""
-
-#: src/blocks/carousel/edit.js:254
-msgid "Show Category"
-msgstr ""
-
-#: src/blocks/carousel/edit.js:261
-msgid "Show Author"
-msgstr ""
-
-#: src/blocks/carousel/edit.js:269
-msgid "Show Author Avatar"
-msgstr ""
 
 #: src/blocks/donate/edit.js:260
 msgid "Error"
@@ -152,7 +160,7 @@ msgstr ""
 msgid "Not ready"
 msgstr ""
 
-#: src/blocks/donate/edit.js:275
+#: src/blocks/donate/edit.js:276
 msgid ""
 "You have not set up your donation settings yet. You need to do that before "
 "you can use the Donate Block."
@@ -166,7 +174,7 @@ msgstr ""
 msgid "Donate Block"
 msgstr ""
 
-#: src/blocks/donate/edit.js:300
+#: src/blocks/donate/edit.js:301
 msgid ""
 "The Donate Block allows you to collect donations from readers. The fields "
 "are automatically defined based on your donation settings."
@@ -196,12 +204,127 @@ msgstr ""
 msgid "Enable donations."
 msgstr ""
 
-#: src/blocks/homepage-articles/index.js:29
-msgid "Homepage Posts"
+#: src/blocks/homepage-articles/edit.js:204
+#: src/blocks/homepage-articles/view.php:200
+msgctxt "post author"
+msgid "by"
+msgstr "por"
+
+#: src/blocks/homepage-articles/edit.js:216
+#: src/blocks/homepage-articles/view.php:218
+msgctxt "post author"
+msgid " and "
+msgstr " y "
+
+#. translators: label for small size option
+#: src/blocks/homepage-articles/edit.js:264
+msgid "Small"
 msgstr ""
 
-#: src/blocks/homepage-articles/index.js:45
-msgid "posts"
+#. translators: abbreviation for small size
+#: src/blocks/homepage-articles/edit.js:265
+msgid "S"
+msgstr ""
+
+#. translators: label for medium size option
+#: src/blocks/homepage-articles/edit.js:269
+msgid "Medium"
+msgstr ""
+
+#. translators: abbreviation for medium size
+#: src/blocks/homepage-articles/edit.js:270
+msgid "M"
+msgstr ""
+
+#. translators: label for large size option
+#: src/blocks/homepage-articles/edit.js:274
+msgid "Large"
+msgstr ""
+
+#. translators: abbreviation for large size
+#: src/blocks/homepage-articles/edit.js:275
+msgid "L"
+msgstr ""
+
+#. translators: label for extra large size option
+#: src/blocks/homepage-articles/edit.js:280
+msgid "Extra Large"
+msgstr ""
+
+#. translators: abbreviation for extra large size
+#: src/blocks/homepage-articles/edit.js:284
+msgid "XL"
+msgstr ""
+
+#: src/blocks/homepage-articles/edit.js:313
+msgid "Columns"
+msgstr ""
+
+#: src/blocks/homepage-articles/edit.js:325
+msgid "Show \"More\" Button"
+msgstr ""
+
+#: src/blocks/homepage-articles/edit.js:328
+msgid "Only available for non-AMP requests."
+msgstr ""
+
+#: src/blocks/homepage-articles/edit.js:332
+msgid "Featured Image Settings"
+msgstr ""
+
+#: src/blocks/homepage-articles/edit.js:335
+msgid "Show Featured Image"
+msgstr ""
+
+#: src/blocks/homepage-articles/edit.js:344
+msgid "Show Featured Image Caption"
+msgstr ""
+
+#: src/blocks/homepage-articles/edit.js:355
+msgid "Stack on mobile"
+msgstr ""
+
+#: src/blocks/homepage-articles/edit.js:360
+#: src/blocks/homepage-articles/edit.js:362
+msgid "Featured Image Size"
+msgstr ""
+
+#: src/blocks/homepage-articles/edit.js:386
+msgid "Minimum height"
+msgstr ""
+
+#: src/blocks/homepage-articles/edit.js:388
+msgid ""
+"Sets a minimum height for the block, using a percentage of the screen's "
+"current height."
+msgstr ""
+
+#: src/blocks/homepage-articles/edit.js:399
+msgid "Post Control Settings"
+msgstr ""
+
+#: src/blocks/homepage-articles/edit.js:402
+msgid "Show Excerpt"
+msgstr ""
+
+#: src/blocks/homepage-articles/edit.js:409
+msgid "Type Scale"
+msgstr ""
+
+#: src/blocks/homepage-articles/edit.js:420
+msgid "Color Settings"
+msgstr ""
+
+#: src/blocks/homepage-articles/edit.js:426
+msgid "Text Color"
+msgstr ""
+
+#: src/blocks/homepage-articles/edit.js:430
+msgid "Post Meta Settings"
+msgstr ""
+
+#: src/blocks/homepage-articles/index.js:29
+msgid "Homepage Posts"
 msgstr ""
 
 #: src/blocks/homepage-articles/index.js:46
@@ -224,4 +347,78 @@ msgstr ""
 #: src/blocks/homepage-articles/index.js:52
 msgctxt "block style"
 msgid "Borders"
+msgstr ""
+
+#: src/blocks/homepage-articles/view.php:126
+msgid "Load more posts"
+msgstr ""
+
+#: src/blocks/homepage-articles/view.php:131
+msgid "Loading..."
+msgstr ""
+
+#: src/blocks/homepage-articles/view.php:134
+msgid "Something went wrong. Please refresh the page and/or try again."
+msgstr ""
+
+#: src/components/query-controls.js:37 src/components/query-controls.js:52
+#: src/components/query-controls.js:98 src/components/query-controls.js:112
+#: src/components/query-controls.js:129 src/components/query-controls.js:143
+msgid "(no title)"
+msgstr ""
+
+#: src/components/query-controls.js:67 src/components/query-controls.js:81
+msgid "(no name)"
+msgstr ""
+
+#: src/components/query-controls.js:174
+msgid "Choose specific stories"
+msgstr ""
+
+#: src/components/query-controls.js:184
+msgid "Posts"
+msgstr ""
+
+#: src/components/query-controls.js:195
+msgid "Authors"
+msgstr ""
+
+#: src/components/query-controls.js:205
+msgid "Categories"
+msgstr ""
+
+#: src/components/query-controls.js:215
+msgid "Tags"
+msgstr ""
+
+#: src/components/query-controls.js:226
+msgid "Hide Advanced Filters"
+msgstr ""
+
+#: src/components/query-controls.js:227
+msgid "Show Advanced Filters"
+msgstr ""
+
+#: src/components/query-controls.js:238
+msgid "Excluded Tags"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Newspack Blocks"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "PLUGIN SITE HERE"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "PLUGIN DESCRIPTION HERE"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "YOUR NAME HERE"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "YOUR SITE HERE"
 msgstr ""

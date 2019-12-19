@@ -13,7 +13,7 @@ import moment from 'moment';
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
 import { Component, Fragment, RawHTML } from '@wordpress/element';
 import {
 	BlockControls,
@@ -201,7 +201,7 @@ class Edit extends Component {
 
 	formatByline = authorInfo => (
 		<span className="byline">
-			{ __( 'by', 'newspack-blocks' ) }{' '}
+			{ _x( 'by', 'post author', 'newspack-blocks' ) }{' '}
 			{ authorInfo.reduce( ( accumulator, author, index ) => {
 				return [
 					...accumulator,
@@ -213,7 +213,7 @@ class Edit extends Component {
 					index < authorInfo.length - 2 && ', ',
 					authorInfo.length > 1 &&
 						index === authorInfo.length - 2 &&
-						__( ' and ', 'newspack-blocks' ),
+						_x( ' and ', 'post author', 'newspack-blocks' ),
 				];
 			}, [] ) }
 		</span>
