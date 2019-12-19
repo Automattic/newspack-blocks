@@ -700,6 +700,12 @@ class Edit extends Component {
 	}
 }
 
+/**
+ * wp.data stores will memoize queries that fetch things through resolvers
+ * that's fine if your your query returns the same thing every time, but ours
+ * does not. We want to re-query every time, because another block may have
+ * changed what _it_ shows, which affects what we show.
+ */
 let cacheBust = 0;
 
 export default compose( [
@@ -714,9 +720,10 @@ export default compose( [
 		};
 	} ),
 	withDispatch( ( dispatch, props ) => {
-		const { updateCriteria } = dispatch( STORE_NAMESPACE );
+		const { updateCriteria, clearPosts } = dispatch( STORE_NAMESPACE );
 		const { query } = props;
 		const wrappedUpdate = ( clientId, criteria ) => {
+			clearPosts( clientId );
 			const cacheBustedCriteria = {
 				...criteria,
 				cacheBust: clientId + cacheBust++,

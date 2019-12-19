@@ -1,7 +1,7 @@
 import apiFetch from '@wordpress/api-fetch';
 import { registerStore, select, subscribe, dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
-import { sum } from 'lodash';
+import { sum, omit } from 'lodash';
 
 import metadata from './block.json';
 import { queryCriteriaFromAttributes } from './edit';
@@ -22,6 +22,7 @@ const UPDATE_CRITERIA = 'UPDATE_CRITERIA';
 const REQUEST_POSTS = 'REQUEST_POSTS';
 const RECEIVE_POSTS = 'RECEIVE_POSTS';
 const UPDATE_BLOCKS = 'UPDATE_BLOCKS';
+const CLEAR_POSTS = 'CLEAR_POSTS';
 
 const actions = {
 	updateCriteria( clientId, criteria ) {
@@ -50,6 +51,9 @@ const actions = {
 			type: UPDATE_BLOCKS,
 			blocks,
 		};
+	},
+	clearPosts( clientId ) {
+		return { type: CLEAR_POSTS, clientId };
 	},
 };
 
@@ -226,6 +230,12 @@ const reducer = ( state = initialState, action ) => {
 				queryBlocks: getQueryBlocksInOrder( action.blocks ),
 			};
 			return updateBlocksState;
+		case CLEAR_POSTS:
+			const clearPostsState = {
+				...state,
+				deDuplicatedPostsByBlock: omit( state.deDuplicatedPostsByBlock, [ action.clientId ] ),
+			};
+			return clearPostsState;
 	}
 	return state;
 };
