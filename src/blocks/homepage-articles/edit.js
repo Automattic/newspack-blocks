@@ -42,6 +42,11 @@ import { compose } from '@wordpress/compose';
 import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
 
+let IS_SUBTITLE_SUPPORTED_IN_THEME
+if ( typeof window === 'object' && window.newspackIsPostSubtitleSupported && window.newspackIsPostSubtitleSupported.post_subtitle ) {
+	IS_SUBTITLE_SUPPORTED_IN_THEME = true
+}
+
 /**
  * Module Constants
  */
@@ -158,7 +163,7 @@ class Edit extends Component {
 							<a href="#">{ postTitle }</a>
 						</h3>
 					) }
-					{ showSubtitle && (
+					{ IS_SUBTITLE_SUPPORTED_IN_THEME && showSubtitle && (
 						<RawHTML
 							key="subtitle"
 							className={classNames(
@@ -408,13 +413,13 @@ class Edit extends Component {
 					) }
 				</PanelBody>
 				<PanelBody title={ __( 'Post Control Settings', 'newspack-blocks' ) }>
-					<PanelRow>
+					{IS_SUBTITLE_SUPPORTED_IN_THEME && <PanelRow>
 						<ToggleControl
 							label={ __( 'Show Subtitle', 'newspack-blocks' ) }
 							checked={ showSubtitle }
 							onChange={ () => setAttributes( { showSubtitle: ! showSubtitle} ) }
 						/>
-					</PanelRow>
+					</PanelRow>}
 					<PanelRow>
 						<ToggleControl
 							label={ __( 'Show Excerpt', 'newspack-blocks' ) }
