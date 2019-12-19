@@ -163,12 +163,6 @@ class Newspack_Blocks {
 				$script_data['version'],
 				true
 			);
-
-			wp_set_script_translations(
-				'newspack-blocks-{$type}',
-				'newspack-blocks',
-				plugin_dir_path( __FILE__ ) . 'languages'
-			);
 		}
 	}
 
