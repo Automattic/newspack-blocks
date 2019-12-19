@@ -14,6 +14,7 @@
     "grunt": "^0.4.5",
     "grunt-wp-i18n": "^0.5.4",
     "grunt-wp-readme-to-markdown": "^1.0.0",
+    "lint-staged": "^9.5.0",
     "npm-run-all": "^4.1.5",
     "prettier": "https://github.com/Automattic/wp-prettier/releases/download/wp-1.16.4/wp-prettier-1.16.4.tgz",
     "stylelint": "^12.0.0",
@@ -39,6 +40,9 @@
     "clean": "rm -rf dist/",
     "test": "echo \"Error: no test specified\" && exit 1",
     "release:archive": "run-p \"clean\" && NODE_ENV=production run-p \"build\" && mkdir -p assets/release && zip -r assets/release/newspack-blocks.zip . -x node_modules/\\* .git/\\* .github/\\* .gitignore .DS_Store vendor/\\*"
+  },
+  "lint-staged": {
+    "*.scss": "npm run lint:scss"
   },
   "repository": {
     "type": "git",

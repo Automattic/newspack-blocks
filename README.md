@@ -15,6 +15,18 @@ To clean out the built blocks, run `npm run clean`.
 
 To work on Block development and have Webpack watch your files for changes run: `npm start`.
 
+#### Linting
+
+is performed on changed files before commiting. In other words, is run during `pre-commit` git hook, but only on staged files. The hook is configured in `composer.json`.
+
+|  | PHP | JS | SCSS |
+| :- | :- | :- | :- |
+| tool | [PHPCS](https://github.com/squizlabs/PHP_CodeSniffer) | [eslint](https://eslint.org/) | [stylelint](https://stylelint.io/) |
+| config | `.phpcs.xml.dist` | `.eslintrc` | `.stylelintrc` |
+| run manually | `./vendor/bin/phpcs <file>` | `npm run lint:js` | `npm run lint:scss` |
+| autofix ✨ | `./vendor/bin/phpcbf <file>` | `npm run lint:js -- --fix` | `npm run lint:scss -- --fix` |
+
+
 ### Building new Blocks
 
 To get started with a new block:
