@@ -78,17 +78,14 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 	$has_more_pages = ( ++$page ) <= $article_query->max_num_pages;
 
-	$has_load_more_button = ! Newspack_Blocks::is_amp() && $has_more_pages && boolval( $attributes['moreButton'] );
+	$has_more_button = ! Newspack_Blocks::is_amp() && $has_more_pages && boolval( $attributes['moreButton'] );
 
 	ob_start();
 
 	if ( $article_query->have_posts() ) : ?>
 		<div
-			class="<?php echo esc_attr( $classes ); ?>"
+			class="<?php echo esc_attr( $classes ); ?><?php echo( $has_more_button ? 'has-more-button' : '' ) ?>"
 			style="<?php echo esc_attr( $styles ); ?>"
-			<?php if ( $has_load_more_button ) : ?>
-				data-has-load-more-button
-			<?php endif; ?>
 			>
 			<div data-posts-container>
 				<?php if ( '' !== $attributes['sectionHeader'] ) : ?>
@@ -125,7 +122,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			 * @see https://wp.me/paYJgx-jW
 			 */
 
-			if ( $has_load_more_button ) :
+			if ( $has_more_button ) :
 				?>
 				<button type="button" data-load-more-btn data-load-more-url="<?php echo esc_url( $articles_rest_url ); ?>">
 				<?php

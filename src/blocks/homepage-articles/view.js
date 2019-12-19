@@ -15,7 +15,9 @@ const fetchRetryCount = 3;
  * Load More Button Handling
  */
 
-document.querySelectorAll( '.wp-block-newspack-blocks-homepage-articles[data-has-load-more-button]' ).forEach( buildLoadMoreHandler );
+document
+	.querySelectorAll( '.wp-block-newspack-blocks-homepage-articles.has-more-button' )
+	.forEach( buildLoadMoreHandler );
 
 /**
  * Builds a function to handle clicks on the load more button.
@@ -94,7 +96,9 @@ function buildLoadMoreHandler( blockWrapperEl ) {
  */
 function getRenderedPostsIds() {
 	const postEls = document.querySelectorAll( 'article[data-homepage-articles-post-id]' );
-	const postIds = Array.from( postEls ).map( el => el.getAttribute( 'data-homepage-articles-post-id' ) );
+	const postIds = Array.from( postEls ).map( el =>
+		el.getAttribute( 'data-homepage-articles-post-id' )
+	);
 
 	return [ ...new Set( postIds ) ]; // Make values unique with Set
 }
