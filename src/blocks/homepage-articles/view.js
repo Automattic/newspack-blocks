@@ -15,21 +15,7 @@ const fetchRetryCount = 3;
  * Load More Button Handling
  */
 
-document.querySelectorAll( '.wp-block-newspack-blocks-homepage-articles[data-has-load-more-button]' ).forEach( attachLoadMoreHandler );
-
-/**
- * Attaches an event handler to the Load more button.
- * @param {DOMElement} btnEl the button that was clicked
- */
-function attachLoadMoreHandler( blockEl ) {
-
-	if ( ! blockEl ) {
-		return null;
-	}
-
-	buildLoadMoreHandler( blockEl );
-
-}
+document.querySelectorAll( '.wp-block-newspack-blocks-homepage-articles[data-has-load-more-button]' ).forEach( buildLoadMoreHandler );
 
 /**
  * Builds a function to handle clicks on the load more button.
