@@ -8,7 +8,6 @@
  */
 import './view.scss';
 
-const btnURLAttr = 'data-load-more-url';
 const fetchRetryCount = 3;
 
 /**
@@ -27,11 +26,9 @@ document
  * @param {DOMElement} btnEl the button that was clicked
  */
 function buildLoadMoreHandler( blockWrapperEl ) {
-	const btnEl = blockWrapperEl.querySelector( 'button[data-load-more-btn]' );
-	if ( ! btnEl ) {
-		return;
-	}
-	const postsContainerEl = blockWrapperEl.querySelector( '[data-posts-container]' );
+	const btnEl = blockWrapperEl.querySelector( '[data-next]' );
+	if ( ! btnEl ) return;
+	const postsContainerEl = blockWrapperEl.querySelector( '[data-posts]' );
 
 	// Set initial state flags.
 	let isFetching = false;
@@ -48,7 +45,7 @@ function buildLoadMoreHandler( blockWrapperEl ) {
 		blockWrapperEl.classList.remove( 'is-error' );
 		blockWrapperEl.classList.add( 'is-loading' );
 
-		const requestURL = new URL( btnEl.getAttribute( btnURLAttr ) );
+		const requestURL = new URL( btnEl.getAttribute( 'data-next' ) );
 
 		// Set currenty rendered posts' IDs as a query param (e.g. exclude_ids=1,2,3)
 		requestURL.searchParams.set( 'exclude_ids', getRenderedPostsIds().join( ',' ) );
@@ -69,12 +66,12 @@ function buildLoadMoreHandler( blockWrapperEl ) {
 
 			if ( data.next ) {
 				// Save next URL as button's attribute.
-				btnEl.setAttribute( btnURLAttr, data.next );
+				btnEl.setAttribute( 'data-next', data.next );
 			}
 
 			if ( ! data.items.length || ! data.next ) {
 				isEndOfData = true;
-				blockWrapperEl.classList.add( 'is-end-of-data' );
+				blockWrapperEl.classList.remove( 'has-more-button' );
 			}
 
 			isFetching = false;
@@ -95,10 +92,10 @@ function buildLoadMoreHandler( blockWrapperEl ) {
  * Returns unique IDs for posts that are currently in the DOM.
  */
 function getRenderedPostsIds() {
-	const postEls = document.querySelectorAll( 'article[data-homepage-articles-post-id]' );
-	const postIds = Array.from( postEls ).map( el =>
-		el.getAttribute( 'data-homepage-articles-post-id' )
+	const postEls = document.querySelectorAll(
+		'.wp-block-newspack-blocks-homepage-articles [data-post-id]'
 	);
+	const postIds = Array.from( postEls ).map( el => el.getAttribute( 'data-post-id' ) );
 
 	return [ ...new Set( postIds ) ]; // Make values unique with Set
 }

@@ -87,7 +87,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			class="<?php echo esc_attr( $classes ); ?><?php echo( $has_more_button ? 'has-more-button' : '' ) ?>"
 			style="<?php echo esc_attr( $styles ); ?>"
 			>
-			<div data-posts-container>
+			<div data-posts>
 				<?php if ( '' !== $attributes['sectionHeader'] ) : ?>
 					<h2 class="article-section-title">
 						<span><?php echo wp_kses_post( $attributes['sectionHeader'] ); ?></span>
@@ -124,7 +124,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 			if ( $has_more_button ) :
 				?>
-				<button type="button" data-load-more-btn data-load-more-url="<?php echo esc_url( $articles_rest_url ); ?>">
+				<button type="button" data-next="<?php echo esc_url( $articles_rest_url ); ?>">
 				<?php
 				if ( ! empty( $attributes['moreButtonText'] ) ) {
 					echo esc_html( $attributes['moreButtonText'] );
@@ -133,10 +133,10 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				}
 				?>
 				</button>
-				<p data-load-more-loading-text>
+				<p class="loading">
 					<?php _e( 'Loading...', 'newspack-blocks' ); ?>
 				</p>
-				<p data-load-more-error-text>
+				<p class="error">
 					<?php _e( 'Something went wrong. Please refresh the page and/or try again.', 'newspack-blocks' ); ?>
 				</p>
 			<?php endif; ?>

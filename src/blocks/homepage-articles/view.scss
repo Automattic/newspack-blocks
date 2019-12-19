@@ -556,22 +556,6 @@
 			}
 		}
 	}
-
-	[data-load-more-loading-text], [data-load-more-error-text] {
-		display: none;
-	}
-
-	&.is-loading button, &.is-end-of-data button {
-		display: none;
-	}
-
-	&.is-loading [data-load-more-loading-text] {
-		display: block;
-	}
-
-	&.is-error [data-load-more-error-text] {
-		display: block;
-	}
 }
 
 /* Block styles */
@@ -625,5 +609,33 @@
 		margin-bottom: 0;
 		line-height: 1.4em;
 		font-style: italic;
+	}
+}
+
+/* "More" button & related elements styles */
+.wpnbha {
+	button, .loading, .error {
+		display: none;
+	}
+
+	&.has-more-button {
+		button {
+			display: block;
+		}
+	}
+
+	&.has-more-button.is-loading {
+		button {
+			display: none;
+		}
+		.loading {
+			display: block;
+		}
+	}
+
+	&.has-more-button.is-error {
+		button, .error {
+			display: block;
+		}
 	}
 }
