@@ -15,9 +15,7 @@ function attachLoadMoreHandler( btnEl ) {
 	if ( ! btnEl ) {
 		return null;
 	}
-
 	const handler = buildLoadMoreHandler( btnEl );
-
 	btnEl.addEventListener( 'click', handler );
 }
 
@@ -42,7 +40,6 @@ function buildLoadMoreHandler( btnEl ) {
 	 */
 	let isFetching = false;
 	let isEndOfData = false;
-
 	return () => {
 		/**
 		 * Early return if still fetching or no more posts to render.
@@ -59,13 +56,13 @@ function buildLoadMoreHandler( btnEl ) {
 		hideEl( btnEl );
 		hideEl( errorEl );
 		showEl( loadingEl );
-		AMP.getState( 'newspackHomepagePosts.exclude_ids' ).then( function( exclude_ids ) {
+		AMP.getState( 'newspackHomepagePosts.exclude_ids' ).then( exclude_ids => {
 			const requestURL = new URL( btnEl.getAttribute( btnURLAttr ) );
 			requestURL.searchParams.set( 'exclude_ids', JSON.parse( exclude_ids ).join( ',' ) );
 			apiFetchWithRetry( { url: requestURL.toString(), onSuccess, onError }, fetchRetryCount );
 		} );
 		const onSuccess = data => {
-			AMP.getState( 'newspackHomepagePosts.exclude_ids' ).then( function( exclude_ids ) {
+			AMP.getState( 'newspackHomepagePosts.exclude_ids' ).then( exclude_ids => {
 				AMP.setState( {
 					newspackHomepagePosts: { exclude_ids: JSON.parse( exclude_ids ).concat( data.ids ) },
 				} );
