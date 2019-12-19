@@ -244,7 +244,8 @@ export const registerQueryStore = () => {
 	const { allQueryBlocksOnPage, query } = select( STORE_NAMESPACE );
 	const { updateBlocks, updateCriteria } = dispatch( STORE_NAMESPACE );
 
-	let currentBlocksIds;
+	let currentBlocksIds,
+		cacheBust = 0;
 	subscribe( () => {
 		const newBlocksIds = getClientIdsWithDescendants();
 		// I don't know why != works but it does, I guess getClientIdsWithDescendants is memoized?
@@ -253,10 +254,10 @@ export const registerQueryStore = () => {
 
 		if ( blocksChanged ) {
 			updateBlocks( getBlocks() );
-			allQueryBlocksOnPage().forEach( ( block, idx ) => {
+			allQueryBlocksOnPage().forEach( block => {
 				const criteria = queryCriteriaFromAttributes( block.attributes );
 				updateCriteria( block.clientId, criteria );
-				query( block.clientId, { ...criteria, _skip_memoization: block.clientId + idx } );
+				query( block.clientId, { ...criteria, _skip_memoization: block.clientId + cacheBust++ } );
 			} );
 		}
 	} );
