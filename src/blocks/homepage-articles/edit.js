@@ -42,6 +42,11 @@ import { compose } from '@wordpress/compose';
 import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
 
+let IS_SUBTITLE_SUPPORTED_IN_THEME
+if ( typeof window === 'object' && window.newspackIsPostSubtitleSupported && window.newspackIsPostSubtitleSupported.post_subtitle ) {
+	IS_SUBTITLE_SUPPORTED_IN_THEME = true
+}
+
 /**
  * Module Constants
  */
@@ -93,6 +98,7 @@ class Edit extends Component {
 			minHeight,
 			showCaption,
 			showExcerpt,
+			showSubtitle,
 			showAuthor,
 			showAvatar,
 			showDate,
@@ -156,6 +162,14 @@ class Edit extends Component {
 						<h3 className="entry-title" key="title">
 							<a href="#">{ postTitle }</a>
 						</h3>
+					) }
+					{ IS_SUBTITLE_SUPPORTED_IN_THEME && showSubtitle && (
+						<RawHTML
+							key="subtitle"
+							className="newspack-post-subtitle newspack-post-subtitle--in-homepage-block"
+						>
+							{ post.meta.newspack_post_subtitle || '' }
+						</RawHTML>
 					) }
 					{ showExcerpt && (
 						<RawHTML key="excerpt" className="excerpt-contain">
@@ -245,6 +259,7 @@ class Edit extends Component {
 			moreButton,
 			moreButtonText,
 			showExcerpt,
+			showSubtitle,
 			typeScale,
 			showDate,
 			showAuthor,
@@ -397,6 +412,13 @@ class Edit extends Component {
 					) }
 				</PanelBody>
 				<PanelBody title={ __( 'Post Control Settings', 'newspack-blocks' ) }>
+					{IS_SUBTITLE_SUPPORTED_IN_THEME && <PanelRow>
+						<ToggleControl
+							label={ __( 'Show Subtitle', 'newspack-blocks' ) }
+							checked={ showSubtitle }
+							onChange={ () => setAttributes( { showSubtitle: ! showSubtitle} ) }
+						/>
+					</PanelRow>}
 					<PanelRow>
 						<ToggleControl
 							label={ __( 'Show Excerpt', 'newspack-blocks' ) }
@@ -478,6 +500,7 @@ class Edit extends Component {
 		} = this.props; // variables getting pulled out of props
 		const {
 			showExcerpt,
+			showSubtitle,
 			showDate,
 			showImage,
 			imageShape,

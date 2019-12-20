@@ -364,7 +364,15 @@
 				width: 2.4em;
 			}
 		}
+	}
 
+	&.ts-10,
+	&.ts-9,
+	&.ts-8,
+	&.ts-7 {
+		.newspack-post-subtitle {
+			font-size: 1.4em;
+		}
 	}
 
 	&.ts-10 article {
@@ -439,6 +447,9 @@
 		.entry-title {
 			font-size: 1.7em;
 		}
+		.newspack-post-subtitle {
+			font-size: 1.4em;
+		}
 		@include media(tablet) {
 			.entry-title {
 				font-size: 2.0em;
@@ -458,6 +469,9 @@
 	&.ts-5 article {
 		.entry-title {
 			font-size: 1.4em;
+		}
+		.newspack-post-subtitle {
+			font-size: 1.2em;
 		}
 		@include media(tablet) {
 			.entry-title {
@@ -481,6 +495,7 @@
 		.entry-title {
 			font-size: 1.0em;
 		}
+		.newspack-post-subtitle,
 		.entry-wrapper p {
 			font-size: 0.8em;
 		}
@@ -503,6 +518,9 @@
 		.entry-title {
 			font-size: 0.8em;
 		}
+		.newspack-post-subtitle {
+			font-size: 0.7em;
+		}
 		.entry-wrapper p,
 		.entry-meta {
 			font-size: 0.7em;
@@ -523,6 +541,9 @@
 	&.ts-1 article {
 		.entry-title,
 		.entry-wrapper p {
+			font-size: 0.7em;
+		}
+		.newspack-post-subtitle {
 			font-size: 0.7em;
 		}
 		.entry-meta {
@@ -578,5 +599,15 @@
 		&.columns-6 article:nth-of-type(6n) {
 			border: 0;
 		}
+	}
+}
+
+/* Styles for the Subtitle, as part of the the Block */
+.newspack-post-subtitle {
+	&--in-homepage-block {
+		margin-top: 0.3em;
+		margin-bottom: 0;
+		line-height: 1.4em;
+		font-style: italic;
 	}
 }
