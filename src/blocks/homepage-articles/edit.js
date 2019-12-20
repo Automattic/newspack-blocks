@@ -30,7 +30,6 @@ import {
 	RangeControl,
 	Toolbar,
 	ToggleControl,
-	Dashicon,
 	Placeholder,
 	Spinner,
 	BaseControl,
@@ -39,7 +38,6 @@ import {
 } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
-import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
 
 let IS_SUBTITLE_SUPPORTED_IN_THEME
@@ -119,7 +117,6 @@ class Edit extends Component {
 				minHeight / 5 + 'vh',
 		};
 
-		const authorNumber = post.newspack_author_info.length;
 		const postTitle = this.titleForPost( post );
 		return (
 			<article
@@ -234,14 +231,7 @@ class Edit extends Component {
 	);
 
 	renderInspectorControls = () => {
-		const {
-			attributes,
-			setAttributes,
-			latestPosts,
-			isSelected,
-			textColor,
-			setTextColor,
-		} = this.props;
+		const { attributes, setAttributes, latestPosts, textColor, setTextColor } = this.props;
 		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
 
 		const {
@@ -249,7 +239,6 @@ class Edit extends Component {
 			specificPosts,
 			postsToShow,
 			categories,
-			sectionHeader,
 			columns,
 			showImage,
 			showCaption,
@@ -257,7 +246,6 @@ class Edit extends Component {
 			mobileStack,
 			minHeight,
 			moreButton,
-			moreButtonText,
 			showExcerpt,
 			showSubtitle,
 			typeScale,
@@ -270,7 +258,6 @@ class Edit extends Component {
 			specificMode,
 			tags,
 			tagExclusions,
-			url,
 		} = attributes;
 
 		const imageSizeOptions = [
@@ -495,24 +482,17 @@ class Edit extends Component {
 			setAttributes,
 			isSelected,
 			latestPosts,
-			hasPosts,
 			textColor,
 		} = this.props; // variables getting pulled out of props
 		const {
-			showExcerpt,
 			showSubtitle,
-			showDate,
 			showImage,
 			imageShape,
-			showAuthor,
-			showAvatar,
-			postsToShow,
 			postLayout,
 			mediaPosition,
 			moreButton,
 			moreButtonText,
 			columns,
-			categories,
 			typeScale,
 			imageScale,
 			mobileStack,
@@ -674,7 +654,7 @@ export default compose( [
 			specificPosts,
 			specificMode,
 		} = props.attributes;
-		const { getAuthors, getEntityRecords } = select( 'core' );
+		const { getEntityRecords } = select( 'core' );
 		const latestPostsQuery = pickBy(
 			specificMode && specificPosts && specificPosts.length
 				? {
@@ -690,9 +670,6 @@ export default compose( [
 				  },
 			value => ! isUndefined( value )
 		);
-		const postsListQuery = {
-			per_page: 50,
-		};
 		return {
 			latestPosts: getEntityRecords( 'postType', 'post', latestPostsQuery ),
 		};
