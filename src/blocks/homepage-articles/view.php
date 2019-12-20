@@ -80,11 +80,15 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 	$has_more_button = ! Newspack_Blocks::is_amp() && $has_more_pages && boolval( $attributes['moreButton'] );
 
+	if ( $has_more_button ) {
+		$classes .= ' has-more-button';
+	}
+
 	ob_start();
 
 	if ( $article_query->have_posts() ) : ?>
 		<div
-			class="<?php echo esc_attr( $classes ); ?><?php echo( $has_more_button ? 'has-more-button' : '' ) ?>"
+			class="<?php echo esc_attr( $classes ); ?>"
 			style="<?php echo esc_attr( $styles ); ?>"
 			>
 			<div data-posts>
