@@ -27,7 +27,9 @@ document
  */
 function buildLoadMoreHandler( blockWrapperEl ) {
 	const btnEl = blockWrapperEl.querySelector( '[data-next]' );
-	if ( ! btnEl ) return;
+	if ( ! btnEl ) {
+		return;
+	}
 	const postsContainerEl = blockWrapperEl.querySelector( '[data-posts]' );
 
 	// Set initial state flags.
