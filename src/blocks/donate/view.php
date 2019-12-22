@@ -24,6 +24,11 @@ function newspack_blocks_render_block_donate( $attributes ) {
 		return '';
 	}
 
+	/* If block is in "manual" mode, override certain state properties with values stored in attributes */
+	if ( $attributes['manual'] ?? false ) {
+		$settings = array_merge( $settings, $attributes );
+	}
+
 	$frequencies = [
 		'once'  => __( 'One-time', 'newspack-blocks' ),
 		'month' => __( 'Monthly', 'newspack-blocks' ),
@@ -204,9 +209,23 @@ function newspack_blocks_register_donate() {
 		'newspack-blocks/donate',
 		array(
 			'attributes'      => array(
-				'className' => array(
+				'className'               => [
 					'type' => 'string',
-				),
+				],
+				'manual'                  => [
+					'type' => 'boolean',
+				],
+				'suggestedAmounts'        => [
+					'type'    => 'array',
+					'default' => [ 0, 0, 0 ],
+				],
+				'suggestedAmountUntiered' => [
+					'type' => 'integer',
+				],
+				'tiered'                  => [
+					'type'    => 'boolean',
+					'default' => true,
+				],
 			),
 			'render_callback' => 'newspack_blocks_render_block_donate',
 		)
