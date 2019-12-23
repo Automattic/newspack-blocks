@@ -59,6 +59,8 @@ class Edit extends Component {
 		return data;
 	}
 
+	sanitizeCurrencyInput = amount => Math.max( 0, parseFloat( amount ).toFixed( 2 ) );
+
 	getSettings() {
 		const path = '/newspack/v1/wizard/newspack-donations-wizard/donation';
 
@@ -335,7 +337,7 @@ class Edit extends Component {
 							value={ suggestedAmounts[ 0 ] }
 							onChange={ value =>
 								setAttributes( {
-									suggestedAmounts: [ value, suggestedAmounts[ 1 ], suggestedAmounts[ 2 ] ],
+									suggestedAmounts: [ this.sanitizeCurrencyInput( value ), suggestedAmounts[ 1 ], suggestedAmounts[ 2 ] ],
 								} )
 							}
 						/>
@@ -347,7 +349,7 @@ class Edit extends Component {
 							value={ suggestedAmounts[ 1 ] }
 							onChange={ value =>
 								setAttributes( {
-									suggestedAmounts: [ suggestedAmounts[ 0 ], value, suggestedAmounts[ 2 ] ],
+									suggestedAmounts: [suggestedAmounts[ 0 ], this.sanitizeCurrencyInput( value ), suggestedAmounts[ 2 ] ],
 								} )
 							}
 						/>
@@ -359,7 +361,7 @@ class Edit extends Component {
 							value={ suggestedAmounts[ 2 ] }
 							onChange={ value =>
 								setAttributes( {
-									suggestedAmounts: [ suggestedAmounts[ 0 ], suggestedAmounts[ 1 ], value ],
+									suggestedAmounts: [ suggestedAmounts[ 0 ], suggestedAmounts[ 1 ], this.sanitizeCurrencyInput( value ) ],
 								} )
 							}
 						/>
@@ -368,13 +370,13 @@ class Edit extends Component {
 				{ ! tiered && (
 					<TextControl
 						key="suggestedAmountUntiered"
-						label={ __( 'Suggested donation amount per month' )  + ' (' + currencySymbol + ')' }
+						label={ __( 'Suggested donation amount per month' ) + ' (' + currencySymbol + ')' }
 						type="number"
 						step="0.01"
 						value={ suggestedAmountUntiered }
 						onChange={ suggestedAmountUntiered =>
 							setAttributes( {
-								suggestedAmountUntiered,
+								suggestedAmountUntiered: this.sanitizeCurrencyInput( suggestedAmountUntiered ),
 							} )
 						}
 					/>
