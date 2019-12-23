@@ -61,6 +61,16 @@ class Edit extends Component {
 
 	sanitizeCurrencyInput = amount => Math.max( 0, parseFloat( amount ).toFixed( 2 ) );
 
+	formatCurrencyWithoutSymbol = amount => {
+		const decimalPlaces = parseFloat( amount ) - parseInt( amount ) ? 2 : 0;
+		return parseFloat( amount ).toFixed( decimalPlaces );
+	}
+
+	formatCurrency = amount => {
+		const { currencySymbol } = this.blockData();
+		return currencySymbol + this.formatCurrencyWithoutSymbol( amount );
+	};
+
 	getSettings() {
 		const path = '/newspack/v1/wizard/newspack-donations-wizard/donation';
 
@@ -145,7 +155,7 @@ class Edit extends Component {
 										<input
 											type="number"
 											onChange={ evt => this.handleCustomDonationChange( evt, frequencySlug ) }
-											value={ customDonationAmounts[ frequencySlug ] }
+											value={ this.formatCurrencyWithoutSymbol( customDonationAmounts[ frequencySlug ] ) }
 											id={ 'newspack-' + frequencySlug + '-untiered-input' }
 										/>
 									</div>
@@ -213,10 +223,11 @@ class Edit extends Component {
 													className="tier-select-label"
 													htmlFor={ 'newspack-tier-' + frequencySlug + '-' + index }
 												>
-													{ currencySymbol +
-														( 'year' === frequencySlug || 'once' == frequencySlug
+													{ this.formatCurrency(
+														'year' === frequencySlug || 'once' == frequencySlug
 															? 12 * suggestedAmount
-															: suggestedAmount ) }
+															: suggestedAmount
+													) }
 												</label>
 											</div>
 										) ) }
