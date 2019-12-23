@@ -23,8 +23,8 @@ is performed on changed files before commiting. In other words, is run during `p
 | :- | :- | :- | :- |
 | tool | [PHPCS](https://github.com/squizlabs/PHP_CodeSniffer) | [eslint](https://eslint.org/) | [stylelint](https://stylelint.io/) |
 | config | `.phpcs.xml.dist` | `.eslintrc` | `.stylelintrc` |
-| run manually | `./vendor/bin/phpcs <file>` | `npm run lint:js` | `npm run lint:scss` |
-| autofix ✨ | `./vendor/bin/phpcbf <file>` | `npm run lint:js -- --fix` | `npm run lint:scss -- --fix` |
+| run manually | `./vendor/bin/phpcs <file>` | `npm run lint:js` | `npm run lint:scss:all` |
+| autofix ✨ | `./vendor/bin/phpcbf <file>` | `npm run lint:js -- --fix` | `npm run lint:scss:all -- --fix` |
 
 
 ### Building new Blocks

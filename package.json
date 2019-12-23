@@ -36,7 +36,8 @@
     "build": "calypso-build --config='./webpack.config.js'",
     "lint": "npm-run-all --parallel lint:*",
     "lint:js": "eslint --ext .js,.jsx src",
-    "lint:scss": "stylelint \"**/*.scss\" --syntax scss",
+    "lint:scss:all": "stylelint \"**/*.scss\" --syntax scss",
+    "lint:scss": "stylelint --syntax scss",
     "clean": "rm -rf dist/",
     "test": "echo \"Error: no test specified\" && exit 1",
     "release:archive": "run-p \"clean\" && NODE_ENV=production run-p \"build\" && mkdir -p assets/release && zip -r assets/release/newspack-blocks.zip . -x node_modules/\\* .git/\\* .github/\\* .gitignore .DS_Store vendor/\\*"
