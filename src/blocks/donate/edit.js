@@ -64,11 +64,33 @@ class Edit extends Component {
 	formatCurrencyWithoutSymbol = amount => {
 		const decimalPlaces = parseFloat( amount ) - parseInt( amount ) ? 2 : 0;
 		return parseFloat( amount ).toFixed( decimalPlaces );
-	}
+	};
 
 	formatCurrency = amount => {
 		const { currencySymbol } = this.blockData();
 		return currencySymbol + this.formatCurrencyWithoutSymbol( amount );
+	};
+
+	manualChanged = value => {
+		const { attributes, setAttributes } = this.props;
+		const { suggestedAmounts, suggestedAmountUntiered } = attributes;
+		setAttributes( { manual: value } );
+		if (
+			value &&
+			0 === suggestedAmountUntiered &&
+			0 === suggestedAmounts[ 0 ] &&
+			0 === suggestedAmounts[ 1 ] &&
+			0 === suggestedAmounts[ 2 ]
+		) {
+			setAttributes( {
+				suggestedAmounts: [
+					this.sanitizeCurrencyInput( this.state.suggestedAmounts[ 0 ] ),
+					this.sanitizeCurrencyInput( this.state.suggestedAmounts[ 1 ] ),
+					this.sanitizeCurrencyInput( this.state.suggestedAmounts[ 2 ] ),
+				],
+				suggestedAmountUntiered: this.sanitizeCurrencyInput( this.state.suggestedAmountUntiered ),
+			} );
+		}
 	};
 
 	getSettings() {
@@ -155,7 +177,9 @@ class Edit extends Component {
 										<input
 											type="number"
 											onChange={ evt => this.handleCustomDonationChange( evt, frequencySlug ) }
-											value={ this.formatCurrencyWithoutSymbol( customDonationAmounts[ frequencySlug ] ) }
+											value={ this.formatCurrencyWithoutSymbol(
+												customDonationAmounts[ frequencySlug ]
+											) }
 											id={ 'newspack-' + frequencySlug + '-untiered-input' }
 										/>
 									</div>
@@ -420,7 +444,7 @@ class Edit extends Component {
 						<ToggleControl
 							key="manual"
 							checked={ manual }
-							onChange={ manual => setAttributes( { manual } ) }
+							onChange={ this.manualChanged }
 							label={ __( 'Configure manually', 'newspack-blocks' ) }
 						/>
 						{ ! manual && (
