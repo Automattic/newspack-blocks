@@ -337,7 +337,11 @@ class Edit extends Component {
 							value={ suggestedAmounts[ 0 ] }
 							onChange={ value =>
 								setAttributes( {
-									suggestedAmounts: [ this.sanitizeCurrencyInput( value ), suggestedAmounts[ 1 ], suggestedAmounts[ 2 ] ],
+									suggestedAmounts: [
+										this.sanitizeCurrencyInput( value ),
+										suggestedAmounts[ 1 ],
+										suggestedAmounts[ 2 ],
+									],
 								} )
 							}
 						/>
@@ -349,7 +353,11 @@ class Edit extends Component {
 							value={ suggestedAmounts[ 1 ] }
 							onChange={ value =>
 								setAttributes( {
-									suggestedAmounts: [suggestedAmounts[ 0 ], this.sanitizeCurrencyInput( value ), suggestedAmounts[ 2 ] ],
+									suggestedAmounts: [
+										suggestedAmounts[ 0 ],
+										this.sanitizeCurrencyInput( value ),
+										suggestedAmounts[ 2 ],
+									],
 								} )
 							}
 						/>
@@ -361,7 +369,11 @@ class Edit extends Component {
 							value={ suggestedAmounts[ 2 ] }
 							onChange={ value =>
 								setAttributes( {
-									suggestedAmounts: [ suggestedAmounts[ 0 ], suggestedAmounts[ 1 ], this.sanitizeCurrencyInput( value ) ],
+									suggestedAmounts: [
+										suggestedAmounts[ 0 ],
+										suggestedAmounts[ 1 ],
+										this.sanitizeCurrencyInput( value ),
+									],
 								} )
 							}
 						/>
