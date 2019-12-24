@@ -26,7 +26,7 @@ class AutocompleteTokenField extends Component {
 			loading: false,
 		};
 
-		this.debouncedUpdateSuggestions = debounce( this.updateSuggestions, 500 )
+		this.debouncedUpdateSuggestions = debounce( this.updateSuggestions, 500 );
 	}
 
 	/**
@@ -41,16 +41,15 @@ class AutocompleteTokenField extends Component {
 		}
 
 		this.setState( { loading: true }, () => {
-			fetchSavedInfo( tokens )
-				.then( results => {
-					const { validValues }  = this.state;
+			fetchSavedInfo( tokens ).then( results => {
+				const { validValues } = this.state;
 
-					results.forEach( suggestion => {
-						validValues[ suggestion.value ] = suggestion.label;
-					} );
-
-					this.setState( { validValues, loading: false } );
+				results.forEach( suggestion => {
+					validValues[ suggestion.value ] = suggestion.label;
 				} );
+
+				this.setState( { validValues, loading: false } );
+			} );
 		} );
 	}
 
@@ -101,30 +100,32 @@ class AutocompleteTokenField extends Component {
 
 		this.setState( { loading: true }, () => {
 			const request = fetchSuggestions( input );
-			request.then( suggestions => { 
-				// A fetch Promise doesn't have an abort option. It's mimicked by
-				// comparing the request reference in on the instance, which is
-				// reset or deleted on subsequent requests or unmounting.
-				if ( this.suggestionsRequest !== request ) {
-					return;
-				}
+			request
+				.then( suggestions => {
+					// A fetch Promise doesn't have an abort option. It's mimicked by
+					// comparing the request reference in on the instance, which is
+					// reset or deleted on subsequent requests or unmounting.
+					if ( this.suggestionsRequest !== request ) {
+						return;
+					}
 
-				const { validValues }  = this.state;
-				const currentSuggestions = []
+					const { validValues } = this.state;
+					const currentSuggestions = [];
 
-				suggestions.forEach( suggestion => {
-					currentSuggestions.push( suggestion.label );
-					validValues[ suggestion.value ] = suggestion.label;
-				} );
-
-				this.setState( { suggestions: currentSuggestions, validValues, loading: false } );
-			} ).catch( () => {
-				if ( this.suggestionsRequest === request ) {
-					this.setState( {
-						loading: false,
+					suggestions.forEach( suggestion => {
+						currentSuggestions.push( suggestion.label );
+						validValues[ suggestion.value ] = suggestion.label;
 					} );
-				}
-			} );
+
+					this.setState( { suggestions: currentSuggestions, validValues, loading: false } );
+				} )
+				.catch( () => {
+					if ( this.suggestionsRequest === request ) {
+						this.setState( {
+							loading: false,
+						} );
+					}
+				} );
 
 			this.suggestionsRequest = request;
 		} );
@@ -158,7 +159,7 @@ class AutocompleteTokenField extends Component {
 		const { suggestions, loading } = this.state;
 
 		return (
-			<div className='autocomplete-tokenfield'>
+			<div className="autocomplete-tokenfield">
 				<FormTokenField
 					value={ this.getTokens() }
 					suggestions={ suggestions }
