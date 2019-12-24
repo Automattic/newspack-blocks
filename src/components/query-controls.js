@@ -171,7 +171,7 @@ class QueryControls extends Component {
 					key="specificMode"
 					checked={ specificMode }
 					onChange={ onSpecificModeChange }
-					label={ __( 'Choose specific stories', 'newspack-blocks' ) }
+					label={ __( 'Choose Specific Posts', 'newspack-blocks' ) }
 				/>
 			),
 			specificMode && (
