@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { mapValues, merge } from 'lodash';
-import Swiper from 'Swiper';
+import Swiper from 'swiper';
 import '../../../node_modules/swiper/dist/css/swiper.css';
 
 export default function createSwiper(
