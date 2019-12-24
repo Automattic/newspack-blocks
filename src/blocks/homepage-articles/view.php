@@ -89,7 +89,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	ob_start();
 
 	if ( $article_query->have_posts() ) : ?>
-		<?php if ( Newspack_Blocks::is_amp() ) : ?>
+		<?php if ( $has_more_button && Newspack_Blocks::is_amp() ) : ?>
 			<amp-script layout="container" src="<?php echo esc_url( plugins_url( '/newspack-blocks/amp/homepage-articles/view.js' ) ); ?>">
 		<?php endif; ?>
 		<div
@@ -136,7 +136,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			<?php endif; ?>
 
 		</div>
-		<?php if ( Newspack_Blocks::is_amp() ) : ?>
+		<?php if ( $has_more_button && Newspack_Blocks::is_amp() ) : ?>
 			</amp-script>
 		<?php endif; ?>
 		<?php
