@@ -40,15 +40,14 @@ import { withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 import { decodeEntities } from '@wordpress/html-entities';
 
-let IS_SUBTITLE_SUPPORTED_IN_THEME
-if ( typeof window === 'object' && window.newspackIsPostSubtitleSupported && window.newspackIsPostSubtitleSupported.post_subtitle ) {
-	IS_SUBTITLE_SUPPORTED_IN_THEME = true
+let IS_SUBTITLE_SUPPORTED_IN_THEME;
+if (
+	typeof window === 'object' &&
+	window.newspackIsPostSubtitleSupported &&
+	window.newspackIsPostSubtitleSupported.post_subtitle
+) {
+	IS_SUBTITLE_SUPPORTED_IN_THEME = true;
 }
-
-/**
- * Module Constants
- */
-const MAX_POSTS_COLUMNS = 6;
 
 /* From https://material.io/tools/icons */
 const landscapeIcon = (
@@ -316,9 +315,7 @@ class Edit extends Component {
 							value={ columns }
 							onChange={ value => setAttributes( { columns: value } ) }
 							min={ 2 }
-							max={
-								! hasPosts ? MAX_POSTS_COLUMNS : Math.min( MAX_POSTS_COLUMNS, latestPosts.length )
-							}
+							max={ 6 }
 							required
 						/>
 					) }
@@ -398,13 +395,15 @@ class Edit extends Component {
 					) }
 				</PanelBody>
 				<PanelBody title={ __( 'Post Control Settings', 'newspack-blocks' ) }>
-					{IS_SUBTITLE_SUPPORTED_IN_THEME && <PanelRow>
-						<ToggleControl
-							label={ __( 'Show Subtitle', 'newspack-blocks' ) }
-							checked={ showSubtitle }
-							onChange={ () => setAttributes( { showSubtitle: ! showSubtitle} ) }
-						/>
-					</PanelRow>}
+					{ IS_SUBTITLE_SUPPORTED_IN_THEME && (
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Show Subtitle', 'newspack-blocks' ) }
+								checked={ showSubtitle }
+								onChange={ () => setAttributes( { showSubtitle: ! showSubtitle } ) }
+							/>
+						</PanelRow>
+					) }
 					<PanelRow>
 						<ToggleControl
 							label={ __( 'Show Excerpt', 'newspack-blocks' ) }
@@ -475,14 +474,7 @@ class Edit extends Component {
 		/**
 		 * Constants
 		 */
-		const {
-			attributes,
-			className,
-			setAttributes,
-			isSelected,
-			latestPosts,
-			textColor,
-		} = this.props; // variables getting pulled out of props
+		const { attributes, className, setAttributes, isSelected, latestPosts, textColor } = this.props; // variables getting pulled out of props
 		const {
 			showSubtitle,
 			showImage,
