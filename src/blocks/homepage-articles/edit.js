@@ -8,12 +8,12 @@ import QueryControls from '../../components/query-controls';
  */
 import classNames from 'classnames';
 import { isUndefined, pickBy } from 'lodash';
-import moment from 'moment';
 
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
+import { dateI18n, format, __experimentalGetSettings } from '@wordpress/date';
 import { Component, Fragment, RawHTML } from '@wordpress/element';
 import {
 	BlockControls,
@@ -117,6 +117,7 @@ class Edit extends Component {
 		};
 
 		const postTitle = this.titleForPost( post );
+		const dateFormat = __experimentalGetSettings().formats.date;
 		return (
 			<article
 				className={ post.newspack_featured_image_src ? 'post-has-image' : null }
@@ -177,9 +178,7 @@ class Edit extends Component {
 						{ showAuthor && this.formatByline( post.newspack_author_info ) }
 						{ showDate && (
 							<time className="entry-date published" key="pub-date">
-								{ moment( post.date_gmt )
-									.local()
-									.format( 'MMMM DD, Y' ) }
+								{ dateI18n( dateFormat, post.date_gmt ) }
 							</time>
 						) }
 					</div>
@@ -211,7 +210,7 @@ class Edit extends Component {
 
 	formatByline = authorInfo => (
 		<span className="byline">
-			{ __( 'by', 'newspack-blocks' ) }{' '}
+			{ _x( 'by', 'post author', 'newspack-blocks' ) }{' '}
 			{ authorInfo.reduce( ( accumulator, author, index ) => {
 				return [
 					...accumulator,
@@ -223,7 +222,7 @@ class Edit extends Component {
 					index < authorInfo.length - 2 && ', ',
 					authorInfo.length > 1 &&
 						index === authorInfo.length - 2 &&
-						__( ' and ', 'newspack-blocks' ),
+						_x( ' and ', 'post author', 'newspack-blocks' ),
 				];
 			}, [] ) }
 		</span>
