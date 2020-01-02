@@ -39,7 +39,7 @@
 			max-width: calc( 100% + 48px );
 			width: calc( 100% + 48px );
 
-			& > .wp-block-column {
+			> .wp-block-column {
 				margin-left: 24px;
 				margin-right: 24px;
 			}
@@ -52,7 +52,7 @@
 			max-width: calc( 100% + 64px );
 			width: calc( 100% + 64px );
 
-			& > .wp-block-column {
+			> .wp-block-column {
 				margin-left: 32px;
 				margin-right: 32px;
 			}
@@ -60,7 +60,7 @@
 	}
 
 	&.is-style-borders {
-		& > .wp-block-column {
+		> .wp-block-column {
 			position: relative;
 			margin-bottom: 64px;
 

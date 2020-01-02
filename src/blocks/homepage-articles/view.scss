@@ -74,23 +74,20 @@
 
 	.post-thumbnail {
 		margin: 0;
+		margin-bottom: 0.25em;
 
 		img {
 			height: auto;
 			width: 100%;
 		}
-	}
-
-	figcaption {
-		font-size: $font__size-xxs;
-	}
-
-	.post-thumbnail {
-		margin-bottom: 0.25em;
 
 		figcaption {
 			margin-bottom: 0.5em;
 		}
+	}
+
+	figcaption {
+		font-size: $font__size-xxs;
 	}
 
 	&.image-alignleft,
@@ -245,9 +242,6 @@
 		figcaption {
 			color: inherit;
 		}
-	}
-
-	&.has-text-color {
 		.entry-meta span:not( .avatar ) {
 			opacity: 0.8;
 		}
@@ -322,9 +316,45 @@
 			}
 		}
 	}
+
+	/* "More" button & related elements styles */
+	button,
+	.loading,
+	.error {
+		display: none;
+	}
+
+	button {
+		margin-top: 1em;
+	}
+
+	&.has-more-button {
+		button {
+			display: block;
+		}
+	}
+
+	&.has-more-button.is-loading {
+		button {
+			display: none;
+		}
+		.loading {
+			display: block;
+		}
+	}
+
+	&.has-more-button.is-error {
+		button,
+		.error {
+			display: block;
+		}
+	}
 }
 
-/* Some really rough font sizing */
+/*
+	Some really rough font sizing.
+ */
+/* stylelint-disable no-duplicate-selectors  */
 .wpnbha {
 	/* 'Normal' size */
 	article {
@@ -557,6 +587,7 @@
 		}
 	}
 }
+/* stylelint-enable */
 
 /* Block styles */
 
@@ -641,42 +672,8 @@
 	}
 }
 
-/* "More" button & related elements styles */
-.wpnbha {
-	button,
-	.loading,
-	.error {
-		display: none;
-	}
-
-	button {
-		margin-top: 1em;
-	}
-
-	&.has-more-button {
-		button {
-			display: block;
-		}
-	}
-
-	&.has-more-button.is-loading {
-		button {
-			display: none;
-		}
-		.loading {
-			display: block;
-		}
-	}
-
-	&.has-more-button.is-error {
-		button,
-		.error {
-			display: block;
-		}
-	}
-}
-
 /* Prevent tree-shaking Loading and Error style rules */
+/* stylelint-disable selector-type-no-unknown  */
 amp-script .wpnbha.has-more-button.is-loading {
 	button {
 		display: none;
@@ -691,3 +688,4 @@ amp-script .wpnbha.has-more-button.is-error {
 		display: block;
 	}
 }
+/* stylelint-enable */

@@ -53,7 +53,7 @@
 		}
 
 		input[type='radio']:checked {
-			& + .tier-select-label {
+			+ .tier-select-label {
 				background-color: $color__primary;
 				border-color: transparent;
 				color: $color__background-body;
@@ -67,8 +67,8 @@
 		}
 
 		input.other-input {
-			& ~ .wp-block-newspack-blocks-donate__money-input,
-			& ~ .other-donate-label {
+			~ .wp-block-newspack-blocks-donate__money-input,
+			~ .other-donate-label {
 				display: none;
 			}
 
@@ -167,7 +167,7 @@
 	}
 
 	input[type='radio']:checked {
-		& + .donation-frequency-label {
+		+ .donation-frequency-label {
 			color: inherit;
 			border-bottom-color: transparent;
 
@@ -176,7 +176,7 @@
 			}
 		}
 
-		& ~ .wp-block-newspack-blocks-donate__tiers {
+		~ .wp-block-newspack-blocks-donate__tiers {
 			display: flex;
 		}
 	}
