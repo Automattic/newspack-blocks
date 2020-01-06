@@ -24,6 +24,11 @@ function newspack_blocks_render_block_donate( $attributes ) {
 		return '';
 	}
 
+	/* If block is in "manual" mode, override certain state properties with values stored in attributes */
+	if ( $attributes['manual'] ?? false ) {
+		$settings = array_merge( $settings, $attributes );
+	}
+
 	$frequencies = [
 		'once'  => __( 'One-time', 'newspack-blocks' ),
 		'month' => __( 'Monthly', 'newspack-blocks' ),
@@ -40,7 +45,6 @@ function newspack_blocks_render_block_donate( $attributes ) {
 	 * Each frequency and tier option is a radio input, styled to look like a button.
 	 * As the radio inputs are checked/unchecked, fields are hidden/displayed using only CSS.
 	 */
-
 	if ( ! $settings['tiered'] ) :
 
 		?>
@@ -49,7 +53,10 @@ function newspack_blocks_render_block_donate( $attributes ) {
 				<input type='hidden' name='newspack_donate' value='1' />
 				<div class='wp-block-newspack-blocks-donate__options'>
 					<?php foreach ( $frequencies as $frequency_slug => $frequency_name ) : ?>
-						<?php $amount = 'year' === $frequency_slug || 'once' === $frequency_slug ? 12 * $settings['suggestedAmountUntiered'] : $settings['suggestedAmountUntiered']; ?>
+						<?php
+							$amount           = 'year' === $frequency_slug || 'once' === $frequency_slug ? 12 * $settings['suggestedAmountUntiered'] : $settings['suggestedAmountUntiered'];
+							$formatted_amount = number_format( $amount, floatval( $amount ) - intval( $amount ) ? 2 : 0 );
+						?>
 
 						<div class='wp-block-newspack-blocks-donate__frequency'>
 							<input
@@ -79,7 +86,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 									<input
 										type='number'
 										name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>_untiered'
-										value='<?php echo esc_attr( $amount ); ?>'
+										value='<?php echo esc_attr( $formatted_amount ); ?>'
 										id='newspack-<?php echo esc_attr( $frequency_slug ); ?>-untiered-input'
 									/>
 								</div>
@@ -125,7 +132,10 @@ function newspack_blocks_render_block_donate( $attributes ) {
 								<div class='wp-block-newspack-blocks-donate__tiers'>
 									<?php foreach ( $suggested_amounts as $index => $suggested_amount ) : ?>
 										<div class='wp-block-newspack-blocks-donate__tier'>
-											<?php $amount = 'year' === $frequency_slug || 'once' === $frequency_slug ? 12 * $suggested_amount : $suggested_amount; ?>
+											<?php
+												$amount           = 'year' === $frequency_slug || 'once' === $frequency_slug ? 12 * $suggested_amount : $suggested_amount;
+												$formatted_amount = $settings['currencySymbol'] . number_format( $amount, floatval( $amount ) - intval( $amount ) ? 2 : 0 );
+											?>
 											<input
 												type='radio'
 												name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>'
@@ -137,7 +147,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 												class='tier-select-label'
 												for='newspack-tier-<?php echo esc_attr( $frequency_slug ); ?>-<?php echo (int) $index; ?>'
 											>
-												<?php echo esc_html( $settings['currencySymbol'] . $amount ); ?>
+												<?php echo esc_html( $formatted_amount ); ?>
 											</label>
 										</div>
 									<?php endforeach; ?>
@@ -204,9 +214,23 @@ function newspack_blocks_register_donate() {
 		'newspack-blocks/donate',
 		array(
 			'attributes'      => array(
-				'className' => array(
+				'className'               => [
 					'type' => 'string',
-				),
+				],
+				'manual'                  => [
+					'type' => 'boolean',
+				],
+				'suggestedAmounts'        => [
+					'type'    => 'array',
+					'default' => [ 0, 0, 0 ],
+				],
+				'suggestedAmountUntiered' => [
+					'type' => 'number',
+				],
+				'tiered'                  => [
+					'type'    => 'boolean',
+					'default' => true,
+				],
 			),
 			'render_callback' => 'newspack_blocks_render_block_donate',
 		)
