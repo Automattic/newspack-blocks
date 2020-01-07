@@ -10,7 +10,14 @@ import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import { Component, Fragment } from '@wordpress/element';
 import { InspectorControls } from '@wordpress/editor';
-import { PanelBody, ExternalLink, Placeholder, Spinner } from '@wordpress/components';
+import {
+	PanelBody,
+	ExternalLink,
+	Placeholder,
+	Spinner,
+	TextControl,
+	ToggleControl,
+} from '@wordpress/components';
 
 class Edit extends Component {
 	constructor( props ) {
@@ -33,10 +40,58 @@ class Edit extends Component {
 			error: '',
 		};
 	}
-
 	componentDidMount() {
 		this.getSettings();
 	}
+
+	/* If block is in "manual" mode, override certain state properties with values stored in attributes */
+	blockData() {
+		const { attributes } = this.props;
+		const { manual } = attributes;
+		const data = { ...this.state, ...( manual ? attributes : {} ) };
+		if ( manual ) {
+			data.customDonationAmounts = {
+				once: data.tiered ? 12 * data.suggestedAmounts[ 1 ] : 12 * data.suggestedAmountUntiered,
+				month: data.tiered ? data.suggestedAmounts[ 1 ] : data.suggestedAmountUntiered,
+				year: data.tiered ? 12 * data.suggestedAmounts[ 1 ] : 12 * data.suggestedAmountUntiered,
+			};
+		}
+		return data;
+	}
+
+	sanitizeCurrencyInput = amount => Math.max( 0, parseFloat( amount ).toFixed( 2 ) );
+
+	formatCurrencyWithoutSymbol = amount => {
+		const decimalPlaces = parseFloat( amount ) - parseInt( amount ) ? 2 : 0;
+		return parseFloat( amount ).toFixed( decimalPlaces );
+	};
+
+	formatCurrency = amount => {
+		const { currencySymbol } = this.blockData();
+		return currencySymbol + this.formatCurrencyWithoutSymbol( amount );
+	};
+
+	manualChanged = value => {
+		const { attributes, setAttributes } = this.props;
+		const { suggestedAmounts, suggestedAmountUntiered } = attributes;
+		setAttributes( { manual: value } );
+		if (
+			value &&
+			0 === suggestedAmountUntiered &&
+			0 === suggestedAmounts[ 0 ] &&
+			0 === suggestedAmounts[ 1 ] &&
+			0 === suggestedAmounts[ 2 ]
+		) {
+			setAttributes( {
+				suggestedAmounts: [
+					this.sanitizeCurrencyInput( this.state.suggestedAmounts[ 0 ] ),
+					this.sanitizeCurrencyInput( this.state.suggestedAmounts[ 1 ] ),
+					this.sanitizeCurrencyInput( this.state.suggestedAmounts[ 2 ] ),
+				],
+				suggestedAmountUntiered: this.sanitizeCurrencyInput( this.state.suggestedAmountUntiered ),
+			} );
+		}
+	};
 
 	getSettings() {
 		const path = '/newspack/v1/wizard/newspack-donations-wizard/donation';
@@ -83,7 +138,7 @@ class Edit extends Component {
 
 	renderUntieredForm() {
 		const { className } = this.props;
-		const { currencySymbol, selectedFrequency, customDonationAmounts, error } = this.state;
+		const { currencySymbol, customDonationAmounts, error, selectedFrequency } = this.blockData();
 
 		const frequencies = {
 			once: __( 'One-time', 'newspack-blocks' ),
@@ -122,7 +177,9 @@ class Edit extends Component {
 										<input
 											type="number"
 											onChange={ evt => this.handleCustomDonationChange( evt, frequencySlug ) }
-											value={ customDonationAmounts[ frequencySlug ] }
+											value={ this.formatCurrencyWithoutSymbol(
+												customDonationAmounts[ frequencySlug ]
+											) }
 											id={ 'newspack-' + frequencySlug + '-untiered-input' }
 										/>
 									</div>
@@ -144,19 +201,18 @@ class Edit extends Component {
 	renderTieredForm() {
 		const { className } = this.props;
 		const {
-			suggestedAmounts,
-			currencySymbol,
 			activeTier,
-			selectedFrequency,
+			currencySymbol,
 			customDonationAmounts,
-		} = this.state;
+			selectedFrequency,
+			suggestedAmounts,
+		} = this.blockData();
 
 		const frequencies = {
 			once: __( 'One-time', 'newspack-blocks' ),
 			month: __( 'Monthly', 'newspack-blocks' ),
 			year: __( 'Annually', 'newspack-blocks' ),
 		};
-
 		return (
 			<div className={ classNames( className, 'tiered wpbnbd' ) }>
 				<form>
@@ -191,10 +247,11 @@ class Edit extends Component {
 													className="tier-select-label"
 													htmlFor={ 'newspack-tier-' + frequencySlug + '-' + index }
 												>
-													{ currencySymbol +
-														( 'year' === frequencySlug || 'once' == frequencySlug
+													{ this.formatCurrency(
+														'year' === frequencySlug || 'once' == frequencySlug
 															? 12 * suggestedAmount
-															: suggestedAmount ) }
+															: suggestedAmount
+													) }
 												</label>
 											</div>
 										) ) }
@@ -245,14 +302,16 @@ class Edit extends Component {
 		);
 	}
 
-	render() {
-		const { className } = this.props;
-		const { tiered, created, isLoading, error } = this.state;
+	renderPlaceholder() {
+		const { attributes } = this.props;
+		const { created, error, isLoading, manual } = this.blockData();
 
+		if ( manual ) {
+			return null;
+		}
 		if ( isLoading ) {
 			return <Placeholder icon={ <Spinner /> } />;
 		}
-
 		if ( error.length ) {
 			return (
 				<Placeholder
@@ -266,7 +325,6 @@ class Edit extends Component {
 				</Placeholder>
 			);
 		}
-
 		if ( ! created ) {
 			return (
 				<Placeholder
@@ -283,29 +341,132 @@ class Edit extends Component {
 				</Placeholder>
 			);
 		}
+	}
 
-		let form;
-		if ( ! tiered ) {
-			form = this.renderUntieredForm();
-		} else {
-			form = this.renderTieredForm();
+	renderForm() {
+		const { created, error, manual, tiered } = this.blockData();
+		if ( ! manual && ( error.length || ! created ) ) {
+			return null;
 		}
+		return tiered ? this.renderTieredForm() : this.renderUntieredForm();
+	}
 
+	renderManualControls() {
+		const { attributes, setAttributes } = this.props;
+		const { currencySymbol, suggestedAmounts, suggestedAmountUntiered, tiered } = this.blockData();
 		return (
 			<Fragment>
-				{ form }
+				<ToggleControl
+					key="tiered"
+					checked={ tiered }
+					onChange={ tiered => setAttributes( { tiered } ) }
+					label={ __( 'Tiered', 'newspack-blocks' ) }
+				/>
+				{ tiered && (
+					<Fragment>
+						<TextControl
+							key="low-tier"
+							label={ __( 'Low-tier' + ' (' + currencySymbol + ')' ) }
+							type="number"
+							step="0.01"
+							value={ suggestedAmounts[ 0 ] }
+							onChange={ value =>
+								setAttributes( {
+									suggestedAmounts: [
+										this.sanitizeCurrencyInput( value ),
+										suggestedAmounts[ 1 ],
+										suggestedAmounts[ 2 ],
+									],
+								} )
+							}
+						/>
+						<TextControl
+							key="mid-tier"
+							label={ __( 'Mid-tier' + ' (' + currencySymbol + ')' ) }
+							type="number"
+							step="0.01"
+							value={ suggestedAmounts[ 1 ] }
+							onChange={ value =>
+								setAttributes( {
+									suggestedAmounts: [
+										suggestedAmounts[ 0 ],
+										this.sanitizeCurrencyInput( value ),
+										suggestedAmounts[ 2 ],
+									],
+								} )
+							}
+						/>
+						<TextControl
+							key="hi-tier"
+							label={ __( 'Hi-tier' ) + ' (' + currencySymbol + ')' }
+							type="number"
+							step="0.01"
+							value={ suggestedAmounts[ 2 ] }
+							onChange={ value =>
+								setAttributes( {
+									suggestedAmounts: [
+										suggestedAmounts[ 0 ],
+										suggestedAmounts[ 1 ],
+										this.sanitizeCurrencyInput( value ),
+									],
+								} )
+							}
+						/>
+					</Fragment>
+				) }
+				{ ! tiered && (
+					<TextControl
+						key="suggestedAmountUntiered"
+						label={ __( 'Suggested donation amount per month' ) + ' (' + currencySymbol + ')' }
+						type="number"
+						step="0.01"
+						value={ suggestedAmountUntiered }
+						onChange={ suggestedAmountUntiered =>
+							setAttributes( {
+								suggestedAmountUntiered: this.sanitizeCurrencyInput( suggestedAmountUntiered ),
+							} )
+						}
+					/>
+				) }
+			</Fragment>
+		);
+	}
+
+	render() {
+		const { attributes, setAttributes } = this.props;
+		const { manual } = this.blockData();
+		return (
+			<Fragment>
+				{ this.renderPlaceholder() }
+				{ this.renderForm() }
 				<InspectorControls>
 					<PanelBody title={ __( 'Donate Block', 'newspack-blocks' ) }>
-						<p>
-							{ __(
-								'The Donate Block allows you to collect donations from readers. The fields are automatically defined based on your donation settings.',
-								'newspack-blocks'
-							) }
-						</p>
-						<ExternalLink href="/wp-admin/admin.php?page=newspack-donations-wizard#/">
-							{ __( 'Edit donation settings.', 'newspack-blocks' ) }
-						</ExternalLink>
+						<ToggleControl
+							key="manual"
+							checked={ manual }
+							onChange={ this.manualChanged }
+							label={ __( 'Configure manually', 'newspack-blocks' ) }
+						/>
+						{ ! manual && (
+							<Fragment>
+								<p>
+									{ __(
+										'The Donate Block allows you to collect donations from readers. The fields are automatically defined based on your donation settings.',
+										'newspack-blocks'
+									) }
+								</p>
+
+								<ExternalLink href="/wp-admin/admin.php?page=newspack-donations-wizard#/">
+									{ __( 'Edit donation settings.', 'newspack-blocks' ) }
+								</ExternalLink>
+							</Fragment>
+						) }
 					</PanelBody>
+					{ manual && (
+						<PanelBody title={ __( 'Manual Settings', 'newspack-blocks' ) }>
+							{ this.renderManualControls() }
+						</PanelBody>
+					) }
 				</InspectorControls>
 			</Fragment>
 		);

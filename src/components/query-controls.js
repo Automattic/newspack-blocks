@@ -171,7 +171,7 @@ class QueryControls extends Component {
 					key="specificMode"
 					checked={ specificMode }
 					onChange={ onSpecificModeChange }
-					label={ __( 'Choose specific stories', 'newspack-blocks' ) }
+					label={ __( 'Choose Specific Posts', 'newspack-blocks' ) }
 				/>
 			),
 			specificMode && (
@@ -182,6 +182,7 @@ class QueryControls extends Component {
 					fetchSuggestions={ this.fetchPostSuggestions }
 					fetchSavedInfo={ this.fetchSavedPosts }
 					label={ __( 'Posts', 'newspack-blocks' ) }
+					help={ __( 'Begin typing post title, click autocomplete result to select.', 'newspack-blocks' ) }
 				/>
 			),
 			! specificMode && <BaseControl key="queryControls" { ...this.props } />,

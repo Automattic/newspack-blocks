@@ -8,28 +8,15 @@
  */
 import './view.scss';
 
-const btnURLAttr = 'data-load-more-url';
 const fetchRetryCount = 3;
 
 /**
  * Load More Button Handling
  */
 
-document.querySelectorAll( '[data-load-more-btn]' ).forEach( attachLoadMoreHandler );
-
-/**
- * Attaches an event handler to the Load more button.
- * @param {DOMElement} btnEl the button that was clicked
- */
-function attachLoadMoreHandler( btnEl ) {
-	if ( ! btnEl ) {
-		return null;
-	}
-
-	const handler = buildLoadMoreHandler( btnEl );
-
-	btnEl.addEventListener( 'click', handler );
-}
+document
+	.querySelectorAll( '.wp-block-newspack-blocks-homepage-articles.has-more-button' )
+	.forEach( buildLoadMoreHandler );
 
 /**
  * Builds a function to handle clicks on the load more button.
@@ -38,18 +25,18 @@ function attachLoadMoreHandler( btnEl ) {
  *
  * @param {DOMElement} btnEl the button that was clicked
  */
-function buildLoadMoreHandler( btnEl ) {
-	// Set elements from scope determined by the clicked "Load more" button.
-	const blockWrapperEl = btnEl.parentElement; // scope root element
-	const postsContainerEl = blockWrapperEl.querySelector( '[data-posts-container]' );
-	const loadingEl = blockWrapperEl.querySelector( '[data-load-more-loading-text]' );
-	const errorEl = blockWrapperEl.querySelector( '[data-load-more-error-text]' );
+function buildLoadMoreHandler( blockWrapperEl ) {
+	const btnEl = blockWrapperEl.querySelector( '[data-next]' );
+	if ( ! btnEl ) {
+		return;
+	}
+	const postsContainerEl = blockWrapperEl.querySelector( '[data-posts]' );
 
 	// Set initial state flags.
 	let isFetching = false;
 	let isEndOfData = false;
 
-	return () => {
+	btnEl.addEventListener( 'click', () => {
 		// Early return if still fetching or no more posts to render.
 		if ( isFetching || isEndOfData ) {
 			return false;
@@ -57,12 +44,10 @@ function buildLoadMoreHandler( btnEl ) {
 
 		isFetching = true;
 
-		// Set elements visibility for fetching state.
-		hideEl( btnEl );
-		hideEl( errorEl );
-		showEl( loadingEl );
+		blockWrapperEl.classList.remove( 'is-error' );
+		blockWrapperEl.classList.add( 'is-loading' );
 
-		const requestURL = new URL( btnEl.getAttribute( btnURLAttr ) );
+		const requestURL = new URL( btnEl.getAttribute( 'data-next' ) );
 
 		// Set currenty rendered posts' IDs as a query param (e.g. exclude_ids=1,2,3)
 		requestURL.searchParams.set( 'exclude_ids', getRenderedPostsIds().join( ',' ) );
@@ -83,37 +68,35 @@ function buildLoadMoreHandler( btnEl ) {
 
 			if ( data.next ) {
 				// Save next URL as button's attribute.
-				btnEl.setAttribute( btnURLAttr, data.next );
-
-				// Unhide button since there are more posts available.
-				showEl( btnEl );
+				btnEl.setAttribute( 'data-next', data.next );
 			}
 
 			if ( ! data.items.length || ! data.next ) {
 				isEndOfData = true;
+				blockWrapperEl.classList.remove( 'has-more-button' );
 			}
 
 			isFetching = false;
 
-			hideEl( loadingEl );
+			blockWrapperEl.classList.remove( 'is-loading' );
 		}
 
 		function onError() {
 			isFetching = false;
 
-			// Display error message and keep the button visible to enable retrying.
-			hideEl( loadingEl );
-			showEl( errorEl );
-			showEl( btnEl );
+			blockWrapperEl.classList.remove( 'is-loading' );
+			blockWrapperEl.classList.add( 'is-error' );
 		}
-	};
+	} );
 }
 
 /**
  * Returns unique IDs for posts that are currently in the DOM.
  */
 function getRenderedPostsIds() {
-	const postEls = document.querySelectorAll( 'article[data-post-id]' );
+	const postEls = document.querySelectorAll(
+		'.wp-block-newspack-blocks-homepage-articles [data-post-id]'
+	);
 	const postIds = Array.from( postEls ).map( el => el.getAttribute( 'data-post-id' ) );
 
 	return [ ...new Set( postIds ) ]; // Make values unique with Set
@@ -203,26 +186,6 @@ function isPostsDataValid( data ) {
 	}
 
 	return isValid;
-}
-
-/**
- * Hides given DOM element.
- *
- * @param {DOMElement} el
- */
-function hideEl( el ) {
-	el.style.display = 'none';
-	el.setAttribute( 'hidden', '' );
-}
-
-/**
- * Unhides given DOM element.
- *
- * @param {DOMElement} el
- */
-function showEl( el ) {
-	el.style.display = '';
-	el.removeAttribute( 'hidden' );
 }
 
 /**

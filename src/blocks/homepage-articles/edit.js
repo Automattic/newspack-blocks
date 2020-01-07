@@ -8,12 +8,12 @@ import QueryControls from '../../components/query-controls';
  */
 import classNames from 'classnames';
 import { isUndefined, pickBy } from 'lodash';
-import moment from 'moment';
 
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
+import { dateI18n, format, __experimentalGetSettings } from '@wordpress/date';
 import { Component, Fragment, RawHTML } from '@wordpress/element';
 import {
 	BlockControls,
@@ -30,7 +30,6 @@ import {
 	RangeControl,
 	Toolbar,
 	ToggleControl,
-	Dashicon,
 	Placeholder,
 	Spinner,
 	BaseControl,
@@ -39,18 +38,16 @@ import {
 } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
-import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
 
-let IS_SUBTITLE_SUPPORTED_IN_THEME
-if ( typeof window === 'object' && window.newspackIsPostSubtitleSupported && window.newspackIsPostSubtitleSupported.post_subtitle ) {
-	IS_SUBTITLE_SUPPORTED_IN_THEME = true
+let IS_SUBTITLE_SUPPORTED_IN_THEME;
+if (
+	typeof window === 'object' &&
+	window.newspackIsPostSubtitleSupported &&
+	window.newspackIsPostSubtitleSupported.post_subtitle
+) {
+	IS_SUBTITLE_SUPPORTED_IN_THEME = true;
 }
-
-/**
- * Module Constants
- */
-const MAX_POSTS_COLUMNS = 6;
 
 /* From https://material.io/tools/icons */
 const landscapeIcon = (
@@ -119,8 +116,8 @@ class Edit extends Component {
 				minHeight / 5 + 'vh',
 		};
 
-		const authorNumber = post.newspack_author_info.length;
 		const postTitle = this.titleForPost( post );
+		const dateFormat = __experimentalGetSettings().formats.date;
 		return (
 			<article
 				className={ post.newspack_featured_image_src ? 'post-has-image' : null }
@@ -181,9 +178,7 @@ class Edit extends Component {
 						{ showAuthor && this.formatByline( post.newspack_author_info ) }
 						{ showDate && (
 							<time className="entry-date published" key="pub-date">
-								{ moment( post.date_gmt )
-									.local()
-									.format( 'MMMM DD, Y' ) }
+								{ dateI18n( dateFormat, post.date_gmt ) }
 							</time>
 						) }
 					</div>
@@ -215,7 +210,7 @@ class Edit extends Component {
 
 	formatByline = authorInfo => (
 		<span className="byline">
-			{ __( 'by', 'newspack-blocks' ) }{' '}
+			{ _x( 'by', 'post author', 'newspack-blocks' ) }{' '}
 			{ authorInfo.reduce( ( accumulator, author, index ) => {
 				return [
 					...accumulator,
@@ -227,21 +222,14 @@ class Edit extends Component {
 					index < authorInfo.length - 2 && ', ',
 					authorInfo.length > 1 &&
 						index === authorInfo.length - 2 &&
-						__( ' and ', 'newspack-blocks' ),
+						_x( ' and ', 'post author', 'newspack-blocks' ),
 				];
 			}, [] ) }
 		</span>
 	);
 
 	renderInspectorControls = () => {
-		const {
-			attributes,
-			setAttributes,
-			latestPosts,
-			isSelected,
-			textColor,
-			setTextColor,
-		} = this.props;
+		const { attributes, setAttributes, latestPosts, textColor, setTextColor } = this.props;
 		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
 
 		const {
@@ -249,7 +237,6 @@ class Edit extends Component {
 			specificPosts,
 			postsToShow,
 			categories,
-			sectionHeader,
 			columns,
 			showImage,
 			showCaption,
@@ -257,7 +244,6 @@ class Edit extends Component {
 			mobileStack,
 			minHeight,
 			moreButton,
-			moreButtonText,
 			showExcerpt,
 			showSubtitle,
 			typeScale,
@@ -270,7 +256,6 @@ class Edit extends Component {
 			specificMode,
 			tags,
 			tagExclusions,
-			url,
 		} = attributes;
 
 		const imageSizeOptions = [
@@ -329,9 +314,7 @@ class Edit extends Component {
 							value={ columns }
 							onChange={ value => setAttributes( { columns: value } ) }
 							min={ 2 }
-							max={
-								! hasPosts ? MAX_POSTS_COLUMNS : Math.min( MAX_POSTS_COLUMNS, latestPosts.length )
-							}
+							max={ 6 }
 							required
 						/>
 					) }
@@ -340,7 +323,6 @@ class Edit extends Component {
 							label={ __( 'Show "More" Button', 'newspack-blocks' ) }
 							checked={ moreButton }
 							onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
-							help={ __( 'Only available for non-AMP requests.', 'newspack-blocks' ) }
 						/>
 					) }
 				</PanelBody>
@@ -412,13 +394,15 @@ class Edit extends Component {
 					) }
 				</PanelBody>
 				<PanelBody title={ __( 'Post Control Settings', 'newspack-blocks' ) }>
-					{IS_SUBTITLE_SUPPORTED_IN_THEME && <PanelRow>
-						<ToggleControl
-							label={ __( 'Show Subtitle', 'newspack-blocks' ) }
-							checked={ showSubtitle }
-							onChange={ () => setAttributes( { showSubtitle: ! showSubtitle} ) }
-						/>
-					</PanelRow>}
+					{ IS_SUBTITLE_SUPPORTED_IN_THEME && (
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Show Subtitle', 'newspack-blocks' ) }
+								checked={ showSubtitle }
+								onChange={ () => setAttributes( { showSubtitle: ! showSubtitle } ) }
+							/>
+						</PanelRow>
+					) }
 					<PanelRow>
 						<ToggleControl
 							label={ __( 'Show Excerpt', 'newspack-blocks' ) }
@@ -489,30 +473,16 @@ class Edit extends Component {
 		/**
 		 * Constants
 		 */
+		const { attributes, className, setAttributes, isSelected, latestPosts, textColor } = this.props; // variables getting pulled out of props
 		const {
-			attributes,
-			className,
-			setAttributes,
-			isSelected,
-			latestPosts,
-			hasPosts,
-			textColor,
-		} = this.props; // variables getting pulled out of props
-		const {
-			showExcerpt,
 			showSubtitle,
-			showDate,
 			showImage,
 			imageShape,
-			showAuthor,
-			showAvatar,
-			postsToShow,
 			postLayout,
 			mediaPosition,
 			moreButton,
 			moreButtonText,
 			columns,
-			categories,
 			typeScale,
 			imageScale,
 			mobileStack,
@@ -674,7 +644,7 @@ export default compose( [
 			specificPosts,
 			specificMode,
 		} = props.attributes;
-		const { getAuthors, getEntityRecords } = select( 'core' );
+		const { getEntityRecords } = select( 'core' );
 		const latestPostsQuery = pickBy(
 			specificMode && specificPosts && specificPosts.length
 				? {
@@ -690,9 +660,6 @@ export default compose( [
 				  },
 			value => ! isUndefined( value )
 		);
-		const postsListQuery = {
-			per_page: 50,
-		};
 		return {
 			latestPosts: getEntityRecords( 'postType', 'post', latestPostsQuery ),
 		};
