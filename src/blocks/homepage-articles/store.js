@@ -16,6 +16,8 @@ const initialState = {
 	postsByBlock: {}, // map of returned posts to block clientId
 	deDuplicatedPostsByBlock: {}, // map of processed posts to block clientId
 	pendingRequestsByBlock: {}, // map to keep track of outstanding fetch requests
+	queryApiResponses: {}, // cache of resolved queries
+	blockQueryResponses: {}, // map of blockIds -> queryApiResponses
 };
 
 const UPDATE_CRITERIA = 'UPDATE_CRITERIA';
@@ -23,13 +25,16 @@ const REQUEST_POSTS = 'REQUEST_POSTS';
 const RECEIVE_POSTS = 'RECEIVE_POSTS';
 const UPDATE_BLOCKS = 'UPDATE_BLOCKS';
 const CLEAR_POSTS = 'CLEAR_POSTS';
+const DEDUPLICATE_POSTS = 'DEDUPLICATE_POSTS';
+const CACHE_RESPONSE = 'CACHE_RESPONSE';
 
 const actions = {
-	updateCriteria( clientId, criteria ) {
+	updateCriteria( clientId, criteria, postIdsToExclude ) {
 		return {
 			type: UPDATE_CRITERIA,
 			clientId,
 			criteria,
+			postIdsToExclude,
 		};
 	},
 	requestPosts( clientId, postsRequest ) {
@@ -55,6 +60,18 @@ const actions = {
 	clearPosts( clientId ) {
 		return { type: CLEAR_POSTS, clientId };
 	},
+	deDuplicatePosts() {
+		return { type: DEDUPLICATE_POSTS };
+	},
+	cacheResponse( clientId, criteria, postIdsToSkip, posts ) {
+		return {
+			type: CACHE_RESPONSE,
+			clientId,
+			criteria,
+			postIdsToSkip,
+			posts,
+		};
+	},
 };
 
 /**
@@ -69,24 +86,20 @@ const blocksBefore = ( orderedBlocks, clientId ) => {
 	return orderedBlocks.slice( 0, ourBlockIdx );
 };
 
+/**
+ * Turns a query into an index for queryApiResponses
+ */
+const serializeCriteria = ( criteria, postIdsToSkip ) =>
+	JSON.stringify( [ criteria, postIdsToSkip ] );
+
 const selectors = {
-	query( state, clientId, criteria ) {
-		return state.deDuplicatedPostsByBlock[ clientId ];
+	query( state, clientId, criteria, postIdsToSkip = [] ) {
+		console.log( 'SELECTOR: ', clientId, criteria, postIdsToSkip );
+		// return state.deDuplicatedPostsByBlock[ clientId ];
+		return state.queryApiResponses[ serializeCriteria( criteria, postIdsToSkip ) ] || [];
 	},
 	allQueryBlocksOnPage( state ) {
 		return state.queryBlocks;
-	},
-	countPostsInEarlierBlocks( state, clientId ) {
-		const { queryBlocks, deDuplicatedPostsByBlock } = state;
-		const earlierBlocks = blocksBefore( queryBlocks, clientId );
-		return sum(
-			earlierBlocks.map( b => {
-				if ( deDuplicatedPostsByBlock[ b.clientId ] ) {
-					return deDuplicatedPostsByBlock[ b.clientId ].length;
-				}
-				return 0;
-			} )
-		);
 	},
 	pendingRequestsForEarlierBlocks( state, clientId ) {
 		return blocksBefore( state.queryBlocks, clientId )
@@ -94,11 +107,17 @@ const selectors = {
 			.map( bId => state.pendingRequestsByBlock[ bId ] )
 			.filter( r => r ); // remove missing
 	},
+	previousPostIds( state, clientId ) {
+		return blocksBefore( state.queryBlocks, clientId )
+			.map( b => b.clientId )
+			.flatMap( clientId => ( state.deDuplicatedPostsByBlock[ clientId ] || [] ).map( p => p.id ) );
+	},
 };
 
 // resolvers must yield an action that contains a promise we want to wait for
 const resolvers = {
-	*query( clientId, criteria ) {
+	*query( clientId, criteria, postIdsToSkip = [] ) {
+		console.log( 'RESOLVER: ', clientId, criteria, postIdsToSkip );
 		let postFetch;
 
 		// Resolve specific mode queries immediately
@@ -107,20 +126,22 @@ const resolvers = {
 			? []
 			: select( STORE_NAMESPACE ).pendingRequestsForEarlierBlocks( clientId );
 
+		// Why do I need to wait if I'm going to just do the exclude later?
+		// TODO simplify!
 		postFetch = Promise.all( prevPromises ).then( () => {
-			const earlierBlockCount = select( STORE_NAMESPACE ).countPostsInEarlierBlocks( clientId );
-			const queryParams = {
-				...criteria,
-				per_page: criteria.per_page + earlierBlockCount,
-			};
-
 			return apiFetch( {
-				path: addQueryArgs( '/wp/v2/posts', { ...queryParams, context: 'edit' } ),
+				path: addQueryArgs( '/wp/v2/posts', {
+					...criteria,
+					// per_page: criteria.per_page + ( postIdsToSkip.length || 0 ),
+					exclude: postIdsToSkip.join( ',' ),
+					context: 'edit',
+				} ),
 			} );
 		} );
 
 		dispatch( STORE_NAMESPACE ).requestPosts( clientId, postFetch );
 		const posts = yield actions.requestPosts( clientId, postFetch );
+		dispatch( STORE_NAMESPACE ).cacheResponse( clientId, criteria, postIdsToSkip, posts );
 		return actions.receivePosts( clientId, posts );
 	},
 };
@@ -156,14 +177,13 @@ const deDuplicatePosts = state => {
 
 	return queryBlocks.reduce( ( deDuplicatedPostsByBlock, block ) => {
 		const { clientId } = block;
-		const rawPosts = postsByBlock[ clientId ] || [];
 
 		if ( ! criteria[ clientId ] ) {
 			return deDuplicatedPostsByBlock;
 		}
 
 		const { include, per_page } = criteria[ clientId ];
-
+		const rawPosts = postsByBlock[ clientId ] || [];
 		const specificMode = include && include.length > 0;
 
 		// Force a specific posts not to de-duplicate, but also log them to not show up in other queries
@@ -199,11 +219,16 @@ const deDuplicatePosts = state => {
 const reducer = ( state = initialState, action ) => {
 	switch ( action.type ) {
 		case UPDATE_CRITERIA:
+			const updateCriteriaCacheKey = serializeCriteria( action.criteria, action.postIdsToExclude );
 			return {
 				...state,
 				criteria: {
 					...state.criteria,
 					[ action.clientId ]: action.criteria,
+				},
+				blockQueryResponses: {
+					...state.blockQueryResponses,
+					[ action.clientId ]: updateCriteriaCacheKey,
 				},
 			};
 		case REQUEST_POSTS:
@@ -236,6 +261,20 @@ const reducer = ( state = initialState, action ) => {
 				deDuplicatedPostsByBlock: omit( state.deDuplicatedPostsByBlock, [ action.clientId ] ),
 			};
 			return clearPostsState;
+		case DEDUPLICATE_POSTS:
+			const deduplicatePostsState = {
+				...state,
+				deDuplicatedPostsByBlock: deDuplicatePosts( state ),
+			};
+			return deduplicatePostsState;
+		case CACHE_RESPONSE:
+			const cacheKey = serializeCriteria( action.criteria, action.postIdsToSkip );
+			const cacheResponseState = {
+				...state,
+				blockQueryResponses: { ...state.blockQueryResponses, [ action.clientId ]: cacheKey },
+				queryApiResponses: { ...state.queryApiResponses, [ cacheKey ]: action.posts },
+			};
+			return cacheResponseState;
 	}
 	return state;
 };
@@ -251,11 +290,10 @@ export const registerQueryStore = () => {
 	} );
 
 	const { getClientIdsWithDescendants, getBlocks } = select( 'core/block-editor' );
-	const { allQueryBlocksOnPage, query } = select( STORE_NAMESPACE );
+	const { allQueryBlocksOnPage, query, previousPostIds } = select( STORE_NAMESPACE );
 	const { updateBlocks, updateCriteria } = dispatch( STORE_NAMESPACE );
 
-	let currentBlocksIds,
-		cacheBust = 0;
+	let currentBlocksIds;
 	subscribe( () => {
 		const newBlocksIds = getClientIdsWithDescendants();
 		// I don't know why != works but it does, I guess getClientIdsWithDescendants is memoized?
@@ -265,9 +303,10 @@ export const registerQueryStore = () => {
 		if ( blocksChanged ) {
 			updateBlocks( getBlocks() );
 			allQueryBlocksOnPage().forEach( block => {
+				const postIdsToExclude = previousPostIds( block.clientId );
 				const criteria = queryCriteriaFromAttributes( block.attributes );
-				updateCriteria( block.clientId, criteria );
-				query( block.clientId, { ...criteria, _skip_memoization: block.clientId + cacheBust++ } );
+				updateCriteria( block.clientId, criteria, postIdsToExclude );
+				query( block.clientId, criteria, postIdsToExclude );
 			} );
 		}
 	} );
