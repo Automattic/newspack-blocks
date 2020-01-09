@@ -3,6 +3,7 @@
  */
 import QueryControls from '../../components/query-controls';
 import { STORE_NAMESPACE } from './store';
+
 /**
  * External dependencies
  */
@@ -81,7 +82,10 @@ const coverIcon = (
 	</SVG>
 );
 
-export const queryCriteriaFromAttributes = attributes => {
+const isSpecificPostModeActive = ( { specificMode, specificPosts } ) =>
+	specificMode && specificPosts && specificPosts.length;
+
+const queryCriteriaFromAttributes = attributes => {
 	const {
 		postsToShow,
 		authors,
@@ -92,7 +96,7 @@ export const queryCriteriaFromAttributes = attributes => {
 		tagExclusions,
 	} = attributes;
 	const criteria = pickBy(
-		specificMode && specificPosts && specificPosts.length
+		isSpecificPostModeActive( attributes )
 			? {
 					include: specificPosts,
 					orderby: 'include',
@@ -111,22 +115,6 @@ export const queryCriteriaFromAttributes = attributes => {
 };
 
 class Edit extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = { latestPosts: undefined };
-		// }
-
-		// componentDidMount() {
-		// const { attributes, clientId, updateCriteria } = this.props;
-		// updateCriteria( clientId, queryCriteriaFromAttributes( attributes ) );
-	}
-
-	componentDidUpdate( prevProps ) {
-		const { latestPosts } = this.props;
-		if ( latestPosts !== prevProps.latestPosts ) {
-			this.setState( { latestPosts } );
-		}
-	}
 	renderPost = post => {
 		const { attributes } = this.props;
 		const {
@@ -262,14 +250,14 @@ class Edit extends Component {
 	);
 
 	renderInspectorControls = () => {
-		const { latestPosts } = this.state;
+		// const { latestPosts } = this.state;
 		const {
 			attributes,
 			setAttributes,
 			textColor,
 			setTextColor,
-			updateCriteria,
 			clientId,
+			latestPosts,
 		} = this.props;
 		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
 
@@ -333,58 +321,21 @@ class Edit extends Component {
 					{ postsToShow && (
 						<QueryControls
 							numberOfItems={ postsToShow }
-							onNumberOfItemsChange={ postsToShow => {
-								updateCriteria(
-									clientId,
-									queryCriteriaFromAttributes( { ...attributes, postsToShow } )
-								);
-								setAttributes( { postsToShow } );
-							} }
+							onNumberOfItemsChange={ postsToShow => setAttributes( { postsToShow } ) }
 							specificMode={ specificMode }
-							onSpecificModeChange={ specificMode => {
-								updateCriteria(
-									clientId,
-									queryCriteriaFromAttributes( { ...attributes, specificMode } )
-								);
-								setAttributes( { specificMode } );
-							} }
+							onSpecificModeChange={ specificMode => setAttributes( { specificMode } ) }
 							specificPosts={ specificPosts }
-							onSpecificPostsChange={ specificPosts => {
-								updateCriteria(
-									clientId,
-									queryCriteriaFromAttributes( { ...attributes, specificPosts } )
-								);
-								setAttributes( { specificPosts } );
-							} }
+							onSpecificPostsChange={ specificPosts => setAttributes( { specificPosts } ) }
 							authors={ authors }
-							onAuthorsChange={ authors => {
-								updateCriteria(
-									clientId,
-									queryCriteriaFromAttributes( { ...attributes, authors } )
-								);
-								setAttributes( { authors } );
-							} }
+							onAuthorsChange={ authors => setAttributes( { authors } ) }
 							categories={ categories }
-							onCategoriesChange={ categories => {
-								updateCriteria(
-									clientId,
-									queryCriteriaFromAttributes( { ...attributes, categories } )
-								);
-								setAttributes( { categories } );
-							} }
+							onCategoriesChange={ categories => setAttributes( { categories } ) }
 							tags={ tags }
 							onTagsChange={ tags => {
-								updateCriteria( clientId, queryCriteriaFromAttributes( { ...attributes, tags } ) );
 								setAttributes( { tags } );
 							} }
 							tagExclusions={ tagExclusions }
-							onTagExclusionsChange={ tagExclusions => {
-								updateCriteria(
-									clientId,
-									queryCriteriaFromAttributes( { ...attributes, tagExclusions } )
-								);
-								setAttributes( { tagExclusions } );
-							} }
+							onTagExclusionsChange={ tagExclusions => setAttributes( { tagExclusions } ) }
 						/>
 					) }
 					{ postLayout === 'grid' && (
@@ -546,8 +497,18 @@ class Edit extends Component {
 		/**
 		 * Constants
 		 */
-		const { latestPosts } = this.state;
-		const { attributes, className, setAttributes, isSelected, textColor } = this.props; // variables getting pulled out of props
+		// const { latestPosts } = this.state;
+		const {
+			attributes,
+			className,
+			clientId,
+			setAttributes,
+			isSelected,
+			textColor,
+			latestPosts,
+			markPostsAsDisplayed,
+		} = this.props;
+
 		const {
 			showImage,
 			imageShape,
@@ -649,6 +610,7 @@ class Edit extends Component {
 			},
 		];
 
+		markPostsAsDisplayed( clientId, latestPosts );
 		return (
 			<Fragment>
 				<div
@@ -709,33 +671,22 @@ export default compose( [
 	withColors( { textColor: 'color' } ),
 	withSelect( ( select, props ) => {
 		const { attributes, clientId } = props;
-		const { query, previousPostIds } = select( STORE_NAMESPACE );
-		const postIdsToExclude = previousPostIds( clientId );
-		console.log( 'withSelect postIdsToExclude', postIdsToExclude );
-		const latestPosts = query(
-			clientId,
-			queryCriteriaFromAttributes( attributes ),
-			postIdsToExclude
-		);
+
+		const postIdsToExclude = select( STORE_NAMESPACE ).previousPostIds( clientId );
+
+		const latestPostsQuery = queryCriteriaFromAttributes( attributes );
+		if ( ! isSpecificPostModeActive( attributes ) ) {
+			latestPostsQuery.exclude = postIdsToExclude.join( ',' );
+		}
+
 		return {
-			latestPosts,
-			query,
-			previousPostIds,
-			postIdsToExclude, // not used, but necessary to keep render in sync
+			latestPosts: select( 'core' ).getEntityRecords( 'postType', 'post', latestPostsQuery ),
 		};
 	} ),
-	withDispatch( ( dispatch, props ) => {
-		const { updateCriteria, clearPosts, deDuplicatePosts } = dispatch( STORE_NAMESPACE );
-		const { query, previousPostIds } = props;
-		const wrappedUpdate = ( clientId, criteria ) => {
-			const postIdsToExclude = previousPostIds( clientId );
-			clearPosts( clientId );
-			updateCriteria( clientId, criteria, postIdsToExclude );
-			// deDuplicatePosts();
-			query( clientId, criteria, postIdsToExclude );
-		};
+	withDispatch( dispatch => {
+		const { markPostsAsDisplayed } = dispatch( STORE_NAMESPACE );
 		return {
-			updateCriteria: wrappedUpdate,
+			markPostsAsDisplayed,
 		};
 	} ),
 ] )( Edit );
