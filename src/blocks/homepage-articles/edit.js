@@ -266,7 +266,7 @@ class Edit extends Component {
 		const {
 			attributes,
 			setAttributes,
-      latestPosts
+			latestPosts,
 			textColor,
 			setTextColor,
 			clientId,
@@ -524,7 +524,7 @@ class Edit extends Component {
 			setAttributes,
 			isSelected,
 			latestPosts,
-      textColor,
+			textColor,
 			markPostsAsDisplayed,
 		} = this.props;
 
