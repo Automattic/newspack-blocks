@@ -9,12 +9,12 @@ import { STORE_NAMESPACE } from './store';
  */
 import classNames from 'classnames';
 import { isUndefined, pickBy } from 'lodash';
-import moment from 'moment';
 
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
+import { dateI18n, format, __experimentalGetSettings } from '@wordpress/date';
 import { Component, Fragment, RawHTML } from '@wordpress/element';
 import {
 	BlockControls,
@@ -41,10 +41,14 @@ import { withDispatch, withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 import { decodeEntities } from '@wordpress/html-entities';
 
-/**
- * Module Constants
- */
-const MAX_POSTS_COLUMNS = 6;
+let IS_SUBTITLE_SUPPORTED_IN_THEME;
+if (
+	typeof window === 'object' &&
+	window.newspackIsPostSubtitleSupported &&
+	window.newspackIsPostSubtitleSupported.post_subtitle
+) {
+	IS_SUBTITLE_SUPPORTED_IN_THEME = true;
+}
 
 /* From https://material.io/tools/icons */
 const landscapeIcon = (
@@ -124,6 +128,7 @@ class Edit extends Component {
 			minHeight,
 			showCaption,
 			showExcerpt,
+			showSubtitle,
 			showAuthor,
 			showAvatar,
 			showDate,
@@ -145,6 +150,7 @@ class Edit extends Component {
 		};
 
 		const postTitle = this.titleForPost( post );
+		const dateFormat = __experimentalGetSettings().formats.date;
 		return (
 			<article
 				className={ post.newspack_featured_image_src ? 'post-has-image' : null }
@@ -187,6 +193,14 @@ class Edit extends Component {
 							<a href="#">{ postTitle }</a>
 						</h3>
 					) }
+					{ IS_SUBTITLE_SUPPORTED_IN_THEME && showSubtitle && (
+						<RawHTML
+							key="subtitle"
+							className="newspack-post-subtitle newspack-post-subtitle--in-homepage-block"
+						>
+							{ post.meta.newspack_post_subtitle || '' }
+						</RawHTML>
+					) }
 					{ showExcerpt && (
 						<RawHTML key="excerpt" className="excerpt-contain">
 							{ post.excerpt.rendered }
@@ -197,9 +211,7 @@ class Edit extends Component {
 						{ showAuthor && this.formatByline( post.newspack_author_info ) }
 						{ showDate && (
 							<time className="entry-date published" key="pub-date">
-								{ moment( post.date_gmt )
-									.local()
-									.format( 'MMMM DD, Y' ) }
+								{ dateI18n( dateFormat, post.date_gmt ) }
 							</time>
 						) }
 					</div>
@@ -231,7 +243,7 @@ class Edit extends Component {
 
 	formatByline = authorInfo => (
 		<span className="byline">
-			{ __( 'by', 'newspack-blocks' ) }{' '}
+			{ _x( 'by', 'post author', 'newspack-blocks' ) }{' '}
 			{ authorInfo.reduce( ( accumulator, author, index ) => {
 				return [
 					...accumulator,
@@ -243,7 +255,7 @@ class Edit extends Component {
 					index < authorInfo.length - 2 && ', ',
 					authorInfo.length > 1 &&
 						index === authorInfo.length - 2 &&
-						__( ' and ', 'newspack-blocks' ),
+						_x( ' and ', 'post author', 'newspack-blocks' ),
 				];
 			}, [] ) }
 		</span>
@@ -254,10 +266,10 @@ class Edit extends Component {
 		const {
 			attributes,
 			setAttributes,
+      latestPosts
 			textColor,
 			setTextColor,
 			clientId,
-			latestPosts,
 		} = this.props;
 		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
 
@@ -274,6 +286,7 @@ class Edit extends Component {
 			minHeight,
 			moreButton,
 			showExcerpt,
+			showSubtitle,
 			typeScale,
 			showDate,
 			showAuthor,
@@ -344,9 +357,7 @@ class Edit extends Component {
 							value={ columns }
 							onChange={ columns => setAttributes( { columns } ) }
 							min={ 2 }
-							max={
-								! hasPosts ? MAX_POSTS_COLUMNS : Math.min( MAX_POSTS_COLUMNS, latestPosts.length )
-							}
+							max={ 6 }
 							required
 						/>
 					) }
@@ -355,7 +366,6 @@ class Edit extends Component {
 							label={ __( 'Show "More" Button', 'newspack-blocks' ) }
 							checked={ moreButton }
 							onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
-							help={ __( 'Only available for non-AMP requests.', 'newspack-blocks' ) }
 						/>
 					) }
 				</PanelBody>
@@ -427,6 +437,15 @@ class Edit extends Component {
 					) }
 				</PanelBody>
 				<PanelBody title={ __( 'Post Control Settings', 'newspack-blocks' ) }>
+					{ IS_SUBTITLE_SUPPORTED_IN_THEME && (
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Show Subtitle', 'newspack-blocks' ) }
+								checked={ showSubtitle }
+								onChange={ () => setAttributes( { showSubtitle: ! showSubtitle } ) }
+							/>
+						</PanelRow>
+					) }
 					<PanelRow>
 						<ToggleControl
 							label={ __( 'Show Excerpt', 'newspack-blocks' ) }
@@ -497,19 +516,20 @@ class Edit extends Component {
 		/**
 		 * Constants
 		 */
-		// const { latestPosts } = this.state;
+
 		const {
 			attributes,
 			className,
 			clientId,
 			setAttributes,
 			isSelected,
-			textColor,
 			latestPosts,
+      textColor,
 			markPostsAsDisplayed,
 		} = this.props;
 
 		const {
+			showSubtitle,
 			showImage,
 			imageShape,
 			postLayout,
@@ -685,6 +705,7 @@ export default compose( [
 	} ),
 	withDispatch( dispatch => {
 		const { markPostsAsDisplayed } = dispatch( STORE_NAMESPACE );
+
 		return {
 			markPostsAsDisplayed,
 		};

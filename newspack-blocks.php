@@ -1,13 +1,13 @@
 <?php
 /**
  * Plugin Name:     Newspack Blocks
- * Plugin URI:      PLUGIN SITE HERE
- * Description:     PLUGIN DESCRIPTION HERE
- * Author:          YOUR NAME HERE
- * Author URI:      YOUR SITE HERE
+ * Plugin URI:      https://newspack.blog/
+ * Description:     A collection of blocks for news publishers.
+ * Author:          Automattic
+ * Author URI:      https://newspack.blog/
  * Text Domain:     newspack-blocks
  * Domain Path:     /languages
- * Version:         1.0.0-alpha.20
+ * Version:         1.0.0-alpha.21
  *
  * @package         Newspack_Blocks
  */
@@ -44,3 +44,20 @@ function newspack_blocks_plugin_textdomain() {
 	load_plugin_textdomain( 'newspack-blocks', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }
 add_action( 'plugins_loaded', 'newspack_blocks_plugin_textdomain' );
+
+
+/**
+ * Add global variable for theme supports detection.
+ *
+ * @action enqueue_block_editor_assets
+ */
+function newspack_blocks_post_subtitle_detection() {
+	wp_localize_script(
+		'newspack-blocks-editor',
+		'newspackIsPostSubtitleSupported',
+		array(
+			'post_subtitle' => get_theme_support( 'post-subtitle' ),
+		)
+	);
+}
+add_action( 'enqueue_block_editor_assets', 'newspack_blocks_post_subtitle_detection' );

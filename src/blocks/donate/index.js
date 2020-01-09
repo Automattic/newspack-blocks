@@ -42,6 +42,21 @@ export const settings = {
 		className: {
 			type: 'string',
 		},
+		manual: {
+			type: 'boolean',
+		},
+		suggestedAmounts: {
+			type: 'array',
+			default: [ 0, 0, 0 ],
+		},
+		suggestedAmountUntiered: {
+			type: 'integer',
+			default: 0,
+		},
+		tiered: {
+			type: 'boolean',
+			default: true,
+		},
 	},
 	supports: {
 		html: false,

@@ -71,11 +71,21 @@ call_user_func(
 				</div>
 				<?php
 			endif;
+
 			if ( '' === $attributes['sectionHeader'] ) :
 				the_title( '<h2 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h2>' );
 			else :
 				the_title( '<h3 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h3>' );
 			endif;
+			?>
+			<?php
+			if ( $attributes['showSubtitle'] ) :
+				?>
+				<div class="newspack-post-subtitle newspack-post-subtitle--in-homepage-block">
+					<?php echo esc_html( get_post_meta( get_the_ID(), 'newspack_post_subtitle', true ) ); ?>
+				</div>
+			<?php endif; ?>
+			<?php
 			if ( $attributes['showExcerpt'] ) :
 				the_excerpt();
 			endif;
@@ -88,7 +98,7 @@ call_user_func(
 							echo wp_kses(
 								newspack_blocks_format_avatars( $authors ),
 								array(
-									'img' => array(
+									'img'      => array(
 										'class'  => true,
 										'src'    => true,
 										'alt'    => true,
@@ -98,8 +108,8 @@ call_user_func(
 										'srcset' => true,
 									),
 									'noscript' => array(),
-									'a' => array(
-										'href'  => true,
+									'a'        => array(
+										'href' => true,
 									),
 								)
 							);
