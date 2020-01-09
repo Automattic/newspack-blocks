@@ -114,6 +114,11 @@ class Edit extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = { latestPosts: undefined };
+		// }
+
+		// componentDidMount() {
+		// const { attributes, clientId, updateCriteria } = this.props;
+		// updateCriteria( clientId, queryCriteriaFromAttributes( attributes ) );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -706,6 +711,7 @@ export default compose( [
 		const { attributes, clientId } = props;
 		const { query, previousPostIds } = select( STORE_NAMESPACE );
 		const postIdsToExclude = previousPostIds( clientId );
+		console.log( 'withSelect postIdsToExclude', postIdsToExclude );
 		const latestPosts = query(
 			clientId,
 			queryCriteriaFromAttributes( attributes ),
@@ -725,7 +731,7 @@ export default compose( [
 			const postIdsToExclude = previousPostIds( clientId );
 			clearPosts( clientId );
 			updateCriteria( clientId, criteria, postIdsToExclude );
-			deDuplicatePosts();
+			// deDuplicatePosts();
 			query( clientId, criteria, postIdsToExclude );
 		};
 		return {

@@ -1,7 +1,7 @@
 import apiFetch from '@wordpress/api-fetch';
 import { registerStore, select, subscribe, dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
-import { sum, omit } from 'lodash';
+import { sum, omit, uniq } from 'lodash';
 
 import metadata from './block.json';
 import { queryCriteriaFromAttributes } from './edit';
@@ -27,6 +27,7 @@ const UPDATE_BLOCKS = 'UPDATE_BLOCKS';
 const CLEAR_POSTS = 'CLEAR_POSTS';
 const DEDUPLICATE_POSTS = 'DEDUPLICATE_POSTS';
 const CACHE_RESPONSE = 'CACHE_RESPONSE';
+const AWAIT_PREVIOUS_REQUESTS = 'AWAIT_PREVIOUS_REQUESTS';
 
 const actions = {
 	updateCriteria( clientId, criteria, postIdsToExclude ) {
@@ -64,12 +65,19 @@ const actions = {
 		return { type: DEDUPLICATE_POSTS };
 	},
 	cacheResponse( clientId, criteria, postIdsToSkip, posts ) {
+		console.log( 'cacheResponse', clientId, criteria, postIdsToSkip, posts );
 		return {
 			type: CACHE_RESPONSE,
 			clientId,
 			criteria,
 			postIdsToSkip,
 			posts,
+		};
+	},
+	awaitPreviousRequests( previousRequests ) {
+		return {
+			type: AWAIT_PREVIOUS_REQUESTS,
+			previousRequests,
 		};
 	},
 };
@@ -94,8 +102,15 @@ const serializeCriteria = ( criteria, postIdsToSkip ) =>
 
 const selectors = {
 	query( state, clientId, criteria, postIdsToSkip = [] ) {
-		console.log( 'SELECTOR: ', clientId, criteria, postIdsToSkip );
+		// dispatch( STORE_NAMESPACE ).updateCriteria( clientId, criteria, postIdsToSkip );
+		// console.log( 'query SELECTOR', clientId, criteria, postIdsToSkip );
 		// return state.deDuplicatedPostsByBlock[ clientId ];
+		// console.log(
+		// 	'query postIds',
+		// 	( state.queryApiResponses[ serializeCriteria( criteria, postIdsToSkip ) ] || [] ).map(
+		// 		p => p.id
+		// 	)
+		// );
 		return state.queryApiResponses[ serializeCriteria( criteria, postIdsToSkip ) ] || [];
 	},
 	allQueryBlocksOnPage( state ) {
@@ -108,16 +123,28 @@ const selectors = {
 			.filter( r => r ); // remove missing
 	},
 	previousPostIds( state, clientId ) {
-		return blocksBefore( state.queryBlocks, clientId )
-			.map( b => b.clientId )
-			.flatMap( clientId => ( state.deDuplicatedPostsByBlock[ clientId ] || [] ).map( p => p.id ) );
+		console.log( 'previousPostIds SELECTOR', clientId );
+		const previousPostIds = uniq(
+			blocksBefore( state.queryBlocks, clientId )
+				.map( b => b.clientId )
+				.map( clientId => state.blockQueryResponses[ clientId ] )
+				.flatMap( cacheKey => ( state.queryApiResponses[ cacheKey ] || [] ).map( p => p.id ) )
+		);
+		console.log( 'previousPostIds', clientId, previousPostIds );
+		return previousPostIds;
 	},
 };
 
 // resolvers must yield an action that contains a promise we want to wait for
 const resolvers = {
 	*query( clientId, criteria, postIdsToSkip = [] ) {
-		console.log( 'RESOLVER: ', clientId, criteria, postIdsToSkip );
+		// console.log(
+		// 	'%c query RESOLVER',
+		// 	'color: red; font-weight: bold',
+		// 	clientId,
+		// 	criteria,
+		// 	postIdsToSkip
+		// );
 		let postFetch;
 
 		// Resolve specific mode queries immediately
@@ -141,9 +168,22 @@ const resolvers = {
 
 		dispatch( STORE_NAMESPACE ).requestPosts( clientId, postFetch );
 		const posts = yield actions.requestPosts( clientId, postFetch );
-		dispatch( STORE_NAMESPACE ).cacheResponse( clientId, criteria, postIdsToSkip, posts );
+		return dispatch( STORE_NAMESPACE ).cacheResponse( clientId, criteria, postIdsToSkip, posts );
 		return actions.receivePosts( clientId, posts );
 	},
+	// THIS IS SUPPOSED TO FORCE THE BLOCKS TO LOAD IN ORDER!
+	// *previousPostIds( clientId ) {
+	// 	console.log( 'previousPostIds RESOLVER', clientId );
+	// 	const prevRequests = select( STORE_NAMESPACE ).pendingRequestsForEarlierBlocks( clientId );
+	// 	console.log( 'previousPostIds prevRequests', prevRequests );
+	// 	const foo = yield actions.awaitPreviousRequests(
+	// 		Promise.all( prevRequests ).then( val => {
+	// 			console.log( '%c previousPostIds RESOLVER resolved', 'color: yellow;', clientId, val );
+	// 			return val;
+	// 		} )
+	// 	);
+	// 	console.log( 'previous requests', foo );
+	// },
 };
 
 // controls must match the action type and return a promise for a value that
@@ -151,6 +191,9 @@ const resolvers = {
 const controls = {
 	REQUEST_POSTS( action ) {
 		return action.postsRequest;
+	},
+	AWAIT_PREVIOUS_REQUESTS( action ) {
+		return action.previousRequests;
 	},
 };
 
@@ -268,6 +311,7 @@ const reducer = ( state = initialState, action ) => {
 			};
 			return deduplicatePostsState;
 		case CACHE_RESPONSE:
+			console.log( 'cacheResponse Reducer', action );
 			const cacheKey = serializeCriteria( action.criteria, action.postIdsToSkip );
 			const cacheResponseState = {
 				...state,
