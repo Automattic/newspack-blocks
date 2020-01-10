@@ -86,38 +86,6 @@ const coverIcon = (
 	</SVG>
 );
 
-const isSpecificPostModeActive = ( { specificMode, specificPosts } ) =>
-	specificMode && specificPosts && specificPosts.length;
-
-const queryCriteriaFromAttributes = attributes => {
-	const {
-		postsToShow,
-		authors,
-		categories,
-		tags,
-		specificPosts,
-		specificMode,
-		tagExclusions,
-	} = attributes;
-	const criteria = pickBy(
-		isSpecificPostModeActive( attributes )
-			? {
-					include: specificPosts,
-					orderby: 'include',
-					per_page: specificPosts.length,
-			  }
-			: {
-					per_page: postsToShow,
-					categories,
-					author: authors,
-					tags,
-					tags_exclude: tagExclusions,
-			  },
-		value => ! isUndefined( value )
-	);
-	return criteria;
-};
-
 class Edit extends Component {
 	renderPost = post => {
 		const { attributes } = this.props;
@@ -263,14 +231,7 @@ class Edit extends Component {
 
 	renderInspectorControls = () => {
 		// const { latestPosts } = this.state;
-		const {
-			attributes,
-			setAttributes,
-			latestPosts,
-			textColor,
-			setTextColor,
-			clientId,
-		} = this.props;
+		const { attributes, setAttributes, latestPosts, textColor, setTextColor } = this.props;
 		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
 
 		const {
@@ -687,15 +648,46 @@ class Edit extends Component {
 	}
 }
 
+const isSpecificPostModeActive = ( { specificMode, specificPosts } ) =>
+	specificMode && specificPosts && specificPosts.length;
+
+const queryCriteriaFromAttributes = attributes => {
+	const {
+		postsToShow,
+		authors,
+		categories,
+		tags,
+		specificPosts,
+		specificMode,
+		tagExclusions,
+	} = attributes;
+	const criteria = pickBy(
+		isSpecificPostModeActive( attributes )
+			? {
+					include: specificPosts,
+					orderby: 'include',
+					per_page: specificPosts.length,
+			  }
+			: {
+					per_page: postsToShow,
+					categories,
+					author: authors,
+					tags,
+					tags_exclude: tagExclusions,
+			  },
+		value => ! isUndefined( value )
+	);
+	return criteria;
+};
+
 export default compose( [
 	withColors( { textColor: 'color' } ),
 	withSelect( ( select, props ) => {
 		const { attributes, clientId } = props;
 
-		const postIdsToExclude = select( STORE_NAMESPACE ).previousPostIds( clientId );
-
 		const latestPostsQuery = queryCriteriaFromAttributes( attributes );
 		if ( ! isSpecificPostModeActive( attributes ) ) {
+			const postIdsToExclude = select( STORE_NAMESPACE ).previousPostIds( clientId );
 			latestPostsQuery.exclude = postIdsToExclude.join( ',' );
 		}
 
@@ -703,8 +695,11 @@ export default compose( [
 			latestPosts: select( 'core' ).getEntityRecords( 'postType', 'post', latestPostsQuery ),
 		};
 	} ),
-	withDispatch( dispatch => {
-		const { markPostsAsDisplayed } = dispatch( STORE_NAMESPACE );
+	withDispatch( ( dispatch, props ) => {
+		const { attributes } = props;
+		const markPostsAsDisplayed = isSpecificPostModeActive( attributes )
+			? dispatch( STORE_NAMESPACE ).markSpecificPostsAsDisplayed
+			: dispatch( STORE_NAMESPACE ).markPostsAsDisplayed;
 
 		return {
 			markPostsAsDisplayed,

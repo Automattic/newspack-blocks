@@ -1,5 +1,5 @@
 import { registerStore, select, subscribe, dispatch } from '@wordpress/data';
-import { uniq } from 'lodash';
+import { uniq, compact } from 'lodash';
 
 import metadata from './block.json';
 
@@ -10,10 +10,12 @@ const blockName = `newspack-blocks/${ name }`;
 const initialState = {
 	queryBlocks: [], // list of Query blocks in the order they are on the page
 	postsByBlock: {}, // map of returned posts to block clientId
+	specificPostsByBlock: {}, // posts displayed by specific-mode, which always return in the selector
 };
 
 const UPDATE_BLOCKS = 'UPDATE_BLOCKS';
 const MARK_POSTS_DISPLAYED = 'MARK_POSTS_DISPLAYED';
+const MARK_SPECIFIC_POSTS_DISPLAYED = 'MARK_SPECIFIC_POSTS_DISPLAYED';
 
 const actions = {
 	updateBlocks( blocks ) {
@@ -25,6 +27,13 @@ const actions = {
 	markPostsAsDisplayed( clientId, posts ) {
 		return {
 			type: MARK_POSTS_DISPLAYED,
+			clientId,
+			posts,
+		};
+	},
+	markSpecificPostsAsDisplayed( clientId, posts ) {
+		return {
+			type: MARK_SPECIFIC_POSTS_DISPLAYED,
 			clientId,
 			posts,
 		};
@@ -45,12 +54,14 @@ const blocksBefore = ( orderedBlocks, clientId ) => {
 
 const selectors = {
 	previousPostIds( state, clientId ) {
-		const previousPostIds = uniq(
-			blocksBefore( state.queryBlocks, clientId )
-				.map( b => b.clientId )
-				.flatMap( clientId => ( state.postsByBlock[ clientId ] || [] ).map( p => p.id ) )
-		);
-		return previousPostIds;
+		const postIdsFromSpecificMode = compact(
+			Object.values( state.specificPostsByBlock ).flat()
+		).map( p => p.id );
+		const previousPostIds = blocksBefore( state.queryBlocks, clientId )
+			.map( b => b.clientId )
+			.flatMap( clientId => ( state.postsByBlock[ clientId ] || [] ).map( p => p.id ) );
+
+		return uniq( postIdsFromSpecificMode.concat( previousPostIds ) ).sort();
 	},
 };
 
@@ -84,6 +95,14 @@ const reducer = ( state = initialState, action ) => {
 				...state,
 				postsByBlock: {
 					...state.postsByBlock,
+					[ action.clientId ]: action.posts,
+				},
+			};
+		case MARK_SPECIFIC_POSTS_DISPLAYED:
+			return {
+				...state,
+				specificPostsByBlock: {
+					...state.specificPostsByBlock,
 					[ action.clientId ]: action.posts,
 				},
 			};
