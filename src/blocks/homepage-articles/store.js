@@ -54,12 +54,15 @@ const blocksBefore = ( orderedBlocks, clientId ) => {
 
 const selectors = {
 	previousPostIds( state, clientId ) {
-		const postIdsFromSpecificMode = compact(
-			Object.values( state.specificPostsByBlock ).flat()
-		).map( p => p.id );
-		const previousPostIds = blocksBefore( state.queryBlocks, clientId )
-			.map( b => b.clientId )
-			.flatMap( clientId => ( state.postsByBlock[ clientId ] || [] ).map( p => p.id ) );
+		const { queryBlocks, specificPostsByBlock, postsByBlock } = state;
+
+		const postIdsFromSpecificMode = queryBlocks
+			.filter( ( { clientId } ) => specificPostsByBlock[ clientId ] )
+			.flatMap( ( { clientId } ) => specificPostsByBlock[ clientId ].map( p => p.id ) );
+
+		const previousPostIds = blocksBefore( queryBlocks, clientId )
+			.filter( ( { clientId } ) => postsByBlock[ clientId ] )
+			.flatMap( ( { clientId } ) => postsByBlock[ clientId ].map( p => p.id ) );
 
 		return uniq( postIdsFromSpecificMode.concat( previousPostIds ) ).sort();
 	},
