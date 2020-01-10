@@ -2,16 +2,20 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Component, Fragment } from '@wordpress/element';
+import { Component } from '@wordpress/element';
 import {
 	Button,
 	QueryControls as BaseControl,
-	SelectControl,
 	ToggleControl,
 } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
+
+/**
+ * External dependencies.
+ */
+import React from 'react';
 
 /**
  * Internal dependencies.
@@ -147,8 +151,6 @@ class QueryControls extends Component {
 
 	render = () => {
 		const {
-			numberOfItems,
-			onNumberOfItemsChange,
 			specificMode,
 			onSpecificModeChange,
 			specificPosts,

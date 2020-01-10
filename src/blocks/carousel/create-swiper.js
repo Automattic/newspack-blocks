@@ -1,14 +1,17 @@
 /**
  * External dependencies
  */
-import { mapValues, merge } from 'lodash';
+import { merge } from 'lodash';
 import Swiper from 'swiper';
 import '../../../node_modules/swiper/dist/css/swiper.css';
 
+/**
+ * @param {string} container Selector
+ * @param {Object} params Params passed to Swiper
+ */
 export default function createSwiper(
 	container = '.swiper-container',
 	params = {},
-	callbacks = {}
 ) {
 	const defaultParams = {
 		effect: 'slide',
@@ -30,8 +33,6 @@ export default function createSwiper(
 		setWrapperSize: true,
 		touchStartPreventDefault: false,
 	};
-	// const [ { default: Swiper } ] = await Promise.all( [
-	// 	import( /* webpackChunkName: "swiper" */ 'swiper' ),
-	// ] );
+
 	return new Swiper( container, merge( {}, defaultParams, params ) );
 }

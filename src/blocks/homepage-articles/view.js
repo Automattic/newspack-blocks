@@ -23,7 +23,7 @@ document
  * Creates internal state via closure to ensure all state is
  * isolated to a single Block + button instance.
  *
- * @param {DOMElement} btnEl the button that was clicked
+ * @param {HTMLElement} blockWrapperEl the button that was clicked
  */
 function buildLoadMoreHandler( blockWrapperEl ) {
 	const btnEl = blockWrapperEl.querySelector( '[data-next]' );
@@ -54,6 +54,9 @@ function buildLoadMoreHandler( blockWrapperEl ) {
 
 		fetchWithRetry( { url: requestURL.toString(), onSuccess, onError }, fetchRetryCount );
 
+		/**
+		 * @param {Object} data Post data
+		 */
 		function onSuccess( data ) {
 			// Validate received data.
 			if ( ! isPostsDataValid( data ) ) {
@@ -81,6 +84,9 @@ function buildLoadMoreHandler( blockWrapperEl ) {
 			blockWrapperEl.classList.remove( 'is-loading' );
 		}
 
+		/**
+		 * Handle fetching error
+		 */
 		function onError() {
 			isFetching = false;
 
@@ -191,8 +197,8 @@ function isPostsDataValid( data ) {
 /**
  * Checks if object has own property.
  *
- * @param {Object} obj
- * @param {string} prop
+ * @param {Object} obj Object
+ * @param {string} prop Property to check
  */
 function hasOwnProp( obj, prop ) {
 	return Object.prototype.hasOwnProperty.call( obj, prop );

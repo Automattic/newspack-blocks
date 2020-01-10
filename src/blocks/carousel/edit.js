@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/anchor-is-valid, jsx-a11y/anchor-has-content, jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus */
+
 /**
  * Internal dependencies
  */
@@ -8,9 +10,9 @@ import classnames from 'classnames';
 /**
  * External dependencies
  */
-import classNames from 'classnames';
 import { isUndefined, pickBy } from 'lodash';
 import moment from 'moment';
+import React from 'react';
 
 /**
  * WordPress dependencies
@@ -25,13 +27,10 @@ import {
 	RangeControl,
 	Spinner,
 	ToggleControl,
-	BaseControl,
 } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
-import { withState, compose } from '@wordpress/compose';
+import { compose } from '@wordpress/compose';
 import { decodeEntities } from '@wordpress/html-entities';
-
-import { PanelColorSettings, withColors } from '@wordpress/block-editor';
 
 class Edit extends Component {
 	constructor( props ) {
@@ -44,7 +43,7 @@ class Edit extends Component {
 		this.btnPrevRef = createRef();
 		this.paginationRef = createRef();
 	}
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate() {
 		const { attributes, latestPosts } = this.props;
 		const { autoPlayState } = this.state;
 		const { autoplay, delay } = attributes;
@@ -52,6 +51,7 @@ class Edit extends Component {
 			this.swiperInstance && latestPosts && this.swiperInstance.realIndex < latestPosts.length ?
 				this.swiperInstance.realIndex :
 				0;
+		// eslint-disable-next-line no-unused-expressions
 		this.swiperInstance && this.swiperInstance.destroy( true, true );
 		this.swiperInstance = createSwiper(
 			this.carouselRef.current,
@@ -61,7 +61,7 @@ class Edit extends Component {
 						{
 							delay: delay * 1000,
 							disableOnInteraction: false,
-						  } :
+						} :
 						false,
 				effect: 'slide',
 				initialSlide: realIndex,
@@ -84,9 +84,7 @@ class Edit extends Component {
 			attributes,
 			className,
 			setAttributes,
-			isSelected,
 			latestPosts,
-			hasPosts,
 		} = this.props;
 		const { autoPlayState } = this.state;
 		const {
@@ -126,7 +124,7 @@ class Edit extends Component {
 										<figure className="post-thumbnail">
 											{ post.newspack_featured_image_src && (
 												<a href="#" rel="bookmark">
-													<img src={ post.newspack_featured_image_src.landscape } />
+													<img src={ post.newspack_featured_image_src.landscape } alt="" />
 												</a>
 											) }
 										</figure>
@@ -225,16 +223,16 @@ class Edit extends Component {
 							label={ __( 'Autoplay' ) }
 							help={ __( 'Autoplay between slides' ) }
 							checked={ autoplay }
-							onChange={ ( autoplay ) => {
-								setAttributes( { autoplay } );
+							onChange={ ( _autoplay ) => {
+								setAttributes( { autoplay: _autoplay } );
 							} }
 						/>
 						{ autoplay && (
 							<RangeControl
 								label={ __( 'Delay between transitions (in seconds)' ) }
 								value={ delay }
-								onChange={ ( delay ) => {
-									setAttributes( { delay } );
+								onChange={ ( _delay ) => {
+									setAttributes( { delay: _delay } );
 								} }
 								min={ 1 }
 								max={ 20 }

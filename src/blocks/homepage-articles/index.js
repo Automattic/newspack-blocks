@@ -3,6 +3,7 @@
  */
 import { Path, SVG } from '@wordpress/components';
 import { createBlock } from '@wordpress/blocks';
+import React from 'react';
 
 /**
  * WordPress dependencies
@@ -64,12 +65,12 @@ export const settings = {
 				type: 'block',
 				blocks: [ 'core/latest-posts' ],
 				transform: ( {
-				     displayPostContent,
-				     displayPostDate,
-				     postLayout,
-				     columns,
-				     postsToShow,
-				     categories,
+					displayPostContent,
+					displayPostDate,
+					postLayout,
+					columns,
+					postsToShow,
+					categories,
 				} ) => {
 					return createBlock( applyFilters( 'blocks.transforms_from_name', 'newspack-blocks/homepage-articles' ), {
 						showExcerpt: displayPostContent,

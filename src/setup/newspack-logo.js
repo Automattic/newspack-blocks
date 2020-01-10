@@ -3,6 +3,7 @@
  */
 import { Path, SVG } from '@wordpress/components';
 import classNames from 'classnames';
+import React from 'react';
 
 export default ( { size = 24, className } ) => (
 	<SVG

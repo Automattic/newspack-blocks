@@ -2,11 +2,12 @@
  * External dependencies
  */
 import { Path, SVG } from '@wordpress/components';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { __, _x } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import edit from './edit';
 
 /**
