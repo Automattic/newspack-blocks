@@ -1,5 +1,5 @@
-@import "../../../shared/sass/variables";
-@import "../../../shared/sass/mixins";
+@import '../../../shared/sass/variables';
+@import '../../../shared/sass/mixins';
 
 .wp-block-columns {
 
@@ -14,8 +14,8 @@
 	@include media( mobile ) {
 		flex-wrap: nowrap;
 		margin-left: -16px;
-		max-width: calc(100% + 32px);
-		width: calc(100% + 32px);
+		max-width: calc( 100% + 32px );
+		width: calc( 100% + 32px );
 
 		.wp-block-column {
 			margin-bottom: 0;
@@ -36,8 +36,8 @@
 	@include media( tablet ) {
 		&.is-style-borders {
 			margin-left: -24px;
-			max-width: calc(100% + 48px);
-			width: calc(100% + 48px);
+			max-width: calc( 100% + 48px );
+			width: calc( 100% + 48px );
 
 			& > .wp-block-column {
 				margin-left: 24px;
@@ -49,8 +49,8 @@
 	@include media( desktop ) {
 		&.is-style-borders {
 			margin-left: -32px;
-			max-width: calc(100% + 64px);
-			width: calc(100% + 64px);
+			max-width: calc( 100% + 64px );
+			width: calc( 100% + 64px );
 
 			& > .wp-block-column {
 				margin-left: 32px;
@@ -68,7 +68,7 @@
 				margin-bottom: 0;
 			}
 
-			&:after {
+			&::after {
 				border: 0 solid $color__border;
 				border-top-width: 1px;
 				bottom: -32px;
@@ -78,14 +78,14 @@
 				right: 0;
 			}
 
-			&:last-child:after {
+			&:last-child::after {
 				display: none;
 			}
 
 			@include media( mobile ) {
 				margin-bottom: 0;
 
-				&:after {
+				&::after {
 					border-right-width: 1px;
 					border-top-width: 0;
 					bottom: 0;
@@ -96,13 +96,13 @@
 			}
 
 			@include media( tablet ) {
-				&:after {
+				&::after {
 					right: -24px;
 				}
 			}
 
 			@include media( desktop ) {
-				&:after {
+				&::after {
 					right: -32px;
 				}
 			}

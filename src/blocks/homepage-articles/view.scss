@@ -295,7 +295,7 @@
 					z-index: 2;
 				}
 
-				&:after {
+				&::after {
 					background: rgba( 0, 0, 0, 0.5 );
 					bottom: 0;
 					content: '';
@@ -588,7 +588,7 @@
 		&.columns-5 {
 			article {
 				border-width: 0;
-				&:nth-of-type(odd) {
+				&:nth-of-type( odd ) {
 					border-width: 0 1px 0 0;
 				}
 			}
@@ -599,8 +599,8 @@
 			article {
 				border-width: 0;
 
-				&:nth-of-type(3n+1),
-				&:nth-of-type(3n+2) {
+				&:nth-of-type( 3n+1 ),
+				&:nth-of-type( 3n+2 ) {
 					border-width: 0 1px 0 0;
 				}
 			}
