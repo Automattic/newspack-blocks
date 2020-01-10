@@ -62,7 +62,7 @@ function buildLoadMoreHandler( blockWrapperEl ) {
 
 			if ( data.items.length ) {
 				// Render posts' HTML from string.
-				const postsHTML = data.items.map( item => item.html ).join( '' );
+				const postsHTML = data.items.map( ( item ) => item.html ).join( '' );
 				postsContainerEl.insertAdjacentHTML( 'beforeend', postsHTML );
 			}
 
@@ -97,7 +97,7 @@ function getRenderedPostsIds() {
 	const postEls = document.querySelectorAll(
 		'.wp-block-newspack-blocks-homepage-articles [data-post-id]'
 	);
-	const postIds = Array.from( postEls ).map( el => el.getAttribute( 'data-post-id' ) );
+	const postIds = Array.from( postEls ).map( ( el ) => el.getAttribute( 'data-post-id' ) );
 
 	return [ ...new Set( postIds ) ]; // Make values unique with Set
 }
@@ -107,7 +107,7 @@ function getRenderedPostsIds() {
  * occurs.
  *
  * @param {Object} options XMLHttpRequest options
- * @param {Number} n retry count before throwing
+ * @param {number} n retry count before throwing
  */
 function fetchWithRetry( options, n ) {
 	const xhr = new XMLHttpRequest();
@@ -192,7 +192,7 @@ function isPostsDataValid( data ) {
  * Checks if object has own property.
  *
  * @param {Object} obj
- * @param {String} prop
+ * @param {string} prop
  */
 function hasOwnProp( obj, prop ) {
 	return Object.prototype.hasOwnProperty.call( obj, prop );

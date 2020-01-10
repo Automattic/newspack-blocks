@@ -86,7 +86,7 @@ const coverIcon = (
 );
 
 class Edit extends Component {
-	renderPost = post => {
+	renderPost = ( post ) => {
 		const { attributes } = this.props;
 		const {
 			showImage,
@@ -187,7 +187,7 @@ class Edit extends Component {
 		);
 	};
 
-	titleForPost = post => {
+	titleForPost = ( post ) => {
 		if ( ! post.title ) {
 			return '';
 		}
@@ -199,8 +199,8 @@ class Edit extends Component {
 		}
 	};
 
-	formatAvatars = authorInfo =>
-		authorInfo.map( author => (
+	formatAvatars = ( authorInfo ) =>
+		authorInfo.map( ( author ) => (
 			<span className="avatar author-avatar" key={ author.id }>
 				<a className="url fn n" href="#">
 					<RawHTML>{ author.avatar }</RawHTML>
@@ -208,9 +208,9 @@ class Edit extends Component {
 			</span>
 		) );
 
-	formatByline = authorInfo => (
+	formatByline = ( authorInfo ) => (
 		<span className="byline">
-			{ _x( 'by', 'post author', 'newspack-blocks' ) }{' '}
+			{ _x( 'by', 'post author', 'newspack-blocks' ) }{ ' ' }
 			{ authorInfo.reduce( ( accumulator, author, index ) => {
 				return [
 					...accumulator,
@@ -293,26 +293,26 @@ class Edit extends Component {
 					{ postsToShow && (
 						<QueryControls
 							numberOfItems={ postsToShow }
-							onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
+							onNumberOfItemsChange={ ( value ) => setAttributes( { postsToShow: value } ) }
 							specificMode={ specificMode }
-							onSpecificModeChange={ value => setAttributes( { specificMode: value } ) }
+							onSpecificModeChange={ ( value ) => setAttributes( { specificMode: value } ) }
 							specificPosts={ specificPosts }
-							onSpecificPostsChange={ value => setAttributes( { specificPosts: value } ) }
+							onSpecificPostsChange={ ( value ) => setAttributes( { specificPosts: value } ) }
 							authors={ authors }
-							onAuthorsChange={ value => setAttributes( { authors: value } ) }
+							onAuthorsChange={ ( value ) => setAttributes( { authors: value } ) }
 							categories={ categories }
-							onCategoriesChange={ value => setAttributes( { categories: value } ) }
+							onCategoriesChange={ ( value ) => setAttributes( { categories: value } ) }
 							tags={ tags }
-							onTagsChange={ value => setAttributes( { tags: value } ) }
+							onTagsChange={ ( value ) => setAttributes( { tags: value } ) }
 							tagExclusions={ tagExclusions }
-							onTagExclusionsChange={ value => setAttributes( { tagExclusions: value } ) }
+							onTagExclusionsChange={ ( value ) => setAttributes( { tagExclusions: value } ) }
 						/>
 					) }
 					{ postLayout === 'grid' && (
 						<RangeControl
 							label={ __( 'Columns', 'newspack-blocks' ) }
 							value={ columns }
-							onChange={ value => setAttributes( { columns: value } ) }
+							onChange={ ( value ) => setAttributes( { columns: value } ) }
 							min={ 2 }
 							max={ 6 }
 							required
@@ -357,7 +357,7 @@ class Edit extends Component {
 							<BaseControl label={ __( 'Featured Image Size', 'newspack-blocks' ) }>
 								<PanelRow>
 									<ButtonGroup aria-label={ __( 'Featured Image Size', 'newspack-blocks' ) }>
-										{ imageSizeOptions.map( option => {
+										{ imageSizeOptions.map( ( option ) => {
 											const isCurrent = imageScale === option.value;
 											return (
 												<Button
@@ -386,7 +386,7 @@ class Edit extends Component {
 								'newspack-blocks'
 							) }
 							value={ minHeight }
-							onChange={ value => setAttributes( { minHeight: value } ) }
+							onChange={ ( value ) => setAttributes( { minHeight: value } ) }
 							min={ 0 }
 							max={ 100 }
 							required
@@ -414,7 +414,7 @@ class Edit extends Component {
 						className="type-scale-slider"
 						label={ __( 'Type Scale', 'newspack-blocks' ) }
 						value={ typeScale }
-						onChange={ value => setAttributes( { typeScale: value } ) }
+						onChange={ ( value ) => setAttributes( { typeScale: value } ) }
 						min={ 1 }
 						max={ 10 }
 						beforeIcon="editor-textcolor"
@@ -587,7 +587,7 @@ class Edit extends Component {
 					<div>
 						{ latestPosts && ( ! RichText.isEmpty( sectionHeader ) || isSelected ) && (
 							<RichText
-								onChange={ value => setAttributes( { sectionHeader: value } ) }
+								onChange={ ( value ) => setAttributes( { sectionHeader: value } ) }
 								placeholder={ __( 'Write header…', 'newspack-blocks' ) }
 								value={ sectionHeader }
 								tagName="h2"
@@ -602,7 +602,7 @@ class Edit extends Component {
 								<Spinner />
 							</Placeholder>
 						) }
-						{ latestPosts && latestPosts.map( post => this.renderPost( post ) ) }
+						{ latestPosts && latestPosts.map( ( post ) => this.renderPost( post ) ) }
 					</div>
 				</div>
 
@@ -612,7 +612,7 @@ class Edit extends Component {
 							<RichText
 								placeholder={ __( 'Load more posts', 'newspack-blocks' ) }
 								value={ moreButtonText }
-								onChange={ value => setAttributes( { moreButtonText: value } ) }
+								onChange={ ( value ) => setAttributes( { moreButtonText: value } ) }
 								className="wp-block-button__link"
 								keepPlaceholderOnFocus
 								allowedFormats={ [] }
@@ -646,19 +646,19 @@ export default compose( [
 		} = props.attributes;
 		const { getEntityRecords } = select( 'core' );
 		const latestPostsQuery = pickBy(
-			specificMode && specificPosts && specificPosts.length
-				? {
-						include: specificPosts,
-						orderby: 'include',
-				  }
-				: {
-						per_page: postsToShow,
-						categories,
-						author: authors,
-						tags,
-						tags_exclude: tagExclusions,
+			specificMode && specificPosts && specificPosts.length ?
+				{
+					include: specificPosts,
+					orderby: 'include',
+				  } :
+				{
+					per_page: postsToShow,
+					categories,
+					author: authors,
+					tags,
+					tags_exclude: tagExclusions,
 				  },
-			value => ! isUndefined( value )
+			( value ) => ! isUndefined( value )
 		);
 		return {
 			latestPosts: getEntityRecords( 'postType', 'post', latestPostsQuery ),

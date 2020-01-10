@@ -59,19 +59,19 @@ class Edit extends Component {
 		return data;
 	}
 
-	sanitizeCurrencyInput = amount => Math.max( 0, parseFloat( amount ).toFixed( 2 ) );
+	sanitizeCurrencyInput = ( amount ) => Math.max( 0, parseFloat( amount ).toFixed( 2 ) );
 
-	formatCurrencyWithoutSymbol = amount => {
+	formatCurrencyWithoutSymbol = ( amount ) => {
 		const decimalPlaces = parseFloat( amount ) - parseInt( amount ) ? 2 : 0;
 		return parseFloat( amount ).toFixed( decimalPlaces );
 	};
 
-	formatCurrency = amount => {
+	formatCurrency = ( amount ) => {
 		const { currencySymbol } = this.blockData();
 		return currencySymbol + this.formatCurrencyWithoutSymbol( amount );
 	};
 
-	manualChanged = value => {
+	manualChanged = ( value ) => {
 		const { attributes, setAttributes } = this.props;
 		const { suggestedAmounts, suggestedAmountUntiered } = attributes;
 		setAttributes( { manual: value } );
@@ -98,7 +98,7 @@ class Edit extends Component {
 
 		this.setState( { isLoading: true }, () => {
 			apiFetch( { path } )
-				.then( settings => {
+				.then( ( settings ) => {
 					const {
 						suggestedAmounts,
 						suggestedAmountUntiered,
@@ -121,7 +121,7 @@ class Edit extends Component {
 						activeTier: 1,
 					} );
 				} )
-				.catch( error => {
+				.catch( ( error ) => {
 					this.setState( {
 						isLoading: false,
 						error: error.message,
@@ -150,7 +150,7 @@ class Edit extends Component {
 			<div className={ classNames( className, 'untiered wpbnbd' ) }>
 				<form>
 					<div className="wp-block-newspack-blocks-donate__options">
-						{ Object.keys( frequencies ).map( frequencySlug => (
+						{ Object.keys( frequencies ).map( ( frequencySlug ) => (
 							<div className="wp-block-newspack-blocks-donate__frequency">
 								<input
 									type="radio"
@@ -176,7 +176,7 @@ class Edit extends Component {
 										<span className="currency">{ currencySymbol }</span>
 										<input
 											type="number"
-											onChange={ evt => this.handleCustomDonationChange( evt, frequencySlug ) }
+											onChange={ ( evt ) => this.handleCustomDonationChange( evt, frequencySlug ) }
 											value={ this.formatCurrencyWithoutSymbol(
 												customDonationAmounts[ frequencySlug ]
 											) }
@@ -190,7 +190,7 @@ class Edit extends Component {
 					<p className="wp-block-newspack-blocks-donate__thanks">
 						{ __( 'Your contribution is appreciated.', 'newspack-blocks' ) }
 					</p>
-					<button type="submit" onClick={ evt => evt.preventDefault() }>
+					<button type="submit" onClick={ ( evt ) => evt.preventDefault() }>
 						{ __( 'Donate now!', 'newspack-blocks' ) }
 					</button>
 				</form>
@@ -218,7 +218,7 @@ class Edit extends Component {
 				<form>
 					<div className="wp-block-newspack-blocks-donate__options">
 						<div className="wp-block-newspack-blocks-donate__frequencies">
-							{ Object.keys( frequencies ).map( frequencySlug => (
+							{ Object.keys( frequencies ).map( ( frequencySlug ) => (
 								<div className="wp-block-newspack-blocks-donate__frequency">
 									<input
 										type="radio"
@@ -248,9 +248,9 @@ class Edit extends Component {
 													htmlFor={ 'newspack-tier-' + frequencySlug + '-' + index }
 												>
 													{ this.formatCurrency(
-														'year' === frequencySlug || 'once' == frequencySlug
-															? 12 * suggestedAmount
-															: suggestedAmount
+														'year' === frequencySlug || 'once' == frequencySlug ?
+															12 * suggestedAmount :
+															suggestedAmount
 													) }
 												</label>
 											</div>
@@ -280,7 +280,7 @@ class Edit extends Component {
 												<span className="currency">{ currencySymbol }</span>
 												<input
 													type="number"
-													onChange={ evt => this.handleCustomDonationChange( evt, frequencySlug ) }
+													onChange={ ( evt ) => this.handleCustomDonationChange( evt, frequencySlug ) }
 													value={ customDonationAmounts[ frequencySlug ] }
 													id={ 'newspack-tier-' + frequencySlug + '-other-input' }
 												/>
@@ -294,7 +294,7 @@ class Edit extends Component {
 					<p className="wp-block-newspack-blocks-donate__thanks">
 						{ __( 'Your contribution is appreciated.', 'newspack-blocks' ) }
 					</p>
-					<button type="submit" onClick={ evt => evt.preventDefault() }>
+					<button type="submit" onClick={ ( evt ) => evt.preventDefault() }>
 						{ __( 'Donate now!', 'newspack-blocks' ) }
 					</button>
 				</form>
@@ -359,7 +359,7 @@ class Edit extends Component {
 				<ToggleControl
 					key="tiered"
 					checked={ tiered }
-					onChange={ tiered => setAttributes( { tiered } ) }
+					onChange={ ( tiered ) => setAttributes( { tiered } ) }
 					label={ __( 'Tiered', 'newspack-blocks' ) }
 				/>
 				{ tiered && (
@@ -370,7 +370,7 @@ class Edit extends Component {
 							type="number"
 							step="0.01"
 							value={ suggestedAmounts[ 0 ] }
-							onChange={ value =>
+							onChange={ ( value ) =>
 								setAttributes( {
 									suggestedAmounts: [
 										this.sanitizeCurrencyInput( value ),
@@ -386,7 +386,7 @@ class Edit extends Component {
 							type="number"
 							step="0.01"
 							value={ suggestedAmounts[ 1 ] }
-							onChange={ value =>
+							onChange={ ( value ) =>
 								setAttributes( {
 									suggestedAmounts: [
 										suggestedAmounts[ 0 ],
@@ -402,7 +402,7 @@ class Edit extends Component {
 							type="number"
 							step="0.01"
 							value={ suggestedAmounts[ 2 ] }
-							onChange={ value =>
+							onChange={ ( value ) =>
 								setAttributes( {
 									suggestedAmounts: [
 										suggestedAmounts[ 0 ],
@@ -421,7 +421,7 @@ class Edit extends Component {
 						type="number"
 						step="0.01"
 						value={ suggestedAmountUntiered }
-						onChange={ suggestedAmountUntiered =>
+						onChange={ ( suggestedAmountUntiered ) =>
 							setAttributes( {
 								suggestedAmountUntiered: this.sanitizeCurrencyInput( suggestedAmountUntiered ),
 							} )

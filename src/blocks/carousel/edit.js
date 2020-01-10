@@ -49,20 +49,20 @@ class Edit extends Component {
 		const { autoPlayState } = this.state;
 		const { autoplay, delay } = attributes;
 		const realIndex =
-			this.swiperInstance && latestPosts && this.swiperInstance.realIndex < latestPosts.length
-				? this.swiperInstance.realIndex
-				: 0;
+			this.swiperInstance && latestPosts && this.swiperInstance.realIndex < latestPosts.length ?
+				this.swiperInstance.realIndex :
+				0;
 		this.swiperInstance && this.swiperInstance.destroy( true, true );
 		this.swiperInstance = createSwiper(
 			this.carouselRef.current,
 			{
 				autoplay:
-					autoplay && autoPlayState
-						? {
-								delay: delay * 1000,
-								disableOnInteraction: false,
-						  }
-						: false,
+					autoplay && autoPlayState ?
+						{
+							delay: delay * 1000,
+							disableOnInteraction: false,
+						  } :
+						false,
 				effect: 'slide',
 				initialSlide: realIndex,
 				loop: true,
@@ -121,7 +121,7 @@ class Edit extends Component {
 					{ latestPosts && (
 						<Fragment>
 							<div className="swiper-wrapper">
-								{ latestPosts.map( post => post.newspack_featured_image_src && (
+								{ latestPosts.map( ( post ) => post.newspack_featured_image_src && (
 									<article className="post-has-image swiper-slide" key={ post.id }>
 										<figure className="post-thumbnail">
 											{ post.newspack_featured_image_src && (
@@ -147,7 +147,7 @@ class Edit extends Component {
 												) }
 												{ showAuthor && (
 													<span className="byline">
-														{ __( 'by' ) }{' '}
+														{ __( 'by' ) }{ ' ' }
 														<span className="author vcard">
 															<a className="url fn n" href="#">
 																{ post.newspack_author_info.display_name }
@@ -210,13 +210,13 @@ class Edit extends Component {
 							<QueryControls
 								enableSpecific={ false }
 								numberOfItems={ postsToShow }
-								onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
+								onNumberOfItemsChange={ ( value ) => setAttributes( { postsToShow: value } ) }
 								authors={ authors }
-								onAuthorsChange={ value => setAttributes( { authors: value } ) }
+								onAuthorsChange={ ( value ) => setAttributes( { authors: value } ) }
 								categories={ categories }
-								onCategoriesChange={ value => setAttributes( { categories: value } ) }
+								onCategoriesChange={ ( value ) => setAttributes( { categories: value } ) }
 								tags={ tags }
-								onTagsChange={ value => setAttributes( { tags: value } ) }
+								onTagsChange={ ( value ) => setAttributes( { tags: value } ) }
 							/>
 						) }
 					</PanelBody>
@@ -225,7 +225,7 @@ class Edit extends Component {
 							label={ __( 'Autoplay' ) }
 							help={ __( 'Autoplay between slides' ) }
 							checked={ autoplay }
-							onChange={ autoplay => {
+							onChange={ ( autoplay ) => {
 								setAttributes( { autoplay } );
 							} }
 						/>
@@ -233,7 +233,7 @@ class Edit extends Component {
 							<RangeControl
 								label={ __( 'Delay between transitions (in seconds)' ) }
 								value={ delay }
-								onChange={ delay => {
+								onChange={ ( delay ) => {
 									setAttributes( { delay } );
 								} }
 								min={ 1 }
@@ -290,7 +290,7 @@ export default compose( [
 				author: authors,
 				tags,
 			},
-			value => ! isUndefined( value )
+			( value ) => ! isUndefined( value )
 		);
 		return {
 			latestPosts: getEntityRecords( 'postType', 'post', latestPostsQuery ),
