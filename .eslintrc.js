@@ -1,6 +1,7 @@
 module.exports = {
 	extends: [
 		'plugin:@wordpress/eslint-plugin/recommended',
+		'plugin:prettier/recommended',
 		'plugin:react/recommended',
 		'plugin:jsdoc/recommended',
 		'plugin:import/errors',
@@ -20,6 +21,7 @@ module.exports = {
 		'react/no-did-mount-set-state': 'error',
 		// Since this code is always ran in Gutenberg, React will be in scope
 		'react/react-in-jsx-scope': 'off',
+		'react/jsx-curly-spacing': 'off',
 		// JSDoc rules overrides
 		'jsdoc/require-returns': 'off',
 	},
