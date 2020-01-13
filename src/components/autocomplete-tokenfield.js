@@ -35,7 +35,7 @@ class AutocompleteTokenField extends Component {
 	isFetchingInfoOnLoad = () => {
 		const { tokens, fetchSavedInfo } = this.props;
 		return Boolean( tokens.length && fetchSavedInfo );
-	}
+	};
 
 	/**
 	 * When the component loads, fetch information about the tokens so we can populate
@@ -45,10 +45,10 @@ class AutocompleteTokenField extends Component {
 		if ( this.isFetchingInfoOnLoad() ) {
 			const { tokens, fetchSavedInfo } = this.props;
 
-			fetchSavedInfo( tokens ).then( ( results ) => {
+			fetchSavedInfo( tokens ).then( results => {
 				const { validValues } = this.state;
 
-				results.forEach( ( suggestion ) => {
+				results.forEach( suggestion => {
 					validValues[ suggestion.value ] = suggestion.label;
 				} );
 
@@ -88,8 +88,8 @@ class AutocompleteTokenField extends Component {
 	 */
 	getValuesForLabels( labels ) {
 		const { validValues } = this.state;
-		return labels.map( ( label ) =>
-			Object.keys( validValues ).find( ( key ) => validValues[ key ] === label )
+		return labels.map( label =>
+			Object.keys( validValues ).find( key => validValues[ key ] === label )
 		);
 	}
 
@@ -107,7 +107,7 @@ class AutocompleteTokenField extends Component {
 		this.setState( { loading: true }, () => {
 			const request = fetchSuggestions( input );
 			request
-				.then( ( suggestions ) => {
+				.then( suggestions => {
 					// A fetch Promise doesn't have an abort option. It's mimicked by
 					// comparing the request reference in on the instance, which is
 					// reset or deleted on subsequent requests or unmounting.
@@ -118,7 +118,7 @@ class AutocompleteTokenField extends Component {
 					const { validValues } = this.state;
 					const currentSuggestions = [];
 
-					suggestions.forEach( ( suggestion ) => {
+					suggestions.forEach( suggestion => {
 						currentSuggestions.push( suggestion.label );
 						validValues[ suggestion.value ] = suggestion.label;
 					} );
@@ -169,8 +169,8 @@ class AutocompleteTokenField extends Component {
 				<FormTokenField
 					value={ this.getTokens() }
 					suggestions={ suggestions }
-					onChange={ ( tokens ) => this.handleOnChange( tokens ) }
-					onInputChange={ ( input ) => this.debouncedUpdateSuggestions( input ) }
+					onChange={ tokens => this.handleOnChange( tokens ) }
+					onInputChange={ input => this.debouncedUpdateSuggestions( input ) }
 					label={ label }
 				/>
 				{ loading && <Spinner /> }

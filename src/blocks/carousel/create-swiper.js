@@ -9,10 +9,7 @@ import '../../../node_modules/swiper/dist/css/swiper.css';
  * @param {string} container Selector
  * @param {Object} params Params passed to Swiper
  */
-export default function createSwiper(
-	container = '.swiper-container',
-	params = {},
-) {
+export default function createSwiper( container = '.swiper-container', params = {} ) {
 	const defaultParams = {
 		effect: 'slide',
 		grabCursor: true,
