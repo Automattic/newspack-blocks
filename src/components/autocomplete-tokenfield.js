@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { debounce } from 'lodash';
-import React from 'react';
 
 /**
  * WordPress dependencies

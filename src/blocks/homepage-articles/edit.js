@@ -10,7 +10,6 @@ import QueryControls from '../../components/query-controls';
  */
 import classNames from 'classnames';
 import { isUndefined, pickBy } from 'lodash';
-import React from 'react';
 
 /**
  * WordPress dependencies

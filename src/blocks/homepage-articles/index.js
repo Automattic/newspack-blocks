@@ -3,7 +3,6 @@
  */
 import { Path, SVG } from '@wordpress/components';
 import { createBlock } from '@wordpress/blocks';
-import React from 'react';
 
 /**
  * WordPress dependencies

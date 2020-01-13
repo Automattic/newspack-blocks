@@ -18,6 +18,8 @@ module.exports = {
 		// Allow exporting components as default exports
 		'react/display-name': 'off',
 		'react/no-did-mount-set-state': 'error',
+		// Since this code is always ran in Gutenberg, React will be in scope
+		'react/react-in-jsx-scope': 'off',
 		// JSDoc rules overrides
 		'jsdoc/require-returns': 'off',
 	},

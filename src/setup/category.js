@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { getCategories, setCategories } from '@wordpress/blocks';
-import React from 'react';
 
 /**
  * Internal dependencies
