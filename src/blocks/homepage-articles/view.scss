@@ -630,8 +630,8 @@
 			article {
 				border-width: 0;
 
-				&:nth-of-type( 3n+1 ),
-				&:nth-of-type( 3n+2 ) {
+				&:nth-of-type( 3n + 1 ),
+				&:nth-of-type( 3n + 2 ) {
 					border-width: 0 1px 0 0;
 				}
 			}
@@ -643,7 +643,6 @@
 	}
 
 	@include media( tablet ) {
-
 		&.is-grid {
 			article {
 				border-width: 0 1px 0 0;
