@@ -65,7 +65,7 @@ function buildLoadMoreHandler( blockWrapperEl ) {
 
 			if ( data.items.length ) {
 				// Render posts' HTML from string.
-				const postsHTML = data.items.map( ( item ) => item.html ).join( '' );
+				const postsHTML = data.items.map( item => item.html ).join( '' );
 				postsContainerEl.insertAdjacentHTML( 'beforeend', postsHTML );
 			}
 
@@ -103,7 +103,7 @@ function getRenderedPostsIds() {
 	const postEls = document.querySelectorAll(
 		'.wp-block-newspack-blocks-homepage-articles [data-post-id]'
 	);
-	const postIds = Array.from( postEls ).map( ( el ) => el.getAttribute( 'data-post-id' ) );
+	const postIds = Array.from( postEls ).map( el => el.getAttribute( 'data-post-id' ) );
 
 	return [ ...new Set( postIds ) ]; // Make values unique with Set
 }

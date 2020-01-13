@@ -3,11 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
-import {
-	Button,
-	QueryControls as BaseControl,
-	ToggleControl,
-} from '@wordpress/components';
+import { Button, QueryControls as BaseControl, ToggleControl } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -26,7 +22,7 @@ class QueryControls extends Component {
 		showAdvancedFilters: false,
 	};
 
-	fetchPostSuggestions = ( search ) => {
+	fetchPostSuggestions = search => {
 		return apiFetch( {
 			path: addQueryArgs( '/wp/v2/search', {
 				search,
@@ -35,14 +31,14 @@ class QueryControls extends Component {
 				type: 'post',
 			} ),
 		} ).then( function( posts ) {
-			const result = posts.map( ( post ) => ( {
+			const result = posts.map( post => ( {
 				value: post.id,
 				label: decodeEntities( post.title ) || __( '(no title)', 'newspack-blocks' ),
 			} ) );
 			return result;
 		} );
 	};
-	fetchSavedPosts = ( postIDs ) => {
+	fetchSavedPosts = postIDs => {
 		return apiFetch( {
 			path: addQueryArgs( '/wp/v2/posts', {
 				per_page: 100,
@@ -50,14 +46,14 @@ class QueryControls extends Component {
 				_fields: 'id,title',
 			} ),
 		} ).then( function( posts ) {
-			return posts.map( ( post ) => ( {
+			return posts.map( post => ( {
 				value: post.id,
 				label: decodeEntities( post.title.rendered ) || __( '(no title)', 'newspack-blocks' ),
 			} ) );
 		} );
 	};
 
-	fetchAuthorSuggestions = ( search ) => {
+	fetchAuthorSuggestions = search => {
 		return apiFetch( {
 			path: addQueryArgs( '/wp/v2/users', {
 				search,
@@ -65,13 +61,13 @@ class QueryControls extends Component {
 				_fields: 'id,name',
 			} ),
 		} ).then( function( users ) {
-			return users.map( ( user ) => ( {
+			return users.map( user => ( {
 				value: user.id,
 				label: decodeEntities( user.name ) || __( '(no name)', 'newspack-blocks' ),
 			} ) );
 		} );
 	};
-	fetchSavedAuthors = ( userIDs ) => {
+	fetchSavedAuthors = userIDs => {
 		return apiFetch( {
 			path: addQueryArgs( '/wp/v2/users', {
 				per_page: 100,
@@ -79,14 +75,14 @@ class QueryControls extends Component {
 				_fields: 'id,name',
 			} ),
 		} ).then( function( users ) {
-			return users.map( ( user ) => ( {
+			return users.map( user => ( {
 				value: user.id,
 				label: decodeEntities( user.name ) || __( '(no name)', 'newspack-blocks' ),
 			} ) );
 		} );
 	};
 
-	fetchCategorySuggestions = ( search ) => {
+	fetchCategorySuggestions = search => {
 		return apiFetch( {
 			path: addQueryArgs( '/wp/v2/categories', {
 				search,
@@ -96,13 +92,13 @@ class QueryControls extends Component {
 				order: 'desc',
 			} ),
 		} ).then( function( categories ) {
-			return categories.map( ( category ) => ( {
+			return categories.map( category => ( {
 				value: category.id,
 				label: decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' ),
 			} ) );
 		} );
 	};
-	fetchSavedCategories = ( categoryIDs ) => {
+	fetchSavedCategories = categoryIDs => {
 		return apiFetch( {
 			path: addQueryArgs( '/wp/v2/categories', {
 				per_page: 100,
@@ -110,14 +106,14 @@ class QueryControls extends Component {
 				include: categoryIDs.join( ',' ),
 			} ),
 		} ).then( function( categories ) {
-			return categories.map( ( category ) => ( {
+			return categories.map( category => ( {
 				value: category.id,
 				label: decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' ),
 			} ) );
 		} );
 	};
 
-	fetchTagSuggestions = ( search ) => {
+	fetchTagSuggestions = search => {
 		return apiFetch( {
 			path: addQueryArgs( '/wp/v2/tags', {
 				search,
@@ -127,13 +123,13 @@ class QueryControls extends Component {
 				order: 'desc',
 			} ),
 		} ).then( function( tags ) {
-			return tags.map( ( tag ) => ( {
+			return tags.map( tag => ( {
 				value: tag.id,
 				label: decodeEntities( tag.name ) || __( '(no title)', 'newspack-blocks' ),
 			} ) );
 		} );
 	};
-	fetchSavedTags = ( tagIDs ) => {
+	fetchSavedTags = tagIDs => {
 		return apiFetch( {
 			path: addQueryArgs( '/wp/v2/tags', {
 				per_page: 100,
@@ -141,7 +137,7 @@ class QueryControls extends Component {
 				include: tagIDs.join( ',' ),
 			} ),
 		} ).then( function( tags ) {
-			return tags.map( ( tag ) => ( {
+			return tags.map( tag => ( {
 				value: tag.id,
 				label: decodeEntities( tag.name ) || __( '(no title)', 'newspack-blocks' ),
 			} ) );
@@ -183,7 +179,10 @@ class QueryControls extends Component {
 					fetchSuggestions={ this.fetchPostSuggestions }
 					fetchSavedInfo={ this.fetchSavedPosts }
 					label={ __( 'Posts', 'newspack-blocks' ) }
-					help={ __( 'Begin typing post title, click autocomplete result to select.', 'newspack-blocks' ) }
+					help={ __(
+						'Begin typing post title, click autocomplete result to select.',
+						'newspack-blocks'
+					) }
 				/>
 			),
 			! specificMode && <BaseControl key="queryControls" { ...this.props } />,
@@ -224,9 +223,9 @@ class QueryControls extends Component {
 						isLink
 						onClick={ () => this.setState( { showAdvancedFilters: ! showAdvancedFilters } ) }
 					>
-						{ showAdvancedFilters ?
-							__( 'Hide Advanced Filters', 'newspack-blocks' ) :
-							__( 'Show Advanced Filters', 'newspack-blocks' ) }
+						{ showAdvancedFilters
+							? __( 'Hide Advanced Filters', 'newspack-blocks' )
+							: __( 'Show Advanced Filters', 'newspack-blocks' ) }
 					</Button>
 				</p>
 			),

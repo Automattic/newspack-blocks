@@ -13,7 +13,7 @@ addFilter( 'blocks.registerBlockType', 'newspack-blocks', ( settings, name ) => 
 	if ( name === 'core/column' ) {
 		return {
 			...settings,
-			getEditWrapperProps: ( attributes ) => {
+			getEditWrapperProps: attributes => {
 				const { width } = attributes;
 				if ( Number.isFinite( width ) ) {
 					return {
