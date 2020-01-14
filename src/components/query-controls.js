@@ -2,16 +2,15 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Component, Fragment } from '@wordpress/element';
-import {
-	Button,
-	QueryControls as BaseControl,
-	SelectControl,
-	ToggleControl,
-} from '@wordpress/components';
+import { Component } from '@wordpress/element';
+import { Button, QueryControls as BaseControl, ToggleControl } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
+
+/**
+ * External dependencies.
+ */
 
 /**
  * Internal dependencies.
@@ -147,8 +146,6 @@ class QueryControls extends Component {
 
 	render = () => {
 		const {
-			numberOfItems,
-			onNumberOfItemsChange,
 			specificMode,
 			onSpecificModeChange,
 			specificPosts,
@@ -182,7 +179,10 @@ class QueryControls extends Component {
 					fetchSuggestions={ this.fetchPostSuggestions }
 					fetchSavedInfo={ this.fetchSavedPosts }
 					label={ __( 'Posts', 'newspack-blocks' ) }
-					help={ __( 'Begin typing post title, click autocomplete result to select.', 'newspack-blocks' ) }
+					help={ __(
+						'Begin typing post title, click autocomplete result to select.',
+						'newspack-blocks'
+					) }
 				/>
 			),
 			! specificMode && <BaseControl key="queryControls" { ...this.props } />,

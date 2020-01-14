@@ -2,8 +2,6 @@
  * External dependencies
  */
 import { Path, SVG } from '@wordpress/components';
-import apiFetch from '@wordpress/api-fetch';
-import { registerStore } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 
 /**
