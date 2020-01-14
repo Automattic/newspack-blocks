@@ -1,4 +1,4 @@
-@import "../../shared/sass/colors";
+@import '../../shared/sass/colors';
 
 .wpbnbd {
 	background: $color__background-body;
@@ -53,7 +53,7 @@
 		}
 
 		input[type='radio']:checked {
-			& + .tier-select-label {
+			+ .tier-select-label {
 				background-color: $color__primary;
 				border-color: transparent;
 				color: $color__background-body;
@@ -67,8 +67,8 @@
 		}
 
 		input.other-input {
-			& ~ .wp-block-newspack-blocks-donate__money-input,
-			& ~ .other-donate-label {
+			~ .wp-block-newspack-blocks-donate__money-input,
+			~ .other-donate-label {
 				display: none;
 			}
 
@@ -167,7 +167,7 @@
 	}
 
 	input[type='radio']:checked {
-		& + .donation-frequency-label {
+		+ .donation-frequency-label {
 			color: inherit;
 			border-bottom-color: transparent;
 
@@ -176,25 +176,25 @@
 			}
 		}
 
-		& ~ .wp-block-newspack-blocks-donate__tiers {
+		~ .wp-block-newspack-blocks-donate__tiers {
 			display: flex;
 		}
 	}
 
-	&:nth-of-type(2) .donation-frequency-label {
+	&:nth-of-type( 2 ) .donation-frequency-label {
 		left: 33.3333%;
 		left: calc( 100% / 3 );
 		border-left-width: 1px;
 		border-right-width: 1px;
 	}
 
-	&:nth-of-type(3) .donation-frequency-label {
+	&:nth-of-type( 3 ) .donation-frequency-label {
 		left: 66.6667%;
 		left: calc( 100% / 3 * 2 );
 	}
 }
 
-@media screen and (max-width: 600px) {
+@media screen and ( max-width: 600px ) {
 	.wpbnbd {
 		.donation-frequency-label {
 			font-size: 12px;
