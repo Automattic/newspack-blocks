@@ -64,22 +64,25 @@ export const settings = {
 				type: 'block',
 				blocks: [ 'core/latest-posts' ],
 				transform: ( {
-				     displayPostContent,
-				     displayPostDate,
-				     postLayout,
-				     columns,
-				     postsToShow,
-				     categories,
+					displayPostContent,
+					displayPostDate,
+					postLayout,
+					columns,
+					postsToShow,
+					categories,
 				} ) => {
-					return createBlock( applyFilters( 'blocks.transforms_from_name', 'newspack-blocks/homepage-articles' ), {
-						showExcerpt: displayPostContent,
-						showDate: displayPostDate,
-						postLayout,
-						columns,
-						postsToShow,
-						showAuthor: false,
-						categories: categories ? [ categories ] : [],
-					} );
+					return createBlock(
+						applyFilters( 'blocks.transforms_from_name', 'newspack-blocks/homepage-articles' ),
+						{
+							showExcerpt: displayPostContent,
+							showDate: displayPostDate,
+							postLayout,
+							columns,
+							postsToShow,
+							showAuthor: false,
+							categories: categories ? [ categories ] : [],
+						}
+					);
 				},
 			},
 		],

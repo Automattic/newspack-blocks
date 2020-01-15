@@ -138,7 +138,7 @@ class Edit extends Component {
 
 	renderUntieredForm() {
 		const { className } = this.props;
-		const { currencySymbol, customDonationAmounts, error, selectedFrequency } = this.blockData();
+		const { currencySymbol, customDonationAmounts, selectedFrequency } = this.blockData();
 
 		const frequencies = {
 			once: __( 'One-time', 'newspack-blocks' ),
@@ -151,7 +151,7 @@ class Edit extends Component {
 				<form>
 					<div className="wp-block-newspack-blocks-donate__options">
 						{ Object.keys( frequencies ).map( frequencySlug => (
-							<div className="wp-block-newspack-blocks-donate__frequency">
+							<div className="wp-block-newspack-blocks-donate__frequency" key={ frequencySlug }>
 								<input
 									type="radio"
 									onClick={ () => this.setState( { selectedFrequency: frequencySlug } ) }
@@ -219,7 +219,7 @@ class Edit extends Component {
 					<div className="wp-block-newspack-blocks-donate__options">
 						<div className="wp-block-newspack-blocks-donate__frequencies">
 							{ Object.keys( frequencies ).map( frequencySlug => (
-								<div className="wp-block-newspack-blocks-donate__frequency">
+								<div className="wp-block-newspack-blocks-donate__frequency" key={ frequencySlug }>
 									<input
 										type="radio"
 										onClick={ () => this.setState( { selectedFrequency: frequencySlug } ) }
@@ -236,7 +236,7 @@ class Edit extends Component {
 
 									<div className="wp-block-newspack-blocks-donate__tiers">
 										{ suggestedAmounts.map( ( suggestedAmount, index ) => (
-											<div className="wp-block-newspack-blocks-donate__tier">
+											<div className="wp-block-newspack-blocks-donate__tier" key={ index }>
 												<input
 													type="radio"
 													onClick={ () => this.setState( { activeTier: index } ) }
@@ -248,7 +248,7 @@ class Edit extends Component {
 													htmlFor={ 'newspack-tier-' + frequencySlug + '-' + index }
 												>
 													{ this.formatCurrency(
-														'year' === frequencySlug || 'once' == frequencySlug
+														'year' === frequencySlug || 'once' === frequencySlug
 															? 12 * suggestedAmount
 															: suggestedAmount
 													) }
@@ -303,7 +303,6 @@ class Edit extends Component {
 	}
 
 	renderPlaceholder() {
-		const { attributes } = this.props;
 		const { created, error, isLoading, manual } = this.blockData();
 
 		if ( manual ) {
@@ -352,14 +351,14 @@ class Edit extends Component {
 	}
 
 	renderManualControls() {
-		const { attributes, setAttributes } = this.props;
+		const { setAttributes } = this.props;
 		const { currencySymbol, suggestedAmounts, suggestedAmountUntiered, tiered } = this.blockData();
 		return (
 			<Fragment>
 				<ToggleControl
 					key="tiered"
 					checked={ tiered }
-					onChange={ tiered => setAttributes( { tiered } ) }
+					onChange={ value => setAttributes( { tiered: value } ) }
 					label={ __( 'Tiered', 'newspack-blocks' ) }
 				/>
 				{ tiered && (
@@ -421,9 +420,9 @@ class Edit extends Component {
 						type="number"
 						step="0.01"
 						value={ suggestedAmountUntiered }
-						onChange={ suggestedAmountUntiered =>
+						onChange={ value =>
 							setAttributes( {
-								suggestedAmountUntiered: this.sanitizeCurrencyInput( suggestedAmountUntiered ),
+								suggestedAmountUntiered: this.sanitizeCurrencyInput( value ),
 							} )
 						}
 					/>
@@ -433,7 +432,6 @@ class Edit extends Component {
 	}
 
 	render() {
-		const { attributes, setAttributes } = this.props;
 		const { manual } = this.blockData();
 		return (
 			<Fragment>

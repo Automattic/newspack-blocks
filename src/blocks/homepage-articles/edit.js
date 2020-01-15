@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+
 /**
  * Internal dependencies
  */
@@ -14,7 +16,7 @@ import { isUndefined, pickBy } from 'lodash';
  * WordPress dependencies
  */
 import { __, _x } from '@wordpress/i18n';
-import { dateI18n, format, __experimentalGetSettings } from '@wordpress/date';
+import { dateI18n, __experimentalGetSettings } from '@wordpress/date';
 import { Component, Fragment, RawHTML } from '@wordpress/element';
 import {
 	BlockControls,
@@ -129,15 +131,16 @@ class Edit extends Component {
 					<figure className="post-thumbnail" key="thumbnail">
 						<a href="#">
 							{ imageShape === 'landscape' && (
-								<img src={ post.newspack_featured_image_src.landscape } />
+								<img src={ post.newspack_featured_image_src.landscape } alt="" />
 							) }
 							{ imageShape === 'portrait' && (
-								<img src={ post.newspack_featured_image_src.portrait } />
+								<img src={ post.newspack_featured_image_src.portrait } alt="" />
 							) }
-							{ imageShape === 'square' && <img src={ post.newspack_featured_image_src.square } /> }
-
+							{ imageShape === 'square' && (
+								<img src={ post.newspack_featured_image_src.square } alt="" />
+							) }
 							{ imageShape === 'uncropped' && (
-								<img src={ post.newspack_featured_image_src.uncropped } />
+								<img src={ post.newspack_featured_image_src.uncropped } alt="" />
 							) }
 						</a>
 						{ showCaption && '' !== post.newspack_featured_image_caption && (
@@ -230,9 +233,7 @@ class Edit extends Component {
 	);
 
 	renderInspectorControls = () => {
-		// const { latestPosts } = this.state;
 		const { attributes, setAttributes, latestPosts, textColor, setTextColor } = this.props;
-		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
 
 		const {
 			authors,
@@ -358,9 +359,15 @@ class Edit extends Component {
 									onChange={ () => setAttributes( { mobileStack: ! mobileStack } ) }
 								/>
 							</PanelRow>
-							<BaseControl label={ __( 'Featured Image Size', 'newspack-blocks' ) }>
+							<BaseControl
+								label={ __( 'Featured Image Size', 'newspack-blocks' ) }
+								id="newspackfeatured-image-size"
+							>
 								<PanelRow>
-									<ButtonGroup aria-label={ __( 'Featured Image Size', 'newspack-blocks' ) }>
+									<ButtonGroup
+										id="newspackfeatured-image-size"
+										aria-label={ __( 'Featured Image Size', 'newspack-blocks' ) }
+									>
 										{ imageSizeOptions.map( option => {
 											const isCurrent = imageScale === option.value;
 											return (
@@ -490,7 +497,6 @@ class Edit extends Component {
 		} = this.props;
 
 		const {
-			showSubtitle,
 			showImage,
 			imageShape,
 			postLayout,
