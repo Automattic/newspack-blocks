@@ -4,6 +4,7 @@
  * Internal dependencies
  */
 import QueryControls from '../../components/query-controls';
+import { STORE_NAMESPACE } from './store';
 
 /**
  * External dependencies
@@ -38,7 +39,7 @@ import {
 	Path,
 	SVG,
 } from '@wordpress/components';
-import { withSelect } from '@wordpress/data';
+import { withDispatch, withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 import { decodeEntities } from '@wordpress/html-entities';
 
@@ -295,26 +296,28 @@ class Edit extends Component {
 					{ postsToShow && (
 						<QueryControls
 							numberOfItems={ postsToShow }
-							onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
+							onNumberOfItemsChange={ postsToShow => setAttributes( { postsToShow } ) }
 							specificMode={ specificMode }
-							onSpecificModeChange={ value => setAttributes( { specificMode: value } ) }
+							onSpecificModeChange={ specificMode => setAttributes( { specificMode } ) }
 							specificPosts={ specificPosts }
-							onSpecificPostsChange={ value => setAttributes( { specificPosts: value } ) }
+							onSpecificPostsChange={ specificPosts => setAttributes( { specificPosts } ) }
 							authors={ authors }
-							onAuthorsChange={ value => setAttributes( { authors: value } ) }
+							onAuthorsChange={ authors => setAttributes( { authors } ) }
 							categories={ categories }
-							onCategoriesChange={ value => setAttributes( { categories: value } ) }
+							onCategoriesChange={ categories => setAttributes( { categories } ) }
 							tags={ tags }
-							onTagsChange={ value => setAttributes( { tags: value } ) }
+							onTagsChange={ tags => {
+								setAttributes( { tags } );
+							} }
 							tagExclusions={ tagExclusions }
-							onTagExclusionsChange={ value => setAttributes( { tagExclusions: value } ) }
+							onTagExclusionsChange={ tagExclusions => setAttributes( { tagExclusions } ) }
 						/>
 					) }
 					{ postLayout === 'grid' && (
 						<RangeControl
 							label={ __( 'Columns', 'newspack-blocks' ) }
 							value={ columns }
-							onChange={ value => setAttributes( { columns: value } ) }
+							onChange={ columns => setAttributes( { columns } ) }
 							min={ 2 }
 							max={ 6 }
 							required
@@ -394,7 +397,7 @@ class Edit extends Component {
 								'newspack-blocks'
 							) }
 							value={ minHeight }
-							onChange={ value => setAttributes( { minHeight: value } ) }
+							onChange={ minHeight => setAttributes( { minHeight } ) }
 							min={ 0 }
 							max={ 100 }
 							required
@@ -422,7 +425,7 @@ class Edit extends Component {
 						className="type-scale-slider"
 						label={ __( 'Type Scale', 'newspack-blocks' ) }
 						value={ typeScale }
-						onChange={ value => setAttributes( { typeScale: value } ) }
+						onChange={ typeScale => setAttributes( { typeScale } ) }
 						min={ 1 }
 						max={ 10 }
 						beforeIcon="editor-textcolor"
@@ -481,7 +484,18 @@ class Edit extends Component {
 		/**
 		 * Constants
 		 */
-		const { attributes, className, setAttributes, isSelected, latestPosts, textColor } = this.props; // variables getting pulled out of props
+
+		const {
+			attributes,
+			className,
+			clientId,
+			setAttributes,
+			isSelected,
+			latestPosts,
+			textColor,
+			markPostsAsDisplayed,
+		} = this.props;
+
 		const {
 			showImage,
 			imageShape,
@@ -583,6 +597,7 @@ class Edit extends Component {
 			},
 		];
 
+		markPostsAsDisplayed( clientId, latestPosts );
 		return (
 			<Fragment>
 				<div
@@ -639,36 +654,61 @@ class Edit extends Component {
 	}
 }
 
+const isSpecificPostModeActive = ( { specificMode, specificPosts } ) =>
+	specificMode && specificPosts && specificPosts.length;
+
+const queryCriteriaFromAttributes = attributes => {
+	const {
+		postsToShow,
+		authors,
+		categories,
+		tags,
+		specificPosts,
+		specificMode,
+		tagExclusions,
+	} = attributes;
+	const criteria = pickBy(
+		isSpecificPostModeActive( attributes )
+			? {
+					include: specificPosts,
+					orderby: 'include',
+					per_page: specificPosts.length,
+			  }
+			: {
+					per_page: postsToShow,
+					categories,
+					author: authors,
+					tags,
+					tags_exclude: tagExclusions,
+			  },
+		value => ! isUndefined( value )
+	);
+	return criteria;
+};
+
 export default compose( [
 	withColors( { textColor: 'color' } ),
 	withSelect( ( select, props ) => {
-		const {
-			postsToShow,
-			authors,
-			categories,
-			tags,
-			tagExclusions,
-			specificPosts,
-			specificMode,
-		} = props.attributes;
-		const { getEntityRecords } = select( 'core' );
-		const latestPostsQuery = pickBy(
-			specificMode && specificPosts && specificPosts.length
-				? {
-						include: specificPosts,
-						orderby: 'include',
-				  }
-				: {
-						per_page: postsToShow,
-						categories,
-						author: authors,
-						tags,
-						tags_exclude: tagExclusions,
-				  },
-			value => ! isUndefined( value )
-		);
+		const { attributes, clientId } = props;
+
+		const latestPostsQuery = queryCriteriaFromAttributes( attributes );
+		if ( ! isSpecificPostModeActive( attributes ) ) {
+			const postIdsToExclude = select( STORE_NAMESPACE ).previousPostIds( clientId );
+			latestPostsQuery.exclude = postIdsToExclude.join( ',' );
+		}
+
 		return {
-			latestPosts: getEntityRecords( 'postType', 'post', latestPostsQuery ),
+			latestPosts: select( 'core' ).getEntityRecords( 'postType', 'post', latestPostsQuery ),
+		};
+	} ),
+	withDispatch( ( dispatch, props ) => {
+		const { attributes } = props;
+		const markPostsAsDisplayed = isSpecificPostModeActive( attributes )
+			? dispatch( STORE_NAMESPACE ).markSpecificPostsAsDisplayed
+			: dispatch( STORE_NAMESPACE ).markPostsAsDisplayed;
+
+		return {
+			markPostsAsDisplayed,
 		};
 	} ),
 ] )( Edit );
