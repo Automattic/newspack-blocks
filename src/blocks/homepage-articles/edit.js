@@ -233,7 +233,7 @@ class Edit extends Component {
 	);
 
 	renderInspectorControls = () => {
-		const { attributes, setAttributes, latestPosts, textColor, setTextColor } = this.props;
+		const { attributes, setAttributes, textColor, setTextColor } = this.props;
 
 		const {
 			authors,
