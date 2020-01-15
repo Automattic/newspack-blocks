@@ -1,11 +1,11 @@
-$primary_color: #36f;
+@import '../../shared/sass/colors';
 
 .wp-block-newspack-blocks-donate button[type='submit'] {
-	background: $primary_color;
+	background: $color__primary;
 	border: none;
 	border-radius: 5px;
 	box-sizing: border-box;
-	color: $muriel-white;
+	color: $color__background-body;
 	font-weight: bold;
 	outline: none;
 	line-height: 3em;

@@ -5,9 +5,29 @@ This plugin is meant to serve as a container for most Newspack Gutenberg blocks.
 
 To get set up for block development, run `composer install && npm install`
 
-To build blocks, run `npm run build:webpack`
+### Generating Builds
 
-To clean out the built blocks, run `npm run clean`
+To generate a build of the current blocks, run `npm run build`.
+
+To clean out the built blocks, run `npm run clean`.
+
+### Developing
+
+To work on Block development and have Webpack watch your files for changes run: `npm start`.
+
+#### Linting
+
+is performed on changed files before commiting. In other words, is run during `pre-commit` git hook, but only on staged files. The hook is configured in `composer.json`.
+
+|  | PHP | JS | SCSS |
+| :- | :- | :- | :- |
+| tool | [PHPCS](https://github.com/squizlabs/PHP_CodeSniffer) | [eslint](https://eslint.org/) | [stylelint](https://stylelint.io/) |
+| config | `.phpcs.xml.dist` | `.eslintrc.js` | `.stylelintrc` |
+| run manually | `./vendor/bin/phpcs <file>` | `npm run lint:js` | `npm run lint:scss` |
+| autofix ✨ | `./vendor/bin/phpcbf <file>` | `npm run lint:js -- --fix` | `npm run lint:scss -- --fix` |
+
+
+### Building new Blocks
 
 To get started with a new block:
 

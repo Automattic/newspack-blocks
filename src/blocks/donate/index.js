@@ -2,8 +2,6 @@
  * External dependencies
  */
 import { Path, SVG } from '@wordpress/components';
-import apiFetch from '@wordpress/api-fetch';
-import { registerStore } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -41,6 +39,21 @@ export const settings = {
 	attributes: {
 		className: {
 			type: 'string',
+		},
+		manual: {
+			type: 'boolean',
+		},
+		suggestedAmounts: {
+			type: 'array',
+			default: [ 0, 0, 0 ],
+		},
+		suggestedAmountUntiered: {
+			type: 'integer',
+			default: 0,
+		},
+		tiered: {
+			type: 'boolean',
+			default: true,
 		},
 	},
 	supports: {

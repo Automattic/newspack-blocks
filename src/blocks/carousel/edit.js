@@ -1,15 +1,15 @@
+/* eslint-disable jsx-a11y/anchor-is-valid, jsx-a11y/anchor-has-content, jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus */
+
 /**
  * Internal dependencies
  */
-import QueryControls from '../homepage-articles/query-controls';
+import QueryControls from '../../components/query-controls';
 import createSwiper from './create-swiper';
 import classnames from 'classnames';
-import AutocompleteTokenField from '../homepage-articles/components/autocomplete-tokenfield.js';
 
 /**
  * External dependencies
  */
-import classNames from 'classnames';
 import { isUndefined, pickBy } from 'lodash';
 import moment from 'moment';
 
@@ -26,15 +26,10 @@ import {
 	RangeControl,
 	Spinner,
 	ToggleControl,
-	BaseControl,
 } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
-import { withState, compose } from '@wordpress/compose';
-import apiFetch from '@wordpress/api-fetch';
-import { addQueryArgs } from '@wordpress/url';
+import { compose } from '@wordpress/compose';
 import { decodeEntities } from '@wordpress/html-entities';
-
-import { PanelColorSettings, withColors } from '@wordpress/block-editor';
 
 class Edit extends Component {
 	constructor( props ) {
@@ -47,7 +42,7 @@ class Edit extends Component {
 		this.btnPrevRef = createRef();
 		this.paginationRef = createRef();
 	}
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate() {
 		const { attributes, latestPosts } = this.props;
 		const { autoPlayState } = this.state;
 		const { autoplay, delay } = attributes;
@@ -55,6 +50,7 @@ class Edit extends Component {
 			this.swiperInstance && latestPosts && this.swiperInstance.realIndex < latestPosts.length
 				? this.swiperInstance.realIndex
 				: 0;
+		// eslint-disable-next-line no-unused-expressions
 		this.swiperInstance && this.swiperInstance.destroy( true, true );
 		this.swiperInstance = createSwiper(
 			this.carouselRef.current,
@@ -83,14 +79,7 @@ class Edit extends Component {
 		);
 	}
 	render() {
-		const {
-			attributes,
-			className,
-			setAttributes,
-			isSelected,
-			latestPosts,
-			hasPosts,
-		} = this.props;
+		const { attributes, className, setAttributes, latestPosts } = this.props;
 		const { autoPlayState } = this.state;
 		const {
 			authors,
@@ -110,96 +99,6 @@ class Edit extends Component {
 			autoplay && autoPlayState && 'wp-block-newspack-blocks-carousel__autoplay-playing'
 		);
 
-		const fetchAuthorSuggestions = search => {
-			return apiFetch( {
-				path: addQueryArgs( '/wp/v2/users', {
-					search,
-					per_page: 20,
-					_fields: 'id,name',
-				} ),
-			} ).then( function( users ) {
-				return users.map( user => ( {
-					value: user.id,
-					label: decodeEntities( user.name ) || __( '(no name)', 'newspack-blocks' ),
-				} ) );
-			} );
-		};
-		const fetchSavedAuthors = userIDs => {
-			return apiFetch( {
-				path: addQueryArgs( '/wp/v2/users', {
-					per_page: 100,
-					include: userIDs.join( ',' ),
-				} ),
-			} ).then( function( users ) {
-				return users.map( user => ( {
-					value: user.id,
-					label: decodeEntities( user.name ) || __( '(no name)', 'newspack-blocks' ),
-				} ) );
-			} );
-		};
-
-		const fetchCategorySuggestions = search => {
-			return apiFetch( {
-				path: addQueryArgs( '/wp/v2/categories', {
-					search,
-					per_page: 20,
-					_fields: 'id,name',
-					orderby: 'count',
-					order: 'desc',
-				} ),
-			} ).then( function( categories ) {
-				return categories.map( category => ( {
-					value: category.id,
-					label: decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' ),
-				} ) );
-			} );
-		};
-		const fetchSavedCategories = categoryIDs => {
-			return apiFetch( {
-				path: addQueryArgs( '/wp/v2/categories', {
-					per_page: 100,
-					_fields: 'id,name',
-					include: categoryIDs.join( ',' ),
-				} ),
-			} ).then( function( categories ) {
-				return categories.map( category => ( {
-					value: category.id,
-					label: decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' ),
-				} ) );
-			} );
-		};
-
-		const fetchTagSuggestions = search => {
-			return apiFetch( {
-				path: addQueryArgs( '/wp/v2/tags', {
-					search,
-					per_page: 20,
-					_fields: 'id,name',
-					orderby: 'count',
-					order: 'desc',
-				} ),
-			} ).then( function( tags ) {
-				return tags.map( tag => ( {
-					value: tag.id,
-					label: decodeEntities( tag.name ) || __( '(no title)', 'newspack-blocks' ),
-				} ) );
-			} );
-		};
-		const fetchSavedTags = tagIDs => {
-			return apiFetch( {
-				path: addQueryArgs( '/wp/v2/tags', {
-					per_page: 100,
-					_fields: 'id,name',
-					include: tagIDs.join( ',' ),
-				} ),
-			} ).then( function( tags ) {
-				return tags.map( tag => ( {
-					value: tag.id,
-					label: decodeEntities( tag.name ) || __( '(no title)', 'newspack-blocks' ),
-				} ) );
-			} );
-		};
-
 		return (
 			<Fragment>
 				<div className={ classes } ref={ this.carouselRef }>
@@ -214,51 +113,54 @@ class Edit extends Component {
 					{ latestPosts && (
 						<Fragment>
 							<div className="swiper-wrapper">
-								{ latestPosts.map( post => post.newspack_featured_image_src && (
-									<article className="post-has-image swiper-slide" key={ post.id }>
-										<figure className="post-thumbnail">
-											{ post.newspack_featured_image_src && (
-												<a href="#" rel="bookmark">
-													<img src={ post.newspack_featured_image_src.landscape } />
-												</a>
-											) }
-										</figure>
-										<div className="entry-wrapper">
-											{ showCategory && post.newspack_category_info.length && (
-												<div className="cat-links">
-													<a href="#">{ post.newspack_category_info }</a>
+								{ latestPosts.map(
+									post =>
+										post.newspack_featured_image_src && (
+											<article className="post-has-image swiper-slide" key={ post.id }>
+												<figure className="post-thumbnail">
+													{ post.newspack_featured_image_src && (
+														<a href="#" rel="bookmark">
+															<img src={ post.newspack_featured_image_src.landscape } alt="" />
+														</a>
+													) }
+												</figure>
+												<div className="entry-wrapper">
+													{ showCategory && post.newspack_category_info.length && (
+														<div className="cat-links">
+															<a href="#">{ post.newspack_category_info }</a>
+														</div>
+													) }
+													<h3 className="entry-title">
+														<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
+													</h3>
+													<div className="entry-meta">
+														{ showAuthor && showAvatar && post.newspack_author_info.avatar && (
+															<span className="avatar author-avatar" key="author-avatar">
+																<RawHTML>{ post.newspack_author_info.avatar }</RawHTML>
+															</span>
+														) }
+														{ showAuthor && (
+															<span className="byline">
+																{ __( 'by' ) }{' '}
+																<span className="author vcard">
+																	<a className="url fn n" href="#">
+																		{ post.newspack_author_info.display_name }
+																	</a>
+																</span>
+															</span>
+														) }
+														{ showDate && (
+															<time className="entry-date published" key="pub-date">
+																{ moment( post.date_gmt )
+																	.local()
+																	.format( 'MMMM DD, Y' ) }
+															</time>
+														) }
+													</div>
 												</div>
-											) }
-											<h3 className="entry-title">
-												<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
-											</h3>
-											<div className="entry-meta">
-												{ showAuthor && showAvatar && post.newspack_author_info.avatar && (
-													<span className="avatar author-avatar" key="author-avatar">
-														<RawHTML>{ post.newspack_author_info.avatar }</RawHTML>
-													</span>
-												) }
-												{ showAuthor && (
-													<span className="byline">
-														{ __( 'by' ) }{' '}
-														<span className="author vcard">
-															<a className="url fn n" href="#">
-																{ post.newspack_author_info.display_name }
-															</a>
-														</span>
-													</span>
-												) }
-												{ showDate && (
-													<time className="entry-date published" key="pub-date">
-														{ moment( post.date_gmt )
-															.local()
-															.format( 'MMMM DD, Y' ) }
-													</time>
-												) }
-											</div>
-										</div>
-									</article>
-								) ) }
+											</article>
+										)
+								) }
 							</div>
 							<a
 								className="amp-carousel-button amp-carousel-button-prev swiper-button-prev"
@@ -300,44 +202,17 @@ class Edit extends Component {
 				<InspectorControls>
 					<PanelBody title={ __( 'Display Settings' ) } initialOpen={ true }>
 						{ postsToShow && (
-							<Fragment>
-								<QueryControls
-									enableSingle={ false }
-									numberOfItems={ postsToShow }
-									onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
-									onSingleChange={ value =>
-										setAttributes( { single: '' !== value ? value : undefined } )
-									}
-									onSingleModeChange={ value => setAttributes( { singleMode: value } ) }
-								/>
-								<BaseControl>
-									<AutocompleteTokenField
-										tokens={ authors || [] }
-										onChange={ tokens => setAttributes( { authors: tokens } ) }
-										fetchSuggestions={ fetchAuthorSuggestions }
-										fetchSavedInfo={ fetchSavedAuthors }
-										label={ __( 'Author', 'newspack-blocks' ) }
-									/>
-								</BaseControl>
-								<BaseControl>
-									<AutocompleteTokenField
-										tokens={ categories || [] }
-										onChange={ tokens => setAttributes( { categories: tokens } ) }
-										fetchSuggestions={ fetchCategorySuggestions }
-										fetchSavedInfo={ fetchSavedCategories }
-										label={ __( 'Category', 'newspack-blocks' ) }
-									/>
-								</BaseControl>
-								<BaseControl>
-									<AutocompleteTokenField
-										tokens={ tags || [] }
-										onChange={ tokens => setAttributes( { tags: tokens } ) }
-										fetchSuggestions={ fetchTagSuggestions }
-										fetchSavedInfo={ fetchSavedTags }
-										label={ __( 'Tag', 'newspack-blocks' ) }
-									/>
-								</BaseControl>
-							</Fragment>
+							<QueryControls
+								enableSpecific={ false }
+								numberOfItems={ postsToShow }
+								onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
+								authors={ authors }
+								onAuthorsChange={ value => setAttributes( { authors: value } ) }
+								categories={ categories }
+								onCategoriesChange={ value => setAttributes( { categories: value } ) }
+								tags={ tags }
+								onTagsChange={ value => setAttributes( { tags: value } ) }
+							/>
 						) }
 					</PanelBody>
 					<PanelBody title={ __( 'Slideshow Settings' ) } initialOpen={ true }>
@@ -345,16 +220,16 @@ class Edit extends Component {
 							label={ __( 'Autoplay' ) }
 							help={ __( 'Autoplay between slides' ) }
 							checked={ autoplay }
-							onChange={ autoplay => {
-								setAttributes( { autoplay } );
+							onChange={ _autoplay => {
+								setAttributes( { autoplay: _autoplay } );
 							} }
 						/>
 						{ autoplay && (
 							<RangeControl
 								label={ __( 'Delay between transitions (in seconds)' ) }
 								value={ delay }
-								onChange={ delay => {
-									setAttributes( { delay } );
+								onChange={ _delay => {
+									setAttributes( { delay: _delay } );
 								} }
 								min={ 1 }
 								max={ 20 }

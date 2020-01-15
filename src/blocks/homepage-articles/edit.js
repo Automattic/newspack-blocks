@@ -1,46 +1,56 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+
 /**
  * Internal dependencies
  */
-import QueryControls from './query-controls';
-import AutocompleteTokenField from './components/autocomplete-tokenfield.js';
+import QueryControls from '../../components/query-controls';
+import { STORE_NAMESPACE } from './store';
 
 /**
  * External dependencies
  */
 import classNames from 'classnames';
 import { isUndefined, pickBy } from 'lodash';
-import moment from 'moment';
 
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
+import { dateI18n, __experimentalGetSettings } from '@wordpress/date';
 import { Component, Fragment, RawHTML } from '@wordpress/element';
-import { InspectorControls, RichText, BlockControls } from '@wordpress/editor';
 import {
+	BlockControls,
+	InspectorControls,
+	PanelColorSettings,
+	RichText,
+	withColors,
+} from '@wordpress/block-editor';
+import {
+	Button,
+	ButtonGroup,
 	PanelBody,
 	PanelRow,
 	RangeControl,
 	Toolbar,
 	ToggleControl,
-	Dashicon,
 	Placeholder,
 	Spinner,
 	BaseControl,
 	Path,
 	SVG,
 } from '@wordpress/components';
-import { withSelect } from '@wordpress/data';
+import { withDispatch, withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
-import apiFetch from '@wordpress/api-fetch';
-import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
-import { PanelColorSettings, withColors } from '@wordpress/block-editor';
 
-/**
- * Module Constants
- */
-const MAX_POSTS_COLUMNS = 6;
+let IS_SUBTITLE_SUPPORTED_IN_THEME;
+if (
+	typeof window === 'object' &&
+	window.newspackIsPostSubtitleSupported &&
+	window.newspackIsPostSubtitleSupported.post_subtitle
+) {
+	IS_SUBTITLE_SUPPORTED_IN_THEME = true;
+}
 
 /* From https://material.io/tools/icons */
 const landscapeIcon = (
@@ -84,30 +94,53 @@ class Edit extends Component {
 		const {
 			showImage,
 			imageShape,
-			imageFileSize,
+			mediaPosition,
+			minHeight,
 			showCaption,
 			showExcerpt,
+			showSubtitle,
 			showAuthor,
 			showAvatar,
 			showDate,
 			showCategory,
 			sectionHeader,
 		} = attributes;
+
+		const styles = {
+			minHeight:
+				mediaPosition === 'behind' &&
+				showImage &&
+				post.newspack_featured_image_src &&
+				minHeight + 'vh',
+			paddingTop:
+				mediaPosition === 'behind' &&
+				showImage &&
+				post.newspack_featured_image_src &&
+				minHeight / 5 + 'vh',
+		};
+
+		const postTitle = this.titleForPost( post );
+		const dateFormat = __experimentalGetSettings().formats.date;
 		return (
-			<article className={ post.newspack_featured_image_src && 'post-has-image' } key={ post.id }>
+			<article
+				className={ post.newspack_featured_image_src ? 'post-has-image' : null }
+				key={ post.id }
+				style={ styles }
+			>
 				{ showImage && post.newspack_featured_image_src && (
 					<figure className="post-thumbnail" key="thumbnail">
 						<a href="#">
 							{ imageShape === 'landscape' && (
-								<img src={ post.newspack_featured_image_src.landscape } />
+								<img src={ post.newspack_featured_image_src.landscape } alt="" />
 							) }
 							{ imageShape === 'portrait' && (
-								<img src={ post.newspack_featured_image_src.portrait } />
+								<img src={ post.newspack_featured_image_src.portrait } alt="" />
 							) }
-							{ imageShape === 'square' && <img src={ post.newspack_featured_image_src.square } /> }
-
+							{ imageShape === 'square' && (
+								<img src={ post.newspack_featured_image_src.square } alt="" />
+							) }
 							{ imageShape === 'uncropped' && (
-								<img src={ post.newspack_featured_image_src.uncropped } />
+								<img src={ post.newspack_featured_image_src.uncropped } alt="" />
 							) }
 						</a>
 						{ showCaption && '' !== post.newspack_featured_image_caption && (
@@ -115,6 +148,7 @@ class Edit extends Component {
 						) }
 					</figure>
 				) }
+
 				<div className="entry-wrapper">
 					{ showCategory && post.newspack_category_info.length && (
 						<div className="cat-links">
@@ -123,36 +157,32 @@ class Edit extends Component {
 					) }
 					{ RichText.isEmpty( sectionHeader ) ? (
 						<h2 className="entry-title" key="title">
-							<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
+							<a href="#">{ postTitle }</a>
 						</h2>
 					) : (
 						<h3 className="entry-title" key="title">
-							<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
+							<a href="#">{ postTitle }</a>
 						</h3>
 					) }
-					{ showExcerpt && <RawHTML key="excerpt">{ post.excerpt.rendered }</RawHTML> }
+					{ IS_SUBTITLE_SUPPORTED_IN_THEME && showSubtitle && (
+						<RawHTML
+							key="subtitle"
+							className="newspack-post-subtitle newspack-post-subtitle--in-homepage-block"
+						>
+							{ post.meta.newspack_post_subtitle || '' }
+						</RawHTML>
+					) }
+					{ showExcerpt && (
+						<RawHTML key="excerpt" className="excerpt-contain">
+							{ post.excerpt.rendered }
+						</RawHTML>
+					) }
 					<div className="entry-meta">
-						{ showAuthor && post.newspack_author_info.avatar && showAvatar && (
-							<span className="avatar author-avatar" key="author-avatar">
-								<RawHTML>{ post.newspack_author_info.avatar }</RawHTML>
-							</span>
-						) }
-
-						{ showAuthor && (
-							<span className="byline">
-								{ __( 'by', 'newspack-blocks' ) }{' '}
-								<span className="author vcard">
-									<a className="url fn n" href="#">
-										{ post.newspack_author_info.display_name }
-									</a>
-								</span>
-							</span>
-						) }
+						{ showAuthor && showAvatar && this.formatAvatars( post.newspack_author_info ) }
+						{ showAuthor && this.formatByline( post.newspack_author_info ) }
 						{ showDate && (
 							<time className="entry-date published" key="pub-date">
-								{ moment( post.date_gmt )
-									.local()
-									.format( 'MMMM DD, Y' ) }
+								{ dateI18n( dateFormat, post.date_gmt ) }
 							</time>
 						) }
 					</div>
@@ -161,28 +191,64 @@ class Edit extends Component {
 		);
 	};
 
+	titleForPost = post => {
+		if ( ! post.title ) {
+			return '';
+		}
+		if ( typeof post.title === 'string' ) {
+			return decodeEntities( post.title.trim() );
+		}
+		if ( typeof post.title === 'object' && post.title.rendered ) {
+			return decodeEntities( post.title.rendered.trim() );
+		}
+	};
+
+	formatAvatars = authorInfo =>
+		authorInfo.map( author => (
+			<span className="avatar author-avatar" key={ author.id }>
+				<a className="url fn n" href="#">
+					<RawHTML>{ author.avatar }</RawHTML>
+				</a>
+			</span>
+		) );
+
+	formatByline = authorInfo => (
+		<span className="byline">
+			{ _x( 'by', 'post author', 'newspack-blocks' ) }{' '}
+			{ authorInfo.reduce( ( accumulator, author, index ) => {
+				return [
+					...accumulator,
+					<span className="author vcard" key={ author.id }>
+						<a className="url fn n" href="#">
+							{ author.display_name }
+						</a>
+					</span>,
+					index < authorInfo.length - 2 && ', ',
+					authorInfo.length > 1 &&
+						index === authorInfo.length - 2 &&
+						_x( ' and ', 'post author', 'newspack-blocks' ),
+				];
+			}, [] ) }
+		</span>
+	);
+
 	renderInspectorControls = () => {
-		const {
-			attributes,
-			postList,
-			setAttributes,
-			latestPosts,
-			isSelected,
-			textColor,
-			setTextColor,
-		} = this.props;
-		const hasPosts = Array.isArray( latestPosts ) && latestPosts.length;
+		const { attributes, setAttributes, textColor, setTextColor } = this.props;
+
 		const {
 			authors,
-			single,
+			specificPosts,
 			postsToShow,
 			categories,
-			sectionHeader,
 			columns,
 			showImage,
 			showCaption,
 			imageScale,
+			mobileStack,
+			minHeight,
+			moreButton,
 			showExcerpt,
+			showSubtitle,
 			typeScale,
 			showDate,
 			showAuthor,
@@ -190,160 +256,78 @@ class Edit extends Component {
 			showCategory,
 			postLayout,
 			mediaPosition,
-			singleMode,
+			specificMode,
 			tags,
-			url,
+			tagExclusions,
 		} = attributes;
 
-		const fetchAuthorSuggestions = search => {
-			return apiFetch( {
-				path: addQueryArgs( '/wp/v2/users', {
-					search,
-					per_page: 20,
-					_fields: 'id,name',
-				} ),
-			} ).then( function( users ) {
-				return users.map( user => ( {
-					value: user.id,
-					label: decodeEntities( user.name ) || __( '(no name)', 'newspack-blocks' ),
-				} ) );
-			} );
-		};
-		const fetchSavedAuthors = userIDs => {
-			return apiFetch( {
-				path: addQueryArgs( '/wp/v2/users', {
-					per_page: 100,
-					include: userIDs.join( ',' ),
-				} ),
-			} ).then( function( users ) {
-				return users.map( user => ( {
-					value: user.id,
-					label: decodeEntities( user.name ) || __( '(no name)', 'newspack-blocks' ),
-				} ) );
-			} );
-		};
-
-		const fetchCategorySuggestions = search => {
-			return apiFetch( {
-				path: addQueryArgs( '/wp/v2/categories', {
-					search,
-					per_page: 20,
-					_fields: 'id,name',
-					orderby: 'count',
-					order: 'desc',
-				} ),
-			} ).then( function( categories ) {
-				return categories.map( category => ( {
-					value: category.id,
-					label: decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' ),
-				} ) );
-			} );
-		};
-		const fetchSavedCategories = categoryIDs => {
-			return apiFetch( {
-				path: addQueryArgs( '/wp/v2/categories', {
-					per_page: 100,
-					_fields: 'id,name',
-					include: categoryIDs.join( ',' ),
-				} ),
-			} ).then( function( categories ) {
-				return categories.map( category => ( {
-					value: category.id,
-					label: decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' ),
-				} ) );
-			} );
-		};
-
-		const fetchTagSuggestions = search => {
-			return apiFetch( {
-				path: addQueryArgs( '/wp/v2/tags', {
-					search,
-					per_page: 20,
-					_fields: 'id,name',
-					orderby: 'count',
-					order: 'desc',
-				} ),
-			} ).then( function( tags ) {
-				return tags.map( tag => ( {
-					value: tag.id,
-					label: decodeEntities( tag.name ) || __( '(no title)', 'newspack-blocks' ),
-				} ) );
-			} );
-		};
-		const fetchSavedTags = tagIDs => {
-			return apiFetch( {
-				path: addQueryArgs( '/wp/v2/tags', {
-					per_page: 100,
-					_fields: 'id,name',
-					include: tagIDs.join( ',' ),
-				} ),
-			} ).then( function( tags ) {
-				return tags.map( tag => ( {
-					value: tag.id,
-					label: decodeEntities( tag.name ) || __( '(no title)', 'newspack-blocks' ),
-				} ) );
-			} );
-		};
+		const imageSizeOptions = [
+			{
+				value: 1,
+				label: /* translators: label for small size option */ __( 'Small', 'newspack-blocks' ),
+				shortName: /* translators: abbreviation for small size */ __( 'S', 'newspack-blocks' ),
+			},
+			{
+				value: 2,
+				label: /* translators: label for medium size option */ __( 'Medium', 'newspack-blocks' ),
+				shortName: /* translators: abbreviation for medium size */ __( 'M', 'newspack-blocks' ),
+			},
+			{
+				value: 3,
+				label: /* translators: label for large size option */ __( 'Large', 'newspack-blocks' ),
+				shortName: /* translators: abbreviation for large size */ __( 'L', 'newspack-blocks' ),
+			},
+			{
+				value: 4,
+				label: /* translators: label for extra large size option */ __(
+					'Extra Large',
+					'newspack-blocks'
+				),
+				shortName: /* translators: abbreviation for extra large size */ __(
+					'XL',
+					'newspack-blocks'
+				),
+			},
+		];
 
 		return (
 			<Fragment>
 				<PanelBody title={ __( 'Display Settings', 'newspack-blocks' ) } initialOpen={ true }>
 					{ postsToShow && (
-						<Fragment>
-							<QueryControls
-								numberOfItems={ postsToShow }
-								onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
-								postList={ postList }
-								singleMode={ singleMode }
-								selectedSingleId={ single }
-								onSingleChange={ value =>
-									setAttributes( { single: '' !== value ? value : undefined } )
-								}
-								onSingleModeChange={ value => setAttributes( { singleMode: value } ) }
-							/>
-							{ ! singleMode && (
-								<Fragment>
-									<BaseControl>
-										<AutocompleteTokenField
-											tokens={ authors || [] }
-											onChange={ tokens => setAttributes( { authors: tokens } ) }
-											fetchSuggestions={ fetchAuthorSuggestions }
-											fetchSavedInfo={ fetchSavedAuthors }
-											label={ __( 'Author', 'newspack-blocks' ) }
-										/>
-									</BaseControl>
-									<BaseControl>
-										<AutocompleteTokenField
-											tokens={ categories || [] }
-											onChange={ tokens => setAttributes( { categories: tokens } ) }
-											fetchSuggestions={ fetchCategorySuggestions }
-											fetchSavedInfo={ fetchSavedCategories }
-											label={ __( 'Category', 'newspack-blocks' ) }
-										/>
-									</BaseControl>
-									<BaseControl>
-										<AutocompleteTokenField
-											tokens={ tags || [] }
-											onChange={ tokens => setAttributes( { tags: tokens } ) }
-											fetchSuggestions={ fetchTagSuggestions }
-											fetchSavedInfo={ fetchSavedTags }
-											label={ __( 'Tag', 'newspack-blocks' ) }
-										/>
-									</BaseControl>
-								</Fragment>
-							) }
-						</Fragment>
+						<QueryControls
+							numberOfItems={ postsToShow }
+							onNumberOfItemsChange={ postsToShow => setAttributes( { postsToShow } ) }
+							specificMode={ specificMode }
+							onSpecificModeChange={ specificMode => setAttributes( { specificMode } ) }
+							specificPosts={ specificPosts }
+							onSpecificPostsChange={ specificPosts => setAttributes( { specificPosts } ) }
+							authors={ authors }
+							onAuthorsChange={ authors => setAttributes( { authors } ) }
+							categories={ categories }
+							onCategoriesChange={ categories => setAttributes( { categories } ) }
+							tags={ tags }
+							onTagsChange={ tags => {
+								setAttributes( { tags } );
+							} }
+							tagExclusions={ tagExclusions }
+							onTagExclusionsChange={ tagExclusions => setAttributes( { tagExclusions } ) }
+						/>
 					) }
 					{ postLayout === 'grid' && (
 						<RangeControl
 							label={ __( 'Columns', 'newspack-blocks' ) }
 							value={ columns }
-							onChange={ value => setAttributes( { columns: value } ) }
+							onChange={ columns => setAttributes( { columns } ) }
 							min={ 2 }
-							max={
-								! hasPosts ? MAX_POSTS_COLUMNS : Math.min( MAX_POSTS_COLUMNS, latestPosts.length )
-							}
+							max={ 6 }
 							required
+						/>
+					) }
+					{ ! specificMode && (
+						<ToggleControl
+							label={ __( 'Show "More" Button', 'newspack-blocks' ) }
+							checked={ moreButton }
+							onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
 						/>
 					) }
 				</PanelBody>
@@ -367,20 +351,69 @@ class Edit extends Component {
 					) }
 
 					{ showImage && mediaPosition !== 'top' && mediaPosition !== 'behind' && (
+						<Fragment>
+							<PanelRow>
+								<ToggleControl
+									label={ __( 'Stack on mobile', 'newspack-blocks' ) }
+									checked={ mobileStack }
+									onChange={ () => setAttributes( { mobileStack: ! mobileStack } ) }
+								/>
+							</PanelRow>
+							<BaseControl
+								label={ __( 'Featured Image Size', 'newspack-blocks' ) }
+								id="newspackfeatured-image-size"
+							>
+								<PanelRow>
+									<ButtonGroup
+										id="newspackfeatured-image-size"
+										aria-label={ __( 'Featured Image Size', 'newspack-blocks' ) }
+									>
+										{ imageSizeOptions.map( option => {
+											const isCurrent = imageScale === option.value;
+											return (
+												<Button
+													isLarge
+													isPrimary={ isCurrent }
+													aria-pressed={ isCurrent }
+													aria-label={ option.label }
+													key={ option.value }
+													onClick={ () => setAttributes( { imageScale: option.value } ) }
+												>
+													{ option.shortName }
+												</Button>
+											);
+										} ) }
+									</ButtonGroup>
+								</PanelRow>
+							</BaseControl>
+						</Fragment>
+					) }
+
+					{ showImage && mediaPosition === 'behind' && (
 						<RangeControl
-							className="image-scale-slider"
-							label={ __( 'Featured Image Scale', 'newspack-blocks' ) }
-							value={ imageScale }
-							onChange={ value => setAttributes( { imageScale: value } ) }
-							min={ 1 }
-							max={ 4 }
-							beforeIcon="images-alt2"
-							afterIcon="images-alt2"
+							label={ __( 'Minimum height', 'newspack-blocks' ) }
+							help={ __(
+								"Sets a minimum height for the block, using a percentage of the screen's current height.",
+								'newspack-blocks'
+							) }
+							value={ minHeight }
+							onChange={ minHeight => setAttributes( { minHeight } ) }
+							min={ 0 }
+							max={ 100 }
 							required
 						/>
 					) }
 				</PanelBody>
-				<PanelBody title={ __( 'Article Control Settings', 'newspack-blocks' ) }>
+				<PanelBody title={ __( 'Post Control Settings', 'newspack-blocks' ) }>
+					{ IS_SUBTITLE_SUPPORTED_IN_THEME && (
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Show Subtitle', 'newspack-blocks' ) }
+								checked={ showSubtitle }
+								onChange={ () => setAttributes( { showSubtitle: ! showSubtitle } ) }
+							/>
+						</PanelRow>
+					) }
 					<PanelRow>
 						<ToggleControl
 							label={ __( 'Show Excerpt', 'newspack-blocks' ) }
@@ -392,7 +425,7 @@ class Edit extends Component {
 						className="type-scale-slider"
 						label={ __( 'Type Scale', 'newspack-blocks' ) }
 						value={ typeScale }
-						onChange={ value => setAttributes( { typeScale: value } ) }
+						onChange={ typeScale => setAttributes( { typeScale } ) }
 						min={ 1 }
 						max={ 10 }
 						beforeIcon="editor-textcolor"
@@ -411,7 +444,7 @@ class Edit extends Component {
 						},
 					] }
 				/>
-				<PanelBody title={ __( 'Article Meta Settings', 'newspack-blocks' ) }>
+				<PanelBody title={ __( 'Post Meta Settings', 'newspack-blocks' ) }>
 					<PanelRow>
 						<ToggleControl
 							label={ __( 'Show Date', 'newspack-blocks' ) }
@@ -451,32 +484,33 @@ class Edit extends Component {
 		/**
 		 * Constants
 		 */
+
 		const {
 			attributes,
 			className,
+			clientId,
 			setAttributes,
 			isSelected,
 			latestPosts,
-			hasPosts,
 			textColor,
-		} = this.props; // variables getting pulled out of props
+			markPostsAsDisplayed,
+		} = this.props;
+
 		const {
-			showExcerpt,
-			showDate,
 			showImage,
 			imageShape,
-			showAuthor,
-			showAvatar,
-			postsToShow,
 			postLayout,
 			mediaPosition,
+			moreButton,
+			moreButtonText,
 			columns,
-			categories,
 			typeScale,
 			imageScale,
+			mobileStack,
 			sectionHeader,
 			showCaption,
 			showCategory,
+			specificMode,
 		} = attributes;
 
 		const classes = classNames( className, {
@@ -486,6 +520,7 @@ class Edit extends Component {
 			[ `ts-${ typeScale }` ]: typeScale !== '5',
 			[ `image-align${ mediaPosition }` ]: showImage,
 			[ `is-${ imageScale }` ]: imageScale !== '1' && showImage,
+			'mobile-stack': mobileStack,
 			[ `image-shape${ imageShape }` ]: imageShape !== 'landscape',
 			'has-text-color': textColor.color !== '',
 			'show-caption': showCaption,
@@ -562,6 +597,7 @@ class Edit extends Component {
 			},
 		];
 
+		markPostsAsDisplayed( clientId, latestPosts );
 		return (
 			<Fragment>
 				<div
@@ -570,25 +606,43 @@ class Edit extends Component {
 						color: textColor.color,
 					} }
 				>
-					{ latestPosts && ( ! RichText.isEmpty( sectionHeader ) || isSelected ) && (
-						<RichText
-							onChange={ value => setAttributes( { sectionHeader: value } ) }
-							placeholder={ __( 'Write header…', 'newspack-blocks' ) }
-							value={ sectionHeader }
-							tagName="h2"
-							className="article-section-title"
-						/>
-					) }
-					{ latestPosts && ! latestPosts.length && (
-						<Placeholder>{ __( 'Sorry, no posts were found.', 'newspack-blocks' ) }</Placeholder>
-					) }
-					{ ! latestPosts && (
-						<Placeholder>
-							<Spinner />
-						</Placeholder>
-					) }
-					{ latestPosts && latestPosts.map( post => this.renderPost( post ) ) }
+					<div>
+						{ latestPosts && ( ! RichText.isEmpty( sectionHeader ) || isSelected ) && (
+							<RichText
+								onChange={ value => setAttributes( { sectionHeader: value } ) }
+								placeholder={ __( 'Write header…', 'newspack-blocks' ) }
+								value={ sectionHeader }
+								tagName="h2"
+								className="article-section-title"
+							/>
+						) }
+						{ latestPosts && ! latestPosts.length && (
+							<Placeholder>{ __( 'Sorry, no posts were found.', 'newspack-blocks' ) }</Placeholder>
+						) }
+						{ ! latestPosts && (
+							<Placeholder>
+								<Spinner />
+							</Placeholder>
+						) }
+						{ latestPosts && latestPosts.map( post => this.renderPost( post ) ) }
+					</div>
 				</div>
+
+				{ ! specificMode && latestPosts && moreButton && (
+					<div className="editor-styles-wrapper">
+						<div className="wp-block-button">
+							<RichText
+								placeholder={ __( 'Load more posts', 'newspack-blocks' ) }
+								value={ moreButtonText }
+								onChange={ value => setAttributes( { moreButtonText: value } ) }
+								className="wp-block-button__link"
+								keepPlaceholderOnFocus
+								allowedFormats={ [] }
+							/>
+						</div>
+					</div>
+				) }
+
 				<BlockControls>
 					<Toolbar controls={ blockControls } />
 					{ showImage && <Toolbar controls={ blockControlsImages } /> }
@@ -600,28 +654,61 @@ class Edit extends Component {
 	}
 }
 
+const isSpecificPostModeActive = ( { specificMode, specificPosts } ) =>
+	specificMode && specificPosts && specificPosts.length;
+
+const queryCriteriaFromAttributes = attributes => {
+	const {
+		postsToShow,
+		authors,
+		categories,
+		tags,
+		specificPosts,
+		specificMode,
+		tagExclusions,
+	} = attributes;
+	const criteria = pickBy(
+		isSpecificPostModeActive( attributes )
+			? {
+					include: specificPosts,
+					orderby: 'include',
+					per_page: specificPosts.length,
+			  }
+			: {
+					per_page: postsToShow,
+					categories,
+					author: authors,
+					tags,
+					tags_exclude: tagExclusions,
+			  },
+		value => ! isUndefined( value )
+	);
+	return criteria;
+};
+
 export default compose( [
 	withColors( { textColor: 'color' } ),
 	withSelect( ( select, props ) => {
-		const { postsToShow, authors, categories, tags, single, singleMode } = props.attributes;
-		const { getAuthors, getEntityRecords } = select( 'core' );
-		const latestPostsQuery = pickBy(
-			singleMode
-				? { include: single }
-				: {
-						per_page: postsToShow,
-						categories,
-						author: authors,
-						tags,
-				  },
-			value => ! isUndefined( value )
-		);
-		const postsListQuery = {
-			per_page: 50,
-		};
+		const { attributes, clientId } = props;
+
+		const latestPostsQuery = queryCriteriaFromAttributes( attributes );
+		if ( ! isSpecificPostModeActive( attributes ) ) {
+			const postIdsToExclude = select( STORE_NAMESPACE ).previousPostIds( clientId );
+			latestPostsQuery.exclude = postIdsToExclude.join( ',' );
+		}
+
 		return {
-			latestPosts: getEntityRecords( 'postType', 'post', latestPostsQuery ),
-			postList: getEntityRecords( 'postType', 'post', postsListQuery ),
+			latestPosts: select( 'core' ).getEntityRecords( 'postType', 'post', latestPostsQuery ),
+		};
+	} ),
+	withDispatch( ( dispatch, props ) => {
+		const { attributes } = props;
+		const markPostsAsDisplayed = isSpecificPostModeActive( attributes )
+			? dispatch( STORE_NAMESPACE ).markSpecificPostsAsDisplayed
+			: dispatch( STORE_NAMESPACE ).markPostsAsDisplayed;
+
+		return {
+			markPostsAsDisplayed,
 		};
 	} ),
 ] )( Edit );

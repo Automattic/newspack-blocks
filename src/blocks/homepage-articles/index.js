@@ -5,9 +5,14 @@ import { Path, SVG } from '@wordpress/components';
 import { createBlock } from '@wordpress/blocks';
 
 /**
+ * WordPress dependencies
+ */
+import { applyFilters } from '@wordpress/hooks';
+import { __, _x } from '@wordpress/i18n';
+
+/**
  * Internal dependencies
  */
-import { __, _x } from '@wordpress/i18n';
 import edit from './edit';
 
 /**
@@ -15,128 +20,41 @@ import edit from './edit';
  */
 import './editor.scss';
 import './view.scss';
+import metadata from './block.json';
+const { name, attributes, category } = metadata;
 
-export const name = 'homepage-articles';
-export const title = __( 'Newspack Homepage Articles', 'newspack-blocks' );
+// Name must be exported separately.
+export { name };
+
+export const title = __( 'Homepage Posts', 'newspack-blocks' );
 
 /* From https://material.io/tools/icons */
 export const icon = (
 	<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
 		<Path d="M0 0h24v24H0z" fill="none" />
-		<Path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" />
+		<Path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12zM10 9h8v2h-8zm0 3h4v2h-4zm0-6h8v2h-8z" />
 	</SVG>
 );
 
 export const settings = {
 	title,
 	icon,
-	category: 'newspack',
+	attributes,
+	category,
 	keywords: [
 		__( 'posts', 'newspack-blocks' ),
 		__( 'articles', 'newspack-blocks' ),
 		__( 'latest', 'newspack-blocks' ),
 	],
-	description: __( 'A block for displaying homepage articles.', 'newspack-blocks' ),
+	description: __( 'A block for displaying homepage posts.', 'newspack-blocks' ),
 	styles: [
 		{ name: 'default', label: _x( 'Default', 'block style', 'newspack-blocks' ), isDefault: true },
 		{ name: 'borders', label: _x( 'Borders', 'block style', 'newspack-blocks' ) },
 	],
-	attributes: {
-		className: {
-			type: 'string',
-		},
-		showExcerpt: {
-			type: 'boolean',
-			default: true,
-		},
-		showDate: {
-			type: 'boolean',
-			default: true,
-		},
-		showImage: {
-			type: 'boolean',
-			default: true,
-		},
-		showCaption: {
-			type: 'boolean',
-			default: false,
-		},
-		imageShape: {
-			type: 'string',
-			default: 'landscape',
-		},
-		showAuthor: {
-			type: 'boolean',
-			default: true,
-		},
-		showAvatar: {
-			type: 'boolean',
-			default: true,
-		},
-		showCategory: {
-			type: 'boolean',
-			default: false,
-		},
-		postLayout: {
-			type: 'string',
-			default: 'list',
-		},
-		columns: {
-			type: 'integer',
-			default: 3,
-		},
-		postsToShow: {
-			type: 'integer',
-			default: 3,
-		},
-		mediaPosition: {
-			type: 'string',
-			default: 'top',
-		},
-		authors: {
-			type: 'array',
-		},
-		categories: {
-			type: 'array',
-		},
-		tags: {
-			type: 'array',
-		},
-		single: {
-			type: 'string',
-		},
-		typeScale: {
-			type: 'integer',
-			default: 4,
-		},
-		imageScale: {
-			type: 'integer',
-			default: 3,
-		},
-		sectionHeader: {
-			type: 'string',
-			default: '',
-		},
-		singleMode: {
-			type: 'boolean',
-			default: false,
-		},
-		textColor: {
-			type: 'string',
-			default: '',
-		},
-		customTextColor: {
-			type: 'string',
-			default: '',
-		},
-		singleMode: {
-			type: 'boolean',
-			default: false,
-		},
-	},
 	supports: {
 		html: false,
-		align: false,
+		align: [ 'wide', 'full' ],
+		default: '',
 	},
 	edit,
 	save: () => null, // to use view.php
@@ -145,16 +63,26 @@ export const settings = {
 			{
 				type: 'block',
 				blocks: [ 'core/latest-posts' ],
-				transform: ( { displayPostContent, displayPostDate, postLayout, columns, postsToShow, categories } ) => {
-					return createBlock( 'newspack-blocks/homepage-articles', {
-						showExcerpt: displayPostContent,
-						showDate: displayPostDate,
-						postLayout,
-						columns,
-						postsToShow,
-						showAuthor: false,
-						categories: categories ? [ categories ] : [],
-					} );
+				transform: ( {
+					displayPostContent,
+					displayPostDate,
+					postLayout,
+					columns,
+					postsToShow,
+					categories,
+				} ) => {
+					return createBlock(
+						applyFilters( 'blocks.transforms_from_name', 'newspack-blocks/homepage-articles' ),
+						{
+							showExcerpt: displayPostContent,
+							showDate: displayPostDate,
+							postLayout,
+							columns,
+							postsToShow,
+							showAuthor: false,
+							categories: categories ? [ categories ] : [],
+						}
+					);
 				},
 			},
 		],
@@ -169,7 +97,7 @@ export const settings = {
 						postLayout,
 						columns,
 						postsToShow,
-						categories: categories[0] || '',
+						categories: categories[ 0 ] || '',
 					} );
 				},
 			},

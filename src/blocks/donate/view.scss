@@ -1,11 +1,10 @@
-$primary_color: #36f;
+@import '../../shared/sass/colors';
 
 .wpbnbd {
-	background: $muriel-white;
-	color: $muriel-gray-900;
+	background: $color__background-body;
+	border: 1px solid $color__border;
+	color: $color__text-main;
 	font-size: 14px;
-	outline: 1px solid $muriel-gray-100;
-	outline-offset: -1px;
 	position: relative;
 	width: 100%;
 
@@ -17,7 +16,6 @@ $primary_color: #36f;
 	.tier-select-label {
 		text-align: center;
 		display: block;
-		background-color: $muriel-white;
 		line-height: 3em;
 		height: 3em;
 		font-weight: bold;
@@ -42,23 +40,23 @@ $primary_color: #36f;
 		display: none;
 
 		.tier-select-label {
-			border: 1px solid $muriel-gray-100;
-			border-radius: 3px;
+			border: 1px solid $color__border;
+			border-radius: 5px;
 			font-size: 16px;
 			margin-left: 25px;
 			padding-left: 1em;
 			padding-right: 1em;
 
 			&:hover {
-				background: $muriel-gray-0;
+				background: $color__background-screen;
 			}
 		}
 
 		input[type='radio']:checked {
-			& + .tier-select-label {
-				background-color: $primary_color;
-				border-color: rgba( black, 0.25 );
-				color: $muriel-white;
+			+ .tier-select-label {
+				background-color: $color__primary;
+				border-color: transparent;
+				color: $color__background-body;
 			}
 		}
 
@@ -69,8 +67,8 @@ $primary_color: #36f;
 		}
 
 		input.other-input {
-			& ~ .wp-block-newspack-blocks-donate__money-input,
-			& ~ .other-donate-label {
+			~ .wp-block-newspack-blocks-donate__money-input,
+			~ .other-donate-label {
 				display: none;
 			}
 
@@ -101,7 +99,7 @@ $primary_color: #36f;
 		display: none;
 
 		label {
-			color: $muriel-gray-300;
+			color: $color__text-main;
 		}
 	}
 
@@ -113,13 +111,13 @@ $primary_color: #36f;
 .wp-block-newspack-blocks-donate__money-input {
 	position: relative;
 	max-width: 200px;
-	background-color: $muriel-white;
+	background-color: $color__background-input;
 	border-radius: 3px;
-	border: 1px solid $muriel-gray-100;
+	border: 1px solid $color__border;
 
 	&:focus-within {
-		border-color: $muriel-gray-800;
-		outline: thin solid rgba( $muriel-gray-800, 0.15 );
+		border-color: $color__text-input-focus;
+		outline: thin solid rgba( $color__text-input-focus, 0.15 );
 		outline-offset: -4px;
 	}
 
@@ -156,43 +154,47 @@ $primary_color: #36f;
 		width: calc( 100% / 3 );
 		position: absolute;
 		top: 0;
-		background: $muriel-gray-0;
-		border: 1px solid $muriel-gray-100;
+		border: 0 solid $color__border;
+		border-width: 0 0 1px;
 		text-transform: uppercase;
-		color: $muriel-gray-500;
+		color: $color__text-light;
 		left: 0;
 
 		&:hover {
-			background: $muriel-white;
+			background: $color__background-screen;
+			color: inherit;
 		}
 	}
 
 	input[type='radio']:checked {
-		& + .donation-frequency-label {
+		+ .donation-frequency-label {
 			color: inherit;
-			background: $muriel-white;
 			border-bottom-color: transparent;
+
+			&:hover {
+				background: transparent;
+			}
 		}
 
-		& ~ .wp-block-newspack-blocks-donate__tiers {
+		~ .wp-block-newspack-blocks-donate__tiers {
 			display: flex;
 		}
 	}
 
-	&:nth-of-type(2) .donation-frequency-label {
+	&:nth-of-type( 2 ) .donation-frequency-label {
 		left: 33.3333%;
 		left: calc( 100% / 3 );
-		border-left: none;
-		border-right: none;
+		border-left-width: 1px;
+		border-right-width: 1px;
 	}
 
-	&:nth-of-type(3) .donation-frequency-label {
+	&:nth-of-type( 3 ) .donation-frequency-label {
 		left: 66.6667%;
 		left: calc( 100% / 3 * 2 );
 	}
 }
 
-@media screen and (max-width: 600px) {
+@media screen and ( max-width: 600px ) {
 	.wpbnbd {
 		.donation-frequency-label {
 			font-size: 12px;
