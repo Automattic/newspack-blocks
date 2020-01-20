@@ -12,11 +12,14 @@ const fetchRetryCount = 3;
 
 /**
  * Load More Button Handling
+ *
+ * Calls Array.prototype.forEach for IE11 compatibility.
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/NodeList
  */
-
-document
-	.querySelectorAll( '.wp-block-newspack-blocks-homepage-articles.has-more-button' )
-	.forEach( buildLoadMoreHandler );
+Array.prototype.forEach.call(
+	document.querySelectorAll( '.wp-block-newspack-blocks-homepage-articles.has-more-button' ),
+	buildLoadMoreHandler
+);
 
 /**
  * Builds a function to handle clicks on the load more button.
