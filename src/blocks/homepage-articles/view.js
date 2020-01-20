@@ -47,12 +47,11 @@ function buildLoadMoreHandler( blockWrapperEl ) {
 		blockWrapperEl.classList.remove( 'is-error' );
 		blockWrapperEl.classList.add( 'is-loading' );
 
-		const requestURL = new URL( btnEl.getAttribute( 'data-next' ) );
+		// Set currently rendered posts' IDs as a query param (e.g. exclude_ids=1,2,3)
+		const requestURL =
+			btnEl.getAttribute( 'data-next' ) + '&exclude_ids=' + getRenderedPostsIds().join( ',' );
 
-		// Set currenty rendered posts' IDs as a query param (e.g. exclude_ids=1,2,3)
-		requestURL.searchParams.set( 'exclude_ids', getRenderedPostsIds().join( ',' ) );
-
-		fetchWithRetry( { url: requestURL.toString(), onSuccess, onError }, fetchRetryCount );
+		fetchWithRetry( { url: requestURL, onSuccess, onError }, fetchRetryCount );
 
 		/**
 		 * @param {Object} data Post data

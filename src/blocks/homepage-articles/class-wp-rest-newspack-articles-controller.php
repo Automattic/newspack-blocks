@@ -107,8 +107,9 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 						$attributes
 					),
 					[
-						'page' => $next_page,
-						'amp'  => $request->get_param( 'amp' ),
+						'exclude_ids' => false,
+						'page'        => $next_page,
+						'amp'         => $request->get_param( 'amp' ),
 					]
 				),
 				rest_url( '/newspack-blocks/v1/articles' )
