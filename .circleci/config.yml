@@ -16,9 +16,6 @@ jobs:
       - run:
           name: Install dependencies
           command: npm ci
-      - run:
-          name: Prune node_modules before persisting
-          command: curl -sfL https://install.goreleaser.com/github.com/tj/node-prune.sh | bash && ./bin/node-prune
       - persist_to_workspace:
           root: ~/
           paths:
