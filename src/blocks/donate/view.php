@@ -38,6 +38,8 @@ function newspack_blocks_render_block_donate( $attributes ) {
 	$selected_frequency = 'month';
 	$suggested_amounts  = $settings['suggestedAmounts'];
 
+	$uid = rand(); // Unique identifier to prevent labels colliding with other instances of Donate block.
+
 	ob_start();
 
 	/**
@@ -62,12 +64,12 @@ function newspack_blocks_render_block_donate( $attributes ) {
 							<input
 								type='radio'
 								value='<?php echo esc_attr( $frequency_slug ); ?>'
-								id='newspack-donate-<?php echo esc_attr( $frequency_slug ); ?>'
+								id='newspack-donate-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>'
 								name='donation_frequency'
 								<?php checked( $selected_frequency, $frequency_slug ); ?>
 							/>
 							<label
-								for='newspack-donate-<?php echo esc_attr( $frequency_slug ); ?>'
+								for='newspack-donate-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>'
 								class='donation-frequency-label'
 							>
 								<?php echo esc_html( $frequency_name ); ?>
@@ -75,7 +77,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 							<div class='input-container'>
 								<label
 									class='donate-label'
-									for='newspack-<?php echo esc_attr( $frequency_slug ); ?>-untiered-input'
+									for='newspack-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-untiered-input'
 								>
 									<?php echo esc_html__( 'Donation amount', 'newspack-blocks' ); ?>
 								</label>
@@ -87,7 +89,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 										type='number'
 										name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>_untiered'
 										value='<?php echo esc_attr( $formatted_amount ); ?>'
-										id='newspack-<?php echo esc_attr( $frequency_slug ); ?>-untiered-input'
+										id='newspack-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-untiered-input'
 									/>
 								</div>
 							</div>
@@ -118,12 +120,12 @@ function newspack_blocks_render_block_donate( $attributes ) {
 								<input
 									type='radio'
 									value='<?php echo esc_attr( $frequency_slug ); ?>'
-									id='newspack-donate-<?php echo esc_attr( $frequency_slug ); ?>'
+									id='newspack-donate-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>'
 									name='donation_frequency'
 									<?php checked( $selected_frequency, $frequency_slug ); ?>
 								/>
 								<label
-									for='newspack-donate-<?php echo esc_attr( $frequency_slug ); ?>'
+									for='newspack-donate-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>'
 									class='donation-frequency-label'
 								>
 									<?php echo esc_html( $frequency_name ); ?>
@@ -140,12 +142,12 @@ function newspack_blocks_render_block_donate( $attributes ) {
 												type='radio'
 												name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>'
 												value='<?php echo esc_attr( $amount ); ?>'
-												id='newspack-tier-<?php echo esc_attr( $frequency_slug ); ?>-<?php echo (int) $index; ?>'
+												id='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-<?php echo (int) $index; ?>'
 												<?php checked( 1, $index ); ?>
 											/>
 											<label
 												class='tier-select-label'
-												for='newspack-tier-<?php echo esc_attr( $frequency_slug ); ?>-<?php echo (int) $index; ?>'
+												for='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-<?php echo (int) $index; ?>'
 											>
 												<?php echo esc_html( $formatted_amount ); ?>
 											</label>
@@ -159,17 +161,17 @@ function newspack_blocks_render_block_donate( $attributes ) {
 											class='other-input'
 											name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>'
 											value='other'
-											id='newspack-tier-<?php echo esc_attr( $frequency_slug ); ?>-other'
+											id='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-other'
 										/>
 										<label
 											class='tier-select-label'
-											for='newspack-tier-<?php echo esc_attr( $frequency_slug ); ?>-other'
+											for='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-other'
 										>
 											<?php echo esc_html__( 'Other', 'newspack-blocks' ); ?>
 										</label>
 										<label
 											class='other-donate-label'
-											for='newspack-tier-<?php echo esc_attr( $frequency_slug ); ?>-other-input'
+											for='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-other-input'
 										>
 											<?php echo esc_html__( 'Donation amount', 'newspack-blocks' ); ?>
 										</label>
@@ -181,7 +183,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 												type='number'
 												name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>_other'
 												value='<?php echo esc_attr( $amount ); ?>'
-												id='newspack-tier-<?php echo esc_attr( $frequency_slug ); ?>-other-input'
+												id='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid  ); ?>-other-input'
 											/>
 										</div>
 									</div>

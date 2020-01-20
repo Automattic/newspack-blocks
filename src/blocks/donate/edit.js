@@ -38,6 +38,9 @@ class Edit extends Component {
 				year: 0,
 			},
 			error: '',
+			uid: Math.random()
+				.toString( 16 )
+				.slice( 2 ), // Unique identifier to prevent collisions with other Donate blocks' labels.
 		};
 	}
 	componentDidMount() {
@@ -138,6 +141,7 @@ class Edit extends Component {
 
 	renderUntieredForm() {
 		const { className } = this.props;
+		const { uid } = this.state;
 		const { currencySymbol, customDonationAmounts, selectedFrequency } = this.blockData();
 
 		const frequencies = {
@@ -155,12 +159,12 @@ class Edit extends Component {
 								<input
 									type="radio"
 									onClick={ () => this.setState( { selectedFrequency: frequencySlug } ) }
-									id={ 'newspack-donate-' + frequencySlug }
+									id={ 'newspack-donate-' + frequencySlug + '-' + uid }
 									name="donation_frequency"
 									checked={ frequencySlug === selectedFrequency }
 								/>
 								<label
-									htmlFor={ 'newspack-donate-' + frequencySlug }
+									htmlFor={ 'newspack-donate-' + frequencySlug + '-' + uid }
 									className="donation-frequency-label"
 								>
 									{ frequencies[ frequencySlug ] }
@@ -168,7 +172,7 @@ class Edit extends Component {
 								<div className="input-container">
 									<label
 										className="donate-label"
-										htmlFor={ 'newspack-' + frequencySlug + '-untiered-input' }
+										htmlFor={ 'newspack-' + frequencySlug + '-' + uid + '-untiered-input' }
 									>
 										{ __( 'Donation amount', 'newspack-blocks' ) }
 									</label>
@@ -180,7 +184,7 @@ class Edit extends Component {
 											value={ this.formatCurrencyWithoutSymbol(
 												customDonationAmounts[ frequencySlug ]
 											) }
-											id={ 'newspack-' + frequencySlug + '-untiered-input' }
+											id={ 'newspack-' + frequencySlug + '-' + uid + '-untiered-input' }
 										/>
 									</div>
 								</div>
@@ -200,6 +204,7 @@ class Edit extends Component {
 
 	renderTieredForm() {
 		const { className } = this.props;
+		const { uid } = this.state;
 		const {
 			activeTier,
 			currencySymbol,
@@ -223,12 +228,12 @@ class Edit extends Component {
 									<input
 										type="radio"
 										onClick={ () => this.setState( { selectedFrequency: frequencySlug } ) }
-										id={ 'newspack-donate-' + frequencySlug }
+										id={ 'newspack-donate-' + frequencySlug + '-' + uid }
 										name="donation_frequency"
 										checked={ frequencySlug === selectedFrequency }
 									/>
 									<label
-										htmlFor={ 'newspack-donate-' + frequencySlug }
+										htmlFor={ 'newspack-donate-' + frequencySlug + '-' + uid }
 										className="donation-frequency-label"
 									>
 										{ frequencies[ frequencySlug ] }
@@ -240,12 +245,12 @@ class Edit extends Component {
 												<input
 													type="radio"
 													onClick={ () => this.setState( { activeTier: index } ) }
-													id={ 'newspack-tier-' + frequencySlug + '-' + index }
+													id={ 'newspack-tier-' + frequencySlug + '-' + uid + '-' + index }
 													checked={ index === activeTier }
 												/>
 												<label
 													className="tier-select-label"
-													htmlFor={ 'newspack-tier-' + frequencySlug + '-' + index }
+													htmlFor={ 'newspack-tier-' + frequencySlug + '-' + uid + '-' + index }
 												>
 													{ this.formatCurrency(
 														'year' === frequencySlug || 'once' === frequencySlug
@@ -261,18 +266,18 @@ class Edit extends Component {
 												type="radio"
 												onClick={ () => this.setState( { activeTier: 'other' } ) }
 												className="other-input"
-												id={ 'newspack-tier-' + frequencySlug + '-other' }
+												id={ 'newspack-tier-' + frequencySlug + '-' + uid + '-other' }
 												checked={ 'other' === activeTier }
 											/>
 											<label
 												className="tier-select-label"
-												htmlFor={ 'newspack-tier-' + frequencySlug + '-other' }
+												htmlFor={ 'newspack-tier-' + frequencySlug + '-' + uid + '-other' }
 											>
 												{ __( 'Other', 'newspack-blocks' ) }
 											</label>
 											<label
 												className="other-donate-label"
-												htmlFor={ 'newspack-tier-' + frequencySlug + '-other-input' }
+												htmlFor={ 'newspack-tier-' + frequencySlug + '-' + uid + '-other-input' }
 											>
 												{ __( 'Donation amount', 'newspack-blocks' ) }
 											</label>
@@ -282,7 +287,7 @@ class Edit extends Component {
 													type="number"
 													onChange={ evt => this.handleCustomDonationChange( evt, frequencySlug ) }
 													value={ customDonationAmounts[ frequencySlug ] }
-													id={ 'newspack-tier-' + frequencySlug + '-other-input' }
+													id={ 'newspack-tier-' + frequencySlug + '-' + uid + '-other-input' }
 												/>
 											</div>
 										</div>
