@@ -22,13 +22,13 @@
 	}
 
 	&.is-style-borders {
-		[data-type="core/column"] {
+		[data-type='core/column'] {
 			border-bottom: 1px solid $color__border;
 			position: relative;
 
 			&:last-child,
-			// exclude nested columns
-			[data-type="core/column"] {
+			
+			[data-type='core/column'] {
 				border-bottom: 0;
 			}
 
@@ -49,8 +49,8 @@
 				}
 
 				&:last-child::after,
-				// exclude nested columns
-				[data-type="core/column"]:after {
+				
+				[data-type='core/column']::after {
 					display: none;
 				}
 			}
