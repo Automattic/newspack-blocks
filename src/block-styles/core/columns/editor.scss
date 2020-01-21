@@ -27,7 +27,6 @@
 			position: relative;
 
 			&:last-child,
-			
 			[data-type='core/column'] {
 				border-bottom: 0;
 			}
@@ -49,7 +48,6 @@
 				}
 
 				&:last-child::after,
-				
 				[data-type='core/column']::after {
 					display: none;
 				}
