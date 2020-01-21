@@ -27,6 +27,7 @@
 			position: relative;
 
 			&:last-child,
+			// exclude nested columns
 			[data-type='core/column'] {
 				border-bottom: 0;
 			}
@@ -48,6 +49,7 @@
 				}
 
 				&:last-child::after,
+				// exclude nested columns
 				[data-type='core/column']::after {
 					display: none;
 				}
