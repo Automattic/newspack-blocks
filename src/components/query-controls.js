@@ -217,9 +217,8 @@ class QueryControls extends Component {
 				/>
 			),
 			! specificMode && onTagExclusionsChange && (
-				<p>
+				<p key="toggle-advanced-filters">
 					<Button
-						key="toggle-advanced-filters"
 						isLink
 						onClick={ () => this.setState( { showAdvancedFilters: ! showAdvancedFilters } ) }
 					>
