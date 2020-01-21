@@ -14,6 +14,7 @@ const fetchRetryCount = 3;
  * Load More Button Handling
  *
  * Calls Array.prototype.forEach for IE11 compatibility.
+ *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/NodeList
  */
 Array.prototype.forEach.call(

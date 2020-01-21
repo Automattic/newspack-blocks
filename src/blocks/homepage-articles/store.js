@@ -1,5 +1,5 @@
 import { registerStore, select, subscribe, dispatch } from '@wordpress/data';
-import { uniq, compact } from 'lodash';
+import { uniq } from 'lodash';
 
 import metadata from './block.json';
 
@@ -41,26 +41,33 @@ const actions = {
 };
 
 /**
+ * @typedef Block A Gutenberg editor block
+ * @type {Object}
+ * @typedef uuid Unique id
+ * @type {string}
+ */
+
+/**
  * Returns the Query blocks that appear before the current one on the page
  *
- * @param {Block[]} orderedBlocks
- * @param {uuid} clientId
- * @returns {Block[]}
+ * @param {Block[]} orderedBlocks Ordered Blocks
+ * @param {uuid} clientId client id
+ * @return {Block[]} blocks
  */
 const blocksBefore = ( orderedBlocks, clientId ) => {
-	const ourBlockIdx = orderedBlocks.findIndex( b => b.clientId == clientId );
+	const ourBlockIdx = orderedBlocks.findIndex( b => b.clientId === clientId );
 	return orderedBlocks.slice( 0, ourBlockIdx );
 };
 
 const selectors = {
-	previousPostIds( state, clientId ) {
+	previousPostIds( state, _clientId ) {
 		const { queryBlocks, specificPostsByBlock, postsByBlock } = state;
 
 		const postIdsFromSpecificMode = queryBlocks
 			.filter( ( { clientId } ) => specificPostsByBlock[ clientId ] )
 			.flatMap( ( { clientId } ) => specificPostsByBlock[ clientId ].map( p => p.id ) );
 
-		const previousPostIds = blocksBefore( queryBlocks, clientId )
+		const previousPostIds = blocksBefore( queryBlocks, _clientId )
 			.filter( ( { clientId } ) => postsByBlock[ clientId ] )
 			.flatMap( ( { clientId } ) => postsByBlock[ clientId ].map( p => p.id ) );
 
@@ -73,13 +80,13 @@ const selectors = {
  * the page. This is needed to be able to show the editor blocks in the order
  * that PHP will render them.
  *
- * @param {Block[]} blocks
- * @return {Block[]}
+ * @param {Block[]} blocks any blocks
+ * @return {Block[]} ordered newspack-blocks/query blocks
  */
 const getQueryBlocksInOrder = blocks =>
 	blocks.flatMap( block => {
 		const queryBlocks = [];
-		if ( block.name == blockName ) {
+		if ( block.name === blockName ) {
 			queryBlocks.push( block );
 		}
 		return queryBlocks.concat( getQueryBlocksInOrder( block.innerBlocks ) );
@@ -128,7 +135,7 @@ export const registerQueryStore = () => {
 	subscribe( () => {
 		const newBlocksIds = getClientIdsWithDescendants();
 		// I don't know why != works but it does, I guess getClientIdsWithDescendants is memoized?
-		const blocksChanged = newBlocksIds != currentBlocksIds;
+		const blocksChanged = newBlocksIds !== currentBlocksIds;
 		currentBlocksIds = newBlocksIds;
 
 		if ( blocksChanged ) {

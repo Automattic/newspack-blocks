@@ -296,28 +296,36 @@ class Edit extends Component {
 					{ postsToShow && (
 						<QueryControls
 							numberOfItems={ postsToShow }
-							onNumberOfItemsChange={ postsToShow => setAttributes( { postsToShow } ) }
+							onNumberOfItemsChange={ _postsToShow =>
+								setAttributes( { postsToShow: _postsToShow } )
+							}
 							specificMode={ specificMode }
-							onSpecificModeChange={ specificMode => setAttributes( { specificMode } ) }
+							onSpecificModeChange={ _specificMode =>
+								setAttributes( { specificMode: _specificMode } )
+							}
 							specificPosts={ specificPosts }
-							onSpecificPostsChange={ specificPosts => setAttributes( { specificPosts } ) }
+							onSpecificPostsChange={ _specificPosts =>
+								setAttributes( { specificPosts: _specificPosts } )
+							}
 							authors={ authors }
-							onAuthorsChange={ authors => setAttributes( { authors } ) }
+							onAuthorsChange={ _authors => setAttributes( { authors: _authors } ) }
 							categories={ categories }
-							onCategoriesChange={ categories => setAttributes( { categories } ) }
+							onCategoriesChange={ _categories => setAttributes( { categories: _categories } ) }
 							tags={ tags }
-							onTagsChange={ tags => {
-								setAttributes( { tags } );
+							onTagsChange={ _tags => {
+								setAttributes( { tags: _tags } );
 							} }
 							tagExclusions={ tagExclusions }
-							onTagExclusionsChange={ tagExclusions => setAttributes( { tagExclusions } ) }
+							onTagExclusionsChange={ _tagExclusions =>
+								setAttributes( { tagExclusions: _tagExclusions } )
+							}
 						/>
 					) }
 					{ postLayout === 'grid' && (
 						<RangeControl
 							label={ __( 'Columns', 'newspack-blocks' ) }
 							value={ columns }
-							onChange={ columns => setAttributes( { columns } ) }
+							onChange={ _columns => setAttributes( { columns: _columns } ) }
 							min={ 2 }
 							max={ 6 }
 							required
@@ -397,7 +405,7 @@ class Edit extends Component {
 								'newspack-blocks'
 							) }
 							value={ minHeight }
-							onChange={ minHeight => setAttributes( { minHeight } ) }
+							onChange={ _minHeight => setAttributes( { minHeight: _minHeight } ) }
 							min={ 0 }
 							max={ 100 }
 							required
@@ -425,7 +433,7 @@ class Edit extends Component {
 						className="type-scale-slider"
 						label={ __( 'Type Scale', 'newspack-blocks' ) }
 						value={ typeScale }
-						onChange={ typeScale => setAttributes( { typeScale } ) }
+						onChange={ _typeScale => setAttributes( { typeScale: _typeScale } ) }
 						min={ 1 }
 						max={ 10 }
 						beforeIcon="editor-textcolor"
@@ -658,15 +666,7 @@ const isSpecificPostModeActive = ( { specificMode, specificPosts } ) =>
 	specificMode && specificPosts && specificPosts.length;
 
 const queryCriteriaFromAttributes = attributes => {
-	const {
-		postsToShow,
-		authors,
-		categories,
-		tags,
-		specificPosts,
-		specificMode,
-		tagExclusions,
-	} = attributes;
+	const { postsToShow, authors, categories, tags, specificPosts, tagExclusions } = attributes;
 	const criteria = pickBy(
 		isSpecificPostModeActive( attributes )
 			? {
