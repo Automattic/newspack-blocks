@@ -3,20 +3,20 @@
 		padding: 14px;
 	}
 
-	.edit-post-visual-editor, .block-editor-writing-flow__click-redirect {
-		height: auto;
+	.block-editor-writing-flow__click-redirect {
+		display: none;
 	}
 
 	/* Categories, Tags */
 	.cat-links,
- 	.tags-links {
- 		span {
+	.tags-links {
+		span {
 			&:before {
-				content: ", ";
+				content: ', ';
 			}
 
 			&:first-of-type:before {
-				content: "";
+				content: '';
 			}
 		}
 	}

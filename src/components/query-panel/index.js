@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import QueryControls from '../../blocks/homepage-articles/query-controls';
-import AutocompleteTokenField from '../../blocks/homepage-articles/components/autocomplete-tokenfield';
+import QueryControls from '../query-controls';
+import AutocompleteTokenField from '../autocomplete-tokenfield';
 
 /**
  * WordPress dependencies
@@ -110,13 +110,15 @@ const fetchSavedTags = async tagIDs => {
 export default class QueryPanel extends Component {
 	updateCriteria = newCriteria => {
 		const { criteria, onChange } = this.props;
-		const { per_page, offset, categories, tags, search, author, singleMode, singleId } = { ...criteria, ...newCriteria };
+		const { per_page, offset, categories, tags, search, author, singleMode, singleId } = {
+			...criteria,
+			...newCriteria,
+		};
 
 		const sanitizedCriteria = {
 			per_page: parseInt( per_page ),
 			offset: parseInt( offset ),
 			singleMode: !! singleMode,
-			singleId: parseInt( singleId ),
 		};
 
 		if ( author ) {
@@ -133,6 +135,10 @@ export default class QueryPanel extends Component {
 
 		if ( search && search.trim().length > 0 ) {
 			sanitizedCriteria.search = search;
+		}
+
+		if ( singleMode && parseInt( singleId ) ) {
+			sanitizedCriteria.singleId = parseInt( singleId );
 		}
 
 		return onChange( sanitizedCriteria );

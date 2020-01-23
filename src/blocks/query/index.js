@@ -10,15 +10,13 @@ import { __ } from '@wordpress/i18n';
 import { InnerBlocks } from '@wordpress/block-editor';
 import edit from './edit';
 
-import { registerQueryStore } from './store';
-
 /**
  * Style dependencies
  */
 import './editor.scss';
 import './view.scss';
 
-registerQueryStore();
+// registerQueryStore();
 
 export const name = 'query';
 export const title = __( 'Query' );
@@ -54,10 +52,10 @@ export const settings = {
 				{
 					isValid: true,
 					clientId: null,
-					name: "newspack-blocks/title",
+					name: 'newspack-blocks/title',
 					attributes: {},
 					innerBlocks: [],
-				}
+				},
 			],
 		},
 	},

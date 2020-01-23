@@ -3,9 +3,11 @@ import { uniq, compact } from 'lodash';
 
 import metadata from './block.json';
 
+// TODO clean this up
 const { name } = metadata;
-export const STORE_NAMESPACE = name;
-const blockName = `newspack-blocks/${ name }`;
+const namespace = 'newspack-blocks';
+export const STORE_NAMESPACE = `${ namespace }/post-deduplication`;
+const blockNames = [ `${ namespace }/${ name }`, `${ namespace }/query` ];
 
 const initialState = {
 	queryBlocks: [], // list of Query blocks in the order they are on the page
@@ -79,7 +81,7 @@ const selectors = {
 const getQueryBlocksInOrder = blocks =>
 	blocks.flatMap( block => {
 		const queryBlocks = [];
-		if ( block.name == blockName ) {
+		if ( blockNames.includes( block.name ) ) {
 			queryBlocks.push( block );
 		}
 		return queryBlocks.concat( getQueryBlocksInOrder( block.innerBlocks ) );

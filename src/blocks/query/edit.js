@@ -26,7 +26,7 @@ import { compose } from '@wordpress/compose';
 import { EntityProvider } from '@wordpress/core-data';
 import { withSelect, withDispatch } from '@wordpress/data';
 
-const defaultFields = [ 'newspack-blocks/title', 'newspack-blocks/date', 'newspack-blocks/author'];
+const defaultFields = [ 'newspack-blocks/title', 'newspack-blocks/date', 'newspack-blocks/author' ];
 
 class Edit extends Component {
 	constructor( props ) {
@@ -35,7 +35,7 @@ class Edit extends Component {
 			editingPost: null,
 			blocksTree: {},
 		};
-		this.props.updateCriteria( this.props.clientId, this.props.attributes.criteria );
+		// this.props.updateCriteria( this.props.clientId, this.props.attributes.criteria );
 		this.debouncedCreateBlockTree = debounce( this.createBlockTree.bind( this ), 1000 );
 	}
 
@@ -98,8 +98,8 @@ class Edit extends Component {
 			query,
 			setAttributes,
 			clientId,
-			updateCriteria,
 			postList,
+			markPostsAsDisplayed,
 		} = this.props;
 
 		const { criteria } = attributes;
@@ -107,6 +107,7 @@ class Edit extends Component {
 		const { editingPost, blocksTree } = this.state;
 		const settings = {};
 		const classes = classNames( className, editingPost ? 'is-editing' : '' );
+		markPostsAsDisplayed( clientId, query );
 
 		return (
 			<div className={ classes }>
@@ -117,7 +118,7 @@ class Edit extends Component {
 							postList={ postList }
 							onChange={ criteria => {
 								setAttributes( { criteria } );
-								updateCriteria( clientId, criteria );
+								// updateCriteria( clientId, criteria );
 							} }
 						/>
 					</PanelBody>
@@ -131,24 +132,26 @@ class Edit extends Component {
 					{ query && ! query.length && (
 						<Placeholder>{ __( 'Sorry, no posts were found.', 'newspack-blocks' ) }</Placeholder>
 					) }
-					{ query && !! query.length && query.map( post => {
-						if ( ! blocksTree[ post.id ] ) return null;
-						return (
-							<article className={ post.id === editingPost ? 'is-editing' : '' } key={ post.id }>
-								<EntityProvider kind="postType" type="post" id={ post.id }>
-									<BlockEditorProvider
-										value={ blocksTree[ post.id ] }
-										onChange={ blocks => this.updateBlocks( blocks, post.id ) }
-										settings={ settings }
-									>
-										<WritingFlow>
-											<BlockList />
-										</WritingFlow>
-									</BlockEditorProvider>
-								</EntityProvider>
-							</article>
-						);
-					} ) }
+					{ query &&
+						!! query.length &&
+						query.map( post => {
+							if ( ! blocksTree[ post.id ] ) return null;
+							return (
+								<article className={ post.id === editingPost ? 'is-editing' : '' } key={ post.id }>
+									<EntityProvider kind="postType" type="post" id={ post.id }>
+										<BlockEditorProvider
+											value={ blocksTree[ post.id ] }
+											onChange={ blocks => this.updateBlocks( blocks, post.id ) }
+											settings={ settings }
+										>
+											<WritingFlow>
+												<BlockList />
+											</WritingFlow>
+										</BlockEditorProvider>
+									</EntityProvider>
+								</article>
+							);
+						} ) }
 				</Fragment>
 			</div>
 		);
@@ -159,16 +162,27 @@ export default compose(
 	withSelect( ( select, props ) => {
 		const { attributes, clientId } = props;
 		const { criteria } = attributes;
-		const { query } = select( 'newspack-blocks/query' );
-		const { getEntityRecords } = select( 'core' );
+
+		if ( ! criteria.singleMode ) {
+			const postIdsToExclude = select( 'newspack-blocks/post-deduplication' ).previousPostIds(
+				clientId
+			);
+			criteria.exclude = postIdsToExclude.join( ',' );
+		}
 
 		return {
-			query: query( clientId, { ...criteria, } ),
-			postList: getEntityRecords( 'postType', 'post', { per_page: 50 } ),
+			query: select( 'core' ).getEntityRecords( 'postType', 'post', { ...criteria } ),
 		};
 	} ),
-	withDispatch( dispatch => {
-		const { updateCriteria } = dispatch( 'newspack-blocks/query' );
-		return { updateCriteria };
+	withDispatch( ( dispatch, props ) => {
+		const { attributes } = props;
+		const { criteria } = attributes;
+		const markPostsAsDisplayed = criteria.singleMode
+			? dispatch( 'newspack-blocks/post-deduplication' ).markSpecificPostsAsDisplayed
+			: dispatch( 'newspack-blocks/post-deduplication' ).markPostsAsDisplayed;
+
+		return {
+			markPostsAsDisplayed,
+		};
 	} )
 )( Edit );
