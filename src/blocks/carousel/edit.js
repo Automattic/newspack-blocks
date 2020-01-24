@@ -106,9 +106,7 @@ class Edit extends Component {
 						<Placeholder>{ __( 'Sorry, no posts were found.' ) }</Placeholder>
 					) }
 					{ ! latestPosts && (
-						<Placeholder>
-							<Spinner />
-						</Placeholder>
+						<Placeholder icon={ <Spinner /> } className="component-placeholder__align-center" />
 					) }
 					{ latestPosts && (
 						<Fragment>
