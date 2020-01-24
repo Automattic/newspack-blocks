@@ -38,6 +38,7 @@ import {
 	BaseControl,
 	Path,
 	SVG,
+	ExternalLink,
 } from '@wordpress/components';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
@@ -336,6 +337,16 @@ class Edit extends Component {
 							label={ __( 'Show "More" Button', 'newspack-blocks' ) }
 							checked={ moreButton }
 							onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
+							help={
+								<>
+									{ __( 'The button will be displayed only if the sites is not private. ' ) }
+									{
+										<ExternalLink href="https://en.support.wordpress.com/settings/#general">
+											{ __( 'More information' ) }
+										</ExternalLink>
+									}
+								</>
+							}
 						/>
 					) }
 				</PanelBody>

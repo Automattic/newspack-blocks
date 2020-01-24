@@ -115,7 +115,8 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			</div>
 			<?php
 
-			if ( $has_more_button ) :
+			if ( $has_more_button && get_option( 'blog_public' ) !== -1 ) :
+				// Hide button for private sites because of authentication issues.
 				?>
 				<button type="button" data-next="<?php echo esc_url( $articles_rest_url ); ?>">
 				<?php
