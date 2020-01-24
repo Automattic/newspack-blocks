@@ -50,7 +50,7 @@ class Edit extends Component {
 	/* If block is in "manual" mode, override certain state properties with values stored in attributes */
 	blockData() {
 		const { attributes } = this.props;
-		const { manual } = attributes;
+		const { manual, campaign } = attributes;
 		const data = { ...this.state, ...( manual ? attributes : {} ) };
 		if ( manual ) {
 			data.customDonationAmounts = {
@@ -59,6 +59,7 @@ class Edit extends Component {
 				year: data.tiered ? 12 * data.suggestedAmounts[ 1 ] : 12 * data.suggestedAmountUntiered,
 			};
 		}
+		data.campaign = campaign;
 		return data;
 	}
 
@@ -437,7 +438,8 @@ class Edit extends Component {
 	}
 
 	render() {
-		const { manual } = this.blockData();
+		const { setAttributes } = this.props;
+		const { manual, campaign } = this.blockData();
 		return (
 			<Fragment>
 				{ this.renderPlaceholder() }
@@ -470,6 +472,17 @@ class Edit extends Component {
 							{ this.renderManualControls() }
 						</PanelBody>
 					) }
+					<PanelBody title={ __( 'Advanced', 'newspack-blocks' ) }>
+						<TextControl
+							label={ __( 'Campaign ID', 'newspack-blocks' ) }
+							value={ campaign ? campaign : '' }
+							onChange={ value =>
+								setAttributes( {
+									campaign: value,
+								} )
+							}
+						/>
+					</PanelBody>
 				</InspectorControls>
 			</Fragment>
 		);
