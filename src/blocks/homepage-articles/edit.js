@@ -339,7 +339,7 @@ class Edit extends Component {
 							onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
 							help={
 								<>
-									{ __( 'The button will be displayed only if the sites is not private. ' ) }
+									{ __( 'The button will not be displayed on private sites. ' ) }
 									{
 										<ExternalLink href="https://en.support.wordpress.com/settings/#general">
 											{ __( 'More information' ) }
