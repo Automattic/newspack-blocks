@@ -302,9 +302,13 @@
 			}
 
 			.entry-wrapper {
-				padding: 2em;
+				padding: 2em 1em;
 				position: relative;
 				z-index: 2;
+
+				@include media( desktop ) {
+					padding: 2em 1.5em;
+				}
 			}
 
 			.entry-wrapper,
