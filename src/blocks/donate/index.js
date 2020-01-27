@@ -55,6 +55,9 @@ export const settings = {
 			type: 'boolean',
 			default: true,
 		},
+		campaign: {
+			type: 'string',
+		},
 	},
 	supports: {
 		html: false,

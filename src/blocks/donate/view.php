@@ -38,6 +38,8 @@ function newspack_blocks_render_block_donate( $attributes ) {
 	$selected_frequency = 'month';
 	$suggested_amounts  = $settings['suggestedAmounts'];
 
+	$campaign = $attributes['campaign'] ?? false;
+
 	$uid = rand(); // Unique identifier to prevent labels colliding with other instances of Donate block.
 
 	ob_start();
@@ -102,6 +104,9 @@ function newspack_blocks_render_block_donate( $attributes ) {
 				<button type='submit'>
 					<?php echo esc_html__( 'Donate now!', 'newspack-blocks' ); ?>
 				</button>
+				<?php if ( $campaign ) : ?>
+					<input type='hidden' name='campaign' value='<?php echo esc_attr( $campaign ); ?>' />
+				<?php endif; ?>
 			</form>
 		</div>
 		<?php
@@ -199,6 +204,9 @@ function newspack_blocks_render_block_donate( $attributes ) {
 				<button type='submit'>
 					<?php echo esc_html__( 'Donate now!', 'newspack-blocks' ); ?>
 				</button>
+				<?php if ( $campaign ) : ?>
+					<input type='hidden' name='campaign' value='<?php echo esc_attr( $campaign ); ?>' />
+				<?php endif; ?>
 			</form>
 		</div>
 		<?php
@@ -233,6 +241,9 @@ function newspack_blocks_register_donate() {
 					'type'    => 'boolean',
 					'default' => true,
 				],
+				'campaign'                => [
+					'type'    => 'string',
+				]
 			),
 			'render_callback' => 'newspack_blocks_render_block_donate',
 		)
