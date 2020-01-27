@@ -472,7 +472,7 @@ class Edit extends Component {
 							{ this.renderManualControls() }
 						</PanelBody>
 					) }
-					<PanelBody title={ __( 'Advanced', 'newspack-blocks' ) }>
+					<PanelBody title={ __( 'Campaign', 'newspack-blocks' ) } initialOpen={ false }>
 						<TextControl
 							label={ __( 'Campaign ID', 'newspack-blocks' ) }
 							value={ campaign ? campaign : '' }
