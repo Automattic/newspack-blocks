@@ -2,110 +2,112 @@
  * Internal dependencies
  */
 import QueryControls from '../query-controls';
-import AutocompleteTokenField from '../autocomplete-tokenfield';
 
 /**
  * WordPress dependencies
  */
-import apiFetch from '@wordpress/api-fetch';
-import { BaseControl } from '@wordpress/components';
+import { BaseControl, FormTokenField } from '@wordpress/components';
+import { compose, withState } from '@wordpress/compose';
+import { withSelect } from '@wordpress/data';
 import { Component, Fragment } from '@wordpress/element';
-import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
-import { addQueryArgs } from '@wordpress/url';
 
-const fetchAuthorSuggestions = async search => {
-	const users = await apiFetch( {
-		path: addQueryArgs( '/wp/v2/users', {
-			search,
-			per_page: 20,
-			_fields: 'id,name',
-		} ),
-	} );
+const AuthorField = compose(
+	withState( { authorValues: undefined } ),
+	withSelect( ( select, props ) => {
+		const { onChange, authorValues, setState, value } = props;
+		const allUsers = select( 'core' ).getAuthors();
 
-	return users.map( user => ( {
-		value: user.id,
-		label: decodeEntities( user.name ) || __( '(no name)', 'newspack-blocks' ),
-	} ) );
-};
+		const userIdFor = name => allUsers.find( u => u.name === name )?.id;
+		const userNameFor = id => allUsers.find( u => u.id === id )?.name;
 
-const fetchSavedAuthors = async userIDs => {
-	const users = await apiFetch( {
-		path: addQueryArgs( '/wp/v2/users', {
-			per_page: 100,
-			include: userIDs.join( ',' ),
-		} ),
-	} );
+		// initialize state from value once select returns
+		if ( ! authorValues && allUsers ) {
+			setState( {
+				authorValues: value.map( id => userNameFor( id ) || __( '(no name)', 'newspack-blocks' ) ),
+			} );
+		}
 
-	return users.map( user => ( {
-		value: user.id,
-		label: decodeEntities( user.name ) || __( '(no name)', 'newspack-blocks' ),
-	} ) );
-};
+		const updateAuthors = authorValues => {
+			setState( { authorValues } );
+			( onChange || noop )( authorValues.map( userIdFor ) );
+		};
 
-const fetchCategorySuggestions = async search => {
-	const categories = await apiFetch( {
-		path: addQueryArgs( '/wp/v2/categories', {
-			search,
-			per_page: 20,
-			_fields: 'id,name',
-			orderby: 'count',
-			order: 'desc',
-		} ),
-	} );
+		return {
+			value: authorValues,
+			suggestions: ( allUsers || [] ).map( user => user.name ),
+			onChange: updateAuthors,
+		};
+	} )
+)( props => {
+	return <FormTokenField label={ __( 'Author', 'newspack-blocks' ) } { ...props } />;
+} );
 
-	return categories.map( category => ( {
-		value: category.id,
-		label: decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' ),
-	} ) );
-};
+const CategoryField = compose(
+	withState( { categoryValues: undefined } ),
+	withSelect( ( select, props ) => {
+		const { onChange, categoryValues, setState, value } = props;
+		const allCategories = select( 'core' ).getEntityRecords( 'taxonomy', 'category' );
 
-const fetchSavedCategories = async categoryIDs => {
-	const categories = await apiFetch( {
-		path: addQueryArgs( '/wp/v2/categories', {
-			per_page: 100,
-			_fields: 'id,name',
-			include: categoryIDs.join( ',' ),
-		} ),
-	} );
+		const categoryIdFor = name => allCategories.find( c => c.name === name )?.id;
+		const categoryNameFor = id => allCategories.find( c => c.id === id )?.name;
 
-	return categories.map( category => ( {
-		value: category.id,
-		label: decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' ),
-	} ) );
-};
+		// initialize state from value once select returns
+		if ( ! categoryValues && value && allCategories?.length > 0 ) {
+			setState( {
+				categoryValues: value.map(
+					id => categoryNameFor( id ) || __( '(no title)', 'newspack-blocks' )
+				),
+			} );
+		}
 
-const fetchTagSuggestions = async search => {
-	const tags = await apiFetch( {
-		path: addQueryArgs( '/wp/v2/tags', {
-			search,
-			per_page: 20,
-			_fields: 'id,name',
-			orderby: 'count',
-			order: 'desc',
-		} ),
-	} );
+		const updateCategories = categoryValues => {
+			setState( { categoryValues } );
+			if ( onChange ) {
+				onChange( categoryValues.map( categoryIdFor ) );
+			}
+		};
 
-	return tags.map( tag => ( {
-		value: tag.id,
-		label: decodeEntities( tag.name ) || __( '(no title)', 'newspack-blocks' ),
-	} ) );
-};
+		return {
+			label: __( 'Category', 'newspack-blocks' ),
+			value: categoryValues,
+			suggestions: ( allCategories || [] ).map( category => category.name ),
+			onChange: updateCategories,
+		};
+	} )
+)( FormTokenField );
 
-const fetchSavedTags = async tagIDs => {
-	const tags = await apiFetch( {
-		path: addQueryArgs( '/wp/v2/tags', {
-			per_page: 100,
-			_fields: 'id,name',
-			include: tagIDs.join( ',' ),
-		} ),
-	} );
+const TagField = compose(
+	withState( { tagValues: undefined } ),
+	withSelect( ( select, props ) => {
+		const { onChange, tagValues, setState, value } = props;
+		const allTags = select( 'core' ).getEntityRecords( 'taxonomy', 'post_tag' );
 
-	return tags.map( tag => ( {
-		value: tag.id,
-		label: decodeEntities( tag.name ) || __( '(no title)', 'newspack-blocks' ),
-	} ) );
-};
+		const tagIdFor = name => allTags.find( c => c.name === name )?.id;
+		const tagNameFor = id => allTags.find( c => c.id === id )?.name;
+
+		// initialize state from value once select returns
+		if ( ! tagValues && value && allTags?.length > 0 ) {
+			setState( {
+				tagValues: value.map( id => tagNameFor( id ) || __( '(no title)', 'newspack-blocks' ) ),
+			} );
+		}
+
+		const updateTags = tagValues => {
+			setState( { tagValues } );
+			if ( onChange ) {
+				onChange( tagValues.map( tagIdFor ) );
+			}
+		};
+
+		return {
+			label: __( 'Tags', 'newspack-blocks' ),
+			value: tagValues,
+			suggestions: ( allTags || [] ).map( tag => tag.name ),
+			onChange: updateTags,
+		};
+	} )
+)( FormTokenField );
 
 export default class QueryPanel extends Component {
 	updateCriteria = newCriteria => {
@@ -160,35 +162,17 @@ export default class QueryPanel extends Component {
 					onSingleModeChange={ singleMode => this.updateCriteria( { singleMode } ) }
 				/>
 				{ ! singleMode && (
-					<Fragment>
-						<BaseControl>
-							<AutocompleteTokenField
-								tokens={ author || [] }
-								onChange={ author => this.updateCriteria( { author } ) }
-								fetchSuggestions={ fetchAuthorSuggestions }
-								fetchSavedInfo={ fetchSavedAuthors }
-								label={ __( 'Author', 'newspack-blocks' ) }
-							/>
-						</BaseControl>
-						<BaseControl>
-							<AutocompleteTokenField
-								tokens={ categories || [] }
-								onChange={ categories => this.updateCriteria( { categories } ) }
-								fetchSuggestions={ fetchCategorySuggestions }
-								fetchSavedInfo={ fetchSavedCategories }
-								label={ __( 'Category', 'newspack-blocks' ) }
-							/>
-						</BaseControl>
-						<BaseControl>
-							<AutocompleteTokenField
-								tokens={ tags || [] }
-								onChange={ tags => this.updateCriteria( { tags } ) }
-								fetchSuggestions={ fetchTagSuggestions }
-								fetchSavedInfo={ fetchSavedTags }
-								label={ __( 'Tag', 'newspack-blocks' ) }
-							/>
-						</BaseControl>
-					</Fragment>
+					<BaseControl>
+						<AuthorField
+							onChange={ author => this.updateCriteria( { author } ) }
+							value={ author }
+						/>
+						<CategoryField
+							onChange={ categories => this.updateCriteria( { categories } ) }
+							value={ categories }
+						/>
+						<TagField onChange={ tags => this.updateCriteria( { tags } ) } value={ tags } />
+					</BaseControl>
 				) }
 			</Fragment>
 		);
