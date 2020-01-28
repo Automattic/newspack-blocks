@@ -14,7 +14,7 @@
 
 define( 'NEWSPACK_BLOCKS__BLOCKS_DIRECTORY', 'dist/' );
 define( 'NEWSPACK_BLOCKS__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'NEWSPACK_BLOCKS__VERSION', '1.0.0-alpha.23' );
+define( 'NEWSPACK_BLOCKS__VERSION', '1.0.0-alpha.24' );
 
 require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'class-newspack-blocks.php';
 require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'class-newspack-blocks-api.php';
