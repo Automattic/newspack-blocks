@@ -7,7 +7,7 @@
  * Author URI:      https://newspack.blog/
  * Text Domain:     newspack-blocks
  * Domain Path:     /languages
- * Version:         1.0.0-alpha.23
+ * Version:         1.0.0-alpha.24
  *
  * @package         Newspack_Blocks
  */
