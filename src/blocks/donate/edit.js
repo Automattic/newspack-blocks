@@ -315,7 +315,7 @@ class Edit extends Component {
 			return null;
 		}
 		if ( isLoading ) {
-			return <Placeholder icon={ <Spinner /> } />;
+			return <Placeholder icon={ <Spinner /> } className="component-placeholder__align-center" />;
 		}
 		if ( error.length ) {
 			return (

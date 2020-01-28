@@ -628,9 +628,7 @@ class Edit extends Component {
 							<Placeholder>{ __( 'Sorry, no posts were found.', 'newspack-blocks' ) }</Placeholder>
 						) }
 						{ ! latestPosts && (
-							<Placeholder>
-								<Spinner />
-							</Placeholder>
+							<Placeholder icon={ <Spinner /> } className="component-placeholder__align-center" />
 						) }
 						{ latestPosts && latestPosts.map( post => this.renderPost( post ) ) }
 					</div>
