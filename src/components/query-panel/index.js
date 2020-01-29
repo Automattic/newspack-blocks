@@ -22,7 +22,7 @@ const AuthorField = compose(
 		const userNameFor = id => allUsers.find( u => u.id === id )?.name;
 
 		// initialize state from value once select returns
-		if ( ! authorValues && allUsers ) {
+		if ( ! authorValues && value && allUsers ) {
 			setState( {
 				authorValues: value.map( id => userNameFor( id ) || __( '(no name)', 'newspack-blocks' ) ),
 			} );
@@ -44,35 +44,50 @@ const AuthorField = compose(
 } );
 
 const CategoryField = compose(
-	withState( { categoryValues: undefined } ),
+	withState( { input: undefined } ),
 	withSelect( ( select, props ) => {
-		const { onChange, categoryValues, setState, value } = props;
-		const allCategories = select( 'core' ).getEntityRecords( 'taxonomy', 'category' );
+		const { onChange, setState, value, input } = props;
 
-		const categoryIdFor = name => allCategories.find( c => c.name === name )?.id;
-		const categoryNameFor = id => allCategories.find( c => c.id === id )?.name;
-
-		// initialize state from value once select returns
-		if ( ! categoryValues && value && allCategories?.length > 0 ) {
-			setState( {
-				categoryValues: value.map(
-					id => categoryNameFor( id ) || __( '(no title)', 'newspack-blocks' )
-				),
-			} );
+		let currentValues = [];
+		if ( value.length ) {
+			currentValues = (
+				select( 'core' ).getEntityRecords( 'taxonomy', 'category', {
+					per_page: value.length,
+					include: value.join( ',' ),
+				} ) || []
+			).map( c => ( {
+				value: c.name || __( '(no title)', 'newspack-blocks' ),
+				id: c.id,
+			} ) );
 		}
 
+		const rawSuggestions =
+			select( 'core' ).getEntityRecords( 'taxonomy', 'category', {
+				per_page: 100,
+				search: input,
+				exclude: value.join( ',' ),
+			} ) || [];
+
 		const updateCategories = categoryValues => {
-			setState( { categoryValues } );
 			if ( onChange ) {
-				onChange( categoryValues.map( categoryIdFor ) );
+				onChange(
+					categoryValues
+						.map( value =>
+							typeof value === 'object'
+								? value.id
+								: rawSuggestions.find( cat => cat.name == value )?.id
+						)
+						.filter( catId => typeof catId !== 'undefined' )
+				);
 			}
 		};
 
 		return {
 			label: __( 'Category', 'newspack-blocks' ),
-			value: categoryValues,
-			suggestions: ( allCategories || [] ).map( category => category.name ),
+			value: currentValues,
+			suggestions: rawSuggestions.map( c => c.name || __( '(no title)', 'newspack-blocks' ) ),
 			onChange: updateCategories,
+			onInputChange: input => setState( { input } ),
 		};
 	} )
 )( FormTokenField );
