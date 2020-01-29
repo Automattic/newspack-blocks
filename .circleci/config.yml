@@ -44,7 +44,7 @@ jobs:
 
 workflows:
   version: 2
-  quality_assurance:
+  all:
     jobs:
       - build
       - lint:
@@ -55,4 +55,6 @@ workflows:
             - build
           filters:
             branches:
-              only: release
+              only:
+                - release
+                - pre-release
