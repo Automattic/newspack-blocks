@@ -111,13 +111,14 @@ class Edit extends Component {
 		} );
 	};
 
-	addManualVideo = () => {
+	addManualVideo() {
 		const { attributes, setAttributes } = this.props;
-		const { videos } = this.attributes;
+		const { videos } = attributes;
 		const { videoToAdd } = this.state;
 
 		videos.push( videoToAdd );
 		setAttributes( { videos } );
+		console.log( videos );
 		this.setState( { videoToAdd: '' } );
 	}
 
