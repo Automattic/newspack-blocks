@@ -51,10 +51,14 @@ export const settings = {
 			type: 'array',
 			default: [],
 		},
+		videosToShow: {
+			type: 'integer',
+			default: 5
+		},
 	},
 	supports: {
 		html: false,
-		// align: false,
+		align: false,
 	},
 	edit,
 	save: () => null, // to use view.php

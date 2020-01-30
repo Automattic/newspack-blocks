@@ -41,6 +41,10 @@ function newspack_blocks_register_video_playlist() {
 					'type' => 'array',
 					'default' => [],
 				],
+				'videosToShow'     => [
+					"type" => "integer",
+					"default" => 5,
+				],
 			),
 			'render_callback' => 'newspack_blocks_render_block_video_playlist',
 		)
@@ -52,7 +56,8 @@ function newspack_blocks_get_video_playlist( $args ) {
 	$defaults = [
 		'categories' => [],
 		'videos'     => [],
-		'limit'      => 5,
+		'videosToShow'      => 5,
+		'className'  => '',
 	];
 	$args = wp_parse_args( $args, $defaults );
 
@@ -64,7 +69,7 @@ function newspack_blocks_get_video_playlist( $args ) {
 
 	$html = '';
 	if ( $videos ) {
-		$html = newspack_blocks_get_video_playlist_html( $videos );
+		$html = newspack_blocks_get_video_playlist_html( $videos, $args );
 	}
 
 	return [
@@ -76,7 +81,7 @@ function newspack_blocks_get_video_playlist( $args ) {
 function newspack_blocks_get_video_playlist_videos( $args ) {
 	$defaults = [
 		'categories' => [],
-		'limit' => 5,
+		'videosToShow' => 5,
 	];
 	$args = wp_parse_args( $args, $defaults );
 
@@ -84,7 +89,7 @@ function newspack_blocks_get_video_playlist_videos( $args ) {
 		'post_type'      => 'post',
 		'post_status'    => 'publish',
 		's'              => 'core-embed/youtube',
-		'posts_per_page' => $args['limit'],
+		'posts_per_page' => $args['videosToShow'],
 	];
 
 	$videos = [];
@@ -99,10 +104,10 @@ function newspack_blocks_get_video_playlist_videos( $args ) {
 		}
 	}
 
-	return array_slice( array_unique( $videos ), 0, $args['limit'] );
+	return array_slice( array_unique( $videos ), 0, $args['videosToShow'] );
 }
 
-function newspack_blocks_get_video_playlist_html( $videos ) {
+function newspack_blocks_get_video_playlist_html( $videos, $args = [] ) {
 	$video_ids = [];
 	foreach ( $videos as $video ) {
 		$url_parts = wp_parse_url( $video );
@@ -125,9 +130,17 @@ function newspack_blocks_get_video_playlist_html( $videos ) {
 		$url .= '&playlist=' . implode( ',', array_slice( $video_ids, 1 ) );
 	}
 
+	$classes = 'wp-block-newspack-blocks-video-playlist wpbnbvp wp-block-embed-youtube wp-block-embed is-type-video is-provider-youtube wp-embed-aspect-16-9 wp-has-aspect-ratio';
+	if ( ! empty( $args['className'] ) ) {
+		$classes .= $args['className'];
+	}
 	ob_start();
 	?>
-	<iframe width="560" height="315" src="<?php echo esc_attr( $url ); ?>" frameborder="0" allowfullscreen></iframe>
+	<figure class='<?php echo esc_attr( $classes ); ?>'>
+		<div class='wp-block-embed__wrapper'>
+			<iframe width='960' height='540' src='<?php echo esc_attr( $url ); ?>' frameborder='0' allowfullscreen></iframe>
+		</div>
+	</figure>
 	<?php
 	return ob_get_clean();
 }

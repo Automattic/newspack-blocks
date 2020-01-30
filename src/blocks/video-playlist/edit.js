@@ -4,7 +4,15 @@
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import { Component, Fragment } from '@wordpress/element';
-import { Placeholder, Spinner } from '@wordpress/components';
+import { Placeholder, Spinner, PanelBody, PanelRow, RangeControl, ToggleControl, TextControl, Button } from '@wordpress/components';
+import { InspectorControls } from '@wordpress/block-editor';
+import { addQueryArgs } from '@wordpress/url';
+import { decodeEntities } from '@wordpress/html-entities';
+
+/**
+ * Internal dependencies.
+ */
+import AutocompleteTokenField from '../../components/autocomplete-tokenfield';
 
 class Edit extends Component {
 	constructor( props ) {
@@ -13,6 +21,7 @@ class Edit extends Component {
 			isLoading: false,
 			error: '',
 			embed: '',
+			videoToAdd: '',
 		};
 	}
 
@@ -42,7 +51,7 @@ class Edit extends Component {
 	}
 
 	renderPlaceholder() {
-		const { isLoading, error } = this.state;
+		const { isLoading, error, embed } = this.state;
 
 		if ( isLoading ) {
 			return <Placeholder icon={ <Spinner /> } className="component-placeholder__align-center" />;
@@ -58,16 +67,128 @@ class Edit extends Component {
 			);
 		}
 
+		if ( ! embed.length ) {
+			return (
+				<Placeholder
+					icon="warning"
+					label={ __( 'Error', 'newspack-blocks' ) }
+					instructions={ __( 'No videos found', 'newspack-blocks' ) }
+				/>
+			);
+		}
+
 		return null;
 	}
 
+	fetchCategorySuggestions = search => {
+		return apiFetch( {
+			path: addQueryArgs( '/wp/v2/categories', {
+				search,
+				per_page: 20,
+				_fields: 'id,name',
+				orderby: 'count',
+				order: 'desc',
+			} ),
+		} ).then( function( categories ) {
+			return categories.map( category => ( {
+				value: category.id,
+				label: decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' ),
+			} ) );
+		} );
+	};
+	fetchSavedCategories = categoryIDs => {
+		return apiFetch( {
+			path: addQueryArgs( '/wp/v2/categories', {
+				per_page: 100,
+				_fields: 'id,name',
+				include: categoryIDs.join( ',' ),
+			} ),
+		} ).then( function( categories ) {
+			return categories.map( category => ( {
+				value: category.id,
+				label: decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' ),
+			} ) );
+		} );
+	};
+
+	addManualVideo = () => {
+		const { attributes, setAttributes } = this.props;
+		const { videos } = this.attributes;
+		const { videoToAdd } = this.state;
+
+		videos.push( videoToAdd );
+		setAttributes( { videos } );
+		this.setState( { videoToAdd: '' } );
+	}
+
 	render() {
-		const { embed } = this.state;
+		const { attributes, setAttributes } = this.props;
+		const { manual, videos, categories, videosToShow } = attributes;
+		const { embed, isLoading, videoToAdd } = this.state;
 
 		return (
 			<Fragment>
-				{ this.renderPlaceholder() }
-				<div className="wp-block-embed__wrapper" dangerouslySetInnerHTML={ { __html: embed } } />
+				{ ( isLoading || '' === embed ) && this.renderPlaceholder() }
+				{ ! ( isLoading || '' === embed ) && (
+					<div dangerouslySetInnerHTML={ { __html: embed } } />
+				) }
+				<InspectorControls>
+					<PanelBody title={ __( 'Settings', 'newspack-blocks' ) } initialOpen={ true }>
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Manually select videos', 'newspack-blocks' ) }
+								checked={ manual }
+								onChange={ () => setAttributes( { manual: ! manual } ) }
+							/>
+						</PanelRow>
+						{ manual && (
+							<Fragment>
+								{ videos.map( function( video, index ) {
+									<div>
+										{ video }
+										<span>X</span>
+									</div>
+								} ) }
+								<TextControl
+									label={ __( 'Add video', 'newspack-blocks' ) }
+									value={ videoToAdd }
+    								onChange={ ( _videoToAdd ) => this.setState( { videoToAdd: _videoToAdd } ) }
+    							/>
+								<Button 
+									isSecondary
+									onClick={ () => this.addManualVideo() }
+									>
+    								{ __( 'Add', 'newspack-blocks' ) }
+								</Button>
+							</Fragment>
+						) }
+						{ ! manual && (
+							<Fragment>
+									<RangeControl
+										className='videosToShow'
+										label={ __( 'Videos', 'newspack-blocks' ) }
+										help={ __(
+											"The maximum number of videos to pull from posts.",
+											'newspack-blocks'
+										) }
+										value={ videosToShow }
+										onChange={ _videosToShow => setAttributes( { videosToShow: _videosToShow } ) }
+										min={ 1 }
+										max={ 30 }
+										required
+									/>
+									<AutocompleteTokenField
+										key="categories"
+										tokens={ categories || [] }
+										onChange={ _categories => setAttributes( { categories: _categories } ) }
+										fetchSuggestions={ this.fetchCategorySuggestions }
+										fetchSavedInfo={ this.fetchSavedCategories }
+										label={ __( 'Categories', 'newspack-blocks' ) }
+									/>
+							</Fragment>
+						) }
+					</PanelBody>
+				</InspectorControls>
 			</Fragment>
 		);
 	}

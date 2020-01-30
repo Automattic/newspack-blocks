@@ -1,7 +1,11 @@
 @import '../../shared/sass/colors';
 @import '../../shared/sass/placeholder';
 
-.wp-block-newspack-blocks-video-playlist {
-	background: $color__primary;
-	border: 5px solid red;
+.wpbnbvp::before {
+	content: "";
+	width: 100%;
+	height: 100%;
+	display: block;
+	position: absolute;
+	z-index: 1;
 }
