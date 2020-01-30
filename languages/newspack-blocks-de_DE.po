@@ -3,7 +3,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Project-Id-Version: Newspack Blocks\n"
 "POT-Creation-Date: 2019-12-19 09:29-0800\n"
-"PO-Revision-Date: 2020-01-29 16:23-0800\n"
+"PO-Revision-Date: 2020-01-30 15:56-0800\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -102,7 +102,7 @@ msgstr "von %s"
 #: src/blocks/carousel/view.php:192
 #, php-format
 msgid "Go to slide %d"
-msgstr ""
+msgstr "Gehe zu Bild %d"
 
 #: src/blocks/carousel/view.php:209
 msgid "Next Slide"
@@ -118,7 +118,7 @@ msgstr "Diashow pausieren"
 
 #: src/blocks/carousel/view.php:250
 msgid "Play Slideshow"
-msgstr ""
+msgstr "Diashow abspielen"
 
 #: src/blocks/donate/edit.js:89 src/blocks/donate/edit.js:155
 #: src/blocks/donate/view.php:28
@@ -143,7 +143,7 @@ msgstr "Spendenbetrag"
 #: src/blocks/donate/edit.js:134 src/blocks/donate/edit.js:238
 #: src/blocks/donate/view.php:91 src/blocks/donate/view.php:185
 msgid "Your contribution is appreciated."
-msgstr ""
+msgstr "Herzlichen Dank für Ihre Unterstützung."
 
 #: src/blocks/donate/edit.js:137 src/blocks/donate/edit.js:241
 #: src/blocks/donate/view.php:94 src/blocks/donate/view.php:188
