@@ -77,13 +77,7 @@
     "*.scss": "npm run lint:scss:staged"
   },
   "release": {
-    "branches": [
-      "release",
-      {
-        "name": "pre-release",
-        "prerelease": true
-      }
-    ],
+    "branches": [ "release" ],
     "prepare": [
       "@semantic-release/changelog",
       "@semantic-release/npm",

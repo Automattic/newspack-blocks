@@ -50,11 +50,9 @@ workflows:
       - lint:
           requires:
             - build
-      - release:
-          requires:
-            - build
-          filters:
-            branches:
-              only:
-                - release
-                - pre-release
+      # - release:
+      #     requires:
+      #       - build
+      #     filters:
+      #       branches:
+      #         only: release
