@@ -4,7 +4,7 @@
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import { Component, Fragment } from '@wordpress/element';
-import { Placeholder, Spinner, PanelBody, PanelRow, RangeControl, ToggleControl, TextControl, Button } from '@wordpress/components';
+import { Placeholder, Spinner, PanelBody, PanelRow, RangeControl, ToggleControl, TextControl, Button, FormTokenField } from '@wordpress/components';
 import { InspectorControls } from '@wordpress/block-editor';
 import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -111,14 +111,9 @@ class Edit extends Component {
 		} );
 	};
 
-	addManualVideo() {
-		const { attributes, setAttributes } = this.props;
-		const { videos } = attributes;
-		const { videoToAdd } = this.state;
-
-		videos.push( videoToAdd );
-		setAttributes( { videos } );
-		console.log( videos );
+	addManualVideo( tokens) {
+		const { setAttributes } = this.props;
+		setAttributes( { videos: tokens } );
 		this.setState( { videoToAdd: '' } );
 	}
 
@@ -143,25 +138,14 @@ class Edit extends Component {
 							/>
 						</PanelRow>
 						{ manual && (
-							<Fragment>
-								{ videos.map( function( video, index ) {
-									<div>
-										{ video }
-										<span>X</span>
-									</div>
-								} ) }
-								<TextControl
-									label={ __( 'Add video', 'newspack-blocks' ) }
-									value={ videoToAdd }
-    								onChange={ ( _videoToAdd ) => this.setState( { videoToAdd: _videoToAdd } ) }
-    							/>
-								<Button 
-									isSecondary
-									onClick={ () => this.addManualVideo() }
-									>
-    								{ __( 'Add', 'newspack-blocks' ) }
-								</Button>
-							</Fragment>
+							<FormTokenField
+								value={ videos }
+								suggestions={ [ videoToAdd ] }
+								onChange={ tokens => this.addManualVideo( tokens ) }
+								onInputChange={ value => this.setState( { videoToAdd: value } ) }
+								placeholder={ __( 'YouTube video URL', 'newspack-blocks' ) }
+								label={ __( 'YouTube video URLs', 'newspack-blocks' ) }
+							/>
 						) }
 						{ ! manual && (
 							<Fragment>
