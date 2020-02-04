@@ -5,6 +5,10 @@ import { registerBlockType } from '@wordpress/blocks';
 import { name, settings } from '.';
 registerBlockType( `newspack-blocks/${ name }`, settings );
 
+import { registerQueryStore, registerDeduplicatedBlock } from '../homepage-articles/store';
+registerQueryStore();
+registerDeduplicatedBlock( `newspack-blocks/${ name }` );
+
 import { registerAuthorBlock } from './field-blocks/author';
 import { registerCategoriesBlock } from './field-blocks/categories';
 import { registerTitleBlock } from './field-blocks/title';

@@ -1,13 +1,10 @@
 import { registerStore, select, subscribe, dispatch } from '@wordpress/data';
 import { uniq, compact } from 'lodash';
 
-import metadata from './block.json';
+export const STORE_NAMESPACE = 'newspack-blocks/post-deduplication';
+const blockNames = [];
 
-// TODO clean this up
-const { name } = metadata;
-const namespace = 'newspack-blocks';
-export const STORE_NAMESPACE = `${ namespace }/post-deduplication`;
-const blockNames = [ `${ namespace }/${ name }`, `${ namespace }/query` ];
+export const registerDeduplicatedBlock = blockName => blockNames.push( blockName );
 
 const initialState = {
 	queryBlocks: [], // list of Query blocks in the order they are on the page
@@ -115,7 +112,10 @@ const reducer = ( state = initialState, action ) => {
 	return state;
 };
 
+let registered = false;
 export const registerQueryStore = () => {
+	if ( registered ) return;
+
 	registerStore( STORE_NAMESPACE, {
 		reducer,
 		actions,
@@ -137,4 +137,6 @@ export const registerQueryStore = () => {
 			updateBlocks( getBlocks() );
 		}
 	} );
+
+	registered = true;
 };
