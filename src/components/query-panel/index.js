@@ -1,9 +1,4 @@
 /**
- * Internal dependencies
- */
-// import QueryControls from '../query-controls';
-
-/**
  * WordPress dependencies
  */
 import { BaseControl, FormTokenField, QueryControls, ToggleControl } from '@wordpress/components';
@@ -19,15 +14,17 @@ const EntityTokenField = compose(
 
 		let currentValues = [];
 		if ( value.length ) {
-			currentValues = (
+			const serverValues =
 				select( 'core' ).getEntityRecords( entityKind, entityName, {
 					per_page: value.length,
 					include: value.join( ',' ),
-				} ) || []
-			).map( entity => ( {
-				value: entityToString( entity ),
-				id: entity.id,
-			} ) );
+				} ) || [];
+			currentValues = value
+				.map( id => {
+					const entity = serverValues.find( e => e.id === id );
+					return entity ? { value: entityToString( entity ), id: entity.id } : undefined;
+				} )
+				.filter( v => !! v );
 		}
 
 		const rawSuggestions =
@@ -43,7 +40,7 @@ const EntityTokenField = compose(
 					.map( value =>
 						typeof value === 'object'
 							? value.id
-							: rawSuggestions.find( e => entityToString( e ) == value )?.id
+							: rawSuggestions.find( entity => entityToString( entity ) == value )?.id
 					)
 					.filter( catId => typeof catId !== 'undefined' );
 				onChange( entityIds );
