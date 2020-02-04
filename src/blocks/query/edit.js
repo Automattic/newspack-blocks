@@ -7,7 +7,7 @@ import { QueryPanel } from '../../components';
  * External dependencies
  */
 import classNames from 'classnames';
-import { debounce } from 'lodash';
+import { debounce, isUndefined, pickBy } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -155,28 +155,50 @@ class Edit extends Component {
 	};
 }
 
+const isSpecificPostModeActive = ( { specificMode, specificPosts } ) =>
+	specificMode && specificPosts && specificPosts.length;
+
+const queryCriteriaFromAttributes = criteria => {
+	const { per_page, authors, categories, tags, specificPosts, specificMode } = criteria;
+	const queryCriteria = pickBy(
+		isSpecificPostModeActive( criteria )
+			? {
+					include: specificPosts,
+					orderby: 'include',
+					per_page: specificPosts.length,
+			  }
+			: {
+					per_page,
+					categories,
+					author: authors,
+					tags,
+			  },
+		value => ! isUndefined( value )
+	);
+	return queryCriteria;
+};
+
 export default compose(
 	withSelect( ( select, props ) => {
 		const { attributes, clientId } = props;
-		const criteria = { ...attributes.criteria };
+		const { criteria } = attributes;
+		const queryCriteria = queryCriteriaFromAttributes( criteria );
 
-		if ( ! criteria.specificMode ) {
+		if ( ! isSpecificPostModeActive( criteria ) ) {
 			const postIdsToExclude = select( 'newspack-blocks/post-deduplication' ).previousPostIds(
 				clientId
 			);
-			criteria.exclude = postIdsToExclude.join( ',' );
-		} else {
-			criteria.posts__in = criteria.specificPosts?.join( ',' );
+			queryCriteria.exclude = postIdsToExclude.join( ',' );
 		}
 
 		return {
-			query: select( 'core' ).getEntityRecords( 'postType', 'post', { ...criteria } ),
+			query: select( 'core' ).getEntityRecords( 'postType', 'post', queryCriteria ),
 		};
 	} ),
 	withDispatch( ( dispatch, props ) => {
 		const { attributes } = props;
 		const { criteria } = attributes;
-		const markPostsAsDisplayed = criteria.specificMode
+		const markPostsAsDisplayed = isSpecificPostModeActive( criteria )
 			? dispatch( 'newspack-blocks/post-deduplication' ).markSpecificPostsAsDisplayed
 			: dispatch( 'newspack-blocks/post-deduplication' ).markPostsAsDisplayed;
 

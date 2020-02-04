@@ -64,7 +64,6 @@ export default class QueryPanel extends Component {
 	updateCriteria = newCriteria => {
 		const { criteria, onChange } = this.props;
 		const { per_page, offset, categories, tags, search, author, specificMode, specificPosts } = {
-			...QueryPanel.defaultProps,
 			...criteria,
 			...newCriteria,
 		};
@@ -96,20 +95,11 @@ export default class QueryPanel extends Component {
 	};
 
 	render = () => {
-		const { criteria, postList } = this.props;
+		const { criteria } = this.props;
 		const { author, per_page, specificMode, specificPosts, categories, tags } = criteria;
 
 		return (
 			<Fragment>
-				{ /* <QueryControls
-					numberOfItems={ per_page }
-					onNumberOfItemsChange={ per_page => this.updateCriteria( { per_page } ) }
-					postList={ postList }
-					specificMode={ specificMode }
-					specificPosts={ specificPosts }
-					onSingleChange={ specificPosts => this.updateCriteria( { specificPosts } ) }
-					onSpecificModeChange={ specificMode => this.updateCriteria( { specificMode } ) }
-				/> */ }
 				<ToggleControl
 					key="specificMode"
 					checked={ specificMode }
