@@ -116,10 +116,7 @@ class Edit extends Component {
 						<QueryPanel
 							criteria={ criteria }
 							postList={ postList }
-							onChange={ criteria => {
-								setAttributes( { criteria } );
-								// updateCriteria( clientId, criteria );
-							} }
+							onChange={ criteria => setAttributes( { criteria } ) }
 						/>
 					</PanelBody>
 				</InspectorControls>
@@ -161,13 +158,15 @@ class Edit extends Component {
 export default compose(
 	withSelect( ( select, props ) => {
 		const { attributes, clientId } = props;
-		const { criteria } = attributes;
+		const criteria = { ...attributes.criteria };
 
-		if ( ! criteria.singleMode ) {
+		if ( ! criteria.specificMode ) {
 			const postIdsToExclude = select( 'newspack-blocks/post-deduplication' ).previousPostIds(
 				clientId
 			);
 			criteria.exclude = postIdsToExclude.join( ',' );
+		} else {
+			criteria.posts__in = criteria.specificPosts?.join( ',' );
 		}
 
 		return {
@@ -177,7 +176,7 @@ export default compose(
 	withDispatch( ( dispatch, props ) => {
 		const { attributes } = props;
 		const { criteria } = attributes;
-		const markPostsAsDisplayed = criteria.singleMode
+		const markPostsAsDisplayed = criteria.specificMode
 			? dispatch( 'newspack-blocks/post-deduplication' ).markSpecificPostsAsDisplayed
 			: dispatch( 'newspack-blocks/post-deduplication' ).markPostsAsDisplayed;
 

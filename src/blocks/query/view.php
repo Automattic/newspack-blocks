@@ -108,7 +108,7 @@ class Newspack_Blocks_Query {
 	 * @return array Return an array of args.
 	 */
 	private function newspack_blocks_criteria_to_args( $criteria ) {
-		if ( $criteria[ 'singleMode' ] == 1 ) {
+		if ( $criteria[ 'specificMode' ] == 1 ) {
 			$args = array(
 				'post_status' => 'publish',
 				'p' => $criteria[ 'singleId' ],

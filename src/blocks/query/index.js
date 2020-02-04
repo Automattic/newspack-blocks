@@ -44,6 +44,10 @@ export const settings = {
 			default: {
 				per_page: 3,
 				offset: 0,
+				tags: [],
+				categories: [],
+				author: [],
+				specificPosts: [],
 			},
 		},
 		blocks: {

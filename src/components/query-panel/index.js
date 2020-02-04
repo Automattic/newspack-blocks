@@ -1,12 +1,12 @@
 /**
  * Internal dependencies
  */
-import QueryControls from '../query-controls';
+// import QueryControls from '../query-controls';
 
 /**
  * WordPress dependencies
  */
-import { BaseControl, FormTokenField } from '@wordpress/components';
+import { BaseControl, FormTokenField, QueryControls, ToggleControl } from '@wordpress/components';
 import { compose, withState } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
 import { Component, Fragment } from '@wordpress/element';
@@ -15,7 +15,7 @@ import { __ } from '@wordpress/i18n';
 const EntityTokenField = compose(
 	withState( { input: undefined } ),
 	withSelect( ( select, props ) => {
-		const { entityKind, entityName, onChange, setState, value, input } = props;
+		const { entityKind, entityName, entityToString, onChange, setState, value, input } = props;
 
 		let currentValues = [];
 		if ( value.length ) {
@@ -25,7 +25,7 @@ const EntityTokenField = compose(
 					include: value.join( ',' ),
 				} ) || []
 			).map( entity => ( {
-				value: entity.name || '🤷‍♂️',
+				value: entityToString( entity ),
 				id: entity.id,
 			} ) );
 		}
@@ -43,7 +43,7 @@ const EntityTokenField = compose(
 					.map( value =>
 						typeof value === 'object'
 							? value.id
-							: rawSuggestions.find( cat => cat.name == value )?.id
+							: rawSuggestions.find( e => entityToString( e ) == value )?.id
 					)
 					.filter( catId => typeof catId !== 'undefined' );
 				onChange( entityIds );
@@ -53,7 +53,7 @@ const EntityTokenField = compose(
 		return {
 			...props,
 			value: currentValues,
-			suggestions: rawSuggestions.map( c => c.name ),
+			suggestions: rawSuggestions.map( c => entityToString( c ) ),
 			onChange: updateValue,
 			onInputChange: input => setState( { input } ),
 		};
@@ -63,7 +63,8 @@ const EntityTokenField = compose(
 export default class QueryPanel extends Component {
 	updateCriteria = newCriteria => {
 		const { criteria, onChange } = this.props;
-		const { per_page, offset, categories, tags, search, author, singleMode, singleId } = {
+		const { per_page, offset, categories, tags, search, author, specificMode, specificPosts } = {
+			...QueryPanel.defaultProps,
 			...criteria,
 			...newCriteria,
 		};
@@ -71,7 +72,8 @@ export default class QueryPanel extends Component {
 		const sanitizedCriteria = {
 			per_page: parseInt( per_page ),
 			offset: parseInt( offset ),
-			singleMode: !! singleMode,
+			specificMode: !! specificMode,
+			specificPosts,
 		};
 
 		if ( author ) {
@@ -90,33 +92,51 @@ export default class QueryPanel extends Component {
 			sanitizedCriteria.search = search;
 		}
 
-		if ( singleMode && parseInt( singleId ) ) {
-			sanitizedCriteria.singleId = parseInt( singleId );
-		}
-
 		return onChange( sanitizedCriteria );
 	};
 
 	render = () => {
 		const { criteria, postList } = this.props;
-		const { author, per_page, singleMode, singleId, categories, tags } = criteria;
+		const { author, per_page, specificMode, specificPosts, categories, tags } = criteria;
 
 		return (
 			<Fragment>
-				<QueryControls
+				{ /* <QueryControls
 					numberOfItems={ per_page }
 					onNumberOfItemsChange={ per_page => this.updateCriteria( { per_page } ) }
 					postList={ postList }
-					singleMode={ singleMode }
-					selectedSingleId={ singleId }
-					onSingleChange={ singleId => this.updateCriteria( { singleId } ) }
-					onSingleModeChange={ singleMode => this.updateCriteria( { singleMode } ) }
+					specificMode={ specificMode }
+					specificPosts={ specificPosts }
+					onSingleChange={ specificPosts => this.updateCriteria( { specificPosts } ) }
+					onSpecificModeChange={ specificMode => this.updateCriteria( { specificMode } ) }
+				/> */ }
+				<ToggleControl
+					key="specificMode"
+					checked={ specificMode }
+					onChange={ specificMode => this.updateCriteria( { specificMode } ) }
+					label={ __( 'Choose Specific Posts', 'newspack-blocks' ) }
 				/>
-				{ ! singleMode && (
+				{ specificMode && (
+					<EntityTokenField
+						entityKind="postType"
+						entityName="post"
+						entityToString={ e => e.title.rendered }
+						label="Entity Posts"
+						onChange={ specificPosts => this.updateCriteria( { specificPosts } ) }
+						value={ specificPosts }
+					/>
+				) }
+				{ ! specificMode && (
 					<BaseControl>
+						<QueryControls
+							key="queryControls"
+							numberOfItems={ per_page }
+							onNumberOfItemsChange={ per_page => this.updateCriteria( { per_page } ) }
+						/>
 						<EntityTokenField
 							entityKind="root"
 							entityName="user"
+							entityToString={ e => e.name }
 							label={ __( 'Author', 'newspack-blocks' ) }
 							onChange={ author => this.updateCriteria( { author } ) }
 							value={ author }
@@ -124,6 +144,7 @@ export default class QueryPanel extends Component {
 						<EntityTokenField
 							entityKind="taxonomy"
 							entityName="category"
+							entityToString={ e => e.name }
 							label={ __( 'Category', 'newspack-blocks' ) }
 							onChange={ categories => this.updateCriteria( { categories } ) }
 							value={ categories }
@@ -131,6 +152,7 @@ export default class QueryPanel extends Component {
 						<EntityTokenField
 							entityKind="taxonomy"
 							entityName="post_tag"
+							entityToString={ e => e.name }
 							label={ __( 'tags', 'newspack-blocks' ) }
 							onChange={ tags => this.updateCriteria( { tags } ) }
 							value={ tags }
@@ -146,8 +168,8 @@ QueryPanel.defaultProps = {
 	criteria: {
 		per_page: 3,
 		offset: 0,
-		singleMode: false,
-		singleId: 0,
+		specificMode: false,
+		specificPosts: [],
 		author: [],
 		categories: [],
 		tags: [],
