@@ -4,7 +4,15 @@
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import { Component, Fragment } from '@wordpress/element';
-import { Placeholder, Spinner, PanelBody, PanelRow, RangeControl, ToggleControl, TextControl, Button, FormTokenField } from '@wordpress/components';
+import {
+	Placeholder,
+	Spinner,
+	PanelBody,
+	PanelRow,
+	RangeControl,
+	ToggleControl,
+	FormTokenField,
+} from '@wordpress/components';
 import { InspectorControls } from '@wordpress/block-editor';
 import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -25,26 +33,45 @@ class Edit extends Component {
 		};
 	}
 
+	/**
+	 * Refresh preview on load.
+	 */
 	componentDidMount() {
-		this.refreshSettings();
+		this.refreshPreview();
 	}
 
+	/**
+	 * Refresh preview if something changes.
+	 *
+	 * @param {Object} prevProps Previous object props.
+	 */
 	componentDidUpdate( prevProps ) {
-		console.log( "COMPONENT DID UPDATE");
 		const { attributes } = this.props;
 		const { manual, videos, categories, videosToShow } = attributes;
 		const { attributes: prevAttributes } = prevProps;
-		const { manual: prevManual, videos: prevVideos, categories: prevCategories, videosToShow: prevVideosToShow } = prevAttributes;
-		console.log( prevAttributes );
-		console.log( attributes );
-		if ( manual !== prevManual || videos !== prevVideos || categories !== prevCategories || videosToShow !== prevVideosToShow ) {
-			this.refreshSettings();
+		const {
+			manual: prevManual,
+			videos: prevVideos,
+			categories: prevCategories,
+			videosToShow: prevVideosToShow,
+		} = prevAttributes;
+
+		if (
+			manual !== prevManual ||
+			videos !== prevVideos ||
+			categories !== prevCategories ||
+			videosToShow !== prevVideosToShow
+		) {
+			this.refreshPreview();
 		}
 	}
 
-	refreshSettings() {
-		const { attributes, setAttributes } = this.props;
-		const { manual, videos, categories, videosToShow, autoplay } = attributes;
+	/**
+	 * Fetch the latest preview for the current attributes.
+	 */
+	refreshPreview() {
+		const { attributes } = this.props;
+		const { manual, videos, categories, videosToShow } = attributes;
 
 		const basePath = '/newspack-blocks/v1/video-playlist';
 		let path = '';
@@ -52,19 +79,20 @@ class Edit extends Component {
 		if ( manual ) {
 			path = addQueryArgs( basePath, {
 				videos,
-				manual
+				manual,
 			} );
 		} else {
 			path = addQueryArgs( basePath, {
 				categories,
-				videosToShow
+				videosToShow,
 			} );
 		}
 
 		this.setState( { isLoading: true }, () => {
-			apiFetch( { 
+			apiFetch( {
 				path,
-			} ).then( response => {
+			} )
+				.then( response => {
 					const { html } = response;
 					this.setState( {
 						embed: html,
@@ -80,6 +108,9 @@ class Edit extends Component {
 		} );
 	}
 
+	/**
+	 * Render an informational placeholder for loading and errors.
+	 */
 	renderPlaceholder() {
 		const { isLoading, error, embed } = this.state;
 
@@ -110,6 +141,12 @@ class Edit extends Component {
 		return null;
 	}
 
+	/**
+	 * Fetch and decode Category autocomplete options.
+	 *
+	 * @param {string} search The text input into the field so far.
+	 * @return {Array} Autocomplete suggestion tokens.
+	 */
 	fetchCategorySuggestions = search => {
 		return apiFetch( {
 			path: addQueryArgs( '/wp/v2/categories', {
@@ -126,6 +163,13 @@ class Edit extends Component {
 			} ) );
 		} );
 	};
+
+	/**
+	 * Convert saved Category IDs into tokens.
+	 *
+	 * @param {Array} categoryIDs array of Category IDs.
+	 * @return {Array} Tokens.
+	 */
 	fetchSavedCategories = categoryIDs => {
 		return apiFetch( {
 			path: addQueryArgs( '/wp/v2/categories', {
@@ -141,12 +185,20 @@ class Edit extends Component {
 		} );
 	};
 
-	addManualVideo( tokens) {
+	/**
+	 * Add a manual YouTube video from the field.
+	 *
+	 * @param {string} tokens Video URL from the tokenfield.
+	 */
+	addManualVideo( tokens ) {
 		const { setAttributes } = this.props;
 		setAttributes( { videos: tokens } );
 		this.setState( { videoToAdd: '' } );
 	}
 
+	/**
+	 * Render.
+	 */
 	render() {
 		const { attributes, setAttributes } = this.props;
 		const { manual, videos, categories, videosToShow, autoplay } = attributes;
@@ -155,9 +207,7 @@ class Edit extends Component {
 		return (
 			<Fragment>
 				{ ( isLoading || '' === embed ) && this.renderPlaceholder() }
-				{ ! ( isLoading || '' === embed ) && (
-					<div dangerouslySetInnerHTML={ { __html: embed } } />
-				) }
+				{ ! ( isLoading || '' === embed ) && <div dangerouslySetInnerHTML={ { __html: embed } } /> }
 				<InspectorControls>
 					<PanelBody title={ __( 'Settings', 'newspack-blocks' ) } initialOpen={ true }>
 						<PanelRow>
@@ -182,32 +232,32 @@ class Edit extends Component {
 								onInputChange={ value => this.setState( { videoToAdd: value } ) }
 								placeholder={ __( 'YouTube video URL', 'newspack-blocks' ) }
 								label={ __( 'YouTube video URLs', 'newspack-blocks' ) }
-								className='youtube-videos-manual-input'
+								className="youtube-videos-manual-input"
 							/>
 						) }
 						{ ! manual && (
 							<Fragment>
-									<RangeControl
-										className='videosToShow'
-										label={ __( 'Videos', 'newspack-blocks' ) }
-										help={ __(
-											"The maximum number of videos to pull from posts.",
-											'newspack-blocks'
-										) }
-										value={ videosToShow }
-										onChange={ _videosToShow => setAttributes( { videosToShow: _videosToShow } ) }
-										min={ 1 }
-										max={ 30 }
-										required
-									/>
-									<AutocompleteTokenField
-										key="categories"
-										tokens={ categories || [] }
-										onChange={ _categories => setAttributes( { categories: _categories } ) }
-										fetchSuggestions={ this.fetchCategorySuggestions }
-										fetchSavedInfo={ this.fetchSavedCategories }
-										label={ __( 'Categories', 'newspack-blocks' ) }
-									/>
+								<RangeControl
+									className="videosToShow"
+									label={ __( 'Videos', 'newspack-blocks' ) }
+									help={ __(
+										'The maximum number of videos to pull from posts.',
+										'newspack-blocks'
+									) }
+									value={ videosToShow }
+									onChange={ _videosToShow => setAttributes( { videosToShow: _videosToShow } ) }
+									min={ 1 }
+									max={ 30 }
+									required
+								/>
+								<AutocompleteTokenField
+									key="categories"
+									tokens={ categories || [] }
+									onChange={ _categories => setAttributes( { categories: _categories } ) }
+									fetchSuggestions={ this.fetchCategorySuggestions }
+									fetchSavedInfo={ this.fetchSavedCategories }
+									label={ __( 'Categories', 'newspack-blocks' ) }
+								/>
 							</Fragment>
 						) }
 					</PanelBody>

@@ -53,7 +53,7 @@ export const settings = {
 		},
 		videosToShow: {
 			type: 'integer',
-			default: 5
+			default: 5,
 		},
 		autoplay: {
 			type: 'boolean',

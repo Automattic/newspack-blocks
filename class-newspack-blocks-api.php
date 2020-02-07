@@ -220,14 +220,26 @@ class Newspack_Blocks_API {
 		return $category->name;
 	}
 
+	/**
+	 * Register the video-playlist endpoint.
+	 */
 	public static function register_video_playlist_endpoint() {
-		register_rest_route( 'newspack-blocks/v1', '/video-playlist', [
-				'methods' => 'GET',
+		register_rest_route(
+			'newspack-blocks/v1',
+			'/video-playlist',
+			[
+				'methods'  => 'GET',
 				'callback' => [ 'Newspack_Blocks_API', 'video_playlist_endpoint' ],
 			]
 		);
 	}
 
+	/**
+	 * Process requests to the video-playlist endpoint.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return WP_REST_Response.
+	 */
 	public static function video_playlist_endpoint( $request ) {
 		$args = $request->get_params();
 		return new \WP_REST_Response( newspack_blocks_get_video_playlist( $args ), 200 );

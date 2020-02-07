@@ -27,34 +27,34 @@ function newspack_blocks_register_video_playlist() {
 		'newspack-blocks/video-playlist',
 		array(
 			'attributes'      => array(
-				'className'               => [
+				'className'    => array(
 					'type' => 'string',
-				],
-				'manual'                  => [
+				),
+				'manual'       => array(
 					'type' => 'boolean',
-				],
-				'videos'        => [
+				),
+				'videos'       => array(
 					'type'    => 'array',
-					'default' => [],
-					'items'   => [
+					'default' => array(),
+					'items'   => array(
 						'type' => 'string',
-					],
-				],
-				'categories' => [
-					'type' => 'array',
-					'default' => [],
-					'items'   => [
+					),
+				),
+				'categories'   => array(
+					'type'    => 'array',
+					'default' => array(),
+					'items'   => array(
 						'type' => 'integer',
-					],
-				],
-				'videosToShow'     => [
-					"type" => "integer",
-					"default" => 5,
-				],
-				'autoplay'                  => [
-					'type' => 'boolean',
+					),
+				),
+				'videosToShow' => array(
+					'type'    => 'integer',
+					'default' => 5,
+				),
+				'autoplay'     => array(
+					'type'    => 'boolean',
 					'default' => false,
-				],
+				),
 			),
 			'render_callback' => 'newspack_blocks_render_block_video_playlist',
 		)
@@ -62,16 +62,22 @@ function newspack_blocks_register_video_playlist() {
 }
 add_action( 'init', 'newspack_blocks_register_video_playlist' );
 
+/**
+ * Get video playlist data for general args.
+ *
+ * @param array $args Arguments. See $defaults.
+ * @return array of video info.
+ */
 function newspack_blocks_get_video_playlist( $args ) {
-	$defaults = [
-		'categories' => [],
-		'videos'     => [],
-		'videosToShow'      => 5,
-		'className'  => '',
-		'manual' => false,
-		'autoplay' => false,
-	];
-	$args = wp_parse_args( $args, $defaults );
+	$defaults = array(
+		'categories'   => array(),
+		'videos'       => array(),
+		'videosToShow' => 5,
+		'className'    => '',
+		'manual'       => false,
+		'autoplay'     => false,
+	);
+	$args     = wp_parse_args( $args, $defaults );
 
 	if ( $args['manual'] ) {
 		$videos = array_map( 'esc_url_raw', $args['videos'] );
@@ -84,37 +90,46 @@ function newspack_blocks_get_video_playlist( $args ) {
 		$html = newspack_blocks_get_video_playlist_html( $videos, $args );
 	}
 
-	return [
+	return array(
 		'videos' => $videos,
 		'html'   => $html,
-	];
+	);
 }
 
+/**
+ * Get video URLs from among published post content.
+ *
+ * @param array $args Arguments. See $defaults.
+ * @return array of strings.
+ */
 function newspack_blocks_get_video_playlist_videos( $args ) {
-	$defaults = [
-		'categories' => [],
+	$defaults = array(
+		'categories'   => array(),
 		'videosToShow' => 5,
-	];
-	$args = wp_parse_args( $args, $defaults );
+	);
+	$args     = wp_parse_args( $args, $defaults );
 
-	$query_args = [
+	$query_args = array(
 		'post_type'      => 'post',
 		'post_status'    => 'publish',
 		's'              => 'core-embed/youtube',
 		'posts_per_page' => $args['videosToShow'],
-	];
+	);
 
 	if ( ! empty( $args['categories'] ) ) {
 		$query_args['category__in'] = $args['categories'];
 	}
 
-	$videos = [];
+	$videos = array();
 	$posts  = get_posts( $query_args );
 	foreach ( $posts as $post ) {
-		$blocks = parse_blocks( $post->post_content );
-		$youtube_blocks = array_filter( $blocks, function( $blocks ) {
-			return 'core-embed/youtube' === $blocks['blockName'];
-		} );
+		$blocks         = parse_blocks( $post->post_content );
+		$youtube_blocks = array_filter(
+			$blocks,
+			function( $blocks ) {
+				return 'core-embed/youtube' === $blocks['blockName'];
+			}
+		);
 		foreach ( $youtube_blocks as $youtube_block ) {
 			$videos[] = $youtube_block['attrs']['url'];
 		}
@@ -123,8 +138,15 @@ function newspack_blocks_get_video_playlist_videos( $args ) {
 	return array_slice( array_unique( $videos ), 0, $args['videosToShow'] );
 }
 
-function newspack_blocks_get_video_playlist_html( $videos, $args = [] ) {
-	$video_ids = [];
+/**
+ * Get embed html for an array of YouTube video URLs.
+ *
+ * @param array $videos YouTube video URLs.
+ * @param array $args 'autoplay' and 'className' are currently supported.
+ * @return string HTML embed.
+ */
+function newspack_blocks_get_video_playlist_html( $videos, $args = array() ) {
+	$video_ids = array();
 	foreach ( $videos as $video ) {
 		$url_parts = wp_parse_url( $video );
 		if ( empty( $url_parts['query'] ) ) {
