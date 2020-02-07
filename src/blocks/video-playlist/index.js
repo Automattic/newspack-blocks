@@ -55,6 +55,10 @@ export const settings = {
 			type: 'integer',
 			default: 5
 		},
+		autoplay: {
+			type: 'boolean',
+			default: false,
+		},
 	},
 	supports: {
 		html: false,

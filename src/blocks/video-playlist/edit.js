@@ -26,15 +26,45 @@ class Edit extends Component {
 	}
 
 	componentDidMount() {
-		this.getSettings();
+		this.refreshSettings();
 	}
 
-	getSettings() {
-		const path = '/newspack-blocks/v1/video-playlist';
+	componentDidUpdate( prevProps ) {
+		console.log( "COMPONENT DID UPDATE");
+		const { attributes } = this.props;
+		const { manual, videos, categories, videosToShow } = attributes;
+		const { attributes: prevAttributes } = prevProps;
+		const { manual: prevManual, videos: prevVideos, categories: prevCategories, videosToShow: prevVideosToShow } = prevAttributes;
+		console.log( prevAttributes );
+		console.log( attributes );
+		if ( manual !== prevManual || videos !== prevVideos || categories !== prevCategories || videosToShow !== prevVideosToShow ) {
+			this.refreshSettings();
+		}
+	}
+
+	refreshSettings() {
+		const { attributes, setAttributes } = this.props;
+		const { manual, videos, categories, videosToShow, autoplay } = attributes;
+
+		const basePath = '/newspack-blocks/v1/video-playlist';
+		let path = '';
+
+		if ( manual ) {
+			path = addQueryArgs( basePath, {
+				videos,
+				manual
+			} );
+		} else {
+			path = addQueryArgs( basePath, {
+				categories,
+				videosToShow
+			} );
+		}
 
 		this.setState( { isLoading: true }, () => {
-			apiFetch( { path } )
-				.then( response => {
+			apiFetch( { 
+				path,
+			} ).then( response => {
 					const { html } = response;
 					this.setState( {
 						embed: html,
@@ -119,7 +149,7 @@ class Edit extends Component {
 
 	render() {
 		const { attributes, setAttributes } = this.props;
-		const { manual, videos, categories, videosToShow } = attributes;
+		const { manual, videos, categories, videosToShow, autoplay } = attributes;
 		const { embed, isLoading, videoToAdd } = this.state;
 
 		return (
@@ -130,6 +160,13 @@ class Edit extends Component {
 				) }
 				<InspectorControls>
 					<PanelBody title={ __( 'Settings', 'newspack-blocks' ) } initialOpen={ true }>
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Autoplay', 'newspack-blocks' ) }
+								checked={ autoplay }
+								onChange={ () => setAttributes( { autoplay: ! autoplay } ) }
+							/>
+						</PanelRow>
 						<PanelRow>
 							<ToggleControl
 								label={ __( 'Manually select videos', 'newspack-blocks' ) }
@@ -145,6 +182,7 @@ class Edit extends Component {
 								onInputChange={ value => this.setState( { videoToAdd: value } ) }
 								placeholder={ __( 'YouTube video URL', 'newspack-blocks' ) }
 								label={ __( 'YouTube video URLs', 'newspack-blocks' ) }
+								className='youtube-videos-manual-input'
 							/>
 						) }
 						{ ! manual && (

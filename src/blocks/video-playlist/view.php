@@ -36,14 +36,24 @@ function newspack_blocks_register_video_playlist() {
 				'videos'        => [
 					'type'    => 'array',
 					'default' => [],
+					'items'   => [
+						'type' => 'string',
+					],
 				],
 				'categories' => [
 					'type' => 'array',
 					'default' => [],
+					'items'   => [
+						'type' => 'integer',
+					],
 				],
 				'videosToShow'     => [
 					"type" => "integer",
 					"default" => 5,
+				],
+				'autoplay'                  => [
+					'type' => 'boolean',
+					'default' => false,
 				],
 			),
 			'render_callback' => 'newspack_blocks_render_block_video_playlist',
@@ -58,10 +68,12 @@ function newspack_blocks_get_video_playlist( $args ) {
 		'videos'     => [],
 		'videosToShow'      => 5,
 		'className'  => '',
+		'manual' => false,
+		'autoplay' => false,
 	];
 	$args = wp_parse_args( $args, $defaults );
 
-	if ( $args['videos'] ) {
+	if ( $args['manual'] ) {
 		$videos = array_map( 'esc_url_raw', $args['videos'] );
 	} else {
 		$videos = newspack_blocks_get_video_playlist_videos( $args );
@@ -91,6 +103,10 @@ function newspack_blocks_get_video_playlist_videos( $args ) {
 		's'              => 'core-embed/youtube',
 		'posts_per_page' => $args['videosToShow'],
 	];
+
+	if ( ! empty( $args['categories'] ) ) {
+		$query_args['category__in'] = $args['categories'];
+	}
 
 	$videos = [];
 	$posts  = get_posts( $query_args );
@@ -130,6 +146,10 @@ function newspack_blocks_get_video_playlist_html( $videos, $args = [] ) {
 		$url .= '&playlist=' . implode( ',', array_slice( $video_ids, 1 ) );
 	}
 
+	if ( ! empty( $args['autoplay'] ) ) {
+		$url .= '&autoplay=1';
+	}
+
 	$classes = 'wp-block-newspack-blocks-video-playlist wpbnbvp wp-block-embed-youtube wp-block-embed is-type-video is-provider-youtube wp-embed-aspect-16-9 wp-has-aspect-ratio';
 	if ( ! empty( $args['className'] ) ) {
 		$classes .= $args['className'];
@@ -138,7 +158,7 @@ function newspack_blocks_get_video_playlist_html( $videos, $args = [] ) {
 	?>
 	<figure class='<?php echo esc_attr( $classes ); ?>'>
 		<div class='wp-block-embed__wrapper'>
-			<iframe width='960' height='540' src='<?php echo esc_attr( $url ); ?>' frameborder='0' allowfullscreen></iframe>
+			<iframe width='960' height='540' src='<?php echo esc_attr( $url ); ?>' frameborder='0' allowfullscreen allow="autoplay; encrypted-media"></iframe>
 		</div>
 	</figure>
 	<?php
