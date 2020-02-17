@@ -41,9 +41,10 @@ add_filter(
 	'newspack_blocks_patterns',
 	function( $patterns, $post_type ) {
 		if ( in_array( $post_type, [ 'post', 'page' ], true ) ) {
+			$from_json = json_decode( file_get_contents( NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/patterns/markup/pattern4.json'), true ); //phpcs:ignore
 			$patterns[] = [
 				'category' => __( 'Homepage Articles', 'newspack-blocks' ),
-				'content'  => file_get_contents( NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/patterns/markup/pattern4.txt'), //phpcs:ignore
+				'content'  => $from_json['content'],
 				'icon'     => plugins_url( 'src/patterns/icons/pattern-icon.png', __FILE__ ),
 				'title'    => __( '3 columns', 'newspack-blocks' ),
 			];
