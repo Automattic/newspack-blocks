@@ -1,0 +1,39 @@
+<!-- wp:columns {"className":"is-style-borders"} -->
+<div class="wp-block-columns is-style-borders"><!-- wp:column {"width":66.66} -->
+<div class="wp-block-column" style="flex-basis:66.66%"><!-- wp:newspack-blocks/homepage-articles {"postsToShow":1,"categories":[845],"sectionHeader":"Entertainment"} /--></div>
+<!-- /wp:column -->
+
+<!-- wp:column {"width":33.33} -->
+<div class="wp-block-column" style="flex-basis:33.33%"><!-- wp:newspack-blocks/homepage-articles {"showExcerpt":false,"imageShape":"square","showAvatar":false,"mediaPosition":"left","categories":[848],"typeScale":2,"imageScale":1,"sectionHeader":"Events"} /-->
+
+<!-- wp:separator {"className":"is-style-wide"} -->
+<hr class="wp-block-separator is-style-wide"/>
+<!-- /wp:separator -->
+
+<!-- wp:newspack-blocks/homepage-articles {"showExcerpt":false,"imageShape":"square","mediaPosition":"left","categories":[843],"typeScale":2,"imageScale":1,"sectionHeader":"Featured"} /--></div>
+<!-- /wp:column --></div>
+<!-- /wp:columns -->
+
+<!-- wp:separator {"className":"is-style-wide"} -->
+<hr class="wp-block-separator is-style-wide"/>
+<!-- /wp:separator -->
+
+<!-- wp:columns {"className":"is-style-borders"} -->
+<div class="wp-block-columns is-style-borders"><!-- wp:column -->
+<div class="wp-block-column"><!-- wp:newspack-blocks/homepage-articles {"className":"is-style-borders","showExcerpt":false,"showAuthor":false,"postsToShow":1,"categories":[854],"typeScale":3,"imageScale":1,"sectionHeader":"Health"} /-->
+
+<!-- wp:newspack-blocks/homepage-articles {"className":"is-style-borders","showExcerpt":false,"showAuthor":false,"showAvatar":false,"postsToShow":2,"mediaPosition":"left","categories":[849],"typeScale":2,"imageScale":1} /--></div>
+<!-- /wp:column -->
+
+<!-- wp:column -->
+<div class="wp-block-column"><!-- wp:newspack-blocks/homepage-articles {"className":"is-style-borders","showExcerpt":false,"showAuthor":false,"postsToShow":1,"categories":[847],"typeScale":3,"imageScale":1,"sectionHeader":"News"} /-->
+
+<!-- wp:newspack-blocks/homepage-articles {"className":"is-style-borders","showExcerpt":false,"showAuthor":false,"showAvatar":false,"postsToShow":2,"mediaPosition":"left","categories":[846],"typeScale":2,"imageScale":1} /--></div>
+<!-- /wp:column -->
+
+<!-- wp:column -->
+<div class="wp-block-column"><!-- wp:newspack-blocks/homepage-articles {"className":"is-style-borders","showExcerpt":false,"showImage":false,"showAuthor":false,"showAvatar":false,"postsToShow":1,"mediaPosition":"left","categories":[851],"imageScale":1,"sectionHeader":"Politics"} /-->
+
+<!-- wp:newspack-blocks/homepage-articles {"className":"is-style-borders","showExcerpt":false,"showImage":false,"showAuthor":false,"showAvatar":false,"postsToShow":4,"mediaPosition":"left","categories":[852],"typeScale":3,"imageScale":1} /--></div>
+<!-- /wp:column --></div>
+<!-- /wp:columns -->
