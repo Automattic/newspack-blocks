@@ -13,7 +13,7 @@
  * @return string Returns the post content with latest posts added.
  */
 function newspack_blocks_render_block_homepage_articles( $attributes ) {
-	$is_blog_private = intval( get_option( 'blog_public' ) ) === -1;
+	$is_blog_private = defined( 'IS_BLOG_PRIVATE' ) && IS_BLOG_PRIVATE;
 
 	$article_query = new WP_Query( Newspack_Blocks::build_articles_query( $attributes ) );
 
