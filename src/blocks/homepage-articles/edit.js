@@ -5,6 +5,7 @@
  */
 import QueryControls from '../../components/query-controls';
 import { STORE_NAMESPACE } from './store';
+import { getIsBlogPrivate } from './helpers';
 
 /**
  * External dependencies
@@ -332,21 +333,11 @@ class Edit extends Component {
 							required
 						/>
 					) }
-					{ ! specificMode && (
+					{ ! specificMode && getIsBlogPrivate() !== true && (
 						<ToggleControl
 							label={ __( 'Show "More" Button', 'newspack-blocks' ) }
 							checked={ moreButton }
 							onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
-							help={
-								<>
-									{ __( 'The button will not be displayed on private sites. ' ) }
-									{
-										<ExternalLink href="https://en.support.wordpress.com/settings/#general">
-											{ __( 'More information' ) }
-										</ExternalLink>
-									}
-								</>
-							}
 						/>
 					) }
 				</PanelBody>
