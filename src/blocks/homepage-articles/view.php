@@ -116,9 +116,10 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			<?php
 
 			/**
-			 * Hide button on private sites because we don't authenticate the
-			 * requests, which in current implementation return 403 (Forbidden).
+			 * Hide the "More" button on private sites.
 			 *
+			 * Fetching private blog data from the client-side requires request
+			 * authentication, which is not provided in the current implementation.			 *
 			 * See: https://github.com/Automattic/newspack-blocks/issues/306
 			 */
 			$is_blog_private = get_option( 'blog_public' ) === -1;
