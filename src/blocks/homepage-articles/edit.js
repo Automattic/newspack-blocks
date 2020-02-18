@@ -39,7 +39,6 @@ import {
 	BaseControl,
 	Path,
 	SVG,
-	ExternalLink,
 } from '@wordpress/components';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
