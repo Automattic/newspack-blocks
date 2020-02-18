@@ -115,8 +115,15 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			</div>
 			<?php
 
-			if ( $has_more_button && get_option( 'blog_public' ) !== -1 ) :
-				// Hide button for private sites because of authentication issues.
+			/**
+			 * Hide button on private sites because we don't authenticate the
+			 * requests, which in current implementation return 403 (Forbidden).
+			 *
+			 * See: https://github.com/Automattic/newspack-blocks/issues/306
+			 */
+			$is_blog_private = get_option( 'blog_public' ) === -1;
+
+			if ( $has_more_button && $is_blog_private !== true ) :
 				?>
 				<button type="button" data-next="<?php echo esc_url( $articles_rest_url ); ?>">
 				<?php
