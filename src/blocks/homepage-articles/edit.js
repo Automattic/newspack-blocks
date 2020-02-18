@@ -635,7 +635,7 @@ class Edit extends Component {
 					</div>
 				</div>
 
-				{ ! specificMode && latestPosts && moreButton && (
+				{ ! specificMode && latestPosts && moreButton && getIsBlogPrivate() !== true && (
 					<div className="editor-styles-wrapper wpnbha__wp-block-button__wrapper">
 						<div className="wp-block-button">
 							<RichText
