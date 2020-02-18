@@ -85,9 +85,9 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	/**
 	 * Hide the "More" button on private sites.
 	 *
-	 * Fetching private blog data from the client-side requires request
-	 * authentication, which is not provided in the current implementation.			 *
-	 * See: https://github.com/Automattic/newspack-blocks/issues/306
+	 * Client-side fetching from a private WP.com blog requires authentication,
+	 * which is not provided in the current implementation.
+	 * See https://github.com/Automattic/newspack-blocks/issues/306.
 	 */
 	$has_more_button = $is_blog_private !== true && $has_more_pages && boolval( $attributes['moreButton'] );
 
