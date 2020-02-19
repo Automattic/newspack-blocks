@@ -5,7 +5,7 @@
  */
 import QueryControls from '../../components/query-controls';
 import { STORE_NAMESPACE } from './store';
-import { isBlogPrivate, isSpecificPostModeActive, queryCriteriaFromAttributes } from './helpers';
+import { isBlogPrivate, isSpecificPostModeActive, queryCriteriaFromAttributes } from './utils';
 
 /**
  * External dependencies
