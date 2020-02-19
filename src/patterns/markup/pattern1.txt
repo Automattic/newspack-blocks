@@ -1,1 +1,0 @@
-<!-- wp:newspack-blocks/homepage-articles {"showExcerpt":false,"postLayout":"grid","mediaPosition":"left"} /-->
