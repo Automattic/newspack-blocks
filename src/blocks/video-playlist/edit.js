@@ -186,22 +186,11 @@ class Edit extends Component {
 	};
 
 	/**
-	 * Add a manual YouTube video from the field.
-	 *
-	 * @param {string} tokens Video URL from the tokenfield.
-	 */
-	addManualVideo( tokens ) {
-		const { setAttributes } = this.props;
-		setAttributes( { videos: tokens } );
-		this.setState( { videoToAdd: '' } );
-	}
-
-	/**
 	 * Render.
 	 */
 	render() {
 		const { attributes, setAttributes } = this.props;
-		const { manual, videos, categories, videosToShow, autoplay } = attributes;
+		const { videos, categories, videosToShow, autoplay } = attributes;
 		const { embed, isLoading, videoToAdd } = this.state;
 
 		return (
@@ -217,49 +206,29 @@ class Edit extends Component {
 								onChange={ () => setAttributes( { autoplay: ! autoplay } ) }
 							/>
 						</PanelRow>
-						<PanelRow>
-							<ToggleControl
-								label={ __( 'Manually select videos', 'newspack-blocks' ) }
-								checked={ manual }
-								onChange={ () => setAttributes( { manual: ! manual } ) }
+						<Fragment>
+							<RangeControl
+								className="videosToShow"
+								label={ __( 'Videos', 'newspack-blocks' ) }
+								help={ __(
+									'The maximum number of videos to pull from posts.',
+									'newspack-blocks'
+								) }
+								value={ videosToShow }
+								onChange={ _videosToShow => setAttributes( { videosToShow: _videosToShow } ) }
+								min={ 1 }
+								max={ 30 }
+								required
 							/>
-						</PanelRow>
-						{ manual && (
-							<FormTokenField
-								value={ videos }
-								suggestions={ [ videoToAdd ] }
-								onChange={ tokens => this.addManualVideo( tokens ) }
-								onInputChange={ value => this.setState( { videoToAdd: value } ) }
-								placeholder={ __( 'YouTube video URL', 'newspack-blocks' ) }
-								label={ __( 'YouTube video URLs', 'newspack-blocks' ) }
-								className="youtube-videos-manual-input"
+							<AutocompleteTokenField
+								key="categories"
+								tokens={ categories || [] }
+								onChange={ _categories => setAttributes( { categories: _categories } ) }
+								fetchSuggestions={ this.fetchCategorySuggestions }
+								fetchSavedInfo={ this.fetchSavedCategories }
+								label={ __( 'Categories', 'newspack-blocks' ) }
 							/>
-						) }
-						{ ! manual && (
-							<Fragment>
-								<RangeControl
-									className="videosToShow"
-									label={ __( 'Videos', 'newspack-blocks' ) }
-									help={ __(
-										'The maximum number of videos to pull from posts.',
-										'newspack-blocks'
-									) }
-									value={ videosToShow }
-									onChange={ _videosToShow => setAttributes( { videosToShow: _videosToShow } ) }
-									min={ 1 }
-									max={ 30 }
-									required
-								/>
-								<AutocompleteTokenField
-									key="categories"
-									tokens={ categories || [] }
-									onChange={ _categories => setAttributes( { categories: _categories } ) }
-									fetchSuggestions={ this.fetchCategorySuggestions }
-									fetchSavedInfo={ this.fetchSavedCategories }
-									label={ __( 'Categories', 'newspack-blocks' ) }
-								/>
-							</Fragment>
-						) }
+						</Fragment>
 					</PanelBody>
 				</InspectorControls>
 			</Fragment>
