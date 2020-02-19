@@ -3,13 +3,14 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 import { parse } from '@wordpress/blocks';
-import { Button, PanelBody, Spinner } from '@wordpress/components';
+import { PanelBody, Spinner } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
 import { PluginSidebar } from '@wordpress/edit-post';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
+import { ENTER, SPACE } from '@wordpress/keycodes';
 
 /**
  * Material UI dependencies.
@@ -54,12 +55,12 @@ class PatternsSidebar extends Component {
 										patternGroup.items.map( ( pattern, patternIndex ) => (
 											<div
 												key={ patternIndex }
-												className='editor-block-styles__item block-editor-block-styles__item'
+												className="editor-block-styles__item block-editor-block-styles__item"
 												onClick={ () => insertBlocks( parse( pattern.content ) ) }
-												onKeyDown={ ( event ) => {
+												onKeyDown={ event => {
 													if ( ENTER === event.keyCode || SPACE === event.keyCode ) {
 														event.preventDefault();
-														insertBlocks( parse( pattern.content ) )
+														insertBlocks( parse( pattern.content ) );
 													}
 												} }
 												role="button"
@@ -67,7 +68,7 @@ class PatternsSidebar extends Component {
 												aria-label={ pattern.title }
 											>
 												<div className="editor-block-styles__item-preview block-editor-block-styles__item-preview">
-													<img src={ pattern.icon } />
+													<img src={ pattern.icon } alt={ __( 'Preview', 'newspack-block' ) } />
 												</div>
 												<div className="editor-block-styles__item-label block-editor-block-styles__item-label">
 													{ pattern.title }
