@@ -11,7 +11,6 @@ import {
 	PanelRow,
 	RangeControl,
 	ToggleControl,
-	FormTokenField,
 } from '@wordpress/components';
 import { InspectorControls } from '@wordpress/block-editor';
 import { addQueryArgs } from '@wordpress/url';
@@ -70,11 +69,12 @@ class Edit extends Component {
 	/**
 	 * Bring the overlay back up when the block is un-selected.
 	 * The overlay handling is the same as the core embed blocks.
+	 *
 	 * @see https://github.com/WordPress/gutenberg/blob/8e7f7b1a388829ac46fb6917351c7d064905af9a/packages/block-library/src/embed/embed-preview.js#L27-L111
 	 *
 	 * @param {Object} nextProps Next object props.
 	 * @param {Object} state Object state.
-	 * @return {Object}
+	 * @return {Object} State or null.
 	 */
 	static getDerivedStateFromProps( nextProps, state ) {
 		if ( ! nextProps.isSelected && state.interactive ) {
@@ -215,22 +215,21 @@ class Edit extends Component {
 	 */
 	render() {
 		const { attributes, setAttributes } = this.props;
-		const { videos, categories, videosToShow, autoplay } = attributes;
-		const { embed, isLoading, videoToAdd, interactive } = this.state;
+		const { categories, videosToShow, autoplay } = attributes;
+		const { embed, isLoading, interactive } = this.state;
 
 		return (
 			<Fragment>
 				{ ( isLoading || '' === embed ) && this.renderPlaceholder() }
-				{ ! ( isLoading || '' === embed ) && 
-					<div 
-						className='wpbnbvp-preview '
-					>
+				{ ! ( isLoading || '' === embed ) && (
+					<div className="wpbnbvp-preview">
 						<div dangerouslySetInnerHTML={ { __html: embed } } />
 						{ ! interactive && (
-							<div className='wpbnbvp__overlay' onMouseUp={ () => this.hideOverlay() } />
+							// eslint-disable-next-line jsx-a11y/no-static-element-interactions
+							<div className="wpbnbvp__overlay" onMouseUp={ () => this.hideOverlay() } />
 						) }
 					</div>
-				}
+				) }
 				<InspectorControls>
 					<PanelBody title={ __( 'Settings', 'newspack-blocks' ) } initialOpen={ true }>
 						<PanelRow>
@@ -244,10 +243,7 @@ class Edit extends Component {
 							<RangeControl
 								className="videosToShow"
 								label={ __( 'Videos', 'newspack-blocks' ) }
-								help={ __(
-									'The maximum number of videos to pull from posts.',
-									'newspack-blocks'
-								) }
+								help={ __( 'The maximum number of videos to pull from posts.', 'newspack-blocks' ) }
 								value={ videosToShow }
 								onChange={ _videosToShow => setAttributes( { videosToShow: _videosToShow } ) }
 								min={ 1 }
