@@ -50,11 +50,12 @@ add_filter(
 	'newspack_blocks_patterns',
 	function( $patterns, $post_type ) {
 		if ( in_array( $post_type, [ 'post', 'page' ], true ) ) {
+			$from_json = json_decode( file_get_contents( NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/patterns/markup/donations/2-columns.json'), true ); //phpcs:ignore
 			$patterns[] = [
 				'category' => __( 'Donations', 'newspack-blocks' ),
-				'content'  => file_get_contents( NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/patterns/markup/layout-1.txt'), //phpcs:ignore
-				'icon'     => plugins_url( 'src/patterns/icons/pattern-icon.png', __FILE__ ),
-				'title'    => __( 'Donate Layout 1', 'newspack-blocks' ),
+				'content'  => $from_json['content'],
+				'icon'     => plugins_url( 'src/patterns/icons/donations/2-columns.png', __FILE__ ),
+				'title'    => __( 'Two columns; one-quarter, three-quarters split', 'newspack-blocks' ),
 			];
 		}
 		return $patterns;
