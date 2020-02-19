@@ -17,6 +17,7 @@ export const isBlogPrivate = () =>
 /**
  * Checks whether the specific post mode is active.
  *
+ * @param {Object} attributes block attributes
  * @return {boolean} specific mode active flag
  */
 export const isSpecificPostModeActive = ( { specificMode, specificPosts } ) =>
