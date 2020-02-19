@@ -15,8 +15,8 @@ import edit from './edit';
 import './editor.scss';
 import './view.scss';
 
-export const name = 'video-playlist';
-export const title = __( 'Video Playlist', 'newspack-blocks' );
+export const name = 'youtube-video-playlist';
+export const title = __( 'YouTube Video Playlist', 'newspack-blocks' );
 
 /* From https://material.io/tools/icons */
 export const icon = (
@@ -35,7 +35,7 @@ export const settings = {
 		__( 'playlist', 'newspack-blocks' ),
 		__( 'youtube', 'newspack-blocks' ),
 	],
-	description: __( 'Embed a playlist of latest or specific YouTube videos.', 'newspack-blocks' ),
+	description: __( 'Embed a playlist of latest YouTube videos.', 'newspack-blocks' ),
 	attributes: {
 		className: {
 			type: 'string',
