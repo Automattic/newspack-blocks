@@ -1,5 +1,5 @@
 /**
- * WordPress dependencies
+ * WordPress dependencies.
  */
 import apiFetch from '@wordpress/api-fetch';
 import { parse } from '@wordpress/blocks';
@@ -12,9 +12,14 @@ import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 
 /**
- * Internal dependencies
+ * Material UI dependencies.
  */
 import Icon from '@material-ui/icons/ViewQuilt';
+
+/**
+ * Internal dependencies.
+ */
+import './style.scss';
 
 class PatternsSidebar extends Component {
 	state = { patternGroups: null };
@@ -44,15 +49,32 @@ class PatternsSidebar extends Component {
 								initialOpen={ true }
 								key={ patternGroupIndex }
 							>
-								{ patternGroup.items &&
-									patternGroup.items.map( ( pattern, patternIndex ) => (
-										<Button
-											key={ patternIndex }
-											onClick={ () => insertBlocks( parse( pattern.content ) ) }
-										>
-											<img src={ pattern.icon } alt={ pattern.name } title={ pattern.name } />
-										</Button>
-									) ) }
+								<div className="editor-block-styles block-editor-block-styles newspack-patterns-block-styles">
+									{ patternGroup.items &&
+										patternGroup.items.map( ( pattern, patternIndex ) => (
+											<div
+												key={ patternIndex }
+												className='editor-block-styles__item block-editor-block-styles__item'
+												onClick={ () => insertBlocks( parse( pattern.content ) ) }
+												onKeyDown={ ( event ) => {
+													if ( ENTER === event.keyCode || SPACE === event.keyCode ) {
+														event.preventDefault();
+														insertBlocks( parse( pattern.content ) )
+													}
+												} }
+												role="button"
+												tabIndex="0"
+												aria-label={ pattern.title }
+											>
+												<div className="editor-block-styles__item-preview block-editor-block-styles__item-preview">
+													<img src={ pattern.icon } />
+												</div>
+												<div className="editor-block-styles__item-label block-editor-block-styles__item-label">
+													{ pattern.title }
+												</div>
+											</div>
+										) ) }
+								</div>
 							</PanelBody>
 						) ) }
 				{ ! patternGroups && (
