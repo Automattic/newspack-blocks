@@ -30,6 +30,7 @@ class Edit extends Component {
 			error: '',
 			embed: '',
 			videoToAdd: '',
+			interactive: false,
 		};
 	}
 
@@ -64,6 +65,23 @@ class Edit extends Component {
 		) {
 			this.refreshPreview();
 		}
+	}
+
+	/**
+	 * Bring the overlay back up when the block is un-selected.
+	 * The overlay handling is the same as the core embed blocks.
+	 * @see https://github.com/WordPress/gutenberg/blob/8e7f7b1a388829ac46fb6917351c7d064905af9a/packages/block-library/src/embed/embed-preview.js#L27-L111
+	 *
+	 * @param {Object} nextProps Next object props.
+	 * @param {Object} state Object state.
+	 * @return {Object}
+	 */
+	static getDerivedStateFromProps( nextProps, state ) {
+		if ( ! nextProps.isSelected && state.interactive ) {
+			return { interactive: false };
+		}
+
+		return null;
 	}
 
 	/**
@@ -186,17 +204,33 @@ class Edit extends Component {
 	};
 
 	/**
+	 * Hide the overlay so users can play the videos.
+	 */
+	hideOverlay() {
+		this.setState( { interactive: true } );
+	}
+
+	/**
 	 * Render.
 	 */
 	render() {
 		const { attributes, setAttributes } = this.props;
 		const { videos, categories, videosToShow, autoplay } = attributes;
-		const { embed, isLoading, videoToAdd } = this.state;
+		const { embed, isLoading, videoToAdd, interactive } = this.state;
 
 		return (
 			<Fragment>
 				{ ( isLoading || '' === embed ) && this.renderPlaceholder() }
-				{ ! ( isLoading || '' === embed ) && <div dangerouslySetInnerHTML={ { __html: embed } } /> }
+				{ ! ( isLoading || '' === embed ) && 
+					<div 
+						className='wpbnbvp-preview '
+					>
+						<div dangerouslySetInnerHTML={ { __html: embed } } />
+						{ ! interactive && (
+							<div className='wpbnbvp__overlay' onMouseUp={ () => this.hideOverlay() } />
+						) }
+					</div>
+				}
 				<InspectorControls>
 					<PanelBody title={ __( 'Settings', 'newspack-blocks' ) } initialOpen={ true }>
 						<PanelRow>

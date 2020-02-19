@@ -1,16 +1,13 @@
 @import '../../shared/sass/colors';
 @import '../../shared/sass/placeholder';
 
-.wpbnbvp::before {
-	content: "";
-	width: 100%;
-	height: 100%;
-	display: block;
+/**
+ * Prevents interaction with the player until the block is focused.
+ */
+.wpbnbvp__overlay {
 	position: absolute;
-	z-index: 1;
-}
-
-.youtube-videos-manual-input .components-form-token-field__token-text {
-	white-space: normal;
-	text-overflow: inherit;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
 }
