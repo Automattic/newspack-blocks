@@ -87,9 +87,9 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	 * which is not provided in the current implementation.
 	 * See https://github.com/Automattic/newspack-blocks/issues/306.
 	 */
-	$is_blog_private = intval( get_option( 'blog_public' ) ) === -1;
+	$is_blog_private = (int) get_option( 'blog_public' ) === -1;
 
-	$has_more_button = ! $is_blog_private && $has_more_pages && boolval( $attributes['moreButton'] );
+	$has_more_button = ! $is_blog_private && $has_more_pages && (bool) $attributes['moreButton'];
 
 	if ( $has_more_button ) {
 		$classes .= ' has-more-button';
