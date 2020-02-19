@@ -24,7 +24,7 @@ function newspack_blocks_render_block_video_playlist( $attributes ) {
  */
 function newspack_blocks_register_video_playlist() {
 	register_block_type(
-		'newspack-blocks/video-playlist',
+		'newspack-blocks/youtube-video-playlist',
 		array(
 			'attributes'      => array(
 				'className'    => array(
@@ -76,6 +76,7 @@ function newspack_blocks_get_video_playlist( $args ) {
 		'className'    => '',
 		'manual'       => false,
 		'autoplay'     => false,
+		'align'        => '',
 	);
 	$args     = wp_parse_args( $args, $defaults );
 
@@ -142,7 +143,7 @@ function newspack_blocks_get_video_playlist_videos( $args ) {
  * Get embed html for an array of YouTube video URLs.
  *
  * @param array $videos YouTube video URLs.
- * @param array $args 'autoplay' and 'className' are currently supported.
+ * @param array $args 'autoplay', 'className', 'align' are currently supported.
  * @return string HTML embed.
  */
 function newspack_blocks_get_video_playlist_html( $videos, $args = array() ) {
@@ -172,13 +173,26 @@ function newspack_blocks_get_video_playlist_html( $videos, $args = array() ) {
 		$url .= '&autoplay=1';
 	}
 
-	$classes = 'wp-block-newspack-blocks-video-playlist wpbnbvp wp-block-embed-youtube wp-block-embed is-type-video is-provider-youtube wp-embed-aspect-16-9 wp-has-aspect-ratio';
+	$classes = array(
+		'wp-block-newspack-blocks-video-playlist',
+		'wpbnbvp',
+		'wp-block-embed-youtube',
+		'wp-block-embed',
+		'is-type-video',
+		'is-provider-youtube',
+		'wp-embed-aspect-16-9',
+		'wp-has-aspect-ratio',
+	);
+
 	if ( ! empty( $args['className'] ) ) {
-		$classes .= $args['className'];
+		$classes[] = $args['className'];
+	}
+	if ( ! empty( $args['align'] ) ) {
+		$classes[] = 'align' . $args['align'];
 	}
 	ob_start();
 	?>
-	<figure class='<?php echo esc_attr( $classes ); ?>'>
+	<figure class='<?php echo esc_attr( implode( ' ', $classes ) ); ?>'>
 		<div class='wp-block-embed__wrapper'>
 			<iframe width='960' height='540' src='<?php echo esc_attr( $url ); ?>' frameborder='0' allowfullscreen allow="autoplay; encrypted-media"></iframe>
 		</div>

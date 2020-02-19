@@ -62,7 +62,7 @@ export const settings = {
 	},
 	supports: {
 		html: false,
-		align: false,
+		align: true,
 	},
 	edit,
 	save: () => null, // to use view.php
