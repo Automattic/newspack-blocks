@@ -333,7 +333,7 @@ class Edit extends Component {
 						/>
 					) }
 					{ ! specificMode && ! getIsBlogPrivate() && (
-						/**
+						/*
 						 * Hide the "More" button option on private sites.
 						 *
 						 * Client-side fetching from a private WP.com blog requires authentication,
@@ -643,8 +643,10 @@ class Edit extends Component {
 				</div>
 
 				{ ! specificMode && latestPosts && moreButton && ! getIsBlogPrivate() && (
-					// The "More" button option is hidden for private sites, so we should
-					// also hide the button in case it was previously enabled.
+					/*
+					 * The "More" button option is hidden for private sites, so we should
+					 * also hide the button in case it was previously enabled.
+					 */
 					<div className="editor-styles-wrapper wpnbha__wp-block-button__wrapper">
 						<div className="wp-block-button">
 							<RichText
