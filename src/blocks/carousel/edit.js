@@ -4,6 +4,7 @@
  * Internal dependencies
  */
 import QueryControls from '../../components/query-controls';
+import { formatAvatars, formatByline } from '../../shared/js/formatters';
 import createSwiper from './create-swiper';
 import classnames from 'classnames';
 
@@ -132,21 +133,10 @@ class Edit extends Component {
 														<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
 													</h3>
 													<div className="entry-meta">
-														{ showAuthor && showAvatar && post.newspack_author_info.avatar && (
-															<span className="avatar author-avatar" key="author-avatar">
-																<RawHTML>{ post.newspack_author_info.avatar }</RawHTML>
-															</span>
-														) }
-														{ showAuthor && (
-															<span className="byline">
-																{ __( 'by' ) }{' '}
-																<span className="author vcard">
-																	<a className="url fn n" href="#">
-																		{ post.newspack_author_info.display_name }
-																	</a>
-																</span>
-															</span>
-														) }
+														{ showAuthor &&
+															showAvatar &&
+															formatAvatars( post.newspack_author_info ) }
+														{ showAuthor && formatByline( post.newspack_author_info ) }
 														{ showDate && (
 															<time className="entry-date published" key="pub-date">
 																{ moment( post.date_gmt )
