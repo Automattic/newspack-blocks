@@ -19,30 +19,6 @@ class Newspack_Blocks_API {
 	public static $namespace = 'newspack-blocks/v1';
 
 	/**
-	 * Registers REST API routes.
-	 *
-	 * @access public
-	 */
-	public static function register_rest_routes() {
-		register_rest_route(
-			self::$namespace,
-			'patterns/(?P<post_type>[\a-z]+)',
-			[
-				[
-					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => [ __CLASS__, 'get_patterns' ],
-					'permission_callback' => '__return_true',
-					'args'                => [
-						'post_type' => [
-							'sanitize_callback' => 'sanitize_text_field',
-						],
-					],
-				],
-			]
-		);
-	}
-
-	/**
 	 * Register Newspack REST fields.
 	 */
 	public static function register_rest_fields() {
@@ -250,35 +226,6 @@ class Newspack_Blocks_API {
 		}
 
 		return $category->name;
-	}
-
-	/**
-	 * Returns a list of patterns.
-	 *
-	 * @param WP_REST_Request $request Request object.
-	 * @return WP_REST_Response
-	 */
-	public static function get_patterns( $request ) {
-		$post_type   = $request['post_type'];
-		$patterns    = apply_filters( 'newspack_blocks_patterns', [], $post_type );
-		$categorized = [];
-		$clean       = [];
-		foreach ( $patterns as $pattern ) {
-			$category = isset( $pattern['category'] ) ? $pattern['category'] : __( 'Common', 'newspack-blocks' );
-			if ( ! isset( $categorized[ $category ] ) ) {
-				$categorized[ $category ] = [];
-			}
-			$categorized[ $category ][] = $pattern;
-		}
-		$categories = array_keys( $categorized );
-		sort( $categories );
-		foreach ( $categories as $category ) {
-			$clean[] = [
-				'title' => $category,
-				'items' => $categorized[ $category ],
-			];
-		}
-		return rest_ensure_response( $clean );
 	}
 }
 

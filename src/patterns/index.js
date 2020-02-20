@@ -23,12 +23,8 @@ import Icon from '@material-ui/icons/ViewQuilt';
 import './style.scss';
 
 class PatternsSidebar extends Component {
-	state = { patternGroups: null };
-	componentDidMount = () => {
-		const { currentPostType } = this.props;
-		apiFetch( {
-			path: `/newspack-blocks/v1/patterns/${ currentPostType }`,
-		} ).then( patternGroups => this.setState( { patternGroups } ) );
+	state = {
+		patternGroups: window && window.newspack_blocks_data && window.newspack_blocks_data.patterns,
 	};
 	render() {
 		const { insertBlocks } = this.props;
@@ -68,7 +64,9 @@ class PatternsSidebar extends Component {
 												aria-label={ pattern.title }
 											>
 												<div className="editor-block-styles__item-preview block-editor-block-styles__item-preview">
-													<img src={ pattern.icon } alt={ __( 'Preview', 'newspack-block' ) } />
+													{ pattern.icon && (
+														<img src={ pattern.icon } alt={ __( 'Preview', 'newspack-block' ) } />
+													) }
 												</div>
 												<div className="editor-block-styles__item-label block-editor-block-styles__item-label">
 													{ pattern.title }
@@ -100,6 +98,10 @@ const PatternsSidebarWithDispatch = compose( [
 	} ),
 ] )( PatternsSidebar );
 
-registerPlugin( 'newspack-blocks-sidebar', {
-	render: PatternsSidebarWithDispatch,
-} );
+const newspackBlocksData = window && window.newspack_blocks_data ? window.newspack_blocks_data : {};
+const { patterns } = newspackBlocksData;
+if ( patterns && patterns.length ) {
+	registerPlugin( 'newspack-blocks-sidebar', {
+		render: PatternsSidebarWithDispatch,
+	} );
+}
