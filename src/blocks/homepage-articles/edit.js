@@ -635,7 +635,7 @@ class Edit extends Component {
 				</div>
 
 				{ ! specificMode && latestPosts && moreButton && (
-					<div className="editor-styles-wrapper">
+					<div className="editor-styles-wrapper wpnbha__wp-block-button__wrapper">
 						<div className="wp-block-button">
 							<RichText
 								placeholder={ __( 'Load more posts', 'newspack-blocks' ) }
