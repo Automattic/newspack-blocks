@@ -230,4 +230,3 @@ class Newspack_Blocks_API {
 }
 
 add_action( 'rest_api_init', array( 'Newspack_Blocks_API', 'register_rest_fields' ) );
-add_action( 'rest_api_init', array( 'Newspack_Blocks_API', 'register_rest_routes' ) );
