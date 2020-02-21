@@ -3,7 +3,8 @@
  */
 import { parse } from '@wordpress/blocks';
 import { PanelBody, Spinner } from '@wordpress/components';
-import { withDispatch } from '@wordpress/data';
+import { compose } from '@wordpress/compose';
+import { withDispatch, withSelect } from '@wordpress/data';
 import { Component, Fragment } from '@wordpress/element';
 import { PluginSidebar, PluginSidebarMoreMenuItem } from '@wordpress/edit-post';
 import { __ } from '@wordpress/i18n';
@@ -24,8 +25,13 @@ class PatternsSidebar extends Component {
 	state = {
 		patternGroups: window && window.newspack_blocks_data && window.newspack_blocks_data.patterns,
 	};
+	insert = content => {
+		const { getBlockSelectionEnd, getBlockIndex, insertBlocks } = this.props;
+		const currentBlock = getBlockSelectionEnd();
+		const insertionIndex = currentBlock ? getBlockIndex( currentBlock ) + 1 : 0;
+		insertBlocks( parse( content ), insertionIndex );
+	};
 	render() {
-		const { insertBlocks } = this.props;
 		const { patternGroups } = this.state;
 		const sidebarTitle = __( 'Newspack Patterns', 'newspack-blocks' );
 		const sidebarId = 'newspack-blocks-sidebar';
@@ -51,11 +57,11 @@ class PatternsSidebar extends Component {
 													<div
 														key={ patternIndex }
 														className="editor-block-styles__item block-editor-block-styles__item"
-														onClick={ () => insertBlocks( parse( content ) ) }
+														onClick={ () => this.insert( content ) }
 														onKeyDown={ event => {
 															if ( ENTER === event.keyCode || SPACE === event.keyCode ) {
 																event.preventDefault();
-																insertBlocks( parse( content ) );
+																this.insert( content );
 															}
 														} }
 														role="button"
@@ -89,10 +95,16 @@ class PatternsSidebar extends Component {
 	}
 }
 
-const PatternsSidebarWithDispatch = withDispatch( dispatch => {
-	const { insertBlocks } = dispatch( 'core/editor' );
-	return { insertBlocks };
-} )( PatternsSidebar );
+const PatternsSidebarWithDispatch = compose( [
+	withSelect( select => {
+		const { getBlockSelectionEnd, getBlockIndex } = select( 'core/block-editor' );
+		return { getBlockSelectionEnd, getBlockIndex };
+	} ),
+	withDispatch( dispatch => {
+		const { insertBlocks } = dispatch( 'core/block-editor' );
+		return { insertBlocks };
+	} ),
+] )( PatternsSidebar );
 
 const newspackBlocksData = window && window.newspack_blocks_data ? window.newspack_blocks_data : {};
 const { patterns } = newspackBlocksData;
