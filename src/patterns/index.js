@@ -46,31 +46,31 @@ class PatternsSidebar extends Component {
 							>
 								<div className="editor-block-styles block-editor-block-styles newspack-patterns-block-styles">
 									{ patternGroup.items &&
-										patternGroup.items.map( ( pattern, patternIndex ) => (
-											<div
-												key={ patternIndex }
-												className="editor-block-styles__item block-editor-block-styles__item"
-												onClick={ () => insertBlocks( parse( pattern.content ) ) }
-												onKeyDown={ event => {
-													if ( ENTER === event.keyCode || SPACE === event.keyCode ) {
-														event.preventDefault();
-														insertBlocks( parse( pattern.content ) );
-													}
-												} }
-												role="button"
-												tabIndex="0"
-												aria-label={ pattern.title }
-											>
-												<div className="editor-block-styles__item-preview block-editor-block-styles__item-preview">
-													{ pattern.icon && (
-														<img src={ pattern.icon } alt={ __( 'Preview', 'newspack-block' ) } />
-													) }
+										patternGroup.items.map(
+											( { preview_image: previewImage, content, title }, patternIndex ) => (
+												<div
+													key={ patternIndex }
+													className="editor-block-styles__item block-editor-block-styles__item"
+													onClick={ () => insertBlocks( parse( content ) ) }
+													onKeyDown={ event => {
+														if ( ENTER === event.keyCode || SPACE === event.keyCode ) {
+															event.preventDefault();
+															insertBlocks( parse( content ) );
+														}
+													} }
+													role="button"
+													tabIndex="0"
+													aria-label={ title }
+												>
+													<div className="editor-block-styles__item-preview block-editor-block-styles__item-preview">
+														<img src={ previewImage } alt={ __( 'Preview', 'newspack-block' ) } />
+													</div>
+													<div className="editor-block-styles__item-label block-editor-block-styles__item-label">
+														{ title }
+													</div>
 												</div>
-												<div className="editor-block-styles__item-label block-editor-block-styles__item-label">
-													{ pattern.title }
-												</div>
-											</div>
-										) ) }
+											)
+										) }
 								</div>
 							</PanelBody>
 						) ) }
