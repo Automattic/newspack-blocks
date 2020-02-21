@@ -1,11 +1,9 @@
 /**
  * WordPress dependencies.
  */
-import apiFetch from '@wordpress/api-fetch';
 import { parse } from '@wordpress/blocks';
 import { PanelBody, Spinner } from '@wordpress/components';
-import { compose } from '@wordpress/compose';
-import { withDispatch, withSelect } from '@wordpress/data';
+import { withDispatch } from '@wordpress/data';
 import { Component } from '@wordpress/element';
 import { PluginSidebar } from '@wordpress/edit-post';
 import { __ } from '@wordpress/i18n';
@@ -87,16 +85,10 @@ class PatternsSidebar extends Component {
 	}
 }
 
-const PatternsSidebarWithDispatch = compose( [
-	withSelect( select => {
-		const { getCurrentPostType } = select( 'core/editor' );
-		return { currentPostType: getCurrentPostType() };
-	} ),
-	withDispatch( dispatch => {
-		const { insertBlocks } = dispatch( 'core/editor' );
-		return { insertBlocks };
-	} ),
-] )( PatternsSidebar );
+const PatternsSidebarWithDispatch = withDispatch( dispatch => {
+	const { insertBlocks } = dispatch( 'core/editor' );
+	return { insertBlocks };
+} )( PatternsSidebar );
 
 const newspackBlocksData = window && window.newspack_blocks_data ? window.newspack_blocks_data : {};
 const { patterns } = newspackBlocksData;

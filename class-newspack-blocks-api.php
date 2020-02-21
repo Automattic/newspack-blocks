@@ -11,14 +11,6 @@
 class Newspack_Blocks_API {
 
 	/**
-	 * Namespace for REST routes
-	 *
-	 * @var string
-	 */
-
-	public static $namespace = 'newspack-blocks/v1';
-
-	/**
 	 * Register Newspack REST fields.
 	 */
 	public static function register_rest_fields() {
