@@ -28,7 +28,6 @@ class Edit extends Component {
 			isLoading: false,
 			error: '',
 			embed: '',
-			videoToAdd: '',
 			interactive: false,
 		};
 	}
@@ -47,21 +46,11 @@ class Edit extends Component {
 	 */
 	componentDidUpdate( prevProps ) {
 		const { attributes } = this.props;
-		const { manual, videos, categories, videosToShow } = attributes;
+		const { categories, videosToShow } = attributes;
 		const { attributes: prevAttributes } = prevProps;
-		const {
-			manual: prevManual,
-			videos: prevVideos,
-			categories: prevCategories,
-			videosToShow: prevVideosToShow,
-		} = prevAttributes;
+		const { categories: prevCategories, videosToShow: prevVideosToShow } = prevAttributes;
 
-		if (
-			manual !== prevManual ||
-			videos !== prevVideos ||
-			categories !== prevCategories ||
-			videosToShow !== prevVideosToShow
-		) {
+		if ( categories !== prevCategories || videosToShow !== prevVideosToShow ) {
 			this.refreshPreview();
 		}
 	}
@@ -89,22 +78,13 @@ class Edit extends Component {
 	 */
 	refreshPreview() {
 		const { attributes } = this.props;
-		const { manual, videos, categories, videosToShow } = attributes;
+		const { categories, videosToShow } = attributes;
 
 		const basePath = '/newspack-blocks/v1/video-playlist';
-		let path = '';
-
-		if ( manual ) {
-			path = addQueryArgs( basePath, {
-				videos,
-				manual,
-			} );
-		} else {
-			path = addQueryArgs( basePath, {
-				categories,
-				videosToShow,
-			} );
-		}
+		const path = addQueryArgs( basePath, {
+			categories,
+			videosToShow,
+		} );
 
 		this.setState( { isLoading: true }, () => {
 			apiFetch( {

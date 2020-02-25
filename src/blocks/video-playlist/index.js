@@ -39,13 +39,6 @@ export const settings = {
 		className: {
 			type: 'string',
 		},
-		manual: {
-			type: 'boolean',
-		},
-		videos: {
-			type: 'array',
-			default: [],
-		},
 		categories: {
 			type: 'array',
 			default: [],

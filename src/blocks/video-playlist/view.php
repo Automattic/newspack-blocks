@@ -30,16 +30,6 @@ function newspack_blocks_register_video_playlist() {
 				'className'    => array(
 					'type' => 'string',
 				),
-				'manual'       => array(
-					'type' => 'boolean',
-				),
-				'videos'       => array(
-					'type'    => 'array',
-					'default' => array(),
-					'items'   => array(
-						'type' => 'string',
-					),
-				),
 				'categories'   => array(
 					'type'    => 'array',
 					'default' => array(),
