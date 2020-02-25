@@ -195,7 +195,7 @@ class Edit extends Component {
 	 */
 	render() {
 		const { attributes, setAttributes } = this.props;
-		const { categories, videosToShow, autoplay } = attributes;
+		const { categories, videosToShow } = attributes;
 		const { embed, isLoading, interactive } = this.state;
 
 		return (
@@ -212,13 +212,6 @@ class Edit extends Component {
 				) }
 				<InspectorControls>
 					<PanelBody title={ __( 'Settings', 'newspack-blocks' ) } initialOpen={ true }>
-						<PanelRow>
-							<ToggleControl
-								label={ __( 'Autoplay', 'newspack-blocks' ) }
-								checked={ autoplay }
-								onChange={ () => setAttributes( { autoplay: ! autoplay } ) }
-							/>
-						</PanelRow>
 						<Fragment>
 							<RangeControl
 								className="videosToShow"

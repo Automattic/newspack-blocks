@@ -41,10 +41,6 @@ function newspack_blocks_register_video_playlist() {
 					'type'    => 'integer',
 					'default' => 5,
 				),
-				'autoplay'     => array(
-					'type'    => 'boolean',
-					'default' => false,
-				),
 			),
 			'render_callback' => 'newspack_blocks_render_block_video_playlist',
 		)
@@ -65,7 +61,6 @@ function newspack_blocks_get_video_playlist( $args ) {
 		'videosToShow' => 5,
 		'className'    => '',
 		'manual'       => false,
-		'autoplay'     => false,
 		'align'        => '',
 	);
 	$args     = wp_parse_args( $args, $defaults );
@@ -133,7 +128,7 @@ function newspack_blocks_get_video_playlist_videos( $args ) {
  * Get embed html for an array of YouTube video URLs.
  *
  * @param array $videos YouTube video URLs.
- * @param array $args 'autoplay', 'className', 'align' are currently supported.
+ * @param array $args 'className', 'align' are currently supported.
  * @return string HTML embed.
  */
 function newspack_blocks_get_video_playlist_html( $videos, $args = array() ) {
@@ -157,10 +152,6 @@ function newspack_blocks_get_video_playlist_html( $videos, $args = array() ) {
 	$url = 'https://www.youtube.com/embed/' . $video_ids[0] . '?rel=0&showinfo=1';
 	if ( count( $video_ids ) > 1 ) {
 		$url .= '&playlist=' . implode( ',', array_slice( $video_ids, 1 ) );
-	}
-
-	if ( ! empty( $args['autoplay'] ) ) {
-		$url .= '&autoplay=1';
 	}
 
 	$classes = array(
