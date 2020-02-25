@@ -4,14 +4,7 @@
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import { Component, Fragment } from '@wordpress/element';
-import {
-	Placeholder,
-	Spinner,
-	PanelBody,
-	PanelRow,
-	RangeControl,
-	ToggleControl,
-} from '@wordpress/components';
+import { Placeholder, Spinner, PanelBody, RangeControl } from '@wordpress/components';
 import { InspectorControls } from '@wordpress/block-editor';
 import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
