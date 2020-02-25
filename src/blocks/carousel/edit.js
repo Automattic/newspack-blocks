@@ -18,7 +18,7 @@ import moment from 'moment';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Component, createRef, Fragment, RawHTML } from '@wordpress/element';
+import { Component, createRef, Fragment } from '@wordpress/element';
 import { InspectorControls } from '@wordpress/editor';
 import {
 	PanelBody,
