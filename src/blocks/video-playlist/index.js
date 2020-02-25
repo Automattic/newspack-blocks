@@ -13,7 +13,6 @@ import edit from './edit';
  * Style dependencies - will load in editor
  */
 import './editor.scss';
-import './view.scss';
 
 export const name = 'youtube-video-playlist';
 export const title = __( 'YouTube Video Playlist', 'newspack-blocks' );
