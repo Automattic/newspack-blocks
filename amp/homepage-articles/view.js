@@ -1,6 +1,6 @@
 let isFetching = false;
 let isEndOfData = false;
-buildLoadMoreHandler( document.querySelector( '.wp-block-newspack-blocks-homepage-articles') );
+buildLoadMoreHandler( document.querySelector( '.wp-block-newspack-blocks-homepage-articles' ) );
 function buildLoadMoreHandler( blockWrapperEl ) {
 	const btnEl = blockWrapperEl.querySelector( '[data-next]' );
 	if ( ! btnEl ) {
@@ -26,10 +26,11 @@ function buildLoadMoreHandler( blockWrapperEl ) {
 				} );
 			} );
 			if ( isPostsDataValid( data ) ) {
-				const postsHTML = data.items.map( item => item.html ).join( '' );
-				const ampLayout = document.createElement( 'amp-layout' );
-				ampLayout.innerHTML = postsHTML;
-				postsContainerEl.appendChild( ampLayout );
+				data.items.forEach( item => {
+					const tempDIV = document.createElement( 'div' );
+					tempDIV.innerHTML = item.html.trim();
+					postsContainerEl.appendChild( tempDIV.childNodes[ 0 ] );
+				} );
 				if ( data.next ) {
 					btnEl.setAttribute( 'data-next', data.next );
 				}
@@ -40,7 +41,7 @@ function buildLoadMoreHandler( blockWrapperEl ) {
 				isFetching = false;
 				blockWrapperEl.classList.remove( 'is-loading' );
 			}
-		};
+		}
 		function onError() {
 			isFetching = false;
 			blockWrapperEl.classList.remove( 'is-loading' );

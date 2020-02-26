@@ -5,12 +5,12 @@
  */
 import QueryControls from '../../components/query-controls';
 import { STORE_NAMESPACE } from './store';
+import { isBlogPrivate, isSpecificPostModeActive, queryCriteriaFromAttributes } from './utils';
 
 /**
  * External dependencies
  */
 import classNames from 'classnames';
-import { isUndefined, pickBy } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -331,7 +331,14 @@ class Edit extends Component {
 							required
 						/>
 					) }
-					{ ! specificMode && (
+					{ ! specificMode && ! isBlogPrivate() && (
+						/*
+						 * Hide the "More" button option on private sites.
+						 *
+						 * Client-side fetching from a private WP.com blog requires authentication,
+						 * which is not provided in the current implementation.
+						 * See https://github.com/Automattic/newspack-blocks/issues/306.
+						 */
 						<ToggleControl
 							label={ __( 'Show "More" Button', 'newspack-blocks' ) }
 							checked={ moreButton }
@@ -634,8 +641,12 @@ class Edit extends Component {
 					</div>
 				</div>
 
-				{ ! specificMode && latestPosts && moreButton && (
-					<div className="editor-styles-wrapper">
+				{ ! specificMode && latestPosts && moreButton && ! isBlogPrivate() && (
+					/*
+					 * The "More" button option is hidden for private sites, so we should
+					 * also hide the button in case it was previously enabled.
+					 */
+					<div className="editor-styles-wrapper wpnbha__wp-block-button__wrapper">
 						<div className="wp-block-button">
 							<RichText
 								placeholder={ __( 'Load more posts', 'newspack-blocks' ) }
@@ -659,30 +670,6 @@ class Edit extends Component {
 		);
 	}
 }
-
-const isSpecificPostModeActive = ( { specificMode, specificPosts } ) =>
-	specificMode && specificPosts && specificPosts.length;
-
-const queryCriteriaFromAttributes = attributes => {
-	const { postsToShow, authors, categories, tags, specificPosts, tagExclusions } = attributes;
-	const criteria = pickBy(
-		isSpecificPostModeActive( attributes )
-			? {
-					include: specificPosts,
-					orderby: 'include',
-					per_page: specificPosts.length,
-			  }
-			: {
-					per_page: postsToShow,
-					categories,
-					author: authors,
-					tags,
-					tags_exclude: tagExclusions,
-			  },
-		value => ! isUndefined( value )
-	);
-	return criteria;
-};
 
 export default compose( [
 	withColors( { textColor: 'color' } ),
