@@ -95,11 +95,10 @@ const getQueryBlocksInOrder = blocks =>
 const reducer = ( state = initialState, action ) => {
 	switch ( action.type ) {
 		case UPDATE_BLOCKS:
-			const updateBlocksState = {
+			return {
 				...state,
 				queryBlocks: getQueryBlocksInOrder( action.blocks ),
 			};
-			return updateBlocksState;
 		case MARK_POSTS_DISPLAYED:
 			return {
 				...state,
