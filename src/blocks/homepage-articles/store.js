@@ -1,6 +1,16 @@
-import { registerStore, select, subscribe, dispatch } from '@wordpress/data';
+/**
+ * External dependencies
+ */
 import { uniq } from 'lodash';
 
+/**
+ * WordPress dependencies
+ */
+import { registerStore, select, subscribe, dispatch } from '@wordpress/data';
+
+/**
+ * Internal dependencies
+ */
 import metadata from './block.json';
 
 const { name } = metadata;
@@ -42,7 +52,7 @@ const actions = {
 
 /**
  * @typedef Block A Gutenberg editor block
- * @type {Object}
+ * @type {object}
  * @typedef uuid Unique id
  * @type {string}
  */
@@ -52,7 +62,7 @@ const actions = {
  *
  * @param {Block[]} orderedBlocks Ordered Blocks
  * @param {uuid} clientId client id
- * @return {Block[]} blocks
+ * @returns {Block[]} blocks
  */
 const blocksBefore = ( orderedBlocks, clientId ) => {
 	const ourBlockIdx = orderedBlocks.findIndex( b => b.clientId === clientId );
@@ -81,7 +91,7 @@ const selectors = {
  * that PHP will render them.
  *
  * @param {Block[]} blocks any blocks
- * @return {Block[]} ordered newspack-blocks/query blocks
+ * @returns {Block[]} ordered newspack-blocks/query blocks
  */
 const getQueryBlocksInOrder = blocks =>
 	blocks.flatMap( block => {
