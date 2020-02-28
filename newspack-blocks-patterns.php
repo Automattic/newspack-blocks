@@ -11,7 +11,7 @@
 add_filter(
 	'newspack_blocks_patterns',
 	function( $patterns, $post_type ) {
-		if ( in_array( $post_type, [ 'post', 'page' ], true ) ) {
+		if ( in_array( $post_type, [ 'page' ], true ) ) {
 			$from_json = json_decode( file_get_contents( NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/patterns/markup/homepage-posts/style-1.json'), true ); //phpcs:ignore
 			$patterns[] = [
 				'category' => __( 'Homepage Posts', 'newspack-blocks' ),
@@ -29,7 +29,7 @@ add_filter(
 add_filter(
 	'newspack_blocks_patterns',
 	function( $patterns, $post_type ) {
-		if ( in_array( $post_type, [ 'post', 'page' ], true ) ) {
+		if ( in_array( $post_type, [ 'page' ], true ) ) {
 			$from_json = json_decode( file_get_contents( NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/patterns/markup/homepage-posts/style-2.json'), true ); //phpcs:ignore
 			$patterns[] = [
 				'category' => __( 'Homepage Posts', 'newspack-blocks' ),
@@ -47,7 +47,7 @@ add_filter(
 add_filter(
 	'newspack_blocks_patterns',
 	function( $patterns, $post_type ) {
-		if ( in_array( $post_type, [ 'post', 'page' ], true ) ) {
+		if ( in_array( $post_type, [ 'page' ], true ) ) {
 			$from_json = json_decode( file_get_contents( NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/patterns/markup/homepage-posts/style-3.json'), true ); //phpcs:ignore
 			$patterns[] = [
 				'category' => __( 'Homepage Posts', 'newspack-blocks' ),
@@ -65,7 +65,7 @@ add_filter(
 add_filter(
 	'newspack_blocks_patterns',
 	function( $patterns, $post_type ) {
-		if ( in_array( $post_type, [ 'post', 'page' ], true ) ) {
+		if ( in_array( $post_type, [ 'page' ], true ) ) {
 			$from_json = json_decode( file_get_contents( NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/patterns/markup/homepage-posts/style-4.json'), true ); //phpcs:ignore
 			$patterns[] = [
 				'category' => __( 'Homepage Posts', 'newspack-blocks' ),
@@ -83,7 +83,7 @@ add_filter(
 add_filter(
 	'newspack_blocks_patterns',
 	function( $patterns, $post_type ) {
-		if ( in_array( $post_type, [ 'post', 'page' ], true ) ) {
+		if ( in_array( $post_type, [ 'page' ], true ) ) {
 			$from_json = json_decode( file_get_contents( NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/patterns/markup/homepage-posts/style-5.json'), true ); //phpcs:ignore
 			$patterns[] = [
 				'category' => __( 'Homepage Posts', 'newspack-blocks' ),
@@ -101,7 +101,7 @@ add_filter(
 add_filter(
 	'newspack_blocks_patterns',
 	function( $patterns, $post_type ) {
-		if ( in_array( $post_type, [ 'post', 'page' ], true ) ) {
+		if ( in_array( $post_type, [ 'page' ], true ) ) {
 			$from_json = json_decode( file_get_contents( NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/patterns/markup/homepage-posts/style-6.json'), true ); //phpcs:ignore
 			$patterns[] = [
 				'category' => __( 'Homepage Posts', 'newspack-blocks' ),
@@ -119,7 +119,7 @@ add_filter(
 add_filter(
 	'newspack_blocks_patterns',
 	function( $patterns, $post_type ) {
-		if ( in_array( $post_type, [ 'post', 'page' ], true ) ) {
+		if ( in_array( $post_type, [ 'page' ], true ) ) {
 			$from_json = json_decode( file_get_contents( NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/patterns/markup/homepage-posts/style-7.json'), true ); //phpcs:ignore
 			$patterns[] = [
 				'category' => __( 'Homepage Posts', 'newspack-blocks' ),
@@ -137,7 +137,7 @@ add_filter(
 add_filter(
 	'newspack_blocks_patterns',
 	function( $patterns, $post_type ) {
-		if ( in_array( $post_type, [ 'post', 'page' ], true ) ) {
+		if ( in_array( $post_type, [ 'page' ], true ) ) {
 			$from_json = json_decode( file_get_contents( NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/patterns/markup/homepage-posts/style-8.json'), true ); //phpcs:ignore
 			$patterns[] = [
 				'category' => __( 'Homepage Posts', 'newspack-blocks' ),
