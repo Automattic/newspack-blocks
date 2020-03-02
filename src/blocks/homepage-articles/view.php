@@ -80,7 +80,16 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 	$has_more_pages = ( ++$page ) <= $article_query->max_num_pages;
 
-	$has_more_button = $has_more_pages && boolval( $attributes['moreButton'] );
+	/**
+	 * Hide the "More" button on private sites.
+	 *
+	 * Client-side fetching from a private WP.com blog requires authentication,
+	 * which is not provided in the current implementation.
+	 * See https://github.com/Automattic/newspack-blocks/issues/306.
+	 */
+	$is_blog_private = (int) get_option( 'blog_public' ) === -1;
+
+	$has_more_button = ! $is_blog_private && $has_more_pages && (bool) $attributes['moreButton'];
 
 	if ( $has_more_button ) {
 		$classes .= ' has-more-button';
@@ -214,7 +223,7 @@ function newspack_blocks_format_byline( $author_info ) {
 						sprintf(
 							/* translators: 1: author link. 2: author name. 3. variable seperator (comma, 'and', or empty) */
 							'<span class="author vcard"><a class="url fn n" href="%1$s">%2$s</a></span>',
-							esc_url( get_author_posts_url( $author->ID ) ),
+							esc_url( get_author_posts_url( $author->ID, $author->user_nicename ) ),
 							esc_html( $author->display_name )
 						),
 						( $index < $penultimate ) ? ', ' : '',
