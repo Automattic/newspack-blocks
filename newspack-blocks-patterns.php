@@ -278,6 +278,60 @@ add_filter(
 	2
 );
 
+add_filter(
+	'newspack_blocks_patterns',
+	function( $patterns, $post_type ) {
+		if ( in_array( $post_type, [ 'page' ], true ) ) {
+			$from_json = json_decode( file_get_contents( NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/patterns/markup/homepage-posts/style-16.json'), true ); //phpcs:ignore
+			$patterns[] = [
+				'category' => __( 'Homepage Posts', 'newspack-blocks' ),
+				'content'  => $from_json['content'],
+				'image'    => plugins_url( 'src/patterns/images/homepage-posts/style-16.png', __FILE__ ),
+				'title'    => __( 'Style 16', 'newspack-blocks' ),
+			];
+		}
+		return $patterns;
+	},
+	10,
+	2
+);
+
+add_filter(
+	'newspack_blocks_patterns',
+	function( $patterns, $post_type ) {
+		if ( in_array( $post_type, [ 'page' ], true ) ) {
+			$from_json = json_decode( file_get_contents( NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/patterns/markup/homepage-posts/style-17.json'), true ); //phpcs:ignore
+			$patterns[] = [
+				'category' => __( 'Homepage Posts', 'newspack-blocks' ),
+				'content'  => $from_json['content'],
+				'image'    => plugins_url( 'src/patterns/images/homepage-posts/style-17.png', __FILE__ ),
+				'title'    => __( 'Style 17', 'newspack-blocks' ),
+			];
+		}
+		return $patterns;
+	},
+	10,
+	2
+);
+
+add_filter(
+	'newspack_blocks_patterns',
+	function( $patterns, $post_type ) {
+		if ( in_array( $post_type, [ 'page' ], true ) ) {
+			$from_json = json_decode( file_get_contents( NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/patterns/markup/homepage-posts/style-18.json'), true ); //phpcs:ignore
+			$patterns[] = [
+				'category' => __( 'Homepage Posts', 'newspack-blocks' ),
+				'content'  => $from_json['content'],
+				'image'    => plugins_url( 'src/patterns/images/homepage-posts/style-18.png', __FILE__ ),
+				'title'    => __( 'Style 18', 'newspack-blocks' ),
+			];
+		}
+		return $patterns;
+	},
+	10,
+	2
+);
+
 /**
  * Subscribe.
  */
