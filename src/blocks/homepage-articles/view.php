@@ -13,6 +13,13 @@
  * @return string Returns the post content with latest posts added.
  */
 function newspack_blocks_render_block_homepage_articles( $attributes ) {
+
+	$cache_key = md5( json_encode( $attributes ) );
+	$cache = wp_cache_get( $cache_key, 'newspack-blocks' );
+	if ( $cache ) {
+		return $cache;
+	}
+
 	$article_query = new WP_Query( Newspack_Blocks::build_articles_query( $attributes ) );
 
 	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes, [ 'wpnbha' ] );
@@ -152,6 +159,8 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	endif;
 
 	$content = ob_get_clean();
+	wp_cache_set( $cache_key, $content, 'newspack-blocks', 5 * MINUTE_IN_SECONDS );
+
 	Newspack_Blocks::enqueue_view_assets( 'homepage-articles' );
 
 	return $content;
