@@ -375,6 +375,9 @@ add_filter(
 	'newspack_blocks_patterns',
 	function( $patterns, $post_type ) {
 		if ( in_array( $post_type, [ 'page', 'post', 'newspack_popups_cpt' ], true ) ) {
+			if ( ! function_exists( 'jetpack_mailchimp_verify_connection' ) || ! jetpack_mailchimp_verify_connection() ) {
+				return $patterns;
+			}
 			$decode = json_decode( file_get_contents( NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/patterns/markup/subscribe/style-1.json'), true ); //phpcs:ignore
 			$patterns[] = [
 				'category' => __( 'Subscribe', 'newspack-blocks' ),
@@ -401,6 +404,9 @@ add_filter(
 	'newspack_blocks_patterns',
 	function( $patterns, $post_type ) {
 		if ( in_array( $post_type, [ 'page', 'post', 'newspack_popups_cpt' ], true ) ) {
+			if ( ! function_exists( 'jetpack_mailchimp_verify_connection' ) || ! jetpack_mailchimp_verify_connection() ) {
+				return $patterns;
+			}
 			$decode = json_decode( file_get_contents( NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/patterns/markup/subscribe/style-2.json'), true ); //phpcs:ignore
 			$patterns[] = [
 				'category' => __( 'Subscribe', 'newspack-blocks' ),
@@ -430,21 +436,30 @@ add_filter(
 	'newspack_blocks_patterns',
 	function( $patterns, $post_type ) {
 		if ( in_array( $post_type, [ 'page', 'post', 'newspack_popups_cpt' ], true ) ) {
-			$decode = json_decode( file_get_contents( NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/patterns/markup/donation/style-1.json'), true ); //phpcs:ignore
-			$patterns[] = [
-				'category' => __( 'Donation', 'newspack-blocks' ),
-				'content'  => str_replace(
-					[
-						'Support our publication',
-					],
-					[
-						__( 'Support our publication', 'newspack-blocks' ),
-					],
-					$decode['content']
-				),
-				'image'    => plugins_url( 'src/patterns/images/donation/style-1.png', __FILE__ ),
-				'title'    => __( 'Style 1', 'newspack-blocks' ),
-			];
+			$newspack_donations_configured = false;
+			if ( class_exists( 'Newspack\Donations' ) ) {
+				$settings = Newspack\Donations::get_donation_settings();
+				if ( ! is_wp_error( $settings ) && $settings['created'] ) {
+					$newspack_donations_configured = true;
+				}
+			}
+			if ( $newspack_donations_configured ) {
+				$decode = json_decode( file_get_contents( NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/patterns/markup/donation/style-1.json'), true ); //phpcs:ignore
+				$patterns[] = [
+					'category' => __( 'Donation', 'newspack-blocks' ),
+					'content'  => str_replace(
+						[
+							'Support our publication',
+						],
+						[
+							__( 'Support our publication', 'newspack-blocks' ),
+						],
+						$decode['content']
+					),
+					'image'    => plugins_url( 'src/patterns/images/donation/style-1.png', __FILE__ ),
+					'title'    => __( 'Style 1', 'newspack-blocks' ),
+				];
+			}
 		}
 		return $patterns;
 	},
@@ -456,23 +471,32 @@ add_filter(
 	'newspack_blocks_patterns',
 	function( $patterns, $post_type ) {
 		if ( in_array( $post_type, [ 'page', 'post', 'newspack_popups_cpt' ], true ) ) {
-			$decode = json_decode( file_get_contents( NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/patterns/markup/donation/style-2.json'), true ); //phpcs:ignore
-			$patterns[] = [
-				'category' => __( 'Donation', 'newspack-blocks' ),
-				'content'  => str_replace(
-					[
-						'Support our publication',
-						'Please join us!',
-					],
-					[
-						__( 'Support our publication', 'newspack-blocks' ),
-						__( 'With the support of readers like you, we provide thoughtfully researched articles for a more informed and connected community. This is your chance to support credible, community-based, public-service journalism. Please join us!', 'newspack-blocks' ),
-					],
-					$decode['content']
-				),
-				'image'    => plugins_url( 'src/patterns/images/donation/style-2.png', __FILE__ ),
-				'title'    => __( 'Style 2', 'newspack-blocks' ),
-			];
+			$newspack_donations_configured = false;
+			if ( class_exists( 'Newspack\Donations' ) ) {
+				$settings = Newspack\Donations::get_donation_settings();
+				if ( ! is_wp_error( $settings ) && $settings['created'] ) {
+					$newspack_donations_configured = true;
+				}
+			}
+			if ( $newspack_donations_configured ) {
+				$decode = json_decode( file_get_contents( NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/patterns/markup/donation/style-2.json'), true ); //phpcs:ignore
+				$patterns[] = [
+					'category' => __( 'Donation', 'newspack-blocks' ),
+					'content'  => str_replace(
+						[
+							'Support our publication',
+							'Please join us!',
+						],
+						[
+							__( 'Support our publication', 'newspack-blocks' ),
+							__( 'With the support of readers like you, we provide thoughtfully researched articles for a more informed and connected community. This is your chance to support credible, community-based, public-service journalism. Please join us!', 'newspack-blocks' ),
+						],
+						$decode['content']
+					),
+					'image'    => plugins_url( 'src/patterns/images/donation/style-2.png', __FILE__ ),
+					'title'    => __( 'Style 2', 'newspack-blocks' ),
+				];
+			}
 		}
 		return $patterns;
 	},
@@ -484,21 +508,30 @@ add_filter(
 	'newspack_blocks_patterns',
 	function( $patterns, $post_type ) {
 		if ( in_array( $post_type, [ 'page', 'post', 'newspack_popups_cpt' ], true ) ) {
-			$decode = json_decode( file_get_contents( NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/patterns/markup/donation/style-3.json'), true ); //phpcs:ignore
-			$patterns[] = [
-				'category' => __( 'Donation', 'newspack-blocks' ),
-				'content'  => str_replace(
-					[
-						'Support our publication',
-					],
-					[
-						__( 'Support our publication', 'newspack-blocks' ),
-					],
-					$decode['content']
-				),
-				'image'    => plugins_url( 'src/patterns/images/donation/style-3.png', __FILE__ ),
-				'title'    => __( 'Style 3', 'newspack-blocks' ),
-			];
+			$newspack_donations_configured = false;
+			if ( class_exists( 'Newspack\Donations' ) ) {
+				$settings = Newspack\Donations::get_donation_settings();
+				if ( ! is_wp_error( $settings ) && $settings['created'] ) {
+					$newspack_donations_configured = true;
+				}
+			}
+			if ( $newspack_donations_configured ) {
+				$decode = json_decode( file_get_contents( NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/patterns/markup/donation/style-3.json'), true ); //phpcs:ignore
+				$patterns[] = [
+					'category' => __( 'Donation', 'newspack-blocks' ),
+					'content'  => str_replace(
+						[
+							'Support our publication',
+						],
+						[
+							__( 'Support our publication', 'newspack-blocks' ),
+						],
+						$decode['content']
+					),
+					'image'    => plugins_url( 'src/patterns/images/donation/style-3.png', __FILE__ ),
+					'title'    => __( 'Style 3', 'newspack-blocks' ),
+				];
+			}
 		}
 		return $patterns;
 	},
