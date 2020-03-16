@@ -133,7 +133,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 			<amp-selector
 				class='wp-block-newspack-blocks-donate__tab-list'
 				role='tablist'
-				on='select:wp-block-newspack-blocks-donate__tab-panel.toggle(index=event.targetOption, value=true)'
+				on='select:wp-block-newspack-blocks-donate__tab-panel-<?php echo esc_attr( $uid ); ?>.toggle(index=event.targetOption, value=true)'
 			>
 			<?php
 			$option = 0;
@@ -154,7 +154,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 			?>
 			</amp-selector>
 			<amp-selector
-				id='wp-block-newspack-blocks-donate__tab-panel'
+				id='wp-block-newspack-blocks-donate__tab-panel-<?php echo esc_attr( $uid ); ?>'
 				class='wp-block-newspack-blocks-donate__tab-panel'
 			>
 				<form>
@@ -199,10 +199,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 								<?php echo esc_html__( 'Other', 'newspack-blocks' ); ?>
 							</label>
 							<div class='wp-block-newspack-blocks-donate__other'>
-								<label
-									class='other-donate-label'
-									for='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-other-input'
-								>
+								<label for='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-other-input'>
 									<?php echo esc_html__( 'Donation amount', 'newspack-blocks' ); ?>
 								</label>
 								<div class='wp-block-newspack-blocks-donate__money-input'>
