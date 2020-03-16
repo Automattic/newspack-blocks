@@ -95,6 +95,11 @@
 		}
 	}
 
+	&__tab-panel-untiered &__panel {
+		margin: 0;
+		width: 100%;
+	}
+
 	input[type='radio'] {
 		display: none;
 	}
@@ -133,6 +138,15 @@
 
 	input.other-input:checked ~ &__other {
 		display: block;
+	}
+
+	&__money-input {
+		flex: 0 0 100%;
+		width: 100%;
+
+		input {
+			max-width: 100%;
+		}
 	}
 
 	&__thanks {
