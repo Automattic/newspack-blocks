@@ -26,10 +26,20 @@ class PatternsSidebar extends Component {
 		patternGroups: window && window.newspack_blocks_data && window.newspack_blocks_data.patterns,
 	};
 	insert = content => {
-		const { getBlockSelectionEnd, getBlockIndex, insertBlocks } = this.props;
+		const {
+			getBlock,
+			getBlockSelectionEnd,
+			getBlockIndex,
+			insertBlocks,
+			replaceBlocks,
+		} = this.props;
 		const currentBlock = getBlockSelectionEnd();
-		const insertionIndex = currentBlock ? getBlockIndex( currentBlock ) + 1 : 0;
-		insertBlocks( parse( content ), insertionIndex );
+		const block = currentBlock ? getBlock( currentBlock ) : null;
+		if ( block && 'core/paragraph' === block.name && '' === block.attributes.content ) {
+			replaceBlocks( currentBlock, parse( content ) );
+		} else {
+			insertBlocks( parse( content ), currentBlock ? getBlockIndex( currentBlock ) + 1 : 0 );
+		}
 	};
 	render() {
 		const { patternGroups } = this.state;
@@ -97,12 +107,12 @@ class PatternsSidebar extends Component {
 
 const PatternsSidebarWithDispatch = compose( [
 	withSelect( select => {
-		const { getBlockSelectionEnd, getBlockIndex } = select( 'core/block-editor' );
-		return { getBlockSelectionEnd, getBlockIndex };
+		const { getBlock, getBlockSelectionEnd, getBlockIndex } = select( 'core/block-editor' );
+		return { getBlock, getBlockSelectionEnd, getBlockIndex };
 	} ),
 	withDispatch( dispatch => {
-		const { insertBlocks } = dispatch( 'core/block-editor' );
-		return { insertBlocks };
+		const { insertBlocks, replaceBlocks } = dispatch( 'core/block-editor' );
+		return { insertBlocks, replaceBlocks };
 	} ),
 ] )( PatternsSidebar );
 
