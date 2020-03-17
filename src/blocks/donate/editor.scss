@@ -1,4 +1,5 @@
 @import '../../shared/sass/colors';
+@import '../../shared/sass/mixins';
 @import '../../shared/sass/variables';
 
 .wpbnbd {
@@ -51,6 +52,7 @@
 		.tier-select-label {
 			border: 1px solid $color__border;
 			border-radius: 5px;
+			cursor: default;
 			display: block;
 			font-size: $font__size-sm;
 			font-weight: bold;
@@ -59,7 +61,7 @@
 			padding: 0.76rem 1rem;
 
 			&:hover {
-				background: $color__background-screen;
+				background: transparent;
 			}
 		}
 
@@ -102,7 +104,11 @@
 }
 
 .wpbnbd.untiered {
-	padding-top: 2.4rem;
+	padding-top: 6.8rem;
+
+	@include media( tablet ) {
+		padding-top: 2.4rem;
+	}
 
 	.input-container {
 		margin: 1.5rem 1.5rem 0.76rem;
@@ -155,21 +161,30 @@
 
 .wp-block-newspack-blocks-donate__frequencies {
 	position: relative;
-	padding-top: 2.4rem;
+	padding-top: 6.8rem;
+
+	@include media( tablet ) {
+		padding-top: 2.4rem;
+	}
 }
 
 .wp-block-newspack-blocks-donate__frequency {
 	.donation-frequency-label {
-		width: 33.3333%;
-		width: calc( 100% / 3 );
-		padding: 0.38rem 1.5rem;
-		position: absolute;
-		top: 0;
 		border: 0 solid $color__border;
 		border-width: 0 0 1px;
-		text-transform: uppercase;
 		color: $color__text-light;
 		left: 0;
+		padding: 0.38rem 1.5rem;
+		position: absolute;
+		text-align: left;
+		text-transform: uppercase;
+		top: 0;
+		width: 100%;
+
+		@include media( tablet ) {
+			width: 33.33%;
+			text-align: center;
+		}
 
 		&:hover {
 			background: $color__background-screen;
@@ -180,7 +195,10 @@
 	input[type='radio']:checked {
 		+ .donation-frequency-label {
 			color: inherit;
-			border-bottom-color: transparent;
+
+			@include media( tablet ) {
+				border-bottom-color: transparent;
+			}
 
 			&:hover {
 				background: transparent;
@@ -189,48 +207,27 @@
 
 		~ .wp-block-newspack-blocks-donate__tiers {
 			display: flex;
+			flex-wrap: wrap;
 		}
 	}
 
 	&:nth-of-type( 2 ) .donation-frequency-label {
-		left: 33.3333%;
-		left: calc( 100% / 3 );
-		border-left-width: 1px;
-		border-right-width: 1px;
+		top: 2.22rem;
+
+		@include media( tablet ) {
+			border-left-width: 1px;
+			border-right-width: 1px;
+			left: 33.33%;
+			top: 0;
+		}
 	}
 
 	&:nth-of-type( 3 ) .donation-frequency-label {
-		left: 66.6667%;
-		left: calc( 100% / 3 * 2 );
-	}
-}
+		top: 4.44rem;
 
-@media screen and ( max-width: 600px ) {
-	.wpbnbd {
-		.donation-frequency-label {
-			font-size: 12px;
-			height: 42px;
-			line-height: 42px;
-		}
-
-		&.tiered {
-			.wp-block-newspack-blocks-donate__tiers {
-				justify-content: space-around;
-
-				.tier-select-label {
-					margin-left: 0;
-					border-radius: 0;
-					font-size: 12px;
-				}
-
-				.other-donate-label {
-					top: 8.5em;
-				}
-
-				.wp-block-newspack-blocks-donate__money-input {
-					top: 10.5em;
-				}
-			}
+		@include media( tablet ) {
+			left: 66.66%;
+			top: 0;
 		}
 	}
 }
