@@ -1,10 +1,10 @@
 @import '../../shared/sass/colors';
+@import '../../shared/sass/variables';
 
 .wpbnbd {
 	background: $color__background-body;
 	border: 1px solid $color__border;
 	color: $color__text-main;
-	font-size: 14px;
 	position: relative;
 	width: 100%;
 
@@ -14,9 +14,11 @@
 		border-radius: 5px;
 		box-sizing: border-box;
 		color: $color__background-body;
+		font-size: $font__size-sm;
 		font-weight: bold;
 		outline: none;
 		line-height: 3em;
+		margin: 0 1.5rem 1.5rem;
 		padding-left: 20px;
 		padding-right: 20px;
 	}
@@ -27,38 +29,34 @@
 
 	.donation-frequency-label,
 	.tier-select-label {
-		text-align: center;
-		display: block;
-		line-height: 3em;
-		height: 3em;
-		font-weight: bold;
 		cursor: pointer;
-	}
-
-	button[type='submit'] {
-		margin-bottom: 2em;
-		font-size: 16px;
-		margin-left: 24px;
+		display: block;
+		font-size: $font__size-sm;
+		font-weight: bold;
+		text-align: center;
 	}
 
 	.wp-block-newspack-blocks-donate__thanks {
-		font-size: 14px;
-		margin-left: 2em;
+		color: $color__text-light;
+		font-size: $font__size-sm;
+		margin: 0 1.5rem 0.76rem;
 	}
 }
 
 .wpbnbd.tiered {
 	.wp-block-newspack-blocks-donate__tiers {
-		margin-top: 2em;
+		margin: 1.12rem 1.12rem 0;
 		display: none;
 
 		.tier-select-label {
 			border: 1px solid $color__border;
 			border-radius: 5px;
-			font-size: 16px;
-			margin-left: 25px;
-			padding-left: 1em;
-			padding-right: 1em;
+			display: block;
+			font-size: $font__size-sm;
+			font-weight: bold;
+			line-height: $font__line-height-heading;
+			margin: 0.38rem;
+			padding: 0.76rem 1rem;
 
 			&:hover {
 				background: $color__background-screen;
@@ -75,8 +73,8 @@
 
 		.other-donate-label {
 			position: absolute;
-			top: 10em;
-			left: 2em;
+			left: 1.5rem;
+			top: 7rem;
 		}
 
 		input.other-input {
@@ -91,24 +89,23 @@
 			}
 
 			&:checked + label {
-				margin-bottom: 6em;
+				margin-bottom: 5rem;
 			}
 		}
 	}
 
 	.wp-block-newspack-blocks-donate__money-input {
 		position: absolute;
-		top: 12em;
-		left: 24px;
+		left: 1.5rem;
+		top: 9.26rem;
 	}
 }
 
 .wpbnbd.untiered {
-	padding-top: 3em;
+	padding-top: 2.4rem;
 
 	.input-container {
-		margin-left: 2em;
-		margin-top: 2em;
+		margin: 1.5rem 1.5rem 0.76rem;
 		display: none;
 
 		label {
@@ -158,13 +155,14 @@
 
 .wp-block-newspack-blocks-donate__frequencies {
 	position: relative;
-	padding-top: 3em;
+	padding-top: 2.4rem;
 }
 
 .wp-block-newspack-blocks-donate__frequency {
 	.donation-frequency-label {
 		width: 33.3333%;
 		width: calc( 100% / 3 );
+		padding: 0.38rem 1.5rem;
 		position: absolute;
 		top: 0;
 		border: 0 solid $color__border;
