@@ -245,15 +245,13 @@ class Edit extends Component {
 											<div className="wp-block-newspack-blocks-donate__tier" key={ index }>
 												<input
 													type="radio"
-													onClick={ () => this.setState( { activeTier: index } ) }
+													onClick={ evt => evt.preventDefault() }
 													id={ 'newspack-tier-' + frequencySlug + '-' + uid + '-' + index }
 													checked={ index === activeTier }
-													onClick={ evt => evt.preventDefault() }
 												/>
 												<label
 													className="tier-select-label"
 													htmlFor={ 'newspack-tier-' + frequencySlug + '-' + uid + '-' + index }
-													onClick={ evt => evt.preventDefault() }
 												>
 													{ this.formatCurrency(
 														'year' === frequencySlug || 'once' === frequencySlug
@@ -267,16 +265,14 @@ class Edit extends Component {
 										<div className="wp-block-newspack-blocks-donate__tier">
 											<input
 												type="radio"
-												onClick={ () => this.setState( { activeTier: 'other' } ) }
+												onClick={ evt => evt.preventDefault() }
 												className="other-input"
 												id={ 'newspack-tier-' + frequencySlug + '-' + uid + '-other' }
 												checked={ 'other' === activeTier }
-												onClick={ evt => evt.preventDefault() }
 											/>
 											<label
 												className="tier-select-label"
 												htmlFor={ 'newspack-tier-' + frequencySlug + '-' + uid + '-other' }
-												onClick={ evt => evt.preventDefault() }
 											>
 												{ __( 'Other', 'newspack-blocks' ) }
 											</label>
