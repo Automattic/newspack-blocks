@@ -77,9 +77,7 @@ class PatternsSidebar extends Component {
 														<div className="block-editor-patterns__item-preview">
 															<img src={ image } alt={ __( 'Preview', 'newspack-block' ) } />
 														</div>
-														<div className="block-editor-patterns__item-title">
-															{ title }
-														</div>
+														<div className="block-editor-patterns__item-title">{ title }</div>
 													</div>
 												)
 											) }
