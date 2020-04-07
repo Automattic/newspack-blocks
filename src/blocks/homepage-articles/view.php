@@ -5,6 +5,8 @@
  * @package WordPress
  */
 
+require_once NEWSPACK_BLOCKS__PLUGIN_DIR . '/src/caching/class-newspack-blocks-cache.php';
+
 /**
  * Renders the `newspack-blocks/homepage-posts` block on server.
  *
@@ -14,6 +16,15 @@
  */
 function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	$article_query = new WP_Query( Newspack_Blocks::build_articles_query( $attributes ) );
+
+	$cache_key   = 'newspack_homepage_articles_query_attributes:' . print_r( $attributes, true );
+	$cache_group = 'newspack_blocks_homepage';
+	$content     = Newspack_Blocks_Cache::get( $cache_key, $cache_group );
+	if ( $content ) {
+		Newspack_Blocks::enqueue_view_assets( 'homepage-articles' );
+
+		return $content;
+	}
 
 	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes, [ 'wpnbha' ] );
 
@@ -153,6 +164,8 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 	$content = ob_get_clean();
 	Newspack_Blocks::enqueue_view_assets( 'homepage-articles' );
+
+	Newspack_Blocks_Cache::add( $cache_key, $content, $cache_group );
 
 	return $content;
 }
