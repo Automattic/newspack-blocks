@@ -259,7 +259,7 @@ function newspack_blocks_carousel_block_autoplay_ui( $block_ordinal = 0 ) {
  */
 function newspack_blocks_register_carousel() {
 	register_block_type(
-		'newspack-blocks/carousel',
+		apply_filters( 'newspack_blocks_block_name', 'newspack-blocks/carousel' ),
 		array(
 			'attributes'      => array(
 				'className'    => array(
