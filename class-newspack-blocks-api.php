@@ -244,7 +244,25 @@ class Newspack_Blocks_API {
 		$args = $request->get_params();
 		return new \WP_REST_Response( newspack_blocks_get_video_playlist( $args ), 200 );
 	}
+
+	/**
+	 * Adds meta query support to API rest endpoint.
+	 *
+	 * @param array           $args    Key value array of query var to query value.
+	 * @param WP_REST_Request $request The request used.
+	 * @return array          $args    Filtered request parameters.
+	 */
+	public static function post_meta_request_params( $args, $request ) {
+		// phpcs:disable WordPress.DB.SlowDBQuery
+		$args['meta_key']   = $request['meta_key'];
+		$args['meta_value'] = $request['meta_value'];
+		$args['meta_query'] = $request['meta_query'];
+		// phpcs:enable WordPress.DB.SlowDBQuery
+
+		return $args;
+	}
 }
 
 add_action( 'rest_api_init', array( 'Newspack_Blocks_API', 'register_rest_fields' ) );
 add_action( 'rest_api_init', array( 'Newspack_Blocks_API', 'register_video_playlist_endpoint' ) );
+add_filter( 'rest_post_query', array( 'Newspack_Blocks_API', 'post_meta_request_params' ), 10, 2 );

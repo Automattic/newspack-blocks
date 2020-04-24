@@ -282,6 +282,9 @@ export default compose( [
 				categories,
 				author: authors,
 				tags,
+				meta_key: '_thumbnail_id',
+				meta_value_num: 0,
+				meta_compare: '>',
 			},
 			value => ! isUndefined( value )
 		);
