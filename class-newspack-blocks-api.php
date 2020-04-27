@@ -253,11 +253,13 @@ class Newspack_Blocks_API {
 	 * @return array          $args    Filtered request parameters.
 	 */
 	public static function post_meta_request_params( $args, $request ) {
-		// phpcs:disable WordPress.DB.SlowDBQuery
-		$args['meta_key']   = $request['meta_key'];
-		$args['meta_value'] = $request['meta_value'];
-		$args['meta_query'] = $request['meta_query'];
-		// phpcs:enable WordPress.DB.SlowDBQuery
+		if ( ! empty( $request['meta_key'] ) && ! empty( $request['meta_value'] ) && ! empty( $request['meta_value'] ) ) {
+			// phpcs:disable WordPress.DB.SlowDBQuery
+			$args['meta_key']   = $request['meta_key'];
+			$args['meta_value'] = $request['meta_value'];
+			$args['meta_query'] = $request['meta_query'];
+			// phpcs:enable WordPress.DB.SlowDBQuery
+		}
 
 		return $args;
 	}
