@@ -95,6 +95,7 @@ class Edit extends Component {
 		} = attributes;
 		const classes = classnames(
 			className,
+			'wp-block-newspack-blocks-carousel', // Default to make styles work for third-party consumers.
 			'swiper-container',
 			autoplay && autoPlayState && 'wp-block-newspack-blocks-carousel__autoplay-playing'
 		);
