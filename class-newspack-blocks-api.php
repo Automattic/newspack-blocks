@@ -253,11 +253,17 @@ class Newspack_Blocks_API {
 	 * @return array          $args    Filtered request parameters.
 	 */
 	public static function post_meta_request_params( $args, $request ) {
-		if ( ! empty( $request['meta_key'] ) && ! empty( $request['meta_value'] ) && ! empty( $request['meta_value'] ) ) {
+		$params = $request->get_params();
+
+		if (
+			'_thumbnail_id' === $params['meta_key'] &&
+			'0' === $params['meta_value_num'] &&
+			'>' === $params['meta_compare']
+		) {
 			// phpcs:disable WordPress.DB.SlowDBQuery
-			$args['meta_key']   = $request['meta_key'];
-			$args['meta_value'] = $request['meta_value'];
-			$args['meta_query'] = $request['meta_query'];
+			$args['meta_key']       = $params['meta_key'];
+			$args['meta_value_num'] = $params['meta_value_num'];
+			$args['meta_compare']   = $params['meta_compare'];
 			// phpcs:enable WordPress.DB.SlowDBQuery
 		}
 
@@ -267,4 +273,4 @@ class Newspack_Blocks_API {
 
 add_action( 'rest_api_init', array( 'Newspack_Blocks_API', 'register_rest_fields' ) );
 add_action( 'rest_api_init', array( 'Newspack_Blocks_API', 'register_video_playlist_endpoint' ) );
-add_filter( 'rest_post_query', array( 'Newspack_Blocks_API', 'post_meta_request_params' ), 10, 2 );
+//add_filter( 'rest_post_query', array( 'Newspack_Blocks_API', 'post_meta_request_params' ), 10, 2 );
