@@ -37,9 +37,9 @@ class Edit extends Component {
 		this.state = {
 			autoPlayState: true,
 		};
-		this.carouselRef = createRef();
 		this.btnNextRef = createRef();
 		this.btnPrevRef = createRef();
+		this.carouselRef = createRef();
 		this.paginationRef = createRef();
 	}
 	componentDidUpdate() {
