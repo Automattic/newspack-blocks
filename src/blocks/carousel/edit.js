@@ -95,6 +95,7 @@ class Edit extends Component {
 		} = attributes;
 		const classes = classnames(
 			className,
+			'wp-block-newspack-blocks-carousel', // Default to make styles work for third-party consumers.
 			'swiper-container',
 			autoplay && autoPlayState && 'wp-block-newspack-blocks-carousel__autoplay-playing'
 		);
@@ -282,6 +283,9 @@ export default compose( [
 				categories,
 				author: authors,
 				tags,
+				meta_key: '_thumbnail_id',
+				meta_value_num: 0,
+				meta_compare: '>',
 			},
 			value => ! isUndefined( value )
 		);
