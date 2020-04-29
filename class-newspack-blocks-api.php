@@ -256,6 +256,7 @@ class Newspack_Blocks_API {
 		$params = $request->get_params();
 
 		if (
+			isset( $params['meta_key'], $params['meta_value_num'], $params['meta_compare'] ) &&
 			'_thumbnail_id' === $params['meta_key'] &&
 			'0' === $params['meta_value_num'] &&
 			'>' === $params['meta_compare']
