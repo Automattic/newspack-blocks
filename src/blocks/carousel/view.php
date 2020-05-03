@@ -33,7 +33,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 	}
 	$classes = Newspack_Blocks::block_classes( 'carousel', $attributes, $other );
 
-	$args          = array(
+	$args = array(
 		'posts_per_page'      => $posts_to_show,
 		'post_status'         => 'publish',
 		'suppress_filters'    => false,
@@ -140,21 +140,21 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 							<?php
 							endif;
 
-							if ( $attributes['showDate'] ) {
-								$time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
-								if ( get_the_time( 'U' ) !== get_the_modified_time( 'U' ) ) {
-									$time_string = '<time class="entry-date published" datetime="%1$s">%2$s</time><time class="updated" datetime="%3$s">%4$s</time>';
-								}
-								$time_string = sprintf(
-									$time_string,
-									esc_attr( get_the_date( DATE_W3C ) ),
-									esc_html( get_the_date() ),
-									esc_attr( get_the_modified_date( DATE_W3C ) ),
-									esc_html( get_the_modified_date() )
-								);
-								echo $time_string; // WPCS: XSS OK.
+						if ( $attributes['showDate'] ) {
+							$time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
+							if ( get_the_time( 'U' ) !== get_the_modified_time( 'U' ) ) {
+								$time_string = '<time class="entry-date published" datetime="%1$s">%2$s</time><time class="updated" datetime="%3$s">%4$s</time>';
 							}
-							?>
+							$time_string = sprintf(
+								$time_string,
+								esc_attr( get_the_date( DATE_W3C ) ),
+								esc_html( get_the_date() ),
+								esc_attr( get_the_modified_date( DATE_W3C ) ),
+								esc_html( get_the_modified_date() )
+							);
+							echo $time_string; // phpcs:ignore
+						}
+						?>
 					</div><!-- .entry-meta -->
 				</div><!-- .entry-wrapper -->
 			</article>
