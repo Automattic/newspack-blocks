@@ -21,6 +21,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 	$authors       = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
 	$categories    = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
 	$tags          = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
+	$is_amp        = function_exists( 'is_amp_endpoint' ) && is_amp_endpoint();
 
 	$other = array();
 	if ( $autoplay ) {
@@ -48,8 +49,14 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 		$args['tag__in'] = $tags;
 	}
 
-	$article_query = new WP_Query( $args );
-	$counter       = 0;
+	$article_query   = new WP_Query( $args );
+	$counter         = 0;
+	$article_classes = [
+		'post-has-image',
+	];
+	if ( ! $is_amp ) {
+		$article_classes[] = 'swiper-slide';
+	}
 	ob_start();
 	if ( $article_query->have_posts() ) :
 		while ( $article_query->have_posts() ) :
@@ -60,7 +67,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 			$counter++;
 			?>
 
-			<article class="post-has-image">
+			<article class="<?php echo esc_attr( implode( ' ', $article_classes ) ); ?>">
 				<figure class="post-thumbnail">
 					<a href="<?php echo esc_url( get_permalink() ); ?>" rel="bookmark">
 						<?php
@@ -166,19 +173,30 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 			0 === $x ? 'selected' : ''
 		);
 	}
-	$selector = sprintf(
-		'<amp-selector id="wp-block-newspack-carousel__amp-pagination__%1$d" class="swiper-pagination-bullets amp-pagination" on="select:wp-block-newspack-carousel__amp-carousel__%1$d.goToSlide(index=event.targetOption)" layout="container">%2$s</amp-selector>',
-		absint( $newspack_blocks_carousel_id ),
-		implode( '', $buttons )
-	);
-	$carousel = sprintf(
-		'<amp-carousel width="4" height="3" layout="responsive" type="slides" data-next-button-aria-label="%1$s" data-prev-button-aria-label="%2$s" controls loop %3$s id="wp-block-newspack-carousel__amp-carousel__%4$s" on="slideChange:wp-block-newspack-carousel__amp-pagination__%4$s.toggle(index=event.index, value=true)">%5$s</amp-carousel>',
-		esc_attr__( 'Next Slide', 'newspack-blocks' ),
-		esc_attr__( 'Previous Slide', 'newspack-blocks' ),
-		$autoplay ? 'autoplay delay=' . esc_attr( $delay * 1000 ) : '',
-		absint( $newspack_blocks_carousel_id ),
-		$slides
-	);
+	if ( $is_amp ) {
+		$selector = sprintf(
+			'<amp-selector id="wp-block-newspack-carousel__amp-pagination__%1$d" class="swiper-pagination-bullets amp-pagination" on="select:wp-block-newspack-carousel__amp-carousel__%1$d.goToSlide(index=event.targetOption)" layout="container">%2$s</amp-selector>',
+			absint( $newspack_blocks_carousel_id ),
+			implode( '', $buttons )
+		);
+		$carousel = sprintf(
+			'<amp-carousel width="4" height="3" layout="responsive" type="slides" data-next-button-aria-label="%1$s" data-prev-button-aria-label="%2$s" controls loop %3$s id="wp-block-newspack-carousel__amp-carousel__%4$s" on="slideChange:wp-block-newspack-carousel__amp-pagination__%4$s.toggle(index=event.index, value=true)">%5$s</amp-carousel>',
+			esc_attr__( 'Next Slide', 'newspack-blocks' ),
+			esc_attr__( 'Previous Slide', 'newspack-blocks' ),
+			$autoplay ? 'autoplay delay=' . esc_attr( $delay * 1000 ) : '',
+			absint( $newspack_blocks_carousel_id ),
+			$slides
+		);
+	} else {
+		$selector = sprintf(
+			'<div class="swiper-pagination-bullets amp-pagination">%s</div>',
+			implode( '', $buttons )
+		);
+		$carousel = sprintf(
+			'<div class="swiper-container"><div class="swiper-wrapper">%s</div></div>',
+			$slides
+		);
+	}
 	Newspack_Blocks::enqueue_view_assets( 'carousel' );
 	return sprintf(
 		'<div class="%1$s" id="wp-block-newspack-carousel__%2$d">%3$s%4$s%5$s</div>',
