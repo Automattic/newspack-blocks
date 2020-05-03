@@ -26,6 +26,10 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 	$other = array();
 	if ( $autoplay ) {
 		$other[] = 'wp-block-newspack-blocks-carousel__autoplay-playing';
+		if ( ! $is_amp ) {
+			$other[] = 'wp-block-newspack-carousel__param-autoplay-1';
+			$other[] = 'wp-block-newspack-carousel__param-delay-' . esc_attr( $delay );
+		}
 	}
 	$classes = Newspack_Blocks::block_classes( 'carousel', $attributes, $other );
 
@@ -174,12 +178,12 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 		);
 	}
 	if ( $is_amp ) {
-		$selector = sprintf(
+		$selector    = sprintf(
 			'<amp-selector id="wp-block-newspack-carousel__amp-pagination__%1$d" class="swiper-pagination-bullets amp-pagination" on="select:wp-block-newspack-carousel__amp-carousel__%1$d.goToSlide(index=event.targetOption)" layout="container">%2$s</amp-selector>',
 			absint( $newspack_blocks_carousel_id ),
 			implode( '', $buttons )
 		);
-		$carousel = sprintf(
+		$carousel    = sprintf(
 			'<amp-carousel width="4" height="3" layout="responsive" type="slides" data-next-button-aria-label="%1$s" data-prev-button-aria-label="%2$s" controls loop %3$s id="wp-block-newspack-carousel__amp-carousel__%4$s" on="slideChange:wp-block-newspack-carousel__amp-pagination__%4$s.toggle(index=event.index, value=true)">%5$s</amp-carousel>',
 			esc_attr__( 'Next Slide', 'newspack-blocks' ),
 			esc_attr__( 'Previous Slide', 'newspack-blocks' ),
@@ -187,15 +191,23 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 			absint( $newspack_blocks_carousel_id ),
 			$slides
 		);
+		$autoplay_ui = $autoplay ? newspack_blocks_carousel_block_autoplay_ui_amp( $newspack_blocks_carousel_id ) : '';
 	} else {
-		$selector = sprintf(
+		$selector    = sprintf(
 			'<div class="swiper-pagination-bullets amp-pagination">%s</div>',
 			implode( '', $buttons )
 		);
-		$carousel = sprintf(
-			'<div class="swiper-container"><div class="swiper-wrapper">%s</div></div>',
-			$slides
+		$navigation  = sprintf(
+			'<a class="swiper-button swiper-button-prev" role="button" aria-label="%s"></a><a class="swiper-button swiper-button-next" role="button" aria-labvel="%s"></a>',
+			esc_attr__( 'Previous Slide', 'newspack-blocks' ),
+			esc_attr__( 'Next Slide', 'newspack-blocks' )
 		);
+		$carousel    = sprintf(
+			'<div class="swiper-container"><div class="swiper-wrapper">%s</div>%s</div>',
+			$slides,
+			$navigation
+		);
+		$autoplay_ui = $autoplay ? newspack_blocks_carousel_block_autoplay_ui( $newspack_blocks_carousel_id ) : '';
 	}
 	Newspack_Blocks::enqueue_view_assets( 'carousel' );
 	return sprintf(
@@ -203,19 +215,34 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 		esc_attr( $classes ),
 		absint( $newspack_blocks_carousel_id ),
 		$carousel,
-		$autoplay ? newspack_blocks_carousel_block_autoplay_ui( $newspack_blocks_carousel_id ) : '',
+		$autoplay_ui,
 		$selector
 	);
 }
 
 /**
- * Generate autoplay play/pause UI.
+ * Generate autoplay play/pause UI for non-AMP requests.
  *
  * @param int $block_ordinal The ordinal number of the block, used in unique ID.
  *
  * @return string Autoplay UI markup.
  */
 function newspack_blocks_carousel_block_autoplay_ui( $block_ordinal = 0 ) {
+	return sprintf(
+		'<a aria-label="%s" class="swiper-button swiper-button-pause" role="button"></a><a aria-label="%s" class="swiper-button swiper-button-play" role="button"></a>',
+		esc_attr__( 'Pause Slideshow', 'newspack-blocks' ),
+		esc_attr__( 'Play Slideshow', 'newspack-blocks' )
+	);
+}
+
+/**
+ * Generate autoplay play/pause UI for AMP requests.
+ *
+ * @param int $block_ordinal The ordinal number of the block, used in unique ID.
+ *
+ * @return string Autoplay UI markup.
+ */
+function newspack_blocks_carousel_block_autoplay_ui_amp( $block_ordinal = 0 ) {
 	$block_id        = sprintf(
 		'wp-block-newspack-carousel__%d',
 		absint( $block_ordinal )

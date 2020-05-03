@@ -112,6 +112,7 @@
 			box-shadow: 0 0 0 2px white, 0 0 0 4px black;
 			outline: 0;
 		}
+		&.swiper-pagination-bullet-active,
 		&[selected] {
 			opacity: 1;
 			outline: 0;
@@ -119,6 +120,7 @@
 		}
 	}
 
+	.swiper-button,
 	.amp-carousel-button {
 		background-color: rgba( black, 0.5 );
 		background-position: center;
@@ -143,7 +145,9 @@
 		}
 	}
 	.amp-carousel-button-next,
-	.amp-carousel-button-prev {
+	.amp-carousel-button-prev,
+	.swiper-button-next,
+	.swiper-button-prev {
 		left: 1.5em;
 		display: none;
 
@@ -151,16 +155,23 @@
 			display: block;
 		}
 	}
-	.amp-carousel-button-next {
+
+	.amp-carousel-button-next,
+	.swiper-button-next {
 		background-image: url( "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='24'%20height='24'%20viewBox='0%200%2024%2024'%3E%3Cpath%20d='M5.88%204.12L13.76%2012l-7.88%207.88L8%2022l10-10L8%202z'%20fill='white'/%3E%3Cpath%20fill='none'%20d='M0 0h24v24H0z'/%3E%3C/svg%3E" );
 		left: auto;
 		right: 1.5em;
 	}
-	.amp-carousel-button-prev {
+
+	.amp-carousel-button-prev,
+	.swiper-button-prev {
 		background-image: url( "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='24'%20height='24'%20viewBox='0%200%2024%2024'%3E%3Cpath%20d='M18%204.12L10.12%2012%2018%2019.88%2015.88%2022l-10-10%2010-10z'%20fill='white'/%3E%3Cpath%20fill='none'%20d='M0 0h24v24H0z'/%3E%3C/svg%3E" );
 	}
+
+	.amp-carousel-button-pause,
 	.amp-carousel-button-play,
-	.amp-carousel-button-pause {
+	.swiper-button-pause,
+	.swiper-button-play {
 		background-image: url( "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='24'%20height='24'%20viewBox='0%200%2024%2024'%3E%3Cpath%20d='M6%2019h4V5H6v14zm8-14v14h4V5h-4z'%20fill='white'/%3E%3Cpath%20d='M0%200h24v24H0z'%20fill='none'/%3E%3C/svg%3E" );
 		display: none;
 		margin-top: 0;
@@ -170,7 +181,8 @@
 		transform: none;
 		z-index: 1;
 	}
-	.amp-carousel-button-play {
+	.amp-carousel-button-play,
+	.swiper-button-play {
 		background-image: url( "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='24'%20height='24'%20viewBox='0%200%2024%2024'%3E%3Cpath%20d='M8%205v14l11-7z'%20fill='white'/%3E%3Cpath%20d='M0 0h24v24H0z'%20fill='none'/%3E%3C/svg%3E" );
 	}
 
@@ -200,7 +212,6 @@
 			margin-right: 1.5em;
 		}
 	}
-
 	.cat-links {
 		color: inherit;
 		font-size: 0.6em;
@@ -211,18 +222,21 @@
 			text-decoration: none;
 		}
 	}
-
 	.avatar {
 		border-radius: 100%;
 		display: block;
 		margin-right: 0.5em;
 	}
 	&.wp-block-newspack-blocks-carousel__autoplay-playing .amp-carousel-button-pause,
-	.amp-carousel-button-play {
+	&.wp-block-newspack-blocks-carousel__autoplay-playing .swiper-button-pause,
+	.amp-carousel-button-play,
+	.swiper-button-play {
 		display: block;
 	}
 	&.wp-block-newspack-blocks-carousel__autoplay-playing .amp-carousel-button-play,
-	.amp-carousel-button-pause {
+	&.wp-block-newspack-blocks-carousel__autoplay-playing .swiper-button-play,
+	.amp-carousel-button-pause,
+	.swiper-button-pause {
 		display: none;
 	}
 }
