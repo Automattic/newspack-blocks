@@ -16,18 +16,6 @@ if ( typeof window !== 'undefined' ) {
 		);
 		blocksArray.forEach( block => {
 			const container = block.querySelector( '.swiper-container' );
-			const params = Array.from( block.classList ).reduce(
-				( accumulator, className ) => {
-					const prefix = 'wp-block-newspack-carousel__param-';
-					if ( 0 === className.indexOf( prefix ) ) {
-						const a = className.split( prefix );
-						const b = a[ a.length - 1 ].split( '-' );
-						accumulator[ b[ 0 ] ] = b[ 1 ];
-					}
-					return accumulator;
-				},
-				{ autoplay: false, delay: 0 }
-			);
 			const els = {
 				prev: block.querySelector( '.swiper-button-prev' ),
 				next: block.querySelector( '.swiper-button-next' ),
@@ -35,10 +23,12 @@ if ( typeof window !== 'undefined' ) {
 				pause: block.querySelector( '.swiper-button-pause' ),
 				play: block.querySelector( '.swiper-button-play' ),
 			};
+			const autoplay = parseInt( block.dataset.autoplay ) ? true : false;
+			const delay = parseInt( block.dataset.autoplay_delay ) * 1000;
 			const swiperConfig = {
-				autoplay: parseInt( params.autoplay )
+				autoplay: autoplay
 					? {
-							delay: parseInt( params.delay ) * 1000,
+							delay,
 							disableOnInteraction: false,
 					  }
 					: false,

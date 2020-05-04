@@ -26,10 +26,6 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 	$other = array();
 	if ( $autoplay ) {
 		$other[] = 'wp-block-newspack-blocks-carousel__autoplay-playing';
-		if ( ! $is_amp ) {
-			$other[] = 'wp-block-newspack-carousel__param-autoplay-1';
-			$other[] = 'wp-block-newspack-carousel__param-delay-' . esc_attr( $delay );
-		}
 	}
 	$classes = Newspack_Blocks::block_classes( 'carousel', $attributes, $other );
 
@@ -209,11 +205,18 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 		);
 		$autoplay_ui = $autoplay ? newspack_blocks_carousel_block_autoplay_ui( $newspack_blocks_carousel_id ) : '';
 	}
+	$data_attributes = [];
+
+	if ( $autoplay && ! $is_amp ) {
+		$data_attributes[] = 'data-autoplay=1';
+		$data_attributes[] = sprintf( 'data-autoplay_delay=%s', esc_attr( $delay ) );
+	}
 	Newspack_Blocks::enqueue_view_assets( 'carousel' );
 	return sprintf(
-		'<div class="%1$s" id="wp-block-newspack-carousel__%2$d">%3$s%4$s%5$s</div>',
+		'<div class="%1$s" id="wp-block-newspack-carousel__%2$d" %3$s>%4$s%5$s%6$s</div>',
 		esc_attr( $classes ),
 		absint( $newspack_blocks_carousel_id ),
+		esc_attr( implode( ' ', $data_attributes ) ),
 		$carousel,
 		$autoplay_ui,
 		$selector
