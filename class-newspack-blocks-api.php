@@ -164,6 +164,10 @@ class Newspack_Blocks_API {
 				} else {
 					$author_avatar = coauthors_get_avatar( $author, 48 );
 				}
+				$author_link = null;
+				if ( function_exists( 'coauthors_posts_links' ) ) {
+					$author_link = get_author_posts_url( $author->ID, $author->user_nicename );
+				}
 				$author_data[] = array(
 					/* Get the author name */
 					'display_name' => esc_html( $author->display_name ),
@@ -171,6 +175,8 @@ class Newspack_Blocks_API {
 					'avatar'       => wp_kses_post( $author_avatar ),
 					/* Get the author ID */
 					'id'           => $author->ID,
+					/* Get the author Link */
+					'author_link'  => $author_link,
 				);
 			}
 		else :
@@ -181,6 +187,8 @@ class Newspack_Blocks_API {
 				'avatar'       => get_avatar( $object['author'], 48 ),
 				/* Get the author ID */
 				'id'           => $object['author'],
+				/* Get the author Link */
+				'author_link'  => get_author_posts_url( $object['author'] ),
 			);
 		endif;
 

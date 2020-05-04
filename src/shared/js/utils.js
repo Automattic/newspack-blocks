@@ -7,7 +7,7 @@ import { RawHTML } from '@wordpress/element';
 export const formatAvatars = authorInfo =>
 	authorInfo.map( author => (
 		<span className="avatar author-avatar" key={ author.id }>
-			<a className="url fn n" href="#">
+			<a className="url fn n" href={ author.author_link }>
 				<RawHTML>{ author.avatar }</RawHTML>
 			</a>
 		</span>
@@ -20,7 +20,7 @@ export const formatByline = authorInfo => (
 			return [
 				...accumulator,
 				<span className="author vcard" key={ author.id }>
-					<a className="url fn n" href="#">
+					<a className="url fn n" href={ author.author_link }>
 						{ author.display_name }
 					</a>
 				</span>,
