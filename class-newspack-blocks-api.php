@@ -86,6 +86,14 @@ class Newspack_Blocks_API {
 			return false;
 		}
 
+		// Large image.
+		$feat_img_array_large        = wp_get_attachment_image_src(
+			$object['featured_media'],
+			'large',
+			false
+		);
+		$featured_image_set['large'] = $feat_img_array_large[0];
+
 		// Landscape image.
 		$landscape_size = Newspack_Blocks::image_size_for_orientation( 'landscape' );
 

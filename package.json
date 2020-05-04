@@ -54,6 +54,7 @@
     "@wordpress/compose": "^3.9.0",
     "@wordpress/data": "^4.11.0",
     "@wordpress/date": "^3.7.0",
+    "@wordpress/dom-ready": "^2.9.0",
     "@wordpress/edit-post": "^3.13.0",
     "@wordpress/hooks": "^2.6.0",
     "@wordpress/html-entities": "^2.5.0",

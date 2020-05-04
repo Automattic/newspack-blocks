@@ -119,7 +119,7 @@ class Edit extends Component {
 												<figure className="post-thumbnail">
 													{ post.newspack_featured_image_src && (
 														<a href="#" rel="bookmark">
-															<img src={ post.newspack_featured_image_src.landscape } alt="" />
+															<img src={ post.newspack_featured_image_src.large } alt="" />
 														</a>
 													) }
 												</figure>
