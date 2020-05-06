@@ -243,4 +243,16 @@
 	.swiper-button-pause {
 		display: none;
 	}
+
+	// Make sure Jetpack Content Options don't affect the block.
+	.posted-on,
+	.cat-links,
+	.tags-links,
+	.byline,
+	.author-avatar {
+		clip: auto;
+		height: auto;
+		position: relative;
+		width: auto;
+	}
 }
