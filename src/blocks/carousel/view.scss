@@ -191,6 +191,7 @@
 	/* Swiper Slide */
 	.swiper-slide {
 		height: auto;
+		max-height: 75vh;
 
 		.post-thumbnail img {
 			object-fit: cover;
