@@ -191,6 +191,10 @@
 	/* Swiper Slide */
 	.swiper-slide {
 		height: auto;
+
+		.post-thumbnail img {
+			object-fit: cover;
+		}
 	}
 
 	/* Image styles */
