@@ -59,8 +59,24 @@ if ( typeof window !== 'undefined' ) {
 							} );
 						}
 
-						// set tabindex to -1 on all focusable elements that are not the current slide
+						// Set tabindex to -1 on all focusable elements that are not the current slide.
 						this.wrapperEl.querySelectorAll( 'a' ).forEach( e => ( e.tabIndex = '-1' ) );
+
+						// Get the active slide's <a> and make them focusable again
+						this.slides[ this.activeIndex ]
+							.querySelectorAll( 'a' )
+							.forEach( e => ( e.tabIndex = '0' ) );
+					},
+					slideChange() {
+						// Get all the previous slides' <a> and set to tabIndex -1
+						this.slides[ this.previousIndex ]
+							.querySelectorAll( 'a' )
+							.forEach( e => ( e.tabIndex = '-1' ) );
+
+						// Get the active slide's <a> and make them focusable again
+						this.slides[ this.activeIndex ]
+							.querySelectorAll( 'a' )
+							.forEach( e => ( e.tabIndex = '0' ) );
 					},
 				},
 			};
