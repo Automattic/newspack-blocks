@@ -150,29 +150,25 @@ class Edit extends Component {
 										)
 								) }
 							</div>
-							<a
+							<button
 								className="amp-carousel-button amp-carousel-button-prev swiper-button-prev"
 								ref={ this.btnPrevRef }
-								role="button"
 							/>
-							<a
+							<button
 								className="amp-carousel-button amp-carousel-button-next swiper-button-next"
 								ref={ this.btnNextRef }
-								role="button"
 							/>
 							{ autoplay && (
 								<Fragment>
-									<a
+									<button
 										className="amp-carousel-button-pause amp-carousel-button"
-										role="button"
 										onClick={ () => {
 											this.swiperInstance.autoplay.stop();
 											this.setState( { autoPlayState: false } );
 										} }
 									/>
-									<a
+									<button
 										className="amp-carousel-button-play amp-carousel-button"
-										role="button"
 										onClick={ () => {
 											this.swiperInstance.autoplay.start();
 											this.setState( { autoPlayState: true } );
