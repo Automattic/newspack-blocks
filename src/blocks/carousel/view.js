@@ -58,6 +58,9 @@ if ( typeof window !== 'undefined' ) {
 								block.classList.add( 'wp-block-newspack-blocks-carousel__autoplay-playing' );
 							} );
 						}
+
+						// set tabindex to -1 on all focusable elements that are not the current slide
+						this.wrapperEl.querySelectorAll( 'a' ).forEach( e => ( e.tabIndex = '-1' ) );
 					},
 				},
 			};
