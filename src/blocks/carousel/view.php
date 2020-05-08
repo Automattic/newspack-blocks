@@ -187,7 +187,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 			implode( '', $buttons )
 		);
 		$navigation  = sprintf(
-			'<button class="swiper-button swiper-button-prev" aria-label="%s"></button><button class="swiper-button swiper-button-next" aria-labvel="%s"></button>',
+			'<button class="swiper-button swiper-button-prev" aria-label="%s"></button><button class="swiper-button swiper-button-next" aria-label="%s"></button>',
 			esc_attr__( 'Previous Slide', 'newspack-blocks' ),
 			esc_attr__( 'Next Slide', 'newspack-blocks' )
 		);
