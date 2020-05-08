@@ -210,8 +210,8 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 		esc_attr( $classes ),
 		absint( $newspack_blocks_carousel_id ),
 		esc_attr( implode( ' ', $data_attributes ) ),
-		$carousel,
 		$autoplay_ui,
+		$carousel,
 		$selector
 	);
 }
