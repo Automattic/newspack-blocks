@@ -26,6 +26,17 @@ if ( typeof window !== 'undefined' ) {
 			};
 			const autoplay = parseInt( block.dataset.autoplay ) ? true : false;
 			const delay = parseInt( block.dataset.autoplay_delay ) * 1000;
+
+			const activateSlide = slide => {
+				slide.ariaHidden = 'false';
+				slide.querySelectorAll( 'a' ).forEach( e => ( e.tabIndex = '0' ) );
+			};
+
+			const deactivateSlide = slide => {
+				slide.ariaHidden = 'true';
+				slide.querySelectorAll( 'a' ).forEach( e => ( e.tabIndex = '-1' ) );
+			};
+
 			const swiperConfig = {
 				autoplay: autoplay
 					? {
@@ -45,6 +56,7 @@ if ( typeof window !== 'undefined' ) {
 					el: els.pagination,
 					type: 'bullets',
 				},
+
 				on: {
 					init() {
 						if ( els.pause ) {
@@ -66,24 +78,17 @@ if ( typeof window !== 'undefined' ) {
 							} );
 						}
 
-						// Set tabindex to -1 on all focusable elements that are not the current slide.
-						this.wrapperEl.querySelectorAll( 'a' ).forEach( e => ( e.tabIndex = '-1' ) );
+						this.wrapperEl
+							.querySelectorAll( '.swiper-slide' )
+							.forEach( slide => deactivateSlide( slide ) );
 
-						// Get the active slide's <a> and make them focusable again
-						this.slides[ this.activeIndex ]
-							.querySelectorAll( 'a' )
-							.forEach( e => ( e.tabIndex = '0' ) );
+						// Set-up our active slide.
+						activateSlide( this.slides[ this.activeIndex ] );
 					},
 					slideChange() {
-						// Get all the previous slides' <a> and set to tabIndex -1.
-						this.slides[ this.previousIndex ]
-							.querySelectorAll( 'a' )
-							.forEach( e => ( e.tabIndex = '-1' ) );
+						deactivateSlide( this.slides[ this.previousIndex ] );
 
-						// Get the active slide's <a> and make them focusable again.
-						this.slides[ this.activeIndex ]
-							.querySelectorAll( 'a' )
-							.forEach( e => ( e.tabIndex = '0' ) );
+						activateSlide( this.slides[ this.activeIndex ] );
 
 						// If we're autoplaying, don't announce the slide change, as that would be supremely annoying.
 						if ( ! this.autoplay.running ) {
