@@ -84,6 +84,12 @@ if ( typeof window !== 'undefined' ) {
 						this.slides[ this.activeIndex ]
 							.querySelectorAll( 'a' )
 							.forEach( e => ( e.tabIndex = '0' ) );
+
+						// If we're autoplaying, don't announce the slide change, as that would be supremely annoying.
+						if ( ! this.autoplay.running ) {
+							// Announce the contents of the slide
+							this.a11y.notify( this.slides[ this.activeIndex ].innerHTML );
+						}
 					},
 				},
 			};
