@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 import QueryControls from '../../components/query-controls';
-import createSwiper from './create-swiper';
+import { createSwiper } from './create-swiper';
 import { formatAvatars, formatByline } from '../../shared/js/utils';
 
 /**
@@ -113,6 +113,24 @@ class Edit extends Component {
 					) }
 					{ latestPosts && (
 						<Fragment>
+							{ autoplay && (
+								<Fragment>
+									<button
+										className="amp-carousel-button-pause amp-carousel-button"
+										onClick={ () => {
+											this.swiperInstance.autoplay.stop();
+											this.setState( { autoPlayState: false } );
+										} }
+									/>
+									<button
+										className="amp-carousel-button-play amp-carousel-button"
+										onClick={ () => {
+											this.swiperInstance.autoplay.start();
+											this.setState( { autoPlayState: true } );
+										} }
+									/>
+								</Fragment>
+							) }
 							<div className="swiper-wrapper">
 								{ latestPosts.map(
 									post =>
@@ -158,24 +176,6 @@ class Edit extends Component {
 								className="amp-carousel-button amp-carousel-button-next swiper-button-next"
 								ref={ this.btnNextRef }
 							/>
-							{ autoplay && (
-								<Fragment>
-									<button
-										className="amp-carousel-button-pause amp-carousel-button"
-										onClick={ () => {
-											this.swiperInstance.autoplay.stop();
-											this.setState( { autoPlayState: false } );
-										} }
-									/>
-									<button
-										className="amp-carousel-button-play amp-carousel-button"
-										onClick={ () => {
-											this.swiperInstance.autoplay.start();
-											this.setState( { autoPlayState: true } );
-										} }
-									/>
-								</Fragment>
-							) }
 							<div
 								className="swiper-pagination-bullets amp-pagination"
 								ref={ this.paginationRef }
