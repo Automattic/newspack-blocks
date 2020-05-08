@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import domReady from '@wordpress/dom-ready';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -93,7 +93,14 @@ if ( typeof window !== 'undefined' ) {
 						// If we're autoplaying, don't announce the slide change, as that would be supremely annoying.
 						if ( ! this.autoplay.running ) {
 							// Announce the contents of the slide.
-							this.a11y.notify( this.slides[ this.activeIndex ].innerHTML );
+							this.a11y.notify(
+								`${ this.slides[ this.activeIndex ].innerHTML }, ${ sprintf(
+									/* translators: current slide number and the total number of slides */
+									__( 'Slide %s of %s', 'newspack-blocks' ),
+									this.realIndex + 1,
+									this.pagination.bullets.length
+								) }`
+							);
 						}
 					},
 				},
