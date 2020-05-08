@@ -51,6 +51,7 @@
   },
   "private": true,
   "dependencies": {
+    "@wordpress/a11y": "^2.9.0",
     "@wordpress/compose": "^3.9.0",
     "@wordpress/data": "^4.11.0",
     "@wordpress/date": "^3.7.0",

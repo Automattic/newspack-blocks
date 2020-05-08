@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import domReady from '@wordpress/dom-ready';
+import { speak } from '@wordpress/a11y';
 import { __, sprintf } from '@wordpress/i18n';
 
 /**
@@ -63,7 +64,7 @@ if ( typeof window !== 'undefined' ) {
 							els.pause.addEventListener( 'click', () => {
 								this.autoplay.stop();
 								block.classList.remove( 'wp-block-newspack-blocks-carousel__autoplay-playing' );
-								this.a11y.notify( __( 'Paused' ) );
+								speak( __( 'Paused', 'newspack-blocks' ), 'assertive' );
 								// Move focus to the play button.
 								els.play.focus();
 							} );
@@ -72,7 +73,7 @@ if ( typeof window !== 'undefined' ) {
 							els.play.addEventListener( 'click', () => {
 								this.autoplay.start();
 								block.classList.add( 'wp-block-newspack-blocks-carousel__autoplay-playing' );
-								this.a11y.notify( __( 'Playing' ) );
+								speak( __( 'Playing', 'newspack-blocks' ), 'assertive' );
 								// Move focus to the pause button.
 								els.pause.focus();
 							} );
@@ -93,13 +94,14 @@ if ( typeof window !== 'undefined' ) {
 						// If we're autoplaying, don't announce the slide change, as that would be supremely annoying.
 						if ( ! this.autoplay.running ) {
 							// Announce the contents of the slide.
-							this.a11y.notify(
+							speak(
 								`${ this.slides[ this.activeIndex ].innerHTML }, ${ sprintf(
 									/* translators: current slide number and the total number of slides */
 									__( 'Slide %s of %s', 'newspack-blocks' ),
 									this.realIndex + 1,
 									this.pagination.bullets.length
-								) }`
+								) }`,
+								'assertive'
 							);
 						}
 					},

@@ -120,6 +120,10 @@
 			outline: 0;
 			width: 24px;
 		}
+
+		span {
+			@include visuallyHidden;
+		}
 	}
 	.swiper-button,
 	.amp-carousel-button {
