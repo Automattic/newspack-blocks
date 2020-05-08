@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import domReady from '@wordpress/dom-ready';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -50,12 +51,18 @@ if ( typeof window !== 'undefined' ) {
 							els.pause.addEventListener( 'click', () => {
 								this.autoplay.stop();
 								block.classList.remove( 'wp-block-newspack-blocks-carousel__autoplay-playing' );
+								this.a11y.notify( __( 'Paused' ) );
+								// Move focus to the play button.
+								els.play.focus();
 							} );
 						}
 						if ( els.play ) {
 							els.play.addEventListener( 'click', () => {
 								this.autoplay.start();
 								block.classList.add( 'wp-block-newspack-blocks-carousel__autoplay-playing' );
+								this.a11y.notify( __( 'Playing' ) );
+								// Move focus to the pause button.
+								els.pause.focus();
 							} );
 						}
 
