@@ -7,21 +7,41 @@ import { __, sprintf } from '@wordpress/i18n';
 import Swiper from 'swiper';
 import 'swiper/dist/css/swiper.css';
 
-export const activateSlide = slide => {
+/**
+ * Modifies attributes on slide HTML to make it accessible.
+ *
+ * @param {HTMLElement} slide Slide DOM element
+ */
+export function activateSlide( slide ) {
 	slide.ariaHidden = 'false';
-	slide.querySelectorAll( 'a' ).forEach( e => ( e.tabIndex = '0' ) );
-};
+	/**
+	 * Calls Array.prototype.forEach for IE11 compatibility.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/NodeList
+	 */
+	Array.prototype.forEach.call( slide.querySelectorAll( 'a' ), e => ( e.tabIndex = '0' ) );
+}
 
-export const deactivateSlide = slide => {
+/**
+ * Modifies attributes on slide HTML to make it accessible.
+ *
+ * @param {HTMLElement} slide Slide DOM element
+ */
+export function deactivateSlide( slide ) {
 	slide.ariaHidden = 'true';
-	slide.querySelectorAll( 'a' ).forEach( e => ( e.tabIndex = '-1' ) );
-};
+	/**
+	 * Calls Array.prototype.forEach for IE11 compatibility.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/NodeList
+	 */
+	Array.prototype.forEach.call( slide.querySelectorAll( 'a' ), e => ( e.tabIndex = '-1' ) );
+}
 
 /**
  * @param {string} container Selector
  * @param {Object} params Params passed to Swiper
  */
-export const createSwiper = ( container = '.swiper-container', params = {} ) => {
+export function createSwiper( container = '.swiper-container', params = {} ) {
 	const defaultParams = {
 		/**
 		 * Remove the messages, as we're announcing the slide content and number. These messages are overwriting the slide announcement.
@@ -85,4 +105,4 @@ export const createSwiper = ( container = '.swiper-container', params = {} ) => 
 	};
 
 	return new Swiper( container, merge( {}, defaultParams, params ) );
-};
+}

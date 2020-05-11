@@ -69,9 +69,15 @@ if ( typeof window !== 'undefined' ) {
 							} );
 						}
 
-						this.wrapperEl
-							.querySelectorAll( '.swiper-slide' )
-							.forEach( slide => deactivateSlide( slide ) );
+						/**
+						 * Calls Array.prototype.forEach for IE11 compatibility.
+						 *
+						 * @see https://developer.mozilla.org/en-US/docs/Web/API/NodeList
+						 */
+						Array.prototype.forEach.call(
+							this.wrapperEl.querySelectorAll( '.swiper-slide' ),
+							slide => deactivateSlide( slide )
+						);
 
 						// Set-up our active slide.
 						activateSlide( this.slides[ this.activeIndex ] );
