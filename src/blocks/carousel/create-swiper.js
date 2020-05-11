@@ -43,6 +43,7 @@ export function deactivateSlide( slide ) {
  * @param {Element} els.prev Previous button element
  * @param {Element} els.play Play button element
  * @param {Element} els.pause Pause button element
+ * @param {Element} els.pagination Pagination element
  * @param {Object} config Swiper config
  */
 export function createSwiper( els, config = {} ) {

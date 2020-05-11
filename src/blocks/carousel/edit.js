@@ -68,6 +68,7 @@ class Edit extends Component {
 				prev: this.btnPrevRef.current,
 				play: this.btnPlayRef.current,
 				pause: this.btnPauseRef.current,
+				pagination: this.paginationRef.current,
 			},
 			{
 				autoplay,
