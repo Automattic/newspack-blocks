@@ -14,13 +14,16 @@ import 'swiper/dist/css/swiper.css';
  * @param {HTMLElement} slide Slide DOM element
  */
 export function activateSlide( slide ) {
-	slide.ariaHidden = 'false';
+	slide.setAttribute( 'aria-hidden', 'false' );
+
 	/**
 	 * Calls Array.prototype.forEach for IE11 compatibility.
 	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/API/NodeList
 	 */
-	Array.prototype.forEach.call( slide.querySelectorAll( 'a' ), e => ( e.tabIndex = '0' ) );
+	Array.prototype.forEach.call( slide.querySelectorAll( 'a' ), el =>
+		el.removeAttribute( 'tabindex' )
+	);
 }
 
 /**
@@ -29,13 +32,15 @@ export function activateSlide( slide ) {
  * @param {HTMLElement} slide Slide DOM element
  */
 export function deactivateSlide( slide ) {
-	slide.ariaHidden = 'true';
+	slide.setAttribute( 'aria-hidden', 'true' );
 	/**
 	 * Calls Array.prototype.forEach for IE11 compatibility.
 	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/API/NodeList
 	 */
-	Array.prototype.forEach.call( slide.querySelectorAll( 'a' ), e => ( e.tabIndex = '-1' ) );
+	Array.prototype.forEach.call( slide.querySelectorAll( 'a' ), el =>
+		el.setAttribute( 'tabindex', '-1' )
+	);
 }
 
 /**
