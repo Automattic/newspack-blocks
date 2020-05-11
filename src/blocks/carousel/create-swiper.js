@@ -86,6 +86,10 @@ export function createSwiper( els, config = {} ) {
 			init() {
 				if ( els.pause ) {
 					els.pause.addEventListener( 'click', () => {
+						if ( this.destroyed ) {
+							return;
+						}
+
 						this.autoplay.stop();
 						els.container.classList.remove( 'wp-block-newspack-blocks-carousel__autoplay-playing' );
 						speak( __( 'Paused', 'newspack-blocks' ), 'assertive' );
@@ -95,6 +99,10 @@ export function createSwiper( els, config = {} ) {
 				}
 				if ( els.play ) {
 					els.play.addEventListener( 'click', () => {
+						if ( this.destroyed ) {
+							return;
+						}
+
 						this.autoplay.start();
 						els.container.classList.add( 'wp-block-newspack-blocks-carousel__autoplay-playing' );
 						speak( __( 'Playing', 'newspack-blocks' ), 'assertive' );
