@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { merge } from 'lodash';
 import { speak } from '@wordpress/a11y';
 import { escapeHTML } from '@wordpress/escape-html';
 import { __, sprintf } from '@wordpress/i18n';
@@ -44,28 +43,39 @@ export function deactivateSlide( slide ) {
 }
 
 /**
- * @param {string} container Selector
- * @param {Object} params Params passed to Swiper
+ * @param {Object} els Swiper elements
+ * @param {Element} els.container Container element
+ * @param {Element} els.next Next button element
+ * @param {Element} els.prev Previous button element
+ * @param {Element} els.play Play button element
+ * @param {Element} els.pause Pause button element
+ * @param {Element} els.pagination Pagination element
+ * @param {Object} config Swiper config
  */
-export function createSwiper( container = '.swiper-container', params = {} ) {
-	const defaultParams = {
+export function createSwiper( els, config = {} ) {
+	return new Swiper( els.container, {
 		/**
 		 * Remove the messages, as we're announcing the slide content and number. These messages are overwriting the slide announcement.
 		 */
 
 		a11y: false,
+		autoplay: !! config.autoplay && {
+			delay: config.delay,
+			disableOnInteraction: false,
+		},
 		effect: 'slide',
 		grabCursor: true,
 		init: true,
-		initialSlide: 0,
+		initialSlide: config.initialSlide || 0,
+		loop: true,
 		navigation: {
-			nextEl: '.swiper-button-next',
-			prevEl: '.swiper-button-prev',
+			nextEl: els.next,
+			prevEl: els.prev,
 		},
 		pagination: {
 			bulletElement: 'button',
 			clickable: true,
-			el: '.swiper-pagination',
+			el: els.pagination,
 			type: 'bullets',
 			renderBullet: ( index, className ) => {
 				// Use a custom render, as Swiper's render is inaccessible.
@@ -81,9 +91,41 @@ export function createSwiper( container = '.swiper-container', params = {} ) {
 		touchStartPreventDefault: false,
 		on: {
 			init() {
-				this.wrapperEl
-					.querySelectorAll( '.swiper-slide' )
-					.forEach( slide => deactivateSlide( slide ) );
+				if ( els.pause ) {
+					els.pause.addEventListener( 'click', () => {
+						if ( this.destroyed ) {
+							return;
+						}
+
+						this.autoplay.stop();
+						els.container.classList.remove( 'wp-block-newspack-blocks-carousel__autoplay-playing' );
+						speak( __( 'Paused', 'newspack-blocks' ), 'assertive' );
+						// Move focus to the play button.
+						els.play.focus();
+					} );
+				}
+				if ( els.play ) {
+					els.play.addEventListener( 'click', () => {
+						if ( this.destroyed ) {
+							return;
+						}
+
+						this.autoplay.start();
+						els.container.classList.add( 'wp-block-newspack-blocks-carousel__autoplay-playing' );
+						speak( __( 'Playing', 'newspack-blocks' ), 'assertive' );
+						// Move focus to the pause button.
+						els.pause.focus();
+					} );
+				}
+
+				/**
+				 * Calls Array.prototype.forEach for IE11 compatibility.
+				 *
+				 * @see https://developer.mozilla.org/en-US/docs/Web/API/NodeList
+				 */
+				Array.prototype.forEach.call( this.wrapperEl.querySelectorAll( '.swiper-slide' ), slide =>
+					deactivateSlide( slide )
+				);
 
 				// Set-up our active slide.
 				activateSlide( this.slides[ this.activeIndex ] );
@@ -119,7 +161,5 @@ export function createSwiper( container = '.swiper-container', params = {} ) {
 				}
 			},
 		},
-	};
-
-	return new Swiper( container, merge( {}, defaultParams, params ) );
+	} );
 }

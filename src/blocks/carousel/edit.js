@@ -35,54 +35,51 @@ import { decodeEntities } from '@wordpress/html-entities';
 class Edit extends Component {
 	constructor( props ) {
 		super( props );
-		this.state = {
-			autoPlayState: true,
-		};
+
+		this.btnPlayRef = createRef();
+		this.btnPauseRef = createRef();
 		this.btnNextRef = createRef();
 		this.btnPrevRef = createRef();
 		this.carouselRef = createRef();
 		this.paginationRef = createRef();
 	}
+
 	componentDidUpdate() {
 		const { attributes, latestPosts } = this.props;
-		const { autoPlayState } = this.state;
 		const { autoplay, delay } = attributes;
-		const realIndex =
-			this.swiperInstance && latestPosts && this.swiperInstance.realIndex < latestPosts.length
-				? this.swiperInstance.realIndex
-				: 0;
-		// eslint-disable-next-line no-unused-expressions
-		this.swiperInstance && this.swiperInstance.destroy( true, true );
+		let initialSlide = 0;
+
+		if (
+			this.swiperInstance &&
+			latestPosts &&
+			this.swiperInstance.realIndex < latestPosts.length
+		) {
+			initialSlide = this.swiperInstance.realIndex;
+		}
+
+		if ( this.swiperInstance ) {
+			this.swiperInstance.destroy( true, true );
+		}
+
 		this.swiperInstance = createSwiper(
-			this.carouselRef.current,
 			{
-				autoplay:
-					autoplay && autoPlayState
-						? {
-								delay: delay * 1000,
-								disableOnInteraction: false,
-						  }
-						: false,
-				effect: 'slide',
-				initialSlide: realIndex,
-				loop: true,
-				navigation: {
-					nextEl: this.btnNextRef.current,
-					prevEl: this.btnPrevRef.current,
-				},
-				pagination: {
-					clickable: true,
-					el: this.paginationRef.current,
-					type: 'bullets',
-				},
+				container: this.carouselRef.current,
+				next: this.btnNextRef.current,
+				prev: this.btnPrevRef.current,
+				play: this.btnPlayRef.current,
+				pause: this.btnPauseRef.current,
+				pagination: this.paginationRef.current,
 			},
-			{}
+			{
+				autoplay,
+				delay: delay * 1000,
+				initialSlide,
+			}
 		);
 	}
 
 	render() {
 		const { attributes, className, setAttributes, latestPosts } = this.props;
-		const { autoPlayState } = this.state;
 		const {
 			authors,
 			autoplay,
@@ -99,7 +96,7 @@ class Edit extends Component {
 			className,
 			'wp-block-newspack-blocks-carousel', // Default to make styles work for third-party consumers.
 			'swiper-container',
-			autoplay && autoPlayState && 'wp-block-newspack-blocks-carousel__autoplay-playing'
+			autoplay && 'wp-block-newspack-blocks-carousel__autoplay-playing'
 		);
 		const dateFormat = __experimentalGetSettings().formats.date;
 		return (
@@ -117,17 +114,11 @@ class Edit extends Component {
 								<Fragment>
 									<button
 										className="amp-carousel-button-pause amp-carousel-button"
-										onClick={ () => {
-											this.swiperInstance.autoplay.stop();
-											this.setState( { autoPlayState: false } );
-										} }
+										ref={ this.btnPauseRef }
 									/>
 									<button
 										className="amp-carousel-button-play amp-carousel-button"
-										onClick={ () => {
-											this.swiperInstance.autoplay.start();
-											this.setState( { autoPlayState: true } );
-										} }
+										ref={ this.btnPlayRef }
 									/>
 								</Fragment>
 							) }
