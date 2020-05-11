@@ -17,6 +17,7 @@ if ( typeof window !== 'undefined' ) {
 		blocksArray.forEach( block => {
 			createSwiper(
 				{
+					block,
 					container: block.querySelector( '.swiper-container' ),
 					prev: block.querySelector( '.swiper-button-prev' ),
 					next: block.querySelector( '.swiper-button-next' ),

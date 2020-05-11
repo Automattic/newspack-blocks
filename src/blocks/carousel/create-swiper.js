@@ -44,7 +44,8 @@ export function deactivateSlide( slide ) {
 
 /**
  * @param {Object} els Swiper elements
- * @param {Element} els.container Container element
+ * @param {Element} els.block Block element
+ * @param {Element} els.container Swiper container element
  * @param {Element} els.next Next button element
  * @param {Element} els.prev Previous button element
  * @param {Element} els.play Play button element
@@ -98,7 +99,7 @@ export function createSwiper( els, config = {} ) {
 						}
 
 						this.autoplay.stop();
-						els.container.classList.remove( 'wp-block-newspack-blocks-carousel__autoplay-playing' );
+						els.block.classList.remove( 'wp-block-newspack-blocks-carousel__autoplay-playing' );
 						speak( __( 'Paused', 'newspack-blocks' ), 'assertive' );
 						// Move focus to the play button.
 						els.play.focus();
@@ -111,7 +112,7 @@ export function createSwiper( els, config = {} ) {
 						}
 
 						this.autoplay.start();
-						els.container.classList.add( 'wp-block-newspack-blocks-carousel__autoplay-playing' );
+						els.block.classList.add( 'wp-block-newspack-blocks-carousel__autoplay-playing' );
 						speak( __( 'Playing', 'newspack-blocks' ), 'assertive' );
 						// Move focus to the pause button.
 						els.pause.focus();

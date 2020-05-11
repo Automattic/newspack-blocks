@@ -63,6 +63,7 @@ class Edit extends Component {
 
 		this.swiperInstance = createSwiper(
 			{
+				block: this.carouselRef.current, // Editor uses the same wrapper for block and swiper container
 				container: this.carouselRef.current,
 				next: this.btnNextRef.current,
 				prev: this.btnPrevRef.current,
