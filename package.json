@@ -57,6 +57,7 @@
     "@wordpress/date": "^3.7.0",
     "@wordpress/dom-ready": "^2.9.0",
     "@wordpress/edit-post": "^3.13.0",
+    "@wordpress/escape-html": "^1.8.0",
     "@wordpress/hooks": "^2.6.0",
     "@wordpress/html-entities": "^2.5.0",
     "@wordpress/i18n": "^3.7.0",

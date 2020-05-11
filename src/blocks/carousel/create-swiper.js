@@ -3,6 +3,7 @@
  */
 import { merge } from 'lodash';
 import { speak } from '@wordpress/a11y';
+import { escapeHTML } from '@wordpress/escape-html';
 import { __, sprintf } from '@wordpress/i18n';
 import Swiper from 'swiper';
 import 'swiper/dist/css/swiper.css';
@@ -83,20 +84,31 @@ export function createSwiper( container = '.swiper-container', params = {} ) {
 				activateSlide( this.slides[ this.activeIndex ] );
 			},
 			slideChange() {
+				const currentSlide = this.slides[ this.activeIndex ];
+
 				deactivateSlide( this.slides[ this.previousIndex ] );
 
-				activateSlide( this.slides[ this.activeIndex ] );
+				activateSlide( currentSlide );
 
 				// If we're autoplaying, don't announce the slide change, as that would be supremely annoying.
 				if ( ! this.autoplay.running ) {
 					// Announce the contents of the slide.
+					const currentImage = currentSlide.querySelector( 'img' );
+					const alt = currentImage ? currentImage.alt : false;
+
+					const slideInfo = sprintf(
+						/* translators: current slide number and the total number of slides */
+						__( 'Slide %s of %s', 'newspack-blocks' ),
+						this.realIndex + 1,
+						this.pagination.bullets.length
+					);
+
 					speak(
-						`${ this.slides[ this.activeIndex ].innerHTML }, ${ sprintf(
-							/* translators: current slide number and the total number of slides */
-							__( 'Slide %s of %s', 'newspack-blocks' ),
-							this.realIndex + 1,
-							this.pagination.bullets.length
-						) }`,
+						escapeHTML(
+							`${ currentSlide.innerText }, 
+							${ alt ? sprintf( __( 'Image: %s, ', 'newspack-blocks' ), alt ) : '' }
+							${ slideInfo }`
+						),
 						'assertive'
 					);
 				}
