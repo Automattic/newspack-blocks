@@ -8,21 +8,28 @@ import Swiper from 'swiper';
 import 'swiper/dist/css/swiper.css';
 
 /**
+ * A helper for IE11-compatible iteration over NodeList elements.
+ *
+ * @param {Object} nodeList List of nodes to be iterated over.
+ * @param {Function} cb Invoked for each iteratee.
+ */
+function forEachNode( nodeList, cb ) {
+	/**
+	 * Calls Array.prototype.forEach for IE11 compatibility.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/NodeList
+	 */
+	Array.prototype.forEach.call( nodeList, cb );
+}
+
+/**
  * Modifies attributes on slide HTML to make it accessible.
  *
  * @param {HTMLElement} slide Slide DOM element
  */
-export function activateSlide( slide ) {
+function activateSlide( slide ) {
 	slide.setAttribute( 'aria-hidden', 'false' );
-
-	/**
-	 * Calls Array.prototype.forEach for IE11 compatibility.
-	 *
-	 * @see https://developer.mozilla.org/en-US/docs/Web/API/NodeList
-	 */
-	Array.prototype.forEach.call( slide.querySelectorAll( 'a' ), el =>
-		el.removeAttribute( 'tabindex' )
-	);
+	forEachNode( slide.querySelectorAll( 'a' ), el => el.removeAttribute( 'tabindex' ) );
 }
 
 /**
@@ -30,19 +37,15 @@ export function activateSlide( slide ) {
  *
  * @param {HTMLElement} slide Slide DOM element
  */
-export function deactivateSlide( slide ) {
+function deactivateSlide( slide ) {
 	slide.setAttribute( 'aria-hidden', 'true' );
-	/**
-	 * Calls Array.prototype.forEach for IE11 compatibility.
-	 *
-	 * @see https://developer.mozilla.org/en-US/docs/Web/API/NodeList
-	 */
-	Array.prototype.forEach.call( slide.querySelectorAll( 'a' ), el =>
-		el.setAttribute( 'tabindex', '-1' )
-	);
+	forEachNode( slide.querySelectorAll( 'a' ), el => el.setAttribute( 'tabindex', '-1' ) );
 }
 
 /**
+ * Creates a Swiper instance with predefined config used by the Articles
+ * Carousel block in both front-end and editor.
+ *
  * @param {Object} els Swiper elements
  * @param {Element} els.block Block element
  * @param {Element} els.container Swiper container element
@@ -52,13 +55,14 @@ export function deactivateSlide( slide ) {
  * @param {Element} els.pause Pause button element
  * @param {Element} els.pagination Pagination element
  * @param {Object} config Swiper config
+ * @return {Object} Swiper instance
  */
-export function createSwiper( els, config = {} ) {
+export default function createSwiper( els, config = {} ) {
 	return new Swiper( els.container, {
 		/**
-		 * Remove the messages, as we're announcing the slide content and number. These messages are overwriting the slide announcement.
+		 * Remove the messages, as we're announcing the slide content and number.
+		 * These messages are overwriting the slide announcement.
 		 */
-
 		a11y: false,
 		autoplay: !! config.autoplay && {
 			delay: config.delay,
@@ -92,6 +96,8 @@ export function createSwiper( els, config = {} ) {
 		touchStartPreventDefault: false,
 		on: {
 			init() {
+				const autoplayClassName = 'wp-block-newspack-blocks-carousel__autoplay-playing';
+
 				if ( els.pause ) {
 					els.pause.addEventListener( 'click', () => {
 						if ( this.destroyed ) {
@@ -99,7 +105,7 @@ export function createSwiper( els, config = {} ) {
 						}
 
 						this.autoplay.stop();
-						els.block.classList.remove( 'wp-block-newspack-blocks-carousel__autoplay-playing' );
+						els.block.classList.remove( autoplayClassName );
 						speak( __( 'Paused', 'newspack-blocks' ), 'assertive' );
 						// Move focus to the play button.
 						els.play.focus();
@@ -112,19 +118,14 @@ export function createSwiper( els, config = {} ) {
 						}
 
 						this.autoplay.start();
-						els.block.classList.add( 'wp-block-newspack-blocks-carousel__autoplay-playing' );
+						els.block.classList.add( autoplayClassName );
 						speak( __( 'Playing', 'newspack-blocks' ), 'assertive' );
 						// Move focus to the pause button.
 						els.pause.focus();
 					} );
 				}
 
-				/**
-				 * Calls Array.prototype.forEach for IE11 compatibility.
-				 *
-				 * @see https://developer.mozilla.org/en-US/docs/Web/API/NodeList
-				 */
-				Array.prototype.forEach.call( this.wrapperEl.querySelectorAll( '.swiper-slide' ), slide =>
+				forEachNode( this.wrapperEl.querySelectorAll( '.swiper-slide' ), slide =>
 					deactivateSlide( slide )
 				);
 
@@ -153,7 +154,7 @@ export function createSwiper( els, config = {} ) {
 
 					speak(
 						escapeHTML(
-							`${ currentSlide.innerText }, 
+							`${ currentSlide.innerText },
 							${ alt ? sprintf( __( 'Image: %s, ', 'newspack-blocks' ), alt ) : '' }
 							${ slideInfo }`
 						),

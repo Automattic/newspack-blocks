@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 import QueryControls from '../../components/query-controls';
-import { createSwiper } from './create-swiper';
+import createSwiper from './create-swiper';
 import { formatAvatars, formatByline } from '../../shared/js/utils';
 
 /**

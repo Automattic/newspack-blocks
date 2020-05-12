@@ -6,7 +6,7 @@ import domReady from '@wordpress/dom-ready';
 /**
  * Internal dependencies
  */
-import { createSwiper } from './create-swiper';
+import createSwiper from './create-swiper';
 import './view.scss';
 
 if ( typeof window !== 'undefined' ) {
