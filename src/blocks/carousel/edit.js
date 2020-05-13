@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { isUndefined, pickBy } from 'lodash';
+import { filter, isEqual, isUndefined, pickBy } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -48,8 +48,14 @@ class Edit extends Component {
 		const { attributes, latestPosts } = this.props;
 		const { autoplay, delay } = attributes;
 
+		/**
+		 * Check if:
+		 * - Latests posts have changed in any way
+		 * - The autoplay attribute has changed
+		 * - The delay attribute has changed
+		 */
 		if (
-			prevProps.latestPosts !== latestPosts ||
+			! isEqual( filter( prevProps.latestPosts, 'id' ), filter( latestPosts, 'id' ) ) ||
 			prevProps.attributes.autoplay !== autoplay ||
 			prevProps.attributes.delay !== delay
 		) {
