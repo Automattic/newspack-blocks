@@ -1,13 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid, jsx-a11y/anchor-has-content, jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus */
 
 /**
- * Internal dependencies
- */
-import QueryControls from '../../components/query-controls';
-import createSwiper from './create-swiper';
-import { formatAvatars, formatByline } from '../../shared/js/utils';
-
-/**
  * External dependencies
  */
 import { isUndefined, pickBy } from 'lodash';
@@ -32,6 +25,13 @@ import { withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 import { decodeEntities } from '@wordpress/html-entities';
 
+/**
+ * Internal dependencies
+ */
+import QueryControls from '../../components/query-controls';
+import createSwiper from './create-swiper';
+import { formatAvatars, formatByline } from '../../shared/js/utils';
+
 class Edit extends Component {
 	constructor( props ) {
 		super( props );
@@ -44,39 +44,41 @@ class Edit extends Component {
 		this.paginationRef = createRef();
 	}
 
-	componentDidUpdate() {
+	componentDidUpdate( prevProps ) {
 		const { attributes, latestPosts } = this.props;
 		const { autoplay, delay } = attributes;
-		let initialSlide = 0;
 
 		if (
-			this.swiperInstance &&
-			latestPosts &&
-			this.swiperInstance.realIndex < latestPosts.length
+			prevProps.latestPosts !== latestPosts ||
+			prevProps.attributes.autoplay !== autoplay ||
+			prevProps.attributes.delay !== delay
 		) {
-			initialSlide = this.swiperInstance.realIndex;
-		}
+			let initialSlide = 0;
 
-		if ( this.swiperInstance ) {
-			this.swiperInstance.destroy( true, true );
-		}
-
-		this.swiperInstance = createSwiper(
-			{
-				block: this.carouselRef.current, // Editor uses the same wrapper for block and swiper container
-				container: this.carouselRef.current,
-				next: this.btnNextRef.current,
-				prev: this.btnPrevRef.current,
-				play: this.btnPlayRef.current,
-				pause: this.btnPauseRef.current,
-				pagination: this.paginationRef.current,
-			},
-			{
-				autoplay,
-				delay: delay * 1000,
-				initialSlide,
+			if ( this.swiperInstance ) {
+				if ( latestPosts && this.swiperInstance.realIndex < latestPosts.length ) {
+					initialSlide = this.swiperInstance.realIndex;
+				}
+				this.swiperInstance.destroy( true, true );
 			}
-		);
+
+			this.swiperInstance = createSwiper(
+				{
+					block: this.carouselRef.current, // Editor uses the same wrapper for block and swiper container
+					container: this.carouselRef.current,
+					next: this.btnNextRef.current,
+					prev: this.btnPrevRef.current,
+					play: this.btnPlayRef.current,
+					pause: this.btnPauseRef.current,
+					pagination: this.paginationRef.current,
+				},
+				{
+					autoplay,
+					delay: delay * 1000,
+					initialSlide,
+				}
+			);
+		}
 	}
 
 	render() {

@@ -7,6 +7,8 @@ import { __, sprintf } from '@wordpress/i18n';
 import Swiper from 'swiper';
 import 'swiper/dist/css/swiper.css';
 
+const autoplayClassName = 'wp-block-newspack-blocks-carousel__autoplay-playing';
+
 /**
  * A helper for IE11-compatible iteration over NodeList elements.
  *
@@ -90,38 +92,28 @@ export default function createSwiper( els, config = {} ) {
 				) }</span></button>`;
 			},
 		},
-		preventClicksPropagation: false /* Necessary for normal block interactions */,
+		preventClicksPropagation: false, // Necessary for normal block interactions.
 		releaseFormElements: false,
 		setWrapperSize: true,
 		touchStartPreventDefault: false,
 		on: {
 			init() {
-				const autoplayClassName = 'wp-block-newspack-blocks-carousel__autoplay-playing';
-
-				if ( els.pause ) {
+				if ( config.autoplay ) {
 					els.pause.addEventListener( 'click', () => {
 						if ( this.destroyed ) {
 							return;
 						}
 
 						this.autoplay.stop();
-						els.block.classList.remove( autoplayClassName );
-						speak( __( 'Paused', 'newspack-blocks' ), 'assertive' );
-						// Move focus to the play button.
-						els.play.focus();
+						els.play.focus(); // Move focus to the play button.
 					} );
-				}
-				if ( els.play ) {
 					els.play.addEventListener( 'click', () => {
 						if ( this.destroyed ) {
 							return;
 						}
 
 						this.autoplay.start();
-						els.block.classList.add( autoplayClassName );
-						speak( __( 'Playing', 'newspack-blocks' ), 'assertive' );
-						// Move focus to the pause button.
-						els.pause.focus();
+						els.pause.focus(); // Move focus to the pause button.
 					} );
 				}
 
@@ -129,9 +121,19 @@ export default function createSwiper( els, config = {} ) {
 					deactivateSlide( slide )
 				);
 
-				// Set-up our active slide.
-				activateSlide( this.slides[ this.activeIndex ] );
+				activateSlide( this.slides[ this.activeIndex ] ); // Set-up our active slide.
 			},
+
+			autoplayStart() {
+				els.block.classList.add( autoplayClassName ); // Hide play & show pause button.
+				speak( __( 'Playing', 'newspack-blocks' ), 'assertive' );
+			},
+
+			autoplayStop() {
+				els.block.classList.remove( autoplayClassName ); // Hide pause & show play button.
+				speak( __( 'Paused', 'newspack-blocks' ), 'assertive' );
+			},
+
 			slideChange() {
 				const currentSlide = this.slides[ this.activeIndex ];
 
@@ -139,7 +141,10 @@ export default function createSwiper( els, config = {} ) {
 
 				activateSlide( currentSlide );
 
-				// If we're autoplaying, don't announce the slide change, as that would be supremely annoying.
+				/**
+				 * If we're autoplaying, don't announce the slide change, as that would
+				 * be supremely annoying.
+				 */
 				if ( ! this.autoplay.running ) {
 					// Announce the contents of the slide.
 					const currentImage = currentSlide.querySelector( 'img' );
