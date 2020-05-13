@@ -60,7 +60,7 @@ function deactivateSlide( slide ) {
  * @return {Object} Swiper instance
  */
 export default function createSwiper( els, config = {} ) {
-	return new Swiper( els.container, {
+	const swiper = new Swiper( els.container, {
 		/**
 		 * Remove the messages, as we're announcing the slide content and number.
 		 * These messages are overwriting the slide announcement.
@@ -72,7 +72,7 @@ export default function createSwiper( els, config = {} ) {
 		},
 		effect: 'slide',
 		grabCursor: true,
-		init: true,
+		init: false,
 		initialSlide: config.initialSlide || 0,
 		loop: true,
 		navigation: {
@@ -98,40 +98,11 @@ export default function createSwiper( els, config = {} ) {
 		touchStartPreventDefault: false,
 		on: {
 			init() {
-				if ( config.autoplay ) {
-					els.pause.addEventListener( 'click', () => {
-						if ( this.destroyed ) {
-							return;
-						}
-
-						this.autoplay.stop();
-						els.play.focus(); // Move focus to the play button.
-					} );
-					els.play.addEventListener( 'click', () => {
-						if ( this.destroyed ) {
-							return;
-						}
-
-						this.autoplay.start();
-						els.pause.focus(); // Move focus to the pause button.
-					} );
-				}
-
 				forEachNode( this.wrapperEl.querySelectorAll( '.swiper-slide' ), slide =>
 					deactivateSlide( slide )
 				);
 
 				activateSlide( this.slides[ this.activeIndex ] ); // Set-up our active slide.
-			},
-
-			autoplayStart() {
-				els.block.classList.add( autoplayClassName ); // Hide play & show pause button.
-				speak( __( 'Playing', 'newspack-blocks' ), 'assertive' );
-			},
-
-			autoplayStop() {
-				els.block.classList.remove( autoplayClassName ); // Hide pause & show play button.
-				speak( __( 'Paused', 'newspack-blocks' ), 'assertive' );
 			},
 
 			slideChange() {
@@ -169,4 +140,46 @@ export default function createSwiper( els, config = {} ) {
 			},
 		},
 	} );
+
+	if ( config.autoplay ) {
+		/**
+		 * Handles the Pause button click.
+		 */
+		function handlePauseButtonClick() {
+			swiper.autoplay.stop();
+			els.play.focus(); // Move focus to the play button.
+		}
+
+		/**
+		 * Handles the Play button click.
+		 */
+		function handlePlayButtonClick() {
+			swiper.autoplay.start();
+			els.pause.focus(); // Move focus to the pause button.
+		}
+
+		swiper.on( 'init', function() {
+			els.play.addEventListener( 'click', handlePlayButtonClick );
+			els.pause.addEventListener( 'click', handlePauseButtonClick );
+		} );
+
+		swiper.on( 'autoplayStart', function() {
+			els.block.classList.add( autoplayClassName ); // Hide play & show pause button.
+			speak( __( 'Playing', 'newspack-blocks' ), 'assertive' );
+		} );
+
+		swiper.on( 'autoplayStop', function() {
+			els.block.classList.remove( autoplayClassName ); // Hide pause & show play button.
+			speak( __( 'Paused', 'newspack-blocks' ), 'assertive' );
+		} );
+
+		swiper.on( 'beforeDestroy', function() {
+			els.play.removeEventListener( 'click', handlePlayButtonClick );
+			els.pause.removeEventListener( 'click', handlePauseButtonClick );
+		} );
+	}
+
+	swiper.init();
+
+	return swiper;
 }
