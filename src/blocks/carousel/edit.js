@@ -62,22 +62,24 @@ class Edit extends Component {
 				this.swiperInstance.destroy( true, true );
 			}
 
-			this.swiperInstance = createSwiper(
-				{
-					block: this.carouselRef.current, // Editor uses the same wrapper for block and swiper container
-					container: this.carouselRef.current,
-					next: this.btnNextRef.current,
-					prev: this.btnPrevRef.current,
-					play: this.btnPlayRef.current,
-					pause: this.btnPauseRef.current,
-					pagination: this.paginationRef.current,
-				},
-				{
-					autoplay,
-					delay: delay * 1000,
-					initialSlide,
-				}
-			);
+			if ( latestPosts && latestPosts.length > 0 ) {
+				this.swiperInstance = createSwiper(
+					{
+						block: this.carouselRef.current, // Editor uses the same wrapper for block and swiper container
+						container: this.carouselRef.current,
+						next: this.btnNextRef.current,
+						prev: this.btnPrevRef.current,
+						play: this.btnPlayRef.current,
+						pause: this.btnPauseRef.current,
+						pagination: this.paginationRef.current,
+					},
+					{
+						autoplay,
+						delay: delay * 1000,
+						initialSlide,
+					}
+				);
+			}
 		}
 	}
 
