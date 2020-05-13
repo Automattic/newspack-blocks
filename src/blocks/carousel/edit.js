@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { filter, isEqual, isUndefined, pickBy } from 'lodash';
+import { isEqual, isUndefined, pickBy } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -55,9 +55,11 @@ class Edit extends Component {
 		 * - The delay attribute has changed
 		 */
 		if (
-			! isEqual( filter( prevProps.latestPosts, 'id' ), filter( latestPosts, 'id' ) ) ||
-			prevProps.attributes.autoplay !== autoplay ||
-			prevProps.attributes.delay !== delay
+			prevProps.latestPosts !== latestPosts ||
+			( prevProps.latestPosts &&
+				latestPosts &&
+				prevProps.latestPosts.length !== latestPosts.length ) ||
+			! isEqual( prevProps.attributes, attributes )
 		) {
 			let initialSlide = 0;
 
