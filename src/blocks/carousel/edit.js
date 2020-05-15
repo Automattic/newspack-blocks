@@ -187,7 +187,9 @@ class Edit extends Component {
 							<QueryControls
 								enableSpecific={ false }
 								numberOfItems={ postsToShow }
-								onNumberOfItemsChange={ value => setAttributes( { postsToShow: value } ) }
+								onNumberOfItemsChange={ value =>
+									setAttributes( { postsToShow: value ? value : 1 } )
+								}
 								authors={ authors }
 								onAuthorsChange={ value => setAttributes( { authors: value } ) }
 								categories={ categories }
