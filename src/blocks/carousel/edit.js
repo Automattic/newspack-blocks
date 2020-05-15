@@ -155,7 +155,7 @@ class Edit extends Component {
 												<div className="entry-wrapper">
 													{ showCategory && post.newspack_category_info.length && (
 														<div className="cat-links">
-															<a href="#">{ post.newspack_category_info }</a>
+															<a href="#">{ decodeEntities( post.newspack_category_info ) }</a>
 														</div>
 													) }
 													<h3 className="entry-title">
