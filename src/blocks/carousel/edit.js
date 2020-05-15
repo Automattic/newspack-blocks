@@ -44,9 +44,12 @@ class Edit extends Component {
 		this.paginationRef = createRef();
 	}
 
+	componentDidMount() {
+		this.initializeSwiper( 0 );
+	}
+
 	componentDidUpdate( prevProps ) {
 		const { attributes, latestPosts } = this.props;
-		const { autoplay, delay } = attributes;
 
 		if (
 			prevProps.latestPosts !== latestPosts ||
@@ -64,24 +67,32 @@ class Edit extends Component {
 				this.swiperInstance.destroy( true, true );
 			}
 
-			if ( latestPosts && latestPosts.length > 0 ) {
-				this.swiperInstance = createSwiper(
-					{
-						block: this.carouselRef.current, // Editor uses the same wrapper for block and swiper container
-						container: this.carouselRef.current,
-						next: this.btnNextRef.current,
-						prev: this.btnPrevRef.current,
-						play: this.btnPlayRef.current,
-						pause: this.btnPauseRef.current,
-						pagination: this.paginationRef.current,
-					},
-					{
-						autoplay,
-						delay: delay * 1000,
-						initialSlide,
-					}
-				);
-			}
+			this.initializeSwiper( initialSlide );
+		}
+	}
+
+	initializeSwiper( initialSlide ) {
+		const { latestPosts } = this.props;
+
+		if ( latestPosts && latestPosts.length ) {
+			const { autoplay, delay } = this.props.attributes;
+
+			this.swiperInstance = createSwiper(
+				{
+					block: this.carouselRef.current, // Editor uses the same wrapper for block and swiper container.
+					container: this.carouselRef.current,
+					next: this.btnNextRef.current,
+					prev: this.btnPrevRef.current,
+					play: this.btnPlayRef.current,
+					pause: this.btnPauseRef.current,
+					pagination: this.paginationRef.current,
+				},
+				{
+					autoplay,
+					delay: delay * 1000,
+					initialSlide,
+				}
+			);
 		}
 	}
 
