@@ -13,6 +13,9 @@
  * @return string Returns the post content with latest posts added.
  */
 function newspack_blocks_render_block_homepage_articles( $attributes ) {
+	wp_enqueue_style( 'blog-posts-block-view' );
+	wp_enqueue_script( 'blog-posts-block-view' );
+
 	$article_query = new WP_Query( Newspack_Blocks::build_articles_query( $attributes ) );
 
 	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes, [ 'wpnbha' ] );

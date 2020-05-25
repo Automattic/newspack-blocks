@@ -14,6 +14,10 @@
  */
 function newspack_blocks_render_block_carousel( $attributes ) {
 	static $newspack_blocks_carousel_id = 0;
+
+	wp_enqueue_style( 'carousel-block-view' );
+	wp_enqueue_script( 'carousel-block-view' );
+
 	$newspack_blocks_carousel_id++;
 	$autoplay      = isset( $attributes['autoplay'] ) ? $attributes['autoplay'] : false;
 	$delay         = isset( $attributes['delay'] ) ? absint( $attributes['delay'] ) : 3;
