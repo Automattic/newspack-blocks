@@ -13,7 +13,7 @@
  * @return string Returns the post content with latest posts added.
  */
 function newspack_blocks_render_block_homepage_articles( $attributes ) {
-	// This will let the FSE plugin know we need CSS/JS now
+	// This will let the FSE plugin know we need CSS/JS now.
 	do_action( 'newspack_blocks_render_homepage_articles' );
 
 	$article_query = new WP_Query( Newspack_Blocks::build_articles_query( $attributes ) );
