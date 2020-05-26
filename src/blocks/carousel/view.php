@@ -15,8 +15,8 @@
 function newspack_blocks_render_block_carousel( $attributes ) {
 	static $newspack_blocks_carousel_id = 0;
 
-	wp_enqueue_style( 'carousel-block-view' );
-	wp_enqueue_script( 'carousel-block-view' );
+	// This will let the FSE plugin know we need CSS/JS now
+	do_action( 'newspack_blocks_render_post_carousel' );
 
 	$newspack_blocks_carousel_id++;
 	$autoplay      = isset( $attributes['autoplay'] ) ? $attributes['autoplay'] : false;
