@@ -412,6 +412,32 @@ class Newspack_Blocks {
 	}
 
 	/**
+	 * Prepare an array classes based on assigned tags.
+	 *
+	 * @param string $post_id Post ID.
+	 * @return array Array of CSS classes.
+	 */
+	public static function get_term_classes( $post_id ) {
+		$classes = [];
+
+		$tags = get_the_terms( $post_id, 'post_tag' );
+		if ( ! empty( $tags ) ) {
+			foreach ( $tags as $tag ) {
+				$classes[] = 'tag-' . $tag->slug;
+			}
+		}
+
+		$categories = get_the_terms( $post_id, 'category' );
+		if ( ! empty( $categories ) ) {
+			foreach ( $categories as $cat ) {
+				$classes[] = 'category-' . $cat->slug;
+			}
+		}
+
+		return implode( ' ', $classes );
+	}
+
+	/**
 	 * Get patterns for post type.
 	 *
 	 * @param string $post_type Post type.

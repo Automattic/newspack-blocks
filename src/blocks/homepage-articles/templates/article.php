@@ -13,24 +13,12 @@ call_user_func(
 		$classes    = array();
 		$styles     = '';
 
-		// Add classes based on the post's assigned categories.
-		$categories = get_the_terms( get_the_ID(), 'category' );
-		if ( ! empty( $categories ) ) {
-			foreach ( $categories as $cat ) {
-				$classes[] = 'category-' . $cat->slug;
-			}
-		}
+		// Add classes based on the post's assigned categories and tags.
+		$classes[] = Newspack_Blocks::get_term_classes( get_the_ID() );
 
-		// Add classes based on the post's assigned tags.
-		$tags = get_the_terms( get_the_ID(), 'post_tag' );
-		if ( ! empty( $tags ) ) {
-			foreach ( $tags as $tag ) {
-				$classes[] = 'tag-' . $tag->slug;
-			}
-		}
 		// Add class if post has a featured image.
 		if ( has_post_thumbnail() ) {
-			$classes[] = 'post-has-image ';
+			$classes[] = 'post-has-image';
 		}
 
 		if ( 'behind' === $attributes['mediaPosition'] && $attributes['showImage'] && has_post_thumbnail() ) {

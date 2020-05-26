@@ -258,25 +258,7 @@ class Newspack_Blocks_API {
 	 * @return string classes from assigned categories and tags.
 	 */
 	public static function newspack_blocks_get_cat_tag_classes( $object ) {
-		$classes = array();
-
-		// Add classes based on the post's assigned categories.
-		$categories = get_the_terms( $object['id'], 'category' );
-		if ( ! empty( $categories ) ) {
-			foreach ( (array) $categories as $cat ) {
-				$classes[] = 'category-' . $cat->slug;
-			}
-		}
-
-		// Add classes based on the post's assigned tags.
-		$tags = get_the_terms( $object['id'], 'post_tag' );
-		if ( ! empty( $tags ) ) {
-			foreach ( $tags as $tag ) {
-				$classes[] = 'tag-' . $tag->slug;
-			}
-		}
-
-		return implode( ' ', $classes );
+		return Newspack_Blocks::get_term_classes( $object['id'] );
 	}
 
 	/**
