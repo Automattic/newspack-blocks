@@ -5,7 +5,7 @@
  */
 import QueryControls from '../../components/query-controls';
 import { STORE_NAMESPACE } from './store';
-import { isBlogPrivate, isSpecificPostModeActive, queryCriteriaFromAttributes } from './utils';
+import { getEditorBlocksIds, isBlogPrivate, shouldReflow } from './utils';
 import { formatAvatars, formatByline } from '../../shared/js/utils';
 
 /**
@@ -91,7 +91,7 @@ const coverIcon = (
 
 class Edit extends Component {
 	renderPost = post => {
-		const { attributes } = this.props;
+		const { attributes, isUIDisabled } = this.props;
 		const {
 			showImage,
 			imageShape,
@@ -124,7 +124,10 @@ class Edit extends Component {
 		const dateFormat = __experimentalGetSettings().formats.date;
 		return (
 			<article
-				className={ post.newspack_featured_image_src ? 'post-has-image' : null }
+				className={ classNames( {
+					'post-has-image': post.newspack_featured_image_src,
+					'homepage-posts-block-post__disabled': isUIDisabled,
+				} ) }
 				key={ post.id }
 				style={ styles }
 			>
@@ -467,21 +470,24 @@ class Edit extends Component {
 		);
 	};
 
+	componentDidMount() {
+		this.props.triggerReflow();
+	}
+	componentDidUpdate( { attributes } ) {
+		if ( shouldReflow( attributes, this.props.attributes ) ) {
+			this.props.triggerReflow();
+		}
+	}
+	componentWillUnmount() {
+		this.props.triggerReflow();
+	}
+
 	render() {
 		/**
 		 * Constants
 		 */
 
-		const {
-			attributes,
-			className,
-			clientId,
-			setAttributes,
-			isSelected,
-			latestPosts,
-			textColor,
-			markPostsAsDisplayed,
-		} = this.props;
+		const { attributes, className, setAttributes, isSelected, latestPosts, textColor } = this.props;
 
 		const {
 			showImage,
@@ -584,7 +590,6 @@ class Edit extends Component {
 			},
 		];
 
-		markPostsAsDisplayed( clientId, latestPosts );
 		return (
 			<Fragment>
 				<div
@@ -645,27 +650,24 @@ class Edit extends Component {
 
 export default compose( [
 	withColors( { textColor: 'color' } ),
-	withSelect( ( select, props ) => {
-		const { attributes, clientId } = props;
+	withSelect( ( select, { clientId } ) => {
+		const { getEditorBlocks } = select( 'core/editor' );
+		const editorBlocksIds = getEditorBlocksIds( getEditorBlocks() );
+		// The block might be rendered in the block styles preview, not in the editor.
+		const isEditorBlock = editorBlocksIds.indexOf( clientId ) >= 0;
 
-		const latestPostsQuery = queryCriteriaFromAttributes( attributes );
-		if ( ! isSpecificPostModeActive( attributes ) ) {
-			const postIdsToExclude = select( STORE_NAMESPACE ).previousPostIds( clientId );
-			latestPostsQuery.exclude = postIdsToExclude.join( ',' );
-		}
+		const { getPosts, isUIDisabled } = select( STORE_NAMESPACE );
 
 		return {
-			latestPosts: select( 'core' ).getEntityRecords( 'postType', 'post', latestPostsQuery ),
+			// TODO: dummy static posts for the previews? (!isEditorBlock)?
+			latestPosts: getPosts( { clientId } ),
+			isEditorBlock,
+			isUIDisabled: isUIDisabled(),
 		};
 	} ),
-	withDispatch( ( dispatch, props ) => {
-		const { attributes } = props;
-		const markPostsAsDisplayed = isSpecificPostModeActive( attributes )
-			? dispatch( STORE_NAMESPACE ).markSpecificPostsAsDisplayed
-			: dispatch( STORE_NAMESPACE ).markPostsAsDisplayed;
-
+	withDispatch( ( dispatch, { isEditorBlock } ) => {
 		return {
-			markPostsAsDisplayed,
+			triggerReflow: isEditorBlock ? dispatch( STORE_NAMESPACE ).reflow : () => {},
 		};
 	} ),
 ] )( Edit );

@@ -25,6 +25,7 @@ const { name, attributes, category } = metadata;
 
 // Name must be exported separately.
 export { name };
+export const BLOCK_NAME = `newspack-blocks/${ name }`;
 
 export const title = __( 'Homepage Posts', 'newspack-blocks' );
 

@@ -1,7 +1,12 @@
 /**
  * External dependencies
  */
-import { isUndefined, pickBy } from 'lodash';
+import { isEqual, isUndefined, pick, pickBy } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { BLOCK_NAME } from '.';
 
 /**
  * Based global WP.com blog_public option, checks whether current blog is
@@ -15,13 +20,29 @@ export const isBlogPrivate = () =>
 	Number( window.wpcomGutenberg.blogPublic ) === -1;
 
 /**
- * Checks whether the specific post mode is active.
- *
- * @param {Object} attributes block attributes
- * @return {boolean} specific mode active flag
+ * Block attributes which influence posts query
  */
-export const isSpecificPostModeActive = ( { specificMode, specificPosts } ) =>
-	specificMode && specificPosts && specificPosts.length;
+const POST_QUERY_ATTRIBUTES = [
+	'postsToShow',
+	'authors',
+	'categories',
+	'tags',
+	'specificPosts',
+	'specificMode',
+	'tagExclusions',
+];
+
+/**
+ * Does the attributes change necessitate a reflow?
+ *
+ * @param {Object} prevAttributes block attributes
+ * @param {Object} attributes block attributes
+ */
+export const shouldReflow = ( prevAttributes, attributes ) =>
+	! isEqual(
+		pick( prevAttributes, POST_QUERY_ATTRIBUTES ),
+		pick( attributes, POST_QUERY_ATTRIBUTES )
+	);
 
 /**
  * Builds query criteria from given attributes.
@@ -30,9 +51,20 @@ export const isSpecificPostModeActive = ( { specificMode, specificPosts } ) =>
  * @return {Object} criteria
  */
 export const queryCriteriaFromAttributes = attributes => {
-	const { postsToShow, authors, categories, tags, specificPosts, tagExclusions } = attributes;
+	const {
+		postsToShow,
+		authors,
+		categories,
+		tags,
+		specificPosts,
+		specificMode,
+		tagExclusions,
+	} = pick( attributes, POST_QUERY_ATTRIBUTES );
+
+	const isSpecificPostModeActive = specificMode && specificPosts && specificPosts.length;
+
 	const criteria = pickBy(
-		isSpecificPostModeActive( attributes )
+		isSpecificPostModeActive
 			? {
 					include: specificPosts,
 					orderby: 'include',
@@ -49,3 +81,20 @@ export const queryCriteriaFromAttributes = attributes => {
 	);
 	return criteria;
 };
+
+export const getBlockQueries = blocks =>
+	blocks.flatMap( block => {
+		const homepageArticleBlocks = [];
+		if ( block.name === BLOCK_NAME ) {
+			const postsQuery = queryCriteriaFromAttributes( block.attributes );
+			homepageArticleBlocks.push( { postsQuery, clientId: block.clientId } );
+		}
+		return homepageArticleBlocks.concat( getBlockQueries( block.innerBlocks ) );
+	} );
+
+export const getEditorBlocksIds = blocks =>
+	blocks.flatMap( block => {
+		const homepageArticleBlocks = [];
+		homepageArticleBlocks.push( block.clientId );
+		return homepageArticleBlocks.concat( getEditorBlocksIds( block.innerBlocks ) );
+	} );
