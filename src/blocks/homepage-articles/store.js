@@ -81,19 +81,29 @@ const genericStore = {
 };
 
 /**
+ * A cache for posts queries.
+ */
+const POSTS_QUERIES_CACHE = {};
+const createCacheKey = JSON.stringify;
+
+/**
  * Get posts for a single block.
  *
  * @param {Object} block an object with a postsQuery and a clientId
  */
 function* getPosts( block ) {
-	// TODO: caching with block.postsQuery as key, a lot of these will be re-triggered, and the
-	const path = addQueryArgs( '/wp/v2/posts', {
-		...block.postsQuery,
-		// `context=edit` is needed, so that custom REST fields are returned.
-		context: 'edit',
-	} );
+	const cacheKey = createCacheKey( block.postsQuery );
+	let posts = POSTS_QUERIES_CACHE[ cacheKey ];
+	if ( posts === undefined ) {
+		const path = addQueryArgs( '/wp/v2/posts', {
+			...block.postsQuery,
+			// `context=edit` is needed, so that custom REST fields are returned.
+			context: 'edit',
+		} );
+		posts = yield call( apiFetch, { path } );
+		POSTS_QUERIES_CACHE[ cacheKey ] = posts;
+	}
 
-	const posts = yield call( apiFetch, { path } );
 	const postsIds = posts.map( post => post.id );
 	yield put( { type: 'UPDATE_BLOCK_POSTS', clientId: block.clientId, posts } );
 	return postsIds;
