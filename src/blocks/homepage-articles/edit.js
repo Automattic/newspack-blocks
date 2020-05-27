@@ -650,7 +650,7 @@ class Edit extends Component {
 
 export default compose( [
 	withColors( { textColor: 'color' } ),
-	withSelect( ( select, { clientId } ) => {
+	withSelect( ( select, { clientId, attributes } ) => {
 		const { getEditorBlocks } = select( 'core/editor' );
 		const editorBlocksIds = getEditorBlocksIds( getEditorBlocks() );
 		// The block might be rendered in the block styles preview, not in the editor.
@@ -658,15 +658,28 @@ export default compose( [
 
 		const { getPosts, isUIDisabled } = select( STORE_NAMESPACE );
 
-		return {
-			// TODO: dummy static posts for the previews? (!isEditorBlock)?
-			latestPosts: getPosts( { clientId } ),
+		const props = {
 			isEditorBlock,
 			isUIDisabled: isUIDisabled(),
 		};
+
+		if ( isEditorBlock ) {
+			props.latestPosts = getPosts( { clientId } );
+		} else {
+			// For block preview, display without deduplication. If there would be a way to match the outside-editor's
+			// block clientId to the clientId of the block that's being previewed, the correct posts could be shown here.
+			props.latestPosts = select( 'core' ).getEntityRecords(
+				'postType',
+				'post',
+				queryCriteriaFromAttributes( attributes )
+			);
+		}
+
+		return props;
 	} ),
 	withDispatch( ( dispatch, { isEditorBlock } ) => {
 		return {
+			// Only editor blocks can trigger reflows.
 			triggerReflow: isEditorBlock ? dispatch( STORE_NAMESPACE ).reflow : () => {},
 		};
 	} ),
