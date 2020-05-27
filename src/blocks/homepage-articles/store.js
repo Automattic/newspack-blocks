@@ -4,6 +4,7 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import { call, put, debounce } from 'redux-saga/effects';
 import createSagaMiddleware from 'redux-saga';
+import { set } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -24,6 +25,7 @@ export const STORE_NAMESPACE = `newspack-blocks/${ name }`;
 const initialState = {
 	// Map of returned posts to block clientIds.
 	postsByBlock: {},
+	errorsByBlock: {},
 };
 
 // Generic redux action creators, not @wordpress/data actions.
@@ -38,35 +40,26 @@ const actions = {
 // Generic redux selectors, not @wordpress/data selectors.
 const selectors = {
 	getPosts( { clientId } ) {
-		const state = reduxStore.getState();
-		return state.postsByBlock[ clientId ];
+		return reduxStore.getState().postsByBlock[ clientId ];
+	},
+	getError( { clientId } ) {
+		return reduxStore.getState().errorsByBlock[ clientId ];
 	},
 	isUIDisabled() {
-		const state = reduxStore.getState();
-		return state.isUIDisabled;
+		return reduxStore.getState().isUIDisabled;
 	},
 };
 
 const reducer = ( state = initialState, action ) => {
 	switch ( action.type ) {
 		case 'DISABLE_UI':
-			return {
-				...state,
-				isUIDisabled: true,
-			};
+			return set( state, 'isUIDisabled', true );
 		case 'ENABLE_UI':
-			return {
-				...state,
-				isUIDisabled: false,
-			};
+			return set( state, 'isUIDisabled', false );
 		case 'UPDATE_BLOCK_POSTS':
-			return {
-				...state,
-				postsByBlock: {
-					...state.postsByBlock,
-					[ action.clientId ]: action.posts,
-				},
-			};
+			return set( state, [ 'postsByBlock', action.clientId ], action.posts );
+		case 'UPDATE_BLOCK_ERROR':
+			return set( state, [ 'errorsByBlock', action.clientId ], action.error );
 	}
 	return state;
 };
@@ -94,22 +87,16 @@ const genericStore = {
  */
 function* getPosts( block ) {
 	// TODO: caching with block.postsQuery as key, a lot of these will be re-triggered, and the
-	try {
-		const path = addQueryArgs( '/wp/v2/posts', {
-			...block.postsQuery,
-			// `context=edit` is needed, so that custom REST fields are returned.
-			context: 'edit',
-		} );
+	const path = addQueryArgs( '/wp/v2/posts', {
+		...block.postsQuery,
+		// `context=edit` is needed, so that custom REST fields are returned.
+		context: 'edit',
+	} );
 
-		const posts = yield call( apiFetch, { path } );
-		const postsIds = posts.map( post => post.id );
-		// or maybe save used id in store
-		yield put( { type: 'UPDATE_BLOCK_POSTS', clientId: block.clientId, posts } );
-		return postsIds;
-	} catch ( e ) {
-		// TODO mark block as failed
-		// yield put( { type: 'FETCH_FAILED', message: e.message } );
-	}
+	const posts = yield call( apiFetch, { path } );
+	const postsIds = posts.map( post => post.id );
+	yield put( { type: 'UPDATE_BLOCK_POSTS', clientId: block.clientId, posts } );
+	return postsIds;
 }
 
 /**
@@ -134,7 +121,12 @@ function* fetchPosts() {
 	while ( blockQueries.length ) {
 		const nextBlock = blockQueries.shift();
 		nextBlock.postsQuery.exclude = exclude;
-		const fetchedPostIds = yield call( getPosts, nextBlock );
+		let fetchedPostIds = [];
+		try {
+			fetchedPostIds = yield call( getPosts, nextBlock );
+		} catch ( e ) {
+			yield put( { type: 'UPDATE_BLOCK_ERROR', clientId: nextBlock.clientId, error: e.message } );
+		}
 		exclude = [ ...exclude, ...fetchedPostIds ];
 	}
 

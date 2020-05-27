@@ -159,6 +159,7 @@ class QueryControls extends Component {
 			tagExclusions,
 			onTagExclusionsChange,
 			enableSpecific,
+			disabled,
 		} = this.props;
 		const { showAdvancedFilters } = this.state;
 
@@ -169,6 +170,7 @@ class QueryControls extends Component {
 					checked={ specificMode }
 					onChange={ onSpecificModeChange }
 					label={ __( 'Choose Specific Posts', 'newspack-blocks' ) }
+					disabled={ disabled }
 				/>
 			),
 			specificMode && (
@@ -183,6 +185,7 @@ class QueryControls extends Component {
 						'Begin typing post title, click autocomplete result to select.',
 						'newspack-blocks'
 					) }
+					disabled={ disabled }
 				/>
 			),
 			! specificMode && <BaseControl key="queryControls" { ...this.props } />,
@@ -194,6 +197,7 @@ class QueryControls extends Component {
 					fetchSuggestions={ this.fetchAuthorSuggestions }
 					fetchSavedInfo={ this.fetchSavedAuthors }
 					label={ __( 'Authors', 'newspack-blocks' ) }
+					disabled={ disabled }
 				/>
 			),
 			! specificMode && onCategoriesChange && (
@@ -204,6 +208,7 @@ class QueryControls extends Component {
 					fetchSuggestions={ this.fetchCategorySuggestions }
 					fetchSavedInfo={ this.fetchSavedCategories }
 					label={ __( 'Categories', 'newspack-blocks' ) }
+					disabled={ disabled }
 				/>
 			),
 			! specificMode && onTagsChange && (
@@ -214,6 +219,7 @@ class QueryControls extends Component {
 					fetchSuggestions={ this.fetchTagSuggestions }
 					fetchSavedInfo={ this.fetchSavedTags }
 					label={ __( 'Tags', 'newspack-blocks' ) }
+					disabled={ disabled }
 				/>
 			),
 			! specificMode && onTagExclusionsChange && (
@@ -236,6 +242,7 @@ class QueryControls extends Component {
 					fetchSuggestions={ this.fetchTagSuggestions }
 					fetchSavedInfo={ this.fetchSavedTags }
 					label={ __( 'Excluded Tags', 'newspack-blocks' ) }
+					disabled={ disabled }
 				/>
 			),
 		];

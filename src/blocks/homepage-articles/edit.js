@@ -5,7 +5,12 @@
  */
 import QueryControls from '../../components/query-controls';
 import { STORE_NAMESPACE } from './store';
-import { getEditorBlocksIds, isBlogPrivate, shouldReflow } from './utils';
+import {
+	getEditorBlocksIds,
+	isBlogPrivate,
+	shouldReflow,
+	queryCriteriaFromAttributes,
+} from './utils';
 import { formatAvatars, formatByline } from '../../shared/js/utils';
 
 /**
@@ -126,7 +131,7 @@ class Edit extends Component {
 			<article
 				className={ classNames( {
 					'post-has-image': post.newspack_featured_image_src,
-					'homepage-posts-block-post__disabled': isUIDisabled,
+					'homepage-posts-block__post--disabled': isUIDisabled,
 				} ) }
 				key={ post.id }
 				style={ styles }
@@ -208,7 +213,7 @@ class Edit extends Component {
 	};
 
 	renderInspectorControls = () => {
-		const { attributes, setAttributes, textColor, setTextColor } = this.props;
+		const { attributes, setAttributes, textColor, setTextColor, isUIDisabled } = this.props;
 
 		const {
 			authors,
@@ -270,6 +275,7 @@ class Edit extends Component {
 				<PanelBody title={ __( 'Display Settings', 'newspack-blocks' ) } initialOpen={ true }>
 					{ postsToShow && (
 						<QueryControls
+							disabled={ isUIDisabled }
 							numberOfItems={ postsToShow }
 							onNumberOfItemsChange={ _postsToShow =>
 								setAttributes( { postsToShow: _postsToShow } )
@@ -487,7 +493,15 @@ class Edit extends Component {
 		 * Constants
 		 */
 
-		const { attributes, className, setAttributes, isSelected, latestPosts, textColor } = this.props;
+		const {
+			attributes,
+			className,
+			setAttributes,
+			isSelected,
+			latestPosts,
+			textColor,
+			error,
+		} = this.props;
 
 		const {
 			showImage,
@@ -611,9 +625,15 @@ class Edit extends Component {
 						{ latestPosts && ! latestPosts.length && (
 							<Placeholder>{ __( 'Sorry, no posts were found.', 'newspack-blocks' ) }</Placeholder>
 						) }
-						{ ! latestPosts && (
+						{ ! latestPosts && ! error && (
 							<Placeholder icon={ <Spinner /> } className="component-placeholder__align-center" />
 						) }
+						{ ! latestPosts && error && (
+							<Placeholder className="component-placeholder__align-center homepage-posts-block--error">
+								{ error }
+							</Placeholder>
+						) }
+
 						{ latestPosts && latestPosts.map( post => this.renderPost( post ) ) }
 					</div>
 				</div>
@@ -656,11 +676,12 @@ export default compose( [
 		// The block might be rendered in the block styles preview, not in the editor.
 		const isEditorBlock = editorBlocksIds.indexOf( clientId ) >= 0;
 
-		const { getPosts, isUIDisabled } = select( STORE_NAMESPACE );
+		const { getPosts, getError, isUIDisabled } = select( STORE_NAMESPACE );
 
 		const props = {
 			isEditorBlock,
 			isUIDisabled: isUIDisabled(),
+			error: getError( { clientId } ),
 		};
 
 		if ( isEditorBlock ) {

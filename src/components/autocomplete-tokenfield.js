@@ -161,7 +161,7 @@ class AutocompleteTokenField extends Component {
 	 * Render.
 	 */
 	render() {
-		const { help, label = '' } = this.props;
+		const { help, label = '', disabled } = this.props;
 		const { suggestions, loading } = this.state;
 
 		return (
@@ -172,6 +172,7 @@ class AutocompleteTokenField extends Component {
 					onChange={ tokens => this.handleOnChange( tokens ) }
 					onInputChange={ input => this.debouncedUpdateSuggestions( input ) }
 					label={ label }
+					disabled={ disabled }
 				/>
 				{ loading && <Spinner /> }
 				{ help && <p className="autocomplete-tokenfield__help">{ help }</p> }
