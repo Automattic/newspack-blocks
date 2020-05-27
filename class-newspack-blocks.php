@@ -412,10 +412,10 @@ class Newspack_Blocks {
 	}
 
 	/**
-	 * Prepare an array classes based on assigned tags.
+	 * Prepare a list of classes based on assigned tags and categories.
 	 *
 	 * @param string $post_id Post ID.
-	 * @return array Array of CSS classes.
+	 * @return string CSS classes.
 	 */
 	public static function get_term_classes( $post_id ) {
 		$classes = [];
