@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { createStore, applyMiddleware, compose } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import { call, put, debounce } from 'redux-saga/effects';
 import createSagaMiddleware from 'redux-saga';
 import { set } from 'lodash';
@@ -67,8 +67,7 @@ const reducer = ( state = initialState, action ) => {
 // create the saga middleware
 const sagaMiddleware = createSagaMiddleware();
 // mount it on the Store
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const reduxStore = createStore( reducer, composeEnhancers( applyMiddleware( sagaMiddleware ) ) );
+const reduxStore = createStore( reducer, applyMiddleware( sagaMiddleware ) );
 
 const genericStore = {
 	getSelectors() {
