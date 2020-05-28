@@ -120,14 +120,15 @@ class Edit extends Component {
 				minHeight / 5 + 'vh',
 		};
 
+		const postClasses = classNames(
+			{ 'post-has-image': post.newspack_featured_image_src },
+			post.newspack_article_classes
+		);
+
 		const postTitle = this.titleForPost( post );
 		const dateFormat = __experimentalGetSettings().formats.date;
 		return (
-			<article
-				className={ post.newspack_featured_image_src ? 'post-has-image' : null }
-				key={ post.id }
-				style={ styles }
-			>
+			<article className={ postClasses } key={ post.id } style={ styles }>
 				{ showImage && post.newspack_featured_image_src && (
 					<figure className="post-thumbnail" key="thumbnail">
 						<a href="#">
