@@ -267,7 +267,9 @@ class Edit extends Component {
 				<PanelBody title={ __( 'Display Settings', 'newspack-blocks' ) } initialOpen={ true }>
 					<QueryControls
 						numberOfItems={ postsToShow }
-						onNumberOfItemsChange={ _postsToShow => setAttributes( { postsToShow: _postsToShow } ) }
+						onNumberOfItemsChange={ _postsToShow =>
+							setAttributes( { postsToShow: _postsToShow || 1 } )
+						}
 						specificMode={ specificMode }
 						onSpecificModeChange={ _specificMode =>
 							setAttributes( { specificMode: _specificMode } )
