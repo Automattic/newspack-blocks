@@ -94,7 +94,6 @@ class Edit extends Component {
 		const { attributes } = this.props;
 		const {
 			showImage,
-			imageShape,
 			mediaPosition,
 			minHeight,
 			showCaption,
@@ -132,18 +131,7 @@ class Edit extends Component {
 				{ showImage && post.newspack_featured_image_src && (
 					<figure className="post-thumbnail" key="thumbnail">
 						<a href="#">
-							{ imageShape === 'landscape' && (
-								<img src={ post.newspack_featured_image_src.landscape } alt="" />
-							) }
-							{ imageShape === 'portrait' && (
-								<img src={ post.newspack_featured_image_src.portrait } alt="" />
-							) }
-							{ imageShape === 'square' && (
-								<img src={ post.newspack_featured_image_src.square } alt="" />
-							) }
-							{ imageShape === 'uncropped' && (
-								<img src={ post.newspack_featured_image_src.uncropped } alt="" />
-							) }
+							<img src={ post.newspack_featured_image_src } alt="" />
 						</a>
 						{ showCaption && '' !== post.newspack_featured_image_caption && (
 							<figcaption>{ post.newspack_featured_image_caption }</figcaption>
@@ -509,7 +497,7 @@ class Edit extends Component {
 			[ `image-align${ mediaPosition }` ]: showImage,
 			[ `is-${ imageScale }` ]: imageScale !== '1' && showImage,
 			'mobile-stack': mobileStack,
-			[ `is-${ imageShape }` ]: showImage,
+			[ `is-${ imageShape }` ]: mediaPosition !== 'behind' && showImage,
 			'has-text-color': textColor.color !== '',
 			'show-caption': showCaption,
 			'show-category': showCategory,
@@ -636,7 +624,9 @@ class Edit extends Component {
 				<BlockControls>
 					<Toolbar controls={ blockControls } />
 					{ showImage && <Toolbar controls={ blockControlsImages } /> }
-					{ showImage && <Toolbar controls={ blockControlsImageShape } /> }
+					{ showImage && mediaPosition !== 'behind' && (
+						<Toolbar controls={ blockControlsImageShape } />
+					) }
 				</BlockControls>
 				<InspectorControls>{ this.renderInspectorControls() }</InspectorControls>
 			</Fragment>

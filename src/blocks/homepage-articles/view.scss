@@ -71,7 +71,6 @@
 	}
 
 	/* Image styles */
-
 	.post-thumbnail {
 		margin: 0;
 		margin-bottom: 0.25em;
@@ -88,6 +87,63 @@
 
 	figcaption {
 		font-size: $font__size-xxs;
+	}
+
+	// set image size crops
+	&.is-landscape .post-thumbnail img {
+		height: auto;
+		width: 100%;
+	}
+
+	&.is-portrait .post-thumbnail img,
+	&.is-square .post-thumbnail img {
+		height: 100%;
+		width: auto;
+	}
+
+	&.is-landscape,
+	&.is-portrait,
+	&.is-square {
+		.post-thumbnail {
+			a {
+				display: inline-block;
+				position: relative;
+				overflow: hidden;
+				width: 100%;
+			}
+
+			img {
+				bottom: 0;
+				left: 50%;
+				max-width: 1000%;
+				position: absolute;
+				top: 50%;
+				-webkit-transform: translateX( -50% ) translateY( -50% );
+				transform: translateX( -50% ) translateY( -50% );
+
+				@supports ( object-fit: cover ) {
+					height: 100%;
+					left: 0;
+					object-fit: cover;
+					top: 0;
+					-webkit-transform: none;
+					transform: none;
+					width: 100%;
+				}
+			}
+		}
+	}
+
+	&.is-landscape .post-thumbnail a {
+		padding-top: 75%;
+	}
+
+	&.is-portrait .post-thumbnail a {
+		padding-top: 133.33%;
+	}
+
+	&.is-square .post-thumbnail a {
+		padding-top: 100%;
 	}
 
 	&.image-alignleft,

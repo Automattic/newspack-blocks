@@ -23,7 +23,7 @@ class Newspack_Blocks_API {
 					'context' => [
 						'edit',
 					],
-					'type'    => 'array',
+					'type'    => 'string',
 				],
 			]
 		);
@@ -95,61 +95,20 @@ class Newspack_Blocks_API {
 	 * @return array | bool Featured image if available, false if not.
 	 */
 	public static function newspack_blocks_get_image_src( $object ) {
-		$featured_image_set = [];
+		$featured_image;
 
 		if ( 0 === $object['featured_media'] ) {
 			return false;
 		}
 
-		// Large image.
-		$feat_img_array_large        = wp_get_attachment_image_src(
+		$feat_img_array_uncropped = wp_get_attachment_image_src(
 			$object['featured_media'],
-			'large',
+			'newspack-article-block-uncropped',
 			false
 		);
-		$featured_image_set['large'] = $feat_img_array_large[0];
+		$featured_image           = $feat_img_array_uncropped[0];
 
-		// Landscape image.
-		$landscape_size = Newspack_Blocks::image_size_for_orientation( 'landscape' );
-
-		$feat_img_array_landscape        = wp_get_attachment_image_src(
-			$object['featured_media'],
-			$landscape_size,
-			false
-		);
-		$featured_image_set['landscape'] = $feat_img_array_landscape[0];
-
-		// Portrait image.
-		$portrait_size = Newspack_Blocks::image_size_for_orientation( 'portrait' );
-
-		$feat_img_array_portrait        = wp_get_attachment_image_src(
-			$object['featured_media'],
-			$portrait_size,
-			false
-		);
-		$featured_image_set['portrait'] = $feat_img_array_portrait[0];
-
-		// Square image.
-		$square_size = Newspack_Blocks::image_size_for_orientation( 'square' );
-
-		$feat_img_array_square        = wp_get_attachment_image_src(
-			$object['featured_media'],
-			$square_size,
-			false
-		);
-		$featured_image_set['square'] = $feat_img_array_square[0];
-
-		// Uncropped image.
-		$uncropped_size = 'newspack-article-block-uncropped';
-
-		$feat_img_array_uncropped        = wp_get_attachment_image_src(
-			$object['featured_media'],
-			$uncropped_size,
-			false
-		);
-		$featured_image_set['uncropped'] = $feat_img_array_uncropped[0];
-
-		return $featured_image_set;
+		return $featured_image;
 	}
 
 	/**

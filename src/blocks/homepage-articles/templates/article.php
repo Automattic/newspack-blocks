@@ -24,15 +24,10 @@ call_user_func(
 		if ( 'behind' === $attributes['mediaPosition'] && $attributes['showImage'] && has_post_thumbnail() ) {
 			$styles = 'min-height: ' . $attributes['minHeight'] . 'vh; padding-top: ' . ( $attributes['minHeight'] / 5 ) . 'vh;';
 		}
-		$image_size = 'newspack-article-block-uncropped';
-		if ( has_post_thumbnail() && 'uncropped' !== $attributes['imageShape'] ) {
-			$image_size = Newspack_Blocks::image_size_for_orientation( $attributes['imageShape'] );
-		}
-		$thumbnail_args = '';
-		// If the image position is behind, pass the object-fit setting to maintain styles with AMP.
-		if ( 'behind' === $attributes['mediaPosition'] ) {
-			$thumbnail_args = array( 'object-fit' => 'cover' );
-		}
+
+		// Pass an object-fit attribute of 'cover' for AMP.
+		$thumbnail_args = array( 'object-fit' => 'cover' );
+
 		$category = false;
 		// Use Yoast primary category if set.
 		if ( class_exists( 'WPSEO_Primary_Term' ) ) {
@@ -59,7 +54,7 @@ call_user_func(
 		<?php if ( has_post_thumbnail() && $attributes['showImage'] && $attributes['imageShape'] ) : ?>
 			<figure class="post-thumbnail">
 				<a href="<?php the_permalink(); ?>" rel="bookmark">
-					<?php the_post_thumbnail( $image_size, $thumbnail_args ); ?>
+					<?php the_post_thumbnail( 'newspack-article-block-uncropped', $thumbnail_args ); ?>
 				</a>
 
 				<?php if ( $attributes['showCaption'] && '' !== get_the_post_thumbnail_caption() ) : ?>
