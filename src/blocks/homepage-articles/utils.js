@@ -33,16 +33,20 @@ const POST_QUERY_ATTRIBUTES = [
 ];
 
 /**
- * Does the attributes change necessitate a reflow?
+ * Does the props change necessitate a reflow?
+ * A reflow should happen if:
+ * 1. Query-changing attributes of a block change
+ * 2. The top-level blocks order changes. A Homepage Articles
+ *    block might be nested somewhere.
  *
- * @param {Object} prevAttributes block attributes
- * @param {Object} attributes block attributes
+ * @param {Object} prevProps Edit component props
+ * @param {Object} props Edit component props
  */
-export const shouldReflow = ( prevAttributes, attributes ) =>
+export const shouldReflow = ( prevProps, props ) =>
 	! isEqual(
-		pick( prevAttributes, POST_QUERY_ATTRIBUTES ),
-		pick( attributes, POST_QUERY_ATTRIBUTES )
-	);
+		pick( prevProps.attributes, POST_QUERY_ATTRIBUTES ),
+		pick( props.attributes, POST_QUERY_ATTRIBUTES )
+	) || ! isEqual( prevProps.topBlocksClientIdsInOrder, props.topBlocksClientIdsInOrder );
 
 /**
  * Builds query criteria from given attributes.

@@ -479,8 +479,8 @@ class Edit extends Component {
 	componentDidMount() {
 		this.props.triggerReflow();
 	}
-	componentDidUpdate( { attributes } ) {
-		if ( shouldReflow( attributes, this.props.attributes ) ) {
+	componentDidUpdate( props ) {
+		if ( shouldReflow( props, this.props ) ) {
 			this.props.triggerReflow();
 		}
 	}
@@ -671,7 +671,7 @@ class Edit extends Component {
 export default compose( [
 	withColors( { textColor: 'color' } ),
 	withSelect( ( select, { clientId, attributes } ) => {
-		const { getEditorBlocks } = select( 'core/editor' );
+		const { getEditorBlocks, getBlocks } = select( 'core/editor' );
 		const editorBlocksIds = getEditorBlocksIds( getEditorBlocks() );
 		// The block might be rendered in the block styles preview, not in the editor.
 		const isEditorBlock = editorBlocksIds.indexOf( clientId ) >= 0;
@@ -682,6 +682,7 @@ export default compose( [
 			isEditorBlock,
 			isUIDisabled: isUIDisabled(),
 			error: getError( { clientId } ),
+			topBlocksClientIdsInOrder: getBlocks().map( block => block.clientId ),
 		};
 
 		if ( isEditorBlock ) {
