@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/Automattic/newspack-blocks/compare/v1.6.0...v1.7.0) (2020-06-02)
+
+
+### Features
+
+* add category and tag classes to each homepage post ([#487](https://github.com/Automattic/newspack-blocks/issues/487)) ([d7c4fcd](https://github.com/Automattic/newspack-blocks/commit/d7c4fcd8d3caa2bbdda970e913265e3da7144b76))
+
 # [1.6.0](https://github.com/Automattic/newspack-blocks/compare/v1.5.0...v1.6.0) (2020-05-19)
 
 
