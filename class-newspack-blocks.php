@@ -309,6 +309,26 @@ class Newspack_Blocks {
 	}
 
 	/**
+	 * Returns width, height and orientation of featured image.
+	 *
+	 * @param string $post_id Post ID.
+	 * @return array
+	 */
+	public static function get_image_shape( $post_id ) {
+		$image = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'full' );
+
+		$image_info['width']       = $image[1];
+		$image_info['height']      = $image[2];
+		$image_info['orientation'] = 'landscape';
+
+		if ( $image_info['height'] > $image_info['width'] ) {
+			$image_info['orientation'] = 'portrait';
+		}
+
+		return $image_info;
+	}
+
+	/**
 	 * Builds and returns query args based on block attributes.
 	 *
 	 * @param array $attributes An array of block attributes.

@@ -8,10 +8,12 @@
 
 call_user_func(
 	function( $data ) {
-		$attributes = $data['attributes'];
-		$authors    = Newspack_Blocks::prepare_authors();
-		$classes    = array();
-		$styles     = '';
+		$attributes  = $data['attributes'];
+		$authors     = Newspack_Blocks::prepare_authors();
+		$image_info  = Newspack_Blocks::get_image_shape( get_the_ID() );
+		$classes     = array();
+		$post_styles = '';
+		$img_styles  = '';
 
 		// Add classes based on the post's assigned categories and tags.
 		$classes[] = Newspack_Blocks::get_term_classes( get_the_ID() );
@@ -22,17 +24,15 @@ call_user_func(
 		}
 
 		if ( 'behind' === $attributes['mediaPosition'] && $attributes['showImage'] && has_post_thumbnail() ) {
-			$styles = 'min-height: ' . $attributes['minHeight'] . 'vh; padding-top: ' . ( $attributes['minHeight'] / 5 ) . 'vh;';
+			$post_styles = 'min-height: ' . $attributes['minHeight'] . 'vh; padding-top: ' . ( $attributes['minHeight'] / 5 ) . 'vh;';
 		}
-		$image_size = 'newspack-article-block-uncropped';
-		if ( has_post_thumbnail() && 'uncropped' !== $attributes['imageShape'] ) {
-			$image_size = Newspack_Blocks::image_size_for_orientation( $attributes['imageShape'] );
-		}
-		$thumbnail_args = '';
-		// If the image position is behind, pass the object-fit setting to maintain styles with AMP.
-		if ( 'behind' === $attributes['mediaPosition'] ) {
-			$thumbnail_args = array( 'object-fit' => 'cover' );
-		}
+
+		// Figure out image orientation and queue up some styles based on that.
+		$img_styles = 'max-width:' . esc_attr( $image_info['width'] ) . 'px';
+
+		// Pass an object-fit attribute of 'cover' for AMP.
+		$thumbnail_args = array( 'object-fit' => 'cover' );
+
 		$category = false;
 		// Use Yoast primary category if set.
 		if ( class_exists( 'WPSEO_Primary_Term' ) ) {
@@ -52,14 +52,16 @@ call_user_func(
 
 	<article data-post-id="<?php the_id(); ?>"
 		class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>"
-		<?php if ( $styles ) : ?>
-		style="<?php echo esc_attr( $styles ); ?>"
+		<?php if ( $post_styles ) : ?>
+		style="<?php echo esc_attr( $post_styles ); ?>"
 		<?php endif; ?>
 		>
 		<?php if ( has_post_thumbnail() && $attributes['showImage'] && $attributes['imageShape'] ) : ?>
 			<figure class="post-thumbnail">
-				<a href="<?php the_permalink(); ?>" rel="bookmark">
-					<?php the_post_thumbnail( $image_size, $thumbnail_args ); ?>
+				<a style="<?php echo esc_attr( $img_styles ); ?>" href="<?php the_permalink(); ?>" rel="bookmark">
+					<span>
+						<?php the_post_thumbnail( 'newspack-article-block-uncropped', $thumbnail_args ); ?>
+					</span>
 				</a>
 
 				<?php if ( $attributes['showCaption'] && '' !== get_the_post_thumbnail_caption() ) : ?>

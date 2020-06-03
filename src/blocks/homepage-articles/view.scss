@@ -87,6 +87,66 @@
 		font-size: $font__size-xxs;
 	}
 
+	// set image size crops
+	&.is-landscape .post-thumbnail img {
+		height: auto;
+		width: 100%;
+	}
+
+	&.is-portrait .post-thumbnail img,
+	&.is-square .post-thumbnail img {
+		height: 100%;
+		width: auto;
+	}
+
+	&.is-landscape,
+	&.is-portrait,
+	&.is-square {
+		.post-thumbnail {
+			a,
+			span {
+				display: inline-block;
+				width: 100%;
+			}
+			span {
+				position: relative;
+				overflow: hidden;
+			}
+
+			img {
+				bottom: 0;
+				left: 50%;
+				max-width: 1000%;
+				position: absolute !important; // !important to override issues with semi-AMP selector [width][height][sizes]:not([layout]):not(.i-amphtml-element)
+				top: 50%;
+				-webkit-transform: translateX( -50% ) translateY( -50% );
+				transform: translateX( -50% ) translateY( -50% );
+
+				@supports ( object-fit: cover ) {
+					height: 100%;
+					left: 0;
+					object-fit: cover;
+					top: 0;
+					-webkit-transform: none;
+					transform: none;
+					width: 100%;
+				}
+			}
+		}
+	}
+
+	&.is-landscape .post-thumbnail span {
+		padding-top: 75%;
+	}
+
+	&.is-portrait .post-thumbnail span {
+		padding-top: 133.33%;
+	}
+
+	&.is-square .post-thumbnail span {
+		padding-top: 100%;
+	}
+
 	&.image-alignleft,
 	&.image-alignright {
 		.post-has-image {

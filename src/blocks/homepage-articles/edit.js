@@ -94,7 +94,6 @@ class Edit extends Component {
 		const { attributes } = this.props;
 		const {
 			showImage,
-			imageShape,
 			mediaPosition,
 			minHeight,
 			showCaption,
@@ -132,18 +131,9 @@ class Edit extends Component {
 				{ showImage && post.newspack_featured_image_src && (
 					<figure className="post-thumbnail" key="thumbnail">
 						<a href="#">
-							{ imageShape === 'landscape' && (
-								<img src={ post.newspack_featured_image_src.landscape } alt="" />
-							) }
-							{ imageShape === 'portrait' && (
-								<img src={ post.newspack_featured_image_src.portrait } alt="" />
-							) }
-							{ imageShape === 'square' && (
-								<img src={ post.newspack_featured_image_src.square } alt="" />
-							) }
-							{ imageShape === 'uncropped' && (
+							<span>
 								<img src={ post.newspack_featured_image_src.uncropped } alt="" />
-							) }
+							</span>
 						</a>
 						{ showCaption && '' !== post.newspack_featured_image_caption && (
 							<figcaption>{ post.newspack_featured_image_caption }</figcaption>
