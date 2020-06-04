@@ -131,7 +131,9 @@ class Edit extends Component {
 				{ showImage && post.newspack_featured_image_src && (
 					<figure className="post-thumbnail" key="thumbnail">
 						<a href="#">
-							<img src={ post.newspack_featured_image_src } alt="" />
+							<span>
+								<img src={ post.newspack_featured_image_src.uncropped } alt="" />
+							</span>
 						</a>
 						{ showCaption && '' !== post.newspack_featured_image_caption && (
 							<figcaption>{ post.newspack_featured_image_caption }</figcaption>
@@ -497,7 +499,7 @@ class Edit extends Component {
 			[ `image-align${ mediaPosition }` ]: showImage,
 			[ `is-${ imageScale }` ]: imageScale !== '1' && showImage,
 			'mobile-stack': mobileStack,
-			[ `is-${ imageShape }` ]: mediaPosition !== 'behind' && showImage,
+			[ `is-${ imageShape }` ]: showImage,
 			'has-text-color': textColor.color !== '',
 			'show-caption': showCaption,
 			'show-category': showCategory,
@@ -624,9 +626,7 @@ class Edit extends Component {
 				<BlockControls>
 					<Toolbar controls={ blockControls } />
 					{ showImage && <Toolbar controls={ blockControlsImages } /> }
-					{ showImage && mediaPosition !== 'behind' && (
-						<Toolbar controls={ blockControlsImageShape } />
-					) }
+					{ showImage && <Toolbar controls={ blockControlsImageShape } /> }
 				</BlockControls>
 				<InspectorControls>{ this.renderInspectorControls() }</InspectorControls>
 			</Fragment>

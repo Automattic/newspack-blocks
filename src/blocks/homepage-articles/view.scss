@@ -36,10 +36,7 @@
 			flex-basis: 100%;
 
 			@include media( tablet ) {
-				&:last-child,
-				& {
-					margin-bottom: 1em;
-				}
+				margin-bottom: 1em;
 			}
 		}
 	}
@@ -71,6 +68,7 @@
 	}
 
 	/* Image styles */
+
 	.post-thumbnail {
 		margin: 0;
 		margin-bottom: 0.25em;
@@ -105,18 +103,21 @@
 	&.is-portrait,
 	&.is-square {
 		.post-thumbnail {
-			a {
+			a,
+			span {
 				display: inline-block;
+				width: 100%;
+			}
+			span {
 				position: relative;
 				overflow: hidden;
-				width: 100%;
 			}
 
 			img {
 				bottom: 0;
 				left: 50%;
 				max-width: 1000%;
-				position: absolute;
+				position: absolute !important; // !important to override issues with semi-AMP selector [width][height][sizes]:not([layout]):not(.i-amphtml-element)
 				top: 50%;
 				-webkit-transform: translateX( -50% ) translateY( -50% );
 				transform: translateX( -50% ) translateY( -50% );
@@ -134,15 +135,15 @@
 		}
 	}
 
-	&.is-landscape .post-thumbnail a {
+	&.is-landscape .post-thumbnail span {
 		padding-top: 75%;
 	}
 
-	&.is-portrait .post-thumbnail a {
+	&.is-portrait .post-thumbnail span {
 		padding-top: 133.33%;
 	}
 
-	&.is-square .post-thumbnail a {
+	&.is-square .post-thumbnail span {
 		padding-top: 100%;
 	}
 

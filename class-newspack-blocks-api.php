@@ -23,7 +23,7 @@ class Newspack_Blocks_API {
 					'context' => [
 						'edit',
 					],
-					'type'    => 'string',
+					'type'    => 'array',
 				],
 			]
 		);
@@ -95,20 +95,23 @@ class Newspack_Blocks_API {
 	 * @return array | bool Featured image if available, false if not.
 	 */
 	public static function newspack_blocks_get_image_src( $object ) {
-		$featured_image;
+		$featured_image_set = [];
 
 		if ( 0 === $object['featured_media'] ) {
 			return false;
 		}
 
-		$feat_img_array_uncropped = wp_get_attachment_image_src(
+		// Uncropped image.
+		$uncropped_size = 'newspack-article-block-uncropped';
+
+		$feat_img_array_uncropped        = wp_get_attachment_image_src(
 			$object['featured_media'],
-			'newspack-article-block-uncropped',
+			$uncropped_size,
 			false
 		);
-		$featured_image           = $feat_img_array_uncropped[0];
+		$featured_image_set['uncropped'] = $feat_img_array_uncropped[0];
 
-		return $featured_image;
+		return $featured_image_set;
 	}
 
 	/**

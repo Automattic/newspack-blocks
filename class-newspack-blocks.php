@@ -9,7 +9,6 @@
  * Newspack blocks functionality
  */
 class Newspack_Blocks {
-
 	/**
 	 * Add hooks and filters.
 	 */
@@ -211,7 +210,114 @@ class Newspack_Blocks {
 	 * Registers image sizes required for Newspack Blocks.
 	 */
 	public static function add_image_sizes() {
-		add_image_size( 'newspack-article-block-uncropped', 1200, 9999, false );
+		add_image_size( 'newspack-article-block-uncropped', 1200, 9999, true );
+	}
+
+	/**
+	 * Checks for Photon, and returns Photon-sized image if available.
+	 *
+	 * @param string $post_id Post ID.
+	 * @param string $shape Image shape.
+	 * @return string
+	 */
+	public static function get_image( $post_id, $shape ) {
+		$sized_image = get_the_post_thumbnail( $post_id, 'large', array( 'object-fit' => 'cover' ) );
+
+		if ( class_exists( 'Jetpack_PostImages' ) ) {
+			$thumb_id = get_post_thumbnail_id( $post_id );
+
+			// Get the URL of the image.
+			$img_info = wp_get_attachment_image_src( $thumb_id, 'full' );
+
+			// Get the image's alt text.
+			$alt = get_post_meta( $thumb_id, '_wp_attachment_image_alt', true );
+
+			// Get the image's srcset.
+			$srcset = wp_get_attachment_image_srcset( $thumb_id, 'full' );
+
+			// Get the images's original size.
+			$img_url    = $img_info[0];
+			$img_width  = $img_info[1];
+			$img_height = $img_info[2];
+
+			// Set the default Photon size -- 1200px wide by infinite height.
+			$photon['width']  = 1200;
+			$photon['height'] = 9999;
+
+			$sizes = array(
+				'landscape' => array(
+					array( 1200, 900 ),
+					array( 800, 600 ),
+					array( 400, 300 ),
+					array( 200, 150 ),
+				),
+				'portrait'  => array(
+					array( 900, 1200 ),
+					array( 600, 800 ),
+					array( 300, 400 ),
+					array( 150, 200 ),
+				),
+				'square'    => array(
+					array( 1200, 1200 ),
+					array( 800, 800 ),
+					array( 400, 400 ),
+					array( 200, 200 ),
+				),
+			);
+
+			// Check what oritentation we want, then set the size.
+			foreach ( $sizes as $size ) {
+				if ( $shape === $size ) {
+					if ( $size[0] <= $image_width && $size[1] <= $image_height ) {
+						$photon['width']  = $dimensions[0];
+						$photon['height'] = $dimensions[1];
+						return $photon;
+					}
+				}
+			}
+
+			if ( ! empty( $img_url ) ) {
+				// Call Jetpack_PostImages to retreive a 1200px wide version of the image.
+				$img_resize = Jetpack_PostImages::fit_image_url( $img_url, $photon['width'], $photon['height'] );
+				// Update HTML to be used for the image.
+				$sized_image = '<img src="' . esc_url( $img_resize ) . '" alt="' . esc_attr( $alt ) . '" srcset="' . esc_attr( $srcset ) . '" object-fit="cover">';
+			}
+		}
+
+		return $sized_image;
+	}
+
+	/**
+	 * Returns width, height and orientation of featured image.
+	 *
+	 * @param string $post_id Post ID.
+	 * @param string $display_shape Shape of image.
+	 * @return array
+	 */
+	public static function get_image_sizing( $post_id, $display_shape ) {
+		$image = wp_get_attachment_metadata( get_post_thumbnail_id( $post_id ) );
+
+		$image_info['maxwidth']    = $image['width'];
+		$image_info['maxheight']   = $image['height'];
+		$image_info['orientation'] = 'landscape';
+
+		if ( $image['height'] > $image['width'] ) {
+			$image_info['orientation'] = 'portrait';
+		}
+
+		if ( 'landscape' === $image_info['orientation'] ) {
+			$image_info['maxwidth'] = ( 4 / 3 ) * $image['height']; // re-calculate max width based on aspect ratio.
+
+			if ( 'portrait' === $display_shape ) {
+				$image_info['maxwidth'] = ( 3 / 4 ) * $image['height'];
+			}
+
+			if ( 'square' === $display_shape ) {
+				$image_info['maxwidth'] = $image['height'];
+			}
+		}
+
+		return $image_info;
 	}
 
 	/**

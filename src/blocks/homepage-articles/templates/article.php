@@ -8,10 +8,34 @@
 
 call_user_func(
 	function( $data ) {
-		$attributes = $data['attributes'];
-		$authors    = Newspack_Blocks::prepare_authors();
-		$classes    = array();
-		$styles     = '';
+		$attributes  = $data['attributes'];
+		$authors     = Newspack_Blocks::prepare_authors();
+		$img_output  = Newspack_Blocks::get_image( get_the_ID(), $attributes['imageShape'] );
+		$img_sizing  = Newspack_Blocks::get_image_sizing( get_the_ID(), $attributes['imageShape'] );
+		$classes     = array();
+		$post_styles = '';
+		$img_styles  = '';
+		$img_html    = array(
+			'img' => array(
+				'src'                    => array(),
+				'alt'                    => array(),
+				'srcset'                 => array(),
+				'object-fit'             => array(),
+				'class'                  => array(),
+				'width'                  => array(),
+				'height'                 => array(),
+				'data-attachment-id'     => array(),
+				'data-permalink'         => array(),
+				'data-orig-file'         => array(),
+				'data-orig-size'         => array(),
+				'data-comments-opened'   => array(),
+				'data-image-meta'        => array(),
+				'data-image-title'       => array(),
+				'data-image-description' => array(),
+				'data-medium-file'       => array(),
+				'data-large-file'        => array(),
+			),
+		);
 
 		// Add classes based on the post's assigned categories and tags.
 		$classes[] = Newspack_Blocks::get_term_classes( get_the_ID() );
@@ -22,11 +46,13 @@ call_user_func(
 		}
 
 		if ( 'behind' === $attributes['mediaPosition'] && $attributes['showImage'] && has_post_thumbnail() ) {
-			$styles = 'min-height: ' . $attributes['minHeight'] . 'vh; padding-top: ' . ( $attributes['minHeight'] / 5 ) . 'vh;';
+			$post_styles = 'min-height: ' . $attributes['minHeight'] . 'vh; padding-top: ' . ( $attributes['minHeight'] / 5 ) . 'vh;';
 		}
 
-		// Pass an object-fit attribute of 'cover' for AMP.
-		$thumbnail_args = array( 'object-fit' => 'cover' );
+		// Figure out image orientation and queue up some styles based on that.
+		if ( $attributes['showImage'] && has_post_thumbnail() && 'behind' !== $attributes['mediaPosition'] ) {
+			$img_styles = 'max-width:' . esc_attr( $img_sizing['maxwidth'] ) . 'px';
+		}
 
 		$category = false;
 		// Use Yoast primary category if set.
@@ -47,14 +73,16 @@ call_user_func(
 
 	<article data-post-id="<?php the_id(); ?>"
 		class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>"
-		<?php if ( $styles ) : ?>
-		style="<?php echo esc_attr( $styles ); ?>"
+		<?php if ( $post_styles ) : ?>
+		style="<?php echo esc_attr( $post_styles ); ?>"
 		<?php endif; ?>
 		>
 		<?php if ( has_post_thumbnail() && $attributes['showImage'] && $attributes['imageShape'] ) : ?>
 			<figure class="post-thumbnail">
-				<a href="<?php the_permalink(); ?>" rel="bookmark">
-					<?php the_post_thumbnail( 'newspack-article-block-uncropped', $thumbnail_args ); ?>
+				<a style="<?php echo esc_attr( $img_styles ); ?>" href="<?php the_permalink(); ?>" rel="bookmark">
+					<span>
+						<?php echo wp_kses( $img_output, $img_html ); ?>
+					</span>
 				</a>
 
 				<?php if ( $attributes['showCaption'] && '' !== get_the_post_thumbnail_caption() ) : ?>
