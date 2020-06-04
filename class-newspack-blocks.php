@@ -9,6 +9,12 @@
  * Newspack blocks functionality
  */
 class Newspack_Blocks {
+	/**
+	 * Add hooks and filters.
+	 */
+	public static function init() {
+		add_action( 'after_setup_theme', [ __CLASS__, 'add_image_sizes' ] );
+	}
 
 	/**
 	 * Gather dependencies and paths needed for script enqueuing.
@@ -431,3 +437,4 @@ class Newspack_Blocks {
 		return $clean;
 	}
 }
+Newspack_Blocks::init();
