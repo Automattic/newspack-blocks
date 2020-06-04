@@ -11,13 +11,6 @@
 class Newspack_Blocks {
 
 	/**
-	 * Add hooks and filters.
-	 */
-	public static function init() {
-		add_action( 'after_setup_theme', [ __CLASS__, 'add_image_sizes' ] );
-	}
-
-	/**
 	 * Gather dependencies and paths needed for script enqueuing.
 	 *
 	 * @param string $script_path Path to the script relative to plugin root.
@@ -208,104 +201,42 @@ class Newspack_Blocks {
 	}
 
 	/**
-	 * Return the most appropriate thumbnail size to display.
-	 *
-	 * @param string $orientation The block's orientation settings: landscape|portrait|square.
-	 *
-	 * @return string Returns the thumbnail key to use.
-	 */
-	public static function image_size_for_orientation( $orientation = 'landscape' ) {
-		$sizes = array(
-			'landscape' => array(
-				'large'  => array(
-					1200,
-					900,
-				),
-				'medium' => array(
-					800,
-					600,
-				),
-				'small'  => array(
-					400,
-					300,
-				),
-				'tiny'   => array(
-					200,
-					150,
-				),
-			),
-			'portrait'  => array(
-				'large'  => array(
-					900,
-					1200,
-				),
-				'medium' => array(
-					600,
-					800,
-				),
-				'small'  => array(
-					300,
-					400,
-				),
-				'tiny'   => array(
-					150,
-					200,
-				),
-			),
-			'square'    => array(
-				'large'  => array(
-					1200,
-					1200,
-				),
-				'medium' => array(
-					800,
-					800,
-				),
-				'small'  => array(
-					400,
-					400,
-				),
-				'tiny'   => array(
-					200,
-					200,
-				),
-			),
-		);
-
-		foreach ( $sizes[ $orientation ] as $key => $dimensions ) {
-			$attachment = wp_get_attachment_image_src(
-				get_post_thumbnail_id( get_the_ID() ),
-				'newspack-article-block-' . $orientation . '-' . $key
-			);
-			if ( $dimensions[0] === $attachment[1] && $dimensions[1] === $attachment[2] ) {
-				return 'newspack-article-block-' . $orientation . '-' . $key;
-			}
-		}
-
-		return 'large';
-	}
-
-	/**
 	 * Registers image sizes required for Newspack Blocks.
 	 */
 	public static function add_image_sizes() {
-		add_image_size( 'newspack-article-block-landscape-large', 1200, 900, true );
-		add_image_size( 'newspack-article-block-portrait-large', 900, 1200, true );
-		add_image_size( 'newspack-article-block-square-large', 1200, 1200, true );
+		add_image_size( 'newspack-article-block-uncropped', 1200, 9999, true );
+	}
 
-		add_image_size( 'newspack-article-block-landscape-medium', 800, 600, true );
-		add_image_size( 'newspack-article-block-portrait-medium', 600, 800, true );
-		add_image_size( 'newspack-article-block-square-medium', 800, 800, true );
+	/**
+	 * Checks for Photon, and returns Photon-sized image if available.
+	 *
+	 * @param string $post_id Post ID.
+	 * @return string
+	 */
+	public static function get_block_image( $post_id ) {
+		$sized_image = get_the_post_thumbnail( $post_id, 'large', array( 'object-fit' => 'cover' ) );
 
-		add_image_size( 'newspack-article-block-landscape-small', 400, 300, true );
-		add_image_size( 'newspack-article-block-portrait-small', 300, 400, true );
-		add_image_size( 'newspack-article-block-square-small', 400, 400, true );
+		if ( class_exists( 'Jetpack_PostImages' ) ) {
+			$thumb_id = get_post_thumbnail_id( $post_id );
 
-		add_image_size( 'newspack-article-block-landscape-tiny', 200, 150, true );
-		add_image_size( 'newspack-article-block-portrait-tiny', 150, 200, true );
-		add_image_size( 'newspack-article-block-square-tiny', 200, 200, true );
+			// Get the URL of the image.
+			$img_url = wp_get_attachment_image_src( $thumb_id, 'full' );
 
-		add_image_size( 'newspack-article-block-uncropped', 1200, 9999, false );
+			// Get the image's alt text.
+			$alt = get_post_meta( $thumb_id, '_wp_attachment_image_alt', true );
+
+			// Get the image's srcset.
+			$srcset = wp_get_attachment_image_srcset( $thumb_id, 'full' );
+
+			if ( ! empty( $img_url ) ) {
+				// Call Jetpack_PostImages to retreive a 1200px wide version of the image.
+				$img_resize = Jetpack_PostImages::fit_image_url( $img_url[0], 1200, 9999 );
+				// Update HTML to be used for the image.
+				$sized_image = '<img src="' . esc_url( $img_resize ) . '" alt="' . esc_attr( $alt ) . '" srcset="' . esc_attr( $srcset ) . '" object-fit="cover">';
+			}
+		}
+
+		return $sized_image;
 	}
 
 	/**
@@ -314,15 +245,27 @@ class Newspack_Blocks {
 	 * @param string $post_id Post ID.
 	 * @return array
 	 */
-	public static function get_image_shape( $post_id ) {
-		$image = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'full' );
+	public static function get_image_info( $post_id, $display_shape ) {
+		$image = wp_get_attachment_metadata( get_post_thumbnail_id( $post_id ) );
 
-		$image_info['width']       = $image[1];
-		$image_info['height']      = $image[2];
+		$image_info['maxwidth']    = $image['width'];
+		$image_info['maxheight']   = $image['height'];
 		$image_info['orientation'] = 'landscape';
 
-		if ( $image_info['height'] > $image_info['width'] ) {
+		if ( $image['height'] > $image['width'] ) {
 			$image_info['orientation'] = 'portrait';
+		}
+
+		if ( 'landscape' === $image_info['orientation'] ) {
+			$image_info['maxwidth'] = ( 4 / 3 ) * $image['height']; // re-calculate max width based on aspect ratio.
+
+			if ( 'portrait' === $display_shape ) {
+				$image_info['maxwidth'] = ( 3 / 4 ) * $image['height'];
+			}
+
+			if ( 'square' === $display_shape ) {
+				$img_styles = 'max-width:' . esc_attr( $image_info['maxheight'] ) . 'px';
+			}
 		}
 
 		return $image_info;
@@ -488,4 +431,3 @@ class Newspack_Blocks {
 		return $clean;
 	}
 }
-Newspack_Blocks::init();
