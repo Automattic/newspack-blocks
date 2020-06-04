@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { createStore, applyMiddleware } from 'redux';
-import { call, put, debounce } from 'redux-saga/effects';
+import { call, put, takeLatest, delay } from 'redux-saga/effects';
 import createSagaMiddleware from 'redux-saga';
 import { set } from 'lodash';
 
@@ -112,6 +112,9 @@ function* getPosts( block ) {
  * "worker" Saga: will be fired on REFLOW actions
  */
 function* fetchPosts() {
+	// debounce by 300ms
+	yield delay( 300 );
+
 	const { getBlocks } = select( 'core/block-editor' );
 
 	yield put( { type: 'DISABLE_UI' } );
@@ -145,12 +148,12 @@ function* fetchPosts() {
 /**
  * Starts fetchPosts on each dispatched `REFLOW` action.
  *
- * Saga will be called after it stops taking REFLOW actions for 300 milliseconds.
- * Not using takeLatest to ensure that the saga will be *called once* per change,
- * not *cancelled* after a new reflow is triggered.
+ * fetchPosts will wait 300ms before fetching. Thanks to takeLatest,
+ * if new reflow happens during this time, the reflow from before
+ * will be cancelled.
  */
 function* fetchPostsSaga() {
-	yield debounce( 300, 'REFLOW', fetchPosts );
+	yield takeLatest( 'REFLOW', fetchPosts );
 }
 
 // Run the saga ✨
