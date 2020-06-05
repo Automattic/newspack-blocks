@@ -320,6 +320,31 @@ class Newspack_Blocks {
 		if ( ! $newspack_blocks_post_id ) {
 			$newspack_blocks_post_id = array();
 		}
+
+		// Get all blocks and gather specificPosts ids of all Homepage Articles blocks.
+		global $newspack_blocks_all_specific_posts_ids;
+		if ( ! is_array( $newspack_blocks_all_specific_posts_ids ) ) {
+			$blocks                                 = parse_blocks( get_the_content() );
+			$block_name                             = apply_filters( 'newspack_blocks_block_name', 'newspack-blocks/homepage-articles' );
+			$newspack_blocks_all_specific_posts_ids = array_reduce(
+				$blocks,
+				function ( $acc, $block ) use ( $block_name ) {
+					if (
+						$block_name === $block['blockName'] &&
+						isset( $block['attrs']['specificMode'], $block['attrs']['specificPosts'] ) &&
+						count( $block['attrs']['specificPosts'] )
+					) {
+						return array_merge(
+							$block['attrs']['specificPosts'],
+							$acc
+						);
+					}
+					return $acc;
+				},
+				[]
+			);
+		}
+
 		$authors        = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
 		$categories     = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
 		$tags           = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
@@ -337,6 +362,9 @@ class Newspack_Blocks {
 			$args['orderby']  = 'post__in';
 		} else {
 			$args['posts_per_page'] = $posts_to_show + count( $newspack_blocks_post_id );
+			if ( count( $newspack_blocks_all_specific_posts_ids ) ) {
+				$args['post__not_in'] = $newspack_blocks_all_specific_posts_ids;
+			}
 			if ( $authors && count( $authors ) ) {
 				$args['author__in'] = $authors;
 			}
