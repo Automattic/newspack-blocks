@@ -331,8 +331,7 @@ class Newspack_Blocks {
 				function ( $acc, $block ) use ( $block_name ) {
 					if (
 						$block_name === $block['blockName'] &&
-						isset( $block['attrs']['specificMode'] ) &&
-						isset( $block['attrs']['specificPosts'] ) &&
+						isset( $block['attrs']['specificMode'], $block['attrs']['specificPosts'] ) &&
 						count( $block['attrs']['specificPosts'] )
 					) {
 						return array_merge(
