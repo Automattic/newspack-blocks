@@ -266,34 +266,33 @@ class Edit extends Component {
 		return (
 			<Fragment>
 				<PanelBody title={ __( 'Display Settings', 'newspack-blocks' ) } initialOpen={ true }>
-					{ postsToShow && (
-						<QueryControls
-							numberOfItems={ postsToShow }
-							onNumberOfItemsChange={ _postsToShow =>
-								setAttributes( { postsToShow: _postsToShow } )
-							}
-							specificMode={ specificMode }
-							onSpecificModeChange={ _specificMode =>
-								setAttributes( { specificMode: _specificMode } )
-							}
-							specificPosts={ specificPosts }
-							onSpecificPostsChange={ _specificPosts =>
-								setAttributes( { specificPosts: _specificPosts } )
-							}
-							authors={ authors }
-							onAuthorsChange={ _authors => setAttributes( { authors: _authors } ) }
-							categories={ categories }
-							onCategoriesChange={ _categories => setAttributes( { categories: _categories } ) }
-							tags={ tags }
-							onTagsChange={ _tags => {
-								setAttributes( { tags: _tags } );
-							} }
-							tagExclusions={ tagExclusions }
-							onTagExclusionsChange={ _tagExclusions =>
-								setAttributes( { tagExclusions: _tagExclusions } )
-							}
-						/>
-					) }
+					<QueryControls
+						numberOfItems={ postsToShow }
+						onNumberOfItemsChange={ _postsToShow =>
+							setAttributes( { postsToShow: _postsToShow || 1 } )
+						}
+						specificMode={ specificMode }
+						onSpecificModeChange={ _specificMode =>
+							setAttributes( { specificMode: _specificMode } )
+						}
+						specificPosts={ specificPosts }
+						onSpecificPostsChange={ _specificPosts =>
+							setAttributes( { specificPosts: _specificPosts } )
+						}
+						authors={ authors }
+						onAuthorsChange={ _authors => setAttributes( { authors: _authors } ) }
+						categories={ categories }
+						onCategoriesChange={ _categories => setAttributes( { categories: _categories } ) }
+						tags={ tags }
+						onTagsChange={ _tags => {
+							setAttributes( { tags: _tags } );
+						} }
+						tagExclusions={ tagExclusions }
+						onTagExclusionsChange={ _tagExclusions =>
+							setAttributes( { tagExclusions: _tagExclusions } )
+						}
+					/>
+
 					{ postLayout === 'grid' && (
 						<RangeControl
 							label={ __( 'Columns', 'newspack-blocks' ) }
