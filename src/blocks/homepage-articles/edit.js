@@ -214,7 +214,7 @@ class Edit extends Component {
 	};
 
 	renderInspectorControls = () => {
-		const { attributes, setAttributes, textColor, setTextColor, isUIDisabled } = this.props;
+		const { attributes, setAttributes, textColor, setTextColor } = this.props;
 
 		const {
 			authors,
@@ -275,7 +275,6 @@ class Edit extends Component {
 			<Fragment>
 				<PanelBody title={ __( 'Display Settings', 'newspack-blocks' ) } initialOpen={ true }>
 					<QueryControls
-						disabled={ isUIDisabled }
 						numberOfItems={ postsToShow }
 						onNumberOfItemsChange={ _postsToShow =>
 							setAttributes( { postsToShow: _postsToShow || 1 } )
