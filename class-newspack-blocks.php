@@ -246,32 +246,33 @@ class Newspack_Blocks {
 
 			$sizes = array(
 				'landscape' => array(
-					array( 1200, 900 ),
-					array( 800, 600 ),
-					array( 400, 300 ),
 					array( 200, 150 ),
+					array( 400, 300 ),
+					array( 800, 600 ),
+					array( 1200, 900 ),
 				),
 				'portrait'  => array(
-					array( 900, 1200 ),
-					array( 600, 800 ),
-					array( 300, 400 ),
 					array( 150, 200 ),
+					array( 300, 400 ),
+					array( 600, 800 ),
+					array( 900, 1200 ),
 				),
 				'square'    => array(
-					array( 1200, 1200 ),
-					array( 800, 800 ),
-					array( 400, 400 ),
 					array( 200, 200 ),
+					array( 400, 400 ),
+					array( 800, 800 ),
+					array( 1200, 1200 ),
 				),
 			);
 
-			// Check what oritentation we want, then set the size.
-			foreach ( $sizes as $size ) {
-				if ( $shape === $size ) {
-					if ( $size[0] <= $image_width && $size[1] <= $image_height ) {
-						$photon['width']  = $dimensions[0];
-						$photon['height'] = $dimensions[1];
-						return $photon;
+			// Try to grab a size for the image that's as close to the size we want as possible.
+			foreach ( $sizes[ $shape ] as $size[] ) {
+				foreach ( $size as $sz ) {
+					if ( $sz[0] <= $img_width && $sz[1] <= $img_height ) {
+
+						// TODO: Should this only pull width to make it easier to change?
+						$photon['width']  = $sz[0];
+						$photon['height'] = $sz[1];
 					}
 				}
 			}
