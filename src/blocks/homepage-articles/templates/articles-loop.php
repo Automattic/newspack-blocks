@@ -23,7 +23,7 @@ call_user_func(
 		$post_counter = 0;
 		while ( $article_query->have_posts() ) {
 			$article_query->the_post();
-			if ( ! $attributes['specificMode'] && ( isset( $newspack_blocks_post_id[ get_the_ID() ] ) || $post_counter >= $attributes['postsToShow'] ) ) {
+			if ( ! Newspack_Blocks::is_experimental_mode() && ! $attributes['specificMode'] && ( isset( $newspack_blocks_post_id[ get_the_ID() ] ) || $post_counter >= $attributes['postsToShow'] ) ) {
 				continue;
 			}
 			$newspack_blocks_post_id[ get_the_ID() ] = true;
