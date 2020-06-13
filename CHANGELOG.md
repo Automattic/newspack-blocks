@@ -1,3 +1,10 @@
+## [1.7.2](https://github.com/Automattic/newspack-blocks/compare/v1.7.1...v1.7.2) (2020-06-13)
+
+
+### Bug Fixes
+
+* **homepage-posts:** exclude posts already on the page from query ([bbbbc3e](https://github.com/Automattic/newspack-blocks/commit/bbbbc3e7fb84f28c02293c10e0cd49faa7c6b819)), closes [#510](https://github.com/Automattic/newspack-blocks/issues/510)
+
 ## [1.7.1](https://github.com/Automattic/newspack-blocks/compare/v1.7.0...v1.7.1) (2020-06-09)
 
 
