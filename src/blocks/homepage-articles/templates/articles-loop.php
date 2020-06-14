@@ -10,6 +10,7 @@
 
 call_user_func(
 	function( $data ) {
+		// By temporarily overriding $wp_the_query, is_main_query() will return false, which is the expected behavior.
 		global $wp_query, $wp_the_query;
 		$temp_query = null;
 		if ( $wp_query === $wp_the_query ) {
