@@ -2,8 +2,10 @@
  * Internal dependencies
  */
 import { registerBlockType } from '@wordpress/blocks';
-import { BLOCK_NAME, settings } from '.';
+import { settings, name } from '.';
 import { registerQueryStore } from './store';
 
+const BLOCK_NAME = `newspack-blocks/${ name }`;
+
 registerBlockType( BLOCK_NAME, settings );
-registerQueryStore();
+registerQueryStore( BLOCK_NAME );

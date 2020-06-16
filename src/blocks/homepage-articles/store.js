@@ -108,57 +108,59 @@ function* getPosts( block ) {
 	return postsIds;
 }
 
-/**
- * "worker" Saga: will be fired on REFLOW actions
- */
-function* fetchPosts() {
-	// debounce by 300ms
-	yield delay( 300 );
+const createFetchPostsSaga = blockName => {
+	/**
+	 * "worker" Saga: will be fired on REFLOW actions
+	 */
+	function* fetchPosts() {
+		// debounce by 300ms
+		yield delay( 300 );
 
-	const { getBlocks } = select( 'core/block-editor' );
+		const { getBlocks } = select( 'core/block-editor' );
 
-	yield put( { type: 'DISABLE_UI' } );
+		yield put( { type: 'DISABLE_UI' } );
 
-	const blockQueries = getBlockQueries( getBlocks() );
+		const blockQueries = getBlockQueries( getBlocks(), blockName );
 
-	// Use requested specific posts ids as the starting state of exclusion list.
-	const specificPostsId = blockQueries.reduce( ( acc, { postsQuery } ) => {
-		if ( postsQuery.include ) {
-			acc = [ ...acc, ...postsQuery.include ];
+		// Use requested specific posts ids as the starting state of exclusion list.
+		const specificPostsId = blockQueries.reduce( ( acc, { postsQuery } ) => {
+			if ( postsQuery.include ) {
+				acc = [ ...acc, ...postsQuery.include ];
+			}
+			return acc;
+		}, [] );
+
+		let exclude = specificPostsId;
+		while ( blockQueries.length ) {
+			const nextBlock = blockQueries.shift();
+			nextBlock.postsQuery.exclude = exclude;
+			let fetchedPostIds = [];
+			try {
+				fetchedPostIds = yield call( getPosts, nextBlock );
+			} catch ( e ) {
+				yield put( { type: 'UPDATE_BLOCK_ERROR', clientId: nextBlock.clientId, error: e.message } );
+			}
+			exclude = [ ...exclude, ...fetchedPostIds ];
 		}
-		return acc;
-	}, [] );
 
-	let exclude = specificPostsId;
-	while ( blockQueries.length ) {
-		const nextBlock = blockQueries.shift();
-		nextBlock.postsQuery.exclude = exclude;
-		let fetchedPostIds = [];
-		try {
-			fetchedPostIds = yield call( getPosts, nextBlock );
-		} catch ( e ) {
-			yield put( { type: 'UPDATE_BLOCK_ERROR', clientId: nextBlock.clientId, error: e.message } );
-		}
-		exclude = [ ...exclude, ...fetchedPostIds ];
+		yield put( { type: 'ENABLE_UI' } );
 	}
 
-	yield put( { type: 'ENABLE_UI' } );
-}
+	/**
+	 * Starts fetchPosts on each dispatched `REFLOW` action.
+	 *
+	 * fetchPosts will wait 300ms before fetching. Thanks to takeLatest,
+	 * if new reflow happens during this time, the reflow from before
+	 * will be cancelled.
+	 */
+	return function* fetchPostsSaga() {
+		yield takeLatest( 'REFLOW', fetchPosts );
+	};
+};
 
-/**
- * Starts fetchPosts on each dispatched `REFLOW` action.
- *
- * fetchPosts will wait 300ms before fetching. Thanks to takeLatest,
- * if new reflow happens during this time, the reflow from before
- * will be cancelled.
- */
-function* fetchPostsSaga() {
-	yield takeLatest( 'REFLOW', fetchPosts );
-}
-
-// Run the saga ✨
-sagaMiddleware.run( fetchPostsSaga );
-
-export const registerQueryStore = () => {
+export const registerQueryStore = blockName => {
 	registerGenericStore( STORE_NAMESPACE, genericStore );
+
+	// Run the saga ✨
+	sagaMiddleware.run( createFetchPostsSaga( blockName ) );
 };

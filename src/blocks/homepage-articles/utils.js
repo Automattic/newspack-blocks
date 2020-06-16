@@ -4,11 +4,6 @@
 import { isEqual, isUndefined, pick, pickBy } from 'lodash';
 
 /**
- * Internal dependencies
- */
-import { BLOCK_NAME } from '.';
-
-/**
  * Based global WP.com blog_public option, checks whether current blog is
  * private or not.
  *
@@ -86,14 +81,14 @@ export const queryCriteriaFromAttributes = attributes => {
 	return criteria;
 };
 
-export const getBlockQueries = blocks =>
+export const getBlockQueries = ( blocks, blockName ) =>
 	blocks.flatMap( block => {
 		const homepageArticleBlocks = [];
-		if ( block.name === BLOCK_NAME ) {
+		if ( block.name === blockName ) {
 			const postsQuery = queryCriteriaFromAttributes( block.attributes );
 			homepageArticleBlocks.push( { postsQuery, clientId: block.clientId } );
 		}
-		return homepageArticleBlocks.concat( getBlockQueries( block.innerBlocks ) );
+		return homepageArticleBlocks.concat( getBlockQueries( block.innerBlocks, blockName ) );
 	} );
 
 export const getEditorBlocksIds = blocks =>
