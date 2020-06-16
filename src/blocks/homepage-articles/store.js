@@ -159,6 +159,6 @@ function* fetchPostsSaga() {
 // Run the saga ✨
 sagaMiddleware.run( fetchPostsSaga );
 
-export default () => {
+export const registerQueryStore = () => {
 	registerGenericStore( STORE_NAMESPACE, genericStore );
 };
