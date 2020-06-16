@@ -135,6 +135,10 @@
 		}
 	}
 
+	&.is-uncropped .post-thumbnail a {
+		display: inline-block;
+	}
+
 	&.is-landscape .post-thumbnail span {
 		padding-top: 75%;
 	}

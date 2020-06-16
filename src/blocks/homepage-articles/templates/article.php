@@ -10,7 +10,7 @@ call_user_func(
 	function( $data ) {
 		$attributes  = $data['attributes'];
 		$authors     = Newspack_Blocks::prepare_authors();
-		$img_output  = Newspack_Blocks::get_image( get_the_ID(), $attributes['imageShape'] );
+		$img_output  = Newspack_Blocks::get_image( get_the_ID(), $attributes['imageShape'], $attributes['mediaPosition'] );
 		$img_sizing  = Newspack_Blocks::get_image_sizing( get_the_ID(), $attributes['imageShape'] );
 		$classes     = array();
 		$post_styles = '';

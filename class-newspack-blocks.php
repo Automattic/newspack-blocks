@@ -220,7 +220,7 @@ class Newspack_Blocks {
 	 * @param string $shape Image shape.
 	 * @return string
 	 */
-	public static function get_image( $post_id, $shape ) {
+	public static function get_image( $post_id, $shape, $alignment ) {
 		$sized_image = get_the_post_thumbnail( $post_id, 'large', array( 'object-fit' => 'cover' ) );
 
 		if ( class_exists( 'Jetpack_PostImages' ) ) {
@@ -263,16 +263,21 @@ class Newspack_Blocks {
 					array( 800, 800 ),
 					array( 1200, 1200 ),
 				),
+				'uncropped' => array(
+					array( $photon['width'], $photon['height'] ),
+				),
 			);
 
 			// Try to grab a size for the image that's as close to the size we want as possible.
-			foreach ( $sizes[ $shape ] as $size[] ) {
-				foreach ( $size as $sz ) {
-					if ( $sz[0] <= $img_width && $sz[1] <= $img_height ) {
+			if ( 'behind' !== $alignment ) {
+				foreach ( $sizes[ $shape ] as $size[] ) {
+					foreach ( $size as $sz ) {
+						if ( $sz[0] <= $img_width && $sz[1] <= $img_height ) {
 
-						// TODO: Should this only pull width to make it easier to change?
-						$photon['width']  = $sz[0];
-						$photon['height'] = $sz[1];
+							// TODO: Should this only pull width to make it easier to change?
+							$photon['width']  = $sz[0];
+							$photon['height'] = $sz[1];
+						}
 					}
 				}
 			}
