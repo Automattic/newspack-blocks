@@ -361,7 +361,7 @@ class Newspack_Blocks {
 			$args['post__in'] = $specific_posts;
 			$args['orderby']  = 'post__in';
 		} else {
-			$args['posts_per_page'] = $posts_to_show + count( $newspack_blocks_post_id );
+			$args['posts_per_page'] = $posts_to_show;
 			if ( count( $newspack_blocks_all_specific_posts_ids ) ) {
 				$args['post__not_in'] = $newspack_blocks_all_specific_posts_ids;
 			}
