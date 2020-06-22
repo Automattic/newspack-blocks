@@ -357,6 +357,21 @@ class Newspack_Blocks {
 			'suppress_filters'    => false,
 			'ignore_sticky_posts' => true,
 		);
+
+		$custom_post_set = apply_filters( 'newspack_set_posts', array() );
+		// Remove post IDs that are part of the excluion array.
+		$custom_post_set = array_diff( $custom_post_set, $newspack_blocks_all_specific_posts_ids );
+		if ( ! empty( $custom_post_set ) ) {
+			// There are still posts in the custom list that have not been shown, so force specific mode.
+			$specific_mode = true;
+
+			// Pop off a number of posts equal to $posts_to_show, set them as the specific_posts array.
+			$specific_posts = array_slice( $custom_post_set, 0, $posts_to_show );
+
+			// Add those posts to the global exclusion list.
+			$newspack_blocks_all_specific_posts_ids = array_merge( $specific_posts, $newspack_blocks_all_specific_posts_ids );
+		}
+
 		if ( $specific_mode && $specific_posts ) {
 			$args['post__in'] = $specific_posts;
 			$args['orderby']  = 'post__in';
