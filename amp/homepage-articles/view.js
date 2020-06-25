@@ -1,6 +1,29 @@
 let isFetching = false;
 let isEndOfData = false;
 buildLoadMoreHandler( document.querySelector( '.wp-block-newspack-blocks-homepage-articles' ) );
+function addClass( el, classToAdd ) {
+	const classes = el.className.split( ' ' );
+	let hasClass = false;
+	classes.forEach( function( c ) {
+		if ( c.trim() === classToAdd.trim() ) {
+			hasClass = true;
+		}
+	} );
+	if ( ! hasClass ) {
+		classes.push( classToAdd );
+	}
+	el.className = classes.join( ' ' );
+}
+function removeClass( el, classToRemove ) {
+	const classes = el.className.split( ' ' );
+	const newClasses = [];
+	classes.forEach( function( c ) {
+		if ( c.trim() !== classToRemove.trim() ) {
+			newClasses.push( c );
+		}
+	} );
+	el.className = newClasses.join( ' ' );
+}
 function buildLoadMoreHandler( blockWrapperEl ) {
 	const btnEl = blockWrapperEl.querySelector( '[data-next]' );
 	if ( ! btnEl ) {
@@ -12,8 +35,8 @@ function buildLoadMoreHandler( blockWrapperEl ) {
 			return false;
 		}
 		isFetching = true;
-		blockWrapperEl.classList.remove( 'is-error' );
-		blockWrapperEl.classList.add( 'is-loading' );
+		removeClass( blockWrapperEl, 'is-error' );
+		addClass( blockWrapperEl, 'is-loading' );
 		AMP.getState( 'newspackHomepagePosts.exclude_ids' ).then( function( exclude_ids ) {
 			const requestURL = new URL( btnEl.getAttribute( 'data-next' ) );
 			requestURL.searchParams.set( 'exclude_ids', JSON.parse( exclude_ids ).join( ',' ) );
@@ -36,16 +59,16 @@ function buildLoadMoreHandler( blockWrapperEl ) {
 				}
 				if ( ! data.items.length || ! data.next ) {
 					isEndOfData = true;
-					blockWrapperEl.classList.remove( 'has-more-button' );
+					removeClass( blockWrapperEl, 'has-more-button' );
 				}
 				isFetching = false;
-				blockWrapperEl.classList.remove( 'is-loading' );
+				removeClass( blockWrapperEl, 'is-loading' );
 			}
 		}
 		function onError() {
 			isFetching = false;
-			blockWrapperEl.classList.remove( 'is-loading' );
-			blockWrapperEl.classList.add( 'is-error' );
+			removeClass( blockWrapperEl, 'is-loading' );
+			addClass( blockWrapperEl, 'is-error' );
 		}
 	} );
 }
