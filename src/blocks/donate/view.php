@@ -42,6 +42,8 @@ function newspack_blocks_render_block_donate( $attributes ) {
 
 	$uid = rand(); // Unique identifier to prevent labels colliding with other instances of Donate block.
 
+	$button_text = $attributes['buttonText'];
+
 	ob_start();
 
 	/**
@@ -102,7 +104,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 					<?php echo esc_html__( 'Your contribution is appreciated.', 'newspack-blocks' ); ?>
 				</p>
 				<button type='submit'>
-					<?php echo esc_html__( 'Donate now!', 'newspack-blocks' ); ?>
+					<?php echo wp_kses_post( $button_text ); ?>
 				</button>
 				<?php if ( $campaign ) : ?>
 					<input type='hidden' name='campaign' value='<?php echo esc_attr( $campaign ); ?>' />
@@ -202,7 +204,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 					<?php echo esc_html__( 'Your contribution is appreciated.', 'newspack-blocks' ); ?>
 				</p>
 				<button type='submit'>
-					<?php echo esc_html__( 'Donate now!', 'newspack-blocks' ); ?>
+					<?php echo wp_kses_post( $button_text ); ?>
 				</button>
 				<?php if ( $campaign ) : ?>
 					<input type='hidden' name='campaign' value='<?php echo esc_attr( $campaign ); ?>' />
@@ -243,7 +245,11 @@ function newspack_blocks_register_donate() {
 				],
 				'campaign'                => [
 					'type'    => 'string',
-				]
+				],
+				'buttonText'              => [
+					'type'    => 'string',
+					'default' => __( 'Donate now!', 'newspack-blocks' ),
+				],
 			),
 			'render_callback' => 'newspack_blocks_render_block_donate',
 		)
