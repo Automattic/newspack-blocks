@@ -2,7 +2,7 @@ let isFetching = false;
 let isEndOfData = false;
 buildLoadMoreHandler( document.querySelector( '.wp-block-newspack-blocks-homepage-articles' ) );
 function addClass( el, classToAdd ) {
-	const classes = el.className.split( ' ' );
+	const classes = classesArray( el );
 	let hasClass = false;
 	classes.forEach( function( c ) {
 		if ( c.trim() === classToAdd.trim() ) {
@@ -11,18 +11,23 @@ function addClass( el, classToAdd ) {
 	} );
 	if ( ! hasClass ) {
 		classes.push( classToAdd );
+		el.className = classes.join( ' ' );
 	}
-	el.className = classes.join( ' ' );
 }
 function removeClass( el, classToRemove ) {
-	const classes = el.className.split( ' ' );
+	const classes = classesArray( el );
 	const newClasses = [];
 	classes.forEach( function( c ) {
 		if ( c.trim() !== classToRemove.trim() ) {
 			newClasses.push( c );
 		}
 	} );
-	el.className = newClasses.join( ' ' );
+	if ( newClasses.length !== classes.length ) {
+		el.className = newClasses.join( ' ' );
+	}
+}
+function classesArray( el ) {
+	return el.className.trim().split( /\s+/ );
 }
 function buildLoadMoreHandler( blockWrapperEl ) {
 	const btnEl = blockWrapperEl.querySelector( '[data-next]' );
