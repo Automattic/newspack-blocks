@@ -361,10 +361,15 @@ class Newspack_Blocks {
 			$args['post__in'] = $specific_posts;
 			$args['orderby']  = 'post__in';
 		} else {
-			$args['posts_per_page'] = $posts_to_show + count( $newspack_blocks_post_id );
+			$args['posts_per_page'] = $posts_to_show;
 			if ( count( $newspack_blocks_all_specific_posts_ids ) ) {
 				$args['post__not_in'] = $newspack_blocks_all_specific_posts_ids;
 			}
+			$args['post__not_in'] = array_merge(
+				$args['post__not_in'] ?? [],
+				array_keys( $newspack_blocks_post_id ),
+				get_the_ID() ? [ get_the_ID() ] : []
+			);
 			if ( $authors && count( $authors ) ) {
 				$args['author__in'] = $authors;
 			}
@@ -408,7 +413,7 @@ class Newspack_Blocks {
 	 * @return array Array of WP_User objects.
 	 */
 	public static function prepare_authors() {
-		if ( function_exists( 'coauthors_posts_links' ) ) {
+		if ( function_exists( 'coauthors_posts_links' ) && ! empty( get_coauthors() ) ) {
 			$authors = get_coauthors();
 			foreach ( $authors as $author ) {
 				// Check if this is a guest author post type.

@@ -18,6 +18,7 @@ import {
 	TextControl,
 	ToggleControl,
 } from '@wordpress/components';
+import { RichText } from '@wordpress/block-editor';
 
 class Edit extends Component {
 	constructor( props ) {
@@ -141,7 +142,8 @@ class Edit extends Component {
 	}
 
 	renderUntieredForm() {
-		const { className } = this.props;
+		const { attributes, className, setAttributes } = this.props;
+		const { buttonText } = attributes;
 		const { uid } = this.state;
 		const { currencySymbol, customDonationAmounts, selectedFrequency } = this.blockData();
 
@@ -196,7 +198,12 @@ class Edit extends Component {
 						{ __( 'Your contribution is appreciated.', 'newspack-blocks' ) }
 					</p>
 					<button type="submit" onClick={ evt => evt.preventDefault() }>
-						{ __( 'Donate now!', 'newspack-blocks' ) }
+						<RichText
+							onChange={ value => setAttributes( { buttonText: value } ) }
+							placeholder={ __( 'Button text…', 'newspack-blocks' ) }
+							value={ buttonText }
+							tagName="span"
+						/>
 					</button>
 				</form>
 			</div>
@@ -204,7 +211,8 @@ class Edit extends Component {
 	}
 
 	renderTieredForm() {
-		const { className } = this.props;
+		const { attributes, className, setAttributes } = this.props;
+		const { buttonText } = attributes;
 		const { uid } = this.state;
 		const {
 			activeTier,
@@ -301,7 +309,12 @@ class Edit extends Component {
 						{ __( 'Your contribution is appreciated.', 'newspack-blocks' ) }
 					</p>
 					<button type="submit" onClick={ evt => evt.preventDefault() }>
-						{ __( 'Donate now!', 'newspack-blocks' ) }
+						<RichText
+							onChange={ value => setAttributes( { buttonText: value } ) }
+							placeholder={ __( 'Button text…', 'newspack-blocks' ) }
+							value={ buttonText }
+							tagName="span"
+						/>
 					</button>
 				</form>
 			</div>
@@ -324,7 +337,7 @@ class Edit extends Component {
 					label={ __( 'Error', 'newspack-blocks' ) }
 					instructions={ error }
 				>
-					<ExternalLink href="/wp-admin/admin.php?page=newspack-donations-wizard#/">
+					<ExternalLink href="/wp-admin/admin.php?page=newspack-reader-revenue-wizard#/donations">
 						{ __( 'Go to donation settings to troubleshoot.', 'newspack-blocks' ) }
 					</ExternalLink>
 				</Placeholder>
@@ -340,7 +353,7 @@ class Edit extends Component {
 						'newspack-blocks'
 					) }
 				>
-					<ExternalLink href="/wp-admin/admin.php?page=newspack-donations-wizard#/">
+					<ExternalLink href="/wp-admin/admin.php?page=newspack-reader-revenue-wizard#/donations">
 						{ __( 'Set up donation settings.', 'newspack-blocks' ) }
 					</ExternalLink>
 				</Placeholder>
@@ -461,7 +474,7 @@ class Edit extends Component {
 									) }
 								</p>
 
-								<ExternalLink href="/wp-admin/admin.php?page=newspack-donations-wizard#/">
+								<ExternalLink href="/wp-admin/admin.php?page=newspack-reader-revenue-wizard#/donations">
 									{ __( 'Edit donation settings.', 'newspack-blocks' ) }
 								</ExternalLink>
 							</Fragment>
