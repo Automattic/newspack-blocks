@@ -40,7 +40,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 
 	$campaign = $attributes['campaign'] ?? false;
 
-	$uid = rand(); // Unique identifier to prevent labels colliding with other instances of Donate block.
+	$uid = wp_rand( 10000, 99999 ); // Unique identifier to prevent labels colliding with other instances of Donate block.
 
 	$button_text = $attributes['buttonText'];
 
@@ -212,7 +212,6 @@ function newspack_blocks_render_block_donate( $attributes ) {
 			</form>
 		</div>
 		<?php
-
 	endif;
 
 	return apply_filters( 'newspack_blocks_donate_block_html', ob_get_clean() );
@@ -234,6 +233,9 @@ function newspack_blocks_register_donate() {
 				],
 				'suggestedAmounts'        => [
 					'type'    => 'array',
+					'items'   => [
+						'type' => 'integer',
+					],
 					'default' => [ 0, 0, 0 ],
 				],
 				'suggestedAmountUntiered' => [
@@ -244,7 +246,7 @@ function newspack_blocks_register_donate() {
 					'default' => true,
 				],
 				'campaign'                => [
-					'type'    => 'string',
+					'type' => 'string',
 				],
 				'buttonText'              => [
 					'type'    => 'string',
