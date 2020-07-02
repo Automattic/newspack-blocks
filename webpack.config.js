@@ -47,6 +47,7 @@ const editorScript = [
 ];
 
 const blockStylesScript = [ path.join( __dirname, 'src', 'block-styles', 'view' ) ];
+const blockSettingsScript = [ path.join( __dirname, 'src', 'block-settings', 'view' ) ];
 
 const webpackConfig = getBaseWebpackConfig(
 	{ WP: true },
@@ -54,6 +55,7 @@ const webpackConfig = getBaseWebpackConfig(
 		entry: {
 			editor: editorScript,
 			block_styles: blockStylesScript,
+			block_settings: blockSettingsScript,
 			...viewBlocksScripts,
 		},
 		'output-path': path.join( __dirname, 'dist' ),

@@ -1,0 +1,18 @@
+@import '../../../shared/sass/variables';
+@import '../../../shared/sass/mixins';
+
+@media only screen and ( max-width: 781px ) {
+	.wp-block-columns.stack-col {
+		flex-wrap: wrap;
+		max-width: 100%;
+
+		.wp-block-column {
+			flex-basis: 100% !important; // !important to override !important in Gutenberg styles.
+			margin-bottom: 32px;
+
+			&:nth-child( 2n ) {
+				margin-left: 0;
+			}
+		}
+	}
+}
