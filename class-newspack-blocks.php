@@ -10,13 +10,6 @@
  */
 class Newspack_Blocks {
 	/**
-	 * Add hooks and filters.
-	 */
-	public static function init() {
-		add_action( 'after_setup_theme', [ __CLASS__, 'add_image_sizes' ] );
-	}
-
-	/**
 	 * Gather dependencies and paths needed for script enqueuing.
 	 *
 	 * @param string $script_path Path to the script relative to plugin root.
@@ -204,13 +197,6 @@ class Newspack_Blocks {
 	 */
 	public static function is_amp() {
 		return ! is_admin() && function_exists( 'is_amp_endpoint' ) && is_amp_endpoint();
-	}
-
-	/**
-	 * Registers image sizes required for Newspack Blocks.
-	 */
-	public static function add_image_sizes() {
-		add_image_size( 'newspack-article-block-uncropped', 1200, 9999, true );
 	}
 
 	/**
@@ -548,4 +534,3 @@ class Newspack_Blocks {
 		return $clean;
 	}
 }
-Newspack_Blocks::init();

@@ -152,7 +152,7 @@ class Edit extends Component {
 					<figure className="post-thumbnail" key="thumbnail">
 						<a href="#" style={ imgStyles }>
 							<span>
-								<img src={ post.newspack_featured_image_src.uncropped } alt="" />
+								<img src={ post.newspack_featured_image_src.imgsrc } alt="" />
 							</span>
 						</a>
 						{ showCaption && '' !== post.newspack_featured_image_caption && (
