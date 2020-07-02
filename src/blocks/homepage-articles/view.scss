@@ -87,16 +87,17 @@
 		font-size: $font__size-xxs;
 	}
 
-	// set image size crops
-	&.is-landscape .post-thumbnail img {
-		height: auto;
-		width: 100%;
-	}
+	@supports ( object-fit: cover ) {
+		&.is-landscape .post-thumbnail img {
+			height: auto;
+			width: 100%;
+		}
 
-	&.is-portrait .post-thumbnail img,
-	&.is-square .post-thumbnail img {
-		height: 100%;
-		width: auto;
+		&.is-portrait .post-thumbnail img,
+		&.is-square .post-thumbnail img {
+			height: 100%;
+			width: auto;
+		}
 	}
 
 	&.is-landscape,
@@ -114,10 +115,9 @@
 			}
 
 			img {
-				bottom: 0;
 				left: 50%;
 				max-width: 1000%;
-				position: absolute !important; // !important to override issues with semi-AMP selector [width][height][sizes]:not([layout]):not(.i-amphtml-element)
+				position: absolute !important; // !important to override issues with "semi-AMP" selector [width][height][sizes]:not([layout]):not(.i-amphtml-element)
 				top: 50%;
 				-webkit-transform: translateX( -50% ) translateY( -50% );
 				transform: translateX( -50% ) translateY( -50% );

@@ -95,25 +95,31 @@ class Newspack_Blocks_API {
 	 * @return array | bool Featured image if available, false if not.
 	 */
 	public static function newspack_blocks_get_image_src( $object ) {
-		$featured_image_set = [];
+		$featured_image = [];
 
 		if ( 0 === $object['featured_media'] ) {
 			return false;
 		}
 
-		// Uncropped image.
-		$uncropped_size = 'newspack-article-block-uncropped';
-
-		$feat_img_array_uncropped        = wp_get_attachment_image_src(
+		$feat_img_array_uncropped = wp_get_attachment_image_src(
 			$object['featured_media'],
-			$uncropped_size,
+			'newspack-article-block-uncropped',
 			false
 		);
-		$featured_image_set['uncropped'] = $feat_img_array_uncropped[0];
 
-		return $featured_image_set;
+		$cropped = Newspack_Blocks::get_cropped_size( $object['id'] );
+
+		$featured_image = array(
+			'uncropped' => $feat_img_array_uncropped[0], // Gets image URL.
+			'maxwidth'  => array(
+				'landscape' => $cropped['landscape']['width'],
+				'portrait'  => $cropped['portrait']['width'],
+				'square'    => $cropped['square']['width'],
+			),
+		);
+
+		return $featured_image;
 	}
-
 	/**
 	 * Get thumbnail featured image captions for the rest field.
 	 *

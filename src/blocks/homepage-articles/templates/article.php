@@ -8,14 +8,14 @@
 
 call_user_func(
 	function( $data ) {
-		$attributes  = $data['attributes'];
-		$authors     = Newspack_Blocks::prepare_authors();
-		$img_output  = Newspack_Blocks::get_image( get_the_ID(), $attributes['imageShape'], $attributes['mediaPosition'] );
-		$img_sizing  = Newspack_Blocks::get_image_sizing( get_the_ID(), $attributes['imageShape'] );
-		$classes     = array();
-		$post_styles = '';
-		$img_styles  = '';
-		$img_html    = array(
+		$attributes   = $data['attributes'];
+		$authors      = Newspack_Blocks::prepare_authors();
+		$img_output   = Newspack_Blocks::get_image_markup( get_the_ID(), $attributes['imageShape'], $attributes['mediaPosition'] );
+		$img_maxwidth = Newspack_Blocks::get_maxwidth( get_the_ID(), $attributes['imageShape'] );
+		$classes      = array();
+		$post_styles  = '';
+		$img_styles   = '';
+		$img_html     = array(
 			'img' => array(
 				'src'                    => array(),
 				'alt'                    => array(),
@@ -51,7 +51,7 @@ call_user_func(
 
 		// Figure out image orientation and queue up some styles based on that.
 		if ( $attributes['showImage'] && has_post_thumbnail() && 'behind' !== $attributes['mediaPosition'] ) {
-			$img_styles = 'max-width:' . esc_attr( $img_sizing['maxwidth'] ) . 'px';
+			$img_styles = 'max-width:' . esc_attr( $img_maxwidth ) . 'px';
 		}
 
 		$category = false;

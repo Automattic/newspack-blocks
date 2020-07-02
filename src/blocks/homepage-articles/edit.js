@@ -94,6 +94,7 @@ class Edit extends Component {
 		const { attributes } = this.props;
 		const {
 			showImage,
+			imageShape,
 			mediaPosition,
 			minHeight,
 			showCaption,
@@ -106,7 +107,7 @@ class Edit extends Component {
 			sectionHeader,
 		} = attributes;
 
-		const styles = {
+		const articleStyles = {
 			minHeight:
 				mediaPosition === 'behind' &&
 				showImage &&
@@ -119,6 +120,25 @@ class Edit extends Component {
 				minHeight / 5 + 'vh',
 		};
 
+		let imgMaxWidth;
+		if ( imageShape === 'landscape' ) {
+			imgMaxWidth = post.newspack_featured_image_src.maxwidth.landscape;
+		}
+		if ( imageShape === 'portrait' ) {
+			imgMaxWidth = post.newspack_featured_image_src.maxwidth.portrait;
+		}
+		if ( imageShape === 'square' ) {
+			imgMaxWidth = post.newspack_featured_image_src.maxwidth.square;
+		}
+
+		const imgStyles = {
+			maxWidth:
+				mediaPosition !== 'behind' &&
+				showImage &&
+				post.newspack_featured_image_src &&
+				imgMaxWidth + 'px',
+		};
+
 		const postClasses = classNames(
 			{ 'post-has-image': post.newspack_featured_image_src },
 			post.newspack_article_classes
@@ -127,10 +147,10 @@ class Edit extends Component {
 		const postTitle = this.titleForPost( post );
 		const dateFormat = __experimentalGetSettings().formats.date;
 		return (
-			<article className={ postClasses } key={ post.id } style={ styles }>
+			<article className={ postClasses } key={ post.id } style={ articleStyles }>
 				{ showImage && post.newspack_featured_image_src && (
 					<figure className="post-thumbnail" key="thumbnail">
-						<a href="#">
+						<a href="#" style={ imgStyles }>
 							<span>
 								<img src={ post.newspack_featured_image_src.uncropped } alt="" />
 							</span>
@@ -498,7 +518,7 @@ class Edit extends Component {
 			[ `image-align${ mediaPosition }` ]: showImage,
 			[ `is-${ imageScale }` ]: imageScale !== '1' && showImage,
 			'mobile-stack': mobileStack,
-			[ `is-${ imageShape }` ]: showImage,
+			[ `is-${ imageShape }` ]: showImage && mediaPosition !== 'behind',
 			'has-text-color': textColor.color !== '',
 			'show-caption': showCaption,
 			'show-category': showCategory,

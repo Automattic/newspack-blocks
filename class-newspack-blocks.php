@@ -214,79 +214,132 @@ class Newspack_Blocks {
 	}
 
 	/**
-	 * Checks for Photon, and returns Photon-sized image if available.
+	 * Gets information about the current featured image.
+	 *
+	 * @param string $post_id Post ID.
+	 * @return array Array of image url, width, height, alt text and srcset.
+	 */
+	public static function get_thumbnail_info( $post_id ) {
+		// Get the image.
+		$thumb_id = get_post_thumbnail_id( $post_id );
+
+		// Get the image information based on the thumbnail ID.
+		$img_src  = wp_get_attachment_image_src( $thumb_id, 'full' );
+		$img_meta = wp_get_attachment_metadata( $thumb_id, true ); // Unlike wp_get_attachment_image_src(), size from wp_get_attachment_metadata() is not affected by Photon.
+
+		// Store URL, width, height, alt and srcset in an array.
+		$img_info = array(
+			'url'    => $img_src[0],
+			'width'  => $img_meta['width'],
+			'height' => $img_meta['height'],
+			'alt'    => get_post_meta( $thumb_id, '_wp_attachment_image_alt', true ),
+			'srcset' => wp_get_attachment_image_srcset( $thumb_id, 'full' ),
+		);
+		return $img_info;
+	}
+
+	/**
+	 * Returns cropped image sizes.
+	 *
+	 * @param string $post_id Post ID.
+	 * @return array Array of the width and height of the resized image for each shape.
+	 */
+	public static function get_cropped_size( $post_id ) {
+
+		// Gets the image info.
+		$img_info = self::get_thumbnail_info( $post_id );
+
+		$original_orientation = 'landscape';
+		if ( $img_info['height'] === $img_info['width'] ) {
+			$original_orientation = 'square';
+		} elseif ( $img_info['height'] > $img_info['width'] ) {
+			$original_orientation = 'portrait';
+		}
+
+		$img_shapes = array();
+
+		// Set image sizes based on original orientation and new shape.
+		if ( 'landscape' === $original_orientation ) {
+			$img_shapes['landscape'] = array(
+				'width'  => ( 4 / 3 ) * $img_info['height'],
+				'height' => ( ( 4 / 3 ) * $img_info['height'] ) * 0.75,
+			);
+			$img_shapes['portrait']  = array(
+				'width'  => ( 3 / 4 ) * $img_info['height'],
+				'height' => ( 4 / 3 ) * ( ( 3 / 4 ) * $img_info['height'] ),
+			);
+			$img_shapes['square']    = array(
+				'width'  => $img_info['height'],
+				'height' => $img_info['height'],
+			);
+		} elseif ( 'portrait' === $original_orientation ) {
+			$img_shapes['landscape'] = array(
+				'width'  => ( 4 / 3 ) * ( ( 3 / 4 ) * $img_info['width'] ),
+				'height' => ( 3 / 4 ) * $img_info['width'],
+			);
+			$img_shapes['portrait']  = array(
+				'width'  => ( 3 / 4 ) * ( ( 4 / 3 ) * $img_info['width'] ),
+				'height' => ( 4 / 3 ) * $img_info['width'],
+			);
+			$img_shapes['square']    = array(
+				'width'  => $img_info['width'],
+				'height' => $img_info['width'],
+			);
+		} else {
+			$img_shapes['landscape'] = array(
+				'width'  => $img_info['width'],
+				'height' => ( 3 / 4 ) * $img_info['width'],
+			);
+			$img_shapes['portrait']  = array(
+				'width'  => ( 4 / 3 ) * $img_info['height'],
+				'height' => $img_info['height'],
+			);
+			$img_shapes['square']    = array(
+				'width'  => $img_info['width'],
+				'height' => $img_info['height'],
+			);
+		}
+
+		return $img_shapes;
+	}
+
+	/**
+	 * Checks for Photon, and returns Photon-sized image if available; otherwise returns large-size image.
 	 *
 	 * @param string $post_id Post ID.
 	 * @param string $shape Image shape.
+	 * @param string $alignment Image alignment.
 	 * @return string
 	 */
-	public static function get_image( $post_id, $shape, $alignment ) {
+	public static function get_image_markup( $post_id, $shape, $alignment ) {
+		// Get large version of the featured image as a fallback.
 		$sized_image = get_the_post_thumbnail( $post_id, 'large', array( 'object-fit' => 'cover' ) );
 
+		// Check if Photon exists; if yes, get a cropped version of the image using Photon.
 		if ( class_exists( 'Jetpack_PostImages' ) ) {
-			$thumb_id = get_post_thumbnail_id( $post_id );
 
-			// Get the URL of the image.
-			$img_info = wp_get_attachment_image_src( $thumb_id, 'full' );
+			// Get the size to use for the Photon image.
+			$cropped = self::get_cropped_size( $post_id );
 
-			// Get the image's alt text.
-			$alt = get_post_meta( $thumb_id, '_wp_attachment_image_alt', true );
+			$photon['width']  = $cropped[ $shape ]['width'];
+			$photon['height'] = $cropped[ $shape ]['height'];
 
-			// Get the image's srcset.
-			$srcset = wp_get_attachment_image_srcset( $thumb_id, 'full' );
+			// Get the image url.
+			$img_info = self::get_thumbnail_info( $post_id );
 
-			// Get the images's original size.
-			$img_url    = $img_info[0];
-			$img_width  = $img_info[1];
-			$img_height = $img_info[2];
-
-			// Set the default Photon size -- 1200px wide by infinite height.
-			$photon['width']  = 1200;
-			$photon['height'] = 9999;
-
-			$sizes = array(
-				'landscape' => array(
-					array( 200, 150 ),
-					array( 400, 300 ),
-					array( 800, 600 ),
-					array( 1200, 900 ),
-				),
-				'portrait'  => array(
-					array( 150, 200 ),
-					array( 300, 400 ),
-					array( 600, 800 ),
-					array( 900, 1200 ),
-				),
-				'square'    => array(
-					array( 200, 200 ),
-					array( 400, 400 ),
-					array( 800, 800 ),
-					array( 1200, 1200 ),
-				),
-				'uncropped' => array(
-					array( $photon['width'], $photon['height'] ),
-				),
-			);
-
-			// Try to grab a size for the image that's as close to the size we want as possible.
-			if ( 'behind' !== $alignment ) {
-				foreach ( $sizes[ $shape ] as $size[] ) {
-					foreach ( $size as $sz ) {
-						if ( $sz[0] <= $img_width && $sz[1] <= $img_height ) {
-
-							// TODO: Should this only pull width to make it easier to change?
-							$photon['width']  = $sz[0];
-							$photon['height'] = $sz[1];
-						}
-					}
-				}
+			// If the image position is behind, we don't need to crop the shape (though we don't want to load anything too large).
+			if ( 'behind' === $alignment ) {
+				$photon['width']  = 1200;
+				$photon['height'] = 9999;
 			}
 
-			if ( ! empty( $img_url ) ) {
-				// Call Jetpack_PostImages to retreive a 1200px wide version of the image.
-				$img_resize = Jetpack_PostImages::fit_image_url( $img_url, $photon['width'], $photon['height'] );
-				// Update HTML to be used for the image.
-				$sized_image = '<img src="' . esc_url( $img_resize ) . '" alt="' . esc_attr( $alt ) . '" srcset="' . esc_attr( $srcset ) . '" object-fit="cover">';
+			// Make sure we have an image URL.
+			if ( ! empty( $img_info['url'] ) ) {
+
+				// Use the URL to get the Photon-sized version of the image.
+				$img_resize = Jetpack_PostImages::fit_image_url( $img_info['url'], $photon['width'], $photon['height'] );
+
+				$sized_image = '<img object-fit="cover" src="' . esc_url( $img_resize ) . '" alt="' . $img_info['alt'] . '">';
 			}
 		}
 
@@ -294,36 +347,17 @@ class Newspack_Blocks {
 	}
 
 	/**
-	 * Returns width, height and orientation of featured image.
+	 * Returns max-width of featured image based on original size and selected shape.
 	 *
 	 * @param string $post_id Post ID.
 	 * @param string $display_shape Shape of image.
 	 * @return array
 	 */
-	public static function get_image_sizing( $post_id, $display_shape ) {
-		$image = wp_get_attachment_metadata( get_post_thumbnail_id( $post_id ) );
+	public static function get_maxwidth( $post_id, $shape ) {
+		$image   = wp_get_attachment_metadata( get_post_thumbnail_id( $post_id ) );
+		$cropped = self::get_cropped_size( $post_id );
 
-		$image_info['maxwidth']    = $image['width'];
-		$image_info['maxheight']   = $image['height'];
-		$image_info['orientation'] = 'landscape';
-
-		if ( $image['height'] > $image['width'] ) {
-			$image_info['orientation'] = 'portrait';
-		}
-
-		if ( 'landscape' === $image_info['orientation'] ) {
-			$image_info['maxwidth'] = ( 4 / 3 ) * $image['height']; // re-calculate max width based on aspect ratio.
-
-			if ( 'portrait' === $display_shape ) {
-				$image_info['maxwidth'] = ( 3 / 4 ) * $image['height'];
-			}
-
-			if ( 'square' === $display_shape ) {
-				$image_info['maxwidth'] = $image['height'];
-			}
-		}
-
-		return $image_info;
+		return $cropped[ $shape ]['width'];
 	}
 
 	/**
