@@ -298,8 +298,14 @@ class Newspack_Blocks {
 	 * @return string
 	 */
 	public static function get_image_markup( $post_id, $shape, $alignment ) {
+		// Add a filter to remove srcset attribute from generated <img> tag.
+		add_filter( 'wp_calculate_image_srcset_meta', '__return_null' );
+
 		// Get large version of the featured image as a fallback.
 		$sized_image = get_the_post_thumbnail( $post_id, 'large', array( 'object-fit' => 'cover' ) );
+
+		// Remove that filter again.
+		remove_filter( 'wp_calculate_image_srcset_meta', '__return_null' );
 
 		// Check if Photon exists; if yes, get a cropped version of the image using Photon.
 		if ( class_exists( 'Jetpack_PostImages' ) ) {
