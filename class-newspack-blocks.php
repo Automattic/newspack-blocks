@@ -330,8 +330,7 @@ class Newspack_Blocks {
 
 				// Use the URL to get the Photon-sized version of the image.
 				$img_resize = Jetpack_PostImages::fit_image_url( $img_info['url'], $photon['width'], $photon['height'] );
-
-				$sized_image = '<img object-fit="cover" src="' . esc_url( $img_resize ) . '" alt="' . $img_info['alt'] . '">';
+				$sized_image = '<img object-fit="cover" width="' . esc_attr( $cropped[ $shape ]['width'] ) . '" height="' . esc_attr( $cropped[ $shape ]['height'] ) . '" src="' . esc_url( $img_resize ) . '" alt="' . $img_info['alt'] . '">';
 			}
 		}
 
