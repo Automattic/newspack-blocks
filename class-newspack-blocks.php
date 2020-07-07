@@ -239,6 +239,10 @@ class Newspack_Blocks {
 		// Gets the image info.
 		$img_info = self::get_thumbnail_info( $post_id );
 
+		if ( empty( $img_info ) ) {
+			return false;
+		}
+
 		$original_orientation = 'landscape';
 		if ( $img_info['height'] === $img_info['width'] ) {
 			$original_orientation = 'square';
@@ -350,6 +354,9 @@ class Newspack_Blocks {
 	 */
 	public static function get_maxwidth( $post_id, $shape ) {
 		$image   = wp_get_attachment_metadata( get_post_thumbnail_id( $post_id ) );
+		if ( empty( $image ) ) {
+			return false;
+		}
 		$cropped = self::get_cropped_size( $post_id );
 
 		return $cropped[ $shape ]['width'];
