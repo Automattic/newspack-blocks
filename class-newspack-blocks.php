@@ -209,6 +209,10 @@ class Newspack_Blocks {
 		// Get the image.
 		$thumb_id = get_post_thumbnail_id( $post_id );
 
+		if ( empty( $thumb_id ) ) {
+			return false;
+		}
+
 		// Get the image information based on the thumbnail ID.
 		$img_src  = wp_get_attachment_image_src( $thumb_id, 'full' );
 		$img_meta = wp_get_attachment_metadata( $thumb_id, true ); // Unlike wp_get_attachment_image_src(), size from wp_get_attachment_metadata() is not affected by Photon.

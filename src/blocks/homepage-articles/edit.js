@@ -120,15 +120,17 @@ class Edit extends Component {
 				minHeight / 5 + 'vh',
 		};
 
-		let imgMaxWidth;
-		if ( imageShape === 'landscape' ) {
-			imgMaxWidth = post.newspack_featured_image_src.maxwidth.landscape;
-		}
-		if ( imageShape === 'portrait' ) {
-			imgMaxWidth = post.newspack_featured_image_src.maxwidth.portrait;
-		}
-		if ( imageShape === 'square' ) {
-			imgMaxWidth = post.newspack_featured_image_src.maxwidth.square;
+		let imgMaxWidth = '';
+		if ( post.newspack_featured_image_src ) {
+			if ( imageShape === 'landscape' ) {
+				imgMaxWidth = post.newspack_featured_image_src.maxwidth.landscape;
+			}
+			if ( imageShape === 'portrait' ) {
+				imgMaxWidth = post.newspack_featured_image_src.maxwidth.portrait;
+			}
+			if ( imageShape === 'square' ) {
+				imgMaxWidth = post.newspack_featured_image_src.maxwidth.square;
+			}
 		}
 
 		const imgStyles = {
