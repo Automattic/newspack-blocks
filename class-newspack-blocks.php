@@ -326,7 +326,7 @@ class Newspack_Blocks {
 			$landscape_width = ( 1200 < $img_info['width'] ) ? 1200 : $img_info['width'];
 
 			// Determine portrait width based off of original width.
-			$portrait_width = ( 4 / 3 ) * $img_info['height'];
+			$portrait_width = ( 3 / 4 ) * $img_info['height'];
 			// If new width is more than 1200, set it to 1200 instead.
 			$portrait_width = ( 1200 < $portrait_width ) ? 1200 : $portrait_width;
 
@@ -340,7 +340,7 @@ class Newspack_Blocks {
 			);
 			$img_shapes['portrait']  = array(
 				'width'  => $portrait_width,
-				'height' => ( 3 / 4 ) * $portrait_width,
+				'height' => ( 4 / 3 ) * $portrait_width,
 			);
 			$img_shapes['square']    = array(
 				'width'  => $square_width,
