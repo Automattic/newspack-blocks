@@ -250,7 +250,21 @@ class Newspack_Blocks {
 			$original_orientation = 'portrait';
 		}
 
-		$img_shapes = array();
+		// Determine uncropped width based on the original width.
+		$uncropped_width = $img_info['width'];
+		// If new width is more than 1200, set it to 1200 instead.
+		$uncropped_width = ( 1200 < $uncropped_width ) ? 1200 : $uncropped_width;
+
+		// Determine uncropped height based on current uncropped width.
+		$uncropped_height = ( $img_info['height'] / $img_info['width'] ) * $uncropped_width;
+
+		// Create an array, and add the uncropped width and height.
+		$img_shapes = array(
+			'uncropped' => array(
+				'width'  => $uncropped_width,
+				'height' => $uncropped_height,
+			),
+		);
 
 		// Set image sizes based on original orientation and new shape.
 		if ( 'landscape' === $original_orientation ) {
@@ -267,7 +281,7 @@ class Newspack_Blocks {
 			// Set square width to original height; if more than 1200, set to 1200 instead.
 			$square_width = ( 1200 < $img_info['height'] ) ? 1200 : $img_info['height'];
 
-			// Save sizes in an array.
+			// Save sizes to the img_shapes array.
 			$img_shapes['landscape'] = array(
 				'width'  => $landscape_width,
 				'height' => $landscape_width * ( 3 / 4 ),
@@ -294,6 +308,7 @@ class Newspack_Blocks {
 			// Set square width to original width; if more than 1200, set to 1200 instead.
 			$square_width = ( 1200 < $img_info['width'] ) ? 1200 : $img_info['width'];
 
+			// Save sizes to the img_shapes array.
 			$img_shapes['landscape'] = array(
 				'width'  => $landscape_width,
 				'height' => ( 3 / 4 ) * $landscape_width,
@@ -318,6 +333,7 @@ class Newspack_Blocks {
 			// Set square width to original width; if more than 1200, set to 1200 instead.
 			$square_width = ( 1200 < $img_info['width'] ) ? 1200 : $img_info['width'];
 
+			// Save sizes to the img_shapes array.
 			$img_shapes['landscape'] = array(
 				'width'  => $landscape_width,
 				'height' => ( 3 / 4 ) * $landscape_width,
@@ -359,20 +375,23 @@ class Newspack_Blocks {
 			// Get the size to use for the Photon image.
 			$cropped = self::get_cropped_size( $post_id );
 
-			$photon['width']  = $cropped[ $shape ]['width'];
-			$photon['height'] = $cropped[ $shape ]['height'];
+			// Set default values for the photon width and height - they are 'uncropped'.
+			$photon = array(
+				'width'  => 1200,
+				'height' => 9999,
+			);
+
+			// Set a cropped height and width if the images are not aligned behind.
+			if ( 'behind' !== $alignment ) {
+				$photon['width']  = $cropped[ $shape ]['width'];
+				$photon['height'] = $cropped[ $shape ]['height'];
+			}
 
 			// Get the image url.
 			$img_info = self::get_thumbnail_info( $post_id );
 
 			if ( empty( $img_info ) ) {
 				return false;
-			}
-
-			// If the image position is behind, we don't need to crop the shape (though we don't want to load anything too large).
-			if ( 'behind' === $alignment ) {
-				$photon['width']  = 1200;
-				$photon['height'] = 9999;
 			}
 
 			// Make sure we have an image URL.
