@@ -254,43 +254,81 @@ class Newspack_Blocks {
 
 		// Set image sizes based on original orientation and new shape.
 		if ( 'landscape' === $original_orientation ) {
+			// Determine landscape width based on the original height.
+			$landscape_width = ( 4 / 3 ) * $img_info['height'];
+			// If new width is more than 1200, set it to 1200 instead.
+			$landscape_width = ( 1200 < $landscape_width ) ? 1200 : $landscape_width;
+
+			// Determine portrait width based on the original height.
+			$portrait_width = ( 3 / 4 ) * $img_info['height'];
+			// If new width is more than 1200, set it to 1200 instead.
+			$portrait_width = ( 1200 < $portrait_width ) ? 1200 : $portrait_width;
+
+			// Set square width to original height; if more than 1200, set to 1200 instead.
+			$square_width = ( 1200 < $img_info['height'] ) ? 1200 : $img_info['height'];
+
+			// Save sizes in an array.
 			$img_shapes['landscape'] = array(
-				'width'  => ( 4 / 3 ) * $img_info['height'],
-				'height' => ( ( 4 / 3 ) * $img_info['height'] ) * 0.75,
+				'width'  => $landscape_width,
+				'height' => $landscape_width * ( 3 / 4 ),
 			);
 			$img_shapes['portrait']  = array(
-				'width'  => ( 3 / 4 ) * $img_info['height'],
-				'height' => ( 4 / 3 ) * ( ( 3 / 4 ) * $img_info['height'] ),
+				'width'  => $portrait_width,
+				'height' => ( 4 / 3 ) * $portrait_width,
 			);
 			$img_shapes['square']    = array(
-				'width'  => $img_info['height'],
-				'height' => $img_info['height'],
+				'width'  => $square_width,
+				'height' => $square_width,
 			);
 		} elseif ( 'portrait' === $original_orientation ) {
+			// Determine landscape width based off of original width.
+			$landscape_width = ( 4 / 3 ) * ( ( 3 / 4 ) * $img_info['width'] );
+			// If new width is more than 1200, set it to 1200 instead.
+			$landscape_width = ( 1200 < $landscape_width ) ? 1200 : $landscape_width;
+
+			// Determine portrait width based off of original width.
+			$portrait_width = ( 3 / 4 ) * ( ( 4 / 3 ) * $img_info['width'] );
+			// If new width is more than 1200, set it to 1200 instead.
+			$portrait_width = ( 1200 < $portrait_width ) ? 1200 : $portrait_width;
+
+			// Set square width to original width; if more than 1200, set to 1200 instead.
+			$square_width = ( 1200 < $img_info['width'] ) ? 1200 : $img_info['width'];
+
 			$img_shapes['landscape'] = array(
-				'width'  => ( 4 / 3 ) * ( ( 3 / 4 ) * $img_info['width'] ),
-				'height' => ( 3 / 4 ) * $img_info['width'],
+				'width'  => $landscape_width,
+				'height' => ( 3 / 4 ) * $landscape_width,
 			);
 			$img_shapes['portrait']  = array(
-				'width'  => ( 3 / 4 ) * ( ( 4 / 3 ) * $img_info['width'] ),
-				'height' => ( 4 / 3 ) * $img_info['width'],
+				'width'  => $portrait_width,
+				'height' => ( 4 / 3 ) * $portrait_width,
 			);
 			$img_shapes['square']    = array(
-				'width'  => $img_info['width'],
-				'height' => $img_info['width'],
+				'width'  => $square_width,
+				'height' => $square_width,
 			);
 		} else {
+			// Set landscape width to original width; if more than 1200, set to 1200 instead.
+			$landscape_width = ( 1200 < $img_info['width'] ) ? 1200 : $img_info['width'];
+
+			// Determine portrait width based off of original width.
+			$portrait_width = ( 4 / 3 ) * $img_info['height'];
+			// If new width is more than 1200, set it to 1200 instead.
+			$portrait_width = ( 1200 < $portrait_width ) ? 1200 : $portrait_width;
+
+			// Set square width to original width; if more than 1200, set to 1200 instead.
+			$square_width = ( 1200 < $img_info['width'] ) ? 1200 : $img_info['width'];
+
 			$img_shapes['landscape'] = array(
-				'width'  => $img_info['width'],
-				'height' => ( 3 / 4 ) * $img_info['width'],
+				'width'  => $landscape_width,
+				'height' => ( 3 / 4 ) * $landscape_width,
 			);
 			$img_shapes['portrait']  = array(
-				'width'  => ( 4 / 3 ) * $img_info['height'],
-				'height' => $img_info['height'],
+				'width'  => $portrait_width,
+				'height' => ( 3 / 4 ) * $portrait_width,
 			);
 			$img_shapes['square']    = array(
-				'width'  => $img_info['width'],
-				'height' => $img_info['height'],
+				'width'  => $square_width,
+				'height' => $square_width,
 			);
 		}
 
