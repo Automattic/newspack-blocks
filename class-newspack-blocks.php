@@ -327,6 +327,10 @@ class Newspack_Blocks {
 			// Get the image url.
 			$img_info = self::get_thumbnail_info( $post_id );
 
+			if ( empty( $img_info ) ) {
+				return false;
+			}
+
 			// If the image position is behind, we don't need to crop the shape (though we don't want to load anything too large).
 			if ( 'behind' === $alignment ) {
 				$photon['width']  = 1200;
