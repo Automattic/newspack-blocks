@@ -190,7 +190,7 @@ class Edit extends Component {
 								ref={ this.paginationRef }
 							/>
 						</Fragment>
-					) }
+					) || (<div className="swiper-wrapper"></div> ) }
 				</div>
 				<InspectorControls>
 					<PanelBody title={ __( 'Display Settings' ) } initialOpen={ true }>

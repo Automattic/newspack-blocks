@@ -98,17 +98,18 @@ export default function createSwiper( els, config = {} ) {
 		touchStartPreventDefault: false,
 		on: {
 			init() {
-				forEachNode( this.wrapperEl.querySelectorAll( '.swiper-slide' ), slide =>
+				forEachNode( swiper.wrapperEl.querySelectorAll( '.swiper-slide' ), ( slide ) =>
 					deactivateSlide( slide )
 				);
 
-				activateSlide( this.slides[ this.activeIndex ] ); // Set-up our active slide.
+				const maybeActiveSlide = swiper.slides[ swiper.activeIndex ];
+				maybeActiveSlide && activateSlide( maybeActiveSlide ); // Set-up our active slide.
 			},
 
 			slideChange() {
-				const currentSlide = this.slides[ this.activeIndex ];
+				const currentSlide = swiper.slides[ swiper.activeIndex ];
 
-				deactivateSlide( this.slides[ this.previousIndex ] );
+				deactivateSlide( swiper.slides[ swiper.previousIndex ] );
 
 				activateSlide( currentSlide );
 
@@ -116,7 +117,7 @@ export default function createSwiper( els, config = {} ) {
 				 * If we're autoplaying, don't announce the slide change, as that would
 				 * be supremely annoying.
 				 */
-				if ( ! this.autoplay.running ) {
+				if ( ! swiper.autoplay.running ) {
 					// Announce the contents of the slide.
 					const currentImage = currentSlide.querySelector( 'img' );
 					const alt = currentImage ? currentImage.alt : false;
@@ -124,8 +125,8 @@ export default function createSwiper( els, config = {} ) {
 					const slideInfo = sprintf(
 						/* translators: current slide number and the total number of slides */
 						__( 'Slide %s of %s', 'newspack-blocks' ),
-						this.realIndex + 1,
-						this.pagination.bullets.length
+						swiper.realIndex + 1,
+						swiper.pagination.bullets.length
 					);
 
 					speak(

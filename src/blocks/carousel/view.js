@@ -14,11 +14,13 @@ if ( typeof window !== 'undefined' ) {
 		const blocksArray = Array.from(
 			document.querySelectorAll( '.wp-block-newspack-blocks-carousel' )
 		);
-		blocksArray.forEach( block => {
+		blocksArray.forEach( ( block ) => {
 			createSwiper(
 				{
 					block,
-					container: block.querySelector( '.swiper-container' ),
+					container: block.classList.contains('swiper-container')
+					  ? block
+					  : block.querySelector( '.swiper-container' ),
 					prev: block.querySelector( '.swiper-button-prev' ),
 					next: block.querySelector( '.swiper-button-next' ),
 					pagination: block.querySelector( '.swiper-pagination-bullets' ),
