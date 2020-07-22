@@ -197,7 +197,7 @@ class Edit extends Component {
 							</div>
 						) ) }
 					</div>
-					<p className="wp-block-newspack-blocks-donate__thanks">
+					<p className="wp-block-newspack-blocks-donate__thanks thanks">
 						{ __( 'Your contribution is appreciated.', 'newspack-blocks' ) }
 					</p>
 					<button type="submit" onClick={ evt => evt.preventDefault() }>

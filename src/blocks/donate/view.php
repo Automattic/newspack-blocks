@@ -100,7 +100,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 						</div>
 					<?php endforeach; ?>
 				</div>
-				<p class='wp-block-newspack-blocks-donate__thanks'>
+				<p class='wp-block-newspack-blocks-donate__thanks thanks'>
 					<?php echo esc_html__( 'Your contribution is appreciated.', 'newspack-blocks' ); ?>
 				</p>
 				<button type='submit'>
