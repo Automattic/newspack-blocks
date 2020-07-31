@@ -36,6 +36,9 @@ jobs:
     steps:
       - checkout_code
       - run:
+          name: Install rsync
+          command: sudo apt install rsync
+      - run:
           name: Release new version
           command: npm run release
 

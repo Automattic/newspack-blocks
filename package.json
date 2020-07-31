@@ -87,7 +87,7 @@
     "clean": "rm -rf dist/",
     "test": "echo \"Error: no test specified\" && exit 1",
     "release": "NODE_ENV=production npm run build && npm run semantic-release",
-    "release:archive": "mkdir -p assets/release && zip -r assets/release/newspack-blocks.zip . -x node_modules/\\* .git/\\* .github/\\* .gitignore .DS_Store vendor/\\*"
+    "release:archive": "rm -rf release && mkdir -p release && rsync -r . ./release/newspack-blocks --exclude-from='./.distignore' && cd release && zip -r newspack-blocks.zip newspack-blocks"
   },
   "lint-staged": {
     "*.scss": "npm run lint:scss:staged",
@@ -133,7 +133,7 @@
         {
           "assets": [
             {
-              "path": "./assets/release/newspack-blocks.zip",
+              "path": "./release/newspack-blocks.zip",
               "label": "newspack-blocks.zip"
             }
           ]
