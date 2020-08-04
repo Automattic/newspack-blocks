@@ -32,3 +32,36 @@ export const formatByline = authorInfo => (
 		}, [] ) }
 	</span>
 );
+
+export const formatSponsorLogos = sponsorInfo => (
+	<span className="sponsor-logos">
+		{ sponsorInfo.map( sponsor => (
+			<a href={ sponsor.sponsor_url } key={ sponsor.id }>
+				<img
+					src={ sponsor.src }
+					width={ sponsor.img_width }
+					height={ sponsor.img_height }
+					alt={ sponsor.display_name }
+				/>
+			</a>
+		) ) }
+	</span>
+);
+
+export const formatSponsorByline = sponsorInfo => (
+	<span className="byline sponsor-byline">
+		{ sponsorInfo[ 0 ].byline_prefix }{' '}
+		{ sponsorInfo.reduce( ( accumulator, sponsor, index ) => {
+			return [
+				...accumulator,
+				<span className="author" key={ sponsor.id }>
+					<a href={ sponsor.author_link }>{ sponsor.display_name }</a>
+				</span>,
+				index < sponsorInfo.length - 2 && ', ',
+				sponsorInfo.length > 1 &&
+					index === sponsorInfo.length - 2 &&
+					_x( ' and ', 'post author', 'newspack-blocks' ),
+			];
+		}, [] ) }
+	</span>
+);

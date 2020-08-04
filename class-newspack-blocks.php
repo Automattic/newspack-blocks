@@ -503,6 +503,141 @@ class Newspack_Blocks {
 	}
 
 	/**
+	 * Function to check if plugin is enabled, and if there are sponsors.
+	 *
+	 * @param string $post_id Post ID.
+	 * @return array Array of sponsors.
+	 */
+	public static function get_post_sponsors( $post_id ) {
+		if ( function_exists( '\Newspack_Sponsors\get_sponsors_for_post' ) ) {
+			// Get all assigned sponsors.
+			$sponsors_all = \Newspack_Sponsors\get_sponsors_for_post( $post_id );
+
+			// Loop through sponsors and remove duplicates.
+			$sponsors   = array();
+			$duplicates = array();
+			foreach ( $sponsors_all as $sponsor ) {
+				if ( ! in_array( $sponsor['sponsor_id'], $duplicates, true ) ) {
+					$duplicates[] = $sponsor['sponsor_id'];
+					$sponsors[]   = $sponsor;
+				}
+			}
+		}
+		if ( $sponsors ) {
+			return $sponsors;
+		}
+		return false;
+	}
+
+	/**
+	 * Function to return sponsor 'flag' from first sponsor.
+	 *
+	 * @param string $post_id Post ID.
+	 * @return string Sponsor flag label.
+	 */
+	public static function get_sponsor_label( $post_id ) {
+		if ( self::get_post_sponsors( $post_id ) ) {
+			$sponsors     = self::get_post_sponsors( $post_id );
+			$sponsor_flag = $sponsors[0]['sponsor_flag'];
+
+			return $sponsor_flag;
+		}
+	}
+
+	/**
+	 * Outputs the sponsor byline markup for the theme.
+	 *
+	 * @param string $post_id Post ID.
+	 * @return array Array of Sponsor byline information.
+	 */
+	public static function get_sponsor_byline( $post_id ) {
+		if ( self::get_post_sponsors( $post_id ) ) {
+			$sponsors      = self::get_post_sponsors( $post_id );
+			$sponsor_count = count( $sponsors );
+			$i             = 1;
+			$sponsor_list  = [];
+
+			foreach ( $sponsors as $sponsor ) {
+				$i++;
+				if ( $sponsor_count === $i ) :
+					/* translators: separates last two sponsor names; needs a space on either side. */
+					$sep = esc_html__( ' and ', 'newspack-blocks' );
+				elseif ( $sponsor_count > $i ) :
+					/* translators: separates all but the last two sponsor names; needs a space at the end. */
+					$sep = esc_html__( ', ', 'newspack-blocks' );
+				else :
+					$sep = '';
+				endif;
+
+				$sponsor_list[] = array(
+					'byline' => $sponsor['sponsor_byline'],
+					'url'    => $sponsor['sponsor_url'],
+					'name'   => $sponsor['sponsor_name'],
+					'sep'    => $sep,
+				);
+			}
+			return $sponsor_list;
+		}
+	}
+
+	/**
+	 * Outputs set of sponsor logos with links.
+	 *
+	 * @param string $post_id Post ID.
+	 */
+	public static function get_sponsor_logos( $post_id ) {
+		if ( self::get_post_sponsors( $post_id ) ) {
+			$sponsors      = self::get_post_sponsors( $post_id );
+			$sponsor_logos = [];
+
+			foreach ( $sponsors as $sponsor ) {
+				if ( '' !== $sponsor['sponsor_logo'] ) :
+					$logo_info = self::get_sponsor_logo_sized( $sponsor['sponsor_id'] );
+
+					$sponsor_logos[] = array(
+						'url'    => $sponsor['sponsor_url'],
+						'src'    => esc_url( $logo_info['src'] ),
+						'width'  => esc_attr( $logo_info['img_width'] ),
+						'height' => esc_attr( $logo_info['img_height'] ),
+					);
+				endif;
+			}
+
+			return $sponsor_logos;
+		}
+	}
+
+	/**
+	 * Returns scaled down logo sizes based on the provided width and height; this is necessary for AMP.
+	 *
+	 * @param string $sponsor_id Sponsor ID.
+	 * @param string $maxwidth Maximum logo width.
+	 * @param string $maxheight Maximum logo height.
+	 * @return array Array with image's src, width and height.
+	 */
+	public static function get_sponsor_logo_sized( $sponsor_id, $maxwidth = 80, $maxheight = 40 ) {
+		// Get image information.
+		$image_info = wp_get_attachment_image_src( get_post_thumbnail_id( $sponsor_id ), 'medium' );
+
+		// Break out URL, original width and original height.
+		$logo_info['src'] = $image_info[0];
+		$image_width      = $image_info[1];
+		$image_height     = $image_info[2];
+
+		// Set the max-height, and width based off that to maintain aspect ratio.
+		$logo_info['img_height'] = $maxheight;
+		$logo_info['img_width']  = ( $image_width / $image_height ) * $logo_info['img_height'];
+
+		// If the new width is too wide, set to the max-width and update height based off that to maintain aspect ratio.
+		if ( $maxwidth < $logo_info['img_width'] ) {
+			$logo_info['img_width']  = $maxwidth;
+			$logo_info['img_height'] = ( $image_height / $image_width ) * $logo_info['img_width'];
+		}
+
+		return $logo_info;
+	}
+
+	/**
 	 * Whether to use experimental features.
 	 *
 	 * @return bool Experimental status.

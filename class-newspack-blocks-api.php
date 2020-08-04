@@ -86,6 +86,21 @@ class Newspack_Blocks_API {
 				],
 			]
 		);
+
+		/* Sponsors */
+		register_rest_field(
+			'post',
+			'newspack_post_sponsors',
+			[
+				'get_callback' => [ 'Newspack_Blocks_API', 'newspack_blocks_sponsor_info' ],
+				'schema'       => [
+					'context' => [
+						'edit',
+					],
+					'type'    => 'array',
+				],
+			]
+		);
 	}
 
 	/**
@@ -259,6 +274,34 @@ class Newspack_Blocks_API {
 	 */
 	public static function newspack_blocks_get_cat_tag_classes( $object ) {
 		return Newspack_Blocks::get_term_classes( $object['id'] );
+	}
+
+	/**
+	 * Get all sponsor information for the rest field.
+	 *
+	 * @param array $object The object info.
+	 * @return array sponsor information.
+	 */
+	public static function newspack_blocks_sponsor_info( $object ) {
+		if ( Newspack_Blocks::get_post_sponsors( $object['id'] ) ) {
+			$sponsors = Newspack_Blocks::get_post_sponsors( $object['id'] );
+			foreach ( $sponsors as $sponsor ) {
+				$sponsor_logo   = Newspack_Blocks::get_sponsor_logo_sized( $sponsor['sponsor_id'] );
+				$sponsor_info[] = array(
+					'flag'          => Newspack_Blocks::get_sponsor_label( $sponsor['sponsor_id'] ),
+					'display_name'  => $sponsor['sponsor_name'],
+					'sponsor_url'   => $sponsor['sponsor_url'],
+					'byline_prefix' => $sponsor['sponsor_byline'],
+					'id'            => $sponsor['sponsor_id'],
+					'src'           => $sponsor_logo['src'],
+					'img_width'     => $sponsor_logo['img_width'],
+					'img_height'    => $sponsor_logo['img_height'],
+				);
+			}
+			return $sponsor_info;
+		} else {
+			return false;
+		}
 	}
 
 	/**
