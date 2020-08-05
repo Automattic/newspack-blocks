@@ -517,6 +517,10 @@ class Newspack_Blocks {
 			$sponsors   = array();
 			$duplicates = array();
 			foreach ( $sponsors_all as $sponsor ) {
+				// For the blocks, only add visual elements to 'native' sponsored content.
+				if ( 'native' !== $sponsor['sponsor_scope'] ) {
+					continue;
+				}
 				if ( ! in_array( $sponsor['sponsor_id'], $duplicates, true ) ) {
 					$duplicates[] = $sponsor['sponsor_id'];
 					$sponsors[]   = $sponsor;

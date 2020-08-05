@@ -41,7 +41,7 @@ export const formatSponsorLogos = sponsorInfo => (
 					src={ sponsor.src }
 					width={ sponsor.img_width }
 					height={ sponsor.img_height }
-					alt={ sponsor.display_name }
+					alt={ sponsor.sponsor_name }
 				/>
 			</a>
 		) ) }
@@ -55,7 +55,7 @@ export const formatSponsorByline = sponsorInfo => (
 			return [
 				...accumulator,
 				<span className="author" key={ sponsor.id }>
-					<a href={ sponsor.author_link }>{ sponsor.display_name }</a>
+					<a href={ sponsor.author_link }>{ sponsor.sponsor_name }</a>
 				</span>,
 				index < sponsorInfo.length - 2 && ', ',
 				sponsorInfo.length > 1 &&

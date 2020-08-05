@@ -289,10 +289,11 @@ class Newspack_Blocks_API {
 				$sponsor_logo   = Newspack_Blocks::get_sponsor_logo_sized( $sponsor['sponsor_id'] );
 				$sponsor_info[] = array(
 					'flag'          => Newspack_Blocks::get_sponsor_label( $sponsor['sponsor_id'] ),
-					'display_name'  => $sponsor['sponsor_name'],
+					'sponsor_name'  => $sponsor['sponsor_name'],
 					'sponsor_url'   => $sponsor['sponsor_url'],
 					'byline_prefix' => $sponsor['sponsor_byline'],
 					'id'            => $sponsor['sponsor_id'],
+					'scope'         => $sponsor['sponsor_scope'],
 					'src'           => $sponsor_logo['src'],
 					'img_width'     => $sponsor_logo['img_width'],
 					'img_height'    => $sponsor_logo['img_height'],
