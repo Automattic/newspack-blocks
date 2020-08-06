@@ -95,7 +95,11 @@
   },
   "release": {
     "branches": [
-      "release"
+      "release",
+      {
+        "name": "alpha",
+        "prerelease": "alpha"
+      }
     ],
     "prepare": [
       "@semantic-release/changelog",
