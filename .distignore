@@ -9,7 +9,6 @@
 Thumbs.db
 behat.yml
 bitbucket-pipelines.yml
-bin
 .circleci/config.yml
 composer.json
 composer.lock
@@ -27,9 +26,12 @@ phpcs.xml.dist
 README.md
 wp-cli.local.yml
 yarn.lock
-tests
-vendor
 node_modules
 *.sql
 *.tar.gz
 *.zip
+.github
+.circleci
+/release
+/tests
+/bin
