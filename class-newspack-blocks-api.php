@@ -271,6 +271,7 @@ class Newspack_Blocks_API {
 			[
 				'methods'  => 'GET',
 				'callback' => [ 'Newspack_Blocks_API', 'video_playlist_endpoint' ],
+				'permission_callback' => [ __CLASS__, 'api_permission_callback' ],
 			]
 		);
 	}
@@ -288,6 +289,7 @@ class Newspack_Blocks_API {
 			[
 				'methods'  => \WP_REST_Server::READABLE,
 				'callback' => [ 'Newspack_Blocks_API', 'specific_posts_endpoint' ],
+				'permission_callback' => [ __CLASS__, 'api_permission_callback' ],
 				'args'     => [
 					'search'   => [
 						'sanitize_callback' => 'sanitize_text_field',
@@ -298,6 +300,22 @@ class Newspack_Blocks_API {
 				],
 			]
 		);
+	}
+
+	/**
+	 * Check capabilities when getting plugin info.
+	 *
+	 * @param WP_REST_Request $request API request object.
+	 * @return bool|WP_Error
+	 */
+	public function api_permission_callback( $request ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return new WP_Error(
+				'newspack_rest_forbidden',
+				esc_html__( 'You cannot view this resource.', 'newspack-blocks' )
+			);
+		}
+		return true;
 	}
 
 	/**
