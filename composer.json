@@ -2,10 +2,8 @@
   "name": "automattic/newspack-blocks",
   "description": "Gutenberg blocks for Newspack.",
   "type": "wordpress-plugin",
-  "require": {
-    "composer/installers": "~1.6"
-  },
   "require-dev": {
+    "composer/installers": "~1.6",
     "automattic/vipwpcs": "^2.0.0",
     "xwp/wp-dev-lib": "^1.5",
     "brainmaestro/composer-git-hooks": "^2.6",

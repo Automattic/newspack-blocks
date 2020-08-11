@@ -271,6 +271,9 @@ class Newspack_Blocks_API {
 			[
 				'methods'  => 'GET',
 				'callback' => [ 'Newspack_Blocks_API', 'video_playlist_endpoint' ],
+				'permission_callback' => function( $request ) {
+					return current_user_can( 'edit_posts' );
+				},
 			]
 		);
 	}
@@ -296,6 +299,9 @@ class Newspack_Blocks_API {
 						'sanitize_callback' => 'absint',
 					],
 				],
+				'permission_callback' => function( $request ) {
+					return current_user_can( 'edit_posts' );
+				},
 			]
 		);
 	}

@@ -10,4 +10,4 @@ node_modules/
 
 /vendor/
 dist/
-assets/
+release/
