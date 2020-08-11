@@ -1,3 +1,10 @@
+## [1.10.2](https://github.com/Automattic/newspack-blocks/compare/v1.10.1...v1.10.2) (2020-08-11)
+
+
+### Bug Fixes
+
+* don't render homepage posts blocks in feeds ([51f72eb](https://github.com/Automattic/newspack-blocks/commit/51f72ebd6a8db158bc93ea2a4ceaf2b044653944))
+
 ## [1.10.1](https://github.com/Automattic/newspack-blocks/compare/v1.10.0...v1.10.1) (2020-08-04)
 
 
