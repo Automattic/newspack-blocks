@@ -288,7 +288,7 @@ class Newspack_Blocks_API {
 			foreach ( $sponsors as $sponsor ) {
 				$sponsor_logo   = Newspack_Blocks::get_sponsor_logo_sized( $sponsor['sponsor_id'] );
 				$sponsor_info[] = array(
-					'flag'          => Newspack_Blocks::get_sponsor_label( $sponsor['sponsor_id'] ),
+					'flag'          => $sponsor['sponsor_flag'],
 					'sponsor_name'  => $sponsor['sponsor_name'],
 					'sponsor_url'   => $sponsor['sponsor_url'],
 					'byline_prefix' => $sponsor['sponsor_byline'],
