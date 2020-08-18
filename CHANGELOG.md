@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/Automattic/newspack-blocks/compare/v1.10.2...v1.11.0) (2020-08-18)
+
+
+### Features
+
+* add sponsor labels to homepage posts and post carousel blocks ([#563](https://github.com/Automattic/newspack-blocks/issues/563)) ([cbcd65f](https://github.com/Automattic/newspack-blocks/commit/cbcd65f7932e61c4a63a1ac72a54aa819bd13e9a))
+
 ## [1.10.2](https://github.com/Automattic/newspack-blocks/compare/v1.10.1...v1.10.2) (2020-08-11)
 
 
