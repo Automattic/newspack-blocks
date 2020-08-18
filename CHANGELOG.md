@@ -1,3 +1,10 @@
+## [1.11.1](https://github.com/Automattic/newspack-blocks/compare/v1.11.0...v1.11.1) (2020-08-18)
+
+
+### Bug Fixes
+
+* moving check for sponsors to prevent notices ([#573](https://github.com/Automattic/newspack-blocks/issues/573)) ([0cd9810](https://github.com/Automattic/newspack-blocks/commit/0cd98108aff171d5cd2c077be1c84d9b056d5f6e))
+
 # [1.11.0](https://github.com/Automattic/newspack-blocks/compare/v1.10.2...v1.11.0) (2020-08-18)
 
 
