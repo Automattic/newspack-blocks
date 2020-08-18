@@ -513,6 +513,10 @@ class Newspack_Blocks {
 			// Get all assigned sponsors.
 			$sponsors_all = \Newspack_Sponsors\get_sponsors_for_post( $post_id );
 
+			if ( empty( $sponsors_all ) ) {
+				return false;
+			}
+
 			// Loop through sponsors and remove duplicates.
 			$sponsors   = array();
 			$duplicates = array();
@@ -526,11 +530,11 @@ class Newspack_Blocks {
 					$sponsors[]   = $sponsor;
 				}
 			}
+
+			if ( $sponsors ) {
+				return $sponsors;
+			}
 		}
-		if ( $sponsors ) {
-			return $sponsors;
-		}
-		return false;
 	}
 
 	/**
