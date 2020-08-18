@@ -5,6 +5,7 @@
  */
 import QueryControls from '../../components/query-controls';
 import { STORE_NAMESPACE } from './store';
+
 import {
 	getEditorBlocksIds,
 	isBlogPrivate,
@@ -17,6 +18,13 @@ import {
 	formatSponsorLogos,
 	formatSponsorByline,
 } from '../../shared/js/utils';
+import {
+	IconCover,
+	IconLandscape,
+	IconPortrait,
+	IconSquare,
+	IconUncropped,
+} from '../../components/icons';
 
 /**
  * External dependencies
@@ -47,8 +55,6 @@ import {
 	Placeholder,
 	Spinner,
 	BaseControl,
-	Path,
-	SVG,
 } from '@wordpress/components';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
@@ -62,42 +68,6 @@ if (
 ) {
 	IS_SUBTITLE_SUPPORTED_IN_THEME = true;
 }
-
-/* From https://material.io/tools/icons */
-const landscapeIcon = (
-	<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-		<Path d="M0 0h24v24H0z" fill="none" />
-		<Path d="M19 5H5c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 12H5V7h14v10z" />
-	</SVG>
-);
-
-const portraitIcon = (
-	<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-		<Path d="M0 0h24v24H0z" fill="none" />
-		<Path d="M17 3H7c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H7V5h10v14z" />
-	</SVG>
-);
-
-const squareIcon = (
-	<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-		<Path d="M0 0h24v24H0z" fill="none" />
-		<Path d="M18 4H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H6V6h12v12z" />
-	</SVG>
-);
-
-const uncroppedIcon = (
-	<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-		<Path d="M0 0h24v24H0z" fill="none" />
-		<Path d="M3 5v4h2V5h4V3H5c-1.1 0-2 .9-2 2zm2 10H3v4c0 1.1.9 2 2 2h4v-2H5v-4zm14 4h-4v2h4c1.1 0 2-.9 2-2v-4h-2v4zm0-16h-4v2h4v4h2V5c0-1.1-.9-2-2-2z" />
-	</SVG>
-);
-
-const coverIcon = (
-	<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-		<Path d="M0 0h24v24H0z" fill="none" />
-		<Path d="M4 4h7V2H4c-1.1 0-2 .9-2 2v7h2V4zm6 9l-4 5h12l-3-4-2.03 2.71L10 13zm7-4.5c0-.83-.67-1.5-1.5-1.5S14 7.67 14 8.5s.67 1.5 1.5 1.5S17 9.33 17 8.5zM20 2h-7v2h7v7h2V4c0-1.1-.9-2-2-2zm0 18h-7v2h7c1.1 0 2-.9 2-2v-7h-2v7zM4 13H2v7c0 1.1.9 2 2 2h7v-2H4v-7z" />
-	</SVG>
-);
 
 class Edit extends Component {
 	renderPost = post => {
@@ -586,7 +556,7 @@ class Edit extends Component {
 				onClick: () => setAttributes( { mediaPosition: 'right' } ),
 			},
 			{
-				icon: coverIcon,
+				icon: IconCover,
 				title: __( 'Show media behind', 'newspack-blocks' ),
 				isActive: mediaPosition === 'behind',
 				onClick: () => setAttributes( { mediaPosition: 'behind' } ),
@@ -595,25 +565,25 @@ class Edit extends Component {
 
 		const blockControlsImageShape = [
 			{
-				icon: landscapeIcon,
+				icon: IconLandscape,
 				title: __( 'Landscape Image Shape', 'newspack-blocks' ),
 				isActive: imageShape === 'landscape',
 				onClick: () => setAttributes( { imageShape: 'landscape' } ),
 			},
 			{
-				icon: portraitIcon,
+				icon: IconPortrait,
 				title: __( 'portrait Image Shape', 'newspack-blocks' ),
 				isActive: imageShape === 'portrait',
 				onClick: () => setAttributes( { imageShape: 'portrait' } ),
 			},
 			{
-				icon: squareIcon,
+				icon: IconSquare,
 				title: __( 'Square Image Shape', 'newspack-blocks' ),
 				isActive: imageShape === 'square',
 				onClick: () => setAttributes( { imageShape: 'square' } ),
 			},
 			{
-				icon: uncroppedIcon,
+				icon: IconUncropped,
 				title: __( 'Uncropped', 'newspack-blocks' ),
 				isActive: imageShape === 'uncropped',
 				onClick: () => setAttributes( { imageShape: 'uncropped' } ),

@@ -1,0 +1,30 @@
+{
+  "name": "audio",
+  "category": "newspack",
+  "attributes": {
+    "source": {
+      "type": "string",
+      "default": ""
+    },
+    "imageUrl": {
+      "type": "string",
+      "default": ""
+    },
+    "title": {
+      "type": "string",
+      "default": ""
+    },
+    "description": {
+      "type": "string",
+      "default": ""
+    },
+    "rssFeedUrl": {
+      "type": "string",
+      "default": ""
+    },
+    "subscribeLink": {
+      "type": "string",
+      "default": ""
+    }
+  }
+}
