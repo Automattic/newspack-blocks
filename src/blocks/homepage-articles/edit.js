@@ -11,7 +11,12 @@ import {
 	shouldReflow,
 	queryCriteriaFromAttributes,
 } from './utils';
-import { formatAvatars, formatByline } from '../../shared/js/utils';
+import {
+	formatAvatars,
+	formatByline,
+	formatSponsorLogos,
+	formatSponsorByline,
+} from '../../shared/js/utils';
 
 /**
  * External dependencies
@@ -135,6 +140,7 @@ class Edit extends Component {
 
 		const postTitle = this.titleForPost( post );
 		const dateFormat = __experimentalGetSettings().formats.date;
+
 		return (
 			<article className={ postClasses } key={ post.id } style={ styles }>
 				{ showImage && post.newspack_featured_image_src && (
@@ -160,7 +166,12 @@ class Edit extends Component {
 				) }
 
 				<div className="entry-wrapper">
-					{ showCategory && post.newspack_category_info.length && (
+					{ post.newspack_post_sponsors && (
+						<span className="cat-links sponsor-label">
+							<span className="flag">{ post.newspack_post_sponsors[ 0 ].flag }</span>
+						</span>
+					) }
+					{ showCategory && post.newspack_category_info.length && ! post.newspack_post_sponsors && (
 						<div className="cat-links">
 							<a href="#">{ decodeEntities( post.newspack_category_info ) }</a>
 						</div>
@@ -188,8 +199,15 @@ class Edit extends Component {
 						</RawHTML>
 					) }
 					<div className="entry-meta">
-						{ showAuthor && showAvatar && formatAvatars( post.newspack_author_info ) }
-						{ showAuthor && formatByline( post.newspack_author_info ) }
+						{ post.newspack_post_sponsors && formatSponsorLogos( post.newspack_post_sponsors ) }
+						{ post.newspack_post_sponsors && formatSponsorByline( post.newspack_post_sponsors ) }
+						{ showAuthor &&
+							showAvatar &&
+							! post.newspack_post_sponsors &&
+							formatAvatars( post.newspack_author_info ) }
+						{ showAuthor &&
+							! post.newspack_post_sponsors &&
+							formatByline( post.newspack_author_info ) }
 						{ showDate && (
 							<time className="entry-date published" key="pub-date">
 								{ dateI18n( dateFormat, post.date_gmt ) }
