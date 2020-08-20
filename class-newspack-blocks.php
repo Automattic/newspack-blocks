@@ -505,34 +505,16 @@ class Newspack_Blocks {
 	/**
 	 * Function to check if plugin is enabled, and if there are sponsors.
 	 *
-	 * @param string $post_id Post ID.
+	 * @param string $id Post ID.
 	 * @return array Array of sponsors.
 	 */
-	public static function get_post_sponsors( $post_id ) {
+	public static function get_all_sponsors( $id = null, $scope = 'native', $type = 'post', $logo_options = array() ) {
 		if ( function_exists( '\Newspack_Sponsors\get_sponsors_for_post' ) ) {
-			// Get all assigned sponsors.
-			$sponsors_all = \Newspack_Sponsors\get_sponsors_for_post( $post_id );
-
-			if ( empty( $sponsors_all ) ) {
-				return false;
-			}
-
-			// Loop through sponsors and remove duplicates.
-			$sponsors   = array();
-			$duplicates = array();
-			foreach ( $sponsors_all as $sponsor ) {
-				// For the blocks, only add visual elements to 'native' sponsored content.
-				if ( 'native' !== $sponsor['sponsor_scope'] ) {
-					continue;
-				}
-				if ( ! in_array( $sponsor['sponsor_id'], $duplicates, true ) ) {
-					$duplicates[] = $sponsor['sponsor_id'];
-					$sponsors[]   = $sponsor;
-				}
-			}
-
+			$sponsors = \Newspack_Sponsors\get_all_sponsors( $id, $scope, $type, $logo_options ); // phpcs:ignore PHPCompatibility.LanguageConstructs.NewLanguageConstructs.t_ns_separatorFound
 			if ( $sponsors ) {
 				return $sponsors;
+			} else {
+				return false;
 			}
 		}
 	}
@@ -540,14 +522,13 @@ class Newspack_Blocks {
 	/**
 	 * Function to return sponsor 'flag' from first sponsor.
 	 *
-	 * @param string $post_id Post ID.
+	 * @param string $id Post ID.
 	 * @return string Sponsor flag label.
 	 */
-	public static function get_sponsor_label( $post_id ) {
-		if ( self::get_post_sponsors( $post_id ) ) {
-			$sponsors     = self::get_post_sponsors( $post_id );
+	public static function get_sponsor_label( $id ) {
+		$sponsors = self::get_all_sponsors( $id );
+		if ( ! empty( $sponsors ) ) {
 			$sponsor_flag = $sponsors[0]['sponsor_flag'];
-
 			return $sponsor_flag;
 		}
 	}
@@ -555,12 +536,12 @@ class Newspack_Blocks {
 	/**
 	 * Outputs the sponsor byline markup for the theme.
 	 *
-	 * @param string $post_id Post ID.
+	 * @param string $id Post ID.
 	 * @return array Array of Sponsor byline information.
 	 */
-	public static function get_sponsor_byline( $post_id ) {
-		if ( self::get_post_sponsors( $post_id ) ) {
-			$sponsors      = self::get_post_sponsors( $post_id );
+	public static function get_sponsor_byline( $id ) {
+		$sponsors = self::get_all_sponsors( $id );
+		if ( ! empty( $sponsors ) ) {
 			$sponsor_count = count( $sponsors );
 			$i             = 1;
 			$sponsor_list  = [];
@@ -591,58 +572,33 @@ class Newspack_Blocks {
 	/**
 	 * Outputs set of sponsor logos with links.
 	 *
-	 * @param string $post_id Post ID.
+	 * @param string $id Post ID.
 	 */
-	public static function get_sponsor_logos( $post_id ) {
-		if ( self::get_post_sponsors( $post_id ) ) {
-			$sponsors      = self::get_post_sponsors( $post_id );
+	public static function get_sponsor_logos( $id ) {
+		$sponsors = self::get_all_sponsors(
+			$id,
+			'native',
+			'post',
+			array(
+				'maxwidth'  => 80,
+				'maxheight' => 40,
+			)
+		);
+		if ( ! empty( $sponsors ) ) {
 			$sponsor_logos = [];
-
 			foreach ( $sponsors as $sponsor ) {
 				if ( '' !== $sponsor['sponsor_logo'] ) :
-					$logo_info = self::get_sponsor_logo_sized( $sponsor['sponsor_id'] );
-
 					$sponsor_logos[] = array(
 						'url'    => $sponsor['sponsor_url'],
-						'src'    => esc_url( $logo_info['src'] ),
-						'width'  => esc_attr( $logo_info['img_width'] ),
-						'height' => esc_attr( $logo_info['img_height'] ),
+						'src'    => esc_url( $sponsor['sponsor_logo']['src'] ),
+						'width'  => esc_attr( $sponsor['sponsor_logo']['img_width'] ),
+						'height' => esc_attr( $sponsor['sponsor_logo']['img_height'] ),
 					);
 				endif;
 			}
 
 			return $sponsor_logos;
 		}
-	}
-
-	/**
-	 * Returns scaled down logo sizes based on the provided width and height; this is necessary for AMP.
-	 *
-	 * @param string $sponsor_id Sponsor ID.
-	 * @param string $maxwidth Maximum logo width.
-	 * @param string $maxheight Maximum logo height.
-	 * @return array Array with image's src, width and height.
-	 */
-	public static function get_sponsor_logo_sized( $sponsor_id, $maxwidth = 80, $maxheight = 40 ) {
-		// Get image information.
-		$image_info = wp_get_attachment_image_src( get_post_thumbnail_id( $sponsor_id ), 'medium' );
-
-		// Break out URL, original width and original height.
-		$logo_info['src'] = $image_info[0];
-		$image_width      = $image_info[1];
-		$image_height     = $image_info[2];
-
-		// Set the max-height, and width based off that to maintain aspect ratio.
-		$logo_info['img_height'] = $maxheight;
-		$logo_info['img_width']  = ( $image_width / $image_height ) * $logo_info['img_height'];
-
-		// If the new width is too wide, set to the max-width and update height based off that to maintain aspect ratio.
-		if ( $maxwidth < $logo_info['img_width'] ) {
-			$logo_info['img_width']  = $maxwidth;
-			$logo_info['img_height'] = ( $image_height / $image_width ) * $logo_info['img_width'];
-		}
-
-		return $logo_info;
 	}
 
 	/**

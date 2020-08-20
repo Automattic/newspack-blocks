@@ -69,7 +69,7 @@ call_user_func(
 		<?php endif; ?>
 
 		<div class="entry-wrapper">
-			<?php if ( Newspack_Blocks::get_post_sponsors( get_the_id() ) ) : ?>
+			<?php if ( Newspack_Blocks::get_all_sponsors( get_the_id() ) ) : ?>
 				<span class="cat-links sponsor-label">
 					<span class="flag">
 						<?php echo esc_html( Newspack_Blocks::get_sponsor_label( get_the_id() ) ); ?>
@@ -101,10 +101,10 @@ call_user_func(
 			if ( $attributes['showExcerpt'] ) :
 				the_excerpt();
 			endif;
-			if ( $attributes['showAuthor'] || $attributes['showDate'] || Newspack_Blocks::get_post_sponsors( get_the_id() ) ) :
+			if ( $attributes['showAuthor'] || $attributes['showDate'] || Newspack_Blocks::get_all_sponsors( get_the_id() ) ) :
 				?>
 				<div class="entry-meta">
-					<?php if ( Newspack_Blocks::get_post_sponsors( get_the_id() ) ) : ?>
+					<?php if ( Newspack_Blocks::get_all_sponsors( get_the_id() ) ) : ?>
 						<span class="sponsor-logos">
 							<?php
 							$logos = Newspack_Blocks::get_sponsor_logos( get_the_id() );
