@@ -90,7 +90,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 				<?php if ( Newspack_Blocks::get_all_sponsors( get_the_id() ) ) : ?>
 					<span class="cat-links sponsor-label">
 						<span class="flag">
-							<?php echo esc_html( Newspack_Blocks::get_all_sponsors( get_the_id() ) ); ?>
+							<?php echo esc_html( Newspack_Blocks::get_sponsor_label( get_the_id() ) ); ?>
 						</span>
 					</span>
 					<?php
