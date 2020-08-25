@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/Automattic/newspack-blocks/compare/v1.11.1...v1.12.0) (2020-08-25)
+
+
+### Features
+
+* trigger release ([419ffe7](https://github.com/Automattic/newspack-blocks/commit/419ffe7f9e168abadbc5fe91b68d7100b087d476))
+
 ## [1.11.1](https://github.com/Automattic/newspack-blocks/compare/v1.11.0...v1.11.1) (2020-08-18)
 
 
