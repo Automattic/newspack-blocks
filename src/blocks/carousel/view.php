@@ -150,7 +150,15 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 								$bylines = Newspack_Blocks::get_sponsor_byline( get_the_id() );
 								echo esc_html( $bylines[0]['byline'] ) . ' ';
 								foreach ( $bylines as $byline ) {
-									echo '<span class="author"><a target="_blank" href="' . esc_url( $byline['url'] ) . '">' . esc_html( $byline['name'] ) . '</a></span>' . esc_html( $byline['sep'] );
+									echo '<span class="author">';
+									if ( '' !== $byline['url'] ) {
+										echo '<a target="_blank" href="' . esc_url( $byline['url'] ) . '">';
+									}
+									echo esc_html( $byline['name'] );
+									if ( '' !== $byline['url'] ) {
+										'</a>';
+									}
+									echo '</span>' . esc_html( $byline['sep'] );
 								}
 								?>
 							</span>
