@@ -283,10 +283,17 @@ class Newspack_Blocks_API {
 	 * @return array sponsor information.
 	 */
 	public static function newspack_blocks_sponsor_info( $object ) {
-		if ( Newspack_Blocks::get_post_sponsors( $object['id'] ) ) {
-			$sponsors = Newspack_Blocks::get_post_sponsors( $object['id'] );
+		$sponsors = Newspack_Blocks::get_all_sponsors(
+			$object['id'],
+			'native',
+			'post',
+			array(
+				'maxwidth'  => 80,
+				'maxheight' => 40,
+			)
+		);
+		if ( ! empty( $sponsors ) ) {
 			foreach ( $sponsors as $sponsor ) {
-				$sponsor_logo   = Newspack_Blocks::get_sponsor_logo_sized( $sponsor['sponsor_id'] );
 				$sponsor_info[] = array(
 					'flag'          => $sponsor['sponsor_flag'],
 					'sponsor_name'  => $sponsor['sponsor_name'],
@@ -294,9 +301,9 @@ class Newspack_Blocks_API {
 					'byline_prefix' => $sponsor['sponsor_byline'],
 					'id'            => $sponsor['sponsor_id'],
 					'scope'         => $sponsor['sponsor_scope'],
-					'src'           => $sponsor_logo['src'],
-					'img_width'     => $sponsor_logo['img_width'],
-					'img_height'    => $sponsor_logo['img_height'],
+					'src'           => $sponsor['sponsor_logo']['src'],
+					'img_width'     => $sponsor['sponsor_logo']['img_width'],
+					'img_height'    => $sponsor['sponsor_logo']['img_height'],
 				);
 			}
 			return $sponsor_info;
