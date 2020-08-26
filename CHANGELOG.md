@@ -1,3 +1,10 @@
+## [1.12.1-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.12.0...v1.12.1-alpha.1) (2020-08-26)
+
+
+### Bug Fixes
+
+* prevent errors when there is no sponsor logo, link ([#581](https://github.com/Automattic/newspack-blocks/issues/581)) ([e1337a2](https://github.com/Automattic/newspack-blocks/commit/e1337a2fb1a6e0bf6cbd221a387f9eb4e4ec7330))
+
 # [1.12.0](https://github.com/Automattic/newspack-blocks/compare/v1.11.1...v1.12.0) (2020-08-25)
 
 
