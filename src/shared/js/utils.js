@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { _x } from '@wordpress/i18n';
-import { RawHTML } from '@wordpress/element';
+import { RawHTML, Fragment } from '@wordpress/element';
 
 export const formatAvatars = authorInfo =>
 	authorInfo.map( author => (
@@ -36,14 +36,18 @@ export const formatByline = authorInfo => (
 export const formatSponsorLogos = sponsorInfo => (
 	<span className="sponsor-logos">
 		{ sponsorInfo.map( sponsor => (
-			<a href={ sponsor.sponsor_url } key={ sponsor.id }>
-				<img
-					src={ sponsor.src }
-					width={ sponsor.img_width }
-					height={ sponsor.img_height }
-					alt={ sponsor.sponsor_name }
-				/>
-			</a>
+			<Fragment key={ sponsor.id }>
+				{ sponsor.src && (
+					<a href={ sponsor.sponsor_url }>
+						<img
+							src={ sponsor.src }
+							width={ sponsor.img_width }
+							height={ sponsor.img_height }
+							alt={ sponsor.sponsor_name }
+						/>
+					</a>
+				) }
+			</Fragment>
 		) ) }
 	</span>
 );
