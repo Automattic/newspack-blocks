@@ -105,9 +105,12 @@ call_user_func(
 				?>
 				<div class="entry-meta">
 					<?php if ( Newspack_Blocks::get_all_sponsors( get_the_id() ) ) : ?>
+						<?php
+						$logos = Newspack_Blocks::get_sponsor_logos( get_the_id() );
+						if ( ! empty( $logos ) ) :
+							?>
 						<span class="sponsor-logos">
 							<?php
-							$logos = Newspack_Blocks::get_sponsor_logos( get_the_id() );
 							foreach ( $logos as $logo ) {
 								if ( '' !== $logo['url'] ) {
 									echo '<a href="' . esc_url( $logo['url'] ) . '" target="_blank">';
@@ -119,15 +122,24 @@ call_user_func(
 							}
 							?>
 						</span>
-						<span class="byline sponsor-byline">
-							<?php
-							$bylines = Newspack_Blocks::get_sponsor_byline( get_the_id() );
-							echo esc_html( $bylines[0]['byline'] ) . ' ';
-							foreach ( $bylines as $byline ) {
-								echo '<span class="author"><a target="_blank" href="' . esc_url( $byline['url'] ) . '">' . esc_html( $byline['name'] ) . '</a></span>' . esc_html( $byline['sep'] );
+					<?php endif; ?>
+					<span class="byline sponsor-byline">
+						<?php
+						$bylines = Newspack_Blocks::get_sponsor_byline( get_the_id() );
+						echo esc_html( $bylines[0]['byline'] ) . ' ';
+						foreach ( $bylines as $byline ) {
+							echo '<span class="author">';
+							if ( '' !== $byline['url'] ) {
+								echo '<a target="_blank" href="' . esc_url( $byline['url'] ) . '">';
 							}
-							?>
-						</span>
+							echo esc_html( $byline['name'] );
+							if ( '' !== $byline['url'] ) {
+								'</a>';
+							}
+							echo '</span>' . esc_html( $byline['sep'] );
+						}
+						?>
+					</span>
 					<?php
 					else :
 						if ( $attributes['showAuthor'] ) :

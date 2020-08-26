@@ -587,7 +587,7 @@ class Newspack_Blocks {
 		if ( ! empty( $sponsors ) ) {
 			$sponsor_logos = [];
 			foreach ( $sponsors as $sponsor ) {
-				if ( '' !== $sponsor['sponsor_logo'] ) :
+				if ( ! empty( $sponsor['sponsor_logo'] ) ) :
 					$sponsor_logos[] = array(
 						'url'    => $sponsor['sponsor_url'],
 						'src'    => esc_url( $sponsor['sponsor_logo']['src'] ),
