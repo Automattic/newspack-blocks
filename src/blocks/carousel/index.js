@@ -1,13 +1,9 @@
 /**
- * External dependencies
- */
-import { Path, SVG } from '@wordpress/components';
-
-/**
  * Internal dependencies
  */
 import { __ } from '@wordpress/i18n';
 import edit from './edit';
+import { IconCarousel } from '../../components/icons';
 
 /**
  * Style dependencies - will load in editor
@@ -18,13 +14,7 @@ import './editor.scss';
 export const name = 'carousel';
 export const title = __( 'Post Carousel' );
 
-/* From https://material.io/tools/icons */
-export const icon = (
-	<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-		<Path d="M0 0h24v24H0z" fill="none" />
-		<Path d="M7 19h10V4H7v15zm-5-2h4V6H2v11zM18 6v11h4V6h-4z" />
-	</SVG>
-);
+export const icon = IconCarousel;
 
 export const settings = {
 	title,

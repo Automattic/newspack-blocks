@@ -1,0 +1,213 @@
+@import './scss/consts.scss';
+@import './scss/mixins.scss';
+
+.newspack-audio-player {
+	position: relative;
+	display: flex;
+	height: $audio-player-height;
+	color: #fff;
+	background: $audio-player-background;
+	font-family: sans-serif;
+	transition: all 200ms;
+
+	// utility classes
+	&__relative {
+		position: relative;
+	}
+
+	// states
+	&::after {
+		content: '';
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
+		transition: all 300ms;
+	}
+	&--is-loading {
+		&::after {
+			pointer-events: all;
+			background: rgba( #fff, 0.5 );
+		}
+	}
+	&--is-closed {
+		transform: translateY( 100% );
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	// elements
+	button,
+	&__image {
+		width: $audio-player-height;
+	}
+
+	button {
+		border-radius: 0;
+		border: none;
+		display: flex;
+		justify-content: center;
+		margin: 0;
+		padding: 0;
+		svg {
+			width: 48px;
+			height: 48px;
+			fill: #fff;
+		}
+		&,
+		&:focus {
+			color: #fff;
+			background: transparent;
+		}
+	}
+
+	// Cover image
+	&__image {
+		background-size: cover;
+		background-position: center;
+	}
+
+	// Title & description
+	&__text {
+		max-width: 30%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		padding: 10px 20px;
+	}
+	&__title {
+		font-weight: bold;
+	}
+	&__description {
+		font-size: 0.7em;
+		margin-top: -2px;
+	}
+	&__title,
+	&__description {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	// Progress bar
+	&__progress {
+		align-items: center;
+		&,
+		&__bar-wrapper {
+			display: flex;
+			align-items: center;
+			flex: 1;
+		}
+		&__bar-wrapper {
+			margin: 0 20px;
+			position: relative;
+		}
+		&__indicator {
+			position: absolute;
+			background: #fff;
+			height: $track-height;
+			pointer-events: none;
+			transition: width 100ms;
+		}
+		&__bar {
+			flex: 1;
+			margin: 0 !important;
+		}
+	}
+
+	// Close
+	&__close {
+		font-size: 50px;
+		line-height: 1px;
+	}
+
+	// Options/sharing modal
+	&__options {
+		.newspack-audio-player__modal {
+			&::after {
+				left: 0;
+				right: 0;
+				border-left: 20px solid transparent;
+				border-right: 20px solid transparent;
+				border-top: 20px solid $audio-player-background;
+			}
+		}
+	}
+
+	// Volume control modal
+	&__volume_button {
+		.newspack-audio-player__modal {
+			width: 120px;
+			padding: 15px;
+			transform: rotate( -90deg ) translateX( 40px );
+			&::after {
+				left: -10px;
+				top: 0;
+				bottom: 0;
+				border-top: 10px solid transparent;
+				border-bottom: 10px solid transparent;
+				border-right: 10px solid $audio-player-background;
+			}
+		}
+		.newspack-audio-player__progress__bar-wrapper {
+			margin: 0;
+		}
+	}
+
+	// Modals
+	&__modal {
+		position: absolute;
+		z-index: 99;
+		bottom: $audio-player-height + 10;
+		padding: 10px;
+		background: $audio-player-background;
+
+		display: none;
+		&--is-open {
+			display: initial;
+		}
+
+		&__trigger {
+			display: none !important;
+			&--is-visible {
+				display: flex !important;
+			}
+			> span {
+				pointer-events: none;
+				@include flex-center;
+			}
+		}
+
+		&__link {
+			display: flex;
+			align-items: center;
+			padding: 5px;
+			color: #fff !important;
+			text-decoration: none;
+			transition: opacity 300ms;
+			&:hover,
+			&:focus {
+				color: #fff !important;
+				opacity: 0.8;
+			}
+			svg {
+				width: 28px !important;
+				height: 28px !important;
+				margin-right: 10px;
+			}
+		}
+
+		// Arrow
+		&::after {
+			content: '';
+			position: absolute;
+			z-index: -1;
+			width: 0;
+			height: 0;
+			margin: auto;
+		}
+	}
+
+	// Sliders
+	@import './scss/range.scss';
+}
