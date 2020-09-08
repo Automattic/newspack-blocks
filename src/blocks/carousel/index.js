@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { Path, SVG } from '@wordpress/components';
+import { createBlock } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -77,6 +78,73 @@ export const settings = {
 	supports: {
 		html: false,
 		align: false,
+	},
+	transforms: {
+		from: [
+			{
+				type: 'block',
+				isMultiBlock: true,
+				blocks: [ 'a8c/blog-posts' ],
+				isMatch: () => {
+					return true;
+				},
+				transform: ( {
+					className,
+					showDate,
+					showAuthor,
+					showAvatar,
+					showCategory,
+					postsToShow,
+					authors,
+					tags,
+					categories,
+				} ) => {
+					return createBlock( `a8c/posts-carousel`, {
+						className,
+						showDate,
+						showAuthor,
+						showAvatar,
+						showCategory,
+						postsToShow,
+						authors,
+						tags,
+						categories,
+					} );
+				},
+			},
+		],
+		to: [
+			{
+				type: 'block',
+				blocks: [ 'a8c/blog-posts' ],
+				isMatch: () => {
+					return true;
+				},
+				transform: ( {
+					className,
+					showDate,
+					showAuthor,
+					showAvatar,
+					showCategory,
+					postsToShow,
+					authors,
+					tags,
+					categories,
+				} ) => {
+					return createBlock( 'a8c/blog-posts', {
+						className,
+						showDate,
+						showAuthor,
+						showAvatar,
+						showCategory,
+						postsToShow,
+						authors,
+						tags,
+						categories,
+					} );
+				},
+			},
+		],
 	},
 	edit,
 	save: () => null, // to use view.php
