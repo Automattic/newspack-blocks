@@ -294,17 +294,20 @@ class Newspack_Blocks_API {
 		);
 		if ( ! empty( $sponsors ) ) {
 			foreach ( $sponsors as $sponsor ) {
-				$sponsor_info[] = array(
+				$sponsor_info_item = [
 					'flag'          => $sponsor['sponsor_flag'],
 					'sponsor_name'  => $sponsor['sponsor_name'],
 					'sponsor_url'   => $sponsor['sponsor_url'],
 					'byline_prefix' => $sponsor['sponsor_byline'],
 					'id'            => $sponsor['sponsor_id'],
 					'scope'         => $sponsor['sponsor_scope'],
-					'src'           => $sponsor['sponsor_logo']['src'],
-					'img_width'     => $sponsor['sponsor_logo']['img_width'],
-					'img_height'    => $sponsor['sponsor_logo']['img_height'],
-				);
+				];
+				if ( ! empty( $sponsor['sponsor_logo'] ) ) {
+					$sponsor_info_item['src']        = $sponsor['sponsor_logo']['src'];
+					$sponsor_info_item['img_width']  = $sponsor['sponsor_logo']['img_width'];
+					$sponsor_info_item['img_height'] = $sponsor['sponsor_logo']['img_height'];
+				}
+				$sponsor_info[] = $sponsor_info_item;
 			}
 			return $sponsor_info;
 		} else {
