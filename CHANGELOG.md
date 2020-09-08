@@ -1,3 +1,10 @@
+## [1.12.2](https://github.com/Automattic/newspack-blocks/compare/v1.12.1...v1.12.2) (2020-09-08)
+
+
+### Bug Fixes
+
+* make sure sponsored content styles survive tree shaking ([#585](https://github.com/Automattic/newspack-blocks/issues/585)) ([b15e7d7](https://github.com/Automattic/newspack-blocks/commit/b15e7d7b66400108faddd58a8dafae7a016b5e27))
+
 ## [1.12.1](https://github.com/Automattic/newspack-blocks/compare/v1.12.0...v1.12.1) (2020-08-26)
 
 
