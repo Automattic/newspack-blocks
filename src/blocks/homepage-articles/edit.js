@@ -328,16 +328,23 @@ class Edit extends Component {
 							required
 						/>
 					) }
-					{ ! specificMode && ! isBlogPrivate() && (
+					{ ! specificMode && isBlogPrivate() ? (
 						/*
-						 * Hide the "More" button option on private sites.
+						 * Hide the "Load more posts" button option on private sites.
 						 *
 						 * Client-side fetching from a private WP.com blog requires authentication,
 						 * which is not provided in the current implementation.
 						 * See https://github.com/Automattic/newspack-blocks/issues/306.
 						 */
+						<i>
+							{ __(
+								'This blog is private, therefore the "Load more posts" feature is not active.',
+								'newspack-blocks'
+							) }
+						</i>
+					) : (
 						<ToggleControl
-							label={ __( 'Show "More" Button', 'newspack-blocks' ) }
+							label={ __( 'Show "Load more posts" Button', 'newspack-blocks' ) }
 							checked={ moreButton }
 							onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
 						/>
