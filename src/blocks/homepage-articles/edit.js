@@ -178,11 +178,11 @@ class Edit extends Component {
 					) }
 					{ RichText.isEmpty( sectionHeader ) ? (
 						<h2 className="entry-title" key="title">
-							<a href="#">{ postTitle }</a>
+							{ post.newspack_post_format === 'aside' ? postTitle : <a href="#">{ postTitle }</a> }
 						</h2>
 					) : (
 						<h3 className="entry-title" key="title">
-							<a href="#">{ postTitle }</a>
+							{ post.newspack_post_format === 'aside' ? postTitle : <a href="#">{ postTitle }</a> }
 						</h3>
 					) }
 					{ IS_SUBTITLE_SUPPORTED_IN_THEME && showSubtitle && (
@@ -195,7 +195,9 @@ class Edit extends Component {
 					) }
 					{ showExcerpt && (
 						<RawHTML key="excerpt" className="excerpt-contain">
-							{ post.excerpt.rendered }
+							{ post.newspack_post_format === 'aside'
+								? post.content.rendered
+								: post.excerpt.rendered }
 						</RawHTML>
 					) }
 					<div className="entry-meta">
