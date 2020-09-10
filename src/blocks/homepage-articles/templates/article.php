@@ -85,9 +85,19 @@ call_user_func(
 			endif;
 
 			if ( '' === $attributes['sectionHeader'] ) :
-				the_title( '<h2 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h2>' );
+				// Don't link the title if using the post format aside.
+				if ( has_post_format( 'aside' ) ) :
+					the_title( '<h2 class="entry-title">', '</h2>' );
+				else :
+					the_title( '<h2 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h2>' );
+				endif;
 			else :
+				// Don't link the title if using the post format aside.
+				if ( has_post_format( 'aside' ) ) :
+					the_title( '<h3 class="entry-title">', '</h3>' );
+				else :
 				the_title( '<h3 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h3>' );
+				endif;
 			endif;
 			?>
 			<?php
@@ -99,7 +109,11 @@ call_user_func(
 			<?php endif; ?>
 			<?php
 			if ( $attributes['showExcerpt'] ) :
-				the_excerpt();
+				if ( has_post_format( 'aside' ) ) :
+					the_content();
+				else :
+					the_excerpt();
+				endif;
 			endif;
 			if ( $attributes['showAuthor'] || $attributes['showDate'] || Newspack_Blocks::get_all_sponsors( get_the_id() ) ) :
 				?>

@@ -101,6 +101,21 @@ class Newspack_Blocks_API {
 				],
 			]
 		);
+
+		/* Post format */
+		register_rest_field(
+			'post',
+			'newspack_post_format',
+			[
+				'get_callback' => [ 'Newspack_Blocks_API', 'newspack_blocks_post_format' ],
+				'schema'       => [
+					'context' => [
+						'edit',
+					],
+					'type'    => 'string',
+				],
+			]
+		);
 	}
 
 	/**
@@ -313,6 +328,17 @@ class Newspack_Blocks_API {
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * Pass post format to editor.
+	 *
+	 * @param array $object The object info.
+	 * @return string post format.
+	 */
+	public static function newspack_blocks_post_format( $object ) {
+		$post_format = get_post_format( $object['id'] );
+		return $post_format;
 	}
 
 	/**
