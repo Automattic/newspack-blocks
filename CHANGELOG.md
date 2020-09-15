@@ -1,3 +1,10 @@
+# [1.13.0-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v1.13.0-alpha.1...v1.13.0-alpha.2) (2020-09-15)
+
+
+### Features
+
+* trigger release ([#594](https://github.com/Automattic/newspack-blocks/issues/594) had an unstructured commit message) ([e9e8e41](https://github.com/Automattic/newspack-blocks/commit/e9e8e4184d8d7bb67f9c2afbf110d5908d472192))
+
 # [1.13.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.12.2...v1.13.0-alpha.1) (2020-09-15)
 
 
