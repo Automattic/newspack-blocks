@@ -5,6 +5,7 @@
 	margin-bottom: 1em;
 
 	article {
+		min-width: 0; // fixes column width on certain themes
 		margin-bottom: 1.5em;
 		word-break: break-word;
 		overflow-wrap: break-word;

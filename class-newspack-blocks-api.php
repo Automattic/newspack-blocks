@@ -101,6 +101,21 @@ class Newspack_Blocks_API {
 				],
 			]
 		);
+
+		/* Post format */
+		register_rest_field(
+			'post',
+			'newspack_post_format',
+			[
+				'get_callback' => [ 'Newspack_Blocks_API', 'newspack_blocks_post_format' ],
+				'schema'       => [
+					'context' => [
+						'edit',
+					],
+					'type'    => 'string',
+				],
+			]
+		);
 	}
 
 	/**
@@ -294,22 +309,36 @@ class Newspack_Blocks_API {
 		);
 		if ( ! empty( $sponsors ) ) {
 			foreach ( $sponsors as $sponsor ) {
-				$sponsor_info[] = array(
+				$sponsor_info_item = [
 					'flag'          => $sponsor['sponsor_flag'],
 					'sponsor_name'  => $sponsor['sponsor_name'],
 					'sponsor_url'   => $sponsor['sponsor_url'],
 					'byline_prefix' => $sponsor['sponsor_byline'],
 					'id'            => $sponsor['sponsor_id'],
 					'scope'         => $sponsor['sponsor_scope'],
-					'src'           => $sponsor['sponsor_logo']['src'],
-					'img_width'     => $sponsor['sponsor_logo']['img_width'],
-					'img_height'    => $sponsor['sponsor_logo']['img_height'],
-				);
+				];
+				if ( ! empty( $sponsor['sponsor_logo'] ) ) {
+					$sponsor_info_item['src']        = $sponsor['sponsor_logo']['src'];
+					$sponsor_info_item['img_width']  = $sponsor['sponsor_logo']['img_width'];
+					$sponsor_info_item['img_height'] = $sponsor['sponsor_logo']['img_height'];
+				}
+				$sponsor_info[] = $sponsor_info_item;
 			}
 			return $sponsor_info;
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * Pass post format to editor.
+	 *
+	 * @param array $object The object info.
+	 * @return string post format.
+	 */
+	public static function newspack_blocks_post_format( $object ) {
+		$post_format = get_post_format( $object['id'] );
+		return $post_format;
 	}
 
 	/**

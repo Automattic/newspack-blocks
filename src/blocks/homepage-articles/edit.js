@@ -178,11 +178,11 @@ class Edit extends Component {
 					) }
 					{ RichText.isEmpty( sectionHeader ) ? (
 						<h2 className="entry-title" key="title">
-							<a href="#">{ postTitle }</a>
+							{ post.newspack_post_format === 'aside' ? postTitle : <a href="#">{ postTitle }</a> }
 						</h2>
 					) : (
 						<h3 className="entry-title" key="title">
-							<a href="#">{ postTitle }</a>
+							{ post.newspack_post_format === 'aside' ? postTitle : <a href="#">{ postTitle }</a> }
 						</h3>
 					) }
 					{ IS_SUBTITLE_SUPPORTED_IN_THEME && showSubtitle && (
@@ -195,7 +195,9 @@ class Edit extends Component {
 					) }
 					{ showExcerpt && (
 						<RawHTML key="excerpt" className="excerpt-contain">
-							{ post.excerpt.rendered }
+							{ post.newspack_post_format === 'aside'
+								? post.content.rendered
+								: post.excerpt.rendered }
 						</RawHTML>
 					) }
 					<div className="entry-meta">
@@ -328,16 +330,23 @@ class Edit extends Component {
 							required
 						/>
 					) }
-					{ ! specificMode && ! isBlogPrivate() && (
+					{ ! specificMode && isBlogPrivate() ? (
 						/*
-						 * Hide the "More" button option on private sites.
+						 * Hide the "Load more posts" button option on private sites.
 						 *
 						 * Client-side fetching from a private WP.com blog requires authentication,
 						 * which is not provided in the current implementation.
 						 * See https://github.com/Automattic/newspack-blocks/issues/306.
 						 */
+						<i>
+							{ __(
+								'This blog is private, therefore the "Load more posts" feature is not active.',
+								'newspack-blocks'
+							) }
+						</i>
+					) : (
 						<ToggleControl
-							label={ __( 'Show "More" Button', 'newspack-blocks' ) }
+							label={ __( 'Show "Load more posts" Button', 'newspack-blocks' ) }
 							checked={ moreButton }
 							onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
 						/>
