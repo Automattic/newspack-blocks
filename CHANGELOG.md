@@ -1,3 +1,16 @@
+# [1.13.0](https://github.com/Automattic/newspack-blocks/compare/v1.12.2...v1.13.0) (2020-09-15)
+
+
+### Bug Fixes
+
+* **homepage-posts:** display info about load more posts if blog is private ([11e2934](https://github.com/Automattic/newspack-blocks/commit/11e293408c8d37aec3ae5709c7586fcc420c5a66)), closes [#507](https://github.com/Automattic/newspack-blocks/issues/507)
+* **sponsors:** prevent warnings when sponsor image is not set ([b715706](https://github.com/Automattic/newspack-blocks/commit/b7157068b1246098908b3b91caab2cc9e1c07e9e))
+
+
+### Features
+
+* add support for the aside post format ([dd69bc2](https://github.com/Automattic/newspack-blocks/commit/dd69bc2939f5200b9fa94a66d60af666f70f13bf))
+
 ## [1.12.2](https://github.com/Automattic/newspack-blocks/compare/v1.12.1...v1.12.2) (2020-09-08)
 
 
