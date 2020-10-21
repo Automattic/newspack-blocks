@@ -360,7 +360,7 @@ class Newspack_Blocks_API {
 	 * Pass whether there is a custom excerpt to the editor.
 	 *
 	 * @param array $object The object info.
-	 * @return string post format.
+	 * @return boolean custom excerpt status.
 	 */
 	public static function newspack_blocks_has_custom_excerpt( $object ) {
 		$post_has_custom_excerpt = has_excerpt( $object['id'] );
