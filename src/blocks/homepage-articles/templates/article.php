@@ -110,9 +110,16 @@ call_user_func(
 			<?php
 			if ( $attributes['showExcerpt'] ) :
 				if ( has_post_format( 'aside' ) ) :
+					// If is an aside, show the full content.
 					the_content();
-				else :
+				elseif ( has_excerpt( get_the_ID() ) ) :
+					// If the post has a custom excerpt, use it.
 					the_excerpt();
+				else :
+					// Otherwise, craft a custom excerpt length from the content.
+					$excerpt_length = $attributes['excerptLength'];
+					$post_content   = get_the_content();
+					echo '<p>' . esc_html( wp_trim_words( wp_strip_all_tags( $post_content ), $excerpt_length, ' [&hellip;] ' ) ) . '</p>';
 				endif;
 			endif;
 			if ( $attributes['showAuthor'] || $attributes['showDate'] || Newspack_Blocks::get_all_sponsors( get_the_id() ) ) :
