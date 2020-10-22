@@ -281,16 +281,3 @@ function newspack_blocks_inject_amp_state() {
 }
 
 add_action( 'wp_footer', 'newspack_blocks_inject_amp_state' );
-
-/**
- * Add global variable to control excerpt length.
- */
-function newspack_blocks_excerpt_length() {
-	global $newspack_blocks_excerpt_length;
-	if ( $newspack_blocks_excerpt_length ) {
-		return $newspack_blocks_excerpt_length;
-	} else {
-		return 55;
-	}
-}
-add_filter( 'excerpt_length', 'newspack_blocks_excerpt_length', 999 );
