@@ -468,8 +468,13 @@ class Newspack_Blocks_API {
 			// phpcs:enable WordPress.DB.SlowDBQuery
 		}
 
+		if ( $request->get_param( 'suppress_password_protected_posts' ) ) {
+			$args['has_password'] = false;
+		}
+
 		return $args;
 	}
+
 }
 
 add_action( 'rest_api_init', array( 'Newspack_Blocks_API', 'register_rest_fields' ) );
