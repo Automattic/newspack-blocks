@@ -357,6 +357,7 @@ class Newspack_Blocks {
 			'post_status'         => 'publish',
 			'suppress_filters'    => false,
 			'ignore_sticky_posts' => true,
+			'has_password'        => false,
 		);
 		if ( $specific_mode && $specific_posts ) {
 			$args['post__in'] = $specific_posts;
