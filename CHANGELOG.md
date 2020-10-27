@@ -1,3 +1,10 @@
+## [1.13.2](https://github.com/Automattic/newspack-blocks/compare/v1.13.1...v1.13.2) (2020-10-27)
+
+
+### Bug Fixes
+
+* suppress password protected posts ([#609](https://github.com/Automattic/newspack-blocks/issues/609)) ([ff667d7](https://github.com/Automattic/newspack-blocks/commit/ff667d714bb6ac92ad5d8961e8d59a6230261e5e))
+
 ## [1.13.1](https://github.com/Automattic/newspack-blocks/compare/v1.13.0...v1.13.1) (2020-09-29)
 
 
