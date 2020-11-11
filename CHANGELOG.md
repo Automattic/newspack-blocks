@@ -1,3 +1,11 @@
+# [1.14.0](https://github.com/Automattic/newspack-blocks/compare/v1.13.2...v1.14.0) (2020-11-11)
+
+
+### Features
+
+* add option to change excerpt length ([#607](https://github.com/Automattic/newspack-blocks/issues/607)) ([a1968d9](https://github.com/Automattic/newspack-blocks/commit/a1968d905cb2117a35ad969804d685076fb292e4))
+* update blocks icons style and colour ([#615](https://github.com/Automattic/newspack-blocks/issues/615)) ([f4d68cb](https://github.com/Automattic/newspack-blocks/commit/f4d68cb74210e28cec17deec1d16b35ede68e901))
+
 ## [1.13.2](https://github.com/Automattic/newspack-blocks/compare/v1.13.1...v1.13.2) (2020-10-27)
 
 
