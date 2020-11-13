@@ -17,6 +17,7 @@ function buildLoadMoreHandler( blockWrapperEl ) {
 		AMP.getState( 'newspackHomepagePosts.exclude_ids' ).then( function( exclude_ids ) {
 			const requestURL = new URL( btnEl.getAttribute( 'data-next' ) );
 			requestURL.searchParams.set( 'exclude_ids', JSON.parse( exclude_ids ).join( ',' ) );
+			requestURL.searchParams.delete( 'page' ); // If we're using exlcude_ids, the page parameter isn't helpful. See issue #404
 			apiFetchWithRetry( { url: requestURL.toString(), onSuccess, onError }, 3 );
 		} );
 		function onSuccess( data ) {
