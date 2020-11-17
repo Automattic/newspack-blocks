@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/Automattic/newspack-blocks/compare/v1.14.0...v1.15.0) (2020-11-17)
+
+
+### Features
+
+* Add French (Belgium) translation to the blocks ([#626](https://github.com/Automattic/newspack-blocks/issues/626)) ([e2f9dc6](https://github.com/Automattic/newspack-blocks/commit/e2f9dc62ddab5f5c146d83ced822fb2edbc16482))
+
 # [1.14.0](https://github.com/Automattic/newspack-blocks/compare/v1.13.2...v1.14.0) (2020-11-11)
 
 
