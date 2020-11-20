@@ -11,8 +11,20 @@
 		}
 	}
 
+	@if tabletonly == $res {
+		@media only screen and ( max-width: #{ $tablet_width - 1 } ) {
+			@content;
+		}
+	}
+
 	@if desktop == $res {
 		@media only screen and ( min-width: $desktop_width ) {
+			@content;
+		}
+	}
+
+	@if desktoponly == $res {
+		@media only screen and ( max-width: #{ $desktop_width - 1 } ) {
 			@content;
 		}
 	}
