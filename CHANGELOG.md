@@ -1,3 +1,10 @@
+# [1.16.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.15.0...v1.16.0-alpha.1) (2020-11-20)
+
+
+### Features
+
+* optimize sponsor queries ([#633](https://github.com/Automattic/newspack-blocks/issues/633)) ([1509951](https://github.com/Automattic/newspack-blocks/commit/150995197e39ade7bb3f71cbf6325b6fa60fd2f8))
+
 # [1.15.0](https://github.com/Automattic/newspack-blocks/compare/v1.14.0...v1.15.0) (2020-11-17)
 
 
