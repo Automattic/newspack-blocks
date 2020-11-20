@@ -340,9 +340,9 @@ class Newspack_Blocks_API {
 				$sponsor_info[] = $sponsor_info_item;
 			}
 			return $sponsor_info;
-		} else {
-			return false;
 		}
+
+		return false;
 	}
 
 	/**
