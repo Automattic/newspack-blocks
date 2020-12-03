@@ -100,7 +100,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	 */
 	$is_blog_private = (int) get_option( 'blog_public' ) === -1;
 
-	$has_more_button = ! $is_blog_private && $has_more_pages && (bool) $attributes['moreButton'];
+	$has_more_button = ! $is_blog_private && $has_more_pages && (bool) $attributes['moreButton'] && ! ( (bool) $attributes['specificMode'] );
 
 	if ( $has_more_button ) {
 		$classes .= ' has-more-button';
