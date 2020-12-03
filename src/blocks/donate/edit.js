@@ -99,6 +99,7 @@ class Edit extends Component {
 	};
 
 	getSettings() {
+		const { setAttributes } = this.props;
 		const path = '/newspack/v1/wizard/newspack-donations-wizard/donation';
 
 		this.setState( { isLoading: true }, () => {
@@ -110,6 +111,7 @@ class Edit extends Component {
 						currencySymbol,
 						tiered,
 						created,
+						force_manual: forceManual,
 					} = settings;
 					this.setState( {
 						suggestedAmounts,
@@ -117,6 +119,7 @@ class Edit extends Component {
 						currencySymbol,
 						tiered,
 						created,
+						forceManual,
 						isLoading: false,
 						customDonationAmounts: {
 							once: tiered ? 12 * suggestedAmounts[ 1 ] : 12 * suggestedAmountUntiered,
@@ -125,6 +128,9 @@ class Edit extends Component {
 						},
 						activeTier: 1,
 					} );
+					if ( forceManual ) {
+						setAttributes( { manual: true } );
+					}
 				} )
 				.catch( error => {
 					this.setState( {
@@ -458,36 +464,39 @@ class Edit extends Component {
 
 	render() {
 		const { setAttributes } = this.props;
+		const { forceManual } = this.state;
 		const { manual, campaign } = this.blockData();
 		return (
 			<Fragment>
 				{ this.renderPlaceholder() }
 				{ this.renderForm() }
 				<InspectorControls>
-					<PanelBody title={ __( 'Donate Block', 'newspack-blocks' ) }>
-						<ToggleControl
-							key="manual"
-							checked={ manual }
-							onChange={ this.manualChanged }
-							label={ __( 'Configure manually', 'newspack-blocks' ) }
-						/>
-						{ ! manual && (
-							<Fragment>
-								<p>
-									{ __(
-										'The Donate Block allows you to collect donations from readers. The fields are automatically defined based on your donation settings.',
-										'newspack-blocks'
-									) }
-								</p>
+					{ ! forceManual && (
+						<PanelBody title={ __( 'Donate Block', 'newspack-blocks' ) }>
+							<ToggleControl
+								key="manual"
+								checked={ manual }
+								onChange={ this.manualChanged }
+								label={ __( 'Configure manually', 'newspack-blocks' ) }
+							/>
+							{ ! manual && (
+								<Fragment>
+									<p>
+										{ __(
+											'The Donate Block allows you to collect donations from readers. The fields are automatically defined based on your donation settings.',
+											'newspack-blocks'
+										) }
+									</p>
 
-								<ExternalLink href="/wp-admin/admin.php?page=newspack-reader-revenue-wizard#/donations">
-									{ __( 'Edit donation settings.', 'newspack-blocks' ) }
-								</ExternalLink>
-							</Fragment>
-						) }
-					</PanelBody>
+									<ExternalLink href="/wp-admin/admin.php?page=newspack-reader-revenue-wizard#/donations">
+										{ __( 'Edit donation settings.', 'newspack-blocks' ) }
+									</ExternalLink>
+								</Fragment>
+							) }
+						</PanelBody>
+					) }
 					{ manual && (
-						<PanelBody title={ __( 'Manual Settings', 'newspack-blocks' ) }>
+						<PanelBody title={ ! forceManual && __( 'Manual Settings', 'newspack-blocks' ) }>
 							{ this.renderManualControls() }
 						</PanelBody>
 					) }
