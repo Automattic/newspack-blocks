@@ -240,7 +240,7 @@ function newspack_blocks_register_donate() {
 				'suggestedAmounts'        => [
 					'type'    => 'array',
 					'items'   => [
-						'type' => 'integer',
+						'type' => 'float',
 					],
 					'default' => [ 0, 0, 0 ],
 				],
