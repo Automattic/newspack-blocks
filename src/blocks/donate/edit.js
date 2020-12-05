@@ -99,7 +99,7 @@ class Edit extends Component {
 	};
 
 	getSettings() {
-		const { setAttributes } = this.props;
+		const { attributes, setAttributes } = this.props;
 		const path = '/newspack/v1/wizard/newspack-donations-wizard/donation';
 
 		this.setState( { isLoading: true }, () => {
@@ -130,6 +130,12 @@ class Edit extends Component {
 					} );
 					if ( forceManual ) {
 						setAttributes( { manual: true } );
+						if (
+							attributes.suggestedAmounts.every( amount => amount === 0 ) &&
+							0 === attributes.suggestedAmountUntiered
+						) {
+							setAttributes( { suggestedAmounts, suggestedAmountUntiered } );
+						}
 					}
 				} )
 				.catch( error => {
