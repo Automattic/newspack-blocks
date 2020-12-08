@@ -61,7 +61,7 @@ class Edit extends Component {
 	blockData() {
 		const { attributes } = this.props;
 		const { manual, campaign } = attributes;
-		const data = { ...this.state, ...( manual ? attributes : {} ) };
+		const data = { ...this.state, ...attributes };
 		if ( manual ) {
 			data.customDonationAmounts = {
 				once: data.tiered ? 12 * data.suggestedAmounts[ 1 ] : 12 * data.suggestedAmountUntiered,
