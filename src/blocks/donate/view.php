@@ -24,6 +24,12 @@ function newspack_blocks_render_block_donate( $attributes ) {
 		return '';
 	}
 
+	$manual = isset( $attributes['manual'] ) ? $attributes['manual'] : false;
+
+	if ( 'nrh' === $settings['platform'] && ! $manual ) {
+		return '';
+	}
+
 	/* If block is in "manual" mode, override certain state properties with values stored in attributes */
 	if ( $attributes['manual'] ?? false ) {
 		$settings = array_merge( $settings, $attributes );
@@ -234,7 +240,7 @@ function newspack_blocks_register_donate() {
 				'suggestedAmounts'        => [
 					'type'    => 'array',
 					'items'   => [
-						'type' => 'integer',
+						'type' => 'number',
 					],
 					'default' => [ 0, 0, 0 ],
 				],
