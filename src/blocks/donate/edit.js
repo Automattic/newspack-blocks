@@ -60,8 +60,8 @@ class Edit extends Component {
 	/* If block is in "manual" mode, override certain state properties with values stored in attributes */
 	blockData() {
 		const { attributes } = this.props;
-		const { manual, campaign } = attributes;
-		const data = { ...this.state, ...attributes };
+		const { defaultFrequency, manual, campaign } = attributes;
+		const data = { ...this.state, ...( manual ? attributes : { defaultFrequency } ) };
 		if ( manual ) {
 			data.customDonationAmounts = {
 				once: data.tiered ? 12 * data.suggestedAmounts[ 1 ] : 12 * data.suggestedAmountUntiered,
