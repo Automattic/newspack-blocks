@@ -486,32 +486,30 @@ class Edit extends Component {
 				{ this.renderPlaceholder() }
 				{ this.renderForm() }
 				<InspectorControls>
-					<PanelBody>
-						{ ! forceManual && (
-							<Fragment>
-								<ToggleControl
-									key="manual"
-									checked={ manual }
-									onChange={ this.manualChanged }
-									label={ __( 'Configure manually', 'newspack-blocks' ) }
-								/>
-								{ ! manual && (
-									<Fragment>
-										<p>
-											{ __(
-												'The Donate Block allows you to collect donations from readers. The fields are automatically defined based on your donation settings.',
-												'newspack-blocks'
-											) }
-										</p>
+					{ ! forceManual && (
+						<PanelBody>
+							<ToggleControl
+								key="manual"
+								checked={ manual }
+								onChange={ this.manualChanged }
+								label={ __( 'Configure manually', 'newspack-blocks' ) }
+							/>
+							{ ! manual && (
+								<Fragment>
+									<p>
+										{ __(
+											'The Donate Block allows you to collect donations from readers. The fields are automatically defined based on your donation settings.',
+											'newspack-blocks'
+										) }
+									</p>
 
-										<ExternalLink href="/wp-admin/admin.php?page=newspack-reader-revenue-wizard#/donations">
-											{ __( 'Edit donation settings.', 'newspack-blocks' ) }
-										</ExternalLink>
-									</Fragment>
-								) }
-							</Fragment>
-						) }
-					</PanelBody>
+									<ExternalLink href="/wp-admin/admin.php?page=newspack-reader-revenue-wizard#/donations">
+										{ __( 'Edit donation settings.', 'newspack-blocks' ) }
+									</ExternalLink>
+								</Fragment>
+							) }
+						</PanelBody>
+					) }
 					{ manual && (
 						<PanelBody title={ ! forceManual && __( 'Manual Settings', 'newspack-blocks' ) }>
 							{ this.renderManualControls() }
