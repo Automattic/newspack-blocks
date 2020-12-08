@@ -15,6 +15,7 @@ import {
 	ExternalLink,
 	Placeholder,
 	Spinner,
+	SelectControl,
 	TextControl,
 	ToggleControl,
 } from '@wordpress/components';
@@ -32,7 +33,6 @@ class Edit extends Component {
 
 			isLoading: false,
 			activeTier: 1,
-			selectedFrequency: 'month',
 			customDonationAmounts: {
 				once: 0,
 				month: 0,
@@ -48,11 +48,20 @@ class Edit extends Component {
 		this.getSettings();
 	}
 
+	componentDidUpdate( prevProps ) {
+		const { selectedFrequency } = this.state;
+		const { attributes } = this.props;
+		const { attributes: prevAttributes } = prevProps;
+		if ( ! selectedFrequency || attributes.defaultFrequency !== prevAttributes.defaultFrequency ) {
+			this.setState( { selectedFrequency: attributes.defaultFrequency } );
+		}
+	}
+
 	/* If block is in "manual" mode, override certain state properties with values stored in attributes */
 	blockData() {
 		const { attributes } = this.props;
-		const { manual, campaign } = attributes;
-		const data = { ...this.state, ...( manual ? attributes : {} ) };
+		const { defaultFrequency, manual, campaign } = attributes;
+		const data = { ...this.state, ...( manual ? attributes : { defaultFrequency } ) };
 		if ( manual ) {
 			data.customDonationAmounts = {
 				once: data.tiered ? 12 * data.suggestedAmounts[ 1 ] : 12 * data.suggestedAmountUntiered,
@@ -471,41 +480,68 @@ class Edit extends Component {
 	render() {
 		const { setAttributes } = this.props;
 		const { forceManual } = this.state;
-		const { manual, campaign } = this.blockData();
+		const { manual, campaign, defaultFrequency } = this.blockData();
 		return (
 			<Fragment>
 				{ this.renderPlaceholder() }
 				{ this.renderForm() }
 				<InspectorControls>
-					{ ! forceManual && (
-						<PanelBody title={ __( 'Donate Block', 'newspack-blocks' ) }>
-							<ToggleControl
-								key="manual"
-								checked={ manual }
-								onChange={ this.manualChanged }
-								label={ __( 'Configure manually', 'newspack-blocks' ) }
-							/>
-							{ ! manual && (
-								<Fragment>
-									<p>
-										{ __(
-											'The Donate Block allows you to collect donations from readers. The fields are automatically defined based on your donation settings.',
-											'newspack-blocks'
-										) }
-									</p>
+					<PanelBody>
+						{ ! forceManual && (
+							<Fragment>
+								<ToggleControl
+									key="manual"
+									checked={ manual }
+									onChange={ this.manualChanged }
+									label={ __( 'Configure manually', 'newspack-blocks' ) }
+								/>
+								{ ! manual && (
+									<Fragment>
+										<p>
+											{ __(
+												'The Donate Block allows you to collect donations from readers. The fields are automatically defined based on your donation settings.',
+												'newspack-blocks'
+											) }
+										</p>
 
-									<ExternalLink href="/wp-admin/admin.php?page=newspack-reader-revenue-wizard#/donations">
-										{ __( 'Edit donation settings.', 'newspack-blocks' ) }
-									</ExternalLink>
-								</Fragment>
-							) }
-						</PanelBody>
-					) }
+										<ExternalLink href="/wp-admin/admin.php?page=newspack-reader-revenue-wizard#/donations">
+											{ __( 'Edit donation settings.', 'newspack-blocks' ) }
+										</ExternalLink>
+									</Fragment>
+								) }
+							</Fragment>
+						) }
+					</PanelBody>
 					{ manual && (
 						<PanelBody title={ ! forceManual && __( 'Manual Settings', 'newspack-blocks' ) }>
 							{ this.renderManualControls() }
 						</PanelBody>
 					) }
+					<PanelBody>
+						<SelectControl
+							label={ __( 'Default Tab', 'newspack' ) }
+							value={ defaultFrequency }
+							options={ [
+								{
+									label: __( 'One-time', 'newspack' ),
+									value: 'once',
+								},
+								{
+									label: __( 'Monthly', 'newspack' ),
+									value: 'month',
+								},
+								{
+									label: __( 'Annually', 'newspack' ),
+									value: 'year',
+								},
+							] }
+							onChange={ _defaultFrequency => {
+								setAttributes( {
+									defaultFrequency: _defaultFrequency,
+								} );
+							} }
+						/>
+					</PanelBody>
 					<PanelBody title={ __( 'Campaign', 'newspack-blocks' ) } initialOpen={ false }>
 						<TextControl
 							label={ __( 'Campaign ID', 'newspack-blocks' ) }
