@@ -480,14 +480,14 @@ class Edit extends Component {
 					) }
 					{ showExcerpt && (
 						<ToggleControl
-							label={ __( 'Add a link after the excerpt', 'newspack-blocks' ) }
+							label={ __( 'Add a "Read More" link after the excerpt', 'newspack-blocks' ) }
 							checked={ showReadMore }
 							onChange={ () => setAttributes( { showReadMore: ! showReadMore } ) }
 						/>
 					) }
 					{ showReadMore && showExcerpt && (
 						<TextControl
-							label={ __( 'Read More link text', 'newspack-blocks' ) }
+							label={ __( '"Read More" link text', 'newspack-blocks' ) }
 							value={ readMoreLabel }
 							placeholder={ readMoreLabel }
 							onChange={ value => setAttributes( { readMoreLabel: value } ) }
