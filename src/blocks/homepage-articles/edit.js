@@ -117,7 +117,7 @@ class Edit extends Component {
 			sectionHeader,
 		} = attributes;
 
-		const styles = {
+		const articleStyles = {
 			minHeight:
 				mediaPosition === 'behind' &&
 				showImage &&
@@ -128,6 +128,27 @@ class Edit extends Component {
 				showImage &&
 				post.newspack_featured_image_src &&
 				minHeight / 5 + 'vh',
+		};
+
+		let imgMaxWidth = '';
+		if ( post.newspack_featured_image_src ) {
+			if ( imageShape === 'landscape' ) {
+				imgMaxWidth = post.newspack_featured_image_src.maxwidth.landscape;
+			}
+			if ( imageShape === 'portrait' ) {
+				imgMaxWidth = post.newspack_featured_image_src.maxwidth.portrait;
+			}
+			if ( imageShape === 'square' ) {
+				imgMaxWidth = post.newspack_featured_image_src.maxwidth.square;
+			}
+		}
+
+		const imgStyles = {
+			maxWidth:
+				mediaPosition !== 'behind' &&
+				showImage &&
+				post.newspack_featured_image_src &&
+				imgMaxWidth + 'px',
 		};
 
 		const postClasses = classNames(
@@ -158,22 +179,13 @@ class Edit extends Component {
 		};
 
 		return (
-			<article className={ postClasses } key={ post.id } style={ styles }>
+			<article className={ postClasses } key={ post.id } style={ articleStyles }>
 				{ showImage && post.newspack_featured_image_src && (
 					<figure className="post-thumbnail" key="thumbnail">
-						<a href="#">
-							{ imageShape === 'landscape' && (
-								<img src={ post.newspack_featured_image_src.landscape } alt="" />
-							) }
-							{ imageShape === 'portrait' && (
-								<img src={ post.newspack_featured_image_src.portrait } alt="" />
-							) }
-							{ imageShape === 'square' && (
-								<img src={ post.newspack_featured_image_src.square } alt="" />
-							) }
-							{ imageShape === 'uncropped' && (
-								<img src={ post.newspack_featured_image_src.uncropped } alt="" />
-							) }
+						<a href="#" style={ imgStyles }>
+							<span>
+								<img src={ post.newspack_featured_image_src.imgsrc } alt="" />
+							</span>
 						</a>
 						{ showCaption && '' !== post.newspack_featured_image_caption && (
 							<figcaption>{ post.newspack_featured_image_caption }</figcaption>
@@ -579,7 +591,7 @@ class Edit extends Component {
 			[ `image-align${ mediaPosition }` ]: showImage,
 			[ `is-${ imageScale }` ]: imageScale !== '1' && showImage,
 			'mobile-stack': mobileStack,
-			[ `is-${ imageShape }` ]: showImage,
+			[ `is-${ imageShape }` ]: showImage && mediaPosition !== 'behind',
 			'has-text-color': textColor.color !== '',
 			'show-caption': showCaption,
 			'show-category': showCategory,
