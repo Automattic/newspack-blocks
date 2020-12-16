@@ -44,6 +44,7 @@ import {
 	RangeControl,
 	Toolbar,
 	ToggleControl,
+	TextControl,
 	Placeholder,
 	Spinner,
 	BaseControl,
@@ -109,6 +110,8 @@ class Edit extends Component {
 			minHeight,
 			showCaption,
 			showExcerpt,
+			showReadMore,
+			readMoreLabel,
 			showSubtitle,
 			showAuthor,
 			showAvatar,
@@ -216,6 +219,11 @@ class Edit extends Component {
 								: getTrimmedExcerpt( post, attributes ) }
 						</RawHTML>
 					) }
+					{ showExcerpt && showReadMore && (
+						<a href="#" className="newspack-more-link">
+							{ readMoreLabel }
+						</a>
+					) }
 					<div className="entry-meta">
 						{ post.newspack_post_sponsors && formatSponsorLogos( post.newspack_post_sponsors ) }
 						{ post.newspack_post_sponsors && formatSponsorByline( post.newspack_post_sponsors ) }
@@ -265,6 +273,8 @@ class Edit extends Component {
 			minHeight,
 			moreButton,
 			showExcerpt,
+			showReadMore,
+			readMoreLabel,
 			excerptLength,
 			showSubtitle,
 			typeScale,
@@ -466,6 +476,21 @@ class Edit extends Component {
 							onChange={ value => setAttributes( { excerptLength: value } ) }
 							min={ 10 }
 							max={ 100 }
+						/>
+					) }
+					{ showExcerpt && (
+						<ToggleControl
+							label={ __( 'Add a link after the excerpt', 'newspack-blocks' ) }
+							checked={ showReadMore }
+							onChange={ () => setAttributes( { showReadMore: ! showReadMore } ) }
+						/>
+					) }
+					{ showReadMore && showExcerpt && (
+						<TextControl
+							label={ __( 'Read More link text', 'newspack-blocks' ) }
+							value={ readMoreLabel }
+							placeholder={ readMoreLabel }
+							onChange={ value => setAttributes( { readMoreLabel: value } ) }
 						/>
 					) }
 					<RangeControl
