@@ -150,9 +150,11 @@ class Edit extends Component {
 			const content = currentPost.content.rendered;
 			const newExcerpt = content.replace( regex, '' );
 
+			const excerptEllipsis = showReadMore ? '…' : ' […]';
+
 			const needsEllipsis = excerptLength < newExcerpt.trim().split( ' ' ).length;
 			const postExcerpt = needsEllipsis
-				? `${ newExcerpt.split( ' ', excerptLength ).join( ' ' ) } […]`
+				? `${ newExcerpt.split( ' ', excerptLength ).join( ' ' ) + excerptEllipsis } `
 				: newExcerpt;
 
 			return currentPost.newspack_has_custom_excerpt
@@ -219,8 +221,8 @@ class Edit extends Component {
 								: getTrimmedExcerpt( post, attributes ) }
 						</RawHTML>
 					) }
-					{ showExcerpt && showReadMore && (
-						<a href="#" className="newspack-more-link">
+					{ showReadMore && (
+						<a href="#" key="readmore" className="newspack-more-link">
 							{ readMoreLabel }
 						</a>
 					) }
@@ -478,14 +480,12 @@ class Edit extends Component {
 							max={ 100 }
 						/>
 					) }
-					{ showExcerpt && (
-						<ToggleControl
-							label={ __( 'Add a "Read More" link after the excerpt', 'newspack-blocks' ) }
-							checked={ showReadMore }
-							onChange={ () => setAttributes( { showReadMore: ! showReadMore } ) }
-						/>
-					) }
-					{ showReadMore && showExcerpt && (
+					<ToggleControl
+						label={ __( 'Add a "Read More" link', 'newspack-blocks' ) }
+						checked={ showReadMore }
+						onChange={ () => setAttributes( { showReadMore: ! showReadMore } ) }
+					/>
+					{ showReadMore && (
 						<TextControl
 							label={ __( '"Read More" link text', 'newspack-blocks' ) }
 							value={ readMoreLabel }

@@ -116,15 +116,14 @@ call_user_func(
 					the_content();
 				else :
 					the_excerpt();
-
-					if ( $attributes['showReadMore'] ) :
-						?>
-					<a class="newspack-more-link" href="<?php echo esc_url( get_permalink() ); ?>" rel="bookmark">
-						<?php echo esc_html( $attributes['readMoreLabel'] ); ?>
-					</a>
-						<?php
-					endif;
 				endif;
+			endif;
+			if ( ! has_post_format( 'aside' ) && ( $attributes['showReadMore'] ) ) :
+				?>
+				<a class="newspack-more-link" href="<?php echo esc_url( get_permalink() ); ?>" rel="bookmark">
+					<?php echo esc_html( $attributes['readMoreLabel'] ); ?>
+				</a>
+				<?php
 			endif;
 			if ( $attributes['showAuthor'] || $attributes['showDate'] || ! empty( $sponsors ) ) :
 				?>
