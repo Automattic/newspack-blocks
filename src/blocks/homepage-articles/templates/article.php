@@ -120,7 +120,7 @@ call_user_func(
 			endif;
 			if ( ! has_post_format( 'aside' ) && ( $attributes['showReadMore'] ) ) :
 				?>
-				<a class="newspack-more-link" href="<?php echo esc_url( get_permalink() ); ?>" rel="bookmark">
+				<a class="more-link" href="<?php echo esc_url( get_permalink() ); ?>" rel="bookmark">
 					<?php echo esc_html( $attributes['readMoreLabel'] ); ?>
 				</a>
 				<?php

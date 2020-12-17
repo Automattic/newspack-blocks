@@ -222,7 +222,7 @@ class Edit extends Component {
 						</RawHTML>
 					) }
 					{ showReadMore && (
-						<a href="#" key="readmore" className="newspack-more-link">
+						<a href="#" key="readmore" className="more-link">
 							{ readMoreLabel }
 						</a>
 					) }
