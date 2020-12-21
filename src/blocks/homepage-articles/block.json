@@ -130,6 +130,10 @@
     "showSubtitle": {
       "type": "boolean",
       "default": false
+    },
+    "includedPostTypes": {
+      "type": "object",
+      "default": { "post": true }
     }
   }
 }
