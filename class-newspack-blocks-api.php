@@ -543,20 +543,23 @@ class Newspack_Blocks_API {
 			$content = apply_filters( 'the_content', $post->post_content );
 			// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 
+			$meta = new WP_REST_Post_Meta_Fields( 'post' );
+
 			$data = [
-				'id'             => $post->ID,
-				'date_gmt'       => mysql_to_rfc3339( $post_date_gmt ),
-				'title'          => [
-					'rendered' => get_the_title( $post->ID ),
-				],
+				'author'         => (int) $post->post_author,
 				'content'        => [
 					'rendered' => post_password_required( $post ) ? '' : $content,
 				],
+				'date_gmt'       => mysql_to_rfc3339( $post_date_gmt ),
 				'excerpt'        => [
 					'rendered' => post_password_required( $post ) ? '' : $excerpt,
 				],
-				'author'         => (int) $post->post_author,
 				'featured_media' => (int) get_post_thumbnail_id( $post->ID ),
+				'id'             => $post->ID,
+				'meta'           => $meta->get_value( $post->ID, $request ),
+				'title'          => [
+					'rendered' => get_the_title( $post->ID ),
+				],
 			];
 
 			$add_ons = [
