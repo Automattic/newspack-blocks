@@ -25,6 +25,7 @@ const POST_QUERY_ATTRIBUTES = [
 	'specificPosts',
 	'specificMode',
 	'tagExclusions',
+	'includedPostTypes',
 ];
 
 /**
@@ -54,6 +55,7 @@ export const queryCriteriaFromAttributes = attributes => {
 		postsToShow,
 		authors,
 		categories,
+		includedPostTypes,
 		tags,
 		specificPosts,
 		specificMode,
@@ -62,12 +64,17 @@ export const queryCriteriaFromAttributes = attributes => {
 
 	const cleanPosts = sanitizePostList( specificPosts );
 	const isSpecificPostModeActive = specificMode && cleanPosts && cleanPosts.length;
+	const postTypeArray = Object.keys( includedPostTypes ).reduce(
+		( acc, postType ) => ( includedPostTypes[ postType ] ? [ ...acc, postType ] : acc ),
+		[]
+	);
 	const criteria = pickBy(
 		isSpecificPostModeActive
 			? {
 					include: cleanPosts,
 					orderby: 'include',
 					per_page: specificPosts.length,
+					post_type: postTypeArray,
 			  }
 			: {
 					per_page: postsToShow,
@@ -75,6 +82,7 @@ export const queryCriteriaFromAttributes = attributes => {
 					author: authors,
 					tags,
 					tags_exclude: tagExclusions,
+					post_type: postTypeArray,
 			  },
 		value => ! isUndefined( value )
 	);

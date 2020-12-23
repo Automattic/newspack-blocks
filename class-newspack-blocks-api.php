@@ -443,6 +443,13 @@ class Newspack_Blocks_API {
 						),
 						'default' => array(),
 					],
+					'post_types'   => [
+						'type'    => 'array',
+						'items'   => array(
+							'type' => 'string',
+						),
+						'default' => array(),
+					],
 				],
 				'permission_callback' => function( $request ) {
 					return current_user_can( 'edit_posts' );
@@ -525,6 +532,10 @@ class Newspack_Blocks_API {
 		}
 		if ( $params['exclude'] && count( $params['exclude'] ) ) {
 			$args['post__not_in'] = $params['exclude'];
+		}
+
+		if ( $params['post_type'] && count( $params['post_type'] ) ) {
+			$args['post_type'] = $params['post_type'];
 		}
 
 		$query        = new WP_Query();
