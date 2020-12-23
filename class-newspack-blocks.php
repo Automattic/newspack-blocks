@@ -346,6 +346,18 @@ class Newspack_Blocks {
 			);
 		}
 
+		$post_type      = isset( $attributes['includedPostTypes'] ) ?
+			array_reduce(
+				array_keys( $attributes['includedPostTypes'] ),
+				function( $acc, $post_type ) use ( $attributes ) {
+					if ( $attributes['includedPostTypes'][ $post_type ] ) {
+						$acc[] = $post_type;
+					}
+					return $acc;
+				},
+				[]
+			)
+			: array( 'post' );
 		$authors        = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
 		$categories     = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
 		$tags           = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
@@ -354,6 +366,7 @@ class Newspack_Blocks {
 		$posts_to_show  = intval( $attributes['postsToShow'] );
 		$specific_mode  = intval( $attributes['specificMode'] );
 		$args           = array(
+			'post_type'           => $post_type,
 			'post_status'         => 'publish',
 			'suppress_filters'    => false,
 			'ignore_sticky_posts' => true,
