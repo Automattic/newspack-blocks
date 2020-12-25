@@ -25,7 +25,7 @@ const POST_QUERY_ATTRIBUTES = [
 	'specificPosts',
 	'specificMode',
 	'tagExclusions',
-	'includedPostTypes',
+	'postType',
 ];
 
 /**
@@ -55,7 +55,7 @@ export const queryCriteriaFromAttributes = attributes => {
 		postsToShow,
 		authors,
 		categories,
-		includedPostTypes,
+		postType,
 		tags,
 		specificPosts,
 		specificMode,
@@ -64,8 +64,8 @@ export const queryCriteriaFromAttributes = attributes => {
 
 	const cleanPosts = sanitizePostList( specificPosts );
 	const isSpecificPostModeActive = specificMode && cleanPosts && cleanPosts.length;
-	const postTypeArray = Object.keys( includedPostTypes ).reduce(
-		( acc, postType ) => ( includedPostTypes[ postType ] ? [ ...acc, postType ] : acc ),
+	const postTypeArray = Object.keys( postType ).reduce(
+		( acc, slug ) => ( postType[ slug ] ? [ ...acc, slug ] : acc ),
 		[]
 	);
 	const criteria = pickBy(

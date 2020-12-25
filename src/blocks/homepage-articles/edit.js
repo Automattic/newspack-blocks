@@ -251,14 +251,14 @@ class Edit extends Component {
 	};
 
 	renderInspectorControls = () => {
-		const { attributes, postTypes, setAttributes, textColor, setTextColor } = this.props;
+		const { attributes, availablePostTypes, setAttributes, textColor, setTextColor } = this.props;
 		const {
 			authors,
 			specificPosts,
 			postsToShow,
 			categories,
 			columns,
-			includedPostTypes,
+			postType,
 			showImage,
 			showCaption,
 			imageScale,
@@ -525,15 +525,15 @@ class Edit extends Component {
 					) }
 				</PanelBody>
 				<PanelBody title={ __( 'Post Types', 'newspack-blocks' ) }>
-					{ postTypes &&
-						postTypes.map( ( { name, slug } ) => (
+					{ availablePostTypes &&
+						availablePostTypes.map( ( { name, slug } ) => (
 							<PanelRow key={ slug }>
 								<CheckboxControl
 									label={ name }
-									checked={ includedPostTypes[ slug ] }
+									checked={ postType[ slug ] }
 									onChange={ value =>
 										setAttributes( {
-											includedPostTypes: { ...includedPostTypes, [ slug ]: value },
+											postType: { ...postType, [ slug ]: value },
 										} )
 									}
 								/>
@@ -752,7 +752,7 @@ export default compose( [
 			isUIDisabled: isUIDisabled(),
 			error: getError( { clientId } ),
 			topBlocksClientIdsInOrder: getBlocks().map( block => block.clientId ),
-			postTypes: getPostTypes( { per_page: -1 } )?.filter( ( { viewable } ) => viewable ),
+			availablePostTypes: getPostTypes( { per_page: -1 } )?.filter( ( { viewable } ) => viewable ),
 		};
 
 		if ( isEditorBlock ) {

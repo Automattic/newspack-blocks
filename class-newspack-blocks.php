@@ -346,11 +346,11 @@ class Newspack_Blocks {
 			);
 		}
 
-		$post_type      = isset( $attributes['includedPostTypes'] ) ?
+		$post_type      = isset( $attributes['postType'] ) ?
 			array_reduce(
-				array_keys( $attributes['includedPostTypes'] ),
+				array_keys( $attributes['postType'] ),
 				function( $acc, $post_type ) use ( $attributes ) {
-					if ( $attributes['includedPostTypes'][ $post_type ] ) {
+					if ( $attributes['postType'][ $post_type ] ) {
 						$acc[] = $post_type;
 					}
 					return $acc;

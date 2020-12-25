@@ -131,7 +131,7 @@
       "type": "boolean",
       "default": false
     },
-    "includedPostTypes": {
+    "postType": {
       "type": "object",
       "default": { "post": true }
     }
