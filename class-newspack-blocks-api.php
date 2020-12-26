@@ -276,7 +276,7 @@ class Newspack_Blocks_API {
 		// Use Yoast primary category if set.
 		if ( class_exists( 'WPSEO_Primary_Term' ) ) {
 			$primary_term = new WPSEO_Primary_Term( 'category', $object['id'] );
-			$category_id = $primary_term->get_primary_term();
+			$category_id  = $primary_term->get_primary_term();
 			if ( $category_id ) {
 				$category = get_term( $category_id );
 			}
@@ -375,8 +375,8 @@ class Newspack_Blocks_API {
 			'newspack-blocks/v1',
 			'/video-playlist',
 			[
-				'methods'  => 'GET',
-				'callback' => [ 'Newspack_Blocks_API', 'video_playlist_endpoint' ],
+				'methods'             => 'GET',
+				'callback'            => [ 'Newspack_Blocks_API', 'video_playlist_endpoint' ],
 				'permission_callback' => function( $request ) {
 					return current_user_can( 'edit_posts' );
 				},
@@ -443,7 +443,7 @@ class Newspack_Blocks_API {
 						),
 						'default' => array(),
 					],
-					'post_types'   => [
+					'post_type'    => [
 						'type'    => 'array',
 						'items'   => array(
 							'type' => 'string',
@@ -469,11 +469,18 @@ class Newspack_Blocks_API {
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => [ 'Newspack_Blocks_API', 'specific_posts_endpoint' ],
 				'args'                => [
-					'search'   => [
+					'search'    => [
 						'sanitize_callback' => 'sanitize_text_field',
 					],
-					'per_page' => [
+					'per_page'  => [
 						'sanitize_callback' => 'absint',
+					],
+					'post_type' => [
+						'type'    => 'array',
+						'items'   => array(
+							'type' => 'string',
+						),
+						'default' => array(),
 					],
 				],
 				'permission_callback' => function( $request ) {
@@ -600,12 +607,15 @@ class Newspack_Blocks_API {
 		add_filter( 'posts_where', [ 'Newspack_Blocks_API', 'add_post_title_wildcard_search' ], 10, 2 );
 
 		$args = [
-			'post_type'             => 'post',
 			'post_status'           => 'publish',
 			'title_wildcard_search' => esc_sql( $params['search'] ),
 			'posts_per_page'        => $params['per_page'],
 		];
-
+		if ( $params['post_type'] && count( $params['post_type'] ) ) {
+			$args['post_type'] = $params['post_type'];
+		} else {
+			$args['post_type'] = 'post';
+		}
 		$query = new WP_Query( $args );
 		remove_filter( 'posts_where', [ 'Newspack_Blocks_API', 'add_post_title_wildcard_search' ], 10, 2 );
 		return new \WP_REST_Response(

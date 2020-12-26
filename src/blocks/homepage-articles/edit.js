@@ -337,6 +337,7 @@ class Edit extends Component {
 						onTagExclusionsChange={ _tagExclusions =>
 							setAttributes( { tagExclusions: _tagExclusions } )
 						}
+						postType={ postType }
 					/>
 					{ postLayout === 'grid' && (
 						<RangeControl
