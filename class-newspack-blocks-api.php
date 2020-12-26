@@ -462,16 +462,13 @@ class Newspack_Blocks_API {
 	 * Register specific posts endpoint.
 	 */
 	public static function register_post_lookup_endpoint() {
-		if ( ! Newspack_Blocks::use_experimental() ) {
-			return;
-		}
 		register_rest_route(
 			'newspack-blocks/v1',
 			'/specific-posts',
 			[
-				'methods'  => \WP_REST_Server::READABLE,
-				'callback' => [ 'Newspack_Blocks_API', 'specific_posts_endpoint' ],
-				'args'     => [
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => [ 'Newspack_Blocks_API', 'specific_posts_endpoint' ],
+				'args'                => [
 					'search'   => [
 						'sanitize_callback' => 'sanitize_text_field',
 					],
