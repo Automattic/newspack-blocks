@@ -346,18 +346,7 @@ class Newspack_Blocks {
 			);
 		}
 
-		$post_type      = isset( $attributes['postType'] ) ?
-			array_reduce(
-				array_keys( $attributes['postType'] ),
-				function( $acc, $post_type ) use ( $attributes ) {
-					if ( $attributes['postType'][ $post_type ] ) {
-						$acc[] = $post_type;
-					}
-					return $acc;
-				},
-				[]
-			)
-			: array( 'post' );
+		$post_type      = isset( $attributes['postType'] ) ? $attributes['postType'] : [ 'post' ];
 		$authors        = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
 		$categories     = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
 		$tags           = isset( $attributes['tags'] ) ? $attributes['tags'] : array();

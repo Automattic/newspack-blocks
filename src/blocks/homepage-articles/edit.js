@@ -530,12 +530,18 @@ class Edit extends Component {
 							<PanelRow key={ slug }>
 								<CheckboxControl
 									label={ name }
-									checked={ postType[ slug ] }
-									onChange={ value =>
+									checked={ postType.indexOf( slug ) > -1 }
+									onChange={ value => {
+										const cleanPostType = [ ...new Set( postType ) ];
+										if ( value && cleanPostType.indexOf( slug ) === -1 ) {
+											cleanPostType.push( slug );
+										} else if ( ! value && cleanPostType.indexOf( slug ) > -1 ) {
+											cleanPostType.splice( cleanPostType.indexOf( slug ), 1 );
+										}
 										setAttributes( {
-											postType: { ...postType, [ slug ]: value },
-										} )
-									}
+											postType: cleanPostType,
+										} );
+									} }
 								/>
 							</PanelRow>
 						) ) }
@@ -754,7 +760,6 @@ export default compose( [
 			topBlocksClientIdsInOrder: getBlocks().map( block => block.clientId ),
 			availablePostTypes: getPostTypes( { per_page: -1 } )?.filter( ( { viewable } ) => viewable ),
 		};
-
 		if ( isEditorBlock ) {
 			props.latestPosts = getPosts( { clientId } );
 		} else {

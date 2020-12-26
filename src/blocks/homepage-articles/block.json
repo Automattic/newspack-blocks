@@ -132,8 +132,9 @@
       "default": false
     },
     "postType": {
-      "type": "object",
-      "default": { "post": true }
+      "type": "array",
+      "default": [ "post" ],
+      "items": { "type": "string" }
     }
   }
 }

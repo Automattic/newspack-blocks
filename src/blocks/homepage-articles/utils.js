@@ -64,17 +64,13 @@ export const queryCriteriaFromAttributes = attributes => {
 
 	const cleanPosts = sanitizePostList( specificPosts );
 	const isSpecificPostModeActive = specificMode && cleanPosts && cleanPosts.length;
-	const postTypeArray = Object.keys( postType ).reduce(
-		( acc, slug ) => ( postType[ slug ] ? [ ...acc, slug ] : acc ),
-		[]
-	);
 	const criteria = pickBy(
 		isSpecificPostModeActive
 			? {
 					include: cleanPosts,
 					orderby: 'include',
 					per_page: specificPosts.length,
-					post_type: postTypeArray,
+					post_type: postType,
 			  }
 			: {
 					per_page: postsToShow,
@@ -82,7 +78,7 @@ export const queryCriteriaFromAttributes = attributes => {
 					author: authors,
 					tags,
 					tags_exclude: tagExclusions,
-					post_type: postTypeArray,
+					post_type: postType,
 			  },
 		value => ! isUndefined( value )
 	);
