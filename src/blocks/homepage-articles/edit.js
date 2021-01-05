@@ -754,13 +754,14 @@ export default compose( [
 		const isEditorBlock = editorBlocksIds.indexOf( clientId ) >= 0;
 
 		const { getPosts, getError, isUIDisabled } = select( STORE_NAMESPACE );
-
 		const props = {
 			isEditorBlock,
 			isUIDisabled: isUIDisabled(),
 			error: getError( { clientId } ),
 			topBlocksClientIdsInOrder: getBlocks().map( block => block.clientId ),
-			availablePostTypes: getPostTypes( { per_page: -1 } )?.filter( ( { viewable } ) => viewable ),
+			availablePostTypes: getPostTypes( { per_page: -1 } )?.filter(
+				( { supports: { newspack_blocks: newspackBlocks } } ) => newspackBlocks
+			),
 		};
 
 		if ( isEditorBlock ) {

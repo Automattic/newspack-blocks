@@ -15,6 +15,8 @@ class Newspack_Blocks {
 	 */
 	public static function init() {
 		add_action( 'after_setup_theme', [ __CLASS__, 'add_image_sizes' ] );
+		add_post_type_support( 'post', 'newspack_blocks' );
+		add_post_type_support( 'page', 'newspack_blocks' );
 	}
 
 	/**
