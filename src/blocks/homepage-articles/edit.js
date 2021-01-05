@@ -39,6 +39,7 @@ import {
 import {
 	Button,
 	ButtonGroup,
+	CheckboxControl,
 	PanelBody,
 	PanelRow,
 	RangeControl,
@@ -250,7 +251,7 @@ class Edit extends Component {
 	};
 
 	renderInspectorControls = () => {
-		const { attributes, setAttributes, textColor, setTextColor } = this.props;
+		const { attributes, availablePostTypes, setAttributes, textColor, setTextColor } = this.props;
 
 		const {
 			authors,
@@ -258,6 +259,7 @@ class Edit extends Component {
 			postsToShow,
 			categories,
 			columns,
+			postType,
 			showImage,
 			showCaption,
 			imageScale,
@@ -336,6 +338,7 @@ class Edit extends Component {
 						onTagExclusionsChange={ _tagExclusions =>
 							setAttributes( { tagExclusions: _tagExclusions } )
 						}
+						postType={ postType }
 					/>
 					{ postLayout === 'grid' && (
 						<RangeControl
@@ -522,6 +525,28 @@ class Edit extends Component {
 							/>
 						</PanelRow>
 					) }
+				</PanelBody>
+				<PanelBody title={ __( 'Post Types', 'newspack-blocks' ) }>
+					{ availablePostTypes &&
+						availablePostTypes.map( ( { name, slug } ) => (
+							<PanelRow key={ slug }>
+								<CheckboxControl
+									label={ name }
+									checked={ postType.indexOf( slug ) > -1 }
+									onChange={ value => {
+										const cleanPostType = [ ...new Set( postType ) ];
+										if ( value && cleanPostType.indexOf( slug ) === -1 ) {
+											cleanPostType.push( slug );
+										} else if ( ! value && cleanPostType.indexOf( slug ) > -1 ) {
+											cleanPostType.splice( cleanPostType.indexOf( slug ), 1 );
+										}
+										setAttributes( {
+											postType: cleanPostType,
+										} );
+									} }
+								/>
+							</PanelRow>
+						) ) }
 				</PanelBody>
 			</Fragment>
 		);
@@ -722,6 +747,7 @@ class Edit extends Component {
 export default compose( [
 	withColors( { textColor: 'color' } ),
 	withSelect( ( select, { clientId, attributes } ) => {
+		const { getPostTypes } = select( 'core' );
 		const { getEditorBlocks, getBlocks } = select( 'core/editor' );
 		const editorBlocksIds = getEditorBlocksIds( getEditorBlocks() );
 		// The block might be rendered in the block styles preview, not in the editor.
@@ -734,6 +760,7 @@ export default compose( [
 			isUIDisabled: isUIDisabled(),
 			error: getError( { clientId } ),
 			topBlocksClientIdsInOrder: getBlocks().map( block => block.clientId ),
+			availablePostTypes: getPostTypes( { per_page: -1 } )?.filter( ( { viewable } ) => viewable ),
 		};
 
 		if ( isEditorBlock ) {

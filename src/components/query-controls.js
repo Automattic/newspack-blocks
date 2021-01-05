@@ -23,6 +23,7 @@ class QueryControls extends Component {
 	};
 
 	fetchPostSuggestions = search => {
+		const { postType } = this.props;
 		const basePath = '/newspack-blocks/v1/specific-posts';
 		return apiFetch( {
 			path: addQueryArgs( basePath, {
@@ -30,6 +31,7 @@ class QueryControls extends Component {
 				per_page: 20,
 				_fields: 'id,title',
 				type: 'post',
+				post_type: postType,
 			} ),
 		} ).then( function( posts ) {
 			const result = posts.map( post => ( {
