@@ -537,7 +537,6 @@ class Newspack_Blocks_API {
 		if ( $params['exclude'] && count( $params['exclude'] ) ) {
 			$args['post__not_in'] = $params['exclude'];
 		}
-
 		if ( $params['post_type'] && count( $params['post_type'] ) ) {
 			$args['post_type'] = $params['post_type'];
 		}

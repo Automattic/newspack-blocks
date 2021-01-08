@@ -670,5 +670,33 @@ class Newspack_Blocks {
 			);
 		}
 	}
+
+	/**
+	 * Return a excerpt more replacement when using the 'Read More' link.
+	 *
+	 * @param string $more Default excerpt_more value.
+	 */
+	public static function more_excerpt( $more ) {
+		return '…';
+	}
+
+	/**
+	 * Filter for excerpt ellipsis.
+	 *
+	 * @param array $attributes The block's attributes.
+	 */
+	public static function filter_excerpt_more( $attributes ) {
+		// If showing the 'Read More' link, modify the ellipsis.
+		if ( $attributes['showReadMore'] ) {
+			add_filter( 'excerpt_more', [ __CLASS__, 'more_excerpt' ], 999 );
+		}
+	}
+
+	/**
+	 * Remove excerpt ellipsis filter after Homepage Posts block loop.
+	 */
+	public static function remove_excerpt_more_filter() {
+		remove_filter( 'excerpt_more', [ __CLASS__, 'more_excerpt' ], 999 );
+	}
 }
 Newspack_Blocks::init();

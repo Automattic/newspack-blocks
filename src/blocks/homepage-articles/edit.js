@@ -45,6 +45,7 @@ import {
 	RangeControl,
 	Toolbar,
 	ToggleControl,
+	TextControl,
 	Placeholder,
 	Spinner,
 	BaseControl,
@@ -110,6 +111,8 @@ class Edit extends Component {
 			minHeight,
 			showCaption,
 			showExcerpt,
+			showReadMore,
+			readMoreLabel,
 			showSubtitle,
 			showAuthor,
 			showAvatar,
@@ -148,9 +151,11 @@ class Edit extends Component {
 			const content = currentPost.content.rendered;
 			const newExcerpt = content.replace( regex, '' );
 
+			const excerptEllipsis = showReadMore ? '…' : ' […]';
+
 			const needsEllipsis = excerptLength < newExcerpt.trim().split( ' ' ).length;
 			const postExcerpt = needsEllipsis
-				? `${ newExcerpt.split( ' ', excerptLength ).join( ' ' ) } […]`
+				? `${ newExcerpt.split( ' ', excerptLength ).join( ' ' ) + excerptEllipsis } `
 				: newExcerpt;
 
 			return currentPost.newspack_has_custom_excerpt
@@ -217,6 +222,11 @@ class Edit extends Component {
 								: getTrimmedExcerpt( post, attributes ) }
 						</RawHTML>
 					) }
+					{ showReadMore && (
+						<a href="#" key="readmore" className="more-link">
+							{ readMoreLabel }
+						</a>
+					) }
 					<div className="entry-meta">
 						{ post.newspack_post_sponsors && formatSponsorLogos( post.newspack_post_sponsors ) }
 						{ post.newspack_post_sponsors && formatSponsorByline( post.newspack_post_sponsors ) }
@@ -267,6 +277,8 @@ class Edit extends Component {
 			minHeight,
 			moreButton,
 			showExcerpt,
+			showReadMore,
+			readMoreLabel,
 			excerptLength,
 			showSubtitle,
 			typeScale,
@@ -469,6 +481,19 @@ class Edit extends Component {
 							onChange={ value => setAttributes( { excerptLength: value } ) }
 							min={ 10 }
 							max={ 100 }
+						/>
+					) }
+					<ToggleControl
+						label={ __( 'Add a "Read More" link', 'newspack-blocks' ) }
+						checked={ showReadMore }
+						onChange={ () => setAttributes( { showReadMore: ! showReadMore } ) }
+					/>
+					{ showReadMore && (
+						<TextControl
+							label={ __( '"Read More" link text', 'newspack-blocks' ) }
+							value={ readMoreLabel }
+							placeholder={ readMoreLabel }
+							onChange={ value => setAttributes( { readMoreLabel: value } ) }
 						/>
 					) }
 					<RangeControl
