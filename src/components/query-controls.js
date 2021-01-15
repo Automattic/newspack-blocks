@@ -17,6 +17,9 @@ import { decodeEntities } from '@wordpress/html-entities';
  */
 import AutocompleteTokenField from './autocomplete-tokenfield';
 
+const getCategoryTitle = category =>
+	decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' );
+
 class QueryControls extends Component {
 	state = {
 		showAdvancedFilters: false,
@@ -90,16 +93,30 @@ class QueryControls extends Component {
 			path: addQueryArgs( '/wp/v2/categories', {
 				search,
 				per_page: 20,
-				_fields: 'id,name',
+				_fields: 'id,name,parent',
 				orderby: 'count',
 				order: 'desc',
 			} ),
-		} ).then( function( categories ) {
-			return categories.map( category => ( {
-				value: category.id,
-				label: decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' ),
-			} ) );
-		} );
+		} ).then( categories =>
+			Promise.all(
+				categories.map( category => {
+					if ( category.parent > 0 ) {
+						return apiFetch( {
+							path: addQueryArgs( `/wp/v2/categories/${ category.parent }`, {
+								_fields: 'name',
+							} ),
+						} ).then( parentCategory => ( {
+							value: category.id,
+							label: `${ getCategoryTitle( category ) } – ${ getCategoryTitle( parentCategory ) }`,
+						} ) );
+					}
+					return Promise.resolve( {
+						value: category.id,
+						label: getCategoryTitle( category ),
+					} );
+				} )
+			)
+		);
 	};
 	fetchSavedCategories = categoryIDs => {
 		return apiFetch( {
