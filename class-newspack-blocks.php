@@ -451,7 +451,7 @@ class Newspack_Blocks {
 	}
 
 	/**
-	 * Prepare a list of classes based on assigned tags, categories and post formats.
+	 * Prepare a list of classes based on assigned tags, categories, post formats and types.
 	 *
 	 * @param string $post_id Post ID.
 	 * @return string CSS classes.
@@ -476,6 +476,11 @@ class Newspack_Blocks {
 		$post_format = get_post_format( $post_id );
 		if ( false !== $post_format ) {
 			$classes[] = 'format-' . $post_format;
+		}
+
+		$post_type = get_post_type( $post_id );
+		if ( false !== $post_type ) {
+			$classes[] = 'type-' . $post_type;
 		}
 
 		return implode( ' ', $classes );
