@@ -390,7 +390,7 @@ class Newspack_Blocks_API {
 	public static function register_posts_endpoint() {
 		register_rest_route(
 			'newspack-blocks/v1',
-			'/homepage-article-posts',
+			'/newspack-blocks-posts',
 			[
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => [ 'Newspack_Blocks_API', 'posts_endpoint' ],
