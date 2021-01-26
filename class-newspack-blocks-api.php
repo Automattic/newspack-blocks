@@ -385,80 +385,6 @@ class Newspack_Blocks_API {
 	}
 
 	/**
-	 * Register custom posts endpoint.
-	 */
-	public static function register_posts_endpoint() {
-		register_rest_route(
-			'newspack-blocks/v1',
-			'/newspack-blocks-posts',
-			[
-				'methods'             => \WP_REST_Server::READABLE,
-				'callback'            => [ 'Newspack_Blocks_API', 'posts_endpoint' ],
-				'args'                => [
-					'author'       => [
-						'type'    => 'array',
-						'items'   => array(
-							'type' => 'integer',
-						),
-						'default' => array(),
-					],
-					'categories'   => [
-						'type'    => 'array',
-						'items'   => array(
-							'type' => 'integer',
-						),
-						'default' => array(),
-					],
-					'exclude'      => [
-						'type'    => 'array',
-						'items'   => array(
-							'type' => 'integer',
-						),
-						'default' => array(),
-					],
-					'include'      => [
-						'type'    => 'array',
-						'items'   => array(
-							'type' => 'integer',
-						),
-						'default' => array(),
-					],
-					'orderby'      => [
-						'sanitize_callback' => 'sanitize_text_field',
-					],
-					'per_page'     => [
-						'sanitize_callback' => 'absint',
-					],
-					'tags'         => [
-						'type'    => 'array',
-						'items'   => array(
-							'type' => 'integer',
-						),
-						'default' => array(),
-					],
-					'tags_exclude' => [
-						'type'    => 'array',
-						'items'   => array(
-							'type' => 'integer',
-						),
-						'default' => array(),
-					],
-					'post_type'    => [
-						'type'    => 'array',
-						'items'   => array(
-							'type' => 'string',
-						),
-						'default' => array(),
-					],
-				],
-				'permission_callback' => function( $request ) {
-					return current_user_can( 'edit_posts' );
-				},
-			]
-		);
-	}
-
-	/**
 	 * Register specific posts endpoint.
 	 */
 	public static function register_post_lookup_endpoint() {
@@ -680,5 +606,4 @@ class Newspack_Blocks_API {
 add_action( 'rest_api_init', array( 'Newspack_Blocks_API', 'register_rest_fields' ) );
 add_action( 'rest_api_init', array( 'Newspack_Blocks_API', 'register_video_playlist_endpoint' ) );
 add_action( 'rest_api_init', array( 'Newspack_Blocks_API', 'register_post_lookup_endpoint' ) );
-add_action( 'rest_api_init', array( 'Newspack_Blocks_API', 'register_posts_endpoint' ) );
 add_filter( 'rest_post_query', array( 'Newspack_Blocks_API', 'post_meta_request_params' ), 10, 2 );
