@@ -64,7 +64,7 @@ class Newspack_Blocks {
 				'newspack_blocks_data',
 				[
 					'patterns'       => self::get_patterns_for_post_type( get_post_type() ),
-					'posts_rest_url' => rest_url( 'newspack-blocks/v1/posts' ),
+					'posts_rest_url' => rest_url( 'newspack-blocks/v1/homepage-article-posts' ),
 				]
 			);
 
