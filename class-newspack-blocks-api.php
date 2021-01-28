@@ -459,6 +459,8 @@ class Newspack_Blocks_API {
 		}
 		if ( $params['include'] && count( $params['include'] ) ) {
 			$args['post__in'] = $params['include'];
+			$args['orderby']  = 'post__in';
+			$args['order']    = 'ASC';
 		}
 		if ( $params['exclude'] && count( $params['exclude'] ) ) {
 			$args['post__not_in'] = $params['exclude'];
