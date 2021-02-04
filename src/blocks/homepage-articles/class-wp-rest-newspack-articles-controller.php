@@ -119,7 +119,7 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 
 		// Endpoint to get articles in the editor, in specific posts mode.
 		register_rest_route(
-			'newspack-blocks/v1',
+			$this->namespace,
 			'/newspack-blocks-specific-posts',
 			[
 				'methods'             => \WP_REST_Server::READABLE,
