@@ -146,7 +146,7 @@ class Newspack_Blocks {
 	 * @param string $type The block's type.
 	 */
 	public static function enqueue_view_assets( $type ) {
-		$style_path= apply_filters(
+		$style_path = apply_filters(
 			'newspack_blocks_enqueue_view_assets',
 			NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $type . '/view' . ( is_rtl() ? '.rtl' : '' ) . '.css',
 			$type,
