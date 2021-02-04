@@ -255,7 +255,7 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 		);
 		$xpath = new DOMXPath( $dom );
 		foreach ( iterator_to_array( $xpath->query( '//noscript | //comment()' ) ) as $node ) {
-			$node->parentNode->removeChild( $node ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar
+			$node->parentNode->removeChild( $node ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		}
 		return AMP_DOM_Utils::get_content_from_dom( $dom );
 	}
