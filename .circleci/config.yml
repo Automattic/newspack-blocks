@@ -27,8 +27,20 @@ jobs:
     steps:
       - checkout_code
       - run:
-          name: Run Linter
+          name: Run JS linter
           command: npm run lint
+
+  php-lint:
+    docker:
+      - image: cimg/php:7.4
+    steps:
+      - checkout_code
+      - run:
+          name: Composer install
+          command: composer install
+      - run:
+          name: PHP lint
+          command: composer lint
 
   release:
     docker:
@@ -62,6 +74,9 @@ workflows:
     jobs:
       - build
       - lint:
+          requires:
+            - build
+      - php-lint:
           requires:
             - build
       - release:
