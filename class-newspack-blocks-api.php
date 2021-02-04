@@ -385,38 +385,6 @@ class Newspack_Blocks_API {
 	}
 
 	/**
-	 * Register specific posts endpoint.
-	 */
-	public static function register_post_lookup_endpoint() {
-		register_rest_route(
-			'newspack-blocks/v1',
-			'/specific-posts',
-			[
-				'methods'             => \WP_REST_Server::READABLE,
-				'callback'            => [ 'Newspack_Blocks_API', 'specific_posts_endpoint' ],
-				'args'                => [
-					'search'   => [
-						'sanitize_callback' => 'sanitize_text_field',
-					],
-					'per_page' => [
-						'sanitize_callback' => 'absint',
-					],
-					'post_type' => [
-						'type'    => 'array',
-						'items'   => array(
-							'type' => 'string',
-						),
-						'default' => array(),
-					],
-				],
-				'permission_callback' => function( $request ) {
-					return current_user_can( 'edit_posts' );
-				},
-			]
-		);
-	}
-
-	/**
 	 * Process requests to the video-playlist endpoint.
 	 *
 	 * @param WP_REST_Request $request Request object.
@@ -607,5 +575,4 @@ class Newspack_Blocks_API {
 
 add_action( 'rest_api_init', array( 'Newspack_Blocks_API', 'register_rest_fields' ) );
 add_action( 'rest_api_init', array( 'Newspack_Blocks_API', 'register_video_playlist_endpoint' ) );
-add_action( 'rest_api_init', array( 'Newspack_Blocks_API', 'register_post_lookup_endpoint' ) );
 add_filter( 'rest_post_query', array( 'Newspack_Blocks_API', 'post_meta_request_params' ), 10, 2 );
