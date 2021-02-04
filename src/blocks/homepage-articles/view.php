@@ -123,7 +123,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 					</h2>
 				<?php endif; ?>
 				<?php
-				echo Newspack_Blocks::template_inc( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				echo Newspack_Blocks::template_inc(
 					__DIR__ . '/templates/articles-list.php',
 					[
 						'articles_rest_url' => $articles_rest_url,
