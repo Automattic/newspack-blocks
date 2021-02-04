@@ -5,10 +5,12 @@
  * @package WordPress
  */
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
 /**
  * Class WP_REST_Newspack_Articles_Controller.
  */
 class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
+// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
 
 	/**
 	 * Attribute schema.
