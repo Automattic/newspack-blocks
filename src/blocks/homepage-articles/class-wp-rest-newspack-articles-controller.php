@@ -35,6 +35,7 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 	 * @access public
 	 */
 	public function register_routes() {
+		// Endpoint to get articles on the front-end.
 		register_rest_route(
 			$this->namespace,
 			'/' . $this->rest_base,
@@ -47,6 +48,8 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 				],
 			]
 		);
+
+		// Endpoint to get articles in the editor, in regular/query mode.
 		register_rest_route(
 			$this->namespace,
 			'/newspack-blocks-posts',
@@ -103,6 +106,34 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 						'default' => array(),
 					],
 					'post_type'    => [
+						'type'    => 'array',
+						'items'   => array(
+							'type' => 'string',
+						),
+						'default' => array(),
+					],
+				],
+				'permission_callback' => function( $request ) {
+					return current_user_can( 'edit_posts' );
+				},
+			]
+		);
+
+		// Endpoint to get articles in the editor, in specific posts mode.
+		register_rest_route(
+			$this->namespace,
+			'/newspack-blocks-specific-posts',
+			[
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => [ 'Newspack_Blocks_API', 'specific_posts_endpoint' ],
+				'args'                => [
+					'search'    => [
+						'sanitize_callback' => 'sanitize_text_field',
+					],
+					'per_page'  => [
+						'sanitize_callback' => 'absint',
+					],
+					'post_type' => [
 						'type'    => 'array',
 						'items'   => array(
 							'type' => 'string',
