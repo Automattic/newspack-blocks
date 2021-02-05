@@ -26,7 +26,7 @@ require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/homepage-articles/class-w
 /**
  * Registers Articles block routes.
  */
-function newspack_articles_block_register_rest_routes() {
+function newspack_articles_block_register_rest_routes() { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 	$articles_controller = new WP_REST_Newspack_Articles_Controller();
 	$articles_controller->register_routes();
 }
