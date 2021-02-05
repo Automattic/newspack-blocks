@@ -18,7 +18,8 @@
     ],
     "post-update-cmd": [
       "vendor/bin/cghooks update"
-    ]
+    ],
+    "lint": "phpcs ./"
   },
   "extra": {
     "hooks": {
