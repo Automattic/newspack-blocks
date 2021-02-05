@@ -276,7 +276,7 @@ class Newspack_Blocks_API {
 		// Use Yoast primary category if set.
 		if ( class_exists( 'WPSEO_Primary_Term' ) ) {
 			$primary_term = new WPSEO_Primary_Term( 'category', $object['id'] );
-			$category_id = $primary_term->get_primary_term();
+			$category_id  = $primary_term->get_primary_term();
 			if ( $category_id ) {
 				$category = get_term( $category_id );
 			}
@@ -323,6 +323,7 @@ class Newspack_Blocks_API {
 			)
 		);
 		if ( ! empty( $sponsors ) ) {
+			$sponsor_info = [];
 			foreach ( $sponsors as $sponsor ) {
 				$sponsor_info_item = [
 					'flag'          => $sponsor['sponsor_flag'],
