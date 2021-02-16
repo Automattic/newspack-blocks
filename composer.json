@@ -9,7 +9,8 @@
     "brainmaestro/composer-git-hooks": "^2.6",
     "wp-coding-standards/wpcs": "*",
     "dealerdirect/phpcodesniffer-composer-installer": "*",
-    "phpcompatibility/phpcompatibility-wp": "*"
+    "phpcompatibility/phpcompatibility-wp": "*",
+    "sirbrillig/phpcs-variable-analysis": "^2.10"
   },
   "license": "GPL-3.0-or-later",
   "scripts": {

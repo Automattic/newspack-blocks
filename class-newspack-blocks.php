@@ -401,7 +401,7 @@ class Newspack_Blocks {
 	 * @param array  $data          Data to be passed into the template to be included.
 	 * @return string
 	 */
-	public static function template_inc( $template, $data = array() ) {
+	public static function template_inc( $template, $data = array() ) { //phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		if ( ! strpos( $template, '.php' ) ) {
 			$template = $template . '.php';
 		}
@@ -676,7 +676,7 @@ class Newspack_Blocks {
 		if ( $attributes['showExcerpt'] ) {
 			self::$newspack_blocks_excerpt_length_closure = add_filter(
 				'excerpt_length',
-				function( $length ) use ( $attributes ) {
+				function() use ( $attributes ) {
 					if ( $attributes['excerptLength'] ) {
 						return $attributes['excerptLength'];
 					}
@@ -704,10 +704,8 @@ class Newspack_Blocks {
 
 	/**
 	 * Return a excerpt more replacement when using the 'Read More' link.
-	 *
-	 * @param string $more Default excerpt_more value.
 	 */
-	public static function more_excerpt( $more ) {
+	public static function more_excerpt() {
 		return '…';
 	}
 
