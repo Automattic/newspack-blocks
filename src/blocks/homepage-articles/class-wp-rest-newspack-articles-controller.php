@@ -120,7 +120,7 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 						'default' => array(),
 					],
 				],
-				'permission_callback' => function( $request ) {
+				'permission_callback' => function() {
 					return current_user_can( 'edit_posts' );
 				},
 			]
@@ -148,7 +148,7 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 						'default' => array(),
 					],
 				],
-				'permission_callback' => function( $request ) {
+				'permission_callback' => function() {
 					return current_user_can( 'edit_posts' );
 				},
 			]
