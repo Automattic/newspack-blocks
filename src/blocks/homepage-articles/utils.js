@@ -1,7 +1,12 @@
 /**
  * External dependencies
  */
-import { isEqual, isUndefined, pick, pickBy } from 'lodash';
+import { debounce, isEqual, isUndefined, pick, pickBy } from 'lodash';
+
+/**
+ * External dependencies
+ */
+import { select as globalSelect } from '@wordpress/data';
 
 /**
  * Based global WP.com blog_public option, checks whether current blog is
@@ -110,3 +115,13 @@ export const getEditorBlocksIds = blocks =>
 		homepageArticleBlocks.push( block.clientId );
 		return homepageArticleBlocks.concat( getEditorBlocksIds( block.innerBlocks ) );
 	} );
+
+export const getCoreStorePosts = debounce(
+	attributes =>
+		globalSelect( 'core' ).getEntityRecords(
+			'postType',
+			'post',
+			queryCriteriaFromAttributes( attributes )
+		),
+	500
+);

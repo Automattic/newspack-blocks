@@ -5,12 +5,7 @@
  */
 import QueryControls from '../../components/query-controls';
 import { STORE_NAMESPACE } from './store';
-import {
-	getEditorBlocksIds,
-	isBlogPrivate,
-	shouldReflow,
-	queryCriteriaFromAttributes,
-} from './utils';
+import { getEditorBlocksIds, isBlogPrivate, shouldReflow, getCoreStorePosts } from './utils';
 import {
 	formatAvatars,
 	formatByline,
@@ -777,11 +772,7 @@ export default compose( [
 		} else {
 			// For block preview, display without deduplication. If there would be a way to match the outside-editor's
 			// block clientId to the clientId of the block that's being previewed, the correct posts could be shown here.
-			props.latestPosts = select( 'core' ).getEntityRecords(
-				'postType',
-				'post',
-				queryCriteriaFromAttributes( attributes )
-			);
+			props.latestPosts = getCoreStorePosts( attributes );
 		}
 
 		return props;
