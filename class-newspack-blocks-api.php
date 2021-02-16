@@ -378,7 +378,7 @@ class Newspack_Blocks_API {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ 'Newspack_Blocks_API', 'video_playlist_endpoint' ],
-				'permission_callback' => function( $request ) {
+				'permission_callback' => function() {
 					return current_user_can( 'edit_posts' );
 				},
 			]
