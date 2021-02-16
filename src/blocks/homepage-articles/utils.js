@@ -21,7 +21,9 @@ const POST_QUERY_ATTRIBUTES = [
 	'postsToShow',
 	'authors',
 	'categories',
+	'excerptLength',
 	'tags',
+	'showExcerpt',
 	'specificPosts',
 	'specificMode',
 	'tagExclusions',
@@ -55,7 +57,9 @@ export const queryCriteriaFromAttributes = attributes => {
 		postsToShow,
 		authors,
 		categories,
+		excerptLength,
 		postType,
+		showExcerpt,
 		tags,
 		specificPosts,
 		specificMode,
@@ -82,6 +86,8 @@ export const queryCriteriaFromAttributes = attributes => {
 		value => ! isUndefined( value )
 	);
 	criteria.suppress_password_protected_posts = true;
+	criteria.excerpt_length = excerptLength;
+	criteria.show_excerpt = showExcerpt;
 	return criteria;
 };
 

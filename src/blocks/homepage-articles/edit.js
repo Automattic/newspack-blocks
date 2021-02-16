@@ -144,25 +144,6 @@ class Edit extends Component {
 
 		const postTitle = this.titleForPost( post );
 		const dateFormat = __experimentalGetSettings().formats.date;
-
-		const getTrimmedExcerpt = ( currentPost, { excerptLength } ) => {
-			const regex = /(<([^>]+)>)/gi;
-			const excerpt = currentPost.excerpt.rendered;
-			const content = currentPost.content.rendered;
-			const newExcerpt = content.replace( regex, '' );
-
-			const excerptEllipsis = showReadMore ? '…' : ' […]';
-
-			const needsEllipsis = excerptLength < newExcerpt.trim().split( ' ' ).length;
-			const postExcerpt = needsEllipsis
-				? `${ newExcerpt.split( ' ', excerptLength ).join( ' ' ) + excerptEllipsis } `
-				: newExcerpt;
-
-			return currentPost.newspack_has_custom_excerpt
-				? excerpt
-				: '<p>' + postExcerpt.trim() + '</p>';
-		};
-
 		return (
 			<article className={ postClasses } key={ post.id } style={ styles }>
 				{ showImage && post.newspack_featured_image_src && (
@@ -219,7 +200,7 @@ class Edit extends Component {
 						<RawHTML key="excerpt" className="excerpt-contain">
 							{ post.newspack_post_format === 'aside'
 								? post.content.rendered
-								: getTrimmedExcerpt( post, attributes ) }
+								: post.excerpt.rendered }
 						</RawHTML>
 					) }
 					{ showReadMore && (
