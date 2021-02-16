@@ -1,3 +1,10 @@
+# [1.21.0-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v1.21.0-alpha.1...v1.21.0-alpha.2) (2021-02-16)
+
+
+### Bug Fixes
+
+* trigger alpha release build ([dac8574](https://github.com/Automattic/newspack-blocks/commit/dac85749c1b005e52b14c1fdecb7ec0c3dbdcc92))
+
 # [1.21.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.20.1...v1.21.0-alpha.1) (2021-02-16)
 
 
