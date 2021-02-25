@@ -1,3 +1,10 @@
+## [1.21.1](https://github.com/Automattic/newspack-blocks/compare/v1.21.0...v1.21.1) (2021-02-25)
+
+
+### Bug Fixes
+
+* update donate thank you message in Portuguese ([#706](https://github.com/Automattic/newspack-blocks/issues/706)) ([93c9da5](https://github.com/Automattic/newspack-blocks/commit/93c9da5a05f7666c1d7d4ef625ad252a00d7c14e))
+
 # [1.21.0](https://github.com/Automattic/newspack-blocks/compare/v1.20.1...v1.21.0) (2021-02-16)
 
 
