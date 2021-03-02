@@ -5,12 +5,7 @@
  */
 import QueryControls from '../../components/query-controls';
 import { STORE_NAMESPACE } from './store';
-import {
-	getEditorBlocksIds,
-	isBlogPrivate,
-	shouldReflow,
-	queryCriteriaFromAttributes,
-} from './utils';
+import { getEditorBlocksIds, isBlogPrivate, shouldReflow, getCoreStorePosts } from './utils';
 import {
 	formatAvatars,
 	formatByline,
@@ -39,11 +34,13 @@ import {
 import {
 	Button,
 	ButtonGroup,
+	CheckboxControl,
 	PanelBody,
 	PanelRow,
 	RangeControl,
 	Toolbar,
 	ToggleControl,
+	TextControl,
 	Placeholder,
 	Spinner,
 	BaseControl,
@@ -109,6 +106,8 @@ class Edit extends Component {
 			minHeight,
 			showCaption,
 			showExcerpt,
+			showReadMore,
+			readMoreLabel,
 			showSubtitle,
 			showAuthor,
 			showAvatar,
@@ -140,23 +139,6 @@ class Edit extends Component {
 
 		const postTitle = this.titleForPost( post );
 		const dateFormat = __experimentalGetSettings().formats.date;
-
-		const getTrimmedExcerpt = ( currentPost, { excerptLength } ) => {
-			const regex = /(<([^>]+)>)/gi;
-			const excerpt = currentPost.excerpt.rendered;
-			const content = currentPost.content.rendered;
-			const newExcerpt = content.replace( regex, '' );
-
-			const needsEllipsis = excerptLength < newExcerpt.trim().split( ' ' ).length;
-			const postExcerpt = needsEllipsis
-				? `${ newExcerpt.split( ' ', excerptLength ).join( ' ' ) } […]`
-				: newExcerpt;
-
-			return currentPost.newspack_has_custom_excerpt
-				? excerpt
-				: '<p>' + postExcerpt.trim() + '</p>';
-		};
-
 		return (
 			<article className={ postClasses } key={ post.id } style={ styles }>
 				{ showImage && post.newspack_featured_image_src && (
@@ -213,8 +195,13 @@ class Edit extends Component {
 						<RawHTML key="excerpt" className="excerpt-contain">
 							{ post.newspack_post_format === 'aside'
 								? post.content.rendered
-								: getTrimmedExcerpt( post, attributes ) }
+								: post.excerpt.rendered }
 						</RawHTML>
+					) }
+					{ showReadMore && (
+						<a href="#" key="readmore" className="more-link">
+							{ readMoreLabel }
+						</a>
 					) }
 					<div className="entry-meta">
 						{ post.newspack_post_sponsors && formatSponsorLogos( post.newspack_post_sponsors ) }
@@ -250,7 +237,7 @@ class Edit extends Component {
 	};
 
 	renderInspectorControls = () => {
-		const { attributes, setAttributes, textColor, setTextColor } = this.props;
+		const { attributes, availablePostTypes, setAttributes, textColor, setTextColor } = this.props;
 
 		const {
 			authors,
@@ -258,6 +245,7 @@ class Edit extends Component {
 			postsToShow,
 			categories,
 			columns,
+			postType,
 			showImage,
 			showCaption,
 			imageScale,
@@ -265,6 +253,8 @@ class Edit extends Component {
 			minHeight,
 			moreButton,
 			showExcerpt,
+			showReadMore,
+			readMoreLabel,
 			excerptLength,
 			showSubtitle,
 			typeScale,
@@ -336,6 +326,7 @@ class Edit extends Component {
 						onTagExclusionsChange={ _tagExclusions =>
 							setAttributes( { tagExclusions: _tagExclusions } )
 						}
+						postType={ postType }
 					/>
 					{ postLayout === 'grid' && (
 						<RangeControl
@@ -362,11 +353,13 @@ class Edit extends Component {
 							) }
 						</i>
 					) : (
-						<ToggleControl
-							label={ __( 'Show "Load more posts" Button', 'newspack-blocks' ) }
-							checked={ moreButton }
-							onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
-						/>
+						! specificMode && (
+							<ToggleControl
+								label={ __( 'Show "Load more posts" Button', 'newspack-blocks' ) }
+								checked={ moreButton }
+								onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
+							/>
+						)
 					) }
 				</PanelBody>
 				<PanelBody title={ __( 'Featured Image Settings', 'newspack-blocks' ) }>
@@ -468,6 +461,19 @@ class Edit extends Component {
 							max={ 100 }
 						/>
 					) }
+					<ToggleControl
+						label={ __( 'Add a "Read More" link', 'newspack-blocks' ) }
+						checked={ showReadMore }
+						onChange={ () => setAttributes( { showReadMore: ! showReadMore } ) }
+					/>
+					{ showReadMore && (
+						<TextControl
+							label={ __( '"Read More" link text', 'newspack-blocks' ) }
+							value={ readMoreLabel }
+							placeholder={ readMoreLabel }
+							onChange={ value => setAttributes( { readMoreLabel: value } ) }
+						/>
+					) }
 					<RangeControl
 						className="type-scale-slider"
 						label={ __( 'Type Scale', 'newspack-blocks' ) }
@@ -522,6 +528,28 @@ class Edit extends Component {
 							/>
 						</PanelRow>
 					) }
+				</PanelBody>
+				<PanelBody title={ __( 'Post Types', 'newspack-blocks' ) }>
+					{ availablePostTypes &&
+						availablePostTypes.map( ( { name, slug } ) => (
+							<PanelRow key={ slug }>
+								<CheckboxControl
+									label={ name }
+									checked={ postType.indexOf( slug ) > -1 }
+									onChange={ value => {
+										const cleanPostType = [ ...new Set( postType ) ];
+										if ( value && cleanPostType.indexOf( slug ) === -1 ) {
+											cleanPostType.push( slug );
+										} else if ( ! value && cleanPostType.indexOf( slug ) > -1 ) {
+											cleanPostType.splice( cleanPostType.indexOf( slug ), 1 );
+										}
+										setAttributes( {
+											postType: cleanPostType,
+										} );
+									} }
+								/>
+							</PanelRow>
+						) ) }
 				</PanelBody>
 			</Fragment>
 		);
@@ -722,18 +750,21 @@ class Edit extends Component {
 export default compose( [
 	withColors( { textColor: 'color' } ),
 	withSelect( ( select, { clientId, attributes } ) => {
+		const { getPostTypes } = select( 'core' );
 		const { getEditorBlocks, getBlocks } = select( 'core/editor' );
 		const editorBlocksIds = getEditorBlocksIds( getEditorBlocks() );
 		// The block might be rendered in the block styles preview, not in the editor.
 		const isEditorBlock = editorBlocksIds.indexOf( clientId ) >= 0;
 
 		const { getPosts, getError, isUIDisabled } = select( STORE_NAMESPACE );
-
 		const props = {
 			isEditorBlock,
 			isUIDisabled: isUIDisabled(),
 			error: getError( { clientId } ),
 			topBlocksClientIdsInOrder: getBlocks().map( block => block.clientId ),
+			availablePostTypes: getPostTypes( { per_page: -1 } )?.filter(
+				( { supports: { newspack_blocks: newspackBlocks } } ) => newspackBlocks
+			),
 		};
 
 		if ( isEditorBlock ) {
@@ -741,11 +772,7 @@ export default compose( [
 		} else {
 			// For block preview, display without deduplication. If there would be a way to match the outside-editor's
 			// block clientId to the clientId of the block that's being previewed, the correct posts could be shown here.
-			props.latestPosts = select( 'core' ).getEntityRecords(
-				'postType',
-				'post',
-				queryCriteriaFromAttributes( attributes )
-			);
+			props.latestPosts = getCoreStorePosts( attributes );
 		}
 
 		return props;

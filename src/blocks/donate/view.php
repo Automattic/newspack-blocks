@@ -24,6 +24,12 @@ function newspack_blocks_render_block_donate( $attributes ) {
 		return '';
 	}
 
+	$manual = isset( $attributes['manual'] ) ? $attributes['manual'] : false;
+
+	if ( 'nrh' === $settings['platform'] && ! $manual ) {
+		return '';
+	}
+
 	/* If block is in "manual" mode, override certain state properties with values stored in attributes */
 	if ( $attributes['manual'] ?? false ) {
 		$settings = array_merge( $settings, $attributes );
@@ -35,7 +41,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 		'year'  => __( 'Annually', 'newspack-blocks' ),
 	];
 
-	$selected_frequency = 'month';
+	$selected_frequency = $attributes['defaultFrequency'] ?? 'month';
 	$suggested_amounts  = $settings['suggestedAmounts'];
 
 	$campaign = $attributes['campaign'] ?? false;
@@ -112,7 +118,6 @@ function newspack_blocks_render_block_donate( $attributes ) {
 			</form>
 		</div>
 		<?php
-
 	else :
 
 		?>
@@ -190,7 +195,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 												type='number'
 												name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>_other'
 												value='<?php echo esc_attr( $amount ); ?>'
-												id='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid  ); ?>-other-input'
+												id='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-other-input'
 											/>
 										</div>
 									</div>
@@ -214,7 +219,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 		<?php
 	endif;
 
-	return apply_filters( 'newspack_blocks_donate_block_html', ob_get_clean() );
+	return apply_filters( 'newspack_blocks_donate_block_html', ob_get_clean(), $attributes );
 }
 
 /**
@@ -234,7 +239,7 @@ function newspack_blocks_register_donate() {
 				'suggestedAmounts'        => [
 					'type'    => 'array',
 					'items'   => [
-						'type' => 'integer',
+						'type' => 'number',
 					],
 					'default' => [ 0, 0, 0 ],
 				],
@@ -251,6 +256,10 @@ function newspack_blocks_register_donate() {
 				'buttonText'              => [
 					'type'    => 'string',
 					'default' => __( 'Donate now!', 'newspack-blocks' ),
+				],
+				'defaultFrequency'        => [
+					'type'    => 'string',
+					'default' => 'month',
 				],
 			),
 			'render_callback' => 'newspack_blocks_render_block_donate',

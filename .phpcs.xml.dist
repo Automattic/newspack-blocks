@@ -48,4 +48,8 @@
 			<property name="blank_line_check" value="true"/>
 		</properties>
 	</rule>
+	<rule ref="VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable"/>
+
+	<!-- Exclude compiled asset files -->
+	<exclude-pattern>*.asset.php</exclude-pattern>
 </ruleset>

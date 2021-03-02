@@ -5,10 +5,12 @@
  * @package WordPress
  */
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
 /**
  * Class WP_REST_Newspack_Articles_Controller.
  */
 class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
+// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
 
 	/**
 	 * Attribute schema.
@@ -33,6 +35,7 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 	 * @access public
 	 */
 	public function register_routes() {
+		// Endpoint to get articles on the front-end.
 		register_rest_route(
 			$this->namespace,
 			'/' . $this->rest_base,
@@ -43,6 +46,111 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 					'args'                => $this->get_attribute_schema(),
 					'permission_callback' => '__return_true',
 				],
+			]
+		);
+
+		// Endpoint to get articles in the editor, in regular/query mode.
+		register_rest_route(
+			$this->namespace,
+			'/newspack-blocks-posts',
+			[
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => [ 'Newspack_Blocks_API', 'posts_endpoint' ],
+				'args'                => [
+					'author'         => [
+						'type'    => 'array',
+						'items'   => array(
+							'type' => 'integer',
+						),
+						'default' => array(),
+					],
+					'categories'     => [
+						'type'    => 'array',
+						'items'   => array(
+							'type' => 'integer',
+						),
+						'default' => array(),
+					],
+					'excerpt_length' => [
+						'type'    => 'integer',
+						'default' => 55,
+					],
+					'exclude'        => [
+						'type'    => 'array',
+						'items'   => array(
+							'type' => 'integer',
+						),
+						'default' => array(),
+					],
+					'include'        => [
+						'type'    => 'array',
+						'items'   => array(
+							'type' => 'integer',
+						),
+						'default' => array(),
+					],
+					'orderby'        => [
+						'sanitize_callback' => 'sanitize_text_field',
+					],
+					'per_page'       => [
+						'sanitize_callback' => 'absint',
+					],
+					'show_excerpt'   => [
+						'type' => 'boolean',
+					],
+					'tags'           => [
+						'type'    => 'array',
+						'items'   => array(
+							'type' => 'integer',
+						),
+						'default' => array(),
+					],
+					'tags_exclude'   => [
+						'type'    => 'array',
+						'items'   => array(
+							'type' => 'integer',
+						),
+						'default' => array(),
+					],
+					'post_type'      => [
+						'type'    => 'array',
+						'items'   => array(
+							'type' => 'string',
+						),
+						'default' => array(),
+					],
+				],
+				'permission_callback' => function() {
+					return current_user_can( 'edit_posts' );
+				},
+			]
+		);
+
+		// Endpoint to get articles in the editor, in specific posts mode.
+		register_rest_route(
+			$this->namespace,
+			'/newspack-blocks-specific-posts',
+			[
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => [ 'Newspack_Blocks_API', 'specific_posts_endpoint' ],
+				'args'                => [
+					'search'    => [
+						'sanitize_callback' => 'sanitize_text_field',
+					],
+					'per_page'  => [
+						'sanitize_callback' => 'absint',
+					],
+					'post_type' => [
+						'type'    => 'array',
+						'items'   => array(
+							'type' => 'string',
+						),
+						'default' => array(),
+					],
+				],
+				'permission_callback' => function() {
+					return current_user_can( 'edit_posts' );
+				},
 			]
 		);
 	}
@@ -64,12 +172,20 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 
 		$article_query_args = Newspack_Blocks::build_articles_query( $attributes );
 
-		$query = array_merge(
-			$article_query_args,
-			[
-				'post__not_in' => $exclude_ids,
-			]
-		);
+		// If using exclude_ids, don't worry about pagination. Just get the next postsToShow number of results without the excluded posts. Otherwise, use standard WP pagination.
+		$query = ! empty( $exclude_ids ) ?
+			array_merge(
+				$article_query_args,
+				[
+					'post__not_in' => $exclude_ids,
+				]
+			) :
+			array_merge(
+				$article_query_args,
+				[
+					'paged' => $page,
+				]
+			);
 
 		// Run Query.
 		$article_query = new WP_Query( $query );
@@ -78,6 +194,9 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 		$items    = [];
 		$ids      = [];
 		$next_url = '';
+
+		Newspack_Blocks::filter_excerpt_length( $attributes );
+		Newspack_Blocks::filter_excerpt_more( $attributes );
 
 		// The Loop.
 		while ( $article_query->have_posts() ) {
@@ -96,8 +215,12 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 			$ids[]           = get_the_ID();
 		}
 
+		Newspack_Blocks::remove_excerpt_length_filter();
+		Newspack_Blocks::remove_excerpt_more_filter();
+
 		// Provide next URL if there are more pages.
-		if ( $next_page <= $article_query->max_num_pages ) {
+		$show_next_button = ! empty( $exclude_ids ) ? $article_query->max_num_pages > 1 : $article_query->max_num_pages > $next_page;
+		if ( $show_next_button ) {
 			$next_url = add_query_arg(
 				array_merge(
 					array_map(
@@ -110,6 +233,7 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 						'exclude_ids' => false,
 						'page'        => $next_page,
 						'amp'         => $request->get_param( 'amp' ),
+
 					]
 				),
 				rest_url( '/newspack-blocks/v1/articles' )
@@ -171,7 +295,7 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 		);
 		$xpath = new DOMXPath( $dom );
 		foreach ( iterator_to_array( $xpath->query( '//noscript | //comment()' ) ) as $node ) {
-			$node->parentNode->removeChild( $node ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar
+			$node->parentNode->removeChild( $node ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		}
 		return AMP_DOM_Utils::get_content_from_dom( $dom );
 	}

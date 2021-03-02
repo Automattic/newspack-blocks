@@ -1,4 +1,5 @@
 # Newspack Blocks
+
 This plugin is meant to serve as a container for most Newspack Gutenberg blocks. There may be certain blocks that relate to specific functionality in other plugins, in which case they would live with the primary functionality, but besides this exception most will live in this one.
 
 ## Setup
@@ -19,13 +20,12 @@ To work on Block development and have Webpack watch your files for changes run: 
 
 is performed on changed files before commiting. In other words, is run during `pre-commit` git hook, but only on staged files. The hook is configured in `composer.json`.
 
-|  | PHP | JS | SCSS |
-| :- | :- | :- | :- |
-| tool | [PHPCS](https://github.com/squizlabs/PHP_CodeSniffer) | [eslint](https://eslint.org/) | [stylelint](https://stylelint.io/) |
-| config | `.phpcs.xml.dist` | `.eslintrc.js` | `.stylelintrc` |
-| run manually | `./vendor/bin/phpcs <file>` | `npm run lint:js` | `npm run lint:scss` |
-| autofix ✨ | `./vendor/bin/phpcbf <file>` | `npm run lint:js -- --fix` | `npm run lint:scss -- --fix` |
-
+|              | PHP                                                   | JS                            | SCSS                               |
+| :----------- | :---------------------------------------------------- | :---------------------------- | :--------------------------------- |
+| tool         | [PHPCS](https://github.com/squizlabs/PHP_CodeSniffer) | [eslint](https://eslint.org/) | [stylelint](https://stylelint.io/) |
+| config       | `.phpcs.xml.dist`                                     | `.eslintrc.js`                | `.stylelintrc`                     |
+| run manually | `composer lint`                                       | `npm run lint:js`             | `npm run lint:scss`                |
+| autofix ✨   | `./vendor/bin/phpcbf <file>`                          | `npm run lint:js -- --fix`    | `npm run lint:scss -- --fix`       |
 
 ### Building new Blocks
 

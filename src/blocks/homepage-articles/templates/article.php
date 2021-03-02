@@ -99,7 +99,7 @@ call_user_func(
 				if ( has_post_format( 'aside' ) ) :
 					the_title( '<h3 class="entry-title">', '</h3>' );
 				else :
-				the_title( '<h3 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h3>' );
+					the_title( '<h3 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h3>' );
 				endif;
 			endif;
 			?>
@@ -117,6 +117,13 @@ call_user_func(
 				else :
 					the_excerpt();
 				endif;
+			endif;
+			if ( ! has_post_format( 'aside' ) && ( $attributes['showReadMore'] ) ) :
+				?>
+				<a class="more-link" href="<?php echo esc_url( get_permalink() ); ?>" rel="bookmark">
+					<?php echo esc_html( $attributes['readMoreLabel'] ); ?>
+				</a>
+				<?php
 			endif;
 			if ( $attributes['showAuthor'] || $attributes['showDate'] || ! empty( $sponsors ) ) :
 				?>
@@ -157,7 +164,7 @@ call_user_func(
 						}
 						?>
 					</span>
-					<?php
+						<?php
 					else :
 						if ( $attributes['showAuthor'] ) :
 							if ( $attributes['showAvatar'] ) :

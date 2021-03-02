@@ -17,22 +17,24 @@ import { decodeEntities } from '@wordpress/html-entities';
  */
 import AutocompleteTokenField from './autocomplete-tokenfield';
 
+const getCategoryTitle = category =>
+	decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' );
+
 class QueryControls extends Component {
 	state = {
 		showAdvancedFilters: false,
 	};
 
 	fetchPostSuggestions = search => {
-		const basePath =
-			window && window.newspack_blocks_data && window.newspack_blocks_data._experimental
-				? '/newspack-blocks/v1/specific-posts'
-				: '/wp/v2/search';
+		const { postType } = this.props;
+		const restUrl = window.newspack_blocks_data.specific_posts_rest_url;
 		return apiFetch( {
-			path: addQueryArgs( basePath, {
+			url: addQueryArgs( restUrl, {
 				search,
 				per_page: 20,
 				_fields: 'id,title',
 				type: 'post',
+				post_type: postType,
 			} ),
 		} ).then( function( posts ) {
 			const result = posts.map( post => ( {
@@ -91,16 +93,30 @@ class QueryControls extends Component {
 			path: addQueryArgs( '/wp/v2/categories', {
 				search,
 				per_page: 20,
-				_fields: 'id,name',
+				_fields: 'id,name,parent',
 				orderby: 'count',
 				order: 'desc',
 			} ),
-		} ).then( function( categories ) {
-			return categories.map( category => ( {
-				value: category.id,
-				label: decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' ),
-			} ) );
-		} );
+		} ).then( categories =>
+			Promise.all(
+				categories.map( category => {
+					if ( category.parent > 0 ) {
+						return apiFetch( {
+							path: addQueryArgs( `/wp/v2/categories/${ category.parent }`, {
+								_fields: 'name',
+							} ),
+						} ).then( parentCategory => ( {
+							value: category.id,
+							label: `${ getCategoryTitle( category ) } – ${ getCategoryTitle( parentCategory ) }`,
+						} ) );
+					}
+					return Promise.resolve( {
+						value: category.id,
+						label: getCategoryTitle( category ),
+					} );
+				} )
+			)
+		);
 	};
 	fetchSavedCategories = categoryIDs => {
 		return apiFetch( {
