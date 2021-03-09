@@ -31,8 +31,12 @@ class Newspack_Blocks_Patterns {
 			* We need to get the post type using the post ID from $_REQUEST
 			* since the global $post is not available inside the admin_init hook.
 			*/
+			$post_type = isset( $_REQUEST['post_type'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['post_type'] ) ) : null; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$post_id   = isset( $_REQUEST['post'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['post'] ) ) : null; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$post_type = ! empty( $post_id ) ? get_post_type( $post_id ) : null;
+
+			if ( empty( $post_type ) && ! empty( $post_id ) ) {
+				$post_type = get_post_type( $post_id );
+			}
 
 			/*
 			* Check if donations have been configured.
@@ -44,15 +48,6 @@ class Newspack_Blocks_Patterns {
 				if ( ! is_wp_error( $settings ) && $settings['created'] ) {
 					$donations_configured = true;
 				}
-			}
-
-			/*
-			* Check if Jetpack's Mailchimp block is available.
-			* If not, we won't show the Subscribe patterns.
-			*/
-			$mailchimp_available = false;
-			if ( has_block( 'jetpack/mailchimp' ) ) {
-				$mailchimp_available = true;
 			}
 
 			$block_patterns = array();
@@ -98,10 +93,7 @@ class Newspack_Blocks_Patterns {
 			}
 
 			// Subscribe.
-			if (
-				$mailchimp_available &&
-				( null === $post_type || in_array( $post_type, [ 'page', 'post', 'newspack_popups_cpt' ], true ) )
-			) {
+			if ( null === $post_type || in_array( $post_type, [ 'page', 'post', 'newspack_popups_cpt' ], true ) ) {
 				array_push(
 					$block_patterns,
 					'subscribe-1',

@@ -51,8 +51,6 @@ class Newspack_Blocks {
 	public static function enqueue_block_editor_assets() {
 		$script_data = static::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.js' );
 
-		error_log( print_r( $script_data, true ) );
-
 		if ( $script_data ) {
 			wp_enqueue_script(
 				'newspack-blocks-editor',
