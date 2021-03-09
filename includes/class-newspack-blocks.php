@@ -33,7 +33,7 @@ class Newspack_Blocks {
 		}
 
 		$path_info   = pathinfo( $local_path );
-		$asset_path  = $path_info['dirname'] . '/' . $path_info['filename'] . '.asset.php';
+		$asset_path  = $path_info['dirname'] . '../' . $path_info['filename'] . '.asset.php';
 		$script_data = file_exists( $asset_path )
 			? require $asset_path
 			: array(
@@ -41,7 +41,7 @@ class Newspack_Blocks {
 				'version'      => filemtime( $local_path ),
 			);
 
-		$script_data['script_path'] = plugins_url( $script_path, __FILE__ );
+		$script_data['script_path'] = plugins_url( $script_path, NEWSPACK_BLOCKS__PLUGIN_FILE );
 		return $script_data;
 	}
 
@@ -50,6 +50,8 @@ class Newspack_Blocks {
 	 */
 	public static function enqueue_block_editor_assets() {
 		$script_data = static::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.js' );
+
+		error_log( print_r( $script_data, true ) );
 
 		if ( $script_data ) {
 			wp_enqueue_script(
@@ -72,11 +74,11 @@ class Newspack_Blocks {
 			wp_set_script_translations(
 				'newspack-blocks-editor',
 				'newspack-blocks',
-				plugin_dir_path( __FILE__ ) . 'languages'
+				plugin_dir_path( NEWSPACK_BLOCKS__PLUGIN_FILE ) . 'languages'
 			);
 		}
 
-		$editor_style = plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.css', __FILE__ );
+		$editor_style = plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.css', NEWSPACK_BLOCKS__PLUGIN_FILE );
 
 		wp_enqueue_style(
 			'newspack-blocks-editor',
@@ -105,6 +107,7 @@ class Newspack_Blocks {
 
 			/* If view.php is found, include it and use for block rendering. */
 			$view_php_path = $src_directory . $type . '/view.php';
+
 			if ( file_exists( $view_php_path ) ) {
 				include_once $view_php_path;
 				continue;
@@ -117,7 +120,7 @@ class Newspack_Blocks {
 					"newspack-blocks/{$type}",
 					array(
 						'render_callback' => function( $attributes, $content ) use ( $type ) {
-							Newspack_Blocks::enqueue_view_assets( $type );
+							self::enqueue_view_assets( $type );
 							return $content;
 						},
 					)
@@ -134,7 +137,7 @@ class Newspack_Blocks {
 		if ( file_exists( NEWSPACK_BLOCKS__PLUGIN_DIR . $style_path ) ) {
 			wp_enqueue_style(
 				'newspack-blocks-block-styles-stylesheet',
-				plugins_url( $style_path, __FILE__ ),
+				plugins_url( $style_path, NEWSPACK_BLOCKS__PLUGIN_FILE ),
 				array(),
 				NEWSPACK_BLOCKS__VERSION
 			);
@@ -157,7 +160,7 @@ class Newspack_Blocks {
 		if ( file_exists( NEWSPACK_BLOCKS__PLUGIN_DIR . $style_path ) ) {
 			wp_enqueue_style(
 				"newspack-blocks-{$type}",
-				plugins_url( $style_path, __FILE__ ),
+				plugins_url( $style_path, NEWSPACK_BLOCKS__PLUGIN_FILE ),
 				array(),
 				NEWSPACK_BLOCKS__VERSION
 			);
