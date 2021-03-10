@@ -50,12 +50,18 @@ class Newspack_Blocks_Patterns {
 				}
 			}
 
-			$block_patterns = array();
+			$block_patterns            = [];
+			$post_types_with_campaigns = [ 'page', 'post' ];
 
-			// Donations.
+			// If Campaigns plugin is active, allow patterns in prompts.
+			if ( class_exists( 'Newspack_Popups' ) ) {
+				$post_types_with_campaigns[] = Newspack_Popups::NEWSPACK_POPUPS_CPT;
+			}
+
+			// Donations: pages, posts, and prompts if Campaigns is active.
 			if (
 				$donations_configured &&
-				( null === $post_type || in_array( $post_type, [ 'page', 'post', 'newspack_popups_cpt' ], true ) )
+				( null === $post_type || in_array( $post_type, $post_types_with_campaigns, true ) )
 			) {
 				array_push(
 					$block_patterns,
@@ -65,8 +71,8 @@ class Newspack_Blocks_Patterns {
 				);
 			}
 
-			// Homepage Posts.
-			if ( null === $post_type || in_array( $post_type, [ 'page' ], true ) ) {
+			// Homepage Posts: pages only.
+			if ( null === $post_type || 'page' === $post_type ) {
 				array_push(
 					$block_patterns,
 					'homepage-posts-1',
@@ -92,8 +98,8 @@ class Newspack_Blocks_Patterns {
 				);
 			}
 
-			// Subscribe.
-			if ( null === $post_type || in_array( $post_type, [ 'page', 'post', 'newspack_popups_cpt' ], true ) ) {
+			// Subscribe: pages, posts, and prompts if Campaigns is active.
+			if ( null === $post_type || in_array( $post_type, $post_types_with_campaigns, true ) ) {
 				array_push(
 					$block_patterns,
 					'subscribe-1',
