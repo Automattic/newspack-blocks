@@ -104,7 +104,7 @@ class Newspack_Blocks_Patterns {
 					'homepage-posts-27',
 					'homepage-posts-28',
 					'homepage-posts-29',
-					'homepage-posts-30',
+					'homepage-posts-30'
 				);
 			}
 
