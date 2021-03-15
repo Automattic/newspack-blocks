@@ -94,7 +94,17 @@ class Newspack_Blocks_Patterns {
 					'homepage-posts-17',
 					'homepage-posts-18',
 					'homepage-posts-19',
-					'homepage-posts-20'
+					'homepage-posts-20',
+					'homepage-posts-21',
+					'homepage-posts-22',
+					'homepage-posts-23',
+					'homepage-posts-24',
+					'homepage-posts-25',
+					'homepage-posts-26',
+					'homepage-posts-27',
+					'homepage-posts-28',
+					'homepage-posts-29',
+					'homepage-posts-30',
 				);
 			}
 
