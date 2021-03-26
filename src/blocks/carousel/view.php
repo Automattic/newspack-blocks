@@ -55,7 +55,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 			$counter++;
 			?>
 
-			<article class="<?php echo esc_attr( implode( ' ', $article_classes ) ); ?>">
+			<article data-post-id="<?php the_id(); ?>" class="<?php echo esc_attr( implode( ' ', $article_classes ) ); ?>">
 				<figure class="post-thumbnail">
 					<a href="<?php echo esc_url( get_permalink() ); ?>" rel="bookmark">
 						<?php
@@ -243,7 +243,9 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 		);
 		$autoplay_ui = $autoplay ? newspack_blocks_carousel_block_autoplay_ui( $newspack_blocks_carousel_id ) : '';
 	}
-	$data_attributes = [];
+	$data_attributes = [
+		'data-current-post-id=' . get_the_ID(),
+	];
 
 	if ( $autoplay && ! $is_amp ) {
 		$data_attributes[] = 'data-autoplay=1';
