@@ -8,6 +8,8 @@ import { debounce, isEqual, isUndefined, pick, pickBy } from 'lodash';
  */
 import { select as globalSelect } from '@wordpress/data';
 
+import { STORE_NAMESPACE } from './store';
+
 /**
  * Based global WP.com blog_public option, checks whether current blog is
  * private or not.
@@ -66,7 +68,7 @@ export const queryCriteriaFromAttributes = attributes => {
 		postType,
 		showExcerpt,
 		tags,
-		specificPosts,
+		specificPosts = [],
 		specificMode,
 		tagExclusions,
 	} = pick( attributes, POST_QUERY_ATTRIBUTES );
@@ -99,14 +101,14 @@ export const queryCriteriaFromAttributes = attributes => {
 export const sanitizePostList = postList =>
 	postList.map( id => parseInt( id ) ).filter( id => id > 0 );
 
-export const getBlockQueries = ( blocks, blockName ) =>
+export const getBlockQueries = ( blocks, blockNames ) =>
 	blocks.flatMap( block => {
 		const homepageArticleBlocks = [];
-		if ( block.name === blockName ) {
+		if ( blockNames.indexOf( block.name ) >= 0 ) {
 			const postsQuery = queryCriteriaFromAttributes( block.attributes );
 			homepageArticleBlocks.push( { postsQuery, clientId: block.clientId } );
 		}
-		return homepageArticleBlocks.concat( getBlockQueries( block.innerBlocks, blockName ) );
+		return homepageArticleBlocks.concat( getBlockQueries( block.innerBlocks, blockNames ) );
 	} );
 
 export const getEditorBlocksIds = blocks =>
@@ -116,7 +118,7 @@ export const getEditorBlocksIds = blocks =>
 		return homepageArticleBlocks.concat( getEditorBlocksIds( block.innerBlocks ) );
 	} );
 
-export const getCoreStorePosts = debounce(
+const getCoreStorePosts = debounce(
 	attributes =>
 		globalSelect( 'core' ).getEntityRecords(
 			'postType',
@@ -125,3 +127,39 @@ export const getCoreStorePosts = debounce(
 		),
 	500
 );
+
+export const postsBlockSelector = ( select, { clientId, attributes } ) => {
+	const { getPostTypes } = select( 'core' );
+	const { getEditorBlocks, getBlocks } = select( 'core/editor' );
+	const editorBlocksIds = getEditorBlocksIds( getEditorBlocks() );
+	// The block might be rendered in the block styles preview, not in the editor.
+	const isEditorBlock = editorBlocksIds.indexOf( clientId ) >= 0;
+
+	const { getPosts, getError, isUIDisabled } = select( STORE_NAMESPACE );
+	const props = {
+		isEditorBlock,
+		isUIDisabled: isUIDisabled(),
+		error: getError( { clientId } ),
+		topBlocksClientIdsInOrder: getBlocks().map( block => block.clientId ),
+		availablePostTypes: getPostTypes( { per_page: -1 } )?.filter(
+			( { supports: { newspack_blocks: newspackBlocks } } ) => newspackBlocks
+		),
+	};
+
+	if ( isEditorBlock ) {
+		props.latestPosts = getPosts( { clientId } );
+	} else {
+		// For block preview, display without deduplication. If there would be a way to match the outside-editor's
+		// block clientId to the clientId of the block that's being previewed, the correct posts could be shown here.
+		props.latestPosts = getCoreStorePosts( attributes );
+	}
+
+	return props;
+};
+
+export const postsBlockDispatch = ( dispatch, { isEditorBlock } ) => {
+	return {
+		// Only editor blocks can trigger reflows.
+		triggerReflow: isEditorBlock ? dispatch( STORE_NAMESPACE ).reflow : () => {},
+	};
+};

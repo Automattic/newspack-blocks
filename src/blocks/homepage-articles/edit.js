@@ -4,8 +4,7 @@
  * Internal dependencies
  */
 import QueryControls from '../../components/query-controls';
-import { STORE_NAMESPACE } from './store';
-import { getEditorBlocksIds, isBlogPrivate, shouldReflow, getCoreStorePosts } from './utils';
+import { postsBlockSelector, postsBlockDispatch, isBlogPrivate, shouldReflow } from './utils';
 import {
 	formatAvatars,
 	formatByline,
@@ -132,7 +131,7 @@ class Edit extends Component {
 		const postClasses = classNames(
 			{
 				'post-has-image': post.newspack_featured_image_src,
-				'homepage-posts-block__post--disabled': isUIDisabled,
+				'newspack-block--disabled': isUIDisabled,
 			},
 			post.newspack_article_classes
 		);
@@ -708,7 +707,7 @@ class Edit extends Component {
 							<Placeholder icon={ <Spinner /> } className="component-placeholder__align-center" />
 						) }
 						{ ! latestPosts && error && (
-							<Placeholder className="component-placeholder__align-center homepage-posts-block--error">
+							<Placeholder className="component-placeholder__align-center newspack-block--error">
 								{ error }
 							</Placeholder>
 						) }
@@ -749,38 +748,6 @@ class Edit extends Component {
 
 export default compose( [
 	withColors( { textColor: 'color' } ),
-	withSelect( ( select, { clientId, attributes } ) => {
-		const { getPostTypes } = select( 'core' );
-		const { getEditorBlocks, getBlocks } = select( 'core/editor' );
-		const editorBlocksIds = getEditorBlocksIds( getEditorBlocks() );
-		// The block might be rendered in the block styles preview, not in the editor.
-		const isEditorBlock = editorBlocksIds.indexOf( clientId ) >= 0;
-
-		const { getPosts, getError, isUIDisabled } = select( STORE_NAMESPACE );
-		const props = {
-			isEditorBlock,
-			isUIDisabled: isUIDisabled(),
-			error: getError( { clientId } ),
-			topBlocksClientIdsInOrder: getBlocks().map( block => block.clientId ),
-			availablePostTypes: getPostTypes( { per_page: -1 } )?.filter(
-				( { supports: { newspack_blocks: newspackBlocks } } ) => newspackBlocks
-			),
-		};
-
-		if ( isEditorBlock ) {
-			props.latestPosts = getPosts( { clientId } );
-		} else {
-			// For block preview, display without deduplication. If there would be a way to match the outside-editor's
-			// block clientId to the clientId of the block that's being previewed, the correct posts could be shown here.
-			props.latestPosts = getCoreStorePosts( attributes );
-		}
-
-		return props;
-	} ),
-	withDispatch( ( dispatch, { isEditorBlock } ) => {
-		return {
-			// Only editor blocks can trigger reflows.
-			triggerReflow: isEditorBlock ? dispatch( STORE_NAMESPACE ).reflow : () => {},
-		};
-	} ),
+	withSelect( postsBlockSelector ),
+	withDispatch( postsBlockDispatch ),
 ] )( Edit );

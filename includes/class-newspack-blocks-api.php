@@ -438,11 +438,13 @@ class Newspack_Blocks_API {
 			$args['post_type'] = $params['post_type'];
 		}
 
-		$block_attributes = [
-			'showExcerpt'   => $params['show_excerpt'],
-			'excerptLength' => $params['excerpt_length'],
-		];
-		Newspack_Blocks::filter_excerpt_length( $block_attributes );
+		if ( isset( $params['show_excerpt'], $params['excerpt_length'] ) ) {
+			$block_attributes = [
+				'showExcerpt'   => $params['show_excerpt'],
+				'excerptLength' => $params['excerpt_length'],
+			];
+			Newspack_Blocks::filter_excerpt_length( $block_attributes );
+		}
 
 		$query        = new WP_Query();
 		$query_result = $query->query( $args );
