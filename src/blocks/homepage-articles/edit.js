@@ -53,8 +53,8 @@ import { decodeEntities } from '@wordpress/html-entities';
 let IS_SUBTITLE_SUPPORTED_IN_THEME;
 if (
 	typeof window === 'object' &&
-	window.newspackIsPostSubtitleSupported &&
-	window.newspackIsPostSubtitleSupported.post_subtitle
+	window.newspack_blocks_data &&
+	window.newspack_blocks_data.post_subtitle
 ) {
 	IS_SUBTITLE_SUPPORTED_IN_THEME = true;
 }

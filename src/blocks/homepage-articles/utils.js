@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import { debounce, isEqual, isUndefined, pick, pickBy } from 'lodash';
+import { times, isEqual, isUndefined, pick, pickBy } from 'lodash';
 
 /**
- * External dependencies
+ * WordPress dependencies
  */
-import { select as globalSelect } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 
 import { STORE_NAMESPACE } from './store';
 
@@ -118,15 +118,49 @@ export const getEditorBlocksIds = blocks =>
 		return homepageArticleBlocks.concat( getEditorBlocksIds( block.innerBlocks ) );
 	} );
 
-const getCoreStorePosts = debounce(
-	attributes =>
-		globalSelect( 'core' ).getEntityRecords(
-			'postType',
-			'post',
-			queryCriteriaFromAttributes( attributes )
-		),
-	500
-);
+const getRandomId = () => Math.round( Math.random() * 9999 );
+const PREVIEW_IMAGE_BASE = window.newspack_blocks_data.assets_path;
+const generatePreviewPost = () => ( {
+	author: 1,
+	content: {
+		rendered: __( 'The post content.', 'newspack' ),
+	},
+	date_gmt: new Date().toISOString(),
+	excerpt: {
+		rendered: __( 'The post excerpt.', 'newspack' ),
+	},
+	featured_media: getRandomId(),
+	id: getRandomId(),
+	meta: {
+		newspack_post_subtitle: __( 'Post Subtitle', 'newspack' ),
+	},
+	title: {
+		rendered: __( 'Post Title', 'newspack' ),
+	},
+	newspack_article_classes: 'type-post',
+	newspack_author_info: [
+		{
+			display_name: __( 'Author Name', 'newspack' ),
+			avatar: `<div style="background: #36f;width: 40px;height: 40px;display: block;overflow: hidden;border-radius: 50%;"></div>`,
+			id: 1,
+			author_link: '/',
+		},
+	],
+	newspack_category_info: __( 'Category', 'newspack' ),
+	newspack_featured_image_caption: __( 'Featured image caption', 'newspack' ),
+	newspack_featured_image_src: {
+		large: `${ PREVIEW_IMAGE_BASE }/newspack-1024x683.jpg`,
+		landscape: `${ PREVIEW_IMAGE_BASE }/newspack-800x600.jpg`,
+		portrait: `${ PREVIEW_IMAGE_BASE }/newspack-600x800.jpg`,
+		square: `${ PREVIEW_IMAGE_BASE }/newspack-800x800.jpg`,
+		uncropped: `${ PREVIEW_IMAGE_BASE }/newspack-1024x683.jpg`,
+	},
+	newspack_has_custom_excerpt: false,
+	newspack_post_format: 'standard',
+	newspack_post_sponsors: false,
+} );
+
+const getPreviewPosts = attributes => times( attributes.postsToShow, generatePreviewPost );
 
 export const postsBlockSelector = ( select, { clientId, attributes } ) => {
 	const { getPostTypes } = select( 'core' );
@@ -149,9 +183,8 @@ export const postsBlockSelector = ( select, { clientId, attributes } ) => {
 	if ( isEditorBlock ) {
 		props.latestPosts = getPosts( { clientId } );
 	} else {
-		// For block preview, display without deduplication. If there would be a way to match the outside-editor's
-		// block clientId to the clientId of the block that's being previewed, the correct posts could be shown here.
-		props.latestPosts = getCoreStorePosts( attributes );
+		// For block preview, display static content.
+		props.latestPosts = getPreviewPosts( attributes );
 	}
 
 	return props;
