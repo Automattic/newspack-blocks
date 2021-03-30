@@ -1,3 +1,10 @@
+## [1.22.1-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.22.0...v1.22.1-alpha.1) (2021-03-30)
+
+
+### Bug Fixes
+
+* a PHP warning when editing newsletters ([#722](https://github.com/Automattic/newspack-blocks/issues/722)) ([41ce40e](https://github.com/Automattic/newspack-blocks/commit/41ce40e2e7843bb8a9bc58db7a37886eb86f84cc))
+
 # [1.22.0](https://github.com/Automattic/newspack-blocks/compare/v1.21.1...v1.22.0) (2021-03-23)
 
 
