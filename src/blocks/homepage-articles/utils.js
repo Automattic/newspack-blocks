@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { times, isEqual, isUndefined, pick, pickBy } from 'lodash';
+import { uniqueId, times, isEqual, isUndefined, pick, pickBy } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -118,7 +118,6 @@ export const getEditorBlocksIds = blocks =>
 		return homepageArticleBlocks.concat( getEditorBlocksIds( block.innerBlocks ) );
 	} );
 
-const getRandomId = () => Math.round( Math.random() * 9999 );
 const PREVIEW_IMAGE_BASE = window.newspack_blocks_data.assets_path;
 const generatePreviewPost = () => ( {
 	author: 1,
@@ -129,8 +128,8 @@ const generatePreviewPost = () => ( {
 	excerpt: {
 		rendered: __( 'The post excerpt.', 'newspack' ),
 	},
-	featured_media: getRandomId(),
-	id: getRandomId(),
+	featured_media: uniqueId(),
+	id: uniqueId(),
 	meta: {
 		newspack_post_subtitle: __( 'Post Subtitle', 'newspack' ),
 	},
