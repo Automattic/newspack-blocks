@@ -122,11 +122,14 @@ class Edit extends Component {
 			autoplay && 'wp-block-newspack-blocks-carousel__autoplay-playing'
 		);
 		const dateFormat = __experimentalGetSettings().formats.date;
+		const hasNoPosts = latestPosts && ! latestPosts.length;
 		return (
 			<Fragment>
 				<div className={ classes } ref={ this.carouselRef }>
-					{ latestPosts && ! latestPosts.length && (
-						<Placeholder>{ __( 'Sorry, no posts were found.' ) }</Placeholder>
+					{ hasNoPosts && (
+						<Placeholder className="component-placeholder__align-center">
+							<div style={ { margin: 'auto' } }>{ __( 'Sorry, no posts were found.' ) }</div>
+						</Placeholder>
 					) }
 					{ ! latestPosts && (
 						<Placeholder icon={ <Spinner /> } className="component-placeholder__align-center" />
