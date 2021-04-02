@@ -559,21 +559,6 @@ class Newspack_Blocks_API {
 	 * @return array          $args    Filtered request parameters.
 	 */
 	public static function post_meta_request_params( $args, $request ) {
-		$params = $request->get_params();
-
-		if (
-			isset( $params['meta_key'], $params['meta_value_num'], $params['meta_compare'] ) &&
-			'_thumbnail_id' === $params['meta_key'] &&
-			'0' === $params['meta_value_num'] &&
-			'>' === $params['meta_compare']
-		) {
-			// phpcs:disable WordPress.DB.SlowDBQuery
-			$args['meta_key']       = $params['meta_key'];
-			$args['meta_value_num'] = $params['meta_value_num'];
-			$args['meta_compare']   = $params['meta_compare'];
-			// phpcs:enable WordPress.DB.SlowDBQuery
-		}
-
 		if ( $request->get_param( 'suppress_password_protected_posts' ) ) {
 			$args['has_password'] = false;
 		}

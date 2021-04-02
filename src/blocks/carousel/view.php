@@ -38,9 +38,6 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 		'post_status'         => 'publish',
 		'suppress_filters'    => false,
 		'ignore_sticky_posts' => true,
-		'meta_key'            => '_thumbnail_id', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-		'meta_value_num'      => 0,
-		'meta_compare'        => '>',
 	);
 
 	if ( $authors ) {
@@ -66,28 +63,30 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 		while ( $article_query->have_posts() ) :
 			$article_query->the_post();
 			$authors = Newspack_Blocks::prepare_authors();
-			if ( ! has_post_thumbnail() ) {
-				continue;
-			}
 
 			// Get sponsors for this post.
 			$sponsors = Newspack_Blocks::get_all_sponsors( get_the_id() );
 
 			$counter++;
+			$has_featured_image = has_post_thumbnail();
 			?>
 
 			<article class="<?php echo esc_attr( implode( ' ', $article_classes ) ); ?>">
 				<figure class="post-thumbnail">
 					<a href="<?php echo esc_url( get_permalink() ); ?>" rel="bookmark">
-						<?php
-							the_post_thumbnail(
-								'large',
-								array(
-									'object-fit' => 'cover',
-									'layout'     => 'fill',
-								)
-							);
-						?>
+						<?php if ( $has_featured_image ) : ?>
+							<?php
+								the_post_thumbnail(
+									'large',
+									array(
+										'object-fit' => 'cover',
+										'layout'     => 'fill',
+									)
+								);
+							?>
+						<?php else : ?>
+							<div class="wp-block-newspack-blocks-carousel__placeholder"></div>
+						<?php endif; ?>
 					</a>
 				</figure>
 				<div class="entry-wrapper">

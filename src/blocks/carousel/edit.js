@@ -149,70 +149,71 @@ class Edit extends Component {
 								</Fragment>
 							) }
 							<div className="swiper-wrapper">
-								{ latestPosts.map(
-									post =>
-										post.newspack_featured_image_src && (
-											<article className="post-has-image swiper-slide" key={ post.id }>
-												<figure className="post-thumbnail">
-													{ post.newspack_featured_image_src && (
-														<a href="#" rel="bookmark">
-															<img src={ post.newspack_featured_image_src.large } alt="" />
-														</a>
-													) }
-												</figure>
-												<div className="entry-wrapper">
-													{ post.newspack_post_sponsors && (
-														<span className="cat-links sponsor-label">
-															<span className="flag">
-																{ post.newspack_post_sponsors[ 0 ].flag }
-															</span>
-														</span>
-													) }
-													{ showCategory &&
-														post.newspack_category_info.length &&
-														! post.newspack_post_sponsors && (
-															<div className="cat-links">
-																<a href="#">{ decodeEntities( post.newspack_category_info ) }</a>
-															</div>
-														) }
-													<h3 className="entry-title">
-														<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
-													</h3>
-													<div className="entry-meta">
-														{ post.newspack_post_sponsors &&
-															formatSponsorLogos( post.newspack_post_sponsors ) }
-														{ post.newspack_post_sponsors &&
-															formatSponsorByline( post.newspack_post_sponsors ) }
-														{ showAuthor &&
-															showAvatar &&
-															! post.newspack_post_sponsors &&
-															formatAvatars( post.newspack_author_info ) }
-														{ showAuthor &&
-															! post.newspack_post_sponsors &&
-															formatByline( post.newspack_author_info ) }
-														{ showDate && (
-															<time className="entry-date published" key="pub-date">
-																{ dateI18n( dateFormat, post.date_gmt ) }
-															</time>
-														) }
+								{ latestPosts.map( post => (
+									<article className="post-has-image swiper-slide" key={ post.id }>
+										<figure className="post-thumbnail">
+											<a href="#" rel="bookmark">
+												{ post.newspack_featured_image_src ? (
+													<img src={ post.newspack_featured_image_src.large } alt="" />
+												) : (
+													<div className="wp-block-newspack-blocks-carousel__placeholder"></div>
+												) }
+											</a>
+										</figure>
+										<div className="entry-wrapper">
+											{ post.newspack_post_sponsors && (
+												<span className="cat-links sponsor-label">
+													<span className="flag">{ post.newspack_post_sponsors[ 0 ].flag }</span>
+												</span>
+											) }
+											{ showCategory &&
+												post.newspack_category_info.length &&
+												! post.newspack_post_sponsors && (
+													<div className="cat-links">
+														<a href="#">{ decodeEntities( post.newspack_category_info ) }</a>
 													</div>
-												</div>
-											</article>
-										)
-								) }
+												) }
+											<h3 className="entry-title">
+												<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
+											</h3>
+											<div className="entry-meta">
+												{ post.newspack_post_sponsors &&
+													formatSponsorLogos( post.newspack_post_sponsors ) }
+												{ post.newspack_post_sponsors &&
+													formatSponsorByline( post.newspack_post_sponsors ) }
+												{ showAuthor &&
+													showAvatar &&
+													! post.newspack_post_sponsors &&
+													formatAvatars( post.newspack_author_info ) }
+												{ showAuthor &&
+													! post.newspack_post_sponsors &&
+													formatByline( post.newspack_author_info ) }
+												{ showDate && (
+													<time className="entry-date published" key="pub-date">
+														{ dateI18n( dateFormat, post.date_gmt ) }
+													</time>
+												) }
+											</div>
+										</div>
+									</article>
+								) ) }
 							</div>
-							<button
-								className="amp-carousel-button amp-carousel-button-prev swiper-button-prev"
-								ref={ this.btnPrevRef }
-							/>
-							<button
-								className="amp-carousel-button amp-carousel-button-next swiper-button-next"
-								ref={ this.btnNextRef }
-							/>
-							<div
-								className="swiper-pagination-bullets amp-pagination"
-								ref={ this.paginationRef }
-							/>
+							{ ! hasNoPosts && (
+								<>
+									<button
+										className="amp-carousel-button amp-carousel-button-prev swiper-button-prev"
+										ref={ this.btnPrevRef }
+									/>
+									<button
+										className="amp-carousel-button amp-carousel-button-next swiper-button-next"
+										ref={ this.btnNextRef }
+									/>
+									<div
+										className="swiper-pagination-bullets amp-pagination"
+										ref={ this.paginationRef }
+									/>
+								</>
+							) }
 						</Fragment>
 					) }
 				</div>
@@ -303,9 +304,6 @@ export default compose( [
 				categories,
 				author: authors,
 				tags,
-				meta_key: '_thumbnail_id',
-				meta_value_num: 0,
-				meta_compare: '>',
 			},
 			value => ! isUndefined( value )
 		);
