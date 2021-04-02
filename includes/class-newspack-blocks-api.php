@@ -428,38 +428,6 @@ class Newspack_Blocks_API {
 		$where .= ' AND post_title LIKE "%' . $search . '%" ';
 		return $where;
 	}
-
-	/**
-	 * Adds meta query support to API rest endpoint.
-	 *
-	 * @param array           $args    Key value array of query var to query value.
-	 * @param WP_REST_Request $request The request used.
-	 * @return array          $args    Filtered request parameters.
-	 */
-	public static function post_meta_request_params( $args, $request ) {
-		$params = $request->get_params();
-
-		if (
-			isset( $params['meta_key'], $params['meta_value_num'], $params['meta_compare'] ) &&
-			'_thumbnail_id' === $params['meta_key'] &&
-			'0' === $params['meta_value_num'] &&
-			'>' === $params['meta_compare']
-		) {
-			// phpcs:disable WordPress.DB.SlowDBQuery
-			$args['meta_key']       = $params['meta_key'];
-			$args['meta_value_num'] = $params['meta_value_num'];
-			$args['meta_compare']   = $params['meta_compare'];
-			// phpcs:enable WordPress.DB.SlowDBQuery
-		}
-
-		if ( $request->get_param( 'suppress_password_protected_posts' ) ) {
-			$args['has_password'] = false;
-		}
-
-		return $args;
-	}
-
 }
 
 add_action( 'rest_api_init', array( 'Newspack_Blocks_API', 'register_video_playlist_endpoint' ) );
-add_filter( 'rest_post_query', array( 'Newspack_Blocks_API', 'post_meta_request_params' ), 10, 2 );
