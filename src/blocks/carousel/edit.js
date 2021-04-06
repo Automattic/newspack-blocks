@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { isEqual, isUndefined, pickBy } from 'lodash';
+import { isEqual } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -21,7 +21,7 @@ import {
 	Spinner,
 	ToggleControl,
 } from '@wordpress/components';
-import { withSelect } from '@wordpress/data';
+import { withDispatch, withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 import { decodeEntities } from '@wordpress/html-entities';
 
@@ -36,6 +36,8 @@ import {
 	formatSponsorLogos,
 	formatSponsorByline,
 } from '../../shared/js/utils';
+// Use same posts store as Homepage Posts block.
+import { postsBlockSelector, postsBlockDispatch, shouldReflow } from '../homepage-articles/utils';
 
 class Edit extends Component {
 	constructor( props ) {
@@ -51,9 +53,14 @@ class Edit extends Component {
 
 	componentDidMount() {
 		this.initializeSwiper( 0 );
+		this.props.triggerReflow();
 	}
 
 	componentDidUpdate( prevProps ) {
+		if ( shouldReflow( prevProps, this.props ) ) {
+			this.props.triggerReflow();
+		}
+
 		const { attributes, latestPosts } = this.props;
 
 		if (
@@ -74,6 +81,10 @@ class Edit extends Component {
 
 			this.initializeSwiper( initialSlide );
 		}
+	}
+
+	componentWillUnmount() {
+		this.props.triggerReflow();
 	}
 
 	initializeSwiper( initialSlide ) {
@@ -102,7 +113,7 @@ class Edit extends Component {
 	}
 
 	render() {
-		const { attributes, className, setAttributes, latestPosts } = this.props;
+		const { attributes, className, setAttributes, latestPosts, isUIDisabled } = this.props;
 		const {
 			authors,
 			autoplay,
@@ -119,7 +130,10 @@ class Edit extends Component {
 			className,
 			'wp-block-newspack-blocks-carousel', // Default to make styles work for third-party consumers.
 			'swiper-container',
-			autoplay && 'wp-block-newspack-blocks-carousel__autoplay-playing'
+			{
+				'wp-block-newspack-blocks-carousel__autoplay-playing': autoplay,
+				'newspack-block--disabled': isUIDisabled,
+			}
 		);
 		const dateFormat = __experimentalGetSettings().formats.date;
 		return (
@@ -290,24 +304,6 @@ class Edit extends Component {
 	}
 }
 
-export default compose( [
-	withSelect( ( select, props ) => {
-		const { postsToShow, authors, categories, tags } = props.attributes;
-		const { getEntityRecords } = select( 'core' );
-		const latestPostsQuery = pickBy(
-			{
-				per_page: postsToShow,
-				categories,
-				author: authors,
-				tags,
-				meta_key: '_thumbnail_id',
-				meta_value_num: 0,
-				meta_compare: '>',
-			},
-			value => ! isUndefined( value )
-		);
-		return {
-			latestPosts: getEntityRecords( 'postType', 'post', latestPostsQuery ),
-		};
-	} ),
-] )( Edit );
+export default compose( [ withSelect( postsBlockSelector ), withDispatch( postsBlockDispatch ) ] )(
+	Edit
+);
