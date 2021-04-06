@@ -137,6 +137,7 @@ class Edit extends Component {
 		);
 		const dateFormat = __experimentalGetSettings().formats.date;
 		const hasNoPosts = latestPosts && ! latestPosts.length;
+		const hasOnePost = latestPosts && latestPosts.length === 1;
 		return (
 			<Fragment>
 				<div className={ classes } ref={ this.carouselRef }>
@@ -212,7 +213,7 @@ class Edit extends Component {
 									</article>
 								) ) }
 							</div>
-							{ ! hasNoPosts && (
+							{ ! hasNoPosts && ! hasOnePost && (
 								<>
 									<button
 										className="amp-carousel-button amp-carousel-button-prev swiper-button-prev"

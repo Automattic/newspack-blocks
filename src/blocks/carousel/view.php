@@ -236,7 +236,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 			'<div class="swiper-pagination-bullets amp-pagination">%s</div>',
 			implode( '', $buttons )
 		);
-		$navigation  = sprintf(
+		$navigation  = 1 === $counter ? '' : sprintf(
 			'<button class="swiper-button swiper-button-prev" aria-label="%s"></button><button class="swiper-button swiper-button-next" aria-label="%s"></button>',
 			esc_attr__( 'Previous Slide', 'newspack-blocks' ),
 			esc_attr__( 'Next Slide', 'newspack-blocks' )
@@ -257,6 +257,9 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 		$data_attributes[] = sprintf( 'data-autoplay_delay=%s', esc_attr( $delay ) );
 	}
 	Newspack_Blocks::enqueue_view_assets( 'carousel' );
+	if ( 1 === $counter ) {
+		$selector = '';
+	}
 	return sprintf(
 		'<div class="%1$s" id="wp-block-newspack-carousel__%2$d" %3$s>%4$s%5$s%6$s</div>',
 		esc_attr( $classes ),
