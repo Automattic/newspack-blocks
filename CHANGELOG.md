@@ -1,3 +1,10 @@
+# [1.23.0-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v1.23.0-alpha.1...v1.23.0-alpha.2) (2021-04-06)
+
+
+### Features
+
+* handle posts with no featured image ([#731](https://github.com/Automattic/newspack-blocks/issues/731)) ([0db34be](https://github.com/Automattic/newspack-blocks/commit/0db34be070f842acdc69f4b64212dcc2df4be2d8)), closes [#443](https://github.com/Automattic/newspack-blocks/issues/443)
+
 # [1.23.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.22.1...v1.23.0-alpha.1) (2021-04-06)
 
 
