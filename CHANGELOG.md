@@ -1,3 +1,11 @@
+# [1.23.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.22.1...v1.23.0-alpha.1) (2021-04-06)
+
+
+### Features
+
+* add new patterns for donation and subscribe ([#730](https://github.com/Automattic/newspack-blocks/issues/730)) ([a00cfd6](https://github.com/Automattic/newspack-blocks/commit/a00cfd6e54258afacdb8c5bb68152f38dbc04761))
+* deduplication across homepage posts & carousel ([#725](https://github.com/Automattic/newspack-blocks/issues/725)) ([427c4e0](https://github.com/Automattic/newspack-blocks/commit/427c4e087d57dee1fba9f4d81ffc8486f735d2c0)), closes [#664](https://github.com/Automattic/newspack-blocks/issues/664)
+
 ## [1.22.1](https://github.com/Automattic/newspack-blocks/compare/v1.22.0...v1.22.1) (2021-03-30)
 
 
