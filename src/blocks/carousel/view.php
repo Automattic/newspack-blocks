@@ -31,7 +31,10 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 	}
 	$classes = Newspack_Blocks::block_classes( 'carousel', $attributes, $other );
 
-	$article_query   = new WP_Query( Newspack_Blocks::build_articles_query( $attributes, apply_filters( 'newspack_blocks_block_name', 'newspack-blocks/carousel' ) ) );
+	$article_query = new WP_Query( Newspack_Blocks::build_articles_query( $attributes, apply_filters( 'newspack_blocks_block_name', 'newspack-blocks/carousel' ) ) );
+	if ( false === $article_query->have_posts() ) {
+		return;
+	}
 	$counter         = 0;
 	$article_classes = [
 		'post-has-image',
