@@ -31,7 +31,10 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 	}
 	$classes = Newspack_Blocks::block_classes( 'carousel', $attributes, $other );
 
-	$article_query   = new WP_Query( Newspack_Blocks::build_articles_query( $attributes, apply_filters( 'newspack_blocks_block_name', 'newspack-blocks/carousel' ) ) );
+	$article_query = new WP_Query( Newspack_Blocks::build_articles_query( $attributes, apply_filters( 'newspack_blocks_block_name', 'newspack-blocks/carousel' ) ) );
+	if ( false === $article_query->have_posts() ) {
+		return;
+	}
 	$counter         = 0;
 	$article_classes = [
 		'post-has-image',
@@ -43,30 +46,32 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 	if ( $article_query->have_posts() ) :
 		while ( $article_query->have_posts() ) :
 			$article_query->the_post();
-			$authors = Newspack_Blocks::prepare_authors();
-			if ( ! has_post_thumbnail() ) {
-				continue;
-			}
+			$authors                                 = Newspack_Blocks::prepare_authors();
 			$newspack_blocks_post_id[ get_the_ID() ] = true;
 
 			// Get sponsors for this post.
 			$sponsors = Newspack_Blocks::get_all_sponsors( get_the_id() );
 
 			$counter++;
+			$has_featured_image = has_post_thumbnail();
 			?>
 
 			<article data-post-id="<?php the_id(); ?>" class="<?php echo esc_attr( implode( ' ', $article_classes ) ); ?>">
 				<figure class="post-thumbnail">
 					<a href="<?php echo esc_url( get_permalink() ); ?>" rel="bookmark">
-						<?php
-							the_post_thumbnail(
-								'large',
-								array(
-									'object-fit' => 'cover',
-									'layout'     => 'fill',
-								)
-							);
-						?>
+						<?php if ( $has_featured_image ) : ?>
+							<?php
+								the_post_thumbnail(
+									'large',
+									array(
+										'object-fit' => 'cover',
+										'layout'     => 'fill',
+									)
+								);
+							?>
+						<?php else : ?>
+							<div class="wp-block-newspack-blocks-carousel__placeholder"></div>
+						<?php endif; ?>
 					</a>
 				</figure>
 				<div class="entry-wrapper">
@@ -231,7 +236,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 			'<div class="swiper-pagination-bullets amp-pagination">%s</div>',
 			implode( '', $buttons )
 		);
-		$navigation  = sprintf(
+		$navigation  = 1 === $counter ? '' : sprintf(
 			'<button class="swiper-button swiper-button-prev" aria-label="%s"></button><button class="swiper-button swiper-button-next" aria-label="%s"></button>',
 			esc_attr__( 'Previous Slide', 'newspack-blocks' ),
 			esc_attr__( 'Next Slide', 'newspack-blocks' )
@@ -252,6 +257,9 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 		$data_attributes[] = sprintf( 'data-autoplay_delay=%s', esc_attr( $delay ) );
 	}
 	Newspack_Blocks::enqueue_view_assets( 'carousel' );
+	if ( 1 === $counter ) {
+		$selector = '';
+	}
 	return sprintf(
 		'<div class="%1$s" id="wp-block-newspack-carousel__%2$d" %3$s>%4$s%5$s%6$s</div>',
 		esc_attr( $classes ),
