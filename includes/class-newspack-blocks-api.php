@@ -9,130 +9,6 @@
  * `Newspack_Blocks_API` is a wrapper for `register_rest_fields()`
  */
 class Newspack_Blocks_API {
-
-	/**
-	 * Register Newspack REST fields.
-	 */
-	public static function register_rest_fields() {
-		register_rest_field(
-			[ 'post', 'page' ],
-			'newspack_featured_image_src',
-			[
-				'get_callback' => [ 'Newspack_Blocks_API', 'newspack_blocks_get_image_src' ],
-				'schema'       => [
-					'context' => [
-						'edit',
-					],
-					'type'    => 'array',
-				],
-			]
-		);
-
-		register_rest_field(
-			[ 'post', 'page' ],
-			'newspack_featured_image_caption',
-			[
-				'get_callback' => [ 'Newspack_Blocks_API', 'newspack_blocks_get_image_caption' ],
-				'schema'       => [
-					'context' => [
-						'edit',
-					],
-					'type'    => 'string',
-				],
-			]
-		);
-
-		/* Add author info source */
-		register_rest_field(
-			'post',
-			'newspack_author_info',
-			[
-				'get_callback' => [ 'Newspack_Blocks_API', 'newspack_blocks_get_author_info' ],
-				'schema'       => [
-					'context' => [
-						'edit',
-					],
-					'type'    => 'array',
-				],
-			]
-		);
-
-		/* Add first category source */
-		register_rest_field(
-			'post',
-			'newspack_category_info',
-			[
-				'get_callback' => [ 'Newspack_Blocks_API', 'newspack_blocks_get_primary_category' ],
-				'schema'       => [
-					'context' => [
-						'edit',
-					],
-					'type'    => 'string',
-				],
-			]
-		);
-
-		/* Add list of categories for CSS classes */
-		register_rest_field(
-			'post',
-			'newspack_article_classes',
-			[
-				'get_callback' => [ 'Newspack_Blocks_API', 'newspack_blocks_get_cat_tag_classes' ],
-				'schema'       => [
-					'context' => [
-						'edit',
-					],
-					'type'    => 'string',
-				],
-			]
-		);
-
-		/* Sponsors */
-		register_rest_field(
-			'post',
-			'newspack_post_sponsors',
-			[
-				'get_callback' => [ 'Newspack_Blocks_API', 'newspack_blocks_sponsor_info' ],
-				'schema'       => [
-					'context' => [
-						'edit',
-					],
-					'type'    => 'array',
-				],
-			]
-		);
-
-		/* Post format */
-		register_rest_field(
-			'post',
-			'newspack_post_format',
-			[
-				'get_callback' => [ 'Newspack_Blocks_API', 'newspack_blocks_post_format' ],
-				'schema'       => [
-					'context' => [
-						'edit',
-					],
-					'type'    => 'string',
-				],
-			]
-		);
-
-		/* Has custom excerpt */
-		register_rest_field(
-			'post',
-			'newspack_has_custom_excerpt',
-			[
-				'get_callback' => [ 'Newspack_Blocks_API', 'newspack_blocks_has_custom_excerpt' ],
-				'schema'       => [
-					'context' => [
-						'edit',
-					],
-					'type'    => 'boolean',
-				],
-			]
-		);
-	}
-
 	/**
 	 * Get thumbnail featured image source for the rest field.
 	 *
@@ -438,11 +314,13 @@ class Newspack_Blocks_API {
 			$args['post_type'] = $params['post_type'];
 		}
 
-		$block_attributes = [
-			'showExcerpt'   => $params['show_excerpt'],
-			'excerptLength' => $params['excerpt_length'],
-		];
-		Newspack_Blocks::filter_excerpt_length( $block_attributes );
+		if ( isset( $params['show_excerpt'], $params['excerpt_length'] ) ) {
+			$block_attributes = [
+				'showExcerpt'   => $params['show_excerpt'],
+				'excerptLength' => $params['excerpt_length'],
+			];
+			Newspack_Blocks::filter_excerpt_length( $block_attributes );
+		}
 
 		$query        = new WP_Query();
 		$query_result = $query->query( $args );
@@ -550,24 +428,6 @@ class Newspack_Blocks_API {
 		$where .= ' AND post_title LIKE "%' . $search . '%" ';
 		return $where;
 	}
-
-	/**
-	 * Adds meta query support to API rest endpoint.
-	 *
-	 * @param array           $args    Key value array of query var to query value.
-	 * @param WP_REST_Request $request The request used.
-	 * @return array          $args    Filtered request parameters.
-	 */
-	public static function post_meta_request_params( $args, $request ) {
-		if ( $request->get_param( 'suppress_password_protected_posts' ) ) {
-			$args['has_password'] = false;
-		}
-
-		return $args;
-	}
-
 }
 
-add_action( 'rest_api_init', array( 'Newspack_Blocks_API', 'register_rest_fields' ) );
 add_action( 'rest_api_init', array( 'Newspack_Blocks_API', 'register_video_playlist_endpoint' ) );
-add_filter( 'rest_post_query', array( 'Newspack_Blocks_API', 'post_meta_request_params' ), 10, 2 );
