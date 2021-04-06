@@ -14,18 +14,16 @@
  */
 function newspack_blocks_render_block_carousel( $attributes ) {
 	static $newspack_blocks_carousel_id = 0;
+	global $newspack_blocks_post_id;
 
 	// This will let the FSE plugin know we need CSS/JS now.
 	do_action( 'newspack_blocks_render_post_carousel' );
 
 	$newspack_blocks_carousel_id++;
-	$autoplay      = isset( $attributes['autoplay'] ) ? $attributes['autoplay'] : false;
-	$delay         = isset( $attributes['delay'] ) ? absint( $attributes['delay'] ) : 3;
-	$posts_to_show = intval( $attributes['postsToShow'] );
-	$authors       = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
-	$categories    = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
-	$tags          = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
-	$is_amp        = function_exists( 'is_amp_endpoint' ) && is_amp_endpoint();
+	$autoplay = isset( $attributes['autoplay'] ) ? $attributes['autoplay'] : false;
+	$delay    = isset( $attributes['delay'] ) ? absint( $attributes['delay'] ) : 3;
+	$authors  = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
+	$is_amp   = function_exists( 'is_amp_endpoint' ) && is_amp_endpoint();
 
 	$other = array();
 	if ( $autoplay ) {
@@ -33,27 +31,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 	}
 	$classes = Newspack_Blocks::block_classes( 'carousel', $attributes, $other );
 
-	$args = array(
-		'posts_per_page'      => $posts_to_show,
-		'post_status'         => 'publish',
-		'suppress_filters'    => false,
-		'ignore_sticky_posts' => true,
-		'meta_key'            => '_thumbnail_id', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-		'meta_value_num'      => 0,
-		'meta_compare'        => '>',
-	);
-
-	if ( $authors ) {
-		$args['author__in'] = $authors;
-	}
-	if ( $categories ) {
-		$args['category__in'] = $categories;
-	}
-	if ( $tags ) {
-		$args['tag__in'] = $tags;
-	}
-
-	$article_query   = new WP_Query( $args );
+	$article_query   = new WP_Query( Newspack_Blocks::build_articles_query( $attributes, apply_filters( 'newspack_blocks_block_name', 'newspack-blocks/carousel' ) ) );
 	$counter         = 0;
 	$article_classes = [
 		'post-has-image',
@@ -69,6 +47,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 			if ( ! has_post_thumbnail() ) {
 				continue;
 			}
+			$newspack_blocks_post_id[ get_the_ID() ] = true;
 
 			// Get sponsors for this post.
 			$sponsors = Newspack_Blocks::get_all_sponsors( get_the_id() );
@@ -76,7 +55,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 			$counter++;
 			?>
 
-			<article class="<?php echo esc_attr( implode( ' ', $article_classes ) ); ?>">
+			<article data-post-id="<?php the_id(); ?>" class="<?php echo esc_attr( implode( ' ', $article_classes ) ); ?>">
 				<figure class="post-thumbnail">
 					<a href="<?php echo esc_url( get_permalink() ); ?>" rel="bookmark">
 						<?php
@@ -264,7 +243,9 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 		);
 		$autoplay_ui = $autoplay ? newspack_blocks_carousel_block_autoplay_ui( $newspack_blocks_carousel_id ) : '';
 	}
-	$data_attributes = [];
+	$data_attributes = [
+		'data-current-post-id=' . get_the_ID(),
+	];
 
 	if ( $autoplay && ! $is_amp ) {
 		$data_attributes[] = 'data-autoplay=1';
