@@ -1,3 +1,10 @@
+# [1.24.0](https://github.com/Automattic/newspack-blocks/compare/v1.23.0...v1.24.0) (2021-04-13)
+
+
+### Features
+
+* update block icons to use Gutenberg style instead of Material ([#724](https://github.com/Automattic/newspack-blocks/issues/724)) ([e8a0eae](https://github.com/Automattic/newspack-blocks/commit/e8a0eae31f2a4ecae2ca6bee62986fa4dc419d27))
+
 # [1.23.0](https://github.com/Automattic/newspack-blocks/compare/v1.22.1...v1.23.0) (2021-04-06)
 
 
