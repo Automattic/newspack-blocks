@@ -172,10 +172,10 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 											newspack_blocks_format_avatars( $authors ),
 											array(
 												'img'      => array(
-													'class'  => true,
-													'src'    => true,
-													'alt'    => true,
-													'width'  => true,
+													'class' => true,
+													'src' => true,
+													'alt' => true,
+													'width' => true,
 													'height' => true,
 													'data-*' => true,
 													'srcset' => true,
