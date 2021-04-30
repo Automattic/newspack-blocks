@@ -204,6 +204,10 @@
 
 		.post-thumbnail img {
 			object-fit: cover;
+
+			&.image-fit-contain {
+				object-fit: contain;
+			}
 		}
 	}
 

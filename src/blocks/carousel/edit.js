@@ -10,13 +10,15 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { InspectorControls } from '@wordpress/block-editor';
 import { dateI18n, __experimentalGetSettings } from '@wordpress/date';
 import { Component, createRef, Fragment } from '@wordpress/element';
-import { InspectorControls } from '@wordpress/editor';
 import {
+	CheckboxControl,
 	PanelBody,
 	PanelRow,
 	Placeholder,
+	RadioControl,
 	RangeControl,
 	Spinner,
 	ToggleControl,
@@ -113,17 +115,29 @@ class Edit extends Component {
 	}
 
 	render() {
-		const { attributes, className, setAttributes, latestPosts, isUIDisabled } = this.props;
+		const {
+			attributes,
+			availablePostTypes,
+			className,
+			setAttributes,
+			latestPosts,
+			isUIDisabled,
+		} = this.props;
 		const {
 			authors,
 			autoplay,
 			categories,
 			delay,
+			imageFit,
 			postsToShow,
+			postType,
 			showCategory,
 			showDate,
 			showAuthor,
 			showAvatar,
+			showTitle,
+			specificMode,
+			specificPosts,
 			tags,
 		} = attributes;
 		const classes = classnames(
@@ -165,51 +179,66 @@ class Edit extends Component {
 							) }
 							<div className="swiper-wrapper">
 								{ latestPosts.map( post => (
-									<article className="post-has-image swiper-slide" key={ post.id }>
+									<article
+										className={ `post-has-image swiper-slide ${ post.post_type }` }
+										key={ post.id }
+									>
 										<figure className="post-thumbnail">
 											<a href="#" rel="bookmark">
 												{ post.newspack_featured_image_src ? (
-													<img src={ post.newspack_featured_image_src.large } alt="" />
+													<img
+														className={ `image-fit-${ imageFit }` }
+														src={ post.newspack_featured_image_src.large }
+														alt=""
+													/>
 												) : (
 													<div className="wp-block-newspack-blocks-carousel__placeholder"></div>
 												) }
 											</a>
 										</figure>
-										<div className="entry-wrapper">
-											{ post.newspack_post_sponsors && (
-												<span className="cat-links sponsor-label">
-													<span className="flag">{ post.newspack_post_sponsors[ 0 ].flag }</span>
-												</span>
-											) }
-											{ showCategory &&
-												post.newspack_category_info.length &&
-												! post.newspack_post_sponsors && (
-													<div className="cat-links">
-														<a href="#">{ decodeEntities( post.newspack_category_info ) }</a>
-													</div>
+										{ ( post.newspack_post_sponsors ||
+											showCategory ||
+											showTitle ||
+											showAuthor ||
+											showDate ) && (
+											<div className="entry-wrapper">
+												{ post.newspack_post_sponsors && (
+													<span className="cat-links sponsor-label">
+														<span className="flag">{ post.newspack_post_sponsors[ 0 ].flag }</span>
+													</span>
 												) }
-											<h3 className="entry-title">
-												<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
-											</h3>
-											<div className="entry-meta">
-												{ post.newspack_post_sponsors &&
-													formatSponsorLogos( post.newspack_post_sponsors ) }
-												{ post.newspack_post_sponsors &&
-													formatSponsorByline( post.newspack_post_sponsors ) }
-												{ showAuthor &&
-													showAvatar &&
-													! post.newspack_post_sponsors &&
-													formatAvatars( post.newspack_author_info ) }
-												{ showAuthor &&
-													! post.newspack_post_sponsors &&
-													formatByline( post.newspack_author_info ) }
-												{ showDate && (
-													<time className="entry-date published" key="pub-date">
-														{ dateI18n( dateFormat, post.date_gmt ) }
-													</time>
+												{ showCategory &&
+													post.newspack_category_info.length &&
+													! post.newspack_post_sponsors && (
+														<div className="cat-links">
+															<a href="#">{ decodeEntities( post.newspack_category_info ) }</a>
+														</div>
+													) }
+												{ showTitle && (
+													<h3 className="entry-title">
+														<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
+													</h3>
 												) }
+												<div className="entry-meta">
+													{ post.newspack_post_sponsors &&
+														formatSponsorLogos( post.newspack_post_sponsors ) }
+													{ post.newspack_post_sponsors &&
+														formatSponsorByline( post.newspack_post_sponsors ) }
+													{ showAuthor &&
+														showAvatar &&
+														! post.newspack_post_sponsors &&
+														formatAvatars( post.newspack_author_info ) }
+													{ showAuthor &&
+														! post.newspack_post_sponsors &&
+														formatByline( post.newspack_author_info ) }
+													{ showDate && (
+														<time className="entry-date published" key="pub-date">
+															{ dateI18n( dateFormat, post.date_gmt ) }
+														</time>
+													) }
+												</div>
 											</div>
-										</div>
+										) }
 									</article>
 								) ) }
 							</div>
@@ -236,7 +265,6 @@ class Edit extends Component {
 					<PanelBody title={ __( 'Display Settings' ) } initialOpen={ true }>
 						{ postsToShow && (
 							<QueryControls
-								enableSpecific={ false }
 								numberOfItems={ postsToShow }
 								onNumberOfItemsChange={ value =>
 									setAttributes( { postsToShow: value ? value : 1 } )
@@ -247,10 +275,28 @@ class Edit extends Component {
 								onCategoriesChange={ value => setAttributes( { categories: value } ) }
 								tags={ tags }
 								onTagsChange={ value => setAttributes( { tags: value } ) }
+								specificMode={ specificMode }
+								onSpecificModeChange={ _specificMode =>
+									setAttributes( { specificMode: _specificMode } )
+								}
+								specificPosts={ specificPosts }
+								onSpecificPostsChange={ _specificPosts =>
+									setAttributes( { specificPosts: _specificPosts } )
+								}
+								postType={ postType }
 							/>
 						) }
 					</PanelBody>
 					<PanelBody title={ __( 'Slideshow Settings' ) } initialOpen={ true }>
+						<RadioControl
+							label={ __( 'Image Fit Style', 'newspack-blocks' ) }
+							selected={ imageFit }
+							onChange={ value => setAttributes( { imageFit: value } ) }
+							options={ [
+								{ label: __( 'Cover', 'newspack-blocks' ), value: 'cover' },
+								{ label: __( 'Contain', 'newspack-blocks' ), value: 'contain' },
+							] }
+						/>
 						<ToggleControl
 							label={ __( 'Autoplay' ) }
 							help={ __( 'Autoplay between slides' ) }
@@ -272,6 +318,13 @@ class Edit extends Component {
 						) }
 					</PanelBody>
 					<PanelBody title={ __( 'Article Meta Settings', 'newspack-blocks' ) }>
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Show Title', 'newspack-blocks' ) }
+								checked={ showTitle }
+								onChange={ () => setAttributes( { showTitle: ! showTitle } ) }
+							/>
+						</PanelRow>
 						<PanelRow>
 							<ToggleControl
 								label={ __( 'Show Date', 'newspack-blocks' ) }
@@ -302,6 +355,28 @@ class Edit extends Component {
 								/>
 							</PanelRow>
 						) }
+					</PanelBody>
+					<PanelBody title={ __( 'Post Types', 'newspack-blocks' ) }>
+						{ availablePostTypes &&
+							availablePostTypes.map( ( { name, slug } ) => (
+								<PanelRow key={ slug }>
+									<CheckboxControl
+										label={ name }
+										checked={ postType.indexOf( slug ) > -1 }
+										onChange={ value => {
+											const cleanPostType = [ ...new Set( postType ) ];
+											if ( value && cleanPostType.indexOf( slug ) === -1 ) {
+												cleanPostType.push( slug );
+											} else if ( ! value && cleanPostType.indexOf( slug ) > -1 ) {
+												cleanPostType.splice( cleanPostType.indexOf( slug ), 1 );
+											}
+											setAttributes( {
+												postType: cleanPostType,
+											} );
+										} }
+									/>
+								</PanelRow>
+							) ) }
 					</PanelBody>
 				</InspectorControls>
 			</Fragment>
