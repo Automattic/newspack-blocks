@@ -87,7 +87,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 								<?php echo esc_html( Newspack_Blocks::get_sponsor_label( $sponsors ) ); ?>
 							</span>
 						</span>
-						<?php
+							<?php
 						else :
 							$category = false;
 
