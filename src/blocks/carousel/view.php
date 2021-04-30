@@ -81,8 +81,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 
 				<?php if ( ! empty( $sponsors ) || $attributes['showCategory'] || $attributes['showTitle'] || $attributes['showAuthor'] || $attributes['showDate'] ) : ?>
 					<div class="entry-wrapper">
-
-					<?php if ( ! empty( $sponsors ) ) : ?>
+						<?php if ( ! empty( $sponsors ) ) : ?>
 						<span class="cat-links sponsor-label">
 							<span class="flag">
 								<?php echo esc_html( Newspack_Blocks::get_sponsor_label( $sponsors ) ); ?>
@@ -383,6 +382,10 @@ function newspack_blocks_register_carousel() {
 						'default' => false,
 					),
 					'showDate'     => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showTitle'    => array(
 						'type'    => 'boolean',
 						'default' => true,
 					),
