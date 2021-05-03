@@ -322,7 +322,7 @@ class Edit extends Component {
 								max={ 20 }
 							/>
 						) }
-						{ latestPosts && 0 < latestPosts.length && (
+						{ latestPosts && 1 < latestPosts.length && (
 							<RangeControl
 								label={ __( 'Number of slides to show at once' ) }
 								value={ slidesPerView }
@@ -330,7 +330,11 @@ class Edit extends Component {
 									setAttributes( { slidesPerView: _slidesPerView } );
 								} }
 								min={ 1 }
-								max={ Math.min( MAX_NUMBER_OF_SLIDES, maxPosts ) }
+								max={
+									specificMode
+										? Math.min( MAX_NUMBER_OF_SLIDES, latestPosts.length )
+										: Math.min( MAX_NUMBER_OF_SLIDES, maxPosts )
+								}
 							/>
 						) }
 					</PanelBody>
