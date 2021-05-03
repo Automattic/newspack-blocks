@@ -341,7 +341,7 @@ function newspack_blocks_register_carousel() {
 			'newspack_blocks_block_args',
 			array(
 				'attributes'      => array(
-					'className'    => array(
+					'className'     => array(
 						'type' => 'string',
 					),
 					'postsToShow'   => array(
