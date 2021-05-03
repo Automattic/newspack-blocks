@@ -103,6 +103,10 @@ export const settings = {
 			default: [],
 			items: { type: 'integer' },
 		},
+		slidesPerView: {
+			type: 'number',
+			default: 1,
+		},
 	},
 	supports: {
 		html: false,

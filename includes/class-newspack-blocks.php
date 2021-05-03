@@ -37,7 +37,7 @@ class Newspack_Blocks {
 		$script_data = file_exists( $asset_path )
 			? require $asset_path
 			: array(
-				'dependencies' => array(),
+				'dependencies' => [ 'wp-a11y', 'wp-escape-html', 'wp-i18n' ],
 				'version'      => filemtime( $local_path ),
 			);
 
@@ -194,6 +194,9 @@ class Newspack_Blocks {
 
 		if ( ! empty( $attributes['align'] ) ) {
 			$classes[] = 'align' . $attributes['align'];
+		}
+		if ( self::is_amp() ) {
+			$classes[] = 'is-amp';
 		}
 		if ( isset( $attributes['className'] ) ) {
 			array_push( $classes, $attributes['className'] );

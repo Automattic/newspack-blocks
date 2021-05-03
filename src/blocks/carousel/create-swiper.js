@@ -95,6 +95,8 @@ export default function createSwiper( els, config = {} ) {
 		preventClicksPropagation: false, // Necessary for normal block interactions.
 		releaseFormElements: false,
 		setWrapperSize: true,
+		slidesPerView: config.slidesPerView || 1,
+		spaceBetween: 16,
 		touchStartPreventDefault: false,
 		on: {
 			init() {
@@ -119,7 +121,7 @@ export default function createSwiper( els, config = {} ) {
 				if ( ! this.autoplay.running ) {
 					// Announce the contents of the slide.
 					const currentImage = currentSlide.querySelector( 'img' );
-					const alt = currentImage ? currentImage.alt : false;
+					const alt = currentImage ? currentImage?.alt : false;
 
 					const slideInfo = sprintf(
 						/* translators: current slide number and the total number of slides */

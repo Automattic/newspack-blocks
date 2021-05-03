@@ -41,6 +41,9 @@ import {
 // Use same posts store as Homepage Posts block.
 import { postsBlockSelector, postsBlockDispatch, shouldReflow } from '../homepage-articles/utils';
 
+// Max number of slides that can be shown at once.
+const MAX_NUMBER_OF_SLIDES = 6;
+
 class Edit extends Component {
 	constructor( props ) {
 		super( props );
@@ -93,7 +96,7 @@ class Edit extends Component {
 		const { latestPosts } = this.props;
 
 		if ( latestPosts && latestPosts.length ) {
-			const { autoplay, delay } = this.props.attributes;
+			const { autoplay, delay, slidesPerView } = this.props.attributes;
 
 			this.swiperInstance = createSwiper(
 				{
@@ -109,6 +112,7 @@ class Edit extends Component {
 					autoplay,
 					delay: delay * 1000,
 					initialSlide,
+					slidesPerView,
 				}
 			);
 		}
@@ -136,6 +140,7 @@ class Edit extends Component {
 			showAuthor,
 			showAvatar,
 			showTitle,
+			slidesPerView,
 			specificMode,
 			specificPosts,
 			tags,
@@ -152,6 +157,7 @@ class Edit extends Component {
 		const dateFormat = __experimentalGetSettings().formats.date;
 		const hasNoPosts = latestPosts && ! latestPosts.length;
 		const hasOnePost = latestPosts && latestPosts.length === 1;
+		const maxPosts = latestPosts ? Math.min( postsToShow, latestPosts.length ) : postsToShow;
 		return (
 			<Fragment>
 				<div className={ classes } ref={ this.carouselRef }>
@@ -314,6 +320,17 @@ class Edit extends Component {
 								} }
 								min={ 1 }
 								max={ 20 }
+							/>
+						) }
+						{ latestPosts && 0 < latestPosts.length && (
+							<RangeControl
+								label={ __( 'Number of slides to show at once' ) }
+								value={ slidesPerView }
+								onChange={ _slidesPerView => {
+									setAttributes( { slidesPerView: _slidesPerView } );
+								} }
+								min={ 1 }
+								max={ Math.min( MAX_NUMBER_OF_SLIDES, maxPosts ) }
 							/>
 						) }
 					</PanelBody>

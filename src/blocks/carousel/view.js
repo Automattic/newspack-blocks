@@ -28,6 +28,8 @@ if ( typeof window !== 'undefined' ) {
 				{
 					autoplay: !! parseInt( block.dataset.autoplay ),
 					delay: parseInt( block.dataset.autoplay_delay ) * 1000,
+					slidesPerView: parseInt( block.dataset.slidesPerView ) || 1,
+					spaceBetween: 16,
 				}
 			);
 		} );
