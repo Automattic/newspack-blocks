@@ -77,7 +77,7 @@
 			}
 		}
 	}
-	figure.post-thumbnail {
+	.post-thumbnail {
 		margin: 0;
 		height: 100%;
 		padding: 0;
@@ -86,7 +86,12 @@
 		img {
 			display: block;
 			height: 100%;
+			object-fit: cover;
 			width: 100%;
+
+			&.image-fit-contain {
+				object-fit: contain;
+			}
 		}
 	}
 	&__placeholder {
@@ -198,18 +203,27 @@
 		background-image: url( "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='24'%20height='24'%20viewBox='0%200%2024%2024'%3E%3Cpath%20d='M8%205v14l11-7z'%20fill='white'/%3E%3Cpath%20d='M0 0h24v24H0z'%20fill='none'/%3E%3C/svg%3E" );
 	}
 
+	/* AMP carousel container */
+	.wp-block-newspack-carousel__amp-carousel {
+		margin: 0 -8px;
+	}
+
+	/* AMP carousel slide */
+	.amp-carousel-slide {
+		position: relative;
+
+		.entry-wrapper,
+		img {
+			left: 8px;
+			width: calc( 100% - 16px );
+		}
+	}
+
 	/* Swiper Slide */
 	.swiper-slide {
 		height: auto;
 		max-height: 75vh;
-
-		.post-thumbnail img {
-			object-fit: cover;
-
-			&.image-fit-contain {
-				object-fit: contain;
-			}
-		}
+		min-height: 260px;
 	}
 
 	/* Image styles */
@@ -273,14 +287,5 @@
 		height: auto;
 		position: relative;
 		width: auto;
-	}
-
-	// AMP carousel overrides
-	&.is-amp {
-		&.has-grouped-slides {
-			figure.post-thumbnail {
-				width: calc( 100% - 16px );
-			}
-		}
 	}
 }

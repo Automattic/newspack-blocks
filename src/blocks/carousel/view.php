@@ -234,7 +234,8 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 			implode( '', $buttons )
 		);
 		$carousel    = sprintf(
-			'<amp-base-carousel width="4" height="3" layout="responsive" snap="true" type="slides" data-next-button-aria-label="%1$s" data-prev-button-aria-label="%2$s" controls loop %3$s id="wp-block-newspack-carousel__amp-carousel__%4$s" on="slideChange:wp-block-newspack-carousel__amp-pagination__%4$s.toggle(index=event.index, value=true)" advance-count="1" visible-count="%5$s">%6$s</amp-base-carousel>',
+			'<amp-base-carousel class="wp-block-newspack-carousel__amp-carousel" width="%1$s" height="3" layout="responsive" snap="true" type="slides" data-next-button-aria-label="%2$s" data-prev-button-aria-label="%3$s" controls loop %4$s id="wp-block-newspack-carousel__amp-carousel__%5$s" on="slideChange:wp-block-newspack-carousel__amp-pagination__%5$s.toggle(index=event.index, value=true)" advance-count="1" visible-count="%6$s">%7$s</amp-base-carousel>',
+			$attributes['slidesPerView'] * 4,
 			esc_attr__( 'Next Slide', 'newspack-blocks' ),
 			esc_attr__( 'Previous Slide', 'newspack-blocks' ),
 			$autoplay ? 'auto-advance="true" delay=' . esc_attr( $delay * 1000 ) : '',
@@ -272,9 +273,6 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 	Newspack_Blocks::enqueue_view_assets( 'carousel' );
 	if ( 1 === $counter ) {
 		$selector = '';
-	}
-	if ( 1 < $attributes['slidesPerView'] ) {
-		$classes .= ' has-grouped-slides';
 	}
 	return sprintf(
 		'<div class="%1$s" id="wp-block-newspack-carousel__%2$d" %3$s>%4$s%5$s%6$s</div>',
@@ -392,6 +390,10 @@ function newspack_blocks_register_carousel() {
 					'showDate'      => array(
 						'type'    => 'boolean',
 						'default' => true,
+					),
+					'imageFit'      => array(
+						'type'    => 'string',
+						'default' => 'cover',
 					),
 					'showTitle'     => array(
 						'type'    => 'boolean',
