@@ -1,3 +1,10 @@
+# [1.25.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.24.0...v1.25.0-alpha.1) (2021-05-04)
+
+
+### Features
+
+* allow different post types in carousel; plus new block options ([#746](https://github.com/Automattic/newspack-blocks/issues/746)) ([f30a5a5](https://github.com/Automattic/newspack-blocks/commit/f30a5a5a33560de4385cf0a1e6724da11f744564))
+
 # [1.24.0](https://github.com/Automattic/newspack-blocks/compare/v1.23.0...v1.24.0) (2021-04-13)
 
 
