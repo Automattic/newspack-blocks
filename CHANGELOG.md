@@ -1,3 +1,10 @@
+## [1.25.1](https://github.com/Automattic/newspack-blocks/compare/v1.25.0...v1.25.1) (2021-05-05)
+
+
+### Bug Fixes
+
+* **carousel:** add missing block attribute ([#754](https://github.com/Automattic/newspack-blocks/issues/754)) ([2fcbec4](https://github.com/Automattic/newspack-blocks/commit/2fcbec469fe0df7db2afd39a7cba54ff9079d494))
+
 # [1.25.0](https://github.com/Automattic/newspack-blocks/compare/v1.24.0...v1.25.0) (2021-05-05)
 
 
