@@ -42,6 +42,10 @@ export const settings = {
 		className: {
 			type: 'string',
 		},
+		imageFit: {
+			type: 'string',
+			default: 'cover',
+		},
 		autoplay: {
 			type: 'boolean',
 			default: false,
@@ -78,6 +82,26 @@ export const settings = {
 		showCategory: {
 			type: 'boolean',
 			default: false,
+		},
+		showTitle: {
+			type: 'boolean',
+			default: true,
+		},
+		postType: {
+			type: 'array',
+			default: [ 'post' ],
+			items: {
+				type: 'string',
+			},
+		},
+		specificMode: {
+			type: 'boolean',
+			default: false,
+		},
+		specificPosts: {
+			type: 'array',
+			default: [],
+			items: { type: 'integer' },
 		},
 	},
 	supports: {
