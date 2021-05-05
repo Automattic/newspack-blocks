@@ -389,7 +389,7 @@ function newspack_blocks_register_carousel() {
 						'type'    => 'boolean',
 						'default' => true,
 					),
-					'imageFit'    => array(
+					'imageFit'     => array(
 						'type'    => 'string',
 						'default' => 'cover',
 					),
