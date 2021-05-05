@@ -112,7 +112,7 @@ class Edit extends Component {
 					autoplay,
 					delay: delay * 1000,
 					initialSlide,
-					slidesPerView,
+					slidesPerView: slidesPerView <= latestPosts.length ? slidesPerView : latestPosts.length,
 				}
 			);
 		}
@@ -325,7 +325,7 @@ class Edit extends Component {
 						{ latestPosts && 1 < latestPosts.length && (
 							<RangeControl
 								label={ __( 'Number of slides to show at once' ) }
-								value={ slidesPerView }
+								value={ slidesPerView <= latestPosts.length ? slidesPerView : latestPosts.length }
 								onChange={ _slidesPerView => {
 									setAttributes( { slidesPerView: _slidesPerView } );
 								} }
