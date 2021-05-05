@@ -25,9 +25,13 @@ call_user_func(
 			$classes[] = 'post-has-image';
 		}
 
-		// If the post is a sponsor, it won't have a working permalink, but it will have an external URL.
-		$external_url = get_post_meta( $post_id, 'newspack_sponsor_url', true );
-		$link         = ! empty( $external_url ) ? $external_url : get_permalink();
+		// If the post is a sponsor or supporter, it won't have a working permalink, but it might have an external URL.
+		$sponsor_url    = get_post_meta( $post_id, 'newspack_sponsor_url', true );
+		$supporter_url  = get_post_meta( $post_id, 'newspack_supporter_url', true );
+		$external_url   = ! empty( $sponsor_url ) ? $sponsor_url : $supporter_url;
+		$link           = ! empty( $external_url ) ? $external_url : get_permalink();
+		$post_type_info = get_post_type_object( get_post_type() );
+		$has_link       = ! empty( $post_type_info->public ) || ! empty( $external_url ); // False if a sponsor or supporter without an external URL.
 
 		if ( 'behind' === $attributes['mediaPosition'] && $attributes['showImage'] && has_post_thumbnail() ) {
 			$styles = 'min-height: ' . $attributes['minHeight'] . 'vh; padding-top: ' . ( $attributes['minHeight'] / 5 ) . 'vh;';
@@ -66,9 +70,13 @@ call_user_func(
 		>
 		<?php if ( has_post_thumbnail() && $attributes['showImage'] && $attributes['imageShape'] ) : ?>
 			<figure class="post-thumbnail">
+				<?php if ( $has_link ) : ?>
 				<a href="<?php echo esc_url( $link ); ?>" rel="bookmark">
+				<?php endif; ?>
 					<?php the_post_thumbnail( $image_size, $thumbnail_args ); ?>
+				<?php if ( $has_link ) : ?>
 				</a>
+				<?php endif; ?>
 
 				<?php if ( $attributes['showCaption'] && '' !== get_the_post_thumbnail_caption() ) : ?>
 					<figcaption><?php the_post_thumbnail_caption(); ?></figcaption>
@@ -93,15 +101,15 @@ call_user_func(
 			endif;
 
 			if ( '' === $attributes['sectionHeader'] ) :
-				// Don't link the title if using the post format aside.
-				if ( has_post_format( 'aside' ) ) :
+				// Don't link the title if using the post format aside, or if the post lacks a valid URL.
+				if ( has_post_format( 'aside' ) || ! $has_link ) :
 					the_title( '<h2 class="entry-title">', '</h2>' );
 				else :
 					the_title( '<h2 class="entry-title"><a href="' . esc_url( $link ) . '" rel="bookmark">', '</a></h2>' );
 				endif;
 			else :
-				// Don't link the title if using the post format aside.
-				if ( has_post_format( 'aside' ) ) :
+				// Don't link the title if using the post format aside, or if the post lacks a valid URL.
+				if ( has_post_format( 'aside' ) || ! $has_link ) :
 					the_title( '<h3 class="entry-title">', '</h3>' );
 				else :
 					the_title( '<h3 class="entry-title"><a href="' . esc_url( $link ) . '" rel="bookmark">', '</a></h3>' );
@@ -123,7 +131,7 @@ call_user_func(
 					the_excerpt();
 				endif;
 			endif;
-			if ( ! has_post_format( 'aside' ) && ( $attributes['showReadMore'] ) ) :
+			if ( ! has_post_format( 'aside' ) && $has_link && ( $attributes['showReadMore'] ) ) :
 				?>
 				<a class="more-link" href="<?php echo esc_url( $link ); ?>" rel="bookmark">
 					<?php echo esc_html( $attributes['readMoreLabel'] ); ?>

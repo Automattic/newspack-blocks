@@ -62,13 +62,13 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 			$supporter_url      = get_post_meta( $post_id, 'newspack_supporter_url', true );
 			$external_url       = ! empty( $sponsor_url ) ? $sponsor_url : $supporter_url;
 			$link               = ! empty( $external_url ) ? $external_url : get_permalink();
-			$post_type_info     = get_post_type_object( get_post_type() );
-			$is_public          = ! empty( $post_type_info->public ) || ! empty( $external_url );
+			$post_type_info     = get_post_type_object( $post_type );
+			$has_link           = ! empty( $post_type_info->public ) || ! empty( $external_url ); // False if a sponsor or supporter without an external URL.
 			?>
 
 			<article data-post-id="<?php echo esc_attr( $post_id ); ?>" class="<?php echo esc_attr( implode( ' ', $article_classes ) . ' ' . $post_type ); ?>">
 				<figure class="post-thumbnail">
-					<?php if ( $is_public ) : ?>
+					<?php if ( $has_link ) : ?>
 					<a href="<?php echo esc_url( $link ); ?>" rel="bookmark">
 					<?php endif; ?>
 						<?php if ( $has_featured_image ) : ?>
@@ -85,7 +85,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 						<?php else : ?>
 							<div class="wp-block-newspack-blocks-carousel__placeholder"></div>
 						<?php endif; ?>
-					<?php if ( $is_public ) : ?>
+					<?php if ( $has_link ) : ?>
 					</a>
 					<?php endif; ?>
 				</figure>
