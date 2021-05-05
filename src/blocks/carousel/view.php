@@ -389,6 +389,10 @@ function newspack_blocks_register_carousel() {
 						'type'    => 'boolean',
 						'default' => true,
 					),
+					'imageFit'     => array(
+						'type'    => 'string',
+						'default' => 'cover',
+					),
 				),
 				'render_callback' => 'newspack_blocks_render_block_carousel',
 				'supports'        => [],
