@@ -236,8 +236,9 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 
 	if ( $is_amp ) {
 		$selector    = sprintf(
-			'<amp-selector id="wp-block-newspack-carousel__amp-pagination__%1$d" class="swiper-pagination-bullets amp-pagination" on="select:wp-block-newspack-carousel__amp-carousel__%1$d.goToSlide(index=event.targetOption)" layout="container">%2$s</amp-selector>',
+			'<amp-selector id="wp-block-newspack-carousel__amp-pagination__%1$d" class="swiper-pagination-bullets amp-pagination" on="select:wp-block-newspack-carousel__amp-carousel__%1$d.goToSlide(index=event.targetOption)" layout="container" %2$s>%3$s</amp-selector>',
 			absint( $newspack_blocks_carousel_id ),
+			$attributes['hideControls'] ? 'aria-hidden="true"' : '',
 			implode( '', $buttons )
 		);
 		$carousel    = sprintf(
@@ -253,13 +254,15 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 		$autoplay_ui = $autoplay ? newspack_blocks_carousel_block_autoplay_ui_amp( $newspack_blocks_carousel_id ) : '';
 	} else {
 		$selector    = sprintf(
-			'<div class="swiper-pagination-bullets amp-pagination">%s</div>',
+			'<div class="swiper-pagination-bullets amp-pagination" %1$s>%2$s</div>',
+			$attributes['hideControls'] ? 'aria-hidden="true"' : '',
 			implode( '', $buttons )
 		);
 		$navigation  = 1 === $counter ? '' : sprintf(
-			'<button class="swiper-button swiper-button-prev" aria-label="%s"></button><button class="swiper-button swiper-button-next" aria-label="%s"></button>',
+			'<button class="swiper-button swiper-button-prev" aria-label="%1$s" %3$s></button><button class="swiper-button swiper-button-next" aria-label="%2$s" %3$s></button>',
 			esc_attr__( 'Previous Slide', 'newspack-blocks' ),
-			esc_attr__( 'Next Slide', 'newspack-blocks' )
+			esc_attr__( 'Next Slide', 'newspack-blocks' ),
+			$attributes['hideControls'] ? 'aria-hidden="true"' : ''
 		);
 		$carousel    = sprintf(
 			'<div class="swiper-container"><div class="swiper-wrapper">%s</div>%s</div>',
@@ -410,6 +413,10 @@ function newspack_blocks_register_carousel() {
 					'slidesPerView' => array(
 						'type'    => 'number',
 						'default' => 1,
+					),
+					'hideControls'  => array(
+						'type'    => 'boolean',
+						'default' => false,
 					),
 				),
 				'render_callback' => 'newspack_blocks_render_block_carousel',

@@ -107,6 +107,10 @@ export const settings = {
 			type: 'number',
 			default: 1,
 		},
+		hideControls: {
+			type: 'boolean',
+			default: false,
+		},
 	},
 	supports: {
 		html: false,

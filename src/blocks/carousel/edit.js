@@ -132,6 +132,7 @@ class Edit extends Component {
 			autoplay,
 			categories,
 			delay,
+			hideControls,
 			imageFit,
 			postsToShow,
 			postType,
@@ -152,6 +153,7 @@ class Edit extends Component {
 			{
 				'wp-block-newspack-blocks-carousel__autoplay-playing': autoplay,
 				'newspack-block--disabled': isUIDisabled,
+				'hide-controls': hideControls,
 			}
 		);
 		const dateFormat = __experimentalGetSettings().formats.date;
@@ -302,6 +304,14 @@ class Edit extends Component {
 								{ label: __( 'Cover', 'newspack-blocks' ), value: 'cover' },
 								{ label: __( 'Contain', 'newspack-blocks' ), value: 'contain' },
 							] }
+						/>
+						<ToggleControl
+							label={ __( 'Hide controls' ) }
+							help={ __( 'Hide the slideshow UI. Useful when used with Autoplay.' ) }
+							checked={ hideControls }
+							onChange={ _hideControls => {
+								setAttributes( { hideControls: _hideControls } );
+							} }
 						/>
 						<ToggleControl
 							label={ __( 'Autoplay' ) }

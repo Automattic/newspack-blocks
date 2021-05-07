@@ -33,6 +33,11 @@
 			right: 1.5em;
 		}
 	}
+
+	&.hide-controls button {
+		display: none;
+		visibility: hidden;
+	}
 }
 .editor-block-list__layout
 	.editor-block-list__block

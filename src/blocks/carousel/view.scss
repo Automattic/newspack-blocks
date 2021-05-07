@@ -288,4 +288,13 @@
 		position: relative;
 		width: auto;
 	}
+
+	// If hideControls is enabled, visually hide the UI elements.
+	&.hide-controls {
+		.amp-pagination,
+		button {
+			display: none;
+			visibility: hidden;
+		}
+	}
 }
