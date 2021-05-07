@@ -357,13 +357,6 @@ class Newspack_Blocks_API {
 				],
 			];
 
-			// Sponsors and Supporters aren't public, so they don't have singular pages/permalinks, and they may or may not have external URL meta values.
-			$sponsor_url    = get_post_meta( $post->ID, 'newspack_sponsor_url', true );
-			$supporter_url  = get_post_meta( $post->ID, 'newspack_supporter_url', true );
-			$external_url   = ! empty( $sponsor_url ) ? $sponsor_url : $supporter_url;
-			$post_type_info = get_post_type_object( $post->post_type );
-			$has_link       = ! empty( $post_type_info->public ) || ! empty( $external_url ); // False if a sponsor or supporter without an external URL.
-
 			$add_ons = [
 				'newspack_article_classes'        => Newspack_Blocks::get_term_classes( $data['id'] ),
 				'newspack_author_info'            => self::newspack_blocks_get_author_info( $data ),
@@ -374,7 +367,7 @@ class Newspack_Blocks_API {
 				'newspack_post_format'            => self::newspack_blocks_post_format( $data ),
 				'newspack_post_sponsors'          => self::newspack_blocks_sponsor_info( $data ),
 				'post_type'                       => $post->post_type,
-				'has_link'                        => $has_link,
+				'post_link'                       => Newspack_Blocks::get_post_link( $post_id ),
 			];
 
 			$posts[] = array_merge( $data, $add_ons );

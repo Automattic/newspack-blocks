@@ -195,9 +195,6 @@ class Newspack_Blocks {
 		if ( ! empty( $attributes['align'] ) ) {
 			$classes[] = 'align' . $attributes['align'];
 		}
-		if ( self::is_amp() ) {
-			$classes[] = 'is-amp';
-		}
 		if ( isset( $attributes['className'] ) ) {
 			array_push( $classes, $attributes['className'] );
 		}
@@ -732,6 +729,29 @@ class Newspack_Blocks {
 	 */
 	public static function remove_excerpt_more_filter() {
 		remove_filter( 'excerpt_more', [ __CLASS__, 'more_excerpt' ], 999 );
+	}
+
+	/**
+	 * Utility to get the link for the given post ID. If the post has an external URL meta value, use that.
+	 * Otherwise, use the permalink. But if the post type doesn't have a public singular view, don't link.
+	 *
+	 * @param int $post_id Post ID for which to get the link. Will default to current post if none given.
+	 * @return string|boolean The URL for the post, or false if it can't be linked to.
+	 */
+	public static function get_post_link( $post_id = null ) {
+		if ( null === $post_id ) {
+			$post_id = get_the_ID();
+		}
+
+		$post_type        = get_post_type( $post_id );
+		$sponsor_url      = get_post_meta( $post_id, 'newspack_sponsor_url', true );
+		$supporter_url    = get_post_meta( $post_id, 'newspack_supporter_url', true );
+		$external_url     = ! empty( $sponsor_url ) ? $sponsor_url : $supporter_url;
+		$post_type_info   = get_post_type_object( $post_type );
+		$link             = ! empty( $external_url ) ? $external_url : get_permalink();
+		$should_have_link = ! empty( $post_type_info->public ) || ! empty( $external_url ); // False if a sponsor or supporter without an external URL.
+
+		return $should_have_link ? $link : false;
 	}
 }
 Newspack_Blocks::init();

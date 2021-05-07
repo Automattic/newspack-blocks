@@ -201,7 +201,7 @@ class Edit extends Component {
 								: post.excerpt.rendered }
 						</RawHTML>
 					) }
-					{ showReadMore && post.has_link && (
+					{ showReadMore && post.post_link && (
 						<a href="#" key="readmore" className="more-link">
 							{ readMoreLabel }
 						</a>
