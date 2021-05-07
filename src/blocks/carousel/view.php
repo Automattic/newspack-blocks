@@ -250,7 +250,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 			$attributes['slidesPerView'] * 4,
 			esc_attr__( 'Next Slide', 'newspack-blocks' ),
 			esc_attr__( 'Previous Slide', 'newspack-blocks' ),
-			$autoplay ? 'auto-advance="true" delay=' . esc_attr( $delay * 1000 ) : '',
+			$autoplay ? 'auto-advance="true" auto-advance-interval=' . esc_attr( $delay * 1000 ) : '',
 			absint( $newspack_blocks_carousel_id ),
 			$slides_to_show,
 			$slides
