@@ -111,6 +111,10 @@ export const settings = {
 			type: 'boolean',
 			default: false,
 		},
+		aspectRatio: {
+			type: 'number',
+			default: 0.75,
+		},
 	},
 	supports: {
 		html: false,

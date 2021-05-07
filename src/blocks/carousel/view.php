@@ -242,8 +242,9 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 			implode( '', $buttons )
 		);
 		$carousel    = sprintf(
-			'<amp-base-carousel class="wp-block-newspack-carousel__amp-carousel" width="%1$s" height="3" layout="responsive" snap="true" type="slides" data-next-button-aria-label="%2$s" data-prev-button-aria-label="%3$s" controls loop %4$s id="wp-block-newspack-carousel__amp-carousel__%5$s" on="slideChange:wp-block-newspack-carousel__amp-pagination__%5$s.toggle(index=event.index, value=true)" advance-count="1" visible-count="%6$s">%7$s</amp-base-carousel>',
-			$attributes['slidesPerView'] * 4,
+			'<amp-base-carousel class="wp-block-newspack-carousel__amp-carousel" width="%1$s" height="%2$s" layout="responsive" snap="true" type="slides" data-next-button-aria-label="%3$s" data-prev-button-aria-label="%4$s" controls loop %5$s id="wp-block-newspack-carousel__amp-carousel__%6$s" on="slideChange:wp-block-newspack-carousel__amp-pagination__%6$s.toggle(index=event.index, value=true)" advance-count="1" visible-count="%7$s">%8$s</amp-base-carousel>',
+			$attributes['slidesPerView'] * 1,
+			$attributes['aspectRatio'],
 			esc_attr__( 'Next Slide', 'newspack-blocks' ),
 			esc_attr__( 'Previous Slide', 'newspack-blocks' ),
 			$autoplay ? 'auto-advance="true" auto-advance-interval=' . esc_attr( $delay * 1000 ) : '',
@@ -275,6 +276,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 		'data-current-post-id=' . $post_id,
 		'data-slides-per-view=' . $attributes['slidesPerView'],
 		'data-slide-count=' . $counter,
+		'data-aspect-ratio=' . $attributes['aspectRatio'],
 	];
 
 	if ( $autoplay && ! $is_amp ) {

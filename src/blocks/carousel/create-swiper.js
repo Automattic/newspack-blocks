@@ -160,6 +160,18 @@ export default function createSwiper( els, config = {} ) {
 			els.pause.focus(); // Move focus to the pause button.
 		}
 
+		/**
+		 * Forces an aspect ratio for each slide.
+		 */
+		function setAspectRatio() {
+			const { aspectRatio } = config;
+			const slides = Array.from( this.slides );
+
+			slides.forEach( slide => {
+				slide.style.height = `${ slide.clientWidth * aspectRatio }px`;
+			} );
+		}
+
 		swiper.on( 'init', function() {
 			els.play.addEventListener( 'click', handlePlayButtonClick );
 			els.pause.addEventListener( 'click', handlePauseButtonClick );
@@ -179,6 +191,9 @@ export default function createSwiper( els, config = {} ) {
 			els.play.removeEventListener( 'click', handlePlayButtonClick );
 			els.pause.removeEventListener( 'click', handlePauseButtonClick );
 		} );
+
+		swiper.on( 'imagesReady', setAspectRatio );
+		swiper.on( 'resize', setAspectRatio );
 	}
 
 	swiper.init();
