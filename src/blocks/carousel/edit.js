@@ -171,12 +171,18 @@ class Edit extends Component {
 					'Square',
 					'newspack-blocks'
 				),
-				shortName: /* translators: abbreviation for small size */ __( '1:1', 'newspack-blocks' ),
+				shortName: /* translators: abbreviation for 1:1 aspect ratio */ __(
+					'1:1',
+					'newspack-blocks'
+				),
 			},
 			{
 				value: 0.75,
 				label: /* translators: label for 4:3 aspect ratio option */ __( '4:3', 'newspack-blocks' ),
-				shortName: /* translators: abbreviation for medium size */ __( '4:3', 'newspack-blocks' ),
+				shortName: /* translators: abbreviation for 4:3 aspect ratio */ __(
+					'4:3',
+					'newspack-blocks'
+				),
 			},
 			{
 				value: 0.5625,
@@ -184,12 +190,18 @@ class Edit extends Component {
 					'16:9',
 					'newspack-blocks'
 				),
-				shortName: /* translators: abbreviation for large size */ __( '16:9', 'newspack-blocks' ),
+				shortName: /* translators: abbreviation for 16:9 aspect ratio */ __(
+					'16:9',
+					'newspack-blocks'
+				),
 			},
 			{
 				value: 4 / 3,
 				label: /* translators: label for 3:4 aspect ratio option */ __( '3:4', 'newspack-blocks' ),
-				shortName: /* translators: abbreviation for large size */ __( '3:4', 'newspack-blocks' ),
+				shortName: /* translators: abbreviation for 3:4 aspect ratio */ __(
+					'3:4',
+					'newspack-blocks'
+				),
 			},
 			{
 				value: 16 / 9,
@@ -197,7 +209,10 @@ class Edit extends Component {
 					'9:16',
 					'newspack-blocks'
 				),
-				shortName: /* translators: abbreviation for large size */ __( '9:16', 'newspack-blocks' ),
+				shortName: /* translators: abbreviation for 9:16 aspect ratio */ __(
+					'9:16',
+					'newspack-blocks'
+				),
 			},
 		];
 		return (
