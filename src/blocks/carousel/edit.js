@@ -409,7 +409,7 @@ class Edit extends Component {
 							</PanelRow>
 						</BaseControl>
 						<ToggleControl
-							label={ __( 'Hide controls' ) }
+							label={ __( 'Hide Controls' ) }
 							help={ __( 'Hide the slideshow UI. Useful when used with Autoplay.' ) }
 							checked={ hideControls }
 							onChange={ _hideControls => {
