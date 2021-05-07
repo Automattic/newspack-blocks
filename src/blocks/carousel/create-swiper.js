@@ -143,6 +143,21 @@ export default function createSwiper( els, config = {} ) {
 		},
 	} );
 
+	/**
+	 * Forces an aspect ratio for each slide.
+	 */
+	function setAspectRatio() {
+		const { aspectRatio } = config;
+		const slides = Array.from( this.slides );
+
+		slides.forEach( slide => {
+			slide.style.height = `${ slide.clientWidth * aspectRatio }px`;
+		} );
+	}
+
+	swiper.on( 'imagesReady', setAspectRatio );
+	swiper.on( 'resize', setAspectRatio );
+
 	if ( config.autoplay ) {
 		/**
 		 * Handles the Pause button click.
@@ -158,18 +173,6 @@ export default function createSwiper( els, config = {} ) {
 		function handlePlayButtonClick() {
 			swiper.autoplay.start();
 			els.pause.focus(); // Move focus to the pause button.
-		}
-
-		/**
-		 * Forces an aspect ratio for each slide.
-		 */
-		function setAspectRatio() {
-			const { aspectRatio } = config;
-			const slides = Array.from( this.slides );
-
-			slides.forEach( slide => {
-				slide.style.height = `${ slide.clientWidth * aspectRatio }px`;
-			} );
 		}
 
 		swiper.on( 'init', function() {
@@ -191,9 +194,6 @@ export default function createSwiper( els, config = {} ) {
 			els.play.removeEventListener( 'click', handlePlayButtonClick );
 			els.pause.removeEventListener( 'click', handlePauseButtonClick );
 		} );
-
-		swiper.on( 'imagesReady', setAspectRatio );
-		swiper.on( 'resize', setAspectRatio );
 	}
 
 	swiper.init();
