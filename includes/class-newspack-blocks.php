@@ -201,7 +201,7 @@ class Newspack_Blocks {
 		if ( is_array( $extra ) && ! empty( $extra ) ) {
 			$classes = array_merge( $classes, $extra );
 		}
-		if ( $attributes['hideControls'] ) {
+		if ( ! empty( $attributes['hideControls'] ) ) {
 			$classes[] = 'hide-controls';
 		}
 
