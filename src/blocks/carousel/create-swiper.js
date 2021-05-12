@@ -95,9 +95,14 @@ export default function createSwiper( els, config = {} ) {
 		preventClicksPropagation: false, // Necessary for normal block interactions.
 		releaseFormElements: false,
 		setWrapperSize: true,
-		slidesPerView: config.slidesPerView || 1,
+		slidesPerView: config.slidesPerView,
 		spaceBetween: 16,
 		touchStartPreventDefault: false,
+		breakpoints: {
+			600: {
+				slidesPerView: config.slidesPerView > 1 ? 2 : 1,
+			},
+		},
 		on: {
 			init() {
 				forEachNode( this.wrapperEl.querySelectorAll( '.swiper-slide' ), slide =>

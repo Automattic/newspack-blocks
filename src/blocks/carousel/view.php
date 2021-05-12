@@ -249,7 +249,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 			esc_attr__( 'Previous Slide', 'newspack-blocks' ),
 			$autoplay ? 'auto-advance="true" auto-advance-interval=' . esc_attr( $delay * 1000 ) : '',
 			absint( $newspack_blocks_carousel_id ),
-			$slides_to_show,
+			'(min-width: 600px) ' . $slides_to_show . ', ' . ( $slides_to_show > 1 ? 2 : 1 ),
 			$slides
 		);
 		$autoplay_ui = $autoplay ? newspack_blocks_carousel_block_autoplay_ui_amp( $newspack_blocks_carousel_id ) : '';
