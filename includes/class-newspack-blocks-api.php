@@ -372,8 +372,8 @@ class Newspack_Blocks_API {
 
 			// Support Newspack Listings hide author/publish date options.
 			if ( class_exists( 'Newspack_Listings\Newspack_Listings_Core' ) ) {
-				$add_ons['newspack_listings_hide_author']       = apply_filters( 'newspack_listings_hide_author', false );
-				$add_ons['newspack_listings_hide_publish_date'] = apply_filters( 'newspack_listings_hide_publish_date', false );
+				$add_ons['newspack_listings_hide_author']       = apply_filters( 'newspack_listings_hide_author', false ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+				$add_ons['newspack_listings_hide_publish_date'] = apply_filters( 'newspack_listings_hide_publish_date', false ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			}
 
 			$posts[] = array_merge( $data, $add_ons );

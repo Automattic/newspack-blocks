@@ -57,8 +57,8 @@ call_user_func(
 		}
 
 		// Support Newspack Listings hide author/publish date options.
-		$hide_author       = apply_filters( 'newspack_listings_hide_author', false );
-		$hide_publish_date = apply_filters( 'newspack_listings_hide_publish_date', false );
+		$hide_author       = apply_filters( 'newspack_listings_hide_author', false ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		$hide_publish_date = apply_filters( 'newspack_listings_hide_publish_date', false ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		$show_author       = $attributes['showAuthor'] && ! $hide_author;
 		$show_date         = $attributes['showDate'] && ! $hide_publish_date;
 		?>
