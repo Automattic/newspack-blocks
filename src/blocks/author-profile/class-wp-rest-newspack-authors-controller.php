@@ -13,13 +13,6 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 // phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
 
 	/**
-	 * Attribute schema.
-	 *
-	 * @var array
-	 */
-	public $attribute_schema;
-
-	/**
 	 * Constructs the controller.
 	 *
 	 * @access public
@@ -244,22 +237,5 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 		$response->header( 'x-wp-total', $user_total + $guest_author_total );
 
 		return rest_ensure_response( $response );
-	}
-
-	/**
-	 * Sets up and returns attribute schema.
-	 *
-	 * @return array
-	 */
-	public function get_attribute_schema() {
-		if ( empty( $this->attribute_schema ) ) {
-			$block_json = json_decode(
-				file_get_contents( __DIR__ . '/block.json' ), // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-				true
-			);
-
-			$this->attribute_schema = $block_json['attributes'];
-		}
-		return $this->attribute_schema;
 	}
 }
