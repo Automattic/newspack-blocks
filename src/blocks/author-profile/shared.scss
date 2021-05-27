@@ -1,0 +1,50 @@
+@import '../../shared/sass/variables';
+@import '../../shared/sass/mixins';
+
+.newspack-author-profile {
+	&__author-card {
+		@include media( mobile ) {
+			align-items: center;
+			display: flex;
+		}
+
+		.newspack-author-profile__avatar {
+			@include media( mobile ) {
+				flex: 1;
+				margin-right: 2rem;
+			}
+
+			figure {
+				margin: 0;
+				overflow: hidden;
+			}
+
+			img {
+				display: block;
+				height: auto;
+				width: 100%;
+			}
+		}
+
+		.newspack-author-profile__bio {
+			@include media( mobile ) {
+				flex: 3;
+
+				h3 {
+					margin-top: 0;
+				}
+			}
+		}
+	}
+
+	ul.newspack-author-profile__social-links {
+		display: flex;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+
+		li + li {
+			margin-left: 2rem;
+		}
+	}
+}

@@ -1,0 +1,12 @@
+@import './shared';
+
+.editor-styles-wrapper .newspack-author-profile {
+	.components-notice {
+		margin: 0 0 2rem 0;
+		width: 100%;
+	}
+
+	&__bio h3 .components-button {
+		font-weight: normal;
+	}
+}
