@@ -28,7 +28,7 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 	 * @access public
 	 */
 	public function register_routes() {
-		// Endpoint to get articles on the front-end.
+		// Endpoint to get authors.
 		register_rest_route(
 			$this->namespace,
 			'/' . $this->rest_base,
