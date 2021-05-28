@@ -4,7 +4,6 @@
 .newspack-author-profile {
 	&__author-card {
 		@include media( mobile ) {
-			align-items: center;
 			display: flex;
 		}
 
@@ -19,16 +18,18 @@
 				overflow: hidden;
 			}
 
-			img {
+			.avatar {
+				border-radius: 0;
 				display: block;
 				height: auto;
+				max-width: none;
 				width: 100%;
 			}
 		}
 
 		.newspack-author-profile__bio {
 			@include media( mobile ) {
-				flex: 3;
+				flex: 4;
 
 				h3 {
 					margin-top: 0;
@@ -46,5 +47,9 @@
 		li + li {
 			margin-left: 2rem;
 		}
+	}
+
+	.hidden {
+		display: none;
 	}
 }

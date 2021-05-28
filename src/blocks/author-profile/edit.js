@@ -5,6 +5,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { InspectorControls } from '@wordpress/block-editor';
 import {
 	Button,
+	ExternalLink,
 	Notice,
 	PanelBody,
 	PanelRow,
@@ -13,7 +14,7 @@ import {
 	RangeControl,
 	ToggleControl,
 } from '@wordpress/components';
-import { Fragment, useEffect, useState } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { Icon, people } from '@wordpress/icons';
 import { __, sprintf } from '@wordpress/i18n';
@@ -162,7 +163,16 @@ export default ( { attributes, setAttributes } ) => {
 						) }
 						<div className="newspack-author-profile__bio">
 							<h3>
-								<MaybeLink>{ author.name }</MaybeLink>
+								<MaybeLink>{ author.name }</MaybeLink>{' '}
+								<ExternalLink
+									href={
+										author.is_guest
+											? `/wp-admin/post.php?post=${ author.id }&action=edit`
+											: '/wp-admin/user-edit.php?user_id=' + author.id
+									}
+								>
+									{ __( 'edit', 'newspack-blocks' ) }
+								</ExternalLink>
 								<Button
 									isLink
 									onClick={ () => {
@@ -170,16 +180,21 @@ export default ( { attributes, setAttributes } ) => {
 										setAuthor( null );
 									} }
 								>
-									{ __( 'Clear selection', 'newspack-blocks' ) }
+									{ __( 'clear', 'newspack-blocks' ) }
 								</Button>
 							</h3>
-							{ showBio && author.bio && <p>{ author.bio }</p> }
+							{ showBio && author.bio && (
+								<p>
+									{ author.bio }{' '}
+									{ showArchiveLink && <a href={ author.url }>More by { author.name }</a> }
+								</p>
+							) }
 							{ ( showEmail || showSocial ) && (
 								<ul className="newspack-author-profile__social-links">
 									{ Object.keys( socialLinks ).map( service => (
 										<li key={ service }>
 											<a href={ socialLinks[ service ].url }>
-												{ socialLinks[ service ] && (
+												{ socialLinks[ service ].svg && (
 													<span
 														dangerouslySetInnerHTML={ { __html: socialLinks[ service ].svg } }
 													/>
@@ -221,6 +236,11 @@ export default ( { attributes, setAttributes } ) => {
 									'newspack=blocks'
 								) }
 								fetchSuggestions={ async ( search = null, offset = 0 ) => {
+									// If we already have a selected author, no need to fetch suggestions.
+									if ( authorId ) {
+										return [];
+									}
+
 									const response = await apiFetch( {
 										parse: false,
 										path: addQueryArgs( '/newspack-blocks/v1/authors', {

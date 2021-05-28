@@ -6,7 +6,11 @@
 		width: 100%;
 	}
 
-	&__bio h3 .components-button {
-		font-weight: normal;
+	&__bio h3 {
+		.components-button,
+		.components-external-link {
+			font-size: 13px;
+			font-weight: normal;
+		}
 	}
 }
