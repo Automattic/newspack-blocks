@@ -130,31 +130,31 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 
 							$guest_author = ( new CoAuthors_Guest_Authors() )->get_guest_author_by( 'id', $guest_author->ID );
 
-							if ( in_array( 'login', $fields ) ) {
+							if ( in_array( 'login', $fields, true ) ) {
 								$guest_author_data['login'] = $guest_author->user_login;
 							}
-							if ( in_array( 'name', $fields ) ) {
+							if ( in_array( 'name', $fields, true ) ) {
 								$guest_author_data['name'] = $guest_author->display_name;
 							}
-							if ( in_array( 'bio', $fields ) ) {
+							if ( in_array( 'bio', $fields, true ) ) {
 								$guest_author_data['bio'] = get_post_meta( $guest_author->ID, 'cap-description', true );
 							}
-							if ( in_array( 'email', $fields ) ) {
+							if ( in_array( 'email', $fields, true ) ) {
 								$email_data = $this->get_email( $guest_author->ID );
 
 								if ( $email_data ) {
 									$guest_author_data['email'] = $email_data;
 								}
 							}
-							if ( in_array( 'avatar', $fields ) && function_exists( 'coauthors_get_avatar' ) ) {
+							if ( in_array( 'avatar', $fields, true ) && function_exists( 'coauthors_get_avatar' ) ) {
 								$guest_author_data['avatar'] = coauthors_get_avatar( $guest_author, 240 );
 							}
-							if ( in_array( 'url', $fields ) ) {
+							if ( in_array( 'url', $fields, true ) ) {
 								$guest_author_data['url'] = esc_urL(
 									get_site_urL( null, '?author_name=' . get_post_meta( $guest_author->ID, 'cap-user_login', true ) )
 								);
 							}
-							if ( in_array( 'social', $fields ) ) {
+							if ( in_array( 'social', $fields, true ) ) {
 								$guest_author_data['social'] = $this->get_social( $guest_author->ID );
 							}
 
@@ -175,29 +175,29 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 							'is_guest'   => false,
 						];
 
-						if ( in_array( 'login', $fields ) ) {
+						if ( in_array( 'login', $fields, true ) ) {
 							$user_data['login'] = $user->data->user_login;
 						}
-						if ( in_array( 'name', $fields ) ) {
+						if ( in_array( 'name', $fields, true ) ) {
 							$user_data['name'] = $user->data->display_name;
 						}
-						if ( in_array( 'bio', $fields ) ) {
+						if ( in_array( 'bio', $fields, true ) ) {
 							$user_data['bio'] = get_the_author_meta( 'description', $user->data->ID );
 						}
-						if ( in_array( 'email', $fields ) ) {
+						if ( in_array( 'email', $fields, true ) ) {
 							$email_data = $this->get_email( $user->data->ID, false, $user->data->user_email );
 
 							if ( $email_data ) {
 								$user_data['email'] = $email_data;
 							}
 						}
-						if ( in_array( 'avatar', $fields ) ) {
+						if ( in_array( 'avatar', $fields, true ) ) {
 							$user_data['avatar'] = get_avatar( $user->data->ID, 240 );
 						}
-						if ( in_array( 'url', $fields ) ) {
+						if ( in_array( 'url', $fields, true ) ) {
 							$user_data['url'] = esc_urL( get_author_posts_url( $user->data->ID ) );
 						}
-						if ( in_array( 'social', $fields ) ) {
+						if ( in_array( 'social', $fields, true ) ) {
 							$user_data['social'] = $this->get_social( $user->data->ID );
 						}
 
@@ -210,7 +210,7 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 		);
 
 		// Sort combined authors array by registration date.
-		$sort = usort(
+		usort(
 			$combined_authors,
 			function( $a, $b ) {
 				return strtotime( $b['registered'] ) - strtotime( $a['registered'] );
