@@ -1,3 +1,10 @@
+# [1.27.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.26.0...v1.27.0-alpha.1) (2021-06-01)
+
+
+### Features
+
+* support Newspack Listings hide entry meta options ([#762](https://github.com/Automattic/newspack-blocks/issues/762)) ([217f5ce](https://github.com/Automattic/newspack-blocks/commit/217f5cecfe2d8627317f5987340f5f7076e271c3))
+
 # [1.26.0](https://github.com/Automattic/newspack-blocks/compare/v1.25.1...v1.26.0) (2021-05-13)
 
 
