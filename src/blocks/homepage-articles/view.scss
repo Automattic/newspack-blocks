@@ -36,7 +36,7 @@
 		article {
 			flex-basis: 100%;
 
-			@include media( tablet ) {
+			@include media( mobile ) {
 				margin-bottom: 1em;
 			}
 		}
@@ -629,6 +629,13 @@ amp-script .wpnbha {
 
 			&:not( :first-of-type ) {
 				border-bottom: 0;
+			}
+		}
+	}
+	&.is-grid {
+		article {
+			@include media( mobile ) {
+				margin-bottom: 1em;
 			}
 		}
 	}
