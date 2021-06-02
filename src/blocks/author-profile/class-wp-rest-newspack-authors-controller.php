@@ -239,7 +239,7 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 			$email_data = [ 'url' => 'mailto:' . $email_address ];
 
 			if ( class_exists( 'Newspack_SVG_Icons' ) ) {
-				$email_data['svg'] = Newspack_SVG_Icons::get_social_link_svg( 'mailto:' . $email_address, 30 );
+				$email_data['svg'] = Newspack_SVG_Icons::get_social_link_svg( 'mailto:' . $email_address, 24 );
 			}
 		}
 
@@ -278,7 +278,7 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 					$acc[ $profile ] = [ 'url' => $url ];
 
 					if ( class_exists( 'Newspack_SVG_Icons' ) ) {
-						$acc[ $profile ]['svg'] = $is_website ? Newspack_SVG_Icons::get_svg( 'ui', 'link', 30 ) : Newspack_SVG_Icons::get_social_link_svg( $url, 30 );
+						$acc[ $profile ]['svg'] = $is_website ? Newspack_SVG_Icons::get_svg( 'ui', 'link', 24 ) : Newspack_SVG_Icons::get_social_link_svg( $url, 24 );
 					}
 				}
 
