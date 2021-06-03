@@ -14,6 +14,10 @@
 				font-weight: normal;
 			}
 		}
+
+		a.no-op {
+			pointer-events: none;
+		}
 	}
 
 	.wp-block-group {

@@ -34,7 +34,6 @@ export const settings = {
 	category,
 	supports: {
 		html: false,
-		align: [ 'wide', 'full' ],
 		default: '',
 	},
 	edit,
