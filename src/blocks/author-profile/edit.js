@@ -100,6 +100,26 @@ export default ( { attributes, setAttributes } ) => {
 			<>{ children }</>
 		);
 
+	// Available units for avatarBorderRadius option.
+	const units = [
+		{
+			value: '%',
+			label: '%',
+		},
+		{
+			value: 'px',
+			label: 'px',
+		},
+		{
+			value: 'em',
+			label: 'em',
+		},
+		{
+			value: 'rem',
+			label: 'rem',
+		},
+	];
+
 	// Avatar size options.
 	const avatarSizeOptions = [
 		{
@@ -218,7 +238,7 @@ export default ( { attributes, setAttributes } ) => {
 								label={ __( 'Avatar border radius', 'newspack-blocks' ) }
 								labelPosition="edge"
 								__unstableInputWidth="80px"
-								units={ [ '%', 'px', 'em', 'rem', 'vw' ] }
+								units={ units }
 								value={ avatarBorderRadius }
 								onChange={ value =>
 									setAttributes( { avatarBorderRadius: 0 > parseFloat( value ) ? '0' : value } )
