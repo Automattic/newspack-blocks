@@ -147,7 +147,7 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 								}
 							}
 							if ( in_array( 'avatar', $fields, true ) && function_exists( 'coauthors_get_avatar' ) ) {
-								$guest_author_data['avatar'] = coauthors_get_avatar( $guest_author, 240 );
+								$guest_author_data['avatar'] = coauthors_get_avatar( $guest_author, 256 );
 							}
 							if ( in_array( 'url', $fields, true ) ) {
 								$guest_author_data['url'] = esc_urL(
@@ -192,7 +192,7 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 							}
 						}
 						if ( in_array( 'avatar', $fields, true ) ) {
-							$user_data['avatar'] = get_avatar( $user->data->ID, 240 );
+							$user_data['avatar'] = get_avatar( $user->data->ID, 256 );
 						}
 						if ( in_array( 'url', $fields, true ) ) {
 							$user_data['url'] = esc_urL( get_author_posts_url( $user->data->ID ) );

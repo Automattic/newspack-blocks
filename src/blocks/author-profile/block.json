@@ -33,6 +33,10 @@
 		"avatarBorderRadius": {
 			"type": "string",
 			"default": "50%"
+		},
+		"avatarSize": {
+			"type": "number",
+			"default": 128
 		}
 	}
 }

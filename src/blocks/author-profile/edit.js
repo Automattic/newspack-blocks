@@ -6,6 +6,9 @@
 import apiFetch from '@wordpress/api-fetch';
 import { BlockControls, InspectorControls } from '@wordpress/block-editor';
 import {
+	BaseControl,
+	Button,
+	ButtonGroup,
 	Notice,
 	PanelBody,
 	PanelRow,
@@ -39,6 +42,7 @@ export default ( { attributes, setAttributes } ) => {
 		showArchiveLink,
 		showAvatar,
 		avatarBorderRadius,
+		avatarSize,
 	} = attributes;
 
 	useEffect( () => {
@@ -96,6 +100,48 @@ export default ( { attributes, setAttributes } ) => {
 			<>{ children }</>
 		);
 
+	// Avatar size options.
+	const avatarSizeOptions = [
+		{
+			value: 72,
+			label: /* translators: label for small avatar size option */ __( 'Small', 'newspack-blocks' ),
+			shortName: /* translators: abbreviation for small avatar size option */ __(
+				'S',
+				'newspack-blocks'
+			),
+		},
+		{
+			value: 128,
+			label: /* translators: label for medium avatar size option */ __(
+				'Medium',
+				'newspack-blocks'
+			),
+			shortName: /* translators: abbreviation for medium avatar size option */ __(
+				'M',
+				'newspack-blocks'
+			),
+		},
+		{
+			value: 192,
+			label: /* translators: label for large avatar size option */ __( 'Large', 'newspack-blocks' ),
+			shortName: /* translators: abbreviation for large avatar size option */ __(
+				'L',
+				'newspack-blocks'
+			),
+		},
+		{
+			value: 256,
+			label: /* translators: label for extra-large avatar size option */ __(
+				'Extra-large',
+				'newspack-blocks'
+			),
+			shortName: /* translators: abbreviation for extra-large avatar size option  */ __(
+				'XL',
+				'newspack-blocks'
+			),
+		},
+	];
+
 	return (
 		<>
 			<InspectorControls>
@@ -138,9 +184,38 @@ export default ( { attributes, setAttributes } ) => {
 						/>
 					</PanelRow>
 					{ showAvatar && (
+						<BaseControl
+							label={ __( 'Avatar size', 'newspack-blocks' ) }
+							id="newspack-blocks__avatar-size-control"
+						>
+							<PanelRow>
+								<ButtonGroup
+									id="newspack-blocks__avatar-size-control-buttons"
+									aria-label={ __( 'Avatar size', 'newspack-blocks' ) }
+								>
+									{ avatarSizeOptions.map( option => {
+										const isCurrent = avatarSize === option.value;
+										return (
+											<Button
+												isLarge
+												isPrimary={ isCurrent }
+												aria-pressed={ isCurrent }
+												aria-label={ option.label }
+												key={ option.value }
+												onClick={ () => setAttributes( { avatarSize: option.value } ) }
+											>
+												{ option.shortName }
+											</Button>
+										);
+									} ) }
+								</ButtonGroup>
+							</PanelRow>
+						</BaseControl>
+					) }
+					{ showAvatar && (
 						<PanelRow>
 							<UnitControl
-								label={ __( 'Border radius', 'newspack-blocks' ) }
+								label={ __( 'Avatar border radius', 'newspack-blocks' ) }
 								labelPosition="edge"
 								__unstableInputWidth="80px"
 								units={ [ '%', 'px', 'em', 'rem', 'vw' ] }
@@ -176,7 +251,7 @@ export default ( { attributes, setAttributes } ) => {
 							<div className="newspack-author-profile__avatar">
 								<MaybeLink>
 									<figure
-										style={ { borderRadius: avatarBorderRadius } }
+										style={ { borderRadius: avatarBorderRadius, width: `${ avatarSize }px` } }
 										dangerouslySetInnerHTML={ { __html: author.avatar } }
 									/>
 								</MaybeLink>
