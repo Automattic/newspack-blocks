@@ -11,8 +11,8 @@ import {
 	PanelRow,
 	Placeholder,
 	Spinner,
-	RangeControl,
 	ToggleControl,
+	__experimentalUnitControl as UnitControl,
 } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -136,13 +136,15 @@ export default ( { attributes, setAttributes } ) => {
 					</PanelRow>
 					{ showAvatar && (
 						<PanelRow>
-							<RangeControl
-								label={ __( 'Border radius (%)', 'newspack-blocks' ) }
-								min={ 0 }
-								max={ 100 }
+							<UnitControl
+								label={ __( 'Border radius', 'newspack-blocks' ) }
+								labelPosition="edge"
+								__unstableInputWidth="80px"
+								units={ [ '%', 'px', 'em', 'rem', 'vw' ] }
 								value={ avatarBorderRadius }
-								withInputFIeld={ true }
-								onChange={ value => setAttributes( { avatarBorderRadius: value } ) }
+								onChange={ value =>
+									setAttributes( { avatarBorderRadius: 0 > parseFloat( value ) ? '0' : value } )
+								}
 							/>
 						</PanelRow>
 					) }
@@ -155,7 +157,7 @@ export default ( { attributes, setAttributes } ) => {
 							<div className="newspack-author-profile__avatar">
 								<MaybeLink>
 									<figure
-										style={ { borderRadius: avatarBorderRadius + '%' } }
+										style={ { borderRadius: avatarBorderRadius } }
 										dangerouslySetInnerHTML={ { __html: author.avatar } }
 									/>
 								</MaybeLink>

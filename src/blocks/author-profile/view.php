@@ -115,7 +115,7 @@ function newspack_blocks_render_block_author_profile( $attributes ) {
 				<?php if ( $show_archive_link ) : ?>
 				<a href="<?php esc_url( $author['url'] ); ?>">
 				<?php endif; ?>
-					<figure style="border-radius: <?php echo esc_attr( $attributes['avatarBorderRadius'] . '%' ); ?>;">
+					<figure style="border-radius: <?php echo esc_attr( $attributes['avatarBorderRadius'] ); ?>;">
 						<?php echo wp_kses_post( $author['avatar'] ); ?>
 					</figure>
 				<?php if ( $show_archive_link ) : ?>

@@ -31,8 +31,8 @@
 			"default": true
 		},
 		"avatarBorderRadius": {
-			"type": "number",
-			"default": 50
+			"type": "string",
+			"default": "50%"
 		}
 	}
 }
