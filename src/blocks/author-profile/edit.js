@@ -88,6 +88,8 @@ export default ( { attributes, setAttributes } ) => {
 	const socialLinks = ( showSocial && author && author.social ) || {};
 	if ( showEmail && author && author.email ) {
 		socialLinks.email = author.email;
+	} else {
+		delete socialLinks.email;
 	}
 
 	// Show a link to the author's post archive page, if available.
