@@ -80,7 +80,7 @@ export default ( { attributes, setAttributes } ) => {
 	};
 
 	// Combine social links and email, which are shown together.
-	const socialLinks = showSocial && author && author.social ? { ...author.social } : {};
+	const socialLinks = ( showSocial && author && author.social ) || {};
 	if ( showEmail && author && author.email ) {
 		socialLinks.email = author.email;
 	}

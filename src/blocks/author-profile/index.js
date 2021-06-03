@@ -28,11 +28,7 @@ export const settings = {
 		src: <Icon icon={ people } />,
 		foreground: '#36f',
 	},
-	keywords: [
-		__( 'donate', 'newspack-blocks' ),
-		__( 'memberships', 'newspack-blocks' ),
-		__( 'subscriptions', 'newspack-blocks' ),
-	],
+	keywords: [ __( 'author', 'newspack-blocks' ), __( 'profile', 'newspack-blocks' ) ],
 	description: __( 'Display an author profile card.', 'newspack-blocks' ),
 	attributes,
 	category,
