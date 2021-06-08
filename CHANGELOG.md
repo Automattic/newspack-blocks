@@ -1,3 +1,15 @@
+# [1.28.0](https://github.com/Automattic/newspack-blocks/compare/v1.27.0...v1.28.0) (2021-06-08)
+
+
+### Bug Fixes
+
+* include author profile block in release packages ([91200de](https://github.com/Automattic/newspack-blocks/commit/91200de8cb5e00de06c280f95ac3e79d5b44be46))
+
+
+### Features
+
+* author profile block ([#763](https://github.com/Automattic/newspack-blocks/issues/763)) ([2cb2249](https://github.com/Automattic/newspack-blocks/commit/2cb2249f42b7d23e2cea55bee583df0e96477185))
+
 # [1.27.0](https://github.com/Automattic/newspack-blocks/compare/v1.26.0...v1.27.0) (2021-06-02)
 
 
