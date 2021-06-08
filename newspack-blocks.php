@@ -24,6 +24,9 @@ require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'includes/class-newspack-blocks-patte
 // REST Controller for Articles Block.
 require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/homepage-articles/class-wp-rest-newspack-articles-controller.php';
 
+// REST Controller for Author Profile Block.
+require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/author-profile/class-wp-rest-newspack-authors-controller.php';
+
 /**
  * Registers Articles block routes.
  */
@@ -32,6 +35,15 @@ function newspack_articles_block_register_rest_routes() { // phpcs:ignore WordPr
 	$articles_controller->register_routes();
 }
 add_action( 'rest_api_init', 'newspack_articles_block_register_rest_routes' );
+
+/**
+ * Registers Authors block routes.
+ */
+function newspack_authors_block_register_rest_routes() { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
+	$authors_controller = new WP_REST_Newspack_Authors_Controller();
+	$authors_controller->register_routes();
+}
+add_action( 'rest_api_init', 'newspack_authors_block_register_rest_routes' );
 
 Newspack_Blocks::manage_view_scripts();
 add_action( 'enqueue_block_editor_assets', array( 'Newspack_Blocks', 'enqueue_block_editor_assets' ) );
