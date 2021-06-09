@@ -110,18 +110,12 @@ function newspack_blocks_render_block_author_profile( $attributes ) {
 	ob_start();
 
 	?>
-	<div class="newspack-author-profile newspack-author-profile__author-card">
+	<div class="newspack-author-profile newspack-author-profile__author-card avatar-<?php echo esc_attr( $attributes['avatarAlignment'] ); ?>">
 		<?php if ( $attributes['showAvatar'] && $author['avatar'] ) : ?>
 			<div class="newspack-author-profile__avatar">
-				<?php if ( $show_archive_link ) : ?>
-				<a href="<?php echo esc_url( $author['url'] ); ?>">
-				<?php endif; ?>
-					<figure style="border-radius: <?php echo esc_attr( $attributes['avatarBorderRadius'] ); ?>; width: <?php echo esc_attr( $attributes['avatarSize'] ); ?>px;">
-						<?php echo wp_kses_post( $author['avatar'] ); ?>
-					</figure>
-				<?php if ( $show_archive_link ) : ?>
-				</a>
-				<?php endif; ?>
+				<figure style="border-radius: <?php echo esc_attr( $attributes['avatarBorderRadius'] ); ?>; width: <?php echo esc_attr( $attributes['avatarSize'] ); ?>px;">
+					<?php echo wp_kses_post( $author['avatar'] ); ?>
+				</figure>
 			</div>
 		<?php endif; ?>
 		<div class="newspack-author-profile__bio">
