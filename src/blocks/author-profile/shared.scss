@@ -62,4 +62,15 @@
 	.hidden {
 		display: none;
 	}
+
+	// Avatar Right Aligned
+	&.avatar-right {
+		@include media( mobile ) {
+			.newspack-author-profile__avatar {
+				margin-left: 1.5em;
+				margin-right: 0;
+				order: 2;
+			}
+		}
+	}
 }
