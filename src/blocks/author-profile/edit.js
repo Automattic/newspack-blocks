@@ -254,7 +254,7 @@ export default ( { attributes, setAttributes } ) => {
 			</InspectorControls>
 			{ author && (
 				<BlockControls>
-					{ showAvatar && (
+					{ showAvatar && 'is-style-center' !== attributes.className && (
 						<Toolbar
 							controls={ [
 								{
@@ -286,18 +286,24 @@ export default ( { attributes, setAttributes } ) => {
 					/>
 				</BlockControls>
 			) }
-			<div className={ classnames( 'newspack-author-profile', 'avatar-' + avatarAlignment ) }>
+			<div
+				className={ classnames(
+					'wp-block-newspack-blocks-author-profile',
+					'avatar-' + avatarAlignment,
+					attributes.className
+				) }
+			>
 				{ ! isLoading && ! error && author && (
-					<div className="newspack-author-profile__author-card">
+					<>
 						{ showAvatar && author.avatar && (
-							<div className="newspack-author-profile__avatar">
+							<div className="wp-block-newspack-blocks-author-profile__avatar">
 								<figure
 									style={ { borderRadius: avatarBorderRadius, width: `${ avatarSize }px` } }
 									dangerouslySetInnerHTML={ { __html: author.avatar } }
 								/>
 							</div>
 						) }
-						<div className="newspack-author-profile__bio">
+						<div className="wp-block-newspack-blocks-author-profile__bio">
 							<h3>
 								<MaybeLink>{ author.name }</MaybeLink>
 							</h3>
@@ -306,13 +312,13 @@ export default ( { attributes, setAttributes } ) => {
 									{ author.bio }{' '}
 									{ showArchiveLink && (
 										<a href="#" className="no-op">
-											More by { author.name }
+											{ __( 'More by', 'newspack-blocks' ) + ' ' + author.name }
 										</a>
 									) }
 								</p>
 							) }
 							{ ( showEmail || showSocial ) && (
-								<ul className="newspack-author-profile__social-links">
+								<ul className="wp-block-newspack-blocks-author-profile__social-links">
 									{ Object.keys( socialLinks ).map( service => (
 										<li key={ service }>
 											<a href="#" className="no-op">
@@ -330,7 +336,7 @@ export default ( { attributes, setAttributes } ) => {
 								</ul>
 							) }
 						</div>
-					</div>
+					</>
 				) }
 				{ ! author && (
 					<Placeholder

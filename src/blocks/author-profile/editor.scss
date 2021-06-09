@@ -1,28 +1,40 @@
 @import './shared';
 
 .editor-styles-wrapper {
-	.newspack-author-profile {
+	.wp-block-newspack-blocks-author-profile {
 		.components-notice {
 			margin: 0 0 2rem 0;
 			width: 100%;
 		}
 
-		&__bio h3 {
-			.components-button,
-			.components-external-link {
-				font-size: 13px;
-				font-weight: normal;
+		a.no-op {
+			pointer-events: none;
+		}
+
+		&__bio {
+			@include media( mobile ) {
+				flex: 4;
+
+				h3 {
+					margin-top: 0;
+				}
 			}
 		}
 
-		a.no-op {
-			pointer-events: none;
+		&__social-links {
+			list-style: none;
+			margin: -8px;
+			padding: 0;
+
+			li {
+				margin: 8px;
+			}
 		}
 	}
 
 	.wp-block-group {
 		&.has-text-color {
-			.newspack-author-profile a {
+			.wp-block-newspack-blocks-author-profile a {
 				color: inherit;
 			}
 		}
