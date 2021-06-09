@@ -107,7 +107,7 @@ function newspack_blocks_render_block_author_profile( $attributes ) {
 		$social_links['email'] = $author['email'];
 	}
 
-	// Classes
+	// Add classes to the block.
 	$classes = Newspack_Blocks::block_classes( 'author-profile' );
 
 	if ( $attributes['avatarAlignment'] ) {
