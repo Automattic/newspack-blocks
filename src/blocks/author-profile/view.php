@@ -107,24 +107,29 @@ function newspack_blocks_render_block_author_profile( $attributes ) {
 		$social_links['email'] = $author['email'];
 	}
 
+	// Add classes to the block.
+	$classes = Newspack_Blocks::block_classes( 'author-profile' );
+
+	if ( $attributes['avatarAlignment'] ) {
+		$classes .= ' avatar-' . $attributes['avatarAlignment'];
+	}
+
+	if ( isset( $attributes['className'] ) ) {
+		$classes .= ' ' . $attributes['className'];
+	}
+
 	ob_start();
 
 	?>
-	<div class="newspack-author-profile newspack-author-profile__author-card">
+	<div class="<?php echo esc_attr( $classes ); ?>">
 		<?php if ( $attributes['showAvatar'] && $author['avatar'] ) : ?>
-			<div class="newspack-author-profile__avatar">
-				<?php if ( $show_archive_link ) : ?>
-				<a href="<?php echo esc_url( $author['url'] ); ?>">
-				<?php endif; ?>
-					<figure style="border-radius: <?php echo esc_attr( $attributes['avatarBorderRadius'] ); ?>; width: <?php echo esc_attr( $attributes['avatarSize'] ); ?>px;">
-						<?php echo wp_kses_post( $author['avatar'] ); ?>
-					</figure>
-				<?php if ( $show_archive_link ) : ?>
-				</a>
-				<?php endif; ?>
+			<div class="wp-block-newspack-blocks-author-profile__avatar">
+				<figure style="border-radius: <?php echo esc_attr( $attributes['avatarBorderRadius'] ); ?>; width: <?php echo esc_attr( $attributes['avatarSize'] ); ?>px;">
+					<?php echo wp_kses_post( $author['avatar'] ); ?>
+				</figure>
 			</div>
 		<?php endif; ?>
-		<div class="newspack-author-profile__bio">
+		<div class="wp-block-newspack-blocks-author-profile__bio">
 			<h3>
 				<?php if ( $show_archive_link ) : ?>
 				<a href="<?php echo esc_url( $author['url'] ); ?>">
@@ -153,7 +158,7 @@ function newspack_blocks_render_block_author_profile( $attributes ) {
 			<?php endif; ?>
 
 			<?php if ( $attributes['showEmail'] || $attributes['showSocial'] ) : ?>
-				<ul class="newspack-author-profile__social-links">
+				<ul class="wp-block-newspack-blocks-author-profile__social-links">
 					<?php foreach ( $social_links as $service => $social_data ) : ?>
 						<li>
 							<a href="<?php echo esc_url( $social_data['url'] ); ?>">
