@@ -1,3 +1,12 @@
+# [1.29.0](https://github.com/Automattic/newspack-blocks/compare/v1.28.0...v1.29.0) (2021-06-15)
+
+
+### Features
+
+* add avatar alignment option to author profile block ([#773](https://github.com/Automattic/newspack-blocks/issues/773)) ([9322b01](https://github.com/Automattic/newspack-blocks/commit/9322b0165f72aa64e26e068319af9332a8174c5b))
+* add centered style to author profile block ([#774](https://github.com/Automattic/newspack-blocks/issues/774)) ([602b5d4](https://github.com/Automattic/newspack-blocks/commit/602b5d47b8a18d9746abd71d954a9b30e62d7fa5))
+* blog posts block force image to be the right size when used behind ([#768](https://github.com/Automattic/newspack-blocks/issues/768)) ([d8dd2a9](https://github.com/Automattic/newspack-blocks/commit/d8dd2a98d89bbc3addc43b41a03ad263c3889fd5))
+
 # [1.28.0](https://github.com/Automattic/newspack-blocks/compare/v1.27.0...v1.28.0) (2021-06-08)
 
 
