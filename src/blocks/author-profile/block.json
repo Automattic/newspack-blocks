@@ -30,6 +30,10 @@
 			"type": "boolean",
 			"default": true
 		},
+		"avatarAlignment": {
+			"type": "string",
+			"default": "left"
+		},
 		"avatarBorderRadius": {
 			"type": "string",
 			"default": "50%"

@@ -20,7 +20,7 @@ import {
 } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
-import { Icon, edit, people } from '@wordpress/icons';
+import { Icon, edit, people, pullLeft, pullRight } from '@wordpress/icons';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 
@@ -28,6 +28,7 @@ import { addQueryArgs } from '@wordpress/url';
  * External dependencies
  */
 import { AutocompleteWithSuggestions } from 'newspack-components';
+import classnames from 'classnames';
 
 export default ( { attributes, setAttributes } ) => {
 	const [ author, setAuthor ] = useState( null );
@@ -41,6 +42,7 @@ export default ( { attributes, setAttributes } ) => {
 		showEmail,
 		showArchiveLink,
 		showAvatar,
+		avatarAlignment,
 		avatarBorderRadius,
 		avatarSize,
 	} = attributes;
@@ -252,6 +254,24 @@ export default ( { attributes, setAttributes } ) => {
 			</InspectorControls>
 			{ author && (
 				<BlockControls>
+					{ showAvatar && 'is-style-center' !== attributes.className && (
+						<Toolbar
+							controls={ [
+								{
+									icon: <Icon icon={ pullLeft } />,
+									title: __( 'Show avatar on left', 'newspack-blocks' ),
+									isActive: avatarAlignment === 'left',
+									onClick: () => setAttributes( { avatarAlignment: 'left' } ),
+								},
+								{
+									icon: <Icon icon={ pullRight } />,
+									title: __( 'Show avatar on right', 'newspack-blocks' ),
+									isActive: avatarAlignment === 'right',
+									onClick: () => setAttributes( { avatarAlignment: 'right' } ),
+								},
+							] }
+						/>
+					) }
 					<Toolbar
 						controls={ [
 							{
@@ -266,20 +286,24 @@ export default ( { attributes, setAttributes } ) => {
 					/>
 				</BlockControls>
 			) }
-			<div className="newspack-author-profile">
+			<div
+				className={ classnames(
+					'wp-block-newspack-blocks-author-profile',
+					'avatar-' + avatarAlignment,
+					attributes.className
+				) }
+			>
 				{ ! isLoading && ! error && author && (
-					<div className="newspack-author-profile__author-card">
+					<>
 						{ showAvatar && author.avatar && (
-							<div className="newspack-author-profile__avatar">
-								<MaybeLink>
-									<figure
-										style={ { borderRadius: avatarBorderRadius, width: `${ avatarSize }px` } }
-										dangerouslySetInnerHTML={ { __html: author.avatar } }
-									/>
-								</MaybeLink>
+							<div className="wp-block-newspack-blocks-author-profile__avatar">
+								<figure
+									style={ { borderRadius: avatarBorderRadius, width: `${ avatarSize }px` } }
+									dangerouslySetInnerHTML={ { __html: author.avatar } }
+								/>
 							</div>
 						) }
-						<div className="newspack-author-profile__bio">
+						<div className="wp-block-newspack-blocks-author-profile__bio">
 							<h3>
 								<MaybeLink>{ author.name }</MaybeLink>
 							</h3>
@@ -288,13 +312,13 @@ export default ( { attributes, setAttributes } ) => {
 									{ author.bio }{' '}
 									{ showArchiveLink && (
 										<a href="#" className="no-op">
-											More by { author.name }
+											{ __( 'More by', 'newspack-blocks' ) + ' ' + author.name }
 										</a>
 									) }
 								</p>
 							) }
 							{ ( showEmail || showSocial ) && (
-								<ul className="newspack-author-profile__social-links">
+								<ul className="wp-block-newspack-blocks-author-profile__social-links">
 									{ Object.keys( socialLinks ).map( service => (
 										<li key={ service }>
 											<a href="#" className="no-op">
@@ -312,7 +336,7 @@ export default ( { attributes, setAttributes } ) => {
 								</ul>
 							) }
 						</div>
-					</div>
+					</>
 				) }
 				{ ! author && (
 					<Placeholder

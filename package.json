@@ -62,7 +62,7 @@
     "@wordpress/keycodes": "^2.9.0",
     "@wordpress/plugins": "^2.12.0",
     "lodash": "^4.17.20",
-    "newspack-components": "^1.6.0",
+    "newspack-components": "^1.6.1",
     "react": "^16.12.0",
     "redux": "^4.0.5",
     "redux-saga": "^1.1.3",
