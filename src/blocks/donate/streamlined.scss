@@ -1,0 +1,52 @@
+@import '../../shared/sass/colors';
+
+.wp-block-newspack-blocks-donate {
+	&__stripe {
+		margin: 20px 30px;
+		&--editor {
+			margin: 16px 25px;
+			i {
+				display: block;
+				background: #e6e6e6;
+				font-size: 14px;
+				padding: 7px 13px;
+				border: 1px dotted #848484;
+			}
+		}
+	}
+	.stripe-payment {
+		&__card {
+			border: 1px solid #ccc;
+			padding: 10px;
+		}
+		&__email,
+		&__messages {
+			width: 100%;
+			font-size: 14px;
+			margin-top: 11px;
+		}
+		&__messages {
+			> div {
+				padding: 4px 10px;
+				border-radius: 3px;
+				&:empty {
+					padding: 0;
+				}
+				&.type-error {
+					background-color: $color__error;
+				}
+				&.type-success {
+					background-color: $color__success;
+				}
+			}
+		}
+
+		&--disabled {
+			button,
+			input {
+				pointer-events: none;
+				opacity: 0.4;
+			}
+		}
+	}
+}

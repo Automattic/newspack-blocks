@@ -1,6 +1,8 @@
 @import '../../shared/sass/colors';
 @import '../../shared/sass/variables';
 
+@import './streamlined.scss';
+
 .wp-block-newspack-blocks-donate {
 	button[type='submit'] {
 		background: $color__secondary;
