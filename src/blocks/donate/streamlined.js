@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 /**
  * External dependencies
@@ -105,7 +105,14 @@ const renderMessages = ( messages, el, type = 'error' ) => {
 				enableForm();
 			} else if ( paymentIntent.status === 'succeeded' ) {
 				// Payment Intent statuses: https://stripe.com/docs/payments/intents#intent-statuses
-				renderMessages( [ __( 'Thank you!', 'newspack-blocks' ) ], messagesEl, 'success' );
+				const successMessge = sprintf(
+					__(
+						'Your payment has been processed. Thank you for your contribution! You will receive a confirmation email at %s.',
+						'newspack-blocks'
+					),
+					formValues.email
+				);
+				renderMessages( [ successMessge ], messagesEl, 'success' );
 			} else {
 				renderMessages(
 					[
