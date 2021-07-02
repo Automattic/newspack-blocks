@@ -121,11 +121,11 @@ const PREVIEW_IMAGE_BASE = window.newspack_blocks_data.assets_path;
 const generatePreviewPost = () => ( {
 	author: 1,
 	content: {
-		rendered: __( 'The post content.', 'newspack' ),
+		rendered: '<p>' + __( 'The post content.', 'newspack' ) + '</p>',
 	},
 	date_gmt: new Date().toISOString(),
 	excerpt: {
-		rendered: __( 'The post excerpt.', 'newspack' ),
+		rendered: '<p>' + __( 'The post excerpt.', 'newspack' ) + '</p>',
 	},
 	featured_media: uniqueId(),
 	id: uniqueId(),
