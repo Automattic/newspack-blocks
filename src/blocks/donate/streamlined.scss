@@ -3,30 +3,12 @@
 @import '../../shared/sass/variables';
 
 .wp-block-newspack-blocks-donate {
-	&__stripe {
-		margin: 0.38rem 0.76rem 0.76rem;
-
-		@include media( tablet ) {
-			margin-left: 1.5rem;
-			margin-right: 1.5rem;
-		}
-		&--editor {
-			margin: 16px 25px;
-			i {
-				display: block;
-				background: #e6e6e6;
-				font-size: 14px;
-				padding: 7px 13px;
-				border: 1px dotted #848484;
-			}
-		}
-	}
 	.stripe-payment {
 		&__card {
 			border: 1px solid #ccc;
 			padding: 10px;
 		}
-		&__email,
+		input,
 		&__messages {
 			width: 100%;
 			font-size: 14px;
@@ -56,6 +38,20 @@
 			input {
 				pointer-events: none;
 				opacity: 0.4;
+			}
+		}
+	}
+
+	&__stripe {
+		margin: 0.38rem 0.76rem 0.76rem;
+
+		@include media( tablet ) {
+			margin-left: 1.5rem;
+			margin-right: 1.5rem;
+		}
+		&--editor {
+			input:first-child {
+				margin-top: 0;
 			}
 		}
 	}
