@@ -102,6 +102,7 @@ const renderMessages = ( messages, el, type = 'error' ) => {
 			);
 			if ( error ) {
 				renderMessages( [ error.message ], messagesEl );
+				enableForm();
 			} else if ( paymentIntent.status === 'succeeded' ) {
 				// Payment Intent statuses: https://stripe.com/docs/payments/intents#intent-statuses
 				renderMessages( [ __( 'Thank you!', 'newspack-blocks' ) ], messagesEl, 'success' );
@@ -117,6 +118,5 @@ const renderMessages = ( messages, el, type = 'error' ) => {
 				);
 			}
 		}
-		enableForm();
 	};
 } );
