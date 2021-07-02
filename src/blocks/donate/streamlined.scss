@@ -1,8 +1,15 @@
 @import '../../shared/sass/colors';
+@import '../../shared/sass/mixins';
+@import '../../shared/sass/variables';
 
 .wp-block-newspack-blocks-donate {
 	&__stripe {
-		margin: 20px 30px;
+		margin: 0.38rem 0.76rem 0.76rem;
+
+		@include media( tablet ) {
+			margin-left: 1.5rem;
+			margin-right: 1.5rem;
+		}
 		&--editor {
 			margin: 16px 25px;
 			i {
