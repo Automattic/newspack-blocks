@@ -34,6 +34,7 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 				<div class="stripe-payment__messages">
 					<div class="type-error"></div>
 					<div class="type-success"></div>
+					<div class="type-info"></div>
 				</div>
 				<button type='submit' style="margin-left: 0; margin-top: 1em;">
 					<?php echo wp_kses_post( $button_text ); ?>

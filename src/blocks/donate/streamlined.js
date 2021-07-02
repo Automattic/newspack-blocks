@@ -54,6 +54,7 @@ const renderMessages = ( messages, el, type = 'error' ) => {
 	formElement.onsubmit = async e => {
 		e.preventDefault();
 		disableForm();
+		renderMessages( [ __( 'Processing payment…', 'newspack-blocks' ) ], messagesEl, 'info' );
 
 		const formValues = Object.fromEntries( new FormData( e.target ) );
 		const valueKey = `donation_value_${ formValues.donation_frequency }`;
