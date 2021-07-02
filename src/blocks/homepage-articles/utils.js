@@ -139,7 +139,7 @@ const generatePreviewPost = () => ( {
 	newspack_author_info: [
 		{
 			display_name: __( 'Author Name', 'newspack' ),
-			avatar: `<div style="background: #36f;width: 40px;height: 40px;display: block;overflow: hidden;border-radius: 50%;"></div>`,
+			avatar: `<div style="background: #36f;width: 40px;height: 40px;display: block;overflow: hidden;border-radius: 50%; max-width: 100%; max-height: 100%;"></div>`,
 			id: 1,
 			author_link: '/',
 		},
