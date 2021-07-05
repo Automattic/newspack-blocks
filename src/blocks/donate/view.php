@@ -30,7 +30,7 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 		<?php if ( $is_streamlined ) : ?>
 			<div class="wp-block-newspack-blocks-donate__stripe stripe-payment stripe-payment--disabled" data-stripe-pub-key="<?php echo esc_attr( $payment_data['usedPublishableKey'] ); ?>">
 				<div class="stripe-payment__card"></div>
-				<input class="stripe-payment__email" placeholder="<?php echo esc_html__( 'Your e-mail address', 'newspack-blocks' ); ?>" type="email" name="email" value="">
+				<input class="stripe-payment__email" placeholder="<?php echo esc_html__( 'Email', 'newspack-blocks' ); ?>" type="email" name="email" value="">
 				<div class="stripe-payment__messages">
 					<div class="type-error"></div>
 					<div class="type-success"></div>

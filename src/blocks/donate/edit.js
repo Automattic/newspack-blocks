@@ -346,8 +346,11 @@ class Edit extends Component {
 				</p>
 				{ this.isStreamlinedForm() && (
 					<div className="wp-block-newspack-blocks-donate__stripe wp-block-newspack-blocks-donate__stripe--editor stripe-payment">
-						<input type="text" placeholder={ __( 'Card number', 'newspack-blocks' ) } />
-						<input type="text" placeholder={ __( 'Your e-mail address', 'newspack-blocks' ) } />
+						<div
+							className="input-placeholder"
+							data-text={ __( 'Card number', 'newspack-blocks' ) }
+						/>
+						<div className="input-placeholder" data-text={ __( 'Email', 'newspack-blocks' ) } />
 					</div>
 				) }
 				<button type="submit" onClick={ evt => evt.preventDefault() }>
