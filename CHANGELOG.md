@@ -1,3 +1,11 @@
+## [1.29.1-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.29.0...v1.29.1-alpha.1) (2021-07-06)
+
+
+### Bug Fixes
+
+* add max width to avatar placeholder ([#786](https://github.com/Automattic/newspack-blocks/issues/786)) ([99f0535](https://github.com/Automattic/newspack-blocks/commit/99f05356e0cda1b5da233caab03101b0f192ec4c))
+* add paragraph markup to excerpt, content placeholders ([#785](https://github.com/Automattic/newspack-blocks/issues/785)) ([48b43eb](https://github.com/Automattic/newspack-blocks/commit/48b43ebdc61205e98c9d18fa24234ed850fae855))
+
 # [1.29.0](https://github.com/Automattic/newspack-blocks/compare/v1.28.0...v1.29.0) (2021-06-15)
 
 
