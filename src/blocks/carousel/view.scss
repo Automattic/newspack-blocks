@@ -175,12 +175,12 @@
 	.swiper-button-prev {
 		margin-top: -24px;
 	}
-	.swiper-button-prev:after,
-	.swiper-container-rtl .swiper-button-next:after {
+	.swiper-button-prev::after,
+	.swiper-container-rtl .swiper-button-next::after {
 		content: none;
 	}
-	.swiper-button-next:after,
-	.swiper-container-rtl .swiper-button-prev:after {
+	.swiper-button-next::after,
+	.swiper-container-rtl .swiper-button-prev::after {
 		content: none;
 	}
 	.amp-carousel-button-next,
