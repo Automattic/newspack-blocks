@@ -11,12 +11,31 @@
 class Newspack_Blocks {
 
 	/**
+	 * Script handle for the streamlined donate block script.
+	 */
+	const DONATE_STREAMLINED_SCRIPT_HANDLE = 'newspack-blocks-donate-streamlined';
+
+	/**
 	 * Add hooks and filters.
 	 */
 	public static function init() {
 		add_action( 'after_setup_theme', [ __CLASS__, 'add_image_sizes' ] );
 		add_post_type_support( 'post', 'newspack_blocks' );
 		add_post_type_support( 'page', 'newspack_blocks' );
+		add_filter( 'script_loader_tag', [ __CLASS__, 'mark_view_script_as_amp_plus_allowed' ], 10, 2 );
+	}
+
+	/**
+	 * Modify the Donate block script to allow it as an "AMP Plus" script.
+	 *
+	 * @param string $tag HTML of the script tag.
+	 * @param string $handle The script handle.
+	 */
+	public static function mark_view_script_as_amp_plus_allowed( $tag, $handle ) {
+		if ( self::DONATE_STREAMLINED_SCRIPT_HANDLE === $handle ) {
+			return str_replace( '<script', '<script data-amp-plus-allowed', $tag );
+		}
+		return $tag;
 	}
 
 	/**
@@ -63,11 +82,12 @@ class Newspack_Blocks {
 				'newspack-blocks-editor',
 				'newspack_blocks_data',
 				[
-					'patterns'                => self::get_patterns_for_post_type( get_post_type() ),
-					'posts_rest_url'          => rest_url( 'newspack-blocks/v1/newspack-blocks-posts' ),
-					'specific_posts_rest_url' => rest_url( 'newspack-blocks/v1/newspack-blocks-specific-posts' ),
-					'assets_path'             => plugins_url( '/src/assets', NEWSPACK_BLOCKS__PLUGIN_FILE ),
-					'post_subtitle'           => get_theme_support( 'post-subtitle' ),
+					'patterns'                         => self::get_patterns_for_post_type( get_post_type() ),
+					'posts_rest_url'                   => rest_url( 'newspack-blocks/v1/newspack-blocks-posts' ),
+					'specific_posts_rest_url'          => rest_url( 'newspack-blocks/v1/newspack-blocks-specific-posts' ),
+					'assets_path'                      => plugins_url( '/src/assets', NEWSPACK_BLOCKS__PLUGIN_FILE ),
+					'post_subtitle'                    => get_theme_support( 'post-subtitle' ),
+					'can_use_streamlined_donate_block' => self::can_use_streamlined_donate_block(),
 				]
 			);
 
@@ -86,6 +106,31 @@ class Newspack_Blocks {
 			array(),
 			NEWSPACK_BLOCKS__VERSION
 		);
+	}
+
+	/**
+	 * Can the experimental stramlined donate block be used?
+	 *
+	 * @return bool True if it can.
+	 */
+	public static function can_use_streamlined_donate_block() {
+		if (
+			// Only in AMP Plus mode.
+			class_exists( 'Newspack\AMP_Enhancements' ) && method_exists( 'Newspack\AMP_Enhancements', 'is_amp_plus_configured' )
+			// The streamlined integration does not support recurring donations by itself. Recurring donation submitted to a Stripe account
+			// connected to NRH will work, because NRH handles the recurring charges.
+			&& class_exists( 'Newspack\Donations' ) && method_exists( 'Newspack\Donations', 'is_platform_nrh' )
+			&& class_exists( 'Newspack\Stripe_Connection' ) && method_exists( 'Newspack\Stripe_Connection', 'get_stripe_data' )
+		) {
+			$payment_data = \Newspack\Stripe_Connection::get_stripe_data();
+			if (
+				// Has to have Stripe keys.
+				isset( $payment_data['usedPublishableKey'], $payment_data['usedSecretKey'] ) && $payment_data['usedPublishableKey'] && $payment_data['usedSecretKey']
+			) {
+				return Newspack\AMP_Enhancements::is_amp_plus_configured() && Newspack\Donations::is_platform_nrh();
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -214,7 +259,13 @@ class Newspack_Blocks {
 	 * @return bool True if AMP, false otherwise.
 	 */
 	public static function is_amp() {
-		return ! is_admin() && function_exists( 'is_amp_endpoint' ) && is_amp_endpoint();
+		if ( class_exists( 'Newspack\AMP_Enhancements' ) && method_exists( 'Newspack\AMP_Enhancements', 'should_use_amp_plus' ) && Newspack\AMP_Enhancements::should_use_amp_plus( 'gam' ) ) {
+			return false;
+		}
+		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
+			return true;
+		}
+		return false;
 	}
 
 	/**

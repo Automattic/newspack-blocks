@@ -6,6 +6,77 @@
  */
 
 /**
+ * Renders the footer of the donation form.
+ *
+ * @param array $attributes The block attributes.
+ *
+ * @return string
+ */
+function newspack_blocks_render_block_donate_footer( $attributes ) {
+	$is_streamlined = $attributes['isStreamlined'];
+	if ( $is_streamlined ) {
+		$payment_data = WP_REST_Newspack_Donate_Controller::get_payment_data();
+	}
+	$button_text = $attributes['buttonText'];
+	$campaign    = $attributes['campaign'] ?? false;
+
+	ob_start();
+
+	?>
+		<p class='wp-block-newspack-blocks-donate__thanks thanks'>
+			<?php echo esc_html__( 'Your contribution is appreciated.', 'newspack-blocks' ); ?>
+		</p>
+
+		<?php if ( $is_streamlined ) : ?>
+			<div class="wp-block-newspack-blocks-donate__stripe stripe-payment stripe-payment--disabled" data-stripe-pub-key="<?php echo esc_attr( $payment_data['usedPublishableKey'] ); ?>">
+				<div class="stripe-payment__card"></div>
+				<input class="stripe-payment__email" placeholder="<?php echo esc_html__( 'Email', 'newspack-blocks' ); ?>" type="email" name="email" value="">
+				<div class="stripe-payment__messages">
+					<div class="type-error"></div>
+					<div class="type-success"></div>
+					<div class="type-info"></div>
+				</div>
+				<button type='submit' style="margin-left: 0; margin-top: 1em;">
+					<?php echo wp_kses_post( $button_text ); ?>
+				</button>
+			</div>
+		<?php else : ?>
+			<button type='submit'>
+				<?php echo wp_kses_post( $button_text ); ?>
+			</button>
+		<?php endif; ?>
+		<?php if ( $campaign ) : ?>
+			<input type='hidden' name='campaign' value='<?php echo esc_attr( $campaign ); ?>' />
+		<?php endif; ?>
+	<?php
+
+	return ob_get_clean();
+}
+
+/**
+ * Enqueue frontend scripts and styles for the streamlined version of the donate block.
+ */
+function newspack_blocks_enqueue_streamlined_donate_block_scripts() {
+	if ( Newspack_Blocks::can_use_streamlined_donate_block() ) {
+		$script_data = Newspack_Blocks::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . '/donateStreamlined.js' );
+		wp_enqueue_script(
+			Newspack_Blocks::DONATE_STREAMLINED_SCRIPT_HANDLE,
+			$script_data['script_path'],
+			[ 'wp-i18n' ],
+			$script_data['version'],
+			true
+		);
+		$style_path = NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'donateStreamlined' . ( is_rtl() ? '.rtl' : '' ) . '.css';
+		wp_enqueue_style(
+			Newspack_Blocks::DONATE_STREAMLINED_SCRIPT_HANDLE,
+			plugins_url( $style_path, NEWSPACK_BLOCKS__PLUGIN_FILE ),
+			[],
+			NEWSPACK_BLOCKS__VERSION
+		);
+	}
+}
+
+/**
  * Renders the `newspack-blocks/donate` block on server.
  *
  * @param array $attributes The block attributes.
@@ -15,6 +86,12 @@
 function newspack_blocks_render_block_donate( $attributes ) {
 	if ( ! class_exists( 'Newspack\Donations' ) ) {
 		return '';
+	}
+
+	// Overwrite the attribute value.
+	$attributes['isStreamlined'] = ( $attributes['isStreamlined'] ?? false ) && Newspack_Blocks::can_use_streamlined_donate_block();
+	if ( $attributes['isStreamlined'] ) {
+		newspack_blocks_enqueue_streamlined_donate_block_scripts();
 	}
 
 	Newspack_Blocks::enqueue_view_assets( 'donate' );
@@ -44,11 +121,9 @@ function newspack_blocks_render_block_donate( $attributes ) {
 	$selected_frequency = $attributes['defaultFrequency'] ?? 'month';
 	$suggested_amounts  = $settings['suggestedAmounts'];
 
-	$campaign = $attributes['campaign'] ?? false;
-
 	$uid = wp_rand( 10000, 99999 ); // Unique identifier to prevent labels colliding with other instances of Donate block.
 
-	$button_text = $attributes['buttonText'];
+	$form_footer = newspack_blocks_render_block_donate_footer( $attributes );
 
 	ob_start();
 
@@ -106,15 +181,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 						</div>
 					<?php endforeach; ?>
 				</div>
-				<p class='wp-block-newspack-blocks-donate__thanks thanks'>
-					<?php echo esc_html__( 'Your contribution is appreciated.', 'newspack-blocks' ); ?>
-				</p>
-				<button type='submit'>
-					<?php echo wp_kses_post( $button_text ); ?>
-				</button>
-				<?php if ( $campaign ) : ?>
-					<input type='hidden' name='campaign' value='<?php echo esc_attr( $campaign ); ?>' />
-				<?php endif; ?>
+				<?php echo $form_footer; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</form>
 		</div>
 		<?php
@@ -205,15 +272,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 						<?php endforeach; ?>
 					</div>
 				</div>
-				<p class='wp-block-newspack-blocks-donate__thanks thanks'>
-					<?php echo esc_html__( 'Your contribution is appreciated.', 'newspack-blocks' ); ?>
-				</p>
-				<button type='submit'>
-					<?php echo wp_kses_post( $button_text ); ?>
-				</button>
-				<?php if ( $campaign ) : ?>
-					<input type='hidden' name='campaign' value='<?php echo esc_attr( $campaign ); ?>' />
-				<?php endif; ?>
+				<?php echo $form_footer; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</form>
 		</div>
 		<?php
