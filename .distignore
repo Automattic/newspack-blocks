@@ -12,7 +12,6 @@ bitbucket-pipelines.yml
 .circleci/config.yml
 composer.json
 composer.lock
-Gruntfile.js
 package.json
 package-lock.json
 phpunit.xml
