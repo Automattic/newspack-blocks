@@ -30,6 +30,11 @@
 		justify-content: space-between;
 		padding: 0;
 		list-style: none;
+
+		&::after {
+			content: '';
+			display: block;
+		}
 	}
 
 	&.is-grid {
@@ -43,15 +48,21 @@
 	}
 
 	@include media( mobile ) {
-		&.columns-3 article,
-		&.columns-6 article {
-			flex-basis: calc( 33.333% - 16px );
+		&.columns-3,
+		&.columns-6 {
+			article,
+			&.is-grid > div::after {
+				flex-basis: calc( 33.333% - 16px );
+			}
 		}
 
-		&.columns-2 article,
-		&.columns-4 article,
-		&.columns-5 article {
-			flex-basis: calc( 50% - 16px );
+		&.columns-2,
+		&.columns-4,
+		&.columns-5 {
+			article,
+			&.is-grid > div::after {
+				flex-basis: calc( 50% - 16px );
+			}
 		}
 
 		&.columns-5 article:last-of-type {
@@ -61,9 +72,12 @@
 
 	@include media( tablet ) {
 		@for $i from 2 through 6 {
-			&.columns-#{ $i } article,
-			&.columns-#{ $i } article:last-of-type {
-				flex-basis: calc( ( 100% / #{$i} ) - 16px );
+			&.columns-#{ $i } {
+				article,
+				article:last-of-type,
+				&.is-grid > div::after {
+					flex-basis: calc( ( 100% / #{$i} ) - 16px );
+				}
 			}
 		}
 	}
