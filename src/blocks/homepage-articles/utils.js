@@ -147,11 +147,11 @@ const generatePreviewPost = () => ( {
 	newspack_category_info: __( 'Category', 'newspack' ),
 	newspack_featured_image_caption: __( 'Featured image caption', 'newspack' ),
 	newspack_featured_image_src: {
-		large: `${ PREVIEW_IMAGE_BASE }/newspack-1024x683.jpg`,
+		large: `${ PREVIEW_IMAGE_BASE }/newspack-1024x536.jpg`,
 		landscape: `${ PREVIEW_IMAGE_BASE }/newspack-800x600.jpg`,
 		portrait: `${ PREVIEW_IMAGE_BASE }/newspack-600x800.jpg`,
 		square: `${ PREVIEW_IMAGE_BASE }/newspack-800x800.jpg`,
-		uncropped: `${ PREVIEW_IMAGE_BASE }/newspack-1024x683.jpg`,
+		uncropped: `${ PREVIEW_IMAGE_BASE }/newspack-1024x536.jpg`,
 	},
 	newspack_has_custom_excerpt: false,
 	newspack_post_format: 'standard',
