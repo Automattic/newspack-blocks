@@ -1,3 +1,13 @@
+## [1.29.2](https://github.com/Automattic/newspack-blocks/compare/v1.29.1...v1.29.2) (2021-07-13)
+
+
+### Bug Fixes
+
+* correct path to placeholder image ([#791](https://github.com/Automattic/newspack-blocks/issues/791)) ([e4f1e47](https://github.com/Automattic/newspack-blocks/commit/e4f1e47aafe7fc382de278f1820f248b45b1d10f))
+* height of post carousel blocks in editor preview ([fc69708](https://github.com/Automattic/newspack-blocks/commit/fc69708e08118f79b5d27ab27659962219798dcb))
+* make carousel slide image width styles more specific ([#792](https://github.com/Automattic/newspack-blocks/issues/792)) ([9cc4bd1](https://github.com/Automattic/newspack-blocks/commit/9cc4bd15a11f6d227edfceb17899e6773a0b4ec6))
+* override the default carousel arrows from swiper ([#794](https://github.com/Automattic/newspack-blocks/issues/794)) ([2e4e735](https://github.com/Automattic/newspack-blocks/commit/2e4e7357e2aa29eb9958e283d4991c7776e4c8cd))
+
 ## [1.29.1](https://github.com/Automattic/newspack-blocks/compare/v1.29.0...v1.29.1) (2021-07-06)
 
 
