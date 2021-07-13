@@ -1,7 +1,6 @@
 {
   "name": "newspack-blocks",
-  "version": "1.29.1",
-  "main": "Gruntfile.js",
+  "version": "0.0.0",
   "author": "Automattic",
   "devDependencies": {
     "@automattic/calypso-build": "^6.3.0",
