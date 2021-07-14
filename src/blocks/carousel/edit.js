@@ -71,10 +71,7 @@ class Edit extends Component {
 		const { attributes, latestPosts } = this.props;
 
 		if (
-			prevProps.latestPosts !== latestPosts ||
-			( prevProps.latestPosts &&
-				latestPosts &&
-				prevProps.latestPosts.length !== latestPosts.length ) ||
+			! isEqual( prevProps.latestPosts, latestPosts ) ||
 			! isEqual( prevProps.attributes, attributes )
 		) {
 			let initialSlide = 0;
