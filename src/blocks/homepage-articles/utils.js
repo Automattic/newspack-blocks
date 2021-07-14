@@ -166,7 +166,8 @@ const getPreviewPosts = attributes => times( attributes.postsToShow, generatePre
 
 export const postsBlockSelector = ( select, { clientId, attributes } ) => {
 	const { getPostTypes } = select( 'core' );
-	const { getEditorBlocks, getBlocks } = select( 'core/editor' );
+	const { getEditorBlocks } = select( 'core/editor' );
+	const { getBlocks } = select( 'core/block-editor' );
 	const editorBlocksIds = getEditorBlocksIds( getEditorBlocks() );
 	// The block might be rendered in the block styles preview, not in the editor.
 	const isEditorBlock = editorBlocksIds.indexOf( clientId ) >= 0;
