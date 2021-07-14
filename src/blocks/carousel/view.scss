@@ -166,6 +166,7 @@
 	.swiper-button-prev {
 		left: 1.5em;
 		display: none;
+		right: auto;
 
 		@include media( mobile ) {
 			display: block;
