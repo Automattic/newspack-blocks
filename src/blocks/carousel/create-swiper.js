@@ -30,8 +30,10 @@ function forEachNode( nodeList, cb ) {
  * @param {HTMLElement} slide Slide DOM element
  */
 function activateSlide( slide ) {
-	slide.setAttribute( 'aria-hidden', 'false' );
-	forEachNode( slide.querySelectorAll( 'a' ), el => el.removeAttribute( 'tabindex' ) );
+	if ( slide ) {
+		slide.setAttribute( 'aria-hidden', 'false' );
+		forEachNode( slide.querySelectorAll( 'a' ), el => el.removeAttribute( 'tabindex' ) );
+	}
 }
 
 /**
@@ -40,8 +42,10 @@ function activateSlide( slide ) {
  * @param {HTMLElement} slide Slide DOM element
  */
 function deactivateSlide( slide ) {
-	slide.setAttribute( 'aria-hidden', 'true' );
-	forEachNode( slide.querySelectorAll( 'a' ), el => el.setAttribute( 'tabindex', '-1' ) );
+	if ( slide ) {
+		slide.setAttribute( 'aria-hidden', 'true' );
+		forEachNode( slide.querySelectorAll( 'a' ), el => el.setAttribute( 'tabindex', '-1' ) );
+	}
 }
 
 /**
