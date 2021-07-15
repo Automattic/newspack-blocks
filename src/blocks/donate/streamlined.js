@@ -7,6 +7,7 @@ import { __, sprintf } from '@wordpress/i18n';
  * External dependencies
  */
 import { loadStripe } from '@stripe/stripe-js';
+import 'regenerator-runtime'; // Required in WP >=5.8.
 
 /**
  * Internal dependencies
