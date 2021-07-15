@@ -54,6 +54,7 @@ const webpackConfig = getBaseWebpackConfig(
 		entry: {
 			editor: editorScript,
 			block_styles: blockStylesScript,
+			donateStreamlined: path.join( __dirname, 'src/blocks/donate/streamlined' ),
 			...viewBlocksScripts,
 		},
 		'output-path': path.join( __dirname, 'dist' ),

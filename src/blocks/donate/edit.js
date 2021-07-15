@@ -72,6 +72,17 @@ class Edit extends Component {
 		return data;
 	}
 
+	isStreamlinedAvailable() {
+		return window.newspack_blocks_data?.can_use_streamlined_donate_block;
+	}
+
+	isStreamlinedForm() {
+		if ( ! this.isStreamlinedAvailable() ) {
+			return false;
+		}
+		return this.props.attributes.isStreamlined;
+	}
+
 	sanitizeCurrencyInput = amount => Math.max( 0, parseFloat( amount ).toFixed( 2 ) );
 
 	formatCurrencyWithoutSymbol = amount => {
@@ -162,8 +173,7 @@ class Edit extends Component {
 	}
 
 	renderUntieredForm() {
-		const { attributes, className, setAttributes } = this.props;
-		const { buttonText } = attributes;
+		const { className } = this.props;
 		const { uid } = this.state;
 		const { currencySymbol, customDonationAmounts, selectedFrequency } = this.blockData();
 
@@ -217,25 +227,14 @@ class Edit extends Component {
 							</div>
 						) ) }
 					</div>
-					<p className="wp-block-newspack-blocks-donate__thanks thanks">
-						{ __( 'Your contribution is appreciated.', 'newspack-blocks' ) }
-					</p>
-					<button type="submit" onClick={ evt => evt.preventDefault() }>
-						<RichText
-							onChange={ value => setAttributes( { buttonText: value } ) }
-							placeholder={ __( 'Button text…', 'newspack-blocks' ) }
-							value={ buttonText }
-							tagName="span"
-						/>
-					</button>
+					{ this.renderFooter() }
 				</form>
 			</div>
 		);
 	}
 
 	renderTieredForm() {
-		const { attributes, className, setAttributes } = this.props;
-		const { buttonText } = attributes;
+		const { className } = this.props;
 		const { uid } = this.state;
 		const {
 			activeTier,
@@ -331,19 +330,38 @@ class Edit extends Component {
 							) ) }
 						</div>
 					</div>
-					<p className="wp-block-newspack-blocks-donate__thanks thanks">
-						{ __( 'Your contribution is appreciated.', 'newspack-blocks' ) }
-					</p>
-					<button type="submit" onClick={ evt => evt.preventDefault() }>
-						<RichText
-							onChange={ value => setAttributes( { buttonText: value } ) }
-							placeholder={ __( 'Button text…', 'newspack-blocks' ) }
-							value={ buttonText }
-							tagName="span"
-						/>
-					</button>
+					{ this.renderFooter() }
 				</form>
 			</div>
+		);
+	}
+
+	renderFooter() {
+		const { attributes, setAttributes } = this.props;
+		const { buttonText } = attributes;
+		return (
+			<>
+				<p className="wp-block-newspack-blocks-donate__thanks thanks">
+					{ __( 'Your contribution is appreciated.', 'newspack-blocks' ) }
+				</p>
+				{ this.isStreamlinedForm() && (
+					<div className="wp-block-newspack-blocks-donate__stripe wp-block-newspack-blocks-donate__stripe--editor stripe-payment">
+						<div
+							className="input-placeholder"
+							data-text={ __( 'Card number', 'newspack-blocks' ) }
+						/>
+						<div className="input-placeholder" data-text={ __( 'Email', 'newspack-blocks' ) } />
+					</div>
+				) }
+				<button type="submit" onClick={ evt => evt.preventDefault() }>
+					<RichText
+						onChange={ value => setAttributes( { buttonText: value } ) }
+						placeholder={ __( 'Button text…', 'newspack-blocks' ) }
+						value={ buttonText }
+						tagName="span"
+					/>
+				</button>
+			</>
 		);
 	}
 
@@ -550,6 +568,20 @@ class Edit extends Component {
 							}
 						/>
 					</PanelBody>
+					{ this.isStreamlinedAvailable() && (
+						<PanelBody title={ __( 'Streamlined', 'newspack-blocks' ) } initialOpen={ false }>
+							<ToggleControl
+								key="isStreamlined"
+								checked={ this.isStreamlinedForm() }
+								help={ __(
+									'In streamlined mode, the donation will happen on-site, with no redirection. The donor will only be asked for their credit card number and e-mail address.',
+									'newspack-blocks'
+								) }
+								onChange={ _isStreamlined => setAttributes( { isStreamlined: _isStreamlined } ) }
+								label={ __( 'Streamlined mode', 'newspack-blocks' ) }
+							/>
+						</PanelBody>
+					) }
 				</InspectorControls>
 			</Fragment>
 		);
