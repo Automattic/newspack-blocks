@@ -64,6 +64,13 @@ function deactivateSlide( slide ) {
  * @return {Object} Swiper instance
  */
 export default function createSwiper( els, config = {} ) {
+	const isVisible = 0 < els.container.offsetWidth && 0 < els.container.offsetHeight;
+
+	// Don't initialize if the swiper is hidden on initial mount.
+	if ( ! isVisible ) {
+		return false;
+	}
+
 	const swiper = new Swiper( els.container, {
 		/**
 		 * Remove the messages, as we're announcing the slide content and number.
