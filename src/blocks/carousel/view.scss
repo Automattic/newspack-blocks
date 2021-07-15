@@ -166,6 +166,7 @@
 	.swiper-button-prev {
 		left: 1.5em;
 		display: none;
+		right: auto;
 
 		@include media( mobile ) {
 			display: block;
@@ -174,6 +175,14 @@
 	.swiper-button-next,
 	.swiper-button-prev {
 		margin-top: -24px;
+	}
+	.swiper-button-prev::after,
+	.swiper-container-rtl .swiper-button-next::after {
+		content: none;
+	}
+	.swiper-button-next::after,
+	.swiper-container-rtl .swiper-button-prev::after {
+		content: none;
 	}
 	.amp-carousel-button-next,
 	.swiper-button-next {
@@ -213,7 +222,7 @@
 		position: relative;
 
 		.entry-wrapper,
-		img {
+		.post-thumbnail img {
 			left: 8px;
 			width: calc( 100% - 16px );
 		}

@@ -2,6 +2,7 @@
 
 .wp-block-newspack-blocks-carousel {
 	.swiper-wrapper {
+		height: auto;
 		pointer-events: none;
 	}
 	.entry-title {
@@ -29,6 +30,7 @@
 			left: 1.5em;
 			margin-top: -24px; // buttons height / 2
 			transform: translateY( -50% );
+			right: auto;
 		}
 
 		&.amp-carousel-button-next {
