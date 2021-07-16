@@ -56,6 +56,10 @@ class Edit extends Component {
 		this.btnPrevRef = createRef();
 		this.carouselRef = createRef();
 		this.paginationRef = createRef();
+
+		this.state = {
+			swiperInitialized: false,
+		};
 	}
 
 	componentDidMount() {
@@ -64,6 +68,19 @@ class Edit extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
+		const isVisible =
+			0 < this.carouselRef.current.offsetWidth && 0 < this.carouselRef.current.offsetHeight;
+
+		// Bail early if the component is hidden.
+		if ( ! isVisible ) {
+			return false;
+		}
+
+		// If the swiper hasn't been initialized yet, initialize it.
+		if ( ! this.state.swiperInitialized ) {
+			return this.initializeSwiper( 0 );
+		}
+
 		if ( shouldReflow( prevProps, this.props ) ) {
 			this.props.triggerReflow();
 		}
@@ -93,11 +110,12 @@ class Edit extends Component {
 
 	initializeSwiper( initialSlide ) {
 		const { latestPosts } = this.props;
+		const { swiperInitialized } = this.state;
 
-		if ( latestPosts && latestPosts.length ) {
+		if ( ! swiperInitialized && latestPosts && latestPosts.length ) {
 			const { aspectRatio, autoplay, delay, slidesPerView } = this.props.attributes;
 
-			this.swiperInstance = createSwiper(
+			const swiperInstance = createSwiper(
 				{
 					block: this.carouselRef.current, // Editor uses the same wrapper for block and swiper container.
 					container: this.carouselRef.current,
@@ -115,6 +133,12 @@ class Edit extends Component {
 					slidesPerView: slidesPerView <= latestPosts.length ? slidesPerView : latestPosts.length,
 				}
 			);
+
+			// Swiper won't be initialized unless the component is visible in the viewport.
+			if ( swiperInstance ) {
+				this.swiperInstance = swiperInstance;
+				this.setState( { swiperInitialized: true } );
+			}
 		}
 	}
 
