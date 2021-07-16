@@ -19,6 +19,10 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 	}
 	$button_text = $attributes['buttonText'];
 	$campaign    = $attributes['campaign'] ?? false;
+	$client_id   = '';
+	if ( class_exists( 'Newspack_Popups_Segmentation' ) ) {
+		$client_id = Newspack_Popups_Segmentation::NEWSPACK_SEGMENTATION_CID_NAME;
+	}
 
 	ob_start();
 
@@ -48,6 +52,12 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 		<?php if ( $campaign ) : ?>
 			<input type='hidden' name='campaign' value='<?php echo esc_attr( $campaign ); ?>' />
 		<?php endif; ?>
+		<input
+			name="cid"
+			type="hidden"
+			value="CLIENT_ID(<?php echo esc_attr( $client_id ); ?>)"
+			data-amp-replace="CLIENT_ID"
+		/>
 	<?php
 
 	return ob_get_clean();
