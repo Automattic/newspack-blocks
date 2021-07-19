@@ -52,7 +52,7 @@ class Newspack_Blocks {
 		}
 
 		$path_info   = pathinfo( $local_path );
-		$asset_path  = $path_info['dirname'] . '../' . $path_info['filename'] . '.asset.php';
+		$asset_path  = $path_info['dirname'] . '/' . $path_info['filename'] . '.asset.php';
 		$script_data = file_exists( $asset_path )
 			? require $asset_path
 			: array(
