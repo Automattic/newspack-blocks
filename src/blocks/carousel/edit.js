@@ -110,9 +110,8 @@ class Edit extends Component {
 
 	initializeSwiper( initialSlide ) {
 		const { latestPosts } = this.props;
-		const { swiperInitialized } = this.state;
 
-		if ( ! swiperInitialized && latestPosts && latestPosts.length ) {
+		if ( latestPosts && latestPosts.length ) {
 			const { aspectRatio, autoplay, delay, slidesPerView } = this.props.attributes;
 
 			const swiperInstance = createSwiper(
