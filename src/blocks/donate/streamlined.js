@@ -7,6 +7,7 @@ import { __, sprintf } from '@wordpress/i18n';
  * External dependencies
  */
 import { loadStripe } from '@stripe/stripe-js';
+import 'regenerator-runtime'; // Required in WP >=5.8.
 
 /**
  * Internal dependencies
@@ -62,6 +63,9 @@ const renderMessages = ( messages, el, type = 'error' ) => {
 		if ( formValues.amount === 'other' ) {
 			formValues.amount = formValues[ `${ valueKey }_other` ];
 		}
+		if ( ! formValues.amount ) {
+			formValues.amount = formValues[ `${ valueKey }_untiered` ];
+		}
 
 		const validationErrors = Object.values( validateFormData( formValues ) );
 		if ( validationErrors.length > 0 ) {
@@ -90,6 +94,9 @@ const renderMessages = ( messages, el, type = 'error' ) => {
 			} ),
 		} );
 		const chargeResultData = await chargeResult.json();
+		if ( chargeResultData.data?.status !== 200 && chargeResultData.message ) {
+			renderMessages( [ chargeResultData.message ], messagesEl );
+		}
 		if ( chargeResultData.error ) {
 			renderMessages( [ chargeResultData.error ], messagesEl );
 		}
