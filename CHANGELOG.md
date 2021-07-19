@@ -1,3 +1,10 @@
+# [1.30.0-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v1.30.0-alpha.1...v1.30.0-alpha.2) (2021-07-19)
+
+
+### Features
+
+* **nrh:** donations handling ([#805](https://github.com/Automattic/newspack-blocks/issues/805)) ([821f6db](https://github.com/Automattic/newspack-blocks/commit/821f6db1ae9c4ed0eed043598e4689e886e1416e))
+
 # [1.30.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.29.2...v1.30.0-alpha.1) (2021-07-19)
 
 
