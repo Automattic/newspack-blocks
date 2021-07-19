@@ -1,3 +1,10 @@
+# [1.30.0-alpha.3](https://github.com/Automattic/newspack-blocks/compare/v1.30.0-alpha.2...v1.30.0-alpha.3) (2021-07-19)
+
+
+### Bug Fixes
+
+* remove autoload dependency from donation class ([#811](https://github.com/Automattic/newspack-blocks/issues/811)) ([c37c885](https://github.com/Automattic/newspack-blocks/commit/c37c885e0dcf1d36a72d70168cfa7b60d0a66d6d))
+
 # [1.30.0-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v1.30.0-alpha.1...v1.30.0-alpha.2) (2021-07-19)
 
 
