@@ -72,6 +72,17 @@ class Edit extends Component {
 		return data;
 	}
 
+	isStreamlinedAvailable() {
+		return window.newspack_blocks_data?.can_use_streamlined_donate_block;
+	}
+
+	isStreamlinedForm() {
+		if ( ! this.isStreamlinedAvailable() ) {
+			return false;
+		}
+		return this.props.attributes.isStreamlined;
+	}
+
 	sanitizeCurrencyInput = amount => Math.max( 0, parseFloat( amount ).toFixed( 2 ) );
 
 	formatCurrencyWithoutSymbol = amount => {
@@ -107,7 +118,6 @@ class Edit extends Component {
 	};
 
 	getSettings() {
-		const { attributes, setAttributes } = this.props;
 		const path = '/newspack/v1/wizard/newspack-donations-wizard/donation';
 
 		this.setState( { isLoading: true }, () => {
@@ -119,7 +129,6 @@ class Edit extends Component {
 						currencySymbol,
 						tiered,
 						created,
-						force_manual: forceManual,
 					} = settings;
 					this.setState( {
 						suggestedAmounts,
@@ -127,7 +136,6 @@ class Edit extends Component {
 						currencySymbol,
 						tiered,
 						created,
-						forceManual,
 						isLoading: false,
 						customDonationAmounts: {
 							once: tiered ? 12 * suggestedAmounts[ 1 ] : 12 * suggestedAmountUntiered,
@@ -136,15 +144,6 @@ class Edit extends Component {
 						},
 						activeTier: 1,
 					} );
-					if ( forceManual ) {
-						setAttributes( { manual: true } );
-						if (
-							attributes.suggestedAmounts.every( amount => amount === 0 ) &&
-							0 === attributes.suggestedAmountUntiered
-						) {
-							setAttributes( { suggestedAmounts, suggestedAmountUntiered } );
-						}
-					}
 				} )
 				.catch( error => {
 					this.setState( {
@@ -162,8 +161,7 @@ class Edit extends Component {
 	}
 
 	renderUntieredForm() {
-		const { attributes, className, setAttributes } = this.props;
-		const { buttonText } = attributes;
+		const { className } = this.props;
 		const { uid } = this.state;
 		const { currencySymbol, customDonationAmounts, selectedFrequency } = this.blockData();
 
@@ -217,25 +215,14 @@ class Edit extends Component {
 							</div>
 						) ) }
 					</div>
-					<p className="wp-block-newspack-blocks-donate__thanks thanks">
-						{ __( 'Your contribution is appreciated.', 'newspack-blocks' ) }
-					</p>
-					<button type="submit" onClick={ evt => evt.preventDefault() }>
-						<RichText
-							onChange={ value => setAttributes( { buttonText: value } ) }
-							placeholder={ __( 'Button text…', 'newspack-blocks' ) }
-							value={ buttonText }
-							tagName="span"
-						/>
-					</button>
+					{ this.renderFooter() }
 				</form>
 			</div>
 		);
 	}
 
 	renderTieredForm() {
-		const { attributes, className, setAttributes } = this.props;
-		const { buttonText } = attributes;
+		const { className } = this.props;
 		const { uid } = this.state;
 		const {
 			activeTier,
@@ -331,19 +318,38 @@ class Edit extends Component {
 							) ) }
 						</div>
 					</div>
-					<p className="wp-block-newspack-blocks-donate__thanks thanks">
-						{ __( 'Your contribution is appreciated.', 'newspack-blocks' ) }
-					</p>
-					<button type="submit" onClick={ evt => evt.preventDefault() }>
-						<RichText
-							onChange={ value => setAttributes( { buttonText: value } ) }
-							placeholder={ __( 'Button text…', 'newspack-blocks' ) }
-							value={ buttonText }
-							tagName="span"
-						/>
-					</button>
+					{ this.renderFooter() }
 				</form>
 			</div>
+		);
+	}
+
+	renderFooter() {
+		const { attributes, setAttributes } = this.props;
+		const { buttonText } = attributes;
+		return (
+			<>
+				<p className="wp-block-newspack-blocks-donate__thanks thanks">
+					{ __( 'Your contribution is appreciated.', 'newspack-blocks' ) }
+				</p>
+				{ this.isStreamlinedForm() && (
+					<div className="wp-block-newspack-blocks-donate__stripe wp-block-newspack-blocks-donate__stripe--editor stripe-payment">
+						<div
+							className="input-placeholder"
+							data-text={ __( 'Card number', 'newspack-blocks' ) }
+						/>
+						<div className="input-placeholder" data-text={ __( 'Email', 'newspack-blocks' ) } />
+					</div>
+				) }
+				<button type="submit" onClick={ evt => evt.preventDefault() }>
+					<RichText
+						onChange={ value => setAttributes( { buttonText: value } ) }
+						placeholder={ __( 'Button text…', 'newspack-blocks' ) }
+						value={ buttonText }
+						tagName="span"
+					/>
+				</button>
+			</>
 		);
 	}
 
@@ -478,39 +484,36 @@ class Edit extends Component {
 
 	render() {
 		const { setAttributes } = this.props;
-		const { forceManual } = this.state;
 		const { manual, campaign, defaultFrequency } = this.blockData();
 		return (
 			<Fragment>
 				{ this.renderPlaceholder() }
 				{ this.renderForm() }
 				<InspectorControls>
-					{ ! forceManual && (
-						<PanelBody>
-							<ToggleControl
-								key="manual"
-								checked={ manual }
-								onChange={ this.manualChanged }
-								label={ __( 'Configure manually', 'newspack-blocks' ) }
-							/>
-							{ ! manual && (
-								<Fragment>
-									<p>
-										{ __(
-											'The Donate Block allows you to collect donations from readers. The fields are automatically defined based on your donation settings.',
-											'newspack-blocks'
-										) }
-									</p>
+					<PanelBody>
+						<ToggleControl
+							key="manual"
+							checked={ manual }
+							onChange={ this.manualChanged }
+							label={ __( 'Configure manually', 'newspack-blocks' ) }
+						/>
+						{ ! manual && (
+							<Fragment>
+								<p>
+									{ __(
+										'The Donate Block allows you to collect donations from readers. The fields are automatically defined based on your donation settings.',
+										'newspack-blocks'
+									) }
+								</p>
 
-									<ExternalLink href="/wp-admin/admin.php?page=newspack-reader-revenue-wizard#/donations">
-										{ __( 'Edit donation settings.', 'newspack-blocks' ) }
-									</ExternalLink>
-								</Fragment>
-							) }
-						</PanelBody>
-					) }
+								<ExternalLink href="/wp-admin/admin.php?page=newspack-reader-revenue-wizard#/donations">
+									{ __( 'Edit donation settings.', 'newspack-blocks' ) }
+								</ExternalLink>
+							</Fragment>
+						) }
+					</PanelBody>
 					{ manual && (
-						<PanelBody title={ ! forceManual && __( 'Manual Settings', 'newspack-blocks' ) }>
+						<PanelBody title={ __( 'Manual Settings', 'newspack-blocks' ) }>
 							{ this.renderManualControls() }
 						</PanelBody>
 					) }
@@ -550,6 +553,20 @@ class Edit extends Component {
 							}
 						/>
 					</PanelBody>
+					{ this.isStreamlinedAvailable() && (
+						<PanelBody title={ __( 'Streamlined', 'newspack-blocks' ) } initialOpen={ false }>
+							<ToggleControl
+								key="isStreamlined"
+								checked={ this.isStreamlinedForm() }
+								help={ __(
+									'In streamlined mode, the donation will happen on-site, with no redirection. The donor will only be asked for their credit card number and e-mail address.',
+									'newspack-blocks'
+								) }
+								onChange={ _isStreamlined => setAttributes( { isStreamlined: _isStreamlined } ) }
+								label={ __( 'Streamlined mode', 'newspack-blocks' ) }
+							/>
+						</PanelBody>
+					) }
 				</InspectorControls>
 			</Fragment>
 		);

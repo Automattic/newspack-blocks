@@ -1,0 +1,69 @@
+@import '../../shared/sass/colors';
+@import '../../shared/sass/mixins';
+@import '../../shared/sass/variables';
+
+.wp-block-newspack-blocks-donate {
+	.stripe-payment {
+		&__card {
+			border: 1px solid $color__border;
+			margin-bottom: 0.76rem;
+			padding: 0.34rem 0.66rem;
+		}
+		input,
+		&__messages {
+			width: 100%;
+		}
+		input {
+			font-family: sans-serif;
+
+			@include media( tablet ) {
+				font-size: 14px;
+				line-height: 1.2;
+			}
+		}
+		&__messages {
+			> div {
+				border: 0 solid $color__info;
+				border-left-width: 4px;
+				font-size: $font__size-sm;
+				margin-top: 0.76rem;
+				padding: 0.38rem 0.76rem;
+				&:empty {
+					border: 0;
+					margin: 0;
+					padding: 0;
+				}
+				&.type-error {
+					background-color: rgba( $color__error, 0.075 );
+					border-color: $color__error;
+				}
+				&.type-success {
+					background-color: rgba( $color__success, 0.075 );
+					border-color: $color__success;
+				}
+			}
+		}
+
+		&--disabled {
+			button,
+			input {
+				pointer-events: none;
+				opacity: 0.4;
+			}
+		}
+	}
+
+	&__stripe {
+		margin: 0.38rem 0.76rem 0.76rem;
+
+		@include media( tablet ) {
+			margin-left: 1.5rem;
+			margin-right: 1.5rem;
+		}
+		&--editor {
+			input:first-child {
+				margin-top: 0;
+			}
+		}
+	}
+}
