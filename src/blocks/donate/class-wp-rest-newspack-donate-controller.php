@@ -5,8 +5,6 @@
  * @package WordPress
  */
 
-require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'vendor/autoload.php';
-
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
 
 /**
