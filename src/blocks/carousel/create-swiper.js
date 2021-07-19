@@ -30,8 +30,10 @@ function forEachNode( nodeList, cb ) {
  * @param {HTMLElement} slide Slide DOM element
  */
 function activateSlide( slide ) {
-	slide.setAttribute( 'aria-hidden', 'false' );
-	forEachNode( slide.querySelectorAll( 'a' ), el => el.removeAttribute( 'tabindex' ) );
+	if ( slide ) {
+		slide.setAttribute( 'aria-hidden', 'false' );
+		forEachNode( slide.querySelectorAll( 'a' ), el => el.removeAttribute( 'tabindex' ) );
+	}
 }
 
 /**
@@ -40,8 +42,10 @@ function activateSlide( slide ) {
  * @param {HTMLElement} slide Slide DOM element
  */
 function deactivateSlide( slide ) {
-	slide.setAttribute( 'aria-hidden', 'true' );
-	forEachNode( slide.querySelectorAll( 'a' ), el => el.setAttribute( 'tabindex', '-1' ) );
+	if ( slide ) {
+		slide.setAttribute( 'aria-hidden', 'true' );
+		forEachNode( slide.querySelectorAll( 'a' ), el => el.setAttribute( 'tabindex', '-1' ) );
+	}
 }
 
 /**
@@ -60,6 +64,13 @@ function deactivateSlide( slide ) {
  * @return {Object} Swiper instance
  */
 export default function createSwiper( els, config = {} ) {
+	const isVisible = 0 < els.container.offsetWidth && 0 < els.container.offsetHeight;
+
+	// Don't initialize if the swiper is hidden on initial mount.
+	if ( ! isVisible ) {
+		return false;
+	}
+
 	const swiper = new Swiper( els.container, {
 		/**
 		 * Remove the messages, as we're announcing the slide content and number.
