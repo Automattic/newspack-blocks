@@ -1,3 +1,20 @@
+# [1.30.0](https://github.com/Automattic/newspack-blocks/compare/v1.29.2...v1.30.0) (2021-07-19)
+
+
+### Bug Fixes
+
+* remove autoload dependency from donation class ([#811](https://github.com/Automattic/newspack-blocks/issues/811)) ([c37c885](https://github.com/Automattic/newspack-blocks/commit/c37c885e0dcf1d36a72d70168cfa7b60d0a66d6d))
+* **class-newspack-blocks.php:** fixes assets meta file path for scripts ([#780](https://github.com/Automattic/newspack-blocks/issues/780)) ([a37ff23](https://github.com/Automattic/newspack-blocks/commit/a37ff23c18d7c63f9a947d5b7592852bc2f0dbe0)), closes [#779](https://github.com/Automattic/newspack-blocks/issues/779)
+* allow swiper to reinitialize carousel on attribute changes ([#807](https://github.com/Automattic/newspack-blocks/issues/807)) ([cc9fa30](https://github.com/Automattic/newspack-blocks/commit/cc9fa30d612daeaff0ecbc715aea759e442870ec))
+* do not initialize swiper instances if component is hidden ([#804](https://github.com/Automattic/newspack-blocks/issues/804)) ([fe599e1](https://github.com/Automattic/newspack-blocks/commit/fe599e1061bd37c763603e8d8324ca0f21ea1c42))
+* **carousel:** preview performance ([#803](https://github.com/Automattic/newspack-blocks/issues/803)) ([e5fc989](https://github.com/Automattic/newspack-blocks/commit/e5fc989d50eaf50e379c35bec4fe741b11d12387))
+
+
+### Features
+
+* **donate:** streamlined block option w/ Stripe ([#784](https://github.com/Automattic/newspack-blocks/issues/784)) ([10bfb0b](https://github.com/Automattic/newspack-blocks/commit/10bfb0bdcea23e31d190b31631d1a30911e955a7))
+* **nrh:** donations handling ([#805](https://github.com/Automattic/newspack-blocks/issues/805)) ([821f6db](https://github.com/Automattic/newspack-blocks/commit/821f6db1ae9c4ed0eed043598e4689e886e1416e))
+
 ## [1.29.2](https://github.com/Automattic/newspack-blocks/compare/v1.29.1...v1.29.2) (2021-07-13)
 
 
