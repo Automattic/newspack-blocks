@@ -40,6 +40,9 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 					<div class="type-success"></div>
 					<div class="type-info"></div>
 				</div>
+				<a target="_blank" rel="noreferrer" class="stripe-payment__branding" href="https://stripe.com">
+					<img src="<?php echo esc_attr( plugins_url( '/src/assets', NEWSPACK_BLOCKS__PLUGIN_FILE ) . '/stripe-badge.svg' ); ?>" alt="Stripe">
+				</a>
 				<button type='submit' style="margin-left: 0; margin-top: 1em;">
 					<?php echo wp_kses_post( $button_text ); ?>
 				</button>
