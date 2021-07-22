@@ -59,6 +59,9 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 							'sanitize_callback' => 'sanitize_text_field',
 							'required'          => true,
 						],
+						'clientId'  => [
+							'sanitize_callback' => 'sanitize_text_field',
+						],
 					],
 					'permission_callback' => '__return_true',
 				],
@@ -122,21 +125,24 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 				);
 			}
 
+			$payment_metadata = [
+				'Source'          => 'Newspack',
+				'Property'        => '',
+				'Type'            => 'once' === $frequency ? 'Single' : 'Recurring',
+				'Frequency'       => $metadata_frequency,
+				'Email'           => $email_address,
+				'DonationAmount'  => $amount,
+				'AgreedToPayFees' => 'No',
+				'clientId'        => $request->get_param( 'clientId' ),
+			];
+
 			$intent        = $stripe->paymentIntents->create( // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 				[
 					'amount'               => $amount,
 					'currency'             => $payment_data['currency'],
 					'receipt_email'        => $email_address,
 					'customer'             => $customer['id'],
-					'metadata'             => [
-						'Source'          => 'Newspack',
-						'Property'        => '',
-						'Type'            => 'once' === $frequency ? 'Single' : 'Recurring',
-						'Frequency'       => $metadata_frequency,
-						'Email'           => $email_address,
-						'DonationAmount'  => $amount,
-						'AgreedToPayFees' => 'No',
-					],
+					'metadata'             => $payment_metadata,
 					'payment_method_types' => [ 'card' ],
 				]
 			);

@@ -36,6 +36,15 @@ const renderMessages = ( messages, el, type = 'error' ) => {
 	} );
 };
 
+const getCookies = () =>
+	document.cookie.split( '; ' ).reduce( ( acc, cookieStr ) => {
+		const cookie = cookieStr.split( '=' );
+		acc[ cookie[ 0 ] ] = cookie[ 1 ];
+		return acc;
+	}, {} );
+
+const getClientIDValue = () => getCookies()[ 'newspack-cid' ];
+
 [ ...document.querySelectorAll( '.stripe-payment' ) ].forEach( async el => {
 	const disableForm = () => el.classList.add( 'stripe-payment--disabled' );
 	const enableForm = () => el.classList.remove( 'stripe-payment--disabled' );
@@ -66,6 +75,10 @@ const renderMessages = ( messages, el, type = 'error' ) => {
 		if ( ! formValues.amount ) {
 			formValues.amount = formValues[ `${ valueKey }_untiered` ];
 		}
+		if ( formValues.cid.indexOf( 'CLIENT_ID' ) === 0 ) {
+			// In non-AMP environment, the value will not be dynamically substituted by AMP runtime.
+			formValues.cid = getClientIDValue();
+		}
 
 		const validationErrors = Object.values( validateFormData( formValues ) );
 		if ( validationErrors.length > 0 ) {
@@ -91,6 +104,7 @@ const renderMessages = ( messages, el, type = 'error' ) => {
 				amount: formValues.amount,
 				email: formValues.email,
 				frequency: formValues.donation_frequency,
+				clientId: formValues.cid,
 			} ),
 		} );
 		const chargeResultData = await chargeResult.json();

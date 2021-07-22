@@ -51,6 +51,15 @@
 				opacity: 0.4;
 			}
 		}
+
+		&__branding {
+			margin-top: 10px;
+			display: block;
+			text-decoration: none;
+			img {
+				width: 111px;
+			}
+		}
 	}
 
 	&__stripe {
