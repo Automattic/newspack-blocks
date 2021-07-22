@@ -10,7 +10,6 @@
     "@semantic-release/changelog": "^5.0.0",
     "@semantic-release/git": "^9.0.0",
     "@wordpress/api-fetch": "^3.21.0",
-    "@wordpress/base-styles": "^3.4.4",
     "@wordpress/block-editor": "^3.11.0",
     "@wordpress/blocks": "^6.25.0",
     "@wordpress/components": "^12.0.6",
