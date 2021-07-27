@@ -1,3 +1,10 @@
+# [1.31.0](https://github.com/Automattic/newspack-blocks/compare/v1.30.0...v1.31.0) (2021-07-27)
+
+
+### Features
+
+* **donate-streamlined:** add Client ID to payment meta ([#806](https://github.com/Automattic/newspack-blocks/issues/806)) ([181e5b7](https://github.com/Automattic/newspack-blocks/commit/181e5b7833d796e852da917c96cdf714dd5b5d56))
+
 # [1.30.0](https://github.com/Automattic/newspack-blocks/compare/v1.29.2...v1.30.0) (2021-07-19)
 
 
