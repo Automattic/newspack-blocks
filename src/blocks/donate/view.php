@@ -19,6 +19,10 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 	}
 	$button_text = $attributes['buttonText'];
 	$campaign    = $attributes['campaign'] ?? false;
+	$client_id   = '';
+	if ( class_exists( 'Newspack_Popups_Segmentation' ) ) {
+		$client_id = Newspack_Popups_Segmentation::NEWSPACK_SEGMENTATION_CID_NAME;
+	}
 
 	ob_start();
 
@@ -36,6 +40,9 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 					<div class="type-success"></div>
 					<div class="type-info"></div>
 				</div>
+				<a target="_blank" rel="noreferrer" class="stripe-payment__branding" href="https://stripe.com">
+					<img src="<?php echo esc_attr( plugins_url( '/src/assets', NEWSPACK_BLOCKS__PLUGIN_FILE ) . '/stripe-badge.svg' ); ?>" alt="Stripe">
+				</a>
 				<button type='submit' style="margin-left: 0; margin-top: 1em;">
 					<?php echo wp_kses_post( $button_text ); ?>
 				</button>
@@ -48,6 +55,12 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 		<?php if ( $campaign ) : ?>
 			<input type='hidden' name='campaign' value='<?php echo esc_attr( $campaign ); ?>' />
 		<?php endif; ?>
+		<input
+			name="cid"
+			type="hidden"
+			value="CLIENT_ID(<?php echo esc_attr( $client_id ); ?>)"
+			data-amp-replace="CLIENT_ID"
+		/>
 	<?php
 
 	return ob_get_clean();
