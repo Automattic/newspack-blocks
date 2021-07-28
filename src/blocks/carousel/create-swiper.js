@@ -191,22 +191,22 @@ export default function createSwiper( els, config = {} ) {
 			els.pause.focus(); // Move focus to the pause button.
 		}
 
-		swiper.on( 'init', function() {
+		swiper.on( 'init', function () {
 			els.play.addEventListener( 'click', handlePlayButtonClick );
 			els.pause.addEventListener( 'click', handlePauseButtonClick );
 		} );
 
-		swiper.on( 'autoplayStart', function() {
+		swiper.on( 'autoplayStart', function () {
 			els.block.classList.add( autoplayClassName ); // Hide play & show pause button.
 			speak( __( 'Playing', 'newspack-blocks' ), 'assertive' );
 		} );
 
-		swiper.on( 'autoplayStop', function() {
+		swiper.on( 'autoplayStop', function () {
 			els.block.classList.remove( autoplayClassName ); // Hide pause & show play button.
 			speak( __( 'Paused', 'newspack-blocks' ), 'assertive' );
 		} );
 
-		swiper.on( 'beforeDestroy', function() {
+		swiper.on( 'beforeDestroy', function () {
 			els.play.removeEventListener( 'click', handlePlayButtonClick );
 			els.pause.removeEventListener( 'click', handlePauseButtonClick );
 		} );

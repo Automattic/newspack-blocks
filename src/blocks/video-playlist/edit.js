@@ -147,7 +147,7 @@ class Edit extends Component {
 				orderby: 'count',
 				order: 'desc',
 			} ),
-		} ).then( function( categories ) {
+		} ).then( function ( categories ) {
 			return categories.map( category => ( {
 				value: category.id,
 				label: decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' ),
@@ -168,7 +168,7 @@ class Edit extends Component {
 				_fields: 'id,name',
 				include: categoryIDs.join( ',' ),
 			} ),
-		} ).then( function( categories ) {
+		} ).then( function ( categories ) {
 			return categories.map( category => ( {
 				value: category.id,
 				label: decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' ),
