@@ -272,6 +272,7 @@ class Edit extends Component {
 			specificMode,
 			tags,
 			tagExclusions,
+			categoryExclusions,
 		} = attributes;
 
 		const imageSizeOptions = [
@@ -330,6 +331,10 @@ class Edit extends Component {
 						tagExclusions={ tagExclusions }
 						onTagExclusionsChange={ _tagExclusions =>
 							setAttributes( { tagExclusions: _tagExclusions } )
+						}
+						categoryExclusions={ categoryExclusions }
+						onCategoryExclusionsChange={ _categoryExclusions =>
+							setAttributes( { categoryExclusions: _categoryExclusions } )
 						}
 						postType={ postType }
 					/>

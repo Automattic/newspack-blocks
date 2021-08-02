@@ -98,6 +98,11 @@
       "default": [],
       "items": { "type": "integer" }
     },
+    "categoryExclusions": {
+      "type": "array",
+      "default": [],
+      "items": { "type": "integer" }
+    },
     "specificPosts": {
       "type": "array",
       "default": [],

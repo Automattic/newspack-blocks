@@ -178,6 +178,8 @@ class QueryControls extends Component {
 			onTagsChange,
 			tagExclusions,
 			onTagExclusionsChange,
+			categoryExclusions,
+			onCategoryExclusionsChange,
 			enableSpecific,
 		} = this.props;
 		const { showAdvancedFilters } = this.state;
@@ -256,6 +258,16 @@ class QueryControls extends Component {
 					fetchSuggestions={ this.fetchTagSuggestions }
 					fetchSavedInfo={ this.fetchSavedTags }
 					label={ __( 'Excluded Tags', 'newspack-blocks' ) }
+				/>
+			),
+			! specificMode && onCategoryExclusionsChange && showAdvancedFilters && (
+				<AutocompleteTokenField
+					key="category-exclusion"
+					tokens={ categoryExclusions || [] }
+					onChange={ onCategoryExclusionsChange }
+					fetchSuggestions={ this.fetchCategorySuggestions }
+					fetchSavedInfo={ this.fetchSavedCategories }
+					label={ __( 'Excluded Categories', 'newspack-blocks' ) }
 				/>
 			),
 		];
