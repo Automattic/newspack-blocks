@@ -1,3 +1,10 @@
+# [1.32.0](https://github.com/Automattic/newspack-blocks/compare/v1.31.0...v1.32.0) (2021-08-03)
+
+
+### Features
+
+* show term classes for Post Carousel blocks ([#819](https://github.com/Automattic/newspack-blocks/issues/819)) ([ca93168](https://github.com/Automattic/newspack-blocks/commit/ca9316898ae699db8bde5a43a384a5d82c3143ab))
+
 # [1.31.0](https://github.com/Automattic/newspack-blocks/compare/v1.30.0...v1.31.0) (2021-07-27)
 
 
