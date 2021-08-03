@@ -36,7 +36,7 @@ class QueryControls extends Component {
 				type: 'post',
 				post_type: postType,
 			} ),
-		} ).then( function( posts ) {
+		} ).then( function ( posts ) {
 			const result = posts.map( post => ( {
 				value: post.id,
 				label: decodeEntities( post.title ) || __( '(no title)', 'newspack-blocks' ),
@@ -51,7 +51,7 @@ class QueryControls extends Component {
 				include: postIDs.join( ',' ),
 				_fields: 'id,title',
 			} ),
-		} ).then( function( posts ) {
+		} ).then( function ( posts ) {
 			return posts.map( post => ( {
 				value: post.id,
 				label: decodeEntities( post.title.rendered ) || __( '(no title)', 'newspack-blocks' ),
@@ -66,7 +66,7 @@ class QueryControls extends Component {
 				per_page: 20,
 				_fields: 'id,name',
 			} ),
-		} ).then( function( users ) {
+		} ).then( function ( users ) {
 			return users.map( user => ( {
 				value: user.id,
 				label: decodeEntities( user.name ) || __( '(no name)', 'newspack-blocks' ),
@@ -80,7 +80,7 @@ class QueryControls extends Component {
 				include: userIDs.join( ',' ),
 				_fields: 'id,name',
 			} ),
-		} ).then( function( users ) {
+		} ).then( function ( users ) {
 			return users.map( user => ( {
 				value: user.id,
 				label: decodeEntities( user.name ) || __( '(no name)', 'newspack-blocks' ),
@@ -125,7 +125,7 @@ class QueryControls extends Component {
 				_fields: 'id,name',
 				include: categoryIDs.join( ',' ),
 			} ),
-		} ).then( function( categories ) {
+		} ).then( function ( categories ) {
 			return categories.map( category => ( {
 				value: category.id,
 				label: decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' ),
@@ -142,7 +142,7 @@ class QueryControls extends Component {
 				orderby: 'count',
 				order: 'desc',
 			} ),
-		} ).then( function( tags ) {
+		} ).then( function ( tags ) {
 			return tags.map( tag => ( {
 				value: tag.id,
 				label: decodeEntities( tag.name ) || __( '(no title)', 'newspack-blocks' ),
@@ -156,7 +156,7 @@ class QueryControls extends Component {
 				_fields: 'id,name',
 				include: tagIDs.join( ',' ),
 			} ),
-		} ).then( function( tags ) {
+		} ).then( function ( tags ) {
 			return tags.map( tag => ( {
 				value: tag.id,
 				label: decodeEntities( tag.name ) || __( '(no title)', 'newspack-blocks' ),

@@ -309,7 +309,7 @@ export default ( { attributes, setAttributes } ) => {
 							</h3>
 							{ showBio && author.bio && (
 								<p>
-									{ author.bio }{' '}
+									{ author.bio }{ ' ' }
 									{ showArchiveLink && (
 										<a href="#" className="no-op">
 											{ __( 'More by', 'newspack-blocks' ) + ' ' + author.name }
