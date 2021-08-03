@@ -15,7 +15,7 @@ export const formatAvatars = authorInfo =>
 
 export const formatByline = authorInfo => (
 	<span className="byline">
-		{ _x( 'by', 'post author', 'newspack-blocks' ) }{' '}
+		{ _x( 'by', 'post author', 'newspack-blocks' ) }{ ' ' }
 		{ authorInfo.reduce( ( accumulator, author, index ) => {
 			return [
 				...accumulator,
@@ -54,7 +54,7 @@ export const formatSponsorLogos = sponsorInfo => (
 
 export const formatSponsorByline = sponsorInfo => (
 	<span className="byline sponsor-byline">
-		{ sponsorInfo[ 0 ].byline_prefix }{' '}
+		{ sponsorInfo[ 0 ].byline_prefix }{ ' ' }
 		{ sponsorInfo.reduce( ( accumulator, sponsor, index ) => {
 			return [
 				...accumulator,

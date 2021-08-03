@@ -35,15 +35,9 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 	if ( false === $article_query->have_posts() ) {
 		return;
 	}
-	$counter         = 0;
-	$article_classes = [
-		'post-has-image',
-	];
-	if ( $is_amp ) {
-		$article_classes[] = 'amp-carousel-slide';
-	} else {
-		$article_classes[] = 'swiper-slide';
-	}
+
+	$counter = 0;
+
 	ob_start();
 	if ( $article_query->have_posts() ) :
 		while ( $article_query->have_posts() ) :
@@ -51,6 +45,18 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 			$post_id                             = get_the_ID();
 			$authors                             = Newspack_Blocks::prepare_authors();
 			$newspack_blocks_post_id[ $post_id ] = true;
+
+			$article_classes = [
+				'post-has-image',
+			];
+			if ( $is_amp ) {
+				$article_classes[] = 'amp-carousel-slide';
+			} else {
+				$article_classes[] = 'swiper-slide';
+			}
+
+			// Add classes based on the post's assigned categories and tags.
+			$article_classes[] = Newspack_Blocks::get_term_classes( $post_id );
 
 			// Get sponsors for this post.
 			$sponsors = Newspack_Blocks::get_all_sponsors( $post_id );

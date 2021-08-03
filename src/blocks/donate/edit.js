@@ -38,9 +38,7 @@ class Edit extends Component {
 				year: 0,
 			},
 			error: '',
-			uid: Math.random()
-				.toString( 16 )
-				.slice( 2 ), // Unique identifier to prevent collisions with other Donate blocks' labels.
+			uid: Math.random().toString( 16 ).slice( 2 ), // Unique identifier to prevent collisions with other Donate blocks' labels.
 		};
 	}
 	componentDidMount() {

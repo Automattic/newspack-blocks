@@ -263,7 +263,9 @@ class Edit extends Component {
 							<div className="swiper-wrapper">
 								{ latestPosts.map( post => (
 									<article
-										className={ `post-has-image swiper-slide ${ post.post_type }` }
+										className={ `post-has-image swiper-slide ${ post.post_type } ${
+											post.newspack_article_classes || ''
+										}` }
 										key={ post.id }
 									>
 										<figure className="post-thumbnail">
