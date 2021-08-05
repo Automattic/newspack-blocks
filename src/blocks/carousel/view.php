@@ -149,7 +149,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 										if ( '' !== $logo['url'] ) {
 											echo '<a href="' . esc_url( $logo['url'] ) . '" target="_blank">';
 										}
-										echo '<img src="' . esc_url( $logo['src'] ) . '" width="' . esc_attr( $logo['width'] ) . '" height="' . esc_attr( $logo['height'] ) . '">';
+										echo '<img src="' . esc_url( $logo['src'] ) . '" alt="' . esc_attr( $logo['alt'] ) . '" width="' . esc_attr( $logo['width'] ) . '" height="' . esc_attr( $logo['height'] ) . '">';
 										if ( '' !== $logo['url'] ) {
 											echo '</a>';
 										}
