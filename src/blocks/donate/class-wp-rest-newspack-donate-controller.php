@@ -48,7 +48,9 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 							],
 						],
 						'amount'    => [
-							'sanitize_callback' => 'absint',
+							'sanitize_callback' => function ( $amount ) {
+								return (float) abs( $amount );
+							},
 							'required'          => true,
 						],
 						'frequency' => [
