@@ -698,6 +698,7 @@ class Newspack_Blocks {
 					$sponsor_logos[] = array(
 						'url'    => $sponsor['sponsor_url'],
 						'src'    => esc_url( $sponsor['sponsor_logo']['src'] ),
+						'alt'    => esc_attr( $sponsor['sponsor_name'] ),
 						'width'  => esc_attr( $sponsor['sponsor_logo']['img_width'] ),
 						'height' => esc_attr( $sponsor['sponsor_logo']['img_height'] ),
 					);
