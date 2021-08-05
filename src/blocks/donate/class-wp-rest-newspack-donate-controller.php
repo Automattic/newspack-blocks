@@ -100,7 +100,9 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 			'status' => null,
 		];
 		$payment_metadata = [
-			'Source'   => 'Newspack',
+			'Source' => 'Newspack',
+		];
+		$client_metadata  = [
 			'clientId' => $request->get_param( 'clientId' ),
 		];
 		$amount_raw       = $request->get_param( 'amount' );
@@ -121,13 +123,17 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 						'email'       => $email_address,
 						'description' => __( 'Newspack Donor', 'newspack-blocks' ),
 						'source'      => $token_data['id'],
+						'metadata'    => $client_metadata,
 					]
 				);
 			}
 			if ( $customer['default_source'] !== $token_data['card']['id'] ) {
 				$stripe->customers->update(
 					$customer['id'],
-					[ 'source' => $token_data['id'] ]
+					[
+						'source'   => $token_data['id'],
+						'metadata' => $client_metadata,
+					]
 				);
 			}
 
