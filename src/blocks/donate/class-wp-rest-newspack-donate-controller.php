@@ -95,18 +95,22 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function charge( $request ) {
-		$payment_data  = self::get_payment_data();
-		$error         = null;
-		$client_secret = null;
+		$response         = [
+			'error'  => null,
+			'status' => null,
+		];
+		$payment_metadata = [
+			'Source'   => 'Newspack',
+			'clientId' => $request->get_param( 'clientId' ),
+		];
+		$amount_raw       = $request->get_param( 'amount' );
 
 		try {
 			$stripe = \Newspack\Stripe_Connection::get_stripe_client();
 
-			$token_data         = $request->get_param( 'tokenData' );
-			$amount             = self::get_amount( $request->get_param( 'amount' ), $payment_data['currency'] );
-			$email_address      = $request->get_param( 'email' );
-			$frequency          = $request->get_param( 'frequency' );
-			$metadata_frequency = 'once' === $frequency ? 'One-Time' : ( 'month' === $frequency ? 'Monthly' : 'Yearly' );
+			$frequency     = $request->get_param( 'frequency' );
+			$token_data    = $request->get_param( 'tokenData' );
+			$email_address = $request->get_param( 'email' );
 
 			// Find or create the customer by email.
 			$found_customers = $stripe->customers->all( [ 'email' => $email_address ] )['data'];
@@ -127,36 +131,53 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 				);
 			}
 
-			$payment_metadata = [
-				'Source'          => 'Newspack',
-				'Property'        => '',
-				'Type'            => 'once' === $frequency ? 'Single' : 'Recurring',
-				'Frequency'       => $metadata_frequency,
-				'Email'           => $email_address,
-				'DonationAmount'  => $amount,
-				'AgreedToPayFees' => 'No',
-				'clientId'        => $request->get_param( 'clientId' ),
-			];
+			if ( 'once' === $frequency ) {
+				// Create a Payment Intent on Stripe.
+				$payment_data              = self::get_payment_data();
+				$intent                    = $stripe->paymentIntents->create( // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+					[
+						'amount'               => self::get_amount( $amount_raw, $payment_data['currency'] ),
+						'currency'             => $payment_data['currency'],
+						'receipt_email'        => $email_address,
+						'customer'             => $customer['id'],
+						'metadata'             => $payment_metadata,
+						'description'          => __( 'Newspack One-Time Donation', 'newspack-blocks' ),
+						'payment_method_types' => [ 'card' ],
+					]
+				);
+				$response['client_secret'] = $intent['client_secret'];
+			} else {
+				// Create a Subscription on Stripe.
+				$prices = \Newspack\Stripe_Connection::get_donation_prices();
+				$price  = $prices[ $frequency ];
+				$amount = self::get_amount( $amount_raw, $price['currency'] );
 
-			$intent        = $stripe->paymentIntents->create( // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-				[
-					'amount'               => $amount,
-					'currency'             => $payment_data['currency'],
-					'receipt_email'        => $email_address,
-					'customer'             => $customer['id'],
-					'metadata'             => $payment_metadata,
-					'payment_method_types' => [ 'card' ],
-				]
-			);
-			$client_secret = $intent['client_secret'];
+				$subscription = $stripe->subscriptions->create( // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+					[
+						'customer'         => $customer['id'],
+						'items'            => [
+							[
+								'price'    => $price['id'],
+								'quantity' => $amount,
+							],
+						],
+						'payment_behavior' => 'allow_incomplete',
+						'metadata'         => $payment_metadata,
+						'expand'           => [ 'latest_invoice.payment_intent' ],
+					]
+				);
+
+				if ( 'incomplete' === $subscription->status ) {
+					// The card may require additional authentication.
+					$response['client_secret'] = $subscription->latest_invoice->payment_intent->client_secret;
+				} elseif ( 'active' === $subscription->status ) {
+					$response['status'] = 'success';
+				}
+			}
 		} catch ( \Exception $e ) {
-			$error = $e->getMessage();
+			$response['error'] = $e->getMessage();
 		}
 
-		$response = [
-			'error'         => $error,
-			'client_secret' => $client_secret,
-		];
 		return rest_ensure_response( $response );
 	}
 
