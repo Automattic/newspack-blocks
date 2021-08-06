@@ -95,17 +95,27 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function charge( $request ) {
-		$response         = [
+		$response = [
 			'error'  => null,
 			'status' => null,
 		];
+		// Experimental NRH integration metadata.
 		$payment_metadata = [
-			'Source' => 'Newspack',
+			'schema_version'     => '1.0',
+			'source'             => 'newspack',
+			'referer'            => wp_get_referer(),
+			'agreed_to_pay_fees' => false,
 		];
-		$client_metadata  = [
+		if ( class_exists( 'Newspack\NRH' ) && method_exists( 'Newspack\NRH', 'get_nrh_config' ) ) {
+			$nrh_config = \Newspack\NRH::get_nrh_config();
+			if ( isset( $nrh_config['nrh_salesforce_campaign_id'] ) ) {
+				$payment_metadata['sf_campaign_id'] = $nrh_config['nrh_salesforce_campaign_id'];
+			}
+		}
+		$client_metadata = [
 			'clientId' => $request->get_param( 'clientId' ),
 		];
-		$amount_raw       = $request->get_param( 'amount' );
+		$amount_raw      = $request->get_param( 'amount' );
 
 		try {
 			$stripe = \Newspack\Stripe_Connection::get_stripe_client();
