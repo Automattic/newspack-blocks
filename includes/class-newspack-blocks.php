@@ -85,6 +85,7 @@ class Newspack_Blocks {
 					'patterns'                         => self::get_patterns_for_post_type( get_post_type() ),
 					'posts_rest_url'                   => rest_url( 'newspack-blocks/v1/newspack-blocks-posts' ),
 					'specific_posts_rest_url'          => rest_url( 'newspack-blocks/v1/newspack-blocks-specific-posts' ),
+					'authors_rest_url'                 => rest_url( 'newspack-blocks/v1/authors' ),
 					'assets_path'                      => plugins_url( '/src/assets', NEWSPACK_BLOCKS__PLUGIN_FILE ),
 					'post_subtitle'                    => get_theme_support( 'post-subtitle' ),
 					'can_use_streamlined_donate_block' => self::can_use_streamlined_donate_block(),
