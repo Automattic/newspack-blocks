@@ -406,15 +406,16 @@ class Newspack_Blocks {
 			);
 		}
 
-		$post_type      = isset( $attributes['postType'] ) ? $attributes['postType'] : [ 'post' ];
-		$authors        = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
-		$categories     = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
-		$tags           = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
-		$tag_exclusions = isset( $attributes['tagExclusions'] ) ? $attributes['tagExclusions'] : array();
-		$specific_posts = isset( $attributes['specificPosts'] ) ? $attributes['specificPosts'] : array();
-		$posts_to_show  = intval( $attributes['postsToShow'] );
-		$specific_mode  = isset( $attributes['specificMode'] ) ? intval( $attributes['specificMode'] ) : false;
-		$args           = array(
+		$post_type           = isset( $attributes['postType'] ) ? $attributes['postType'] : [ 'post' ];
+		$authors             = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
+		$categories          = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
+		$tags                = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
+		$tag_exclusions      = isset( $attributes['tagExclusions'] ) ? $attributes['tagExclusions'] : array();
+		$category_exclusions = isset( $attributes['categoryExclusions'] ) ? $attributes['categoryExclusions'] : array();
+		$specific_posts      = isset( $attributes['specificPosts'] ) ? $attributes['specificPosts'] : array();
+		$posts_to_show       = intval( $attributes['postsToShow'] );
+		$specific_mode       = isset( $attributes['specificMode'] ) ? intval( $attributes['specificMode'] ) : false;
+		$args                = array(
 			'post_type'           => $post_type,
 			'post_status'         => 'publish',
 			'suppress_filters'    => false,
@@ -446,6 +447,9 @@ class Newspack_Blocks {
 			}
 			if ( $tag_exclusions && count( $tag_exclusions ) ) {
 				$args['tag__not_in'] = $tag_exclusions;
+			}
+			if ( $category_exclusions && count( $category_exclusions ) ) {
+				$args['category__not_in'] = $category_exclusions;
 			}
 		}
 		return $args;
@@ -694,6 +698,7 @@ class Newspack_Blocks {
 					$sponsor_logos[] = array(
 						'url'    => $sponsor['sponsor_url'],
 						'src'    => esc_url( $sponsor['sponsor_logo']['src'] ),
+						'alt'    => esc_attr( $sponsor['sponsor_name'] ),
 						'width'  => esc_attr( $sponsor['sponsor_logo']['img_width'] ),
 						'height' => esc_attr( $sponsor['sponsor_logo']['img_height'] ),
 					);

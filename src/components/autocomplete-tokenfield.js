@@ -119,12 +119,13 @@ class AutocompleteTokenField extends Component {
 					const currentSuggestions = [];
 
 					suggestions.forEach( suggestion => {
-						const duplicatedSuggestionIndex = currentSuggestions.indexOf( suggestion.label );
+						const trimmedSuggestionLabel = suggestion.label.trim();
+						const duplicatedSuggestionIndex = currentSuggestions.indexOf( trimmedSuggestionLabel );
 						if ( duplicatedSuggestionIndex >= 0 ) {
-							suggestion.label = `${ suggestion.label } (${ suggestion.value })`;
+							suggestion.label = `${ trimmedSuggestionLabel } (${ suggestion.value })`;
 						}
-						currentSuggestions.push( suggestion.label );
-						validValues[ suggestion.value ] = suggestion.label;
+						currentSuggestions.push( trimmedSuggestionLabel );
+						validValues[ suggestion.value ] = trimmedSuggestionLabel;
 					} );
 
 					this.setState( { suggestions: currentSuggestions, validValues, loading: false } );
