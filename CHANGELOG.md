@@ -1,3 +1,17 @@
+# [1.33.0](https://github.com/Automattic/newspack-blocks/compare/v1.32.0...v1.33.0) (2021-08-10)
+
+
+### Bug Fixes
+
+* select specific posts with white space at the end of the title ([a0c0075](https://github.com/Automattic/newspack-blocks/commit/a0c007532aee151c2e3b093573ecc1f3a7e8b279))
+* **homepage posts:** fix inconsistent column sizing when border enabled ([361fed5](https://github.com/Automattic/newspack-blocks/commit/361fed5ae8ef5a41d63845dad387e00b3776ebc6)), closes [#825](https://github.com/Automattic/newspack-blocks/issues/825)
+* **sponsor logo:** fix sponsor logo accessibility ([901db8c](https://github.com/Automattic/newspack-blocks/commit/901db8c2402d6f3add2c7221c68461355748d162)), closes [#678](https://github.com/Automattic/newspack-blocks/issues/678)
+
+
+### Features
+
+* **homepage-posts:** handle category exclusion ([45a3001](https://github.com/Automattic/newspack-blocks/commit/45a3001cab4b19ce6f638258180355003c02018f)), closes [#600](https://github.com/Automattic/newspack-blocks/issues/600)
+
 # [1.32.0](https://github.com/Automattic/newspack-blocks/compare/v1.31.0...v1.32.0) (2021-08-03)
 
 
