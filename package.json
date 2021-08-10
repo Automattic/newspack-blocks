@@ -3,7 +3,7 @@
 	"version": "1.32.0",
 	"author": "Automattic",
 	"devDependencies": {
-		"@automattic/calypso-build": "^6.3.0",
+		"@automattic/calypso-build": "^9.0.0",
 		"@babel/core": "^7.12.10",
 		"@commitlint/cli": "^8.3.5",
 		"@commitlint/config-conventional": "^8.3.4",
@@ -35,8 +35,8 @@
 		"stylelint-config-prettier": "^8.0.0",
 		"stylelint-config-wordpress": "^15.0.0",
 		"stylelint-prettier": "^1.1.2",
-		"webpack": "^4.29.6",
-		"webpack-cli": "^3.3.0"
+		"webpack": "^5.46.0",
+		"webpack-cli": "^4.7.2 "
 	},
 	"description": "=== Newspack Blocks === Contributors: (this should be a list of wordpress.org userid's) Donate link: https://example.com/ Tags: comments, spam Requires at least: 4.5 Tested up to: 5.1.1 Stable tag: 0.1.0 License: GPLv2 or later License URI: https://www.gnu.org/licenses/gpl-2.0.html",
 	"directories": {

@@ -293,6 +293,9 @@ class Newspack_Blocks_API {
 		if ( $params['categories'] && count( $params['categories'] ) ) {
 			$args['category__in'] = $params['categories'];
 		}
+		if ( $params['categories_exclude'] && count( $params['categories_exclude'] ) ) {
+			$args['category__not_in'] = $params['categories_exclude'];
+		}
 		if ( $params['tags'] && count( $params['tags'] ) ) {
 			$args['tag__in'] = $params['tags'];
 		}
