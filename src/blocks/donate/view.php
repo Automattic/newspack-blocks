@@ -13,7 +13,7 @@
  * @return string
  */
 function newspack_blocks_render_block_donate_footer( $attributes ) {
-	$is_streamlined = $attributes['isStreamlined'];
+	$is_streamlined = Newspack_Blocks::is_rendering_streamlined_block();
 	if ( $is_streamlined ) {
 		$payment_data = WP_REST_Newspack_Donate_Controller::get_payment_data();
 	}
@@ -70,7 +70,7 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
  * Enqueue frontend scripts and styles for the streamlined version of the donate block.
  */
 function newspack_blocks_enqueue_streamlined_donate_block_scripts() {
-	if ( Newspack_Blocks::can_use_streamlined_donate_block() ) {
+	if ( Newspack_Blocks::is_rendering_streamlined_block() ) {
 		$script_data = Newspack_Blocks::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . '/donateStreamlined.js' );
 		wp_enqueue_script(
 			Newspack_Blocks::DONATE_STREAMLINED_SCRIPT_HANDLE,
@@ -101,9 +101,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 		return '';
 	}
 
-	// Overwrite the attribute value.
-	$attributes['isStreamlined'] = ( $attributes['isStreamlined'] ?? false ) && Newspack_Blocks::can_use_streamlined_donate_block();
-	if ( $attributes['isStreamlined'] ) {
+	if ( Newspack_Blocks::is_rendering_streamlined_block() ) {
 		newspack_blocks_enqueue_streamlined_donate_block_scripts();
 	}
 

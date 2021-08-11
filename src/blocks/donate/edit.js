@@ -70,15 +70,8 @@ class Edit extends Component {
 		return data;
 	}
 
-	isStreamlinedAvailable() {
-		return window.newspack_blocks_data?.can_use_streamlined_donate_block;
-	}
-
-	isStreamlinedForm() {
-		if ( ! this.isStreamlinedAvailable() ) {
-			return false;
-		}
-		return this.props.attributes.isStreamlined;
+	isRenderingStreamlinedBlock() {
+		return window.newspack_blocks_data?.is_rendering_streamlined_block;
 	}
 
 	sanitizeCurrencyInput = amount => Math.max( 0, parseFloat( amount ).toFixed( 2 ) );
@@ -330,7 +323,7 @@ class Edit extends Component {
 				<p className="wp-block-newspack-blocks-donate__thanks thanks">
 					{ __( 'Your contribution is appreciated.', 'newspack-blocks' ) }
 				</p>
-				{ this.isStreamlinedForm() && (
+				{ this.isRenderingStreamlinedBlock() && (
 					<div className="wp-block-newspack-blocks-donate__stripe wp-block-newspack-blocks-donate__stripe--editor stripe-payment">
 						<div
 							className="input-placeholder"
@@ -551,20 +544,6 @@ class Edit extends Component {
 							}
 						/>
 					</PanelBody>
-					{ this.isStreamlinedAvailable() && (
-						<PanelBody title={ __( 'Streamlined', 'newspack-blocks' ) } initialOpen={ false }>
-							<ToggleControl
-								key="isStreamlined"
-								checked={ this.isStreamlinedForm() }
-								help={ __(
-									'In streamlined mode, the donation will happen on-site, with no redirection. The donor will only be asked for their credit card number and e-mail address.',
-									'newspack-blocks'
-								) }
-								onChange={ _isStreamlined => setAttributes( { isStreamlined: _isStreamlined } ) }
-								label={ __( 'Streamlined mode', 'newspack-blocks' ) }
-							/>
-						</PanelBody>
-					) }
 				</InspectorControls>
 			</Fragment>
 		);
