@@ -85,6 +85,7 @@ class Newspack_Blocks {
 					'patterns'                         => self::get_patterns_for_post_type( get_post_type() ),
 					'posts_rest_url'                   => rest_url( 'newspack-blocks/v1/newspack-blocks-posts' ),
 					'specific_posts_rest_url'          => rest_url( 'newspack-blocks/v1/newspack-blocks-specific-posts' ),
+					'authors_rest_url'                 => rest_url( 'newspack-blocks/v1/authors' ),
 					'assets_path'                      => plugins_url( '/src/assets', NEWSPACK_BLOCKS__PLUGIN_FILE ),
 					'post_subtitle'                    => get_theme_support( 'post-subtitle' ),
 					'can_use_streamlined_donate_block' => self::can_use_streamlined_donate_block(),
@@ -406,16 +407,15 @@ class Newspack_Blocks {
 			);
 		}
 
-		$post_type           = isset( $attributes['postType'] ) ? $attributes['postType'] : [ 'post' ];
-		$authors             = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
-		$categories          = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
-		$tags                = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
-		$tag_exclusions      = isset( $attributes['tagExclusions'] ) ? $attributes['tagExclusions'] : array();
-		$category_exclusions = isset( $attributes['categoryExclusions'] ) ? $attributes['categoryExclusions'] : array();
-		$specific_posts      = isset( $attributes['specificPosts'] ) ? $attributes['specificPosts'] : array();
-		$posts_to_show       = intval( $attributes['postsToShow'] );
-		$specific_mode       = isset( $attributes['specificMode'] ) ? intval( $attributes['specificMode'] ) : false;
-		$args                = array(
+		$post_type      = isset( $attributes['postType'] ) ? $attributes['postType'] : [ 'post' ];
+		$authors        = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
+		$categories     = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
+		$tags           = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
+		$tag_exclusions = isset( $attributes['tagExclusions'] ) ? $attributes['tagExclusions'] : array();
+		$specific_posts = isset( $attributes['specificPosts'] ) ? $attributes['specificPosts'] : array();
+		$posts_to_show  = intval( $attributes['postsToShow'] );
+		$specific_mode  = isset( $attributes['specificMode'] ) ? intval( $attributes['specificMode'] ) : false;
+		$args           = array(
 			'post_type'           => $post_type,
 			'post_status'         => 'publish',
 			'suppress_filters'    => false,
@@ -437,7 +437,26 @@ class Newspack_Blocks {
 				get_the_ID() ? [ get_the_ID() ] : []
 			);
 			if ( $authors && count( $authors ) ) {
-				$args['author__in'] = $authors;
+				$co_authors_names = array();
+
+				if ( class_exists( 'CoAuthors_Guest_Authors' ) ) {
+					$co_authors_guest_authors = new CoAuthors_Guest_Authors();
+
+					foreach ( $authors as $index => $author_id ) {
+						$co_author = $co_authors_guest_authors->get_guest_author_by( 'id', $author_id );
+						if ( $co_author ) {
+							$co_authors_names[] = $co_author->user_nicename;
+							unset( $authors[ $index ] );
+						}
+					}
+				}
+
+				if ( count( $co_authors_names ) ) {
+					// look for authors and co-authors posts.
+					self::filter_posts_clauses_when_co_authors( $authors, $co_authors_names );
+				} else {
+					$args['author__in'] = $authors;
+				}
 			}
 			if ( $categories && count( $categories ) ) {
 				$args['category__in'] = $categories;
@@ -447,9 +466,6 @@ class Newspack_Blocks {
 			}
 			if ( $tag_exclusions && count( $tag_exclusions ) ) {
 				$args['tag__not_in'] = $tag_exclusions;
-			}
-			if ( $category_exclusions && count( $category_exclusions ) ) {
-				$args['category__not_in'] = $category_exclusions;
 			}
 		}
 		return $args;
@@ -698,7 +714,6 @@ class Newspack_Blocks {
 					$sponsor_logos[] = array(
 						'url'    => $sponsor['sponsor_url'],
 						'src'    => esc_url( $sponsor['sponsor_logo']['src'] ),
-						'alt'    => esc_attr( $sponsor['sponsor_name'] ),
 						'width'  => esc_attr( $sponsor['sponsor_logo']['img_width'] ),
 						'height' => esc_attr( $sponsor['sponsor_logo']['img_height'] ),
 					);
@@ -714,7 +729,7 @@ class Newspack_Blocks {
 	/**
 	 * Closure for excerpt filtering that can be added and removed.
 	 *
-	 * @var newspack_blocks_excerpt_length_closure
+	 * @var $newspack_blocks_excerpt_length_closure
 	 */
 	public static $newspack_blocks_excerpt_length_closure = null;
 
@@ -788,6 +803,84 @@ class Newspack_Blocks {
 	 */
 	public static function remove_excerpt_more_filter() {
 		remove_filter( 'excerpt_more', [ __CLASS__, 'more_excerpt' ], 999 );
+	}
+
+	/**
+	 * Closure for posts clauses when we have co-authors can be added and removed.
+	 *
+	 * @var $newspack_blocks_posts_clauses_when_co_authors_closure
+	 */
+	public static $newspack_blocks_posts_clauses_when_co_authors_closure = null;
+
+	/**
+	 * Filter posts by authors and co-authors.
+	 *
+	 * @param int[]    $authors_ids Authors IDs to filter with.
+	 * @param string[] $co_authors_names Co-authors names to filter with.
+	 */
+	public static function filter_posts_clauses_when_co_authors( $authors_ids, $co_authors_names ) {
+		self::$newspack_blocks_posts_clauses_when_co_authors_closure = add_filter(
+			'posts_clauses',
+			function( $clauses ) use ( $authors_ids, $co_authors_names ) {
+				global $wpdb;
+
+				// co-author tax query.
+				$tax_query = array(
+					array(
+						'taxonomy' => 'author',
+						'field'    => 'name',
+						'terms'    => $co_authors_names,
+					),
+				);
+
+				// Generate the tax query SQL.
+				$tax_query = new WP_Tax_Query( $tax_query );
+				$tax_query = $tax_query->get_sql( $wpdb->posts, 'ID' );
+
+				// Generate the author query SQL.
+				$csv     = implode( ',', wp_parse_id_list( (array) $authors_ids ) );
+				$authors = " {$wpdb->posts}.post_author IN ( $csv ) ";
+
+				// Make sure the authors are set and the tax query is valid (doesn't contain 0 = 1).
+				if ( false === strpos( $tax_query['where'], ' 0 = 1' ) ) {
+					// Append to the current join/where parts.
+					$clauses['join']  .= $tax_query['join'];
+					$clauses['where'] .= sprintf(
+					// The tax query SQL comes prepended with AND.
+						' AND ( %s ( 1=1 %s ) ) ',
+						empty( $authors_ids ) ? '' : "$authors OR",
+						$tax_query['where']
+					);
+				}
+
+				return $clauses;
+			},
+			999
+		);
+
+		add_filter( 'posts_groupby', [ 'Newspack_Blocks', 'group_by_post_id_filter' ], 999 );
+	}
+
+	/**
+	 * Group by post ID filter, used when we join taxonomies while getting posts.
+	 */
+	public static function group_by_post_id_filter() {
+		global $wpdb;
+		return "{$wpdb->posts}.ID ";
+	}
+
+	/**
+	 * Remove posts clauses filter after Homepage Posts block loop.
+	 */
+	public static function remove_filter_posts_clauses_when_co_authors_filter() {
+		if ( self::$newspack_blocks_posts_clauses_when_co_authors_closure ) {
+			remove_filter(
+				'posts_clauses',
+				self::$newspack_blocks_posts_clauses_when_co_authors_closure,
+				999
+			);
+			remove_filter( 'posts_groupby', [ 'Newspack_Blocks', 'group_by_post_id_filter' ] );
+		}
 	}
 
 	/**
