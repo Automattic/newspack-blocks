@@ -300,6 +300,9 @@ class Newspack_Blocks_API {
 			$args['tag__in'] = $params['tags'];
 		}
 		if ( $params['tags_exclude'] && count( $params['tags_exclude'] ) ) {
+			$args['tag__not_in'] = $params['tags_exclude'];
+		}
+		if ( $params['author'] && count( $params['author'] ) ) {
 			$authors_ids      = $params['author'];
 			$co_authors_names = [];
 
@@ -321,9 +324,6 @@ class Newspack_Blocks_API {
 			} else {
 				$args['author__in'] = $authors_ids;
 			}
-		}
-		if ( $params['author'] && count( $params['author'] ) ) {
-			$args['author__in'] = $params['author'];
 		}
 		if ( $params['include'] && count( $params['include'] ) ) {
 			$args['post__in'] = $params['include'];
