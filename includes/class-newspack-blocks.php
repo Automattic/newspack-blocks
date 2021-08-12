@@ -19,10 +19,10 @@ class Newspack_Blocks {
 	 * Add hooks and filters.
 	 */
 	public static function init() {
-		add_action( 'after_setup_theme', [ __CLASS__, 'add_image_sizes' ] );
+		add_action( 'after_setup_theme', array( __CLASS__, 'add_image_sizes' ) );
 		add_post_type_support( 'post', 'newspack_blocks' );
 		add_post_type_support( 'page', 'newspack_blocks' );
-		add_filter( 'script_loader_tag', [ __CLASS__, 'mark_view_script_as_amp_plus_allowed' ], 10, 2 );
+		add_filter( 'script_loader_tag', array( __CLASS__, 'mark_view_script_as_amp_plus_allowed' ), 10, 2 );
 	}
 
 	/**
@@ -56,7 +56,7 @@ class Newspack_Blocks {
 		$script_data = file_exists( $asset_path )
 			? require $asset_path
 			: array(
-				'dependencies' => [ 'wp-a11y', 'wp-escape-html', 'wp-i18n' ],
+				'dependencies' => array( 'wp-a11y', 'wp-escape-html', 'wp-i18n' ),
 				'version'      => filemtime( $local_path ),
 			);
 
@@ -81,7 +81,7 @@ class Newspack_Blocks {
 			wp_localize_script(
 				'newspack-blocks-editor',
 				'newspack_blocks_data',
-				[
+				array(
 					'patterns'                         => self::get_patterns_for_post_type( get_post_type() ),
 					'posts_rest_url'                   => rest_url( 'newspack-blocks/v1/newspack-blocks-posts' ),
 					'specific_posts_rest_url'          => rest_url( 'newspack-blocks/v1/newspack-blocks-specific-posts' ),
@@ -89,7 +89,7 @@ class Newspack_Blocks {
 					'assets_path'                      => plugins_url( '/src/assets', NEWSPACK_BLOCKS__PLUGIN_FILE ),
 					'post_subtitle'                    => get_theme_support( 'post-subtitle' ),
 					'can_use_streamlined_donate_block' => self::can_use_streamlined_donate_block(),
-				]
+				)
 			);
 
 			wp_set_script_translations(
@@ -236,7 +236,7 @@ class Newspack_Blocks {
 	 * @return string Class list separated by spaces.
 	 */
 	public static function block_classes( $type, $attributes = array(), $extra = array() ) {
-		$classes = [ "wp-block-newspack-blocks-{$type}" ];
+		$classes = array( "wp-block-newspack-blocks-{$type}" );
 
 		if ( ! empty( $attributes['align'] ) ) {
 			$classes[] = 'align' . $attributes['align'];
@@ -403,19 +403,20 @@ class Newspack_Blocks {
 					}
 					return $acc;
 				},
-				[]
+				array()
 			);
 		}
 
-		$post_type      = isset( $attributes['postType'] ) ? $attributes['postType'] : [ 'post' ];
-		$authors        = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
-		$categories     = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
-		$tags           = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
-		$tag_exclusions = isset( $attributes['tagExclusions'] ) ? $attributes['tagExclusions'] : array();
-		$specific_posts = isset( $attributes['specificPosts'] ) ? $attributes['specificPosts'] : array();
-		$posts_to_show  = intval( $attributes['postsToShow'] );
-		$specific_mode  = isset( $attributes['specificMode'] ) ? intval( $attributes['specificMode'] ) : false;
-		$args           = array(
+		$post_type           = isset( $attributes['postType'] ) ? $attributes['postType'] : array( 'post' );
+		$authors             = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
+		$categories          = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
+		$tags                = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
+		$tag_exclusions      = isset( $attributes['tagExclusions'] ) ? $attributes['tagExclusions'] : array();
+		$category_exclusions = isset( $attributes['categoryExclusions'] ) ? $attributes['categoryExclusions'] : array();
+		$specific_posts      = isset( $attributes['specificPosts'] ) ? $attributes['specificPosts'] : array();
+		$posts_to_show       = intval( $attributes['postsToShow'] );
+		$specific_mode       = isset( $attributes['specificMode'] ) ? intval( $attributes['specificMode'] ) : false;
+		$args                = array(
 			'post_type'           => $post_type,
 			'post_status'         => 'publish',
 			'suppress_filters'    => false,
@@ -432,9 +433,9 @@ class Newspack_Blocks {
 				$args['post__not_in'] = $newspack_blocks_all_specific_posts_ids;
 			}
 			$args['post__not_in'] = array_merge(
-				$args['post__not_in'] ?? [],
+				$args['post__not_in'] ?? array(),
 				array_keys( $newspack_blocks_post_id ),
-				get_the_ID() ? [ get_the_ID() ] : []
+				get_the_ID() ? array( get_the_ID() ) : array()
 			);
 			if ( $authors && count( $authors ) ) {
 				$co_authors_names = array();
@@ -460,6 +461,9 @@ class Newspack_Blocks {
 			}
 			if ( $categories && count( $categories ) ) {
 				$args['category__in'] = $categories;
+			}
+			if ( $category_exclusions && count( $category_exclusions ) ) {
+				$args['category__not_in'] = $category_exclusions;
 			}
 			if ( $tags && count( $tags ) ) {
 				$args['tag__in'] = $tags;
@@ -536,7 +540,7 @@ class Newspack_Blocks {
 	 * @return string CSS classes.
 	 */
 	public static function get_term_classes( $post_id ) {
-		$classes = [];
+		$classes = array();
 
 		$tags = get_the_terms( $post_id, 'post_tag' );
 		if ( ! empty( $tags ) ) {
@@ -572,26 +576,26 @@ class Newspack_Blocks {
 	 * @return array Array of patterns.
 	 */
 	public static function get_patterns_for_post_type( $post_type = null ) {
-		$patterns    = apply_filters( 'newspack_blocks_patterns', [], $post_type );
-		$categorized = [];
-		$clean       = [];
+		$patterns    = apply_filters( 'newspack_blocks_patterns', array(), $post_type );
+		$categorized = array();
+		$clean       = array();
 		foreach ( $patterns as $pattern ) {
 			if ( ! isset( $pattern['image'] ) || ! $pattern['image'] ) {
 				continue;
 			}
 			$category = isset( $pattern['category'] ) ? $pattern['category'] : __( 'Common', 'newspack-blocks' );
 			if ( ! isset( $categorized[ $category ] ) ) {
-				$categorized[ $category ] = [];
+				$categorized[ $category ] = array();
 			}
 			$categorized[ $category ][] = $pattern;
 		}
 		$categories = array_keys( $categorized );
 		sort( $categories );
 		foreach ( $categories as $category ) {
-			$clean[] = [
+			$clean[] = array(
 				'title' => $category,
 				'items' => $categorized[ $category ],
-			];
+			);
 		}
 		return $clean;
 	}
@@ -660,7 +664,7 @@ class Newspack_Blocks {
 		if ( ! empty( $sponsors ) ) {
 			$sponsor_count = count( $sponsors );
 			$i             = 1;
-			$sponsor_list  = [];
+			$sponsor_list  = array();
 
 			foreach ( $sponsors as $sponsor ) {
 				$i++;
@@ -708,12 +712,13 @@ class Newspack_Blocks {
 		}
 
 		if ( ! empty( $sponsors ) ) {
-			$sponsor_logos = [];
+			$sponsor_logos = array();
 			foreach ( $sponsors as $sponsor ) {
 				if ( ! empty( $sponsor['sponsor_logo'] ) ) :
 					$sponsor_logos[] = array(
 						'url'    => $sponsor['sponsor_url'],
 						'src'    => esc_url( $sponsor['sponsor_logo']['src'] ),
+						'alt'    => esc_attr( $sponsor['sponsor_name'] ),
 						'width'  => esc_attr( $sponsor['sponsor_logo']['img_width'] ),
 						'height' => esc_attr( $sponsor['sponsor_logo']['img_height'] ),
 					);
@@ -761,7 +766,7 @@ class Newspack_Blocks {
 				},
 				999
 			);
-			add_filter( 'wc_memberships_trimmed_restricted_excerpt', [ 'Newspack_Blocks', 'remove_wc_memberships_excerpt_limit' ], 999 );
+			add_filter( 'wc_memberships_trimmed_restricted_excerpt', array( 'Newspack_Blocks', 'remove_wc_memberships_excerpt_limit' ), 999 );
 		}
 	}
 
@@ -775,7 +780,7 @@ class Newspack_Blocks {
 				self::$newspack_blocks_excerpt_length_closure,
 				999
 			);
-			remove_filter( 'wc_memberships_trimmed_restricted_excerpt', [ 'Newspack_Blocks', 'remove_wc_memberships_excerpt_limit' ] );
+			remove_filter( 'wc_memberships_trimmed_restricted_excerpt', array( 'Newspack_Blocks', 'remove_wc_memberships_excerpt_limit' ) );
 		}
 	}
 
@@ -794,7 +799,7 @@ class Newspack_Blocks {
 	public static function filter_excerpt_more( $attributes ) {
 		// If showing the 'Read More' link, modify the ellipsis.
 		if ( $attributes['showReadMore'] ) {
-			add_filter( 'excerpt_more', [ __CLASS__, 'more_excerpt' ], 999 );
+			add_filter( 'excerpt_more', array( __CLASS__, 'more_excerpt' ), 999 );
 		}
 	}
 
@@ -802,7 +807,7 @@ class Newspack_Blocks {
 	 * Remove excerpt ellipsis filter after Homepage Posts block loop.
 	 */
 	public static function remove_excerpt_more_filter() {
-		remove_filter( 'excerpt_more', [ __CLASS__, 'more_excerpt' ], 999 );
+		remove_filter( 'excerpt_more', array( __CLASS__, 'more_excerpt' ), 999 );
 	}
 
 	/**
@@ -858,7 +863,7 @@ class Newspack_Blocks {
 			999
 		);
 
-		add_filter( 'posts_groupby', [ 'Newspack_Blocks', 'group_by_post_id_filter' ], 999 );
+		add_filter( 'posts_groupby', array( 'Newspack_Blocks', 'group_by_post_id_filter' ), 999 );
 	}
 
 	/**
@@ -879,7 +884,7 @@ class Newspack_Blocks {
 				self::$newspack_blocks_posts_clauses_when_co_authors_closure,
 				999
 			);
-			remove_filter( 'posts_groupby', [ 'Newspack_Blocks', 'group_by_post_id_filter' ] );
+			remove_filter( 'posts_groupby', array( 'Newspack_Blocks', 'group_by_post_id_filter' ) );
 		}
 	}
 
@@ -913,22 +918,22 @@ class Newspack_Blocks {
 	 * @return string Sanitized markup.
 	 */
 	public static function sanitize_svg( $svg = '' ) {
-		$allowed_html = [
-			'svg'  => [
-				'xmlns'       => [],
-				'fill'        => [],
-				'viewbox'     => [],
-				'role'        => [],
-				'aria-hidden' => [],
-				'focusable'   => [],
-				'height'      => [],
-				'width'       => [],
-			],
-			'path' => [
-				'd'    => [],
-				'fill' => [],
-			],
-		];
+		$allowed_html = array(
+			'svg'  => array(
+				'xmlns'       => array(),
+				'fill'        => array(),
+				'viewbox'     => array(),
+				'role'        => array(),
+				'aria-hidden' => array(),
+				'focusable'   => array(),
+				'height'      => array(),
+				'width'       => array(),
+			),
+			'path' => array(
+				'd'    => array(),
+				'fill' => array(),
+			),
+		);
 
 		return wp_kses( $svg, $allowed_html );
 	}
