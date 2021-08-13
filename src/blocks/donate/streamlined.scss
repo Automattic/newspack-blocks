@@ -6,8 +6,11 @@
 	.stripe-payment {
 		&__card {
 			border: 1px solid $color__border;
-			margin-bottom: 0.76rem;
 			padding: 0.34rem 0.66rem;
+		}
+		input,
+		button {
+			font-size: 0.7em;
 		}
 		input,
 		&__messages {
@@ -21,6 +24,13 @@
 				line-height: 1.2;
 			}
 		}
+
+		&__inputs {
+			&--hidden {
+				display: none;
+			}
+		}
+
 		&__messages {
 			> div {
 				border: 0 solid $color__info;
@@ -52,13 +62,39 @@
 			}
 		}
 
+		&__row {
+			margin-bottom: 0.4rem;
+			&--flex {
+				display: flex;
+				align-items: flex-start;
+				justify-content: space-between;
+				flex-wrap: wrap;
+				@include media( tablet ) {
+					flex-wrap: nowrap;
+				}
+				input {
+					margin-bottom: 0.4rem;
+					@include media( tablet ) {
+						margin-bottom: 0;
+						width: 50%;
+						&:last-child {
+							margin-left: 0.76rem;
+						}
+					}
+				}
+			}
+		}
+
+		&__footer {
+			margin-top: 1.2em;
+			margin-bottom: 1.32rem;
+		}
+		button[type='submit'] {
+			margin: 0 10px 0 0 !important;
+		}
 		&__branding {
-			margin-top: 10px;
 			display: block;
 			text-decoration: none;
-			img {
-				width: 111px;
-			}
 		}
 	}
 
