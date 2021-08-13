@@ -61,6 +61,10 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 							'sanitize_callback' => 'sanitize_text_field',
 							'required'          => true,
 						],
+						'full_name' => [
+							'sanitize_callback' => 'sanitize_text_field',
+							'required'          => true,
+						],
 						'clientId'  => [
 							'sanitize_callback' => 'sanitize_text_field',
 						],
@@ -97,6 +101,7 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 				'frequency'        => $request->get_param( 'frequency' ),
 				'token_data'       => $request->get_param( 'tokenData' ),
 				'email_address'    => $request->get_param( 'email' ),
+				'full_name'        => $request->get_param( 'full_name' ),
 				'amount'           => $request->get_param( 'amount' ),
 				'client_metadata'  => [
 					'clientId' => $request->get_param( 'clientId' ),

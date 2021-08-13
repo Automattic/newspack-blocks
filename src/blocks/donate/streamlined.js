@@ -23,6 +23,9 @@ const validateFormData = values => {
 	if ( values.amount <= 0 ) {
 		errors.amount = __( 'Amount must be greater than zero.', 'newspack-blocks' );
 	}
+	if ( values.full_name.length === 0 ) {
+		errors.amount = __( 'Full name should be provided.', 'newspack-blocks' );
+	}
 	return errors;
 };
 
@@ -48,15 +51,29 @@ const getClientIDValue = () => getCookies()[ 'newspack-cid' ];
 [ ...document.querySelectorAll( '.stripe-payment' ) ].forEach( async el => {
 	const disableForm = () => el.classList.add( 'stripe-payment--disabled' );
 	const enableForm = () => el.classList.remove( 'stripe-payment--disabled' );
-
-	const stripePublishableKey = el.getAttribute( 'data-stripe-pub-key' );
-	const stripe = await loadStripe( stripePublishableKey );
 	enableForm();
 
-	const elements = stripe.elements();
+	let stripe, cardElement;
+	const initStripe = async () => {
+		const stripePublishableKey = el.getAttribute( 'data-stripe-pub-key' );
+		stripe = await loadStripe( stripePublishableKey );
 
-	const cardElement = elements.create( 'card' );
-	cardElement.mount( el.querySelector( '.stripe-payment__card' ) );
+		const elements = stripe.elements();
+
+		cardElement = elements.create( 'card' );
+		cardElement.mount( el.querySelector( '.stripe-payment__card' ) );
+	};
+
+	// Handle initial form unravelling.
+	const submitButtonEl = el.querySelector( 'button[type="submit"]' );
+	submitButtonEl.onclick = e => {
+		const inputsHiddenEl = el.querySelector( '.stripe-payment__inputs--hidden' );
+		if ( inputsHiddenEl ) {
+			e.preventDefault();
+			initStripe();
+			inputsHiddenEl.classList.remove( 'stripe-payment__inputs--hidden' );
+		}
+	};
 
 	const messagesEl = el.querySelector( '.stripe-payment__messages' );
 
@@ -119,6 +136,7 @@ const getClientIDValue = () => getCookies()[ 'newspack-cid' ];
 				tokenData: stripeTokenCreationResult.token,
 				amount: formValues.amount,
 				email: formValues.email,
+				full_name: formValues.full_name,
 				frequency: formValues.donation_frequency,
 				clientId: formValues.cid,
 			} ),

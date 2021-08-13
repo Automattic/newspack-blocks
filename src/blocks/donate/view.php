@@ -33,19 +33,28 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 
 		<?php if ( $is_streamlined ) : ?>
 			<div class="wp-block-newspack-blocks-donate__stripe stripe-payment stripe-payment--disabled" data-stripe-pub-key="<?php echo esc_attr( $payment_data['usedPublishableKey'] ); ?>">
-				<div class="stripe-payment__card"></div>
-				<input class="stripe-payment__email" placeholder="<?php echo esc_html__( 'Email', 'newspack-blocks' ); ?>" type="email" name="email" value="">
-				<div class="stripe-payment__messages">
-					<div class="type-error"></div>
-					<div class="type-success"></div>
-					<div class="type-info"></div>
+				<div class="stripe-payment__inputs stripe-payment__inputs--hidden">
+					<div class="stripe-payment__row">
+						<div class="stripe-payment__card"></div>
+					</div>
+					<div class="stripe-payment__row stripe-payment__row--flex">
+						<input required placeholder="<?php echo esc_html__( 'Email', 'newspack-blocks' ); ?>" type="email" name="email" value="">
+						<input required placeholder="<?php echo esc_html__( 'Full Name', 'newspack-blocks' ); ?>" type="text" name="full_name" value="">
+					</div>
+					<div class="stripe-payment__messages">
+						<div class="type-error"></div>
+						<div class="type-success"></div>
+						<div class="type-info"></div>
+					</div>
 				</div>
-				<a target="_blank" rel="noreferrer" class="stripe-payment__branding" href="https://stripe.com">
-					<img src="<?php echo esc_attr( plugins_url( '/src/assets', NEWSPACK_BLOCKS__PLUGIN_FILE ) . '/stripe-badge.svg' ); ?>" alt="Stripe">
-				</a>
-				<button type='submit' style="margin-left: 0; margin-top: 1em;">
-					<?php echo wp_kses_post( $button_text ); ?>
-				</button>
+				<div class="stripe-payment__row stripe-payment__row--flex stripe-payment__footer">
+					<button type='submit' style="margin-left: 0; margin-top: 1em;">
+						<?php echo wp_kses_post( $button_text ); ?>
+					</button>
+					<a target="_blank" rel="noreferrer" class="stripe-payment__branding" href="https://stripe.com">
+						<img width="111" height="26" src="<?php echo esc_attr( Newspack_Blocks::streamlined_block_stripe_badge() ); ?>" alt="Stripe">
+					</a>
+				</div>
 			</div>
 		<?php else : ?>
 			<button type='submit'>
