@@ -138,6 +138,7 @@ const getClientIDValue = () => getCookies()[ 'newspack-cid' ];
 				email: formValues.email,
 				full_name: formValues.full_name,
 				frequency: formValues.donation_frequency,
+				newsletter_opt_in: Boolean( formValues.newsletter_opt_in ),
 				clientId: formValues.cid,
 			} ),
 		} );

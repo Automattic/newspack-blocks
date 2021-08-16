@@ -8,15 +8,19 @@
 			border: 1px solid $color__border;
 			padding: 0.34rem 0.66rem;
 		}
-		input,
+		input[type='text'],
+		input[type='email'],
+		&__checkbox,
 		button {
 			font-size: 0.7em;
 		}
-		input,
+		input[type='text'],
+		input[type='email'],
 		&__messages {
 			width: 100%;
 		}
-		input {
+		input[type='text'],
+		input[type='email'] {
 			font-family: sans-serif;
 
 			@include media( tablet ) {
@@ -28,6 +32,12 @@
 		&__inputs {
 			&--hidden {
 				display: none;
+			}
+		}
+
+		&__checkbox {
+			input {
+				margin-right: 5px;
 			}
 		}
 

@@ -37,7 +37,7 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => [ $this, 'process_donation' ],
 					'args'                => [
-						'tokenData' => [
+						'tokenData'         => [
 							'type'       => 'object',
 							'properties' => [
 								'id' => [
@@ -47,26 +47,29 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 								],
 							],
 						],
-						'amount'    => [
+						'amount'            => [
 							'sanitize_callback' => function ( $amount ) {
 								return (float) abs( $amount );
 							},
 							'required'          => true,
 						],
-						'frequency' => [
+						'frequency'         => [
 							'sanitize_callback' => 'sanitize_text_field',
 							'required'          => true,
 						],
-						'email'     => [
+						'email'             => [
 							'sanitize_callback' => 'sanitize_text_field',
 							'required'          => true,
 						],
-						'full_name' => [
+						'full_name'         => [
 							'sanitize_callback' => 'sanitize_text_field',
 							'required'          => true,
 						],
-						'clientId'  => [
+						'clientId'          => [
 							'sanitize_callback' => 'sanitize_text_field',
+						],
+						'newsletter_opt_in' => [
+							'sanitize_callback' => 'rest_sanitize_boolean',
 						],
 					],
 					'permission_callback' => '__return_true',
@@ -104,7 +107,8 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 				'full_name'        => $request->get_param( 'full_name' ),
 				'amount'           => $request->get_param( 'amount' ),
 				'client_metadata'  => [
-					'clientId' => $request->get_param( 'clientId' ),
+					'clientId'        => $request->get_param( 'clientId' ),
+					'newsletterOptIn' => $request->get_param( 'newsletter_opt_in' ),
 				],
 				'payment_metadata' => $payment_metadata,
 			]
