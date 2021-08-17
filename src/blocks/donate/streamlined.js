@@ -60,6 +60,22 @@ const getClientIDValue = () => getCookies()[ 'newspack-cid' ];
 
 	const messagesEl = el.querySelector( '.stripe-payment__messages' );
 
+	const renderGenericError = () =>
+		renderMessages(
+			[ __( 'Something went wrong with the payment. Please try again later.', 'newspack-blocks' ) ],
+			messagesEl
+		);
+	const renderSuccessMessageWithEmail = emailAddress => {
+		const successMessge = sprintf(
+			__(
+				'Your payment has been processed. Thank you for your contribution! You will receive a confirmation email at %s.',
+				'newspack-blocks'
+			),
+			emailAddress
+		);
+		renderMessages( [ successMessge ], messagesEl, 'success' );
+	};
+
 	const formElement = el.closest( 'form' );
 	formElement.onsubmit = async e => {
 		e.preventDefault();
@@ -107,13 +123,18 @@ const getClientIDValue = () => getCookies()[ 'newspack-cid' ];
 				clientId: formValues.cid,
 			} ),
 		} );
+
 		const chargeResultData = await chargeResult.json();
+
+		// Error handling.
 		if ( chargeResultData.data?.status !== 200 && chargeResultData.message ) {
 			renderMessages( [ chargeResultData.message ], messagesEl );
 		}
 		if ( chargeResultData.error ) {
 			renderMessages( [ chargeResultData.error ], messagesEl );
 		}
+
+		// Additional authentication handling.
 		if ( chargeResultData.client_secret ) {
 			const { paymentIntent, error } = await stripe.confirmCardPayment(
 				chargeResultData.client_secret,
@@ -126,25 +147,14 @@ const getClientIDValue = () => getCookies()[ 'newspack-cid' ];
 				enableForm();
 			} else if ( paymentIntent.status === 'succeeded' ) {
 				// Payment Intent statuses: https://stripe.com/docs/payments/intents#intent-statuses
-				const successMessge = sprintf(
-					__(
-						'Your payment has been processed. Thank you for your contribution! You will receive a confirmation email at %s.',
-						'newspack-blocks'
-					),
-					formValues.email
-				);
-				renderMessages( [ successMessge ], messagesEl, 'success' );
+				renderSuccessMessageWithEmail( formValues.email );
 			} else {
-				renderMessages(
-					[
-						__(
-							'Something went wrong with the payment. Please try again later.',
-							'newspack-blocks'
-						),
-					],
-					messagesEl
-				);
+				renderGenericError();
 			}
+		}
+
+		if ( chargeResultData.status === 'success' ) {
+			renderSuccessMessageWithEmail( formValues.email );
 		}
 	};
 } );
