@@ -1,3 +1,17 @@
+# [1.34.0](https://github.com/Automattic/newspack-blocks/compare/v1.33.0...v1.34.0) (2021-08-17)
+
+
+### Bug Fixes
+
+* **co-authors plus:** add co-authors in the authors filter list ([e598259](https://github.com/Automattic/newspack-blocks/commit/e5982596b2f2f5b920909bafed4c6c2e6da2767a)), closes [#601](https://github.com/Automattic/newspack-blocks/issues/601)
+* fix a bad copy/paste ([c2afde1](https://github.com/Automattic/newspack-blocks/commit/c2afde19128cf80f9b25fc280eaafb5729a47479))
+* **co-authors plus:** filter homepage posts block posts by co-authors ([7f7e65a](https://github.com/Automattic/newspack-blocks/commit/7f7e65ab084f839364bf2ce010bcbef5d9931f61)), closes [#831](https://github.com/Automattic/newspack-blocks/issues/831)
+
+
+### Features
+
+* **donate:** handle recurring donations ([#829](https://github.com/Automattic/newspack-blocks/issues/829)) ([50039c6](https://github.com/Automattic/newspack-blocks/commit/50039c6c7f28391293935b8b353faa74bb36b7df))
+
 # [1.33.0](https://github.com/Automattic/newspack-blocks/compare/v1.32.0...v1.33.0) (2021-08-10)
 
 
