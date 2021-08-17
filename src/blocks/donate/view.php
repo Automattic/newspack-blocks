@@ -16,8 +16,10 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 	$is_streamlined                      = Newspack_Blocks::is_rendering_streamlined_block();
 	$is_rendering_newsletter_list_opt_in = false;
 	if ( $is_streamlined ) {
-		$payment_data                        = WP_REST_Newspack_Donate_Controller::get_payment_data();
-		$is_rendering_newsletter_list_opt_in = isset( $payment_data['newsletter_list_id'] ) && ! empty( $payment_data['newsletter_list_id'] );
+		$payment_data = WP_REST_Newspack_Donate_Controller::get_payment_data();
+		if ( class_exists( 'Newspack_Newsletters' ) ) {
+			$is_rendering_newsletter_list_opt_in = isset( $payment_data['newsletter_list_id'] ) && ! empty( $payment_data['newsletter_list_id'] );
+		}
 	}
 	$button_text = $attributes['buttonText'];
 	$campaign    = $attributes['campaign'] ?? false;
