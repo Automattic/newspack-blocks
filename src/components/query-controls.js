@@ -60,11 +60,12 @@ class QueryControls extends Component {
 	};
 
 	fetchAuthorSuggestions = search => {
+		const restUrl = window.newspack_blocks_data.authors_rest_url;
 		return apiFetch( {
-			path: addQueryArgs( '/wp/v2/users', {
+			url: addQueryArgs( restUrl, {
 				search,
 				per_page: 20,
-				_fields: 'id,name',
+				fields: 'id,name',
 			} ),
 		} ).then( function ( users ) {
 			return users.map( user => ( {
@@ -74,11 +75,12 @@ class QueryControls extends Component {
 		} );
 	};
 	fetchSavedAuthors = userIDs => {
+		const restUrl = window.newspack_blocks_data.authors_rest_url;
 		return apiFetch( {
-			path: addQueryArgs( '/wp/v2/users', {
+			url: addQueryArgs( restUrl, {
 				per_page: 100,
 				include: userIDs.join( ',' ),
-				_fields: 'id,name',
+				fields: 'id,name',
 			} ),
 		} ).then( function ( users ) {
 			return users.map( user => ( {
