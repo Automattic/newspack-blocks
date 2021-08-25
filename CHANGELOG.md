@@ -1,3 +1,11 @@
+# [1.35.0](https://github.com/Automattic/newspack-blocks/compare/v1.34.0...v1.35.0) (2021-08-25)
+
+
+### Features
+
+* add span to 'by' in Homepage Posts, Post Carousel bylines ([#843](https://github.com/Automattic/newspack-blocks/issues/843)) ([fc82a19](https://github.com/Automattic/newspack-blocks/commit/fc82a19afd41faec47cc3577009835fb98679039))
+* **donate-block:** streamlined handling ([#835](https://github.com/Automattic/newspack-blocks/issues/835)) ([b9acb40](https://github.com/Automattic/newspack-blocks/commit/b9acb40d86f9c65db1bc51a5bab5365b0c199e58))
+
 # [1.34.0](https://github.com/Automattic/newspack-blocks/compare/v1.33.0...v1.34.0) (2021-08-17)
 
 
