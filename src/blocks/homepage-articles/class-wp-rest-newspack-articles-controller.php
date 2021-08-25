@@ -57,62 +57,69 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => [ 'Newspack_Blocks_API', 'posts_endpoint' ],
 				'args'                => [
-					'author'         => [
+					'author'             => [
 						'type'    => 'array',
 						'items'   => array(
 							'type' => 'integer',
 						),
 						'default' => array(),
 					],
-					'categories'     => [
+					'categories'         => [
 						'type'    => 'array',
 						'items'   => array(
 							'type' => 'integer',
 						),
 						'default' => array(),
 					],
-					'excerpt_length' => [
+					'categories_exclude' => [
+						'type'    => 'array',
+						'items'   => array(
+							'type' => 'integer',
+						),
+						'default' => array(),
+					],
+					'excerpt_length'     => [
 						'type'    => 'integer',
 						'default' => 55,
 					],
-					'exclude'        => [
+					'exclude'            => [
 						'type'    => 'array',
 						'items'   => array(
 							'type' => 'integer',
 						),
 						'default' => array(),
 					],
-					'include'        => [
+					'include'            => [
 						'type'    => 'array',
 						'items'   => array(
 							'type' => 'integer',
 						),
 						'default' => array(),
 					],
-					'orderby'        => [
+					'orderby'            => [
 						'sanitize_callback' => 'sanitize_text_field',
 					],
-					'per_page'       => [
+					'per_page'           => [
 						'sanitize_callback' => 'absint',
 					],
-					'show_excerpt'   => [
+					'show_excerpt'       => [
 						'type' => 'boolean',
 					],
-					'tags'           => [
+					'tags'               => [
 						'type'    => 'array',
 						'items'   => array(
 							'type' => 'integer',
 						),
 						'default' => array(),
 					],
-					'tags_exclude'   => [
+					'tags_exclude'       => [
 						'type'    => 'array',
 						'items'   => array(
 							'type' => 'integer',
 						),
 						'default' => array(),
 					],
-					'post_type'      => [
+					'post_type'          => [
 						'type'    => 'array',
 						'items'   => array(
 							'type' => 'string',

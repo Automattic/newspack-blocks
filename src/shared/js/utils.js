@@ -15,7 +15,7 @@ export const formatAvatars = authorInfo =>
 
 export const formatByline = authorInfo => (
 	<span className="byline">
-		{ _x( 'by', 'post author', 'newspack-blocks' ) }{ ' ' }
+		<span className="author-prefix">{ _x( 'by', 'post author', 'newspack-blocks' ) } </span>
 		{ authorInfo.reduce( ( accumulator, author, index ) => {
 			return [
 				...accumulator,
