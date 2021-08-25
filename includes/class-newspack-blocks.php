@@ -82,13 +82,13 @@ class Newspack_Blocks {
 				'newspack-blocks-editor',
 				'newspack_blocks_data',
 				[
-					'patterns'                         => self::get_patterns_for_post_type( get_post_type() ),
-					'posts_rest_url'                   => rest_url( 'newspack-blocks/v1/newspack-blocks-posts' ),
-					'specific_posts_rest_url'          => rest_url( 'newspack-blocks/v1/newspack-blocks-specific-posts' ),
-					'authors_rest_url'                 => rest_url( 'newspack-blocks/v1/authors' ),
-					'assets_path'                      => plugins_url( '/src/assets', NEWSPACK_BLOCKS__PLUGIN_FILE ),
-					'post_subtitle'                    => get_theme_support( 'post-subtitle' ),
-					'can_use_streamlined_donate_block' => self::can_use_streamlined_donate_block(),
+					'patterns'                       => self::get_patterns_for_post_type( get_post_type() ),
+					'posts_rest_url'                 => rest_url( 'newspack-blocks/v1/newspack-blocks-posts' ),
+					'specific_posts_rest_url'        => rest_url( 'newspack-blocks/v1/newspack-blocks-specific-posts' ),
+					'authors_rest_url'               => rest_url( 'newspack-blocks/v1/authors' ),
+					'assets_path'                    => plugins_url( '/src/assets', NEWSPACK_BLOCKS__PLUGIN_FILE ),
+					'post_subtitle'                  => get_theme_support( 'post-subtitle' ),
+					'is_rendering_streamlined_block' => self::is_rendering_streamlined_block(),
 				]
 			);
 
@@ -110,26 +110,17 @@ class Newspack_Blocks {
 	}
 
 	/**
-	 * Can the experimental stramlined donate block be used?
+	 * Should the Donate block be a "streamlined" block?
 	 *
 	 * @return bool True if it can.
 	 */
-	public static function can_use_streamlined_donate_block() {
+	public static function is_rendering_streamlined_block() {
 		if (
-			// Only in AMP Plus mode.
-			class_exists( 'Newspack\AMP_Enhancements' ) && method_exists( 'Newspack\AMP_Enhancements', 'is_amp_plus_configured' )
-			// The streamlined integration does not support recurring donations by itself. Recurring donation submitted to a Stripe account
-			// connected to NRH will work, because NRH handles the recurring charges.
-			&& class_exists( 'Newspack\Donations' ) && method_exists( 'Newspack\Donations', 'is_platform_nrh' )
-			&& class_exists( 'Newspack\Stripe_Connection' ) && method_exists( 'Newspack\Stripe_Connection', 'get_stripe_data' )
+			class_exists( 'Newspack\Donations' )
+			&& method_exists( 'Newspack\Donations', 'can_use_streamlined_donate_block' )
+			&& method_exists( 'Newspack\Donations', 'is_platform_stripe' )
 		) {
-			$payment_data = \Newspack\Stripe_Connection::get_stripe_data();
-			if (
-				// Has to have Stripe keys.
-				isset( $payment_data['usedPublishableKey'], $payment_data['usedSecretKey'] ) && $payment_data['usedPublishableKey'] && $payment_data['usedSecretKey']
-			) {
-				return Newspack\AMP_Enhancements::is_amp_plus_configured() && Newspack\Donations::is_platform_nrh();
-			}
+			return \Newspack\Donations::can_use_streamlined_donate_block() && \Newspack\Donations::is_platform_stripe();
 		}
 		return false;
 	}
