@@ -1,5 +1,5 @@
 {
-	"name": "newspack-blocks",
+	"name": "@automattic/newspack-blocks",
 	"version": "1.33.0",
 	"author": "Automattic",
 	"devDependencies": {
