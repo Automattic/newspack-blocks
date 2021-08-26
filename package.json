@@ -42,7 +42,9 @@
 	"directories": {
 		"test": "tests"
 	},
-	"private": true,
+	"publishConfig": {
+		"access": "public"
+	},
 	"dependencies": {
 		"@stripe/stripe-js": "^1.15.0",
 		"@wordpress/a11y": "^2.9.0",
