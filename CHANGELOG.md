@@ -1,3 +1,12 @@
+# [1.36.0](https://github.com/Automattic/newspack-blocks/compare/v1.35.0...v1.36.0) (2021-08-31)
+
+
+### Features
+
+* **donate:** handle newsletter opt-in ([#839](https://github.com/Automattic/newspack-blocks/issues/839)) ([3e36d90](https://github.com/Automattic/newspack-blocks/commit/3e36d900847bbb611e6e9b588d018e0800952822))
+* update author profile icon and fix loading alignment ([#848](https://github.com/Automattic/newspack-blocks/issues/848)) ([040b145](https://github.com/Automattic/newspack-blocks/commit/040b1452c9a7da8e91102fd8c1182f248eb6d96b))
+* **donate:** donor name input; initial form hiding ([7ab2854](https://github.com/Automattic/newspack-blocks/commit/7ab2854723db12e493d707a07add1cdabe38a595))
+
 # [1.35.0](https://github.com/Automattic/newspack-blocks/compare/v1.34.0...v1.35.0) (2021-08-25)
 
 
