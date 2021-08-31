@@ -13,9 +13,13 @@
  * @return string
  */
 function newspack_blocks_render_block_donate_footer( $attributes ) {
-	$is_streamlined = Newspack_Blocks::is_rendering_streamlined_block();
+	$is_streamlined                      = Newspack_Blocks::is_rendering_streamlined_block();
+	$is_rendering_newsletter_list_opt_in = false;
 	if ( $is_streamlined ) {
 		$payment_data = WP_REST_Newspack_Donate_Controller::get_payment_data();
+		if ( class_exists( 'Newspack_Newsletters' ) ) {
+			$is_rendering_newsletter_list_opt_in = isset( $payment_data['newsletter_list_id'] ) && ! empty( $payment_data['newsletter_list_id'] );
+		}
 	}
 	$button_text = $attributes['buttonText'];
 	$campaign    = $attributes['campaign'] ?? false;
@@ -41,6 +45,13 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 						<input required placeholder="<?php echo esc_html__( 'Email', 'newspack-blocks' ); ?>" type="email" name="email" value="">
 						<input required placeholder="<?php echo esc_html__( 'Full Name', 'newspack-blocks' ); ?>" type="text" name="full_name" value="">
 					</div>
+					<?php if ( $is_rendering_newsletter_list_opt_in ) : ?>
+						<div class="stripe-payment__row">
+							<label class="stripe-payment__checkbox">
+								<input type="checkbox" name="newsletter_opt_in" checked value="true"><?php echo esc_html__( 'Sign up for our newsletter', 'newspack-blocks' ); ?>
+							</label>
+						</div>
+					<?php endif; ?>
 					<div class="stripe-payment__messages">
 						<div class="type-error"></div>
 						<div class="type-success"></div>
