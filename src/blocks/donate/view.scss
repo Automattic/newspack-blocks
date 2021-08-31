@@ -108,7 +108,9 @@
 				display: none;
 			}
 
-			&:checked ~ .money-input,
+			&:checked ~ .money-input {
+				display: flex;
+			}
 			&:checked ~ .other-label {
 				display: block;
 			}
@@ -123,6 +125,8 @@
 		bottom: 0.38rem;
 		left: 0.38rem;
 		position: absolute;
+		display: flex;
+		align-items: center;
 	}
 }
 
