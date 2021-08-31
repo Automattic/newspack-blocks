@@ -20,7 +20,7 @@ import {
 } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
-import { Icon, edit, people, pullLeft, pullRight } from '@wordpress/icons';
+import { Icon, edit, postAuthor, pullLeft, pullRight } from '@wordpress/icons';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 
@@ -340,7 +340,7 @@ export default ( { attributes, setAttributes } ) => {
 				) }
 				{ ! author && (
 					<Placeholder
-						icon={ <Icon icon={ people } /> }
+						icon={ <Icon icon={ postAuthor } /> }
 						label={ __( 'Author Profile', 'newspack-blocks' ) }
 					>
 						{ error && (
@@ -349,12 +349,10 @@ export default ( { attributes, setAttributes } ) => {
 							</Notice>
 						) }
 						{ isLoading && (
-							<>
-								<p style={ { margin: 0 } }>
-									{ __( 'Fetching author info...', 'newspack-blocks' ) }
-								</p>
+							<div className="is-loading">
+								{ __( 'Fetching author info...', 'newspack-blocks' ) }
 								<Spinner />
-							</>
+							</div>
 						) }
 						{ ! isLoading && (
 							<AutocompleteWithSuggestions
