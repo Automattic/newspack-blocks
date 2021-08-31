@@ -7,6 +7,16 @@
 			width: 100%;
 		}
 
+		.is-loading {
+			align-items: center;
+			display: flex;
+
+			.components-spinner {
+				margin-right: 0;
+				margin-top: 0;
+			}
+		}
+
 		a.no-op {
 			pointer-events: none;
 		}

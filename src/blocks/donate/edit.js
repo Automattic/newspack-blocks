@@ -315,31 +315,49 @@ class Edit extends Component {
 		);
 	}
 
-	renderFooter() {
+	renderButton() {
 		const { attributes, setAttributes } = this.props;
 		const { buttonText } = attributes;
+		return (
+			<button type="submit" onClick={ evt => evt.preventDefault() }>
+				<RichText
+					onChange={ value => setAttributes( { buttonText: value } ) }
+					placeholder={ __( 'Button text…', 'newspack-blocks' ) }
+					value={ buttonText }
+					tagName="span"
+				/>
+			</button>
+		);
+	}
+
+	renderFooter() {
 		return (
 			<>
 				<p className="wp-block-newspack-blocks-donate__thanks thanks">
 					{ __( 'Your contribution is appreciated.', 'newspack-blocks' ) }
 				</p>
-				{ this.isRenderingStreamlinedBlock() && (
-					<div className="wp-block-newspack-blocks-donate__stripe wp-block-newspack-blocks-donate__stripe--editor stripe-payment">
-						<div
-							className="input-placeholder"
-							data-text={ __( 'Card number', 'newspack-blocks' ) }
-						/>
-						<div className="input-placeholder" data-text={ __( 'Email', 'newspack-blocks' ) } />
+				{ this.isRenderingStreamlinedBlock() ? (
+					<div className="wp-block-newspack-blocks-donate__stripe stripe-payment">
+						<div className="stripe-payment__row stripe-payment__row--flex stripe-payment__footer">
+							{ this.renderButton() }
+							<a
+								target="_blank"
+								rel="noreferrer"
+								className="stripe-payment__branding"
+								href="https://stripe.com"
+							>
+								<img
+									width="111"
+									height="26"
+									src={ window.newspack_blocks_data?.streamlined_block_stripe_badge }
+									alt="Stripe"
+								/>
+							</a>
+						</div>
 					</div>
+				) : (
+					this.renderButton()
 				) }
-				<button type="submit" onClick={ evt => evt.preventDefault() }>
-					<RichText
-						onChange={ value => setAttributes( { buttonText: value } ) }
-						placeholder={ __( 'Button text…', 'newspack-blocks' ) }
-						value={ buttonText }
-						tagName="span"
-					/>
-				</button>
 			</>
 		);
 	}
