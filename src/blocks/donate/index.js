@@ -53,6 +53,10 @@ export const settings = {
 		campaign: {
 			type: 'string',
 		},
+		thanksText: {
+			type: 'string',
+			default: __( 'Your contribution is appreciated.', 'newspack-blocks' ),
+		},
 		buttonText: {
 			type: 'string',
 			default: __( 'Donate now!', 'newspack-blocks' ),

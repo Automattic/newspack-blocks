@@ -21,6 +21,7 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 			$is_rendering_newsletter_list_opt_in = isset( $payment_data['newsletter_list_id'] ) && ! empty( $payment_data['newsletter_list_id'] );
 		}
 	}
+	$thanks_text = $attributes['thanksText'];
 	$button_text = $attributes['buttonText'];
 	$campaign    = $attributes['campaign'] ?? false;
 	$client_id   = '';
@@ -32,7 +33,7 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 
 	?>
 		<p class='wp-block-newspack-blocks-donate__thanks thanks'>
-			<?php echo esc_html__( 'Your contribution is appreciated.', 'newspack-blocks' ); ?>
+			<?php echo wp_kses_post( $thanks_text ); ?>
 		</p>
 
 		<?php if ( $is_streamlined ) : ?>
@@ -336,6 +337,10 @@ function newspack_blocks_register_donate() {
 				],
 				'campaign'                => [
 					'type' => 'string',
+				],
+				'thanksText'              => [
+					'type'    => 'string',
+					'default' => __( 'Your contribution is appreciated.', 'newspack-blocks' ),
 				],
 				'buttonText'              => [
 					'type'    => 'string',

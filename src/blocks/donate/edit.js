@@ -331,10 +331,17 @@ class Edit extends Component {
 	}
 
 	renderFooter() {
+		const { attributes, setAttributes } = this.props;
+		const { thanksText } = attributes;
 		return (
 			<>
 				<p className="wp-block-newspack-blocks-donate__thanks thanks">
-					{ __( 'Your contribution is appreciated.', 'newspack-blocks' ) }
+					<RichText
+						onChange={ value => setAttributes( { thanksText: value } ) }
+						placeholder={ __( 'Thank you text…', 'newspack-blocks' ) }
+						value={ thanksText }
+						tagName="span"
+					/>
 				</p>
 				{ this.isRenderingStreamlinedBlock() ? (
 					<div className="wp-block-newspack-blocks-donate__stripe stripe-payment">
