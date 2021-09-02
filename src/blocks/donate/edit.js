@@ -6,7 +6,7 @@ import classNames from 'classnames';
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import { Component, Fragment } from '@wordpress/element';
 import {
@@ -432,7 +432,8 @@ class Edit extends Component {
 					<Fragment>
 						<TextControl
 							key="low-tier"
-							label={ __( 'Low-tier' + ' (' + currencySymbol + ')' ) }
+							/* Translators: %s: the symbol for the current currency */
+							label={ sprintf( __( 'Low-tier (%s)' ), currencySymbol ) }
 							type="number"
 							step="0.01"
 							value={ suggestedAmounts[ 0 ] }
@@ -448,7 +449,8 @@ class Edit extends Component {
 						/>
 						<TextControl
 							key="mid-tier"
-							label={ __( 'Mid-tier' + ' (' + currencySymbol + ')' ) }
+							/* Translators: %s: the symbol for the current currency */
+							label={ sprintf( __( 'Mid-tier (%s)' ), currencySymbol ) }
 							type="number"
 							step="0.01"
 							value={ suggestedAmounts[ 1 ] }

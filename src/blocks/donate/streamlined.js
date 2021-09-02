@@ -84,6 +84,7 @@ const getClientIDValue = () => getCookies()[ 'newspack-cid' ];
 		);
 	const renderSuccessMessageWithEmail = emailAddress => {
 		const successMessge = sprintf(
+			/* Translators: %s is the email address of the current user. */
 			__(
 				'Your payment has been processed. Thank you for your contribution! You will receive a confirmation email at %s.',
 				'newspack-blocks'
