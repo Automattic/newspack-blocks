@@ -61,6 +61,11 @@
 			margin-right: 1.5rem;
 		}
 	}
+
+	.money-input {
+		display: flex;
+		align-items: center;
+	}
 }
 
 .wpbnbd.tiered {
@@ -125,8 +130,6 @@
 		bottom: 0.38rem;
 		left: 0.38rem;
 		position: absolute;
-		display: flex;
-		align-items: center;
 	}
 }
 
