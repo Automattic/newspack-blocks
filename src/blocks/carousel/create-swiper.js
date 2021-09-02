@@ -12,8 +12,8 @@ const autoplayClassName = 'wp-block-newspack-blocks-carousel__autoplay-playing';
 /**
  * A helper for IE11-compatible iteration over NodeList elements.
  *
- * @param {Object} nodeList List of nodes to be iterated over.
- * @param {Function} cb Invoked for each iteratee.
+ * @param {Object}   nodeList List of nodes to be iterated over.
+ * @param {Function} cb       Invoked for each iteratee.
  */
 function forEachNode( nodeList, cb ) {
 	/**
@@ -52,15 +52,15 @@ function deactivateSlide( slide ) {
  * Creates a Swiper instance with predefined config used by the Articles
  * Carousel block in both front-end and editor.
  *
- * @param {Object} els Swiper elements
- * @param {Element} els.block Block element
- * @param {Element} els.container Swiper container element
- * @param {Element} els.next Next button element
- * @param {Element} els.prev Previous button element
- * @param {Element} els.play Play button element
- * @param {Element} els.pause Pause button element
+ * @param {Object}  els            Swiper elements
+ * @param {Element} els.block      Block element
+ * @param {Element} els.container  Swiper container element
+ * @param {Element} els.next       Next button element
+ * @param {Element} els.prev       Previous button element
+ * @param {Element} els.play       Play button element
+ * @param {Element} els.pause      Pause button element
  * @param {Element} els.pagination Pagination element
- * @param {Object} config Swiper config
+ * @param {Object}  config         Swiper config
  * @return {Object} Swiper instance
  */
 export default function createSwiper( els, config = {} ) {
@@ -98,6 +98,7 @@ export default function createSwiper( els, config = {} ) {
 			renderBullet: ( index, className ) => {
 				// Use a custom render, as Swiper's render is inaccessible.
 				return `<button class="${ className }"><span>${ sprintf(
+					/* translators: Indicates which slide the slider is on. */
 					__( 'Slide %s', 'newspack-blocks' ),
 					index + 1
 				) }</span></button>`;
@@ -140,8 +141,8 @@ export default function createSwiper( els, config = {} ) {
 					const alt = currentImage ? currentImage?.alt : false;
 
 					const slideInfo = sprintf(
-						/* translators: current slide number and the total number of slides */
-						__( 'Slide %s of %s', 'newspack-blocks' ),
+						/* translators: 1: current slide number and 2: total number of slides */
+						__( 'Slide %1$s of %2$s', 'newspack-blocks' ),
 						this.realIndex + 1,
 						this.pagination.bullets.length
 					);
@@ -149,7 +150,14 @@ export default function createSwiper( els, config = {} ) {
 					speak(
 						escapeHTML(
 							`${ currentSlide.innerText },
-							${ alt ? sprintf( __( 'Image: %s, ', 'newspack-blocks' ), alt ) : '' }
+							${
+								alt
+									? /* translators: the title of the image. */ sprintf(
+											__( 'Image: %s, ', 'newspack-blocks' ),
+											alt
+									  )
+									: ''
+							}
 							${ slideInfo }`
 						),
 						'assertive'

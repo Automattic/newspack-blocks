@@ -88,6 +88,7 @@ const createCacheKey = JSON.stringify;
 /**
  * Get posts for a single block.
  *
+ * @yield
  * @param {Object} block an object with a postsQuery and a clientId
  */
 function* getPostsForBlock( block ) {
@@ -112,6 +113,8 @@ function* getPostsForBlock( block ) {
 const createFetchPostsSaga = blockNames => {
 	/**
 	 * "worker" Saga: will be fired on REFLOW actions
+	 *
+	 * @yield
 	 */
 	function* fetchPosts() {
 		// debounce by 300ms
@@ -154,6 +157,8 @@ const createFetchPostsSaga = blockNames => {
 	 * fetchPosts will wait 300ms before fetching. Thanks to takeLatest,
 	 * if new reflow happens during this time, the reflow from before
 	 * will be cancelled.
+	 *
+	 * @yield
 	 */
 	return function* fetchPostsSaga() {
 		yield takeLatest( 'REFLOW', fetchPosts );
