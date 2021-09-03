@@ -108,7 +108,9 @@
 				display: none;
 			}
 
-			&:checked ~ .money-input,
+			&:checked ~ .money-input {
+				display: flex;
+			}
 			&:checked ~ .other-label {
 				display: block;
 			}
@@ -160,6 +162,8 @@
 }
 
 .wpbnbd .money-input {
+	display: flex;
+	align-items: center;
 	position: relative;
 	max-width: 200px;
 	background-color: $color__background-input;
