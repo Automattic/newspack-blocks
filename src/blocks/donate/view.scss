@@ -61,11 +61,6 @@
 			margin-right: 1.5rem;
 		}
 	}
-
-	.money-input {
-		display: flex;
-		align-items: center;
-	}
 }
 
 .wpbnbd.tiered {
@@ -167,6 +162,8 @@
 }
 
 .wpbnbd .money-input {
+	display: flex;
+	align-items: center;
 	position: relative;
 	max-width: 200px;
 	background-color: $color__background-input;
