@@ -45,11 +45,14 @@ class QueryControls extends Component {
 		} );
 	};
 	fetchSavedPosts = postIDs => {
+		const { postType } = this.props;
+		const restUrl = window.newspack_blocks_data.posts_rest_url;
 		return apiFetch( {
-			path: addQueryArgs( '/wp/v2/posts', {
+			url: addQueryArgs( restUrl, {
 				per_page: 100,
 				include: postIDs.join( ',' ),
 				_fields: 'id,title',
+				post_type: postType,
 			} ),
 		} ).then( function ( posts ) {
 			return posts.map( post => ( {
