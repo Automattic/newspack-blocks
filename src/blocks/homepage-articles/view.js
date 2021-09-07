@@ -118,7 +118,7 @@ function getRenderedPostsIds() {
  * occurs.
  *
  * @param {Object} options XMLHttpRequest options
- * @param {number} n retry count before throwing
+ * @param {number} n       retry count before throwing
  */
 function fetchWithRetry( options, n ) {
 	const xhr = new XMLHttpRequest();
@@ -202,7 +202,7 @@ function isPostsDataValid( data ) {
 /**
  * Checks if object has own property.
  *
- * @param {Object} obj Object
+ * @param {Object} obj  Object
  * @param {string} prop Property to check
  */
 function hasOwnProp( obj, prop ) {
