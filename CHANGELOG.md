@@ -1,3 +1,16 @@
+# [1.37.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.36.0...v1.37.0-alpha.1) (2021-09-07)
+
+
+### Bug Fixes
+
+* currency symbol handling ([#850](https://github.com/Automattic/newspack-blocks/issues/850)) ([9637d89](https://github.com/Automattic/newspack-blocks/commit/9637d896eb4b9bc16d05b141b72d0ab22eb73737))
+* show all saved post types in specific posts field ([#857](https://github.com/Automattic/newspack-blocks/issues/857)) ([42c25a9](https://github.com/Automattic/newspack-blocks/commit/42c25a94f2a210ea054dc9550ae5e0b42fdbc546))
+
+
+### Features
+
+* make Donate Block 'thank you' text editable ([#854](https://github.com/Automattic/newspack-blocks/issues/854)) ([7e8f1ea](https://github.com/Automattic/newspack-blocks/commit/7e8f1ea46fd95fdc38601fee6be4fd031a7c1a5a))
+
 # [1.36.0](https://github.com/Automattic/newspack-blocks/compare/v1.35.0...v1.36.0) (2021-08-31)
 
 
