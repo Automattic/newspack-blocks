@@ -1,0 +1,31 @@
+.editor-styles-wrapper {
+	.wp-block-newspack-blocks-iframe {
+		.components-notice {
+			margin: 0;
+			width: 100%;
+		}
+
+		.wp-block-newspack-blocks-iframe__input {
+			border-radius: 2px;
+			margin: 0 8px 0 0;
+			flex: 1 1 auto;
+		}
+
+		.components-placeholder__fieldset {
+			> * {
+				width: 100%;
+				margin-bottom: 1.5rem;
+
+				&:last-child {
+					margin-bottom: 0;
+				}
+			}
+		}
+
+		.wp-block-newspack-blocks-iframe__archive-uploader {
+			button {
+				margin-left: 8px;
+			}
+		}
+	}
+}
