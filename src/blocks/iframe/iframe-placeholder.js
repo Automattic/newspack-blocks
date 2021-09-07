@@ -35,6 +35,11 @@ const IframePlaceholder = ( {
 			icon={ <BlockIcon icon={ icon } showColors /> }
 			label={ label }
 			className="wp-block-newspack-blocks-iframe"
+			instructions={
+				value
+					? __( 'Update your iframe from URL', 'newspack-blocks' )
+					: __( 'Insert your iframe from URL', 'newspack-blocks' )
+			}
 		>
 			{ error && (
 				<Notice status="error" isDismissible={ false }>
@@ -51,7 +56,7 @@ const IframePlaceholder = ( {
 					placeholder={ __( 'Enter URL to embed here…' ) }
 					onChange={ onChange }
 				/>
-				<Button isPrimary={ true } variant="primary" type="submit">
+				<Button isPrimary variant="primary" type="submit">
 					{ _x( 'Embed', 'button label' ) }
 				</Button>
 			</form>
@@ -67,10 +72,10 @@ const IframePlaceholder = ( {
 						render={ ( { openFileDialog } ) => (
 							<div className="wp-block-newspack-blocks-iframe__archive-uploader">
 								<span>{ __( 'or', 'newspack-blocks' ) }</span>
-								<Button isPrimary onClick={ openFileDialog }>
+								<Button isSecondary onClick={ openFileDialog }>
 									{ archiveFolder
-										? __( 'Update your iframe archive', 'newspack-blocks' )
-										: __( 'Upload your iframe archive', 'newspack-blocks' ) }
+										? __( 'update it with an assets folder (.zip)', 'newspack-blocks' )
+										: __( 'upload an assets folder (.zip)', 'newspack-blocks' ) }
 								</Button>
 							</div>
 						) }
