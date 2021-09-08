@@ -16,6 +16,7 @@ import {
 	Spinner,
 	ToggleControl,
 	Toolbar,
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalUnitControl as UnitControl,
 } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
@@ -68,6 +69,7 @@ export default ( { attributes, setAttributes } ) => {
 
 			if ( ! _author ) {
 				throw sprintf(
+					/* translators: Error text for when no authors are found. */
 					__( 'No authors or guest authors found for ID %s.', 'newspack-blocks' ),
 					authorId
 				);
@@ -78,6 +80,7 @@ export default ( { attributes, setAttributes } ) => {
 				e.message ||
 					e ||
 					sprintf(
+						/* translators: Error text for when no authors are found. */
 						__( 'No authors or guest authors found for ID %s.', 'newspack-blocks' ),
 						authorId
 					)
@@ -350,7 +353,7 @@ export default ( { attributes, setAttributes } ) => {
 						) }
 						{ isLoading && (
 							<div className="is-loading">
-								{ __( 'Fetching author info...', 'newspack-blocks' ) }
+								{ __( 'Fetching author info…', 'newspack-blocks' ) }
 								<Spinner />
 							</div>
 						) }

@@ -11,6 +11,7 @@ import classnames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 import { InspectorControls } from '@wordpress/block-editor';
+// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 import { dateI18n, __experimentalGetSettings } from '@wordpress/date';
 import { Component, createRef, Fragment } from '@wordpress/element';
 import {
@@ -293,7 +294,7 @@ class Edit extends Component {
 													</span>
 												) }
 												{ showCategory &&
-													post.newspack_category_info.length &&
+													0 < post.newspack_category_info.length &&
 													! post.newspack_post_sponsors && (
 														<div className="cat-links">
 															<a href="#">{ decodeEntities( post.newspack_category_info ) }</a>

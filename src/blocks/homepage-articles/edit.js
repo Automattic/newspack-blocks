@@ -21,6 +21,7 @@ import classNames from 'classnames';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
+// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 import { dateI18n, __experimentalGetSettings } from '@wordpress/date';
 import { Component, Fragment, RawHTML } from '@wordpress/element';
 import {
@@ -172,11 +173,13 @@ class Edit extends Component {
 							<span className="flag">{ post.newspack_post_sponsors[ 0 ].flag }</span>
 						</span>
 					) }
-					{ showCategory && post.newspack_category_info.length && ! post.newspack_post_sponsors && (
-						<div className="cat-links">
-							<a href="#">{ decodeEntities( post.newspack_category_info ) }</a>
-						</div>
-					) }
+					{ showCategory &&
+						0 < post.newspack_category_info.length &&
+						! post.newspack_post_sponsors && (
+							<div className="cat-links">
+								<a href="#">{ decodeEntities( post.newspack_category_info ) }</a>
+							</div>
+						) }
 					{ RichText.isEmpty( sectionHeader ) ? (
 						<h2 className="entry-title" key="title">
 							{ post.newspack_post_format === 'aside' ? postTitle : <a href="#">{ postTitle }</a> }

@@ -46,7 +46,7 @@ const POST_QUERY_ATTRIBUTES = [
  *    block might be nested somewhere.
  *
  * @param {Object} prevProps Edit component props
- * @param {Object} props Edit component props
+ * @param {Object} props     Edit component props
  */
 export const shouldReflow = ( prevProps, props ) =>
 	! isEqual(

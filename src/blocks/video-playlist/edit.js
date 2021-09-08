@@ -53,9 +53,8 @@ class Edit extends Component {
 	 * The overlay handling is the same as the core embed blocks.
 	 *
 	 * @see https://github.com/WordPress/gutenberg/blob/8e7f7b1a388829ac46fb6917351c7d064905af9a/packages/block-library/src/embed/embed-preview.js#L27-L111
-	 *
 	 * @param {Object} nextProps Next object props.
-	 * @param {Object} state Object state.
+	 * @param {Object} state     Object state.
 	 * @return {Object} State or null.
 	 */
 	static getDerivedStateFromProps( nextProps, state ) {
