@@ -1,3 +1,10 @@
+# [1.37.0-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v1.37.0-alpha.1...v1.37.0-alpha.2) (2021-09-08)
+
+
+### Bug Fixes
+
+* only show category link anchor tags if the category has a link ([#863](https://github.com/Automattic/newspack-blocks/issues/863)) ([549f03a](https://github.com/Automattic/newspack-blocks/commit/549f03a41c531c5580a0bf7af34b734a0db2c719))
+
 # [1.37.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.36.0...v1.37.0-alpha.1) (2021-09-07)
 
 
