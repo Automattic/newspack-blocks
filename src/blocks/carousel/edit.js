@@ -294,7 +294,7 @@ class Edit extends Component {
 													</span>
 												) }
 												{ showCategory &&
-													post.newspack_category_info.length &&
+													0 < post.newspack_category_info.length &&
 													! post.newspack_post_sponsors && (
 														<div className="cat-links">
 															<a href="#">{ decodeEntities( post.newspack_category_info ) }</a>
