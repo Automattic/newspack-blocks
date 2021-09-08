@@ -93,10 +93,15 @@ call_user_func(
 					</span>
 				</span>
 			<?php elseif ( $attributes['showCategory'] && $category ) : ?>
+				<?php $category_link = get_category_link( $category->term_id ); ?>
 				<div class="cat-links">
-					<a href="<?php echo esc_url( get_category_link( $category->term_id ) ); ?>">
+					<?php if ( ! empty( $category_link ) ) : ?>
+						<a href="<?php echo esc_url( $category_link ); ?>">
+					<?php endif; ?>
 						<?php echo esc_html( $category->name ); ?>
-					</a>
+					<?php if ( ! empty( $category_link ) ) : ?>
+						</a>
+					<?php endif; ?>
 				</div>
 				<?php
 			endif;

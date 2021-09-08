@@ -128,9 +128,14 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 							if ( $attributes['showCategory'] && $category ) :
 								?>
 								<div class="cat-links">
-									<a href="<?php echo esc_url( get_category_link( $category->term_id ) ); ?>">
+									<?php $category_link = get_category_link( $category->term_id ); ?>
+									<?php if ( ! empty( $category_link ) ) : ?>
+										<a href="<?php echo esc_url( get_category_link( $category->term_id ) ); ?>">
+									<?php endif; ?>
 										<?php echo esc_html( $category->name ); ?>
+									<?php if ( ! empty( $category_link ) ) : ?>
 									</a>
+									<?php endif; ?>
 								</div>
 								<?php
 							endif;
