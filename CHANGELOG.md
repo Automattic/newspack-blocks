@@ -1,3 +1,10 @@
+## [1.37.1](https://github.com/Automattic/newspack-blocks/compare/v1.37.0...v1.37.1) (2021-09-09)
+
+
+### Bug Fixes
+
+* specify whitespace between author prefix and byline ([#866](https://github.com/Automattic/newspack-blocks/issues/866)) ([a91ffb7](https://github.com/Automattic/newspack-blocks/commit/a91ffb7050bd2089b48bc3e7d7e16f7d0dcac7db))
+
 # [1.37.0](https://github.com/Automattic/newspack-blocks/compare/v1.36.0...v1.37.0) (2021-09-08)
 
 
