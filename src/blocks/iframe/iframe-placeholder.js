@@ -42,7 +42,11 @@ const IframePlaceholder = ( {
 			}
 		>
 			{ error && (
-				<Notice status="error" isDismissible={ false }>
+				<Notice
+					status="error"
+					className="wp-block-newspack-blocks-iframe-notice"
+					isDismissible={ false }
+				>
 					{ error }
 				</Notice>
 			) }

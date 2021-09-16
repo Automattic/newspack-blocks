@@ -6,6 +6,7 @@ import {
 	TextControl,
 	Toolbar,
 	FocusableIframe,
+	Notice,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import IframePlaceholder from './iframe-placeholder';
@@ -107,6 +108,15 @@ const IframeEdit = ( { attributes, setAttributes, isSelected } ) => {
 
 	return (
 		<Fragment>
+			{ isFullScreen && (
+				<Notice
+					status="warning"
+					className="wp-block-newspack-blocks-iframe-notice"
+					isDismissible={ false }
+				>
+					{ __( 'This block will take over the page content.', 'newspack-blocks' ) }
+				</Notice>
+			) }
 			{ src && ( ! isSelected || showPreview ) ? (
 				<div className="iframe-container">
 					<FocusableIframe
