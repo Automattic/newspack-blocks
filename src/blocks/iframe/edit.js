@@ -143,7 +143,7 @@ const IframeEdit = ( { attributes, setAttributes, isSelected } ) => {
 				<PanelBody title={ __( 'Settings', 'newspack-blocks' ) } initialOpen={ true }>
 					<Fragment>
 						<CheckboxControl
-							label={ __( 'Is full screen?', 'newspack-blocks' ) }
+							label={ __( 'Is full screen', 'newspack-blocks' ) }
 							help={ __(
 								'If checked, the iframe will be full screen and hide all the post content.',
 								'newspack-blocks'
