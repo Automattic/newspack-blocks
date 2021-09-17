@@ -565,6 +565,15 @@ class Newspack_Blocks {
 			$classes[] = 'type-' . $post_type;
 		}
 
+		/**
+		 * Filter the array of class names before applying them to the HTML.
+		 *
+		 * @param array $classes Array of term class names.
+		 *
+		 * @return array Filtered array of term class names.
+		 */
+		$classes = apply_filters( 'newspack_blocks_term_classes', $classes );
+
 		return implode( ' ', $classes );
 	}
 
