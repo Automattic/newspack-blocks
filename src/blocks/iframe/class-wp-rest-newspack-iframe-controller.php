@@ -73,7 +73,7 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 			$archive_file      = $files['archive_file'];
 			$wp_upload_dir     = wp_upload_dir();
 			$iframe_upload_dir = $wp_upload_dir['path'] . self::IFRAME_UPLOAD_DIR;
-			$iframe_folder     = pathinfo( $archive_file['name'] )['filename'] . wp_generate_password( 8, false );
+			$iframe_folder     = pathinfo( $archive_file['name'] )['filename'] . '-' . wp_generate_password( 8, false );
 			$iframe_path       = $iframe_upload_dir . $iframe_folder;
 
 			// create iframe directory if not existing.
