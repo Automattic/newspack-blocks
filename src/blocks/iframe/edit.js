@@ -120,7 +120,7 @@ const IframeEdit = ( { attributes, setAttributes, isSelected } ) => {
 			{ src && ( ! isSelected || showPreview ) ? (
 				<div className="iframe-container">
 					<FocusableIframe
-						title="iframe title"
+						title={ __( 'Newspack embedded iframe', 'newspack-blocks' ) }
 						src={ src }
 						style={ {
 							width: isFullScreen ? '100vw' : width,
