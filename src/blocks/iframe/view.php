@@ -19,7 +19,7 @@ function newspack_blocks_render_block_iframe( $attributes ) {
 }
 
 /**
- * Registers the `newspack-blocks/donate` block on server.
+ * Registers the `newspack-blocks/iframe` block on server.
  */
 function newspack_blocks_register_iframe() {
 	register_block_type(
@@ -40,10 +40,10 @@ function newspack_blocks_register_iframe() {
 add_action( 'init', 'newspack_blocks_register_iframe' );
 
 /**
- * Get video playlist data for general args.
+ * Get iframe data for general args.
  *
  * @param array $args Arguments. See $defaults.
- * @return array of video info.
+ * @return array of iframe info.
  */
 function newspack_blocks_get_iframe( $args ) {
 	$defaults = array(
@@ -58,7 +58,7 @@ function newspack_blocks_get_iframe( $args ) {
 }
 
 /**
- * Get embed html for an array of YouTube video URLs.
+ * Get embed html for embbed iframe.
  *
  * @param array $src Iframe source.
  * @param array $height Iframe Height.
