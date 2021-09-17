@@ -11,7 +11,7 @@
  * Class WP_REST_Newspack_Iframe_Controller.
  */
 class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
-	const IFRAME_UPLOAD_DIR = '/iframes/';
+	const IFRAME_UPLOAD_DIR = '/newspack_iframes/';
 	const IFRAME_ENTRY_FILE = 'index.html';
 
 	/**
