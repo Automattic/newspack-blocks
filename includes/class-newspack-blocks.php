@@ -798,7 +798,7 @@ class Newspack_Blocks {
 	/**
 	 * Filter for excerpt length.
 	 *
-	 * @deprectated
+	 * @deprecated
 	 * @param array $attributes The block's attributes.
 	 */
 	public static function filter_excerpt_length( $attributes ) {
@@ -821,7 +821,7 @@ class Newspack_Blocks {
 	/**
 	 * Remove excerpt length filter after Homepage Posts block loop.
 	 *
-	 * @deprectated
+	 * @deprecated
 	 */
 	public static function remove_excerpt_length_filter() {
 		if ( self::$newspack_blocks_excerpt_length_closure ) {
@@ -844,7 +844,7 @@ class Newspack_Blocks {
 	/**
 	 * Filter for excerpt ellipsis.
 	 *
-	 * @deprectated
+	 * @deprecated
 	 * @param array $attributes The block's attributes.
 	 */
 	public static function filter_excerpt_more( $attributes ) {
@@ -857,7 +857,7 @@ class Newspack_Blocks {
 	/**
 	 * Remove excerpt ellipsis filter after Homepage Posts block loop.
 	 *
-	 * @deprectated
+	 * @deprecated
 	 */
 	public static function remove_excerpt_more_filter() {
 		remove_filter( 'excerpt_more', [ __CLASS__, 'more_excerpt' ], 999 );
