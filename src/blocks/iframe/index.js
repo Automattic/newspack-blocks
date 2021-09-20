@@ -1,6 +1,7 @@
 /**
  * WordPress dependencies
  */
+import { ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -25,7 +26,14 @@ export const settings = {
 	},
 	category: 'newspack',
 	keywords: [ __( 'iframe', 'newspack-blocks' ), __( 'project iframe', 'newspack-blocks' ) ],
-	description: __( 'Embed an iframe.', 'newspack-blocks' ),
+	description: (
+		<>
+			<p>{ __( 'Embed an iframe.', 'newspack-blocks' ) }</p>
+			<ExternalLink href={ __( 'https://newspack.pub/support/blocks/iframe-block/' ) }>
+				{ __( 'Support reference', 'newspack-blocks' ) }
+			</ExternalLink>
+		</>
+	),
 	attributes: {
 		src: {
 			type: 'string',

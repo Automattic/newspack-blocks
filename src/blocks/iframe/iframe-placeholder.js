@@ -2,14 +2,7 @@
  * WordPress dependencies
  */
 import { __, _x } from '@wordpress/i18n';
-import {
-	Button,
-	Placeholder,
-	ExternalLink,
-	FormFileUpload,
-	Spinner,
-	Notice,
-} from '@wordpress/components';
+import { Button, Placeholder, FormFileUpload, Spinner, Notice } from '@wordpress/components';
 import { BlockIcon } from '@wordpress/block-editor';
 
 const IframePlaceholder = ( {
@@ -85,11 +78,6 @@ const IframePlaceholder = ( {
 						) }
 					/>
 				) }
-			</div>
-			<div className="wp-block-newspack-blocks-iframe__learn-more">
-				<ExternalLink href={ __( 'https://newspack.pub/support/blocks/iframe-block/' ) }>
-					{ __( 'Learn more about iframe block.' ) }
-				</ExternalLink>
 			</div>
 		</Placeholder>
 	);
