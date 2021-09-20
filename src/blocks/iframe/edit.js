@@ -2,8 +2,8 @@ import { Fragment, useState, useEffect } from 'react';
 import { InspectorControls, BlockControls } from '@wordpress/block-editor';
 import {
 	PanelBody,
-	CheckboxControl,
 	TextControl,
+	ToggleControl,
 	Toolbar,
 	FocusableIframe,
 	Notice,
@@ -150,12 +150,12 @@ const IframeEdit = ( { attributes, setAttributes, isSelected } ) => {
 			</BlockControls>
 
 			<InspectorControls>
-				<PanelBody title={ __( 'Settings', 'newspack-blocks' ) } initialOpen={ true }>
+				<PanelBody title={ __( 'Iframe Settings', 'newspack-blocks' ) } initialOpen={ true }>
 					<Fragment>
-						<CheckboxControl
-							label={ __( 'Is full screen', 'newspack-blocks' ) }
+						<ToggleControl
+							label={ __( 'Fullscreen', 'newspack-blocks' ) }
 							help={ __(
-								'If checked, the iframe will be full screen and hide all the post content.',
+								'If enabled, the iframe will be full screen and hide all the post content.',
 								'newspack-blocks'
 							) }
 							checked={ isFullScreen }
@@ -165,7 +165,7 @@ const IframeEdit = ( { attributes, setAttributes, isSelected } ) => {
 
 						{ ! isFullScreen && (
 							<TextControl
-								label={ __( 'Iframe width', 'newspack-blocks' ) }
+								label={ __( 'Width', 'newspack-blocks' ) }
 								value={ width }
 								onChange={ _width => setAttributes( { width: _width } ) }
 							/>
@@ -173,7 +173,7 @@ const IframeEdit = ( { attributes, setAttributes, isSelected } ) => {
 
 						{ ! isFullScreen && (
 							<TextControl
-								label={ __( 'Iframe height', 'newspack-blocks' ) }
+								label={ __( 'Height', 'newspack-blocks' ) }
 								value={ height }
 								onChange={ _height => setAttributes( { height: _height } ) }
 							/>
