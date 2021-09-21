@@ -30,6 +30,7 @@ import {
 	PanelColorSettings,
 	RichText,
 	withColors,
+	AlignmentControl,
 } from '@wordpress/block-editor';
 import {
 	Button,
@@ -608,6 +609,7 @@ class Edit extends Component {
 			showCaption,
 			showCategory,
 			specificMode,
+			textAlign,
 		} = attributes;
 
 		const classes = classNames( className, {
@@ -622,6 +624,7 @@ class Edit extends Component {
 			'has-text-color': textColor.color !== '',
 			'show-caption': showCaption,
 			'show-category': showCategory,
+			[ `has-text-align-${ textAlign }` ]: textAlign,
 			wpnbha: true,
 		} );
 
@@ -751,6 +754,14 @@ class Edit extends Component {
 					<Toolbar controls={ blockControls } />
 					{ showImage && <Toolbar controls={ blockControlsImages } /> }
 					{ showImage && <Toolbar controls={ blockControlsImageShape } /> }
+					{ showImage && mediaPosition === 'top' && (
+						<AlignmentControl
+							value={ textAlign }
+							onChange={ nextAlign => {
+								setAttributes( { textAlign: nextAlign } );
+							} }
+						/>
+					) }
 				</BlockControls>
 				<InspectorControls>{ this.renderInspectorControls() }</InspectorControls>
 			</Fragment>
