@@ -352,6 +352,18 @@
 		position: relative;
 		width: auto;
 	}
+
+	// Ensure centre alignment when selected.
+	&.has-text-align-center {
+		.cat-links {
+			display: block;
+		}
+
+		button {
+			margin-left: auto;
+			margin-right: auto;
+		}
+	}
 }
 
 /* stylelint-disable selector-type-no-unknown  */
