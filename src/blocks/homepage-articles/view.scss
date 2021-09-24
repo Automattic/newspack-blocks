@@ -355,13 +355,43 @@
 
 	// Ensure centre alignment when selected.
 	&.has-text-align-center {
-		.cat-links {
-			display: block;
+		.cat-links,
+		.entry-meta,
+		.sponsor-logos {
+			justify-content: center;
+		}
+
+		.sponsor-logos > * {
+			margin: 0;
+		}
+
+		figcaption {
+			text-align: inherit;
 		}
 
 		button {
 			margin-left: auto;
 			margin-right: auto;
+		}
+	}
+
+	&.has-text-align-right {
+		.cat-links,
+		.entry-meta,
+		.sponsor-logos {
+			justify-content: flex-end;
+		}
+
+		figcaption {
+			text-align: inherit;
+		}
+
+		.wpnbha .entry-meta .byline:not( :last-child ) {
+			margin: 0 0 0 1.5em;
+		}
+
+		.sponsor-logos > * {
+			margin: 0;
 		}
 	}
 }
