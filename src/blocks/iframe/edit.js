@@ -23,11 +23,11 @@ const iconPreview = (
 	</SVG>
 );
 
-const IframeEdit = ( { attributes, setAttributes, isSelected } ) => {
+const IframeEdit = ( { attributes, setAttributes } ) => {
 	const label = __( 'Iframe', 'block title' );
 	const { src, archiveFolder, isFullScreen, height, width } = attributes;
 	const [ formSrc, setFormSrc ] = useState( src );
-	const [ showPreview, setShowPreview ] = useState( true );
+	const [ showPreview, setShowPreview ] = useState( false );
 	const [ isUploadingArchive, setIsUploadingArchive ] = useState();
 	const [ archiveFile, setArchiveFile ] = useState();
 	const [ error, setError ] = useState();
@@ -156,7 +156,7 @@ const IframeEdit = ( { attributes, setAttributes, isSelected } ) => {
 					{ __( 'This block will take over the page content.', 'newspack-blocks' ) }
 				</Notice>
 			) }
-			{ src && ( ! isSelected || showPreview ) ? (
+			{ src && showPreview ? (
 				<div className="iframe-container">
 					<FocusableIframe
 						title={ __( 'Newspack embedded iframe', 'newspack-blocks' ) }
