@@ -3,12 +3,12 @@ import { InspectorControls, BlockControls } from '@wordpress/block-editor';
 import {
 	PanelBody,
 	Path,
-	TextControl,
 	ToggleControl,
 	Toolbar,
 	FocusableIframe,
 	Notice,
 	SVG,
+	__experimentalUnitControl as UnitControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import IframePlaceholder from './iframe-placeholder';
@@ -32,6 +32,12 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 	const [ archiveFile, setArchiveFile ] = useState();
 	const [ error, setError ] = useState();
 	const [ removeCurrentArchiveFolder, setRemoveCurrentArchiveFolder ] = useState();
+
+	const sizeUnits = [
+		{ value: 'px', label: 'px' },
+		{ value: '%', label: '%' },
+		{ value: 'em', label: 'em' },
+	];
 
 	const embedURL = url => {
 		setError( null );
@@ -204,18 +210,20 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 						/>
 
 						{ ! isFullScreen && (
-							<TextControl
+							<UnitControl
 								label={ __( 'Width', 'newspack-blocks' ) }
-								value={ width }
 								onChange={ _width => setAttributes( { width: _width } ) }
+								value={ width }
+								units={ sizeUnits }
 							/>
 						) }
 
 						{ ! isFullScreen && (
-							<TextControl
+							<UnitControl
 								label={ __( 'Height', 'newspack-blocks' ) }
-								value={ height }
 								onChange={ _height => setAttributes( { height: _height } ) }
+								value={ height }
+								units={ sizeUnits }
 							/>
 						) }
 					</Fragment>

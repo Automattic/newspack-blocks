@@ -60,10 +60,10 @@ function newspack_blocks_get_iframe( $args ) {
 /**
  * Get embed html for embbed iframe.
  *
- * @param array $src Iframe source.
- * @param array $height Iframe Height.
- * @param array $width Iframe width.
- * @param array $is_full_screen If the Iframe should be rendered full screen.
+ * @param string  $src Iframe source.
+ * @param string  $height Iframe Height.
+ * @param string  $width Iframe width.
+ * @param boolean $is_full_screen If the Iframe should be rendered full screen.
  * @return string HTML embed.
  */
 function newspack_blocks_get_iframe_html( $src, $height, $width, $is_full_screen ) {
@@ -80,11 +80,11 @@ function newspack_blocks_get_iframe_html( $src, $height, $width, $is_full_screen
 	ob_start();
 	?>
 	<figure class='wp-block-newspack-blocks-iframe'>
-		<div class='wp-block-embed__wrapper'>
+		<div class='wp-block-embed__wrapper' style="height:<?php echo esc_attr( $height ); ?>; width:<?php echo esc_attr( $width ); ?>;">
 			<iframe 
-				layout='<?php echo esc_attr( $layout ); ?>''
-				height='<?php echo esc_attr( $height ); ?>''
-				width='<?php echo esc_attr( $width ); ?>''
+				layout='<?php echo esc_attr( $layout ); ?>'
+				height='100'
+				width='100'
 				src='<?php echo esc_attr( $src ); ?>'
 				style='<?php echo esc_attr( $style ); ?>'
 				frameborder='0'
