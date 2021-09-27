@@ -33,13 +33,9 @@ const IframeEdit = ( { attributes, setAttributes, isSelected } ) => {
 	const [ error, setError ] = useState();
 	const [ removeCurrentArchiveFolder, setRemoveCurrentArchiveFolder ] = useState();
 
-	const embedURL = event => {
-		if ( event ) {
-			event.preventDefault();
-		}
-
+	const embedURL = url => {
 		setError( null );
-		setAttributes( { src: formSrc } );
+		setAttributes( { src: url } );
 		setShowPreview( true );
 
 		// remove current archive folder if exists.
@@ -77,6 +73,37 @@ const IframeEdit = ( { attributes, setAttributes, isSelected } ) => {
 				e.message ||
 					e ||
 					__( 'An error occured when uploading the iframe archive.', 'newspack-blocks' )
+			);
+		}
+
+		setIsUploadingArchive( false );
+	};
+
+	const setIframeArchiveFromMedia = async mediaId => {
+		setError( null );
+		setIsUploadingArchive( true );
+
+		try {
+			const formData = new FormData();
+			formData.append( 'media_id', mediaId );
+
+			const { src: iframeArchiveSrc, dir: iframeArchiveFolder } = await apiFetch( {
+				path: '/newspack-blocks/v1/newspack-blocks-iframe-archive-from-media',
+				method: 'POST',
+				body: formData,
+			} );
+
+			setAttributes( { src: iframeArchiveSrc, archiveFolder: iframeArchiveFolder } );
+			setFormSrc( iframeArchiveSrc );
+			setShowPreview( true );
+		} catch ( e ) {
+			setError(
+				e.message ||
+					e ||
+					__(
+						'An error occured when setting the iframe from the archive media.',
+						'newspack-blocks'
+					)
 			);
 		}
 
@@ -147,9 +174,10 @@ const IframeEdit = ( { attributes, setAttributes, isSelected } ) => {
 				<IframePlaceholder
 					icon={ iframeIcon }
 					label={ label }
-					onSubmit={ embedURL }
-					value={ formSrc }
-					onChange={ event => setFormSrc( event.target.value ) }
+					src={ formSrc }
+					setFormSrc={ setFormSrc }
+					onSelectURL={ embedURL }
+					onSelectMedia={ setIframeArchiveFromMedia }
 					isUploadingArchive={ isUploadingArchive }
 					archiveFolder={ archiveFolder }
 					setArchiveFile={ setArchiveFile }
