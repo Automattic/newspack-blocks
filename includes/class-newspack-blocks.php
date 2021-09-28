@@ -776,13 +776,15 @@ class Newspack_Blocks {
 		}
 
 		self::$newspack_blocks_excerpt_closure = function( $text = '', $post = null ) use ( $attributes ) {
+			$post        = get_post( $post );
+			$text        = $post->post_excerpt;
 			$raw_excerpt = $text;
 
-			$post = get_post( $post );
-			$text = get_the_content( '', false, $post );
-
-			$text = strip_shortcodes( $text );
-			$text = excerpt_remove_blocks( $text );
+			if ( empty( $text ) ) {
+				$text = get_the_content( '', false, $post );
+				$text = strip_shortcodes( $text );
+				$text = excerpt_remove_blocks( $text );
+			}
 
 			/** This filter is documented in wp-includes/post-template.php */
 			$text = apply_filters( 'the_content', $text ); // phpcs:ignore
