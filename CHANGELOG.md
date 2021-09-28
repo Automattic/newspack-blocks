@@ -1,3 +1,10 @@
+# [1.39.0-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v1.39.0-alpha.1...v1.39.0-alpha.2) (2021-09-28)
+
+
+### Bug Fixes
+
+* if a post has a custom excerpt, use it ([#880](https://github.com/Automattic/newspack-blocks/issues/880)) ([57b5cdd](https://github.com/Automattic/newspack-blocks/commit/57b5cdd4fe29c72103d247afd1f7b1830586e4f7))
+
 # [1.39.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.38.0...v1.39.0-alpha.1) (2021-09-28)
 
 
