@@ -142,12 +142,11 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 	const iframeControls = [
 		{
 			icon: <Icon icon={ iconPreview } />,
-			title:
-				src && showPreview
-					? __( 'Hide iframe preview', 'newspack-blocks' )
-					: __( 'Show iframe preview', 'newspack-blocks' ),
+			title: showPreview
+				? __( 'Hide iframe preview', 'newspack-blocks' )
+				: __( 'Show iframe preview', 'newspack-blocks' ),
 			onClick: () => setShowPreview( ! showPreview ),
-			isActive: src && showPreview,
+			isActive: showPreview,
 		},
 	];
 
@@ -192,7 +191,7 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 			) }
 
 			<BlockControls>
-				<Toolbar controls={ iframeControls } />
+				<Toolbar controls={ src && iframeControls } />
 			</BlockControls>
 
 			<InspectorControls>
