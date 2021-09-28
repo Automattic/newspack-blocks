@@ -1,3 +1,10 @@
+## [1.39.1](https://github.com/Automattic/newspack-blocks/compare/v1.39.0...v1.39.1) (2021-09-28)
+
+
+### Bug Fixes
+
+* do not apply the_content filter to homepage post excerpts ([#883](https://github.com/Automattic/newspack-blocks/issues/883)) ([aa9e667](https://github.com/Automattic/newspack-blocks/commit/aa9e6671ed673248b168dbdd69f7a43e1c405c6e))
+
 # [1.39.0](https://github.com/Automattic/newspack-blocks/compare/v1.38.0...v1.39.0) (2021-09-28)
 
 
