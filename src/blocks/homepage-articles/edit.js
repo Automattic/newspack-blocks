@@ -751,17 +751,17 @@ class Edit extends Component {
 				) }
 
 				<BlockControls>
-					<Toolbar controls={ blockControls } />
-					{ showImage && <Toolbar controls={ blockControlsImages } /> }
-					{ showImage && <Toolbar controls={ blockControlsImageShape } /> }
-					{ showImage && mediaPosition === 'top' && (
+					<Toolbar>
 						<AlignmentControl
 							value={ textAlign }
 							onChange={ nextAlign => {
 								setAttributes( { textAlign: nextAlign } );
 							} }
 						/>
-					) }
+					</Toolbar>
+					<Toolbar controls={ blockControls } />
+					{ showImage && <Toolbar controls={ blockControlsImages } /> }
+					{ showImage && <Toolbar controls={ blockControlsImageShape } /> }
 				</BlockControls>
 				<InspectorControls>{ this.renderInspectorControls() }</InspectorControls>
 			</Fragment>
