@@ -302,6 +302,7 @@
 			padding: 0 1rem;
 			position: absolute;
 			right: 0;
+			text-align: right;
 			text-overflow: ellipsis;
 			z-index: 2;
 
@@ -382,7 +383,6 @@
 			justify-content: flex-end;
 		}
 
-		&.image-alignbehind figcaption,
 		figcaption {
 			text-align: inherit;
 		}
