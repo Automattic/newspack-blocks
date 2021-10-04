@@ -18,3 +18,9 @@
 		padding-right: 20px;
 	}
 }
+
+div[data-type='newspack-blocks/donate'] {
+	.components-notice {
+		margin: 0;
+	}
+}

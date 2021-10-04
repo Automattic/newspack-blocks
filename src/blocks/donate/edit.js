@@ -17,6 +17,7 @@ import {
 	SelectControl,
 	TextControl,
 	ToggleControl,
+	Notice,
 } from '@wordpress/components';
 import { InspectorControls, RichText } from '@wordpress/block-editor';
 
@@ -414,7 +415,16 @@ class Edit extends Component {
 		if ( ! manual && ( error.length || ! created ) ) {
 			return null;
 		}
-		return tiered ? this.renderTieredForm() : this.renderUntieredForm();
+		return (
+			<>
+				{ this.state.error ? (
+					<Notice status="error" isDismissible={ false }>
+						{ this.state.error }
+					</Notice>
+				) : null }
+				{ tiered ? this.renderTieredForm() : this.renderUntieredForm() }
+			</>
+		);
 	}
 
 	renderManualControls() {
