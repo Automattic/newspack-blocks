@@ -1,3 +1,10 @@
+# [1.40.0](https://github.com/Automattic/newspack-blocks/compare/v1.39.1...v1.40.0) (2021-10-05)
+
+
+### Features
+
+* add text alignment option to the homepage posts block ([514907f](https://github.com/Automattic/newspack-blocks/commit/514907fb9a08ff91b48fafbfac15ffda002a0926))
+
 ## [1.39.1](https://github.com/Automattic/newspack-blocks/compare/v1.39.0...v1.39.1) (2021-09-28)
 
 
