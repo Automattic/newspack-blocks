@@ -209,21 +209,20 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 						/>
 
 						{ ! isFullScreen && (
-							<UnitControl
-								label={ __( 'Width', 'newspack-blocks' ) }
-								onChange={ _width => setAttributes( { width: _width } ) }
-								value={ width }
-								units={ sizeUnits }
-							/>
-						) }
-
-						{ ! isFullScreen && (
-							<UnitControl
-								label={ __( 'Height', 'newspack-blocks' ) }
-								onChange={ _height => setAttributes( { height: _height } ) }
-								value={ height }
-								units={ sizeUnits }
-							/>
+							<div className="wp-block-newspack-blocks-iframe__unit-control">
+								<UnitControl
+									label={ __( 'Width', 'newspack-blocks' ) }
+									onChange={ _width => setAttributes( { width: _width } ) }
+									value={ width }
+									units={ sizeUnits }
+								/>
+								<UnitControl
+									label={ __( 'Height', 'newspack-blocks' ) }
+									onChange={ _height => setAttributes( { height: _height } ) }
+									value={ height }
+									units={ sizeUnits }
+								/>
+							</div>
 						) }
 					</Fragment>
 				</PanelBody>
