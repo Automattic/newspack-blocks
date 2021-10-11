@@ -155,9 +155,9 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 			wp_mkdir_p( $iframe_upload_dir );
 		}
 
-			// unzip iframe archive.
-			$zip = new ZipArchive();
-			$res = $zip->open( $media_path );
+		// unzip iframe archive.
+		$zip = new ZipArchive();
+		$res = $zip->open( $media_path );
 
 		if ( true === $res ) {
 			$zip->extractTo( $iframe_path );
