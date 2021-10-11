@@ -103,7 +103,7 @@ const IframePlaceholder = ( {
 					>
 						{ isUpdate
 							? __( 'Update from URL', 'newspack-blocks' )
-							: __( 'Upload from URL', 'newspack-blocks' ) }
+							: __( 'Embed from URL', 'newspack-blocks' ) }
 					</Button>
 					{ isURLInputVisible && (
 						<InsertFromURLPopover
