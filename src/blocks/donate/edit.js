@@ -152,8 +152,12 @@ class Edit extends Component {
 		this.setState( { customDonationAmounts } );
 	}
 
+	getFormClassName = ( className = '' ) =>
+		classNames( className, this.props.className, {
+			'wp-block-newspack-blocks-donate--is-loading': this.state.isLoading,
+		} );
+
 	renderUntieredForm() {
-		const { className } = this.props;
 		const { uid } = this.state;
 		const { currencySymbol, customDonationAmounts, selectedFrequency } = this.blockData();
 
@@ -164,7 +168,7 @@ class Edit extends Component {
 		};
 
 		return (
-			<div className={ classNames( className, 'untiered wpbnbd' ) }>
+			<div className={ this.getFormClassName( 'untiered wpbnbd' ) }>
 				<form>
 					<div className="wp-block-newspack-blocks-donate__options">
 						{ Object.keys( frequencies ).map( frequencySlug => (
@@ -214,7 +218,6 @@ class Edit extends Component {
 	}
 
 	renderTieredForm() {
-		const { className } = this.props;
 		const { uid } = this.state;
 		const {
 			activeTier,
@@ -230,7 +233,7 @@ class Edit extends Component {
 			year: __( 'Annually', 'newspack-blocks' ),
 		};
 		return (
-			<div className={ classNames( className, 'tiered wpbnbd' ) }>
+			<div className={ this.getFormClassName( 'tiered wpbnbd' ) }>
 				<form>
 					<div className="wp-block-newspack-blocks-donate__options">
 						<div className="wp-block-newspack-blocks-donate__frequencies frequencies">

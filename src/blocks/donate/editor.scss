@@ -4,6 +4,9 @@
 @import './streamlined.scss';
 
 .wp-block-newspack-blocks-donate {
+	&--is-loading {
+		opacity: 0.5;
+	}
 	button[type='submit'] {
 		background: $color__secondary;
 		border: none;
