@@ -1,4 +1,7 @@
-import { Fragment, useState, useEffect } from 'react';
+/**
+ * WordPress dependencies
+ */
+import { Fragment, useState, useEffect } from '@wordpress/element';
 import { InspectorControls, BlockControls } from '@wordpress/block-editor';
 import {
 	PanelBody,
@@ -12,10 +15,14 @@ import {
 	__experimentalUnitControl as UnitControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Icon } from '@wordpress/icons';
+import apiFetch from '@wordpress/api-fetch';
+
+/**
+ * Internal dependencies
+ */
 import IframePlaceholder from './iframe-placeholder';
 import { iframeIcon } from './icons';
-import apiFetch from '@wordpress/api-fetch';
-import { Icon } from '@wordpress/icons';
 
 const iconPreview = (
 	<SVG xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">

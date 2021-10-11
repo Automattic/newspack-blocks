@@ -6,6 +6,10 @@ import { __ } from '@wordpress/i18n';
 import { Button, Placeholder, FormFileUpload, Spinner, Notice } from '@wordpress/components';
 import { BlockIcon, URLPopover, MediaUpload } from '@wordpress/block-editor';
 import { keyboardReturn } from '@wordpress/icons';
+
+/**
+ * External dependencies
+ */
 import classnames from 'classnames';
 
 const InsertFromURLPopover = ( { src, onChange, onSubmit, onClose } ) => (
