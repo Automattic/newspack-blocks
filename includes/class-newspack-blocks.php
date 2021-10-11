@@ -61,7 +61,7 @@ class Newspack_Blocks {
 					add_filter(
 						'body_class',
 						function( $classes ) {
-							$classes[] = 'post-with-fullscreen-iframe';
+							$classes[] = 'newspack-post-with-fullscreen-iframe';
 							return $classes;
 						}
 					);
