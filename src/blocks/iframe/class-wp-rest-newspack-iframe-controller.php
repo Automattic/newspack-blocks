@@ -204,8 +204,7 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 		} else {
 			$response = new WP_Error(
 				'newspack_blocks',
-				/* translators: %s: iframe entry file (e.g. index,html) */
-				sprintf( __( 'Could not unzip the iframe archive.', 'newspack-blocks' ), self::IFRAME_ENTRY_FILE ),
+				__( "Could not unzip the iframe archive, make sure it's a valid .zip archive file.", 'newspack-blocks' ),
 				[ 'status' => '400' ]
 			);
 		}
