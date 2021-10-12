@@ -63,7 +63,7 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 			'/newspack-blocks-remove-iframe-archive',
 			[
 				[
-					'methods'             => WP_REST_Server::EDITABLE,
+					'methods'             => WP_REST_Server::DELETABLE,
 					'callback'            => [ $this, 'remove_iframe_archive' ],
 					'permission_callback' => function() {
 						return current_user_can( 'edit_posts' );
