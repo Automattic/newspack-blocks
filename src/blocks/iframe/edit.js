@@ -84,9 +84,7 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 			setShowPreview( true );
 		} catch ( e ) {
 			setError(
-				e.message ||
-					e ||
-					__( 'An error occured when uploading the iframe archive.', 'newspack-blocks' )
+				e.message || __( 'An error occured when uploading the iframe archive.', 'newspack-blocks' )
 			);
 		}
 
@@ -113,7 +111,6 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 		} catch ( e ) {
 			setError(
 				e.message ||
-					e ||
 					__(
 						'An error occured when setting the iframe from the archive media.',
 						'newspack-blocks'
