@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { Fragment, useState, useEffect } from '@wordpress/element';
+import { Fragment, useState } from '@wordpress/element';
 import { InspectorControls, BlockControls } from '@wordpress/block-editor';
 import {
 	PanelBody,
@@ -34,12 +34,9 @@ const iconPreview = (
 const IframeEdit = ( { attributes, setAttributes } ) => {
 	const label = __( 'Iframe', 'block title' );
 	const { src, archiveFolder, isFullScreen, height, width } = attributes;
-	const [ formSrc, setFormSrc ] = useState( src );
 	const [ showPreview, setShowPreview ] = useState( true );
 	const [ isUploadingArchive, setIsUploadingArchive ] = useState();
-	const [ archiveFile, setArchiveFile ] = useState();
 	const [ error, setError ] = useState();
-	const [ removeCurrentArchiveFolder, setRemoveCurrentArchiveFolder ] = useState();
 
 	const sizeUnits = [
 		{ value: 'px', label: 'px' },
@@ -54,17 +51,11 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 
 		// remove current archive folder if exists.
 		if ( archiveFolder ) {
-			setRemoveCurrentArchiveFolder( true );
+			deleteIframeArchive();
 		}
 	};
 
-	useEffect( () => {
-		if ( archiveFile ) {
-			uploadIframeArchive();
-		}
-	}, [ archiveFile ] );
-
-	const uploadIframeArchive = async () => {
+	const uploadIframeArchive = async archiveFile => {
 		setError( null );
 		setIsUploadingArchive( true );
 
@@ -80,7 +71,6 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 			} );
 
 			setAttributes( { src: iframeArchiveSrc, archiveFolder: iframeArchiveFolder } );
-			setFormSrc( iframeArchiveSrc );
 			setShowPreview( true );
 		} catch ( e ) {
 			setError(
@@ -106,7 +96,6 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 			} );
 
 			setAttributes( { src: iframeArchiveSrc, archiveFolder: iframeArchiveFolder } );
-			setFormSrc( iframeArchiveSrc );
 			setShowPreview( true );
 		} catch ( e ) {
 			setError(
@@ -121,22 +110,16 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 		setIsUploadingArchive( false );
 	};
 
-	useEffect( () => {
+	const deleteIframeArchive = () => {
 		// Do not remove archive if it's used (if a user clicks on embed after uploading the archive.)
-		if ( removeCurrentArchiveFolder && src && archiveFolder && ! src.includes( archiveFolder ) ) {
-			const formData = new FormData();
-			formData.append( 'archive_folder', archiveFolder );
-
+		if ( src && archiveFolder && ! src.includes( archiveFolder ) ) {
 			apiFetch( {
 				path: '/newspack-blocks/v1/newspack-blocks-remove-iframe-archive',
-				method: 'POST',
-				body: formData,
-			} );
-
-			setAttributes( { archiveFolder: null } );
-			setRemoveCurrentArchiveFolder( false );
+				method: 'DELETE',
+				body: JSON.stringify( { archive_folder: archiveFolder } ),
+			} ); //.then( () => setAttributes( { archiveFolder: null } ) );
 		}
-	}, [ src, archiveFolder ] );
+	};
 
 	const iframeControls = [
 		{
@@ -177,13 +160,13 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 				<IframePlaceholder
 					icon={ iframeIcon }
 					label={ label }
-					src={ formSrc }
-					setFormSrc={ setFormSrc }
+					src={ src }
+					setSrc={ _src => setAttributes( { src: _src } ) }
 					onSelectURL={ embedURL }
 					onSelectMedia={ setIframeArchiveFromMedia }
 					isUploadingArchive={ isUploadingArchive }
 					archiveFolder={ archiveFolder }
-					setArchiveFile={ setArchiveFile }
+					uploadIframeArchive={ uploadIframeArchive }
 					error={ error }
 				/>
 			) }

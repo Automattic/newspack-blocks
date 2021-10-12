@@ -37,19 +37,19 @@ const IframePlaceholder = ( {
 	icon,
 	label,
 	src,
-	setFormSrc,
+	setSrc,
 	onSelectURL,
 	onSelectMedia,
 	isUploadingArchive,
 	archiveFolder,
-	setArchiveFile,
+	uploadIframeArchive,
 	error,
 } ) => {
 	const [ isURLInputVisible, setIsURLInputVisible ] = useState( false );
 
 	// URL text field
 	const onChangeSrc = event => {
-		setFormSrc( event.target.value );
+		setSrc( event.target.value );
 	};
 
 	const openURLInput = () => {
@@ -75,7 +75,7 @@ const IframePlaceholder = ( {
 	const onUpload = event => {
 		const files = event.target.files;
 		if ( 0 < files.length ) {
-			setArchiveFile( files.item( 0 ) );
+			uploadIframeArchive( files.item( 0 ) );
 		}
 	};
 
