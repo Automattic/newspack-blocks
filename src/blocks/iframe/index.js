@@ -8,6 +8,8 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import edit from './edit';
+import metadata from './block.json';
+const { name, attributes, category } = metadata;
 
 /**
  * Style dependencies - will load in editor
@@ -15,8 +17,10 @@ import edit from './edit';
 import './editor.scss';
 import { iframeIcon } from './icons';
 
-export const name = 'iframe';
 export const title = __( 'Iframe', 'newspack-blocks' );
+
+// Name must be exported separately.
+export { name };
 
 export const settings = {
 	title,
@@ -24,7 +28,7 @@ export const settings = {
 		src: iframeIcon,
 		foreground: '#36f',
 	},
-	category: 'newspack',
+	category,
 	keywords: [ __( 'iframe', 'newspack-blocks' ), __( 'project iframe', 'newspack-blocks' ) ],
 	description: (
 		<>
@@ -34,27 +38,7 @@ export const settings = {
 			</ExternalLink>
 		</>
 	),
-	attributes: {
-		src: {
-			type: 'string',
-		},
-		archiveFolder: {
-			type: 'string',
-			default: '',
-		},
-		height: {
-			type: 'string',
-			default: '600px',
-		},
-		width: {
-			type: 'string',
-			default: '100%',
-		},
-		isFullScreen: {
-			type: 'boolean',
-			default: false,
-		},
-	},
+	attributes,
 	supports: {
 		html: false,
 		align: true,

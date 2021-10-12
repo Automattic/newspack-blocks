@@ -22,19 +22,17 @@ function newspack_blocks_render_block_iframe( $attributes ) {
  * Registers the `newspack-blocks/iframe` block on server.
  */
 function newspack_blocks_register_iframe() {
+	$block_json = json_decode(
+		file_get_contents( __DIR__ . '/block.json' ), // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		true
+	);
+
 	register_block_type(
-		'newspack-blocks/iframe',
-		array(
-			'attributes'      => array(
-				'src'           => array( 'type' => 'string' ),
-				'archiveFolder' => array( 'type' => 'string' ),
-				'height'        => array( 'type' => 'string' ),
-				'width'         => array( 'type' => 'string' ),
-				'isFullScreen'  => array( 'type' => 'boolean' ),
-			),
+		'newspack-blocks/' . $block_json['name'],
+		[
+			'attributes'      => $block_json['attributes'],
 			'render_callback' => 'newspack_blocks_render_block_iframe',
-			'supports'        => [],
-		)
+		]
 	);
 }
 add_action( 'init', 'newspack_blocks_register_iframe' );
