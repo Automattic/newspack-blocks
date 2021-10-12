@@ -67,7 +67,7 @@ class Newspack_Blocks {
 					);
 
 					// we don't need to show Newspack popups since the iframe will take over them.
-					add_filter( 'newspack_popups_assess_has_disabled_popups', true );
+					add_filter( 'newspack_popups_assess_has_disabled_popups', '__return_true' );
 				}
 			}
 		}
