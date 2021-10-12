@@ -136,13 +136,7 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 			setAttributes( { archiveFolder: null } );
 			setRemoveCurrentArchiveFolder( false );
 		}
-	}, [
-		src,
-		archiveFolder,
-		setArchiveFile,
-		removeCurrentArchiveFolder,
-		setRemoveCurrentArchiveFolder,
-	] );
+	}, [ src, archiveFolder ] );
 
 	const iframeControls = [
 		{
