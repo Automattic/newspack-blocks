@@ -144,11 +144,12 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	private function process_iframe_archive( $request, $iframe_folder, $media_path ) {
-		$wp_upload_dir         = wp_upload_dir();
-			$iframe_upload_dir = $wp_upload_dir['path'] . self::IFRAME_UPLOAD_DIR;
-			$iframe_path       = $iframe_upload_dir . $iframe_folder;
+		$wp_upload_dir     = wp_upload_dir();
+		$iframe_upload_dir = $wp_upload_dir['path'] . self::IFRAME_UPLOAD_DIR;
+		$iframe_path       = $iframe_upload_dir . $iframe_folder;
+		$data              = $request->get_body_params();
 
-			// create iframe directory if not existing.
+		// create iframe directory if not existing.
 		if ( ! file_exists( $iframe_upload_dir ) ) {
 			wp_mkdir_p( $iframe_upload_dir );
 		}
@@ -169,7 +170,9 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 				];
 
 				// if we need to remove the previous archive, it's a good place to do it here.
-				$this->remove_iframe_archive( $request );
+				if ( array_key_exists( 'archive_folder', $data ) && ! empty( $data['archive_folder'] ) ) {
+					$this->remove_folder( $wp_upload_dir['basedir'] . $data['archive_folder'] );
+				}
 			} else {
 				// check if its not a one folder archive: archive.zip > archive > index.html.
 				$archive_folders = array_values(
@@ -188,7 +191,9 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 					];
 
 					// if we need to remove the previous archive, it's a good place to do it here.
-					$this->remove_iframe_archive( $request );
+					if ( array_key_exists( 'archive_folder', $data ) && ! empty( $data['archive_folder'] ) ) {
+						$this->remove_folder( $wp_upload_dir['basedir'] . $data['archive_folder'] );
+					}
 				} else {
 					// if not, remove the uploaded archive data and raise an error.
 					$this->remove_folder( $iframe_path );
@@ -220,7 +225,7 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 	 */
 	public function remove_iframe_archive( $request ) {
 		$wp_upload_dir = wp_upload_dir();
-		$data          = $request->get_body_params();
+		$data          = $request->get_json_params();
 
 		if ( array_key_exists( 'archive_folder', $data ) && ! empty( $data['archive_folder'] ) ) {
 			$this->remove_folder( $wp_upload_dir['basedir'] . $data['archive_folder'] );
