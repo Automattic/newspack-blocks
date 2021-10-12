@@ -35,7 +35,7 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 	const label = __( 'Iframe', 'block title' );
 	const { src, archiveFolder, isFullScreen, height, width } = attributes;
 	const [ formSrc, setFormSrc ] = useState( src );
-	const [ showPreview, setShowPreview ] = useState( false );
+	const [ showPreview, setShowPreview ] = useState( true );
 	const [ isUploadingArchive, setIsUploadingArchive ] = useState();
 	const [ archiveFile, setArchiveFile ] = useState();
 	const [ error, setError ] = useState();
@@ -180,7 +180,6 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 							'max-width': '100%',
 							'max-height': '100%',
 						} }
-						onFocus={ () => setShowPreview( false ) }
 					></FocusableIframe>
 				</div>
 			) : (
