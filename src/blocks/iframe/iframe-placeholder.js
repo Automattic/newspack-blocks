@@ -37,7 +37,6 @@ const IframePlaceholder = ( {
 	icon,
 	label,
 	src,
-	setSrc,
 	onSelectURL,
 	onSelectMedia,
 	isUploadingArchive,
@@ -46,10 +45,11 @@ const IframePlaceholder = ( {
 	error,
 } ) => {
 	const [ isURLInputVisible, setIsURLInputVisible ] = useState( false );
+	const [ urlFieldValue, setUrlFieldValue ] = useState( src );
 
 	// URL text field
-	const onChangeSrc = event => {
-		setSrc( event.target.value );
+	const onChangeUrlField = event => {
+		setUrlFieldValue( event.target.value );
 	};
 
 	const openURLInput = () => {
@@ -61,8 +61,8 @@ const IframePlaceholder = ( {
 
 	const onSubmitSrc = event => {
 		event.preventDefault();
-		if ( src && onSelectURL ) {
-			onSelectURL( src );
+		if ( urlFieldValue && onSelectURL ) {
+			onSelectURL( urlFieldValue );
 			closeURLInput();
 		}
 	};
@@ -111,8 +111,8 @@ const IframePlaceholder = ( {
 					</Button>
 					{ isURLInputVisible && (
 						<InsertFromURLPopover
-							src={ src }
-							onChange={ onChangeSrc }
+							src={ urlFieldValue }
+							onChange={ onChangeUrlField }
 							onSubmit={ onSubmitSrc }
 							onClose={ closeURLInput }
 						/>

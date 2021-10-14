@@ -161,7 +161,6 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 					icon={ iframeIcon }
 					label={ label }
 					src={ src }
-					setSrc={ _src => setAttributes( { src: _src } ) }
 					onSelectURL={ embedURL }
 					onSelectMedia={ setIframeArchiveFromMedia }
 					isUploadingArchive={ isUploadingArchive }
