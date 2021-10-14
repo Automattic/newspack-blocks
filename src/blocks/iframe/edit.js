@@ -117,7 +117,7 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 				path: '/newspack-blocks/v1/newspack-blocks-remove-iframe-archive',
 				method: 'DELETE',
 				body: JSON.stringify( { archive_folder: archiveFolder } ),
-			} ); //.then( () => setAttributes( { archiveFolder: null } ) );
+			} );
 		}
 	};
 
