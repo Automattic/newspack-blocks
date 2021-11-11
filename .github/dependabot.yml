@@ -11,6 +11,9 @@ updates:
     # Check the npm registry for updates every day (weekdays)
     schedule:
       interval: 'daily'
+    # Add reviewers
+    reviewers:
+      - 'Automattic/newspack-product'
 
   # Enable version updates for Composer
   - package-ecosystem: 'composer'
@@ -19,3 +22,6 @@ updates:
     # Check for updates every day (weekdays)
     schedule:
       interval: 'daily'
+    # Add reviewers
+    reviewers:
+      - 'Automattic/newspack-product'
