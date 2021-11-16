@@ -251,7 +251,7 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 			[
 				'post_type'      => 'guest-author',
 				'posts_per_page' => 1,
-				'meta_key'       => 'cap-linked_account',
+				'meta_key'       => 'cap-linked_account', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 				'meta_value'     => $user_login, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 			]
 		);
