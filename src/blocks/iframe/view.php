@@ -45,6 +45,7 @@ add_action( 'init', 'newspack_blocks_register_iframe' );
  */
 function newspack_blocks_get_iframe( $args ) {
 	$defaults = array(
+		'mode'         => 'iframe',
 		'src'          => '',
 		'height'       => '600px',
 		'width'        => '100%',
@@ -52,23 +53,25 @@ function newspack_blocks_get_iframe( $args ) {
 	);
 	$args     = wp_parse_args( $args, $defaults );
 
-	return newspack_blocks_get_iframe_html( $args['src'], $args['height'], $args['width'], $args['isFullScreen'] );
+	return newspack_blocks_get_iframe_html( $args['mode'], $args['src'], $args['height'], $args['width'], $args['isFullScreen'] );
 }
 
 /**
  * Get embed html for embbed iframe.
  *
+ * @param string  $mode Embed mode (iframe or document).
  * @param string  $src Iframe source.
  * @param string  $height Iframe Height.
  * @param string  $width Iframe width.
  * @param boolean $is_full_screen If the Iframe should be rendered full screen.
  * @return string HTML embed.
  */
-function newspack_blocks_get_iframe_html( $src, $height, $width, $is_full_screen ) {
-	$height = $is_full_screen ? '100' : $height;
-	$width  = $is_full_screen ? '100' : $width;
-	$style  = "height: $height; width: $width;";
-	$layout = 'responsive';
+function newspack_blocks_get_iframe_html( $mode, $src, $height, $width, $is_full_screen ) {
+	$is_document = 'document' === $mode;
+	$height      = $is_full_screen ? '100' : $height;
+	$width       = $is_full_screen ? '100' : $width;
+	$style       = "height: $height; width: $width;";
+	$layout      = 'responsive';
 
 	if ( empty( $src ) ) {
 		return;
@@ -83,15 +86,25 @@ function newspack_blocks_get_iframe_html( $src, $height, $width, $is_full_screen
 	?>
 	<figure class='wp-block-newspack-blocks-iframe'>
 		<div class='wp-block-embed__wrapper' style="height:<?php echo esc_attr( $height ); ?>; width:<?php echo esc_attr( $width ); ?>;">
-			<iframe
-				layout='<?php echo esc_attr( $layout ); ?>'
-				height='100'
-				width='100'
+		<?php if ( $is_document ) : ?>
+			<amp-google-document-embed
 				src='<?php echo esc_attr( $src ); ?>'
-				style='<?php echo esc_attr( $style ); ?>'
-				frameborder='0'
+				width="100"
+				height="100"
+				style = '<?php echo esc_attr( $style ); ?>'
+				layout = '<?php echo esc_attr( $layout ); ?>'
+			></amp-google-document-embed>
+		<?php else : ?>
+			<iframe
+				layout = '<?php echo esc_attr( $layout ); ?>'
+				height = '100'
+				width = '100'
+				src = '<?php echo esc_attr( $src ); ?>'
+				style = '<?php echo esc_attr( $style ); ?>'
+				frameborder = '0'
 				allowfullscreen
 			></iframe>
+		<?php endif; ?>
 		</div>
 	</figure>
 	<?php
