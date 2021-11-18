@@ -1,3 +1,11 @@
+## [1.42.2-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.42.1...v1.42.2-alpha.1) (2021-11-18)
+
+
+### Bug Fixes
+
+* add wptexturize to the article subtitle ([#910](https://github.com/Automattic/newspack-blocks/issues/910)) ([1bec09c](https://github.com/Automattic/newspack-blocks/commit/1bec09cd716f2899509ed15938f1b06014bbef21))
+* update newspack-components dep version ([#923](https://github.com/Automattic/newspack-blocks/issues/923)) ([7678c75](https://github.com/Automattic/newspack-blocks/commit/7678c75b9b71a7a796aa68d5738203a48669c2a6))
+
 ## [1.42.1](https://github.com/Automattic/newspack-blocks/compare/v1.42.0...v1.42.1) (2021-11-18)
 
 
