@@ -17,7 +17,7 @@
 		"@wordpress/element": "^4.0.1",
 		"@wordpress/eslint-plugin": "^9.2.0",
 		"@wordpress/stylelint-config": "^19.1.0",
-		"@wordpress/url": "^3.2.3",
+		"@wordpress/url": "^3.3.1",
 		"classnames": "^2.3.1",
 		"commitizen": "^4.2.4",
 		"cz-conventional-changelog": "^3.3.0",
