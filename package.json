@@ -49,7 +49,7 @@
 	"dependencies": {
 		"@stripe/stripe-js": "^1.21.1",
 		"@wordpress/a11y": "^3.2.3",
-		"@wordpress/compose": "^5.0.4",
+		"@wordpress/compose": "^5.0.6",
 		"@wordpress/data": "^6.1.0",
 		"@wordpress/date": "^4.2.2",
 		"@wordpress/dom-ready": "^3.2.2",
