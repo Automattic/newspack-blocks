@@ -283,7 +283,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 			$attributes['hideControls'] ? 'aria-hidden="true"' : ''
 		);
 		$carousel    = sprintf(
-			'<div class="swiper-container"><div class="swiper-wrapper">%s</div>%s</div>',
+			'<div class="swiper"><div class="swiper-wrapper">%s</div>%s</div>',
 			$slides,
 			$navigation
 		);
