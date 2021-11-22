@@ -74,6 +74,10 @@
 
 		&__row {
 			margin-bottom: 0.4rem;
+			&--small {
+				line-height: 1em;
+				margin-bottom: 0;
+			}
 			&--flex {
 				display: flex;
 				align-items: flex-start;
@@ -93,6 +97,14 @@
 					}
 				}
 			}
+		}
+
+		&__info {
+			padding-left: 18px;
+			font-size: 0.6em;
+			font-style: italic;
+			line-height: 1.4em;
+			opacity: 0.8;
 		}
 
 		&__footer {

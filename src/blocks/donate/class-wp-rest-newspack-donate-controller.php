@@ -71,6 +71,9 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 						'newsletter_opt_in' => [
 							'sanitize_callback' => 'rest_sanitize_boolean',
 						],
+						'agree_to_pay_fees' => [
+							'sanitize_callback' => 'rest_sanitize_boolean',
+						],
 					],
 					'permission_callback' => '__return_true',
 				],
