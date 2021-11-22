@@ -30,6 +30,15 @@ jobs:
           name: Run JS linter
           command: npm run lint
 
+  test-js:
+    docker:
+      - image: circleci/node:16
+    steps:
+      - checkout_code
+      - run:
+          name: Run JS Tests
+          command: npm run test
+
   php-lint:
     docker:
       - image: cimg/php:7.4
@@ -54,7 +63,7 @@ jobs:
           name: Release new version
           command: npm run release
 
-    # Reset alpha branch after a release
+  # Reset alpha branch after a release
   post_release:
     docker:
       - image: circleci/node:16
@@ -74,6 +83,9 @@ workflows:
     jobs:
       - build
       - lint:
+          requires:
+            - build
+      - test-js:
           requires:
             - build
       - php-lint:

@@ -14,3 +14,4 @@ node_modules/
 /vendor/
 dist/
 release/
+coverage
