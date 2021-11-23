@@ -31,6 +31,104 @@ import { addQueryArgs } from '@wordpress/url';
 import { AutocompleteWithSuggestions } from 'newspack-components';
 import classnames from 'classnames';
 
+// Available units for avatarBorderRadius option.
+export const units = [
+	{
+		value: '%',
+		label: '%',
+	},
+	{
+		value: 'px',
+		label: 'px',
+	},
+	{
+		value: 'em',
+		label: 'em',
+	},
+	{
+		value: 'rem',
+		label: 'rem',
+	},
+];
+
+// Textsize options.
+export const textSizeOptions = [
+	{
+		value: 'small',
+		label: /* translators: label for small text size option */ __( 'Small', 'newspack-blocks' ),
+		shortName: /* translators: abbreviation for small text size option */ __(
+			'S',
+			'newspack-blocks'
+		),
+	},
+	{
+		value: 'medium',
+		label: /* translators: label for medium text size option */ __( 'Medium', 'newspack-blocks' ),
+		shortName: /* translators: abbreviation for medium text size option */ __(
+			'M',
+			'newspack-blocks'
+		),
+	},
+	{
+		value: 'large',
+		label: /* translators: label for small text size option */ __( 'Large', 'newspack-blocks' ),
+		shortName: /* translators: abbreviation for large text size option */ __(
+			'L',
+			'newspack-blocks'
+		),
+	},
+	{
+		value: 'extra-large',
+		label: /* translators: label for extra-large text size option */ __(
+			'Extra Large',
+			'newspack-blocks'
+		),
+		shortName: /* translators: abbreviation for small text size option */ __(
+			'XL',
+			'newspack-blocks'
+		),
+	},
+];
+
+// Avatar size options.
+export const avatarSizeOptions = [
+	{
+		value: 72,
+		label: /* translators: label for small avatar size option */ __( 'Small', 'newspack-blocks' ),
+		shortName: /* translators: abbreviation for small avatar size option */ __(
+			'S',
+			'newspack-blocks'
+		),
+	},
+	{
+		value: 128,
+		label: /* translators: label for medium avatar size option */ __( 'Medium', 'newspack-blocks' ),
+		shortName: /* translators: abbreviation for medium avatar size option */ __(
+			'M',
+			'newspack-blocks'
+		),
+	},
+	{
+		value: 192,
+		label: /* translators: label for large avatar size option */ __( 'Large', 'newspack-blocks' ),
+		shortName: /* translators: abbreviation for large avatar size option */ __(
+			'L',
+			'newspack-blocks'
+		),
+	},
+	{
+		value: 256,
+		label: /* translators: label for extra-large avatar size option */ __(
+			'Extra-large',
+			'newspack-blocks'
+		),
+		shortName: /* translators: abbreviation for extra-large avatar size option  */ __(
+			'XL',
+			'newspack-blocks'
+		),
+	},
+];
+
 export default ( { attributes, setAttributes } ) => {
 	const [ author, setAuthor ] = useState( null );
 	const [ error, setError ] = useState( null );
@@ -42,6 +140,7 @@ export default ( { attributes, setAttributes } ) => {
 		showSocial,
 		showEmail,
 		showArchiveLink,
+		textSize,
 		showAvatar,
 		avatarAlignment,
 		avatarBorderRadius,
@@ -107,72 +206,37 @@ export default ( { attributes, setAttributes } ) => {
 			<>{ children }</>
 		);
 
-	// Available units for avatarBorderRadius option.
-	const units = [
-		{
-			value: '%',
-			label: '%',
-		},
-		{
-			value: 'px',
-			label: 'px',
-		},
-		{
-			value: 'em',
-			label: 'em',
-		},
-		{
-			value: 'rem',
-			label: 'rem',
-		},
-	];
-
-	// Avatar size options.
-	const avatarSizeOptions = [
-		{
-			value: 72,
-			label: /* translators: label for small avatar size option */ __( 'Small', 'newspack-blocks' ),
-			shortName: /* translators: abbreviation for small avatar size option */ __(
-				'S',
-				'newspack-blocks'
-			),
-		},
-		{
-			value: 128,
-			label: /* translators: label for medium avatar size option */ __(
-				'Medium',
-				'newspack-blocks'
-			),
-			shortName: /* translators: abbreviation for medium avatar size option */ __(
-				'M',
-				'newspack-blocks'
-			),
-		},
-		{
-			value: 192,
-			label: /* translators: label for large avatar size option */ __( 'Large', 'newspack-blocks' ),
-			shortName: /* translators: abbreviation for large avatar size option */ __(
-				'L',
-				'newspack-blocks'
-			),
-		},
-		{
-			value: 256,
-			label: /* translators: label for extra-large avatar size option */ __(
-				'Extra-large',
-				'newspack-blocks'
-			),
-			shortName: /* translators: abbreviation for extra-large avatar size option  */ __(
-				'XL',
-				'newspack-blocks'
-			),
-		},
-	];
-
 	return (
 		<>
 			<InspectorControls>
 				<PanelBody title={ __( 'Author Profile Settings', 'newspack-blocks' ) }>
+					<BaseControl
+						label={ __( 'Text Size', 'newspack-blocks' ) }
+						id="newspack-blocks__text-size-control"
+					>
+						<PanelRow>
+							<ButtonGroup
+								id="newspack-blocks__text-size-control-buttons"
+								aria-label={ __( 'Text Size', 'newspack-blocks' ) }
+							>
+								{ textSizeOptions.map( option => {
+									const isCurrent = textSize === option.value;
+									return (
+										<Button
+											isLarge
+											isPrimary={ isCurrent }
+											aria-pressed={ isCurrent }
+											aria-label={ option.label }
+											key={ option.value }
+											onClick={ () => setAttributes( { textSize: option.value } ) }
+										>
+											{ option.shortName }
+										</Button>
+									);
+								} ) }
+							</ButtonGroup>
+						</PanelRow>
+					</BaseControl>
 					<PanelRow>
 						<ToggleControl
 							label={ __( 'Display biographical info', 'newspack-blocks' ) }
@@ -293,7 +357,8 @@ export default ( { attributes, setAttributes } ) => {
 				className={ classnames(
 					'wp-block-newspack-blocks-author-profile',
 					'avatar-' + avatarAlignment,
-					attributes.className
+					attributes.className,
+					'text-size-' + textSize
 				) }
 			>
 				{ ! isLoading && ! error && author && (
@@ -301,7 +366,11 @@ export default ( { attributes, setAttributes } ) => {
 						{ showAvatar && author.avatar && (
 							<div className="wp-block-newspack-blocks-author-profile__avatar">
 								<figure
-									style={ { borderRadius: avatarBorderRadius, width: `${ avatarSize }px` } }
+									style={ {
+										borderRadius: avatarBorderRadius,
+										height: `${ avatarSize }px`,
+										width: `${ avatarSize }px`,
+									} }
 									dangerouslySetInnerHTML={ { __html: author.avatar } }
 								/>
 							</div>
@@ -362,7 +431,7 @@ export default ( { attributes, setAttributes } ) => {
 								label={ __( 'Search for an author to display', 'newspack-blocks' ) }
 								help={ __(
 									'Begin typing name, click autocomplete result to select.',
-									'newspack=blocks'
+									'newspack-blocks'
 								) }
 								fetchSuggestions={ async ( search = null, offset = 0 ) => {
 									// If we already have a selected author, no need to fetch suggestions.

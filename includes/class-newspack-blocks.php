@@ -134,6 +134,7 @@ class Newspack_Blocks {
 					'post_subtitle'                  => get_theme_support( 'post-subtitle' ),
 					'is_rendering_streamlined_block' => self::is_rendering_streamlined_block(),
 					'streamlined_block_stripe_badge' => self::streamlined_block_stripe_badge(),
+					'can_use_cap'                    => class_exists( 'CoAuthors_Guest_Authors' ),
 				]
 			);
 
