@@ -258,15 +258,17 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 			$attributes['hideControls'] ? 'aria-hidden="true"' : '',
 			implode( '', $buttons )
 		);
+
 		$carousel    = sprintf(
-			'<amp-base-carousel class="wp-block-newspack-carousel__amp-carousel" width="%1$s" height="%2$s" layout="responsive" snap="true" type="slides" data-next-button-aria-label="%3$s" data-prev-button-aria-label="%4$s" controls loop %5$s id="wp-block-newspack-carousel__amp-carousel__%6$s" on="slideChange:wp-block-newspack-carousel__amp-pagination__%6$s.toggle(index=event.index, value=true)" advance-count="1" visible-count="%7$s">%8$s</amp-base-carousel>',
+			'<amp-base-carousel class="wp-block-newspack-carousel__amp-carousel" width="%1$s" height="%2$s" heights="%3$s" layout="responsive" snap="true" type="slides" data-next-button-aria-label="%4$s" data-prev-button-aria-label="%5$s" controls loop %6$s id="wp-block-newspack-carousel__amp-carousel__%7$s" on="slideChange:wp-block-newspack-carousel__amp-pagination__%7$s.toggle(index=event.index, value=true)" advance-count="1" visible-count="%8$s">%9$s</amp-base-carousel>',
 			$attributes['slidesPerView'] * 1,
 			$attributes['aspectRatio'],
+			'(min-width: 1168px) ' . ( $attributes['aspectRatio'] / $slides_to_show * 100 ) . '% !important, (min-width: 782px) ' . ( $slides_to_show > 1 ? ( $attributes['aspectRatio'] / 2 * 100 ) . '% !important' : ( $attributes['aspectRatio'] * 100 ) . '% !important' ) . ', ' . ( $attributes['aspectRatio'] * 100 ) . '% !important',
 			esc_attr__( 'Next Slide', 'newspack-blocks' ),
 			esc_attr__( 'Previous Slide', 'newspack-blocks' ),
 			$autoplay ? 'auto-advance="true" auto-advance-interval=' . esc_attr( $delay * 1000 ) : '',
 			absint( $newspack_blocks_carousel_id ),
-			'(min-width: 600px) ' . $slides_to_show . ', ' . ( $slides_to_show > 1 ? 2 : 1 ),
+			'(min-width: 1168px) ' . $slides_to_show . ', (min-width: 782px) ' . ( $slides_to_show > 1 ? 2 : 1 ) . ', ' . 1,
 			$slides
 		);
 		$autoplay_ui = $autoplay ? newspack_blocks_carousel_block_autoplay_ui_amp( $newspack_blocks_carousel_id ) : '';

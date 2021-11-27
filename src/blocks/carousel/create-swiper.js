@@ -115,9 +115,12 @@ export default function createSwiper( els, config = {} ) {
 		touchStartPreventDefault: false,
 		breakpoints: {
 			320: {
+				slidesPerView: 1,
+			},
+			782: {
 				slidesPerView: config.slidesPerView > 1 ? 2 : 1,
 			},
-			600: {
+			1168: {
 				slidesPerView: config.slidesPerView,
 			},
 		},

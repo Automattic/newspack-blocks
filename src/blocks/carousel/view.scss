@@ -305,4 +305,29 @@
 			visibility: hidden;
 		}
 	}
+
+	&[data-slides-per-view='2'] article {
+		.entry-title {
+			@include media( tablet ) {
+				font-size: 1.4em;
+			}
+		}
+	}
+
+	&[data-slides-per-view='3'] article,
+	&[data-slides-per-view='4'] article {
+		.entry-title {
+			@include media( tablet ) {
+				font-size: 1.2em;
+			}
+			@include media( desktop ) {
+				font-size: 1em;
+			}
+		}
+		.entry-meta {
+			@include media( tablet ) {
+				font-size: 0.7em;
+			}
+		}
+	}
 }
