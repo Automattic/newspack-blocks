@@ -252,14 +252,14 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 	$slides_to_show  = $slides_per_view <= $counter ? $slides_per_view : $counter;
 
 	if ( $is_amp ) {
-		$selector    = sprintf(
+		$selector = sprintf(
 			'<amp-selector id="wp-block-newspack-carousel__amp-pagination__%1$d" class="swiper-pagination-bullets amp-pagination" on="select:wp-block-newspack-carousel__amp-carousel__%1$d.goToSlide(index=event.targetOption)" layout="container" %2$s>%3$s</amp-selector>',
 			absint( $newspack_blocks_carousel_id ),
 			$attributes['hideControls'] ? 'aria-hidden="true"' : '',
 			implode( '', $buttons )
 		);
 
-		$carousel    = sprintf(
+		$carousel = sprintf(
 			'<amp-base-carousel class="wp-block-newspack-carousel__amp-carousel" width="%1$s" height="%2$s" heights="%3$s" layout="responsive" snap="true" type="slides" data-next-button-aria-label="%4$s" data-prev-button-aria-label="%5$s" controls loop %6$s id="wp-block-newspack-carousel__amp-carousel__%7$s" on="slideChange:wp-block-newspack-carousel__amp-pagination__%7$s.toggle(index=event.index, value=true)" advance-count="1" visible-count="%8$s">%9$s</amp-base-carousel>',
 			$attributes['slidesPerView'] * 1,
 			$attributes['aspectRatio'],
@@ -273,7 +273,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 		);
 		$autoplay_ui = $autoplay ? newspack_blocks_carousel_block_autoplay_ui_amp( $newspack_blocks_carousel_id ) : '';
 	} else {
-		$selector    = sprintf(
+		$selector = sprintf(
 			'<div class="swiper-pagination-bullets amp-pagination" %1$s>%2$s</div>',
 			$attributes['hideControls'] ? 'aria-hidden="true"' : '',
 			implode( '', $buttons )
@@ -284,7 +284,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 			esc_attr__( 'Next Slide', 'newspack-blocks' ),
 			$attributes['hideControls'] ? 'aria-hidden="true"' : ''
 		);
-		$carousel    = sprintf(
+		$carousel = sprintf(
 			'<div class="swiper"><div class="swiper-wrapper">%s</div>%s</div>',
 			$slides,
 			$navigation
