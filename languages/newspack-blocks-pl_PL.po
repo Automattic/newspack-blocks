@@ -1,0 +1,398 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Newspack Blocks\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2021-11-28 09:20+0100\n"
+"PO-Revision-Date: 2021-11-28 09:52+0100\n"
+"Language: pl_PL\n"
+"X-Generator: Poedit 3.0\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: newspack-blocks.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.min.js\n"
+"X-Poedit-SearchPathExcluded-1: vendor\n"
+"X-Poedit-SearchPathExcluded-2: node_modules\n"
+
+#: includes/class-newspack-blocks-patterns.php:139
+msgid "Newspack Donations"
+msgstr "Darowizny Newspack"
+
+#: includes/class-newspack-blocks-patterns.php:143
+msgid "Newspack Homepage Posts"
+msgstr "Posty na Stronie Głównej Newspack"
+
+#: includes/class-newspack-blocks-patterns.php:147
+msgid "Newspack Subscribe"
+msgstr "Subskrybuj Newspack"
+
+#: includes/class-newspack-blocks.php:638
+msgid "Common"
+msgstr "Wspólne"
+
+#. translators: separates last two sponsor names; needs a space on either side.
+#: includes/class-newspack-blocks.php:725
+msgid " and "
+msgstr " i "
+
+#. translators: separates all but the last two sponsor names; needs a space at the end.
+#: includes/class-newspack-blocks.php:728
+msgid ", "
+msgstr ", "
+
+#: includes/class-newspack-blocks.php:1067
+msgid "Jetpack donations is disabled in favour of Newspack donations."
+msgstr "Darowizny Jetpack są wyłączone na rzecz darowizn Newspack."
+
+#: src/block-patterns/donations-1.php:9
+msgid "Donations Pattern 1"
+msgstr "Darowizny Wzorzec 1"
+
+#: src/block-patterns/donations-1.php:10
+#: src/block-patterns/donations-2.php:10
+#: src/block-patterns/donations-3.php:10
+#: src/block-patterns/donations-4.php:10
+msgid "Support our publication"
+msgstr "Wesprzyj naszą publikację"
+
+#: src/block-patterns/donations-2.php:9
+msgid "Donations Pattern 2"
+msgstr "Darowizny Wzorzec 2"
+
+#: src/block-patterns/donations-2.php:10
+msgid "With the support of readers like you, we provide thoughtfully researched articles for a more informed and connected community. This is your chance to support credible, community-based, public-service journalism. Please join us!"
+msgstr "Przy wsparciu czytelników takich jak Ty, zapewniamy starannie przygotowane artykuły dla bardziej świadomej i połączonej społeczności. To Twoja szansa na wspieranie wiarygodnego, opartego na społeczności dziennikarstwa publicznego. Dołącz do nas!"
+
+#: src/block-patterns/donations-3.php:9
+msgid "Donations Pattern 3"
+msgstr "Darowizny Wzorzec 3"
+
+#: src/block-patterns/donations-4.php:9
+msgid "Donations Pattern 4"
+msgstr "Darowizny Wzorzec 4"
+
+#: src/block-patterns/homepage-posts-1.php:9
+msgid "Homepage Posts Pattern 1"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 1"
+
+#: src/block-patterns/homepage-posts-10.php:9
+msgid "Homepage Posts Pattern 10"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 10"
+
+#: src/block-patterns/homepage-posts-11.php:9
+msgid "Homepage Posts Pattern 11"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 11"
+
+#: src/block-patterns/homepage-posts-12.php:9
+msgid "Homepage Posts Pattern 12"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 12"
+
+#: src/block-patterns/homepage-posts-13.php:9
+msgid "Homepage Posts Pattern 13"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 13"
+
+#: src/block-patterns/homepage-posts-14.php:9
+msgid "Homepage Posts Pattern 14"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 14"
+
+#: src/block-patterns/homepage-posts-15.php:9
+msgid "Homepage Posts Pattern 15"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 15"
+
+#: src/block-patterns/homepage-posts-16.php:9
+msgid "Homepage Posts Pattern 16"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 16"
+
+#: src/block-patterns/homepage-posts-17.php:9
+msgid "Homepage Posts Pattern 17"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 17"
+
+#: src/block-patterns/homepage-posts-18.php:9
+msgid "Homepage Posts Pattern 18"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 18"
+
+#: src/block-patterns/homepage-posts-19.php:9
+msgid "Homepage Posts Pattern 19"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 19"
+
+#: src/block-patterns/homepage-posts-2.php:9
+msgid "Homepage Posts Pattern 2"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 2"
+
+#: src/block-patterns/homepage-posts-20.php:9
+msgid "Homepage Posts Pattern 20"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 20"
+
+#: src/block-patterns/homepage-posts-21.php:9
+msgid "Homepage Posts Pattern 21"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 21"
+
+#: src/block-patterns/homepage-posts-22.php:9
+msgid "Homepage Posts Pattern 22"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 22"
+
+#: src/block-patterns/homepage-posts-23.php:9
+msgid "Homepage Posts Pattern 23"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 23"
+
+#: src/block-patterns/homepage-posts-24.php:9
+msgid "Homepage Posts Pattern 24"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 24"
+
+#: src/block-patterns/homepage-posts-25.php:9
+msgid "Homepage Posts Pattern 25"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 25"
+
+#: src/block-patterns/homepage-posts-26.php:9
+msgid "Homepage Posts Pattern 26"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 26"
+
+#: src/block-patterns/homepage-posts-27.php:9
+msgid "Homepage Posts Pattern 27"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 27"
+
+#: src/block-patterns/homepage-posts-28.php:9
+msgid "Homepage Posts Pattern 28"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 28"
+
+#: src/block-patterns/homepage-posts-29.php:9
+msgid "Homepage Posts Pattern 29"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 29"
+
+#: src/block-patterns/homepage-posts-3.php:9
+msgid "Homepage Posts Pattern 3"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 3"
+
+#: src/block-patterns/homepage-posts-30.php:9
+msgid "Homepage Posts Pattern 30"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 30"
+
+#: src/block-patterns/homepage-posts-4.php:9
+msgid "Homepage Posts Pattern 4"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 4"
+
+#: src/block-patterns/homepage-posts-5.php:9
+msgid "Homepage Posts Pattern 5"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 5"
+
+#: src/block-patterns/homepage-posts-6.php:9
+msgid "Homepage Posts Pattern 6"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 6"
+
+#: src/block-patterns/homepage-posts-7.php:9
+msgid "Homepage Posts Pattern 7"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 7"
+
+#: src/block-patterns/homepage-posts-8.php:9
+msgid "Homepage Posts Pattern 8"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 8"
+
+#: src/block-patterns/homepage-posts-9.php:9
+msgid "Homepage Posts Pattern 9"
+msgstr "Posty na Stronie Głównej Newspack Wzorzec 9"
+
+#: src/block-patterns/subscribe-1.php:9
+msgid "Subscribe Pattern 1"
+msgstr "Subskrybuj wzorzec 1"
+
+#: src/block-patterns/subscribe-1.php:10
+#: src/block-patterns/subscribe-2.php:10
+#: src/block-patterns/subscribe-3.php:10
+#: src/block-patterns/subscribe-4.php:10
+#: src/block-patterns/subscribe-5.php:10
+#: src/block-patterns/subscribe-6.php:10
+msgid "Subscribe to our newsletter"
+msgstr "Zapisz się do naszego newslettera"
+
+#: src/block-patterns/subscribe-1.php:10
+#: src/block-patterns/subscribe-2.php:10
+#: src/block-patterns/subscribe-3.php:10
+#: src/block-patterns/subscribe-4.php:10
+#: src/block-patterns/subscribe-5.php:10
+#: src/block-patterns/subscribe-6.php:10
+msgid "By subscribing, you agree to share your email address with us and Mailchimp to receive marketing, updates, and other emails from us. Use the unsubscribe link in those emails to opt out at any time."
+msgstr "Subskrybując, zgadzasz się udostępnić swój adres e-mail nam oraz firmie Mailchimp, aby otrzymywać od nas wiadomości marketingowe, aktualizacje, i inne wiadomości e-mail. Użyj linku rezygnacji z subskrypcji w tych wiadomościach e-mail, aby zrezygnować w dowolnym momencie."
+
+#: src/block-patterns/subscribe-1.php:10
+#: src/block-patterns/subscribe-2.php:10
+#: src/block-patterns/subscribe-3.php:10
+#: src/block-patterns/subscribe-4.php:10
+#: src/block-patterns/subscribe-5.php:10
+#: src/block-patterns/subscribe-6.php:10
+msgid "Subscribe"
+msgstr "Subskrybuj"
+
+#: src/block-patterns/subscribe-2.php:9
+msgid "Subscribe Pattern 2"
+msgstr "Subskrybuj wzorzec 2"
+
+#: src/block-patterns/subscribe-3.php:9
+msgid "Subscribe Pattern 3"
+msgstr "Subskrybuj wzorzec 3"
+
+#: src/block-patterns/subscribe-4.php:9
+msgid "Subscribe Pattern 4"
+msgstr "Subskrybuj wzorzec 4"
+
+#: src/block-patterns/subscribe-5.php:9
+msgid "Subscribe Pattern 5"
+msgstr "Subskrybuj wzorzec 5"
+
+#: src/block-patterns/subscribe-6.php:9
+msgid "Subscribe Pattern 6"
+msgstr "Subskrybuj wzorzec 6"
+
+#: src/blocks/author-profile/view.php:150
+#, php-format
+msgid " <a href=\"%1$s\">More by %2$s</a>"
+msgstr " <a href=\"%1$s\">Więcej %2$s od:</a>"
+
+#. translators: %d: Slide number.
+#: src/blocks/carousel/view.php:240
+#, php-format
+msgid "Go to slide %d"
+msgstr "Przejdź do slajdu %d"
+
+#: src/blocks/carousel/view.php:265
+#: src/blocks/carousel/view.php:282
+msgid "Next Slide"
+msgstr "Następny slajd"
+
+#: src/blocks/carousel/view.php:266
+#: src/blocks/carousel/view.php:281
+msgid "Previous Slide"
+msgstr "Poprzedni slajd"
+
+#: src/blocks/carousel/view.php:326
+#: src/blocks/carousel/view.php:349
+msgid "Pause Slideshow"
+msgstr "Wstrzymaj pokazu slajdów"
+
+#: src/blocks/carousel/view.php:327
+#: src/blocks/carousel/view.php:355
+msgid "Play Slideshow"
+msgstr "Odtwórz pokaz slajdów"
+
+#: src/blocks/donate/edit.js:160
+#: src/blocks/donate/edit.js:227
+#: src/blocks/donate/edit.js:544
+#: src/blocks/donate/view.php:142
+msgid "One-time"
+msgstr "Jednorazowy"
+
+#: src/blocks/donate/edit.js:161
+#: src/blocks/donate/edit.js:228
+#: src/blocks/donate/edit.js:548
+#: src/blocks/donate/view.php:143
+msgid "Monthly"
+msgstr "Miesięcznie"
+
+#: src/blocks/donate/edit.js:162
+#: src/blocks/donate/edit.js:229
+#: src/blocks/donate/edit.js:552
+#: src/blocks/donate/view.php:144
+msgid "Annually"
+msgstr "Rocznie"
+
+#: src/blocks/donate/edit.js:192
+#: src/blocks/donate/edit.js:295
+#: src/blocks/donate/view.php:193
+#: src/blocks/donate/view.php:281
+msgid "Donation amount"
+msgstr "Kwota darowizny"
+
+#: src/blocks/donate/edit.js:289
+#: src/blocks/donate/view.php:275
+msgid "Other"
+msgstr "Inne"
+
+#: src/blocks/donate/index.js:58
+#: src/blocks/donate/view.php:343
+msgid "Your contribution is appreciated."
+msgstr "Dziękujemy za Twój wkład!"
+
+#: src/blocks/donate/index.js:62
+#: src/blocks/donate/view.php:347
+msgid "Donate now!"
+msgstr "Wpłać teraz!"
+
+#: src/blocks/donate/view.php:46
+msgid "Email"
+msgstr "Email"
+
+#: src/blocks/donate/view.php:47
+msgid "Full Name"
+msgstr "Imię i nazwisko"
+
+#: src/blocks/donate/view.php:52
+msgid "Sign up for our newsletter"
+msgstr "Subskrybuj nasz newsletter"
+
+#: src/blocks/homepage-articles/view.php:148
+msgid "Load more posts"
+msgstr "Załaduj więcej postów"
+
+#: src/blocks/homepage-articles/view.php:153
+msgid "Loading..."
+msgstr "Ładowanie..."
+
+#: src/blocks/homepage-articles/view.php:156
+msgid "Something went wrong. Please refresh the page and/or try again."
+msgstr "Coś poszło nie tak. Odśwież stronę i/lub spróbuj ponownie."
+
+#: src/blocks/homepage-articles/view.php:227
+#: src/shared/js/utils.js:18
+msgctxt "post author"
+msgid "by"
+msgstr "–"
+
+#: src/blocks/homepage-articles/view.php:250
+#: src/shared/js/utils.js:30
+#: src/shared/js/utils.js:67
+msgctxt "post author"
+msgid " and "
+msgstr " i "
+
+#: src/blocks/iframe/class-wp-rest-newspack-iframe-controller.php:94
+msgid "Could not find the iframe archive on your request."
+msgstr "Nie można znaleźć archiwum iframe."
+
+#: src/blocks/iframe/class-wp-rest-newspack-iframe-controller.php:123
+#: src/blocks/iframe/class-wp-rest-newspack-iframe-controller.php:130
+msgid "Please choose a valid (.zip) assets archive."
+msgstr "Wybierz prawidłowe (.zip) archiwum zasobów."
+
+#. translators: %s: iframe entry file (e.g. index,html)
+#: src/blocks/iframe/class-wp-rest-newspack-iframe-controller.php:204
+#, php-format
+msgid "%s was not found in the iframe archive."
+msgstr "%s nie znaleziono w archiwum iframe."
+
+#: src/blocks/iframe/class-wp-rest-newspack-iframe-controller.php:212
+msgid "Could not unzip the iframe archive, make sure it's a valid .zip archive file."
+msgstr "Nie można rozpakować archiwum iframe, upewnij się, że jest to prawidłowy plik archiwum .zip."
+
+#. Plugin Name of the plugin/theme
+msgid "Newspack Blocks"
+msgstr "Bloki Newspack"
+
+#. Plugin URI of the plugin/theme
+#. Author URI of the plugin/theme
+msgid "https://newspack.blog/"
+msgstr "https://newspack.blog/"
+
+#. Description of the plugin/theme
+msgid "A collection of blocks for news publishers."
+msgstr "Zbiór bloków dla wydawców wiadomości."
+
+#. Author of the plugin/theme
+msgid "Automattic"
+msgstr "Automatycznie"
