@@ -314,8 +314,8 @@
 		}
 	}
 
-	&[data-slides-per-view='3'] article,
-	&[data-slides-per-view='4'] article {
+	&.slides-per-view-3 article,
+	&.slides-per-view-4 article {
 		.entry-title {
 			@include media( tablet ) {
 				font-size: 1.2em;

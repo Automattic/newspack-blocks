@@ -29,6 +29,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 	if ( $autoplay ) {
 		$other[] = 'wp-block-newspack-blocks-carousel__autoplay-playing';
 	}
+	$other[] = 'slides-per-view-' . $attributes['slidesPerView'];
 	$classes = Newspack_Blocks::block_classes( 'carousel', $attributes, $other );
 
 	$article_query = new WP_Query( Newspack_Blocks::build_articles_query( $attributes, apply_filters( 'newspack_blocks_block_name', 'newspack-blocks/carousel' ) ) );
