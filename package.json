@@ -53,7 +53,7 @@
 		"@wordpress/data": "^6.1.0",
 		"@wordpress/date": "^4.2.2",
 		"@wordpress/dom-ready": "^3.2.2",
-		"@wordpress/edit-post": "^5.0.4",
+		"@wordpress/edit-post": "^5.0.12",
 		"@wordpress/escape-html": "^2.2.2",
 		"@wordpress/hooks": "^3.2.1",
 		"@wordpress/html-entities": "^3.2.2",
