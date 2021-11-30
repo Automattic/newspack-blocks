@@ -6,6 +6,7 @@
 	.stripe-payment {
 		&__card {
 			border: 1px solid $color__border;
+			border-radius: 3px;
 			padding: 0.34rem 0.66rem;
 		}
 		input[type='text'],
@@ -21,6 +22,7 @@
 		}
 		input[type='text'],
 		input[type='email'] {
+			border-radius: 3px;
 			font-family: sans-serif;
 
 			@include media( tablet ) {
@@ -36,8 +38,13 @@
 		}
 
 		&__checkbox {
+			align-items: center;
+			display: flex;
+
 			input {
-				margin-right: 5px;
+				height: 1em;
+				width: 1em;
+				margin-right: 0.5em;
 			}
 		}
 
@@ -73,26 +80,26 @@
 		}
 
 		&__row {
-			margin-bottom: 0.4rem;
+			margin-bottom: 0.5rem;
 			&--small {
 				line-height: 1em;
 				margin-bottom: 0;
 			}
 			&--flex {
 				display: flex;
-				align-items: flex-start;
+				align-items: flex-end;
 				justify-content: space-between;
 				flex-wrap: wrap;
 				@include media( tablet ) {
 					flex-wrap: nowrap;
 				}
 				input {
-					margin-bottom: 0.4rem;
+					margin-bottom: 0.5rem;
 					@include media( tablet ) {
 						margin-bottom: 0;
 						width: 50%;
 						&:last-child {
-							margin-left: 0.76rem;
+							margin-left: 0.5rem;
 						}
 					}
 				}
@@ -100,16 +107,15 @@
 		}
 
 		&__info {
-			padding-left: 18px;
-			font-size: 0.6em;
+			color: $color__text-light;
+			font-size: 0.7em;
 			font-style: italic;
-			line-height: 1.4em;
-			opacity: 0.8;
+			padding-left: 1.5em;
 		}
 
 		&__footer {
-			margin-top: 1.2em;
-			margin-bottom: 1.32rem;
+			margin-top: 1.5rem;
+			margin-bottom: 1.5rem;
 		}
 		button[type='submit'] {
 			margin: 0 10px 0 0 !important;
@@ -117,6 +123,10 @@
 		&__branding {
 			display: block;
 			text-decoration: none;
+
+			img {
+				display: block;
+			}
 		}
 	}
 
