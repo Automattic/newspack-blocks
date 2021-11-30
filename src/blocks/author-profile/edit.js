@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-
 /**
  * WordPress dependencies
  */
@@ -26,10 +24,14 @@ import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 
 /**
+ * Internal dependencies
+ */
+import { SingleAuthor } from './single-author';
+
+/**
  * External dependencies
  */
 import { AutocompleteWithSuggestions } from 'newspack-components';
-import classnames from 'classnames';
 
 // Available units for avatarBorderRadius option.
 export const units = [
@@ -196,16 +198,6 @@ export default ( { attributes, setAttributes } ) => {
 		delete socialLinks.email;
 	}
 
-	// Show a link to the author's post archive page, if available.
-	const MaybeLink = ( { children } ) =>
-		showArchiveLink && author && author.url ? (
-			<a href="#" className="no-op">
-				{ children }
-			</a>
-		) : (
-			<>{ children }</>
-		);
-
 	return (
 		<>
 			<InspectorControls>
@@ -353,124 +345,68 @@ export default ( { attributes, setAttributes } ) => {
 					/>
 				</BlockControls>
 			) }
-			<div
-				className={ classnames(
-					'wp-block-newspack-blocks-author-profile',
-					'avatar-' + avatarAlignment,
-					attributes.className,
-					'text-size-' + textSize
-				) }
-			>
-				{ ! isLoading && ! error && author && (
-					<>
-						{ showAvatar && author.avatar && (
-							<div className="wp-block-newspack-blocks-author-profile__avatar">
-								<figure
-									style={ {
-										borderRadius: avatarBorderRadius,
-										height: `${ avatarSize }px`,
-										width: `${ avatarSize }px`,
-									} }
-									dangerouslySetInnerHTML={ { __html: author.avatar } }
-								/>
-							</div>
-						) }
-						<div className="wp-block-newspack-blocks-author-profile__bio">
-							<h3>
-								<MaybeLink>{ author.name }</MaybeLink>
-							</h3>
-							{ showBio && author.bio && (
-								<p>
-									{ author.bio }{ ' ' }
-									{ showArchiveLink && (
-										<a href="#" className="no-op">
-											{ __( 'More by', 'newspack-blocks' ) + ' ' + author.name }
-										</a>
-									) }
-								</p>
-							) }
-							{ ( showEmail || showSocial ) && (
-								<ul className="wp-block-newspack-blocks-author-profile__social-links">
-									{ Object.keys( socialLinks ).map( service => (
-										<li key={ service }>
-											<a href="#" className="no-op">
-												{ socialLinks[ service ].svg && (
-													<span
-														dangerouslySetInnerHTML={ { __html: socialLinks[ service ].svg } }
-													/>
-												) }
-												<span className={ socialLinks[ service ].svg ? 'hidden' : 'visible' }>
-													{ service }
-												</span>
-											</a>
-										</li>
-									) ) }
-								</ul>
-							) }
+			{ author ? (
+				<SingleAuthor author={ author } attributes={ attributes } />
+			) : (
+				<Placeholder
+					icon={ <Icon icon={ postAuthor } /> }
+					label={ __( 'Author Profile', 'newspack-blocks' ) }
+				>
+					{ error && (
+						<Notice status="error" isDismissible={ false }>
+							{ error }
+						</Notice>
+					) }
+					{ isLoading && (
+						<div className="is-loading">
+							{ __( 'Fetching author info…', 'newspack-blocks' ) }
+							<Spinner />
 						</div>
-					</>
-				) }
-				{ ! author && (
-					<Placeholder
-						icon={ <Icon icon={ postAuthor } /> }
-						label={ __( 'Author Profile', 'newspack-blocks' ) }
-					>
-						{ error && (
-							<Notice status="error" isDismissible={ false }>
-								{ error }
-							</Notice>
-						) }
-						{ isLoading && (
-							<div className="is-loading">
-								{ __( 'Fetching author info…', 'newspack-blocks' ) }
-								<Spinner />
-							</div>
-						) }
-						{ ! isLoading && (
-							<AutocompleteWithSuggestions
-								label={ __( 'Search for an author to display', 'newspack-blocks' ) }
-								help={ __(
-									'Begin typing name, click autocomplete result to select.',
-									'newspack-blocks'
-								) }
-								fetchSuggestions={ async ( search = null, offset = 0 ) => {
-									// If we already have a selected author, no need to fetch suggestions.
-									if ( authorId ) {
-										return [];
-									}
+					) }
+					{ ! isLoading && (
+						<AutocompleteWithSuggestions
+							label={ __( 'Search for an author to display', 'newspack-blocks' ) }
+							help={ __(
+								'Begin typing name, click autocomplete result to select.',
+								'newspack-blocks'
+							) }
+							fetchSuggestions={ async ( search = null, offset = 0 ) => {
+								// If we already have a selected author, no need to fetch suggestions.
+								if ( authorId ) {
+									return [];
+								}
 
-									const response = await apiFetch( {
-										parse: false,
-										path: addQueryArgs( '/newspack-blocks/v1/authors', {
-											search,
-											offset,
-											fields: 'id,name',
-										} ),
-									} );
+								const response = await apiFetch( {
+									parse: false,
+									path: addQueryArgs( '/newspack-blocks/v1/authors', {
+										search,
+										offset,
+										fields: 'id,name',
+									} ),
+								} );
 
-									const total = parseInt( response.headers.get( 'x-wp-total' ) || 0 );
-									const authors = await response.json();
+								const total = parseInt( response.headers.get( 'x-wp-total' ) || 0 );
+								const authors = await response.json();
 
-									// Set max items for "load more" functionality in suggestions list.
-									if ( ! maxItemsToSuggest && ! search ) {
-										setMaxItemsToSuggest( total );
-									}
+								// Set max items for "load more" functionality in suggestions list.
+								if ( ! maxItemsToSuggest && ! search ) {
+									setMaxItemsToSuggest( total );
+								}
 
-									return authors.map( _author => ( {
-										value: _author.id,
-										label: decodeEntities( _author.name ) || __( '(no name)', 'newspack' ),
-									} ) );
-								} }
-								maxItemsToSuggest={ maxItemsToSuggest }
-								onChange={ items => setAttributes( { authorId: parseInt( items[ 0 ].value ) } ) }
-								postTypeLabel={ __( 'author', 'newspack-blocks' ) }
-								postTypeLabelPlural={ __( 'authors', 'newspack-blocks' ) }
-								selectedItems={ [] }
-							/>
-						) }
-					</Placeholder>
-				) }
-			</div>
+								return authors.map( _author => ( {
+									value: _author.id,
+									label: decodeEntities( _author.name ) || __( '(no name)', 'newspack' ),
+								} ) );
+							} }
+							maxItemsToSuggest={ maxItemsToSuggest }
+							onChange={ items => setAttributes( { authorId: parseInt( items[ 0 ].value ) } ) }
+							postTypeLabel={ __( 'author', 'newspack-blocks' ) }
+							postTypeLabelPlural={ __( 'authors', 'newspack-blocks' ) }
+							selectedItems={ [] }
+						/>
+					) }
+				</Placeholder>
+			) }
 		</>
 	);
 };

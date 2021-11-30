@@ -9,7 +9,7 @@
 /**
  * Class WP_REST_Newspack_Authors_Controller.
  */
-class WP_REST_Newspack_author_list_Controller extends WP_REST_Newspack_Authors_Controller {
+class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_Controller {
 // phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
 
 	/**
@@ -60,13 +60,34 @@ class WP_REST_Newspack_author_list_Controller extends WP_REST_Newspack_Authors_C
 	}
 
 	/**
+	 * Get a list of user roles on this site that have the edit_posts capability.
+	 *
+	 * @return array List of roles with edit_posts capability.
+	 */
+	public function get_editable_roles() {
+		global $wp_roles;
+
+		return array_reduce(
+			$wp_roles->roles,
+			function( $acc, $role ) {
+				if ( isset( $role['capabilities'] ) && isset( $role['capabilities']['edit_posts'] ) && $role['capabilities']['edit_posts'] ) {
+					$acc[] = $role['name'];
+				}
+				return $acc;
+			},
+			[]
+		);
+	}
+
+	/**
 	 * Returns a list of combined authors and guest authors.
 	 *
 	 * @param WP_REST_Request $request Request object.
 	 * @return WP_REST_Response
 	 */
 	public function get_all_authors( $request ) {
-		$author_type = ! empty( $request->get_param( 'authorType' ) ) ? $request->get_param( 'authorType' ) : 'all';
+		$author_type  = ! empty( $request->get_param( 'authorType' ) ) ? $request->get_param( 'authorType' ) : 'all';
+		$author_roles = ! empty( $request->get_param( 'authorRoles' ) ) ? $request->get_param( 'authorRoles' ) : $this->get_editable_roles();
 		$exclude     = ! empty( $request->get_param( 'exclude' ) ) && is_array( $request->get_param( 'exclude' ) ) ? $request->get_param( 'exclude' ) : []; // Fetch a specific user or guest author by ID.
 		$fields      = ! empty( $request->get_param( 'fields' ) ) ? explode( ',', $request->get_param( 'fields' ) ) : [ 'id' ]; // Fields to get. Will return at least id.
 		$per_page    = 10;
@@ -115,7 +136,7 @@ class WP_REST_Newspack_author_list_Controller extends WP_REST_Newspack_Authors_C
 
 			// Get WP users.
 			$user_args = [
-				'role__in' => [ 'Administrator', 'Editor', 'Author', 'Contributor' ],
+				'role__in' => $author_roles,
 				'orderby'  => 'display_name',
 				'order'    => 'ASC',
 				'number'   => $per_page,

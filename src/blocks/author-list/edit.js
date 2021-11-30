@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-
 /**
  * WordPress dependencies
  */
@@ -9,6 +7,7 @@ import {
 	BaseControl,
 	Button,
 	ButtonGroup,
+	CheckboxControl,
 	Notice,
 	PanelBody,
 	PanelRow,
@@ -21,7 +20,7 @@ import {
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalUnitControl as UnitControl,
 } from '@wordpress/components';
-import { Fragment, useEffect, useState } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import {
 	Icon,
@@ -36,19 +35,26 @@ import { addQueryArgs } from '@wordpress/url';
 import { avatarSizeOptions, textSizeOptions, units } from '../author-profile/edit';
 
 /**
+ * Internal dependencies
+ */
+import { SingleAuthor } from '../author-profile/single-author';
+
+/**
  * External dependencies
  */
 import { AutocompleteWithSuggestions } from 'newspack-components';
 import classnames from 'classnames';
 
-export default ( { attributes, setAttributes } ) => {
+export default ( { attributes, clientId, setAttributes } ) => {
 	const [ authors, setAuthors ] = useState( null );
 	const [ error, setError ] = useState( null );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ maxItemsToSuggest, setMaxItemsToSuggest ] = useState( 0 );
-	const separators = [];
 	const canUseCAP = Boolean( window.newspack_blocks_data?.can_use_cap );
+	const editableRoles = window.newspack_blocks_data?.editable_roles;
+	const separators = [];
 	const {
+		authorRoles,
 		authorType,
 		columns,
 		exclude,
@@ -59,15 +65,17 @@ export default ( { attributes, setAttributes } ) => {
 		showArchiveLink,
 		showAvatar,
 		showSeparators,
+		separatorSections,
 		textSize,
 		avatarAlignment,
 		avatarBorderRadius,
 		avatarSize,
 	} = attributes;
+	const isColumns = 'columns' === layout;
 
 	useEffect( () => {
 		getAuthors();
-	}, [ authorType, exclude ] );
+	}, [ authorRoles, authorType, exclude ] );
 
 	const getAuthors = async () => {
 		setError( null );
@@ -76,6 +84,7 @@ export default ( { attributes, setAttributes } ) => {
 			const response = await apiFetch( {
 				path: addQueryArgs( '/newspack-blocks/v1/author-list', {
 					authorType,
+					authorRoles,
 					exclude: exclude.map( exclusion => parseInt( exclusion.value ) ),
 					fields: 'id,name,bio,email,social,avatar,url',
 				} ),
@@ -91,15 +100,18 @@ export default ( { attributes, setAttributes } ) => {
 		setIsLoading( false );
 	};
 
-	// Show a link to the author's post archive page, if available.
-	const MaybeLink = ( { author, children } ) =>
-		showArchiveLink && author && author.url ? (
-			<a href="#" className="no-op">
-				{ children }
-			</a>
-		) : (
-			<>{ children }</>
-		);
+	// Authors grouped by alphabet.
+	const chunkedAuthors = {};
+	if ( Array.isArray( authors ) ) {
+		authors.forEach( author => {
+			const { last_name: lastName } = author;
+			const firstLetter = lastName.charAt( 0 ).toUpperCase();
+			if ( ! chunkedAuthors.hasOwnProperty( firstLetter ) ) {
+				chunkedAuthors[ firstLetter ] = [];
+			}
+			chunkedAuthors[ firstLetter ].push( author );
+		} );
+	}
 
 	return (
 		<>
@@ -114,8 +126,8 @@ export default ( { attributes, setAttributes } ) => {
 									__( 'Show %s.', 'newspack-blocks' ),
 									'all' === authorType
 										? __( 'both guest authors and WP users', 'newspack-blocks' )
-										: // translators: currently selected author type option.
-										  sprintf(
+										: sprintf(
+												// translators: currently selected author type option.
 												__( '%s only', 'newspack-blocks' ),
 												'guest-authors' === authorType
 													? __( 'guest authors', 'newspack-blocks' )
@@ -132,8 +144,8 @@ export default ( { attributes, setAttributes } ) => {
 							/>
 						) }
 					</PanelRow>
-					<PanelRow>
-						{ 'columns' === layout && (
+					{ isColumns && (
+						<PanelRow>
 							<RangeControl
 								label={ __( 'Columns', 'newspack-blocks' ) }
 								value={ columns }
@@ -142,16 +154,53 @@ export default ( { attributes, setAttributes } ) => {
 								max={ 6 }
 								required
 							/>
-						) }
-					</PanelRow>
+						</PanelRow>
+					) }
+					{ 'guest-authors' !== authorType && (
+						<PanelRow>
+							<BaseControl
+								id="newspack-blocks__author-list-roles"
+								label={ __( 'WP User Roles', 'newspack-blocks' ) }
+							>
+								{ editableRoles.map( ( role, index ) => (
+									<CheckboxControl
+										checked={ -1 < authorRoles.indexOf( role ) }
+										key={ index }
+										label={ role }
+										value={ role }
+										onChange={ check => {
+											const selectedRoles = check
+												? [ ...authorRoles, role ]
+												: authorRoles.filter( _role => _role !== role );
+
+											setAttributes( { authorRoles: selectedRoles } );
+										} }
+									/>
+								) ) }
+							</BaseControl>
+						</PanelRow>
+					) }
 					<PanelRow>
 						<ToggleControl
-							label={ __( 'Display separators', 'newspack-blocks' ) }
+							label={ __( 'Display alphabetical separators', 'newspack-blocks' ) }
 							help={ __( 'Chunk authors alphabetically.', 'newspack-blocks' ) }
 							checked={ showSeparators }
 							onChange={ () => setAttributes( { showSeparators: ! showSeparators } ) }
 						/>
 					</PanelRow>
+					{ isColumns && showSeparators && (
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Group authors by alphabet', 'newspack-blocks' ) }
+								help={ __(
+									'Display each alphabetical chunk as a discrete section.',
+									'newspack-blocks'
+								) }
+								checked={ separatorSections }
+								onChange={ () => setAttributes( { separatorSections: ! separatorSections } ) }
+							/>
+						</PanelRow>
+					) }
 				</PanelBody>
 				<PanelBody title={ __( 'Author List Exclusions', 'newspack-block' ) }>
 					<p>{ __( 'Authors selected here will not be shown.', 'newspack-blocks' ) }</p>
@@ -315,7 +364,7 @@ export default ( { attributes, setAttributes } ) => {
 							{
 								icon: <Icon icon={ columnsIcon } />,
 								title: __( 'Columns', 'newspack-blocks' ),
-								isActive: 'columns' === layout,
+								isActive: isColumns,
 								onClick: () => {
 									setAttributes( { layout: 'columns' } );
 								},
@@ -347,7 +396,6 @@ export default ( { attributes, setAttributes } ) => {
 								title: __( 'Edit selection', 'newspack-blocks' ),
 								onClick: () => {
 									setAttributes( { authorId: 0 } );
-									setAuthor( null );
 								},
 							},
 						] }
@@ -357,93 +405,68 @@ export default ( { attributes, setAttributes } ) => {
 			<div
 				className={ classnames( attributes.className, {
 					'wp-block-newspack-blocks-author-list': true,
-					'is-columns': ! isLoading && 'columns' === layout,
-					[ `columns-${ columns }` ]: ! isLoading && 'columns' === layout,
 				} ) }
 			>
-				{ ! isLoading &&
-					! error &&
-					authors &&
-					Array.isArray( authors ) &&
-					authors.map( ( author, index ) => {
-						// Combine social links and email, which are shown together.
-						const socialLinks = ( showSocial && author && author.social ) || {};
-						if ( showEmail && author && author.email ) {
-							socialLinks.email = author.email;
-						} else {
-							delete socialLinks.email;
-						}
+				{ ! isLoading && ! error && authors && Array.isArray( authors ) && (
+					<>
+						{ ! isColumns || ! separatorSections ? (
+							<div
+								className={ classnames( {
+									'is-columns': isColumns,
+									[ `columns-${ columns }` ]: isColumns,
+								} ) }
+							>
+								{ authors.map( ( author, index ) => {
+									const { last_name: lastName } = author;
+									const firstLetter = lastName.charAt( 0 ).toUpperCase();
+									const showSeparator = 0 > separators.indexOf( firstLetter );
 
-						const { last_name: lastName } = author;
-						const firstLetter = lastName.charAt( 0 ).toUpperCase();
-						const showSeparator = showSeparators && 0 > separators.indexOf( firstLetter );
+									if ( showSeparator ) {
+										separators.push( firstLetter );
+									}
 
-						if ( showSeparator ) {
-							separators.push( firstLetter );
-						}
-
-						return (
-							<Fragment key={ index }>
-								{ showSeparator && (
-									<h2 className="newspack-blocks__author-list-separator">{ firstLetter }</h2>
-								) }
-								<div
-									className={ classnames(
-										'wp-block-newspack-blocks-author-profile',
-										'avatar-' + avatarAlignment,
-										'text-size-' + textSize,
-										{ 'is-style-center': 'is-style-center' === attributes.className }
-									) }
-								>
-									{ showAvatar && author.avatar && (
-										<div className="wp-block-newspack-blocks-author-profile__avatar">
-											<figure
-												style={ {
-													borderRadius: avatarBorderRadius,
-													height: `${ avatarSize }px`,
-													width: `${ avatarSize }px`,
-												} }
-												dangerouslySetInnerHTML={ { __html: author.avatar } }
-											/>
-										</div>
-									) }
-									<div className="wp-block-newspack-blocks-author-profile__bio">
-										<h3>
-											<MaybeLink author={ author }>{ author.name }</MaybeLink>
-										</h3>
-										{ showBio && author.bio && (
-											<p>
-												{ author.bio }{ ' ' }
-												{ showArchiveLink && (
-													<a href="#" className="no-op">
-														{ __( 'More by', 'newspack-blocks' ) + ' ' + author.name }
-													</a>
-												) }
-											</p>
-										) }
-										{ ( showEmail || showSocial ) && (
-											<ul className="wp-block-newspack-blocks-author-profile__social-links">
-												{ Object.keys( socialLinks ).map( service => (
-													<li key={ service }>
-														<a href="#" className="no-op">
-															{ socialLinks[ service ].svg && (
-																<span
-																	dangerouslySetInnerHTML={ { __html: socialLinks[ service ].svg } }
-																/>
-															) }
-															<span className={ socialLinks[ service ].svg ? 'hidden' : 'visible' }>
-																{ service }
-															</span>
-														</a>
-													</li>
-												) ) }
-											</ul>
-										) }
-									</div>
-								</div>
-							</Fragment>
-						);
-					} ) }
+									return (
+										<>
+											{ showSeparators && showSeparator && (
+												<h2
+													className="newspack-blocks__author-list-separator"
+													id={ `newspack-blocks__author-list-separator__${ clientId }__${ firstLetter }` }
+												>
+													{ firstLetter }
+												</h2>
+											) }
+											<SingleAuthor author={ author } attributes={ attributes } key={ index } />
+										</>
+									);
+								} ) }
+							</div>
+						) : (
+							Object.keys( chunkedAuthors ).map( ( firstLetter, index ) => (
+								<>
+									<h2
+										className="newspack-blocks__author-list-separator"
+										id={ `newspack-blocks__author-list-separator__${ clientId }__${ firstLetter }` }
+									>
+										{ firstLetter }
+									</h2>
+									<ul
+										key={ index }
+										className={ classnames( 'newspack-blocks__author-list-container', {
+											'is-columns': isColumns,
+											[ `columns-${ columns }` ]: isColumns,
+										} ) }
+									>
+										{ chunkedAuthors[ firstLetter ].map( ( author, i ) => (
+											<li key={ i } className="newspack-blocks__author-list-item">
+												<SingleAuthor author={ author } attributes={ attributes } />
+											</li>
+										) ) }
+									</ul>
+								</>
+							) )
+						) }
+					</>
+				) }
 				{ ( ! authors || isLoading ) && (
 					<Placeholder
 						icon={ <Icon icon={ listView } /> }

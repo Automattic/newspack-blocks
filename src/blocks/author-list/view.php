@@ -29,7 +29,21 @@ function newspack_blocks_register_author_list() {
  * @param array $attributes Block attributes.
  */
 function newspack_blocks_render_block_author_list( $attributes ) {
-	error_log( print_r( $attributes, true ) );
+	// Enqueue required front-end assets.
+	Newspack_Blocks::enqueue_view_assets( 'author-list' );
+	Newspack_Blocks::enqueue_view_assets( 'author-profile' );
+
+	// Gather attributes.
+	$exclude_ids     = array_map(
+		function( $exclusion ) {
+			return (int) $exclusion['value'];
+		},
+		$attributes['exclude']
+	);
+	$layout          = $attributes['layout'];
+	$text_size       = $attributes['textSize'];
+	$show_separators = $attributes['showSeparators'];
+
 	return;
 }
 

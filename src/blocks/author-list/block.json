@@ -22,6 +22,10 @@
 			"type": "string",
 			"default": "medium"
 		},
+		"authorRoles": {
+			"type": "array",
+			"default": [ "Administrator", "Editor", "Author", "Contributor" ]
+		},
 		"authorType": {
 			"type": "string",
 			"default": "all"
@@ -43,6 +47,10 @@
 			"default": true
 		},
 		"showSeparators": {
+			"type": "boolean",
+			"default": false
+		},
+		"separatorSections": {
 			"type": "boolean",
 			"default": false
 		},

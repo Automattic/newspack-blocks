@@ -58,7 +58,7 @@ add_action( 'rest_api_init', 'newspack_authors_block_register_rest_routes' );
  * Registers Author List block routes.
  */
 function newspack_author_list_block_register_rest_routes() { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
-	$author_list_controller = new WP_REST_Newspack_author_list_Controller();
+	$author_list_controller = new WP_REST_Newspack_Author_List_Controller();
 	$author_list_controller->register_routes();
 }
 add_action( 'rest_api_init', 'newspack_author_list_block_register_rest_routes' );
