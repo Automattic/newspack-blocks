@@ -14,6 +14,10 @@
 			"type": "array",
 			"default": []
 		},
+		"excludeEmpty": {
+			"type": "boolean",
+			"default": false
+		},
 		"layout": {
 			"type": "string",
 			"default": "list"

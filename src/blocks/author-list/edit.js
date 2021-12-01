@@ -20,7 +20,7 @@ import {
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalUnitControl as UnitControl,
 } from '@wordpress/components';
-import { useEffect, useState } from '@wordpress/element';
+import { Fragment, useEffect, useState } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import {
 	Icon,
@@ -58,6 +58,7 @@ export default ( { attributes, clientId, setAttributes } ) => {
 		authorType,
 		columns,
 		exclude,
+		excludeEmpty,
 		layout,
 		showBio,
 		showSocial,
@@ -75,19 +76,24 @@ export default ( { attributes, clientId, setAttributes } ) => {
 
 	useEffect( () => {
 		getAuthors();
-	}, [ authorRoles, authorType, exclude ] );
+	}, [ authorRoles, authorType, exclude, excludeEmpty ] );
 
 	const getAuthors = async () => {
 		setError( null );
 		setIsLoading( true );
 		try {
+			const params = {
+				authorType,
+				authorRoles,
+				exclude: exclude.map( exclusion => parseInt( exclusion.value ) ),
+			};
+
+			if ( excludeEmpty ) {
+				params.excludeEmpty = 1;
+			}
+
 			const response = await apiFetch( {
-				path: addQueryArgs( '/newspack-blocks/v1/author-list', {
-					authorType,
-					authorRoles,
-					exclude: exclude.map( exclusion => parseInt( exclusion.value ) ),
-					fields: 'id,name,bio,email,social,avatar,url',
-				} ),
+				path: addQueryArgs( '/newspack-blocks/v1/author-list', params ),
 			} );
 
 			if ( ! response ) {
@@ -102,7 +108,7 @@ export default ( { attributes, clientId, setAttributes } ) => {
 
 	// Authors grouped by alphabet.
 	const chunkedAuthors = {};
-	if ( Array.isArray( authors ) ) {
+	if ( Array.isArray( authors ) && separatorSections ) {
 		authors.forEach( author => {
 			const { last_name: lastName } = author;
 			const firstLetter = lastName.charAt( 0 ).toUpperCase();
@@ -203,10 +209,22 @@ export default ( { attributes, clientId, setAttributes } ) => {
 					) }
 				</PanelBody>
 				<PanelBody title={ __( 'Author List Exclusions', 'newspack-block' ) }>
-					<p>{ __( 'Authors selected here will not be shown.', 'newspack-blocks' ) }</p>
+					<PanelRow>
+						<ToggleControl
+							label={ __( 'Exclude authors with 0 posts', 'newspack-blocks' ) }
+							help={ sprintf(
+								// Translators: Help message for "include empty authors" toggle.
+								__( '%s authors with no published posts.', 'newspack-blocks' ),
+								excludeEmpty ? __( 'Hide', 'newspack-blocks' ) : __( 'Show', 'newspack-blocks' )
+							) }
+							checked={ excludeEmpty }
+							onChange={ () => setAttributes( { excludeEmpty: ! excludeEmpty } ) }
+						/>
+					</PanelRow>
 					<PanelRow>
 						<AutocompleteWithSuggestions
 							label={ __( 'Search by author name', 'newspack-blocks' ) }
+							help={ __( 'Authors selected here will not be shown.', 'newspack-blocks' ) }
 							fetchSuggestions={ async ( search = null, offset = 0 ) => {
 								const response = await apiFetch( {
 									parse: false,
@@ -402,16 +420,35 @@ export default ( { attributes, clientId, setAttributes } ) => {
 					/>
 				</BlockControls>
 			) }
-			<div
-				className={ classnames( attributes.className, {
-					'wp-block-newspack-blocks-author-list': true,
-				} ) }
-			>
+			<div className={ classnames( attributes.className, 'wp-block-newspack-blocks-author-list' ) }>
 				{ ! isLoading && ! error && authors && Array.isArray( authors ) && (
 					<>
-						{ ! isColumns || ! separatorSections ? (
-							<div
-								className={ classnames( {
+						{ isColumns && showSeparators && separatorSections ? (
+							Object.keys( chunkedAuthors ).map( ( firstLetter, index ) => (
+								<Fragment key={ index }>
+									<h2
+										className="newspack-blocks__author-list-separator"
+										id={ `newspack-blocks__author-list-separator__${ clientId }__${ firstLetter }` }
+									>
+										{ firstLetter }
+									</h2>
+									<ul
+										className={ classnames( 'newspack-blocks__author-list-container', {
+											'is-columns': isColumns,
+											[ `columns-${ columns }` ]: isColumns,
+										} ) }
+									>
+										{ chunkedAuthors[ firstLetter ].map( ( author, i ) => (
+											<li key={ i } className="newspack-blocks__author-list-item">
+												<SingleAuthor author={ author } attributes={ attributes } />
+											</li>
+										) ) }
+									</ul>
+								</Fragment>
+							) )
+						) : (
+							<ul
+								className={ classnames( 'newspack-blocks__author-list-container', {
 									'is-columns': isColumns,
 									[ `columns-${ columns }` ]: isColumns,
 								} ) }
@@ -426,44 +463,25 @@ export default ( { attributes, clientId, setAttributes } ) => {
 									}
 
 									return (
-										<>
+										<Fragment key={ index }>
 											{ showSeparators && showSeparator && (
-												<h2
-													className="newspack-blocks__author-list-separator"
-													id={ `newspack-blocks__author-list-separator__${ clientId }__${ firstLetter }` }
-												>
-													{ firstLetter }
-												</h2>
+												<li className="newspack-blocks__author-list-item">
+													<h2
+														className="newspack-blocks__author-list-separator"
+														id={ `newspack-blocks__author-list-separator__${ clientId }__${ firstLetter }` }
+													>
+														{ firstLetter }
+													</h2>
+												</li>
 											) }
-											<SingleAuthor author={ author } attributes={ attributes } key={ index } />
-										</>
-									);
-								} ) }
-							</div>
-						) : (
-							Object.keys( chunkedAuthors ).map( ( firstLetter, index ) => (
-								<>
-									<h2
-										className="newspack-blocks__author-list-separator"
-										id={ `newspack-blocks__author-list-separator__${ clientId }__${ firstLetter }` }
-									>
-										{ firstLetter }
-									</h2>
-									<ul
-										key={ index }
-										className={ classnames( 'newspack-blocks__author-list-container', {
-											'is-columns': isColumns,
-											[ `columns-${ columns }` ]: isColumns,
-										} ) }
-									>
-										{ chunkedAuthors[ firstLetter ].map( ( author, i ) => (
-											<li key={ i } className="newspack-blocks__author-list-item">
+
+											<li className="newspack-blocks__author-list-item">
 												<SingleAuthor author={ author } attributes={ attributes } />
 											</li>
-										) ) }
-									</ul>
-								</>
-							) )
+										</Fragment>
+									);
+								} ) }
+							</ul>
 						) }
 					</>
 				) }

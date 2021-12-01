@@ -39,7 +39,8 @@
 		column-count: 6;
 	}
 
-	h2.newspack-blocks__author-list-separator:first-child {
+	h2.newspack-blocks__author-list-separator {
+		margin-bottom: 0;
 		margin-top: 0;
 	}
 }

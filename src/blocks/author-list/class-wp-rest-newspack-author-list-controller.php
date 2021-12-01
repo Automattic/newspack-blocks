@@ -35,7 +35,7 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 			[
 				[
 					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => [ $this, 'get_all_authors' ],
+					'callback'            => [ $this, 'api_get_all_authors' ],
 					'args'                => [
 						'author_id' => [
 							'sanitize_callback' => 'absint',
@@ -67,7 +67,7 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 	public function get_editable_roles() {
 		global $wp_roles;
 
-		return array_reduce(
+		$editable_roles = array_reduce(
 			$wp_roles->roles,
 			function( $acc, $role ) {
 				if ( isset( $role['capabilities'] ) && isset( $role['capabilities']['edit_posts'] ) && $role['capabilities']['edit_posts'] ) {
@@ -77,47 +77,95 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 			},
 			[]
 		);
+
+		/**
+		 * Filter the array of editable roles so other plugins can add/remove as needed.
+		 * The array should be a flat array of the name of each role as registered via add_role.
+		 * https://developer.wordpress.org/reference/functions/add_role/
+		 *
+		 * @param array $editable_roles Array of editable role names as registered via add_role.
+		 *
+		 * @return array Filtered array of roles.
+		 */
+		return apply_filters( 'newspack_blocks_authors_list_editable_roles', $editable_roles );
 	}
 
 	/**
-	 * Returns a list of combined authors and guest authors.
+	 * API request handler to fetch all authors matching the given request params.
 	 *
 	 * @param WP_REST_Request $request Request object.
 	 * @return WP_REST_Response
 	 */
-	public function get_all_authors( $request ) {
-		$author_type  = ! empty( $request->get_param( 'authorType' ) ) ? $request->get_param( 'authorType' ) : 'all';
-		$author_roles = ! empty( $request->get_param( 'authorRoles' ) ) ? $request->get_param( 'authorRoles' ) : $this->get_editable_roles();
-		$exclude     = ! empty( $request->get_param( 'exclude' ) ) && is_array( $request->get_param( 'exclude' ) ) ? $request->get_param( 'exclude' ) : []; // Fetch a specific user or guest author by ID.
-		$fields      = ! empty( $request->get_param( 'fields' ) ) ? explode( ',', $request->get_param( 'fields' ) ) : [ 'id' ]; // Fields to get. Will return at least id.
-		$per_page    = 10;
+	public function api_get_all_authors( $request ) {
+		$options = [];
 
-		// Total number of users and guest authors on the site.
-		$guest_author_total = 0;
-		$user_total         = 0;
-		$current_page       = 1;
+		if ( ! empty( $request->get_param( 'authorType' ) ) ) {
+			$options['author_type'] = $request->get_param( 'authorType' );
+		}
+
+		if ( ! empty( $request->get_param( 'authorRoles' ) ) ) {
+			$options['author_roles'] = $request->get_param( 'authorRoles' );
+		}
+
+		if ( ! empty( $request->get_param( 'exclude' ) ) && is_array( $request->get_param( 'exclude' ) ) ) {
+			$options['exclude'] = $request->get_param( 'exclude' );
+		}
+
+		if ( ! empty( $request->get_param( 'excludeEmpty' ) ) ) {
+			$options['exclude_empty'] = true;
+		}
+
+		if ( ! empty( $request->get_param( 'fields' ) ) ) {
+			$options['fields'] = explode( ',', $request->get_param( 'fields' ) );
+		}
+
+		$combined_authors = $this->get_all_authors( $options );
+		$response         = new \WP_REST_Response( $combined_authors );
+		$response->header( 'x-wp-total', count( $combined_authors ) );
+
+		return rest_ensure_response( $response );
+	}
+
+	/**
+	 * Returns an array of combined authors and guest authors.
+	 *
+	 * @param array $options Associative array of options used to query authors.
+	 *
+	 * @return array Array of all matching authors and/or guest authors on the site.
+	 */
+	public function get_all_authors( $options = [] ) {
+		$default_options = [
+			'author_type'   => 'all',
+			'author_roles'  => $this->get_editable_roles(),
+			'exclude'       => [],
+			'exclude_empty' => false,
+			'fields'        => [ 'id', 'name', 'bio', 'email', 'social', 'avatar', 'url' ],
+			'per_page'      => 10,
+		];
+		$options         = wp_parse_args( $options, $default_options );
+		$fields          = $options['fields'];
+		$current_page    = 1;
 
 		// Array to store all authors.
 		$all_guest_authors = [];
 		$all_users         = [];
 
 		// Get Co-authors guest authors, only if CAP plugin is active and the author type specified includes guest authors.
-		if ( 'users' !== $author_type && class_exists( 'CoAuthors_Guest_Authors' ) ) {
+		if ( 'users' !== $options['author_type'] && class_exists( 'CoAuthors_Guest_Authors' ) ) {
 			$guest_author_args = [
 				'post_type'      => 'guest-author',
-				'posts_per_page' => $per_page,
+				'posts_per_page' => $options['per_page'],
 				'orderby'        => 'title',
 				'order'          => 'ASC',
 			];
 
-			if ( ! empty( $exclude ) ) {
-				$guest_author_args['post__not_in'] = $exclude;
+			if ( ! empty( $options['exclude'] ) ) {
+				$guest_author_args['post__not_in'] = $options['exclude'];
 			}
 
-			$results            = new \WP_Query( $guest_author_args );
-			$guest_author_total = $results->found_posts;
-			$number_of_pages    = $results->max_num_pages;
-			$all_guest_authors  = array_merge( $all_guest_authors, $results->posts );
+			$results           = new \WP_Query( $guest_author_args );
+			$number_of_pages   = $results->max_num_pages;
+			$all_guest_authors = array_merge( $all_guest_authors, $results->posts );
 
 			// Keep querying until we have all guest authors.
 			if ( $current_page < $number_of_pages ) {
@@ -130,25 +178,36 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 			}
 		}
 
-		if ( 'guest-authors' !== $author_type ) {
+		if ( 'guest-authors' !== $options['author_type'] ) {
 			// Reset current page for new query.
-			$current_page = 1;
+			$current_page         = 1;
+			$published_post_types = $options['exclude_empty'] ? [ 'post' ] : null;
 
 			// Get WP users.
 			$user_args = [
-				'role__in' => $author_roles,
-				'orderby'  => 'display_name',
-				'order'    => 'ASC',
-				'number'   => $per_page,
+				'role__in'            => $options['author_roles'],
+				'orderby'             => 'display_name',
+				'order'               => 'ASC',
+				'number'              => $options['per_page'],
+				/**
+				 * Filter the post types to check for user query. By default, only users with at least one
+				 * published post will be included in the results. Filter this array to add/remove post types
+				 * or set to `null` to include all users even if they have no published posts.
+				 *
+				 * @param array|null $post_types Array of post types to check, or null to bypass the check.
+				 *
+				 * @return array|null Filtered value.
+				 */
+				'has_published_posts' => apply_filters( 'newspack_blocks_author_profile_post_types', $published_post_types ),
 			];
 
-			if ( ! empty( $exclude ) ) {
-				$user_args['exclude'] = $exclude;
+			if ( ! empty( $options['exclude'] ) ) {
+				$user_args['exclude'] = $options['exclude'];
 			}
 
 			$results         = new \WP_User_Query( $user_args );
 			$user_total      = $results->get_total();
-			$number_of_pages = ceil( $user_total / $per_page );
+			$number_of_pages = ceil( $user_total / $options['per_page'] );
 			$all_users       = array_merge( $all_users, $results->get_results() );
 
 			// Keep querying until we have all users.
@@ -167,7 +226,7 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 		$combined_authors = array_merge(
 			array_reduce(
 				$all_guest_authors,
-				function( $acc, $guest_author ) use ( $fields, &$linked_accounts ) {
+				function( $acc, $guest_author ) use ( $fields, $options, &$linked_accounts ) {
 					if ( $guest_author ) {
 						if ( class_exists( 'CoAuthors_Guest_Authors' ) ) {
 							$last_name         = get_post_meta( $guest_author->ID, 'cap-last_name', true );
@@ -184,6 +243,12 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 							}
 
 							$guest_author = ( new CoAuthors_Guest_Authors() )->get_guest_author_by( 'id', $guest_author->ID );
+							$post_count   = ( new CoAuthors_Plus() )->get_guest_author_post_count( $guest_author );
+
+							// Only include users with at least one published post.
+							if ( 0 === $post_count && $options['exclude_empty'] ) {
+								return $acc;
+							}
 
 							if ( in_array( 'login', $fields, true ) ) {
 								$guest_author_data['login'] = $guest_author->user_login;
@@ -222,7 +287,7 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 			),
 			array_reduce(
 				$all_users,
-				function( $acc, $user ) use ( $fields, &$linked_accounts ) {
+				function( $acc, $user ) use ( $fields, $options, &$linked_accounts ) {
 					if ( $user ) {
 						$is_linked = in_array( $user->data->user_login, $linked_accounts );
 
@@ -281,9 +346,6 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 			}
 		);
 
-		$response = new \WP_REST_Response( $combined_authors );
-		$response->header( 'x-wp-total', $user_total + $guest_author_total );
-
-		return rest_ensure_response( $response );
+		return $combined_authors;
 	}
 }
