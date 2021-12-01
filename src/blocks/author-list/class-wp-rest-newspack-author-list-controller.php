@@ -87,7 +87,7 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 		 *
 		 * @return array Filtered array of roles.
 		 */
-		return apply_filters( 'newspack_blocks_authors_list_editable_roles', $editable_roles );
+		return apply_filters( 'newspack_blocks_author_list_editable_roles', $editable_roles );
 	}
 
 	/**
@@ -186,7 +186,8 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 		if ( 'guest-authors' !== $options['author_type'] ) {
 			// Reset current page for new query.
 			$current_page         = 1;
-			$published_post_types = $options['exclude_empty'] ? [ 'post' ] : null;
+			$exclude_empty        = $options['exclude_empty'] ? true : false;
+			$published_post_types = $exclude_empty ? [ 'post' ] : null;
 
 			// Get WP users.
 			$user_args = [
@@ -200,10 +201,11 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 				 * or set to `null` to include all users even if they have no published posts.
 				 *
 				 * @param array|null $post_types Array of post types to check, or null to bypass the check.
+				 * @param boolean    $exclude_empty True if the block is set to exclude authors with 0 posts, otherwise false.
 				 *
 				 * @return array|null Filtered value.
 				 */
-				'has_published_posts' => apply_filters( 'newspack_blocks_author_profile_post_types', $published_post_types ),
+				'has_published_posts' => apply_filters( 'newspack_blocks_author_list_post_types', $published_post_types, $exclude_empty ),
 			];
 
 			if ( ! empty( $options['exclude'] ) ) {
