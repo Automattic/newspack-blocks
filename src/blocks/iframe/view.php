@@ -72,6 +72,7 @@ function newspack_blocks_get_iframe_html( $mode, $src, $height, $width, $is_full
 	$width       = $is_full_screen ? '100' : $width;
 	$style       = "height: $height; width: $width;";
 	$layout      = 'responsive';
+	$iframe_id   = 'newspack-iframe-' . wp_generate_password( 12, false );
 
 	if ( empty( $src ) ) {
 		return;
@@ -82,20 +83,16 @@ function newspack_blocks_get_iframe_html( $mode, $src, $height, $width, $is_full
 		$style  = 'height: 100vh; width: 100vw; max-width: 100vw; max-height: 100vh; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 999999; margin-top: 0!important;';
 	}
 
+	if ( $is_document ) {
+		$src = 'https://docs.google.com/gview?embedded=true&url=' . rawurlencode( $src );
+	}
+
 	ob_start();
 	?>
 	<figure class='wp-block-newspack-blocks-iframe'>
 		<div class='wp-block-embed__wrapper' style="height:<?php echo esc_attr( $height ); ?>; width:<?php echo esc_attr( $width ); ?>;">
-		<?php if ( $is_document ) : ?>
-			<amp-google-document-embed
-				src='<?php echo esc_attr( $src ); ?>'
-				width="100"
-				height="100"
-				style = '<?php echo esc_attr( $style ); ?>'
-				layout = '<?php echo esc_attr( $layout ); ?>'
-			></amp-google-document-embed>
-		<?php else : ?>
 			<iframe
+				id = '<?php echo esc_attr( $iframe_id ); ?>'
 				layout = '<?php echo esc_attr( $layout ); ?>'
 				height = '100'
 				width = '100'
@@ -104,9 +101,23 @@ function newspack_blocks_get_iframe_html( $mode, $src, $height, $width, $is_full
 				frameborder = '0'
 				allowfullscreen
 			></iframe>
-		<?php endif; ?>
 		</div>
 	</figure>
+
+	<?php if ( ! Newspack_Blocks::is_amp() ) : ?>
+		<script>
+			const iframe = document.getElementById("<?php echo esc_attr( $iframe_id ); ?>");
+			const timerId = setInterval( function() {
+					iframe.src = iframe.src;
+				}, 2000 );
+
+			iframe.onload = function() {
+				clearInterval(timerId);
+			}
+
+		</script>
+	<?php endif; ?>
+
 	<?php
 	return ob_get_clean();
 }
