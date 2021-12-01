@@ -147,23 +147,30 @@ export default ( { attributes, setAttributes } ) => {
 		avatarAlignment,
 		avatarBorderRadius,
 		avatarSize,
+		avatarHideDefault,
 	} = attributes;
 
 	useEffect( () => {
 		if ( 0 !== authorId ) {
 			getAuthorById();
 		}
-	}, [ authorId ] );
+	}, [ authorId, avatarHideDefault ] );
 
 	const getAuthorById = async () => {
 		setError( null );
 		setIsLoading( true );
 		try {
+			const params = {
+				authorId,
+				fields: 'id,name,bio,email,social,avatar,url',
+			};
+
+			if ( avatarHideDefault ) {
+				params.avatarHideDefault = 1;
+			}
+
 			const response = await apiFetch( {
-				path: addQueryArgs( '/newspack-blocks/v1/authors', {
-					author_id: authorId,
-					fields: 'id,name,bio,email,social,avatar,url',
-				} ),
+				path: addQueryArgs( '/newspack-blocks/v1/authors', params ),
 			} );
 
 			const _author = response.pop();
@@ -266,6 +273,15 @@ export default ( { attributes, setAttributes } ) => {
 							onChange={ () => setAttributes( { showAvatar: ! showAvatar } ) }
 						/>
 					</PanelRow>
+					{ showAvatar && (
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Hide default avatar', 'newspack-blocks' ) }
+								checked={ avatarHideDefault }
+								onChange={ () => setAttributes( { avatarHideDefault: ! avatarHideDefault } ) }
+							/>
+						</PanelRow>
+					) }
 					{ showAvatar && (
 						<BaseControl
 							label={ __( 'Avatar size', 'newspack-blocks' ) }

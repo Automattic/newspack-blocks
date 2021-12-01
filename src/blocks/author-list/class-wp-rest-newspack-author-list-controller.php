@@ -115,6 +115,10 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 			$options['exclude_empty'] = true;
 		}
 
+		if ( ! empty( $request->get_param( 'avatarHideDefault' ) ) ) {
+			$options['avatar_hide_default'] = true;
+		}
+
 		if ( ! empty( $request->get_param( 'fields' ) ) ) {
 			$options['fields'] = explode( ',', $request->get_param( 'fields' ) );
 		}
@@ -135,12 +139,13 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 	 */
 	public function get_all_authors( $options = [] ) {
 		$default_options = [
-			'author_type'   => 'all',
-			'author_roles'  => $this->get_editable_roles(),
-			'exclude'       => [],
-			'exclude_empty' => false,
-			'fields'        => [ 'id', 'name', 'bio', 'email', 'social', 'avatar', 'url' ],
-			'per_page'      => 10,
+			'author_type'         => 'all',
+			'author_roles'        => $this->get_editable_roles(),
+			'avatar_hide_default' => false,
+			'exclude'             => [],
+			'exclude_empty'       => false,
+			'fields'              => [ 'id', 'name', 'bio', 'email', 'social', 'avatar', 'url' ],
+			'per_page'            => 10,
 		];
 		$options         = wp_parse_args( $options, $default_options );
 		$fields          = $options['fields'];
@@ -213,10 +218,10 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 			// Keep querying until we have all users.
 			if ( $current_page < $number_of_pages ) {
 				while ( $current_page < $number_of_pages ) {
-					$current_page      ++;
+					$current_page       ++;
 					$user_args['paged'] = $current_page;
-					$results           = new \WP_User_Query( $user_args );
-					$all_users         = array_merge( $all_users, $results->get_results() );
+					$results            = new \WP_User_Query( $user_args );
+					$all_users          = array_merge( $all_users, $results->get_results() );
 				}
 			}
 		}
@@ -234,7 +239,7 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 								'id'         => intval( $guest_author->ID ),
 								'registered' => $guest_author->post_date,
 								'is_guest'   => true,
-								'last_name'  => ! empty( $last_name ) && in_array( $last_name, explode( ' ', $guest_author->post_title ) ) ? $last_name : $guest_author->post_title,
+								'last_name'  => ! empty( $last_name ) && in_array( $last_name, explode( ' ', $guest_author->post_title ), true ) ? $last_name : $guest_author->post_title,
 							];
 
 							$linked_account = get_post_meta( $guest_author->ID, 'cap-linked_account', true );
@@ -267,7 +272,11 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 								}
 							}
 							if ( in_array( 'avatar', $fields, true ) && function_exists( 'coauthors_get_avatar' ) ) {
-								$guest_author_data['avatar'] = coauthors_get_avatar( $guest_author, 256 );
+								$avatar = coauthors_get_avatar( $guest_author, 256 );
+
+								if ( $avatar && ( false === strpos( $avatar, 'avatar-default' ) || ! $options['avatar_hide_default'] ) ) {
+									$guest_author_data['avatar'] = $avatar;
+								}
 							}
 							if ( in_array( 'url', $fields, true ) ) {
 								$guest_author_data['url'] = esc_urL(
@@ -301,7 +310,7 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 							'id'         => intval( $user->data->ID ),
 							'registered' => $user->data->user_registered,
 							'is_guest'   => false,
-							'last_name'  => ! empty( $last_name ) && in_array( $last_name, explode( ' ', $user->data->display_name ) ) ? $last_name : $user->data->display_name,
+							'last_name'  => ! empty( $last_name ) && in_array( $last_name, explode( ' ', $user->data->display_name ), true ) ? $last_name : $user->data->display_name,
 						];
 
 						if ( in_array( 'login', $fields, true ) ) {
@@ -321,7 +330,11 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 							}
 						}
 						if ( in_array( 'avatar', $fields, true ) ) {
-							$user_data['avatar'] = get_avatar( $user->data->ID, 256 );
+							$avatar = get_avatar( $user->data->ID, 256 );
+
+							if ( $avatar && ( false === strpos( $avatar, 'avatar-default' ) || ! $options['avatar_hide_default'] ) ) {
+								$user_data['avatar'] = $avatar;
+							}
 						}
 						if ( in_array( 'url', $fields, true ) ) {
 							$user_data['url'] = esc_urL( get_author_posts_url( $user->data->ID ) );

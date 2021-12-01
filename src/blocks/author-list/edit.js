@@ -71,12 +71,13 @@ export default ( { attributes, clientId, setAttributes } ) => {
 		avatarAlignment,
 		avatarBorderRadius,
 		avatarSize,
+		avatarHideDefault,
 	} = attributes;
 	const isColumns = 'columns' === layout;
 
 	useEffect( () => {
 		getAuthors();
-	}, [ authorRoles, authorType, exclude, excludeEmpty ] );
+	}, [ authorRoles, authorType, avatarHideDefault, exclude, excludeEmpty ] );
 
 	const getAuthors = async () => {
 		setError( null );
@@ -90,6 +91,10 @@ export default ( { attributes, clientId, setAttributes } ) => {
 
 			if ( excludeEmpty ) {
 				params.excludeEmpty = 1;
+			}
+
+			if ( avatarHideDefault ) {
+				params.avatarHideDefault = 1;
 			}
 
 			const response = await apiFetch( {
@@ -322,6 +327,15 @@ export default ( { attributes, clientId, setAttributes } ) => {
 							onChange={ () => setAttributes( { showAvatar: ! showAvatar } ) }
 						/>
 					</PanelRow>
+					{ showAvatar && (
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Hide default avatar', 'newspack-blocks' ) }
+								checked={ avatarHideDefault }
+								onChange={ () => setAttributes( { avatarHideDefault: ! avatarHideDefault } ) }
+							/>
+						</PanelRow>
+					) }
 					{ showAvatar && (
 						<BaseControl
 							label={ __( 'Avatar Size', 'newspack-blocks' ) }

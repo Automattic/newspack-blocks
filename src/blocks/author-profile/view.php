@@ -26,11 +26,12 @@ function newspack_blocks_register_author_profile() {
 /**
  * Given a numeric ID, get the corresponding WP user or Co-authors Plus guest author.
  *
- * @param int $author_id Author ID to look up.
- * @param int $avatar_size Size of the avatar image to fetch.
+ * @param int     $author_id Author ID to look up.
+ * @param int     $avatar_size Size of the avatar image to fetch.
+ * @param boolean $hide_default If true, don't show default avatars.
  * @return object|boolean Author object in standardized format, or false if none exists.
  */
-function newspack_blocks_get_author_or_guest_author( $author_id, $avatar_size = 128 ) {
+function newspack_blocks_get_author_or_guest_author( $author_id, $avatar_size = 128, $hide_default = false ) {
 	$wp_user = get_user_by( 'id', $author_id );
 	$author  = false;
 
@@ -55,13 +56,17 @@ function newspack_blocks_get_author_or_guest_author( $author_id, $avatar_size = 
 				'id'     => $author_id,
 				'name'   => $author->display_name,
 				'bio'    => $author->description,
-				'avatar' => function_exists( 'coauthors_get_avatar' ) ? coauthors_get_avatar( $author, $avatar_size ) : false,
 				'url'    => esc_urL(
 					get_author_posts_url( $author_id, $author->user_nicename )
 				),
 				'email'  => WP_REST_Newspack_Authors_Controller::get_email( $author_id ),
 				'social' => WP_REST_Newspack_Authors_Controller::get_social( $author_id ),
 			];
+		}
+
+		$avatar = function_exists( 'coauthors_get_avatar' ) ? coauthors_get_avatar( $author, $avatar_size ) : false;
+		if ( $avatar && ( false === strpos( $avatar, 'avatar-default' ) || ! $hide_default ) ) {
+			$author['avatar'] = $avatar;
 		}
 	}
 
@@ -75,11 +80,15 @@ function newspack_blocks_get_author_or_guest_author( $author_id, $avatar_size = 
 				'id'     => $author_id,
 				'name'   => $author->data->display_name,
 				'bio'    => get_the_author_meta( 'description', $author_id ),
-				'avatar' => get_avatar( $author_id, $avatar_size ),
 				'url'    => esc_urL( get_author_posts_url( $author_id ) ),
 				'email'  => WP_REST_Newspack_Authors_Controller::get_email( $author_id, false, $author->data->user_email ),
 				'social' => WP_REST_Newspack_Authors_Controller::get_social( $author_id ),
 			];
+
+			$avatar = get_avatar( $author_id, $avatar_size );
+			if ( $avatar && ( false === strpos( $avatar, 'avatar-default' ) || ! $hide_default ) ) {
+				$author['avatar'] = $avatar;
+			}
 		}
 	}
 
@@ -98,7 +107,7 @@ function newspack_blocks_render_block_author_profile( $attributes ) {
 	}
 
 	// Get the author by ID.
-	$author = newspack_blocks_get_author_or_guest_author( intval( $attributes['authorId'] ), intval( $attributes['avatarSize'] ) );
+	$author = newspack_blocks_get_author_or_guest_author( intval( $attributes['authorId'] ), intval( $attributes['avatarSize'] ), $attributes['avatarHideDefault'] );
 
 	// Bail if there's no author or guest author with the saved ID.
 	if ( empty( $author ) ) {

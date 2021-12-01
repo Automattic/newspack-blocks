@@ -73,6 +73,10 @@
 		"avatarSize": {
 			"type": "number",
 			"default": 128
+		},
+		"avatarHideDefault": {
+			"type": "boolean",
+			"default": false
 		}
 	}
 }

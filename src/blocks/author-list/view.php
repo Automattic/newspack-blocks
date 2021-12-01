@@ -40,22 +40,31 @@ function newspack_blocks_render_block_author_list( $attributes ) {
 		},
 		$attributes['exclude']
 	);
-	$author_roles       = $attributes['authorRoles'];
-	$author_type        = $attributes['authorType'];
-	$is_columns         = 'columns' === $attributes['layout'];
-	$number_of_columns  = $attributes['columns'];
-	$show_separators    = $attributes['showSeparators'];
-	$separator_sections = $attributes['separatorSections'];
+	$exclude_empty       = $attributes['excludeEmpty'];
+	$author_roles        = $attributes['authorRoles'];
+	$author_type         = $attributes['authorType'];
+	$is_columns          = 'columns' === $attributes['layout'];
+	$number_of_columns   = $attributes['columns'];
+	$show_separators     = $attributes['showSeparators'];
+	$separator_sections  = $attributes['separatorSections'];
+	$avatar_hide_default = $attributes['avatarHideDefault'];
+	$params              = [
+		'author_type'  => $author_type,
+		'author_roles' => $author_roles,
+		'exclude'      => $exclude_ids,
+		'fields'       => [ 'id', 'name', 'bio', 'email', 'social', 'avatar', 'url' ],
+	];
+
+	if ( $exclude_empty ) {
+		$params['exclude_empty'] = true;
+	}
+
+	if ( $avatar_hide_default ) {
+		$params['avatar_hide_default'] = true;
+	}
 
 	$author_list_controller = new WP_REST_Newspack_Author_List_Controller();
-	$authors                = $author_list_controller->get_all_authors(
-		[
-			'author_type'  => $author_type,
-			'author_roles' => $author_roles,
-			'exclude'      => $exclude_ids,
-			'fields'       => [ 'id', 'name', 'bio', 'email', 'social', 'avatar', 'url' ],
-		]
-	);
+	$authors                = $author_list_controller->get_all_authors( $params );
 
 	$anchor_id = uniqid();
 
