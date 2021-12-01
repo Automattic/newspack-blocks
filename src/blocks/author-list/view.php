@@ -34,7 +34,7 @@ function newspack_blocks_render_block_author_list( $attributes ) {
 	}
 
 	// Gather attributes.
-	$exclude_ids        = array_map(
+	$exclude_ids         = array_map(
 		function( $exclusion ) {
 			return (int) $exclusion['value'];
 		},
@@ -135,7 +135,7 @@ function newspack_blocks_render_block_author_list( $attributes ) {
 			<?php
 			foreach ( $authors as $author ) :
 				$first_letter   = strtoupper( substr( $author['last_name'], 0, 1 ) );
-				$show_separator = ! in_array( $first_letter, $separators );
+				$show_separator = ! in_array( $first_letter, $separators, true );
 
 				if ( $show_separator ) {
 					$separators[] = $first_letter;

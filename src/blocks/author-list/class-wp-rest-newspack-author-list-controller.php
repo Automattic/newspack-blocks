@@ -298,7 +298,7 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 				$all_users,
 				function( $acc, $user ) use ( $fields, $options, &$linked_accounts ) {
 					if ( $user ) {
-						$is_linked = in_array( $user->data->user_login, $linked_accounts );
+						$is_linked = in_array( $user->data->user_login, $linked_accounts, true );
 
 						// If linked to a guest author, show only the guest author.
 						if ( $is_linked ) {
