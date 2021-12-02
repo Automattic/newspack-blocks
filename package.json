@@ -1,6 +1,6 @@
 {
 	"name": "newspack-blocks",
-	"version": "1.42.2",
+	"version": "1.42.3-alpha.1",
 	"author": "Automattic",
 	"devDependencies": {
 		"@automattic/calypso-build": "^10.0.0",
