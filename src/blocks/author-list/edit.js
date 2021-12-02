@@ -128,8 +128,8 @@ export default ( { attributes, clientId, setAttributes } ) => {
 		<>
 			<InspectorControls>
 				<PanelBody title={ __( 'Author List Settings', 'newspack-blocks' ) }>
-					<PanelRow>
-						{ canUseCAP && (
+					{ canUseCAP && (
+						<PanelRow>
 							<RadioControl
 								label={ __( 'Author Type', 'newspack' ) }
 								help={ sprintf(
@@ -153,8 +153,8 @@ export default ( { attributes, clientId, setAttributes } ) => {
 								] }
 								onChange={ value => setAttributes( { authorType: value } ) }
 							/>
-						) }
-					</PanelRow>
+						</PanelRow>
+					) }
 					{ isColumns && (
 						<PanelRow>
 							<RangeControl
