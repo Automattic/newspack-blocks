@@ -9,12 +9,6 @@
  * Newspack blocks functionality
  */
 class Newspack_Blocks {
-
-	/**
-	 * Script handle for the streamlined donate block script.
-	 */
-	const DONATE_STREAMLINED_SCRIPT_HANDLE = 'newspack-blocks-donate-streamlined';
-
 	/**
 	 * Add hooks and filters.
 	 */
@@ -34,7 +28,7 @@ class Newspack_Blocks {
 	 * @param string $handle The script handle.
 	 */
 	public static function mark_view_script_as_amp_plus_allowed( $tag, $handle ) {
-		if ( self::DONATE_STREAMLINED_SCRIPT_HANDLE === $handle ) {
+		if ( 0 === stripos( $handle, 'newspack-blocks-' ) ) {
 			return str_replace( '<script', '<script data-amp-plus-allowed', $tag );
 		}
 		return $tag;
