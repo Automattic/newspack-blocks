@@ -33,7 +33,7 @@
 		"postcss-cli": "^9.0.2",
 		"postcss-focus-within": "^5.0.1",
 		"prettier": "npm:wp-prettier@2.2.1-beta-1",
-		"semantic-release": "^18.0.0",
+		"semantic-release": "^18.0.1",
 		"semantic-release-version-bump": "^1.4.1",
 		"stylelint": "^13.3.1",
 		"stylelint-config-prettier": "^9.0.3",
