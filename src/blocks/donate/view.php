@@ -94,7 +94,7 @@ function newspack_blocks_enqueue_streamlined_donate_block_scripts() {
 	if ( Newspack_Blocks::is_rendering_streamlined_block() ) {
 		$script_data = Newspack_Blocks::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . '/donateStreamlined.js' );
 		wp_enqueue_script(
-			'newspack-blocks-donate-streamlined',
+			Newspack_Blocks::DONATE_STREAMLINED_SCRIPT_HANDLE,
 			$script_data['script_path'],
 			[ 'wp-i18n' ],
 			$script_data['version'],
@@ -102,7 +102,7 @@ function newspack_blocks_enqueue_streamlined_donate_block_scripts() {
 		);
 		$style_path = NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'donateStreamlined' . ( is_rtl() ? '.rtl' : '' ) . '.css';
 		wp_enqueue_style(
-			'newspack-blocks-donate-streamlined',
+			Newspack_Blocks::DONATE_STREAMLINED_SCRIPT_HANDLE,
 			plugins_url( $style_path, NEWSPACK_BLOCKS__PLUGIN_FILE ),
 			[],
 			NEWSPACK_BLOCKS__VERSION

@@ -23,7 +23,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 	$autoplay = isset( $attributes['autoplay'] ) ? $attributes['autoplay'] : false;
 	$delay    = isset( $attributes['delay'] ) ? absint( $attributes['delay'] ) : 3;
 	$authors  = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
-	$is_amp   = Newspack_Blocks::is_amp();
+	$is_amp   = function_exists( 'is_amp_endpoint' ) && is_amp_endpoint();
 
 	$other = array();
 	if ( $autoplay ) {
@@ -274,8 +274,6 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 		);
 		$autoplay_ui = $autoplay ? newspack_blocks_carousel_block_autoplay_ui_amp( $newspack_blocks_carousel_id ) : '';
 	} else {
-		// Make sure the active class is present in the DOM, so AMP won't tree-shake it away in AMP Plus mode.
-		$buttons[0]  = str_replace( 'swiper-pagination-bullet', 'swiper-pagination-bullet swiper-pagination-bullet-active', $buttons[0] );
 		$selector    = sprintf(
 			'<div class="swiper-pagination-bullets amp-pagination" %1$s>%2$s</div>',
 			$attributes['hideControls'] ? 'aria-hidden="true"' : '',
