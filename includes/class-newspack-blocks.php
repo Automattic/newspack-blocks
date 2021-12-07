@@ -227,17 +227,26 @@ class Newspack_Blocks {
 	}
 
 	/**
-	 * Enqueue view scripts and styles for a single block.
+	 * Get path of view CSS asset.
 	 *
 	 * @param string $type The block's type.
 	 */
-	public static function enqueue_view_assets( $type ) {
-		$style_path = apply_filters(
+	public static function get_view_style_asset_path( $type ) {
+		return apply_filters(
 			'newspack_blocks_enqueue_view_assets',
 			NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $type . '/view' . ( is_rtl() ? '.rtl' : '' ) . '.css',
 			$type,
 			is_rtl()
 		);
+	}
+
+	/**
+	 * Enqueue view scripts and styles for a single block.
+	 *
+	 * @param string $type The block's type.
+	 */
+	public static function enqueue_view_assets( $type ) {
+		$style_path = self::get_view_style_asset_path( $type );
 
 		if ( file_exists( NEWSPACK_BLOCKS__PLUGIN_DIR . $style_path ) ) {
 			wp_enqueue_style(

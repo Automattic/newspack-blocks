@@ -66,14 +66,16 @@ const getClientIDValue = () => getCookies()[ 'newspack-cid' ];
 
 	// Handle initial form unravelling.
 	const submitButtonEl = el.querySelector( 'button[type="submit"]' );
-	submitButtonEl.onclick = e => {
-		const inputsHiddenEl = el.querySelector( '.stripe-payment__inputs--hidden' );
-		if ( inputsHiddenEl ) {
+	const inputsHiddenEl = el.querySelector( '.stripe-payment__inputs--hidden' );
+	if ( inputsHiddenEl ) {
+		submitButtonEl.onclick = e => {
 			e.preventDefault();
 			initStripe();
 			inputsHiddenEl.classList.remove( 'stripe-payment__inputs--hidden' );
-		}
-	};
+		};
+	} else {
+		initStripe();
+	}
 
 	const messagesEl = el.querySelector( '.stripe-payment__messages' );
 

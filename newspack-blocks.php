@@ -29,6 +29,8 @@ require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/author-profile/class-wp-r
 
 // REST Controller for Donate Block.
 require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/donate/class-wp-rest-newspack-donate-controller.php';
+// Renderer for Donate Block.
+require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/donate/class-donate-block-renderer.php';
 
 // REST Controller for Iframe Block.
 require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/iframe/class-wp-rest-newspack-iframe-controller.php';
