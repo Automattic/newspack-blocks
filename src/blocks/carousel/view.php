@@ -23,7 +23,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 	$autoplay = isset( $attributes['autoplay'] ) ? $attributes['autoplay'] : false;
 	$delay    = isset( $attributes['delay'] ) ? absint( $attributes['delay'] ) : 3;
 	$authors  = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
-	$is_amp   = function_exists( 'is_amp_endpoint' ) && is_amp_endpoint();
+	$is_amp   = Newspack_Blocks::is_amp();
 
 	$other = array();
 	if ( $autoplay ) {
