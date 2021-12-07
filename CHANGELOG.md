@@ -1,3 +1,10 @@
+## [1.42.3](https://github.com/Automattic/newspack-blocks/compare/v1.42.2...v1.42.3) (2021-12-07)
+
+
+### Bug Fixes
+
+* **author-profile:** corrected CAP author links; linked WP users ([#908](https://github.com/Automattic/newspack-blocks/issues/908)) ([e4583d1](https://github.com/Automattic/newspack-blocks/commit/e4583d19942aa230eed743c41ea7bb0c193af7e0))
+
 ## [1.42.3-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.42.2...v1.42.3-alpha.1) (2021-12-02)
 
 
