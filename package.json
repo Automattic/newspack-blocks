@@ -47,7 +47,7 @@
 	},
 	"private": true,
 	"dependencies": {
-		"@stripe/stripe-js": "^1.21.1",
+		"@stripe/stripe-js": "^1.21.2",
 		"@wordpress/a11y": "^3.2.3",
 		"@wordpress/compose": "^5.0.4",
 		"@wordpress/data": "^6.1.0",
