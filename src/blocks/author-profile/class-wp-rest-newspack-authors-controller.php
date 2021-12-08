@@ -90,12 +90,28 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 			$guest_author_args['p'] = $author_id;
 		}
 
-		$guest_authors      = new \WP_Query( $guest_author_args );
-		$guest_author_total = $guest_authors->found_posts;
+		$guest_authors      = get_posts( $guest_author_args );
+		$guest_author_total = count( $guest_authors );
+		$users              = []; // We'll only get standard WP users if no guest authors were found.
 
-		// Get standard WP users.
+		// If passed an author ID.
 		if ( $author_id ) {
-			$users = 0 === $guest_author_total ? [ get_user_by( 'id', $author_id ) ] : []; // If passed an author_id and we already found it as guest author, no need to run this query.
+			if ( 0 === $guest_author_total ) {
+				$user = get_user_by( 'id', $author_id ); // Get the WP user.
+
+				// We have a WP user, let's use it.
+				if ( $user ) {
+					// But wait, there's more! Let's see if this user is linked to a guest author.
+					$linked_guest_author = self::get_linked_guest_author( $user->user_login );
+
+					// If it is, let's use that instead.
+					if ( $linked_guest_author ) {
+						$guest_authors = [ $linked_guest_author ];
+					} else {
+						$users = [ $user ];
+					}
+				}
+			}
 		} else {
 			$user_args = [
 				'role__in' => [ 'Administrator', 'Editor', 'Author', 'Contributor' ],
@@ -118,7 +134,7 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 		// Format and combine results.
 		$combined_authors = array_merge(
 			array_reduce(
-				! empty( $guest_authors->posts ) ? $guest_authors->posts : [],
+				! empty( $guest_authors ) ? $guest_authors : [],
 				function( $acc, $guest_author ) use ( $fields ) {
 					if ( $guest_author ) {
 						if ( class_exists( 'CoAuthors_Guest_Authors' ) ) {
@@ -221,6 +237,26 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 		$response->header( 'x-wp-total', $user_total + $guest_author_total );
 
 		return rest_ensure_response( $response );
+	}
+
+	/**
+	 * Given a WP user login, get the linked guest author, if any.
+	 *
+	 * @param string $user_login WP user login name.
+	 *
+	 * @return WP_Post|boolean Linked guest author in post form, or false if none.
+	 */
+	public static function get_linked_guest_author( $user_login ) {
+		$linked_guest_authors = get_posts(
+			[
+				'post_type'      => 'guest-author',
+				'posts_per_page' => 1,
+				'meta_key'       => 'cap-linked_account', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+				'meta_value'     => $user_login, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+			]
+		);
+
+		return 0 < count( $linked_guest_authors ) ? reset( $linked_guest_authors ) : false;
 	}
 
 	/**

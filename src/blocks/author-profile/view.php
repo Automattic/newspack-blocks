@@ -31,10 +31,22 @@ function newspack_blocks_register_author_profile() {
  * @return object|boolean Author object in standardized format, or false if none exists.
  */
 function newspack_blocks_get_author_or_guest_author( $author_id, $avatar_size = 128 ) {
-	$author = false;
+	$wp_user = get_user_by( 'id', $author_id );
+	$author  = false;
 
 	// First, see if the $author_id is a guest author.
 	if ( class_exists( 'CoAuthors_Guest_Authors' ) ) {
+		// Check if the ID given is a WP user with linked guest author.
+		$linked_guest_author = false;
+
+		if ( $wp_user ) {
+			$linked_guest_author = WP_REST_Newspack_Authors_Controller::get_linked_guest_author( $wp_user->user_login );
+		}
+
+		if ( $linked_guest_author && isset( $linked_guest_author->ID ) ) {
+			$author_id = $linked_guest_author->ID;
+		}
+
 		$author = ( new CoAuthors_Guest_Authors() )->get_guest_author_by( 'id', $author_id );
 
 		// Format CAP guest author object to return to the render function.
@@ -45,10 +57,7 @@ function newspack_blocks_get_author_or_guest_author( $author_id, $avatar_size = 
 				'bio'    => $author->description,
 				'avatar' => function_exists( 'coauthors_get_avatar' ) ? coauthors_get_avatar( $author, $avatar_size ) : false,
 				'url'    => esc_urL(
-					get_site_urL(
-						null,
-						'?author_name=' . get_post_meta( $author_id, 'cap-user_login', true )
-					)
+					get_author_posts_url( $author_id, $author->user_nicename )
 				),
 				'email'  => WP_REST_Newspack_Authors_Controller::get_email( $author_id ),
 				'social' => WP_REST_Newspack_Authors_Controller::get_social( $author_id ),
@@ -58,7 +67,7 @@ function newspack_blocks_get_author_or_guest_author( $author_id, $avatar_size = 
 
 	// If $author is still false, see if it's a standard WP User.
 	if ( ! $author ) {
-		$author = get_user_by( 'id', $author_id );
+		$author = $wp_user;
 
 		// Format WP user object to return to the render function.
 		if ( $author && isset( $author->data ) ) {
