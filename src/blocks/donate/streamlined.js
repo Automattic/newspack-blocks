@@ -48,6 +48,33 @@ const getCookies = () =>
 
 const getClientIDValue = () => getCookies()[ 'newspack-cid' ];
 
+const getAmount = formValues => {
+	const valueKey = `donation_value_${ formValues.donation_frequency }`;
+	formValues.amount = formValues[ valueKey ];
+	if ( formValues.amount === 'other' ) {
+		formValues.amount = formValues[ `${ valueKey }_other` ];
+	}
+	if ( ! formValues.amount ) {
+		formValues.amount = formValues[ `${ valueKey }_untiered` ];
+	}
+	return parseFloat( formValues.amount );
+};
+
+const getFeeAmount = formElement => {
+	const formValues = Object.fromEntries( new FormData( formElement ) );
+	const amount = getAmount( formValues );
+	// eslint-disable-next-line no-unused-vars, @wordpress/no-unused-vars-before-return
+	const [ CURRENCY_SYMBOL, FREQUENCIES, FEE_MULTIPLIER, FEE_STATIC ] = JSON.parse(
+		formElement.getAttribute( 'data-settings' )
+	);
+	return parseFloat(
+		(
+			( ( amount + parseFloat( FEE_STATIC ) ) / ( 100 - parseFloat( FEE_MULTIPLIER ) ) ) * 100 -
+			amount
+		).toFixed( 2 )
+	);
+};
+
 export const processStreamlinedElements = ( parentElement = document ) =>
 	[ ...parentElement.querySelectorAll( '.stripe-payment' ) ].forEach( async el => {
 		const disableForm = () => el.classList.add( 'stripe-payment--disabled' );
@@ -87,7 +114,7 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 			);
 		const renderSuccessMessageWithEmail = emailAddress => {
 			const successMessge = sprintf(
-				/* Translators: %s is the email address of the current user. */
+				/* Translators: %s is the email address of the donor. */
 				__(
 					'Your payment has been processed. Thank you for your contribution! You will receive a confirmation email at %s.',
 					'newspack-blocks'
@@ -98,20 +125,32 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 		};
 
 		const formElement = el.closest( 'form' );
+		const [ CURRENCY_SYMBOL, FREQUENCIES ] = JSON.parse(
+			formElement.getAttribute( 'data-settings' )
+		);
+
+		const updateFeesAmount = () => {
+			const feesAmountEl = el.querySelector( '#stripe-fees-amount' );
+			if ( feesAmountEl ) {
+				const formValues = Object.fromEntries( new FormData( formElement ) );
+				const feeAmount = getFeeAmount( formElement );
+				feesAmountEl.innerHTML = `(${ CURRENCY_SYMBOL }${ feeAmount } ${ FREQUENCIES[
+					formValues.donation_frequency
+				].toLowerCase() })`;
+			}
+		};
+
+		updateFeesAmount();
+		formElement.onchange = () => {
+			updateFeesAmount();
+		};
 		formElement.onsubmit = async e => {
 			e.preventDefault();
 			disableForm();
 			renderMessages( [ __( 'Processing payment…', 'newspack-blocks' ) ], messagesEl, 'info' );
 
-			const formValues = Object.fromEntries( new FormData( e.target ) );
-			const valueKey = `donation_value_${ formValues.donation_frequency }`;
-			formValues.amount = formValues[ valueKey ];
-			if ( formValues.amount === 'other' ) {
-				formValues.amount = formValues[ `${ valueKey }_other` ];
-			}
-			if ( ! formValues.amount ) {
-				formValues.amount = formValues[ `${ valueKey }_untiered` ];
-			}
+			const formValues = Object.fromEntries( new FormData( formElement ) );
+			formValues.amount = getAmount( formValues );
 			if ( formValues.cid.indexOf( 'CLIENT_ID' ) === 0 ) {
 				// In non-AMP environment, the value will not be dynamically substituted by AMP runtime.
 				formValues.cid = getClientIDValue();
@@ -131,6 +170,10 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 				enableForm();
 				return;
 			}
+			let amount = formValues.amount;
+			if ( formValues.agree_to_pay_fees ) {
+				amount = amount + getFeeAmount( formElement );
+			}
 			const chargeResult = await fetch( '/wp-json/newspack-blocks/v1/donate', {
 				method: 'POST',
 				headers: {
@@ -138,7 +181,7 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 				},
 				body: JSON.stringify( {
 					tokenData: stripeTokenCreationResult.token,
-					amount: formValues.amount,
+					amount,
 					email: formValues.email,
 					full_name: formValues.full_name,
 					frequency: formValues.donation_frequency,

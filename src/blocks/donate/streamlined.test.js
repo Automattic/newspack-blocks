@@ -1,31 +1,43 @@
 import * as testingLibrary from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import fetchMock from 'fetch-mock-jest';
+import { encode } from 'html-entities';
 
 import { processStreamlinedElements } from './streamlined';
 
-const createDOM = () => {
+const MONTHLY_AMOUNT = 7;
+
+const createDOM = settings => {
 	const parentElement = document.createElement( 'div' );
 	parentElement.innerHTML = `
-    <style>.stripe-payment__inputs--hidden {display:none;}</style>
-    <form>
-      <div class='frequencies'>
-        <input type="radio" value="once" id="once" name="donation_frequency">
-        <label for="once">Once</label>
-        <input type="radio" value="monthly" id="monthly" name="donation_frequency" checked>
-        <label for="monthly">Monthly</label>
-      </div>
-      <div class="stripe-payment">
-        <div class="stripe-payment__inputs--hidden">
+		<style>.stripe-payment__inputs--hidden {display:none;}</style>
+		<form data-settings="${ encode( JSON.stringify( settings ) ) }">
+			<div class='frequencies'>
+				<div class='frequency'>
+					<input type="radio" value="once" id="once" name="donation_frequency">
+					<label for="once">Once</label>
+				</div>
+				<div class='frequency'>
+					<input type="radio" value="month" id="month" name="donation_frequency" checked>
+					<label for="month">Monthly</label>
+					<input type="radio" name="donation_value_month" value="${ MONTHLY_AMOUNT }" checked />
+				</div>
+			</div>
+			<div class="stripe-payment">
+				<div class="stripe-payment__inputs--hidden">
 					<input required="" placeholder="Email" type="email" name="email" value="">
 					<input required="" placeholder="Full Name" type="text" name="full_name" value="">
 				</div>
-        <div class="stripe-payment__messages"></div>
-        <button type="submit">Donate</button>
-      </div>
-  		<input name="cid" type="hidden" value="amp-123" />
-    </form>
-  `;
+				<label>
+					<input type="checkbox" name="agree_to_pay_fees" checked value="true">Agree to pay fees?
+					<span id="stripe-fees-amount">($0)</span>
+				</label>
+				<div class="stripe-payment__messages"></div>
+				<button type="submit">Donate</button>
+			</div>
+			<input name="cid" type="hidden" value="amp-123" />
+		</form>
+	`;
 	document.body.appendChild( parentElement );
 	return document.body;
 };
@@ -35,7 +47,12 @@ describe( 'Streamlined Donate block processing', () => {
 		return { data: { status: 200, client_secret: 'sec_123' } };
 	} );
 
-	const container = createDOM();
+	const currencySymbol = '$';
+	const frequencies = { once: 'Once', month: 'Monthly', year: 'Annually' };
+	const feeMultiplier = '2.9';
+	const feeStatic = '0.3';
+	const settings = [ currencySymbol, frequencies, feeMultiplier, feeStatic ];
+	const container = createDOM( settings );
 	processStreamlinedElements( container );
 
 	const button = testingLibrary.getByText( container, 'Donate' );
@@ -62,6 +79,10 @@ describe( 'Streamlined Donate block processing', () => {
 		expect(
 			testingLibrary.queryByText( container, 'Email address is invalid.' )
 		).not.toBeInTheDocument();
+	} );
+
+	it( 'the fee amount is updated', () => {
+		expect( testingLibrary.getByText( container, '($0.52 monthly)' ) ).toBeInTheDocument();
 	} );
 
 	it( 'form can be submitted after validation passes', () => {
