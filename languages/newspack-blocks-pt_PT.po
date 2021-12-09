@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Newspack Blocks 1.0.0-alpha.25\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/newspack-blocks\n"
-"POT-Creation-Date: 2021-12-08T22:44:53+00:00\n"
-"PO-Revision-Date: 2021-12-08 14:51-0800\n"
+"POT-Creation-Date: 2021-12-09T19:50:15+00:00\n"
+"PO-Revision-Date: 2021-12-09 12:13-0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pt\n"
@@ -315,11 +315,11 @@ msgstr "Valor da Doação"
 msgid "Other"
 msgstr "Outro"
 
-#: src/blocks/donate/view.php:343 src/blocks/donate/index.js:58
+#: src/blocks/donate/view.php:343 dist/editor.js:41
 msgid "Your contribution is appreciated."
 msgstr "A sua contribuição é fundamental."
 
-#: src/blocks/donate/view.php:347 src/blocks/donate/index.js:62
+#: src/blocks/donate/view.php:347
 msgid "Donate now!"
 msgstr "Doe agora!"
 
@@ -420,6 +420,10 @@ msgstr ""
 #: dist/donateStreamlined.js:1 src/blocks/donate/streamlined.js:27
 msgid "Full name should be provided."
 msgstr ""
+
+#: dist/editor.js:41
+msgid "Donate Now!"
+msgstr "Doe agora!"
 
 #: dist/editor.js:41
 msgid "Button text…"
