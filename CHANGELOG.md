@@ -1,3 +1,17 @@
+# [1.43.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.42.3...v1.43.0-alpha.1) (2021-12-09)
+
+
+### Bug Fixes
+
+* homepage posts block in AMP Plus mode ([#954](https://github.com/Automattic/newspack-blocks/issues/954)) ([8834fb6](https://github.com/Automattic/newspack-blocks/commit/8834fb69aeedb2d98b255f67fad07b6be8f3ee69)), closes [#953](https://github.com/Automattic/newspack-blocks/issues/953)
+* update mobile styles for the post carousel ([#946](https://github.com/Automattic/newspack-blocks/issues/946)) ([ea213e9](https://github.com/Automattic/newspack-blocks/commit/ea213e982e12bdd93f0925feb75c07e9878505c9))
+
+
+### Features
+
+* **donate-block:** defer Stripe scripts loading ([045a867](https://github.com/Automattic/newspack-blocks/commit/045a8671dbca6d2643fcb2c30231a2412f8b6d9d))
+* **donate:** agree to pay fees feature ([#928](https://github.com/Automattic/newspack-blocks/issues/928)) ([221c061](https://github.com/Automattic/newspack-blocks/commit/221c061848877da8963cc05c915623cc9fca3245))
+
 ## [1.42.3](https://github.com/Automattic/newspack-blocks/compare/v1.42.2...v1.42.3) (2021-12-07)
 
 
