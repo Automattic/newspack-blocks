@@ -4,11 +4,14 @@
 	"author": "Automattic",
 	"devDependencies": {
 		"@automattic/calypso-build": "^10.0.0",
-		"@babel/core": "^7.15.0",
+		"@babel/core": "^7.16.0",
 		"@commitlint/cli": "^15.0.0",
 		"@commitlint/config-conventional": "^15.0.0",
 		"@semantic-release/changelog": "^6.0.1",
 		"@semantic-release/git": "^10.0.1",
+		"@testing-library/dom": "^8.11.1",
+		"@testing-library/jest-dom": "^5.15.0",
+		"@testing-library/user-event": "^13.5.0",
 		"@wordpress/api-fetch": "^5.2.4",
 		"@wordpress/base-styles": "^4.0.4",
 		"@wordpress/block-editor": "^8.0.4",
@@ -24,9 +27,14 @@
 		"eslint": "^7.32.0",
 		"eslint-config-prettier": "^8.3.0",
 		"eslint-plugin-import": "^2.25.3",
+		"eslint-plugin-jest": "^25.2.4",
 		"eslint-plugin-jsdoc": "^37.0.3",
 		"eslint-plugin-prettier": "^4.0.0",
 		"eslint-plugin-react": "^7.26.1",
+		"fetch-mock-jest": "^1.5.1",
+		"identity-obj-proxy": "^3.0.0",
+		"jest": "^27.3.1",
+		"jest-environment-jsdom": "^27.3.1",
 		"lint-staged": "^12.0.3",
 		"npm-run-all": "^4.1.5",
 		"postcss": "^8.4.4",
@@ -69,12 +77,30 @@
 		"regenerator-runtime": "^0.13.9",
 		"swiper": "7.3.1"
 	},
+	"jest": {
+		"setupFilesAfterEnv": [
+			"<rootDir>/src/setupTests.js"
+		],
+		"testMatch": [
+			"<rootDir>/**/*test.js?(x)",
+			"!**/.eslintrc.*"
+		],
+		"transform": {
+			"^.+\\.js?$": "babel-jest"
+		},
+		"moduleNameMapper": {
+			"\\.(scss|css)$": "identity-obj-proxy"
+		},
+		"verbose": false,
+		"testEnvironment": "jsdom"
+	},
 	"scripts": {
 		"cm": "git-cz",
 		"semantic-release": "semantic-release",
 		"start": "npm run dev",
 		"dev": "calypso-build --watch --config='./webpack.config.js'",
 		"build": "calypso-build --config='./webpack.config.js'",
+		"test": "jest",
 		"lint": "npm-run-all --parallel lint:*",
 		"lint:js": "eslint --ext .js,.jsx src",
 		"lint:js:staged": "eslint --ext .js,.jsx",
@@ -84,7 +110,6 @@
 		"lint:scss:staged": "stylelint --syntax scss",
 		"i18n": "NODE_ENV=production npm run build; bash ./bin/update-translations.sh",
 		"clean": "rm -rf dist/",
-		"test": "echo \"Error: no test specified\" && exit 1",
 		"release": "NODE_ENV=production npm run build && npm run semantic-release",
 		"release:archive": "rm -rf release && mkdir -p release && rsync -r . ./release/newspack-blocks --exclude-from='./.distignore' && cd release && zip -r newspack-blocks.zip newspack-blocks"
 	},
