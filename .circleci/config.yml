@@ -58,7 +58,7 @@ jobs:
       - checkout_code
       - run:
           name: Install rsync
-          command: sudo apt install rsync
+          command: sudo apt-get update && sudo apt-get install rsync
       - run:
           name: Release new version
           command: npm run release
