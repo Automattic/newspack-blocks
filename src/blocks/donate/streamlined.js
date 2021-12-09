@@ -114,7 +114,7 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 			);
 		const renderSuccessMessageWithEmail = emailAddress => {
 			const successMessge = sprintf(
-				/* Translators: %s is the email address of the current user. */
+				/* Translators: %s is the email address of the donor. */
 				__(
 					'Your payment has been processed. Thank you for your contribution! You will receive a confirmation email at %s.',
 					'newspack-blocks'
@@ -130,11 +130,11 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 		);
 
 		const updateFeesAmount = () => {
-			const feesAmountEl = formElement.querySelector( '#stripe-fees-amount' );
+			const feesAmountEl = el.querySelector( '#stripe-fees-amount' );
 			if ( feesAmountEl ) {
 				const formValues = Object.fromEntries( new FormData( formElement ) );
 				const feeAmount = getFeeAmount( formElement );
-				feesAmountEl.innerText = `(${ CURRENCY_SYMBOL }${ feeAmount } ${ FREQUENCIES[
+				feesAmountEl.innerHTML = `(${ CURRENCY_SYMBOL }${ feeAmount } ${ FREQUENCIES[
 					formValues.donation_frequency
 				].toLowerCase() })`;
 			}
