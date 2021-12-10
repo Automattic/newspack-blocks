@@ -35,10 +35,17 @@ call_user_func(
 		if ( has_post_thumbnail() && 'uncropped' !== $attributes['imageShape'] ) {
 			$image_size = Newspack_Blocks::image_size_for_orientation( $attributes['imageShape'] );
 		}
-		$thumbnail_args = '';
+		$thumbnail_args = array(
+			'data-hero-candidate' => true,
+		);
 		// If the image position is behind, pass the object-fit setting to maintain styles with AMP.
 		if ( 'behind' === $attributes['mediaPosition'] ) {
-			$thumbnail_args = array( 'object-fit' => 'cover' );
+			$thumbnail_args['object-fit'] = 'cover';
+		}
+		// Disable lazy loading by using an arbitraty `loading` attribute other than `lazy`.
+		// Empty string or `false` would still result in `lazy`.
+		if ( $attributes['disableImageLazyLoad'] ) {
+			$thumbnail_args['loading'] = 'none';
 		}
 		$category = false;
 		// Use Yoast primary category if set.
