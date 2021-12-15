@@ -1,8 +1,8 @@
-module.exports = api => {
-	api.cache( true );
+module.exports = ( { env } ) => {
+	const isTest = env( 'test' );
 	return {
 		presets: [
-			[ '@babel/preset-env' ],
+			...( isTest ? [ '@babel/preset-env' ] : [] ),
 			'@automattic/calypso-build/babel/default',
 			'@automattic/calypso-build/babel/wordpress-element',
 		],

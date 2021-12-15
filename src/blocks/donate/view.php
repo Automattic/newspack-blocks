@@ -47,12 +47,19 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 						<input required placeholder="<?php echo esc_html__( 'Full Name', 'newspack-blocks' ); ?>" type="text" name="full_name" value="">
 					</div>
 					<?php if ( $is_rendering_newsletter_list_opt_in ) : ?>
-						<div class="stripe-payment__row">
+						<div class="stripe-payment__row stripe-payment__row--small">
 							<label class="stripe-payment__checkbox">
 								<input type="checkbox" name="newsletter_opt_in" checked value="true"><?php echo esc_html__( 'Sign up for our newsletter', 'newspack-blocks' ); ?>
 							</label>
 						</div>
 					<?php endif; ?>
+					<div class="stripe-payment__row stripe-payment__row--small">
+						<label class="stripe-payment__checkbox">
+							<input type="checkbox" name="agree_to_pay_fees" checked value="true"><?php echo esc_html__( 'Agree to pay fees?', 'newspack-blocks' ); ?>
+							<span id="stripe-fees-amount">($0)</span>
+						</label>
+						<div class="stripe-payment__info"><?php echo esc_html__( 'Paying the transaction fee is not required, but it directs more money in support of our mission.', 'newspack-blocks' ); ?></div>
+					</div>
 					<div class="stripe-payment__messages">
 						<div class="type-error"></div>
 						<div class="type-success"></div>
@@ -151,6 +158,19 @@ function newspack_blocks_render_block_donate( $attributes ) {
 
 	$form_footer = newspack_blocks_render_block_donate_footer( $attributes );
 
+	if ( Newspack_Blocks::is_rendering_streamlined_block() ) {
+		$fee_muliplier         = get_option( 'newspack_blocks_donate_fee_multiplier', '2.9' );
+		$fee_static            = get_option( 'newspack_blocks_donate_fee_static', '0.3' );
+		$settings_for_frontend = [
+			$settings['currencySymbol'],
+			$frequencies,
+			$fee_muliplier,
+			$fee_static,
+		];
+	} else {
+		$settings_for_frontend = [];
+	}
+
 	ob_start();
 
 	/**
@@ -162,7 +182,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 
 		?>
 		<div class='wp-block-newspack-blocks-donate wpbnbd untiered'>
-			<form>
+			<form data-settings="<?php echo esc_html( htmlspecialchars( wp_json_encode( $settings_for_frontend ), ENT_QUOTES, 'UTF-8' ) ); ?>">
 				<input type='hidden' name='newspack_donate' value='1' />
 				<div class='wp-block-newspack-blocks-donate__options'>
 					<?php foreach ( $frequencies as $frequency_slug => $frequency_name ) : ?>
@@ -215,7 +235,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 
 		?>
 		<div class='wp-block-newspack-blocks-donate wpbnbd tiered'>
-			<form>
+			<form data-settings="<?php echo esc_html( htmlspecialchars( wp_json_encode( $settings_for_frontend ), ENT_QUOTES, 'UTF-8' ) ); ?>">
 				<input type='hidden' name='newspack_donate' value='1' />
 				<div class='wp-block-newspack-blocks-donate__options'>
 					<div class='wp-block-newspack-blocks-donate__frequencies frequencies'>
