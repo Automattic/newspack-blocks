@@ -1,3 +1,10 @@
+# [1.44.0](https://github.com/Automattic/newspack-blocks/compare/v1.43.0...v1.44.0) (2021-12-15)
+
+
+### Features
+
+* disabling image lazy load for homepage articles ([#970](https://github.com/Automattic/newspack-blocks/issues/970)) ([de68cb2](https://github.com/Automattic/newspack-blocks/commit/de68cb22402dc67725df9cb8ffe3ad34678108a7))
+
 # [1.44.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.43.0...v1.44.0-alpha.1) (2021-12-15)
 
 
