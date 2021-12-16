@@ -261,7 +261,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 		);
 
 		$carousel    = sprintf(
-			'<amp-base-carousel class="wp-block-newspack-carousel__amp-carousel" width="%1$s" height="%2$s" heights="%3$s" layout="responsive" snap="true" type="slides" data-next-button-aria-label="%4$s" data-prev-button-aria-label="%5$s" controls loop %6$s id="wp-block-newspack-carousel__amp-carousel__%7$s" on="slideChange:wp-block-newspack-carousel__amp-pagination__%7$s.toggle(index=event.index, value=true)" advance-count="1" visible-count="%8$s">%9$s</amp-base-carousel>',
+			'<amp-base-carousel class="wp-block-newspack-carousel__amp-carousel" width="%1$s" height="%2$s" heights="%3$s" layout="responsive" snap="true" data-next-button-aria-label="%4$s" data-prev-button-aria-label="%5$s" controls="auto" loop="true" %6$s id="wp-block-newspack-carousel__amp-carousel__%7$s" on="slideChange:wp-block-newspack-carousel__amp-pagination__%7$s.toggle(index=event.index, value=true)" advance-count="1" visible-count="%8$s">%9$s</amp-base-carousel>',
 			$attributes['slidesPerView'] * 1,
 			$attributes['aspectRatio'],
 			'(min-width: 1168px) ' . ( $attributes['aspectRatio'] / $slides_to_show * 100 ) . '% !important, (min-width: 782px) ' . ( $slides_to_show > 1 ? ( $attributes['aspectRatio'] / 2 * 100 ) . '% !important' : ( $attributes['aspectRatio'] * 100 ) . '% !important' ) . ', ' . ( $attributes['aspectRatio'] * 100 ) . '% !important',
