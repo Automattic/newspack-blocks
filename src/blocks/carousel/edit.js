@@ -174,7 +174,8 @@ class Edit extends Component {
 		const classes = classnames(
 			className,
 			'wp-block-newspack-blocks-carousel', // Default to make styles work for third-party consumers.
-			'swiper-container',
+			'slides-per-view-' + slidesPerView,
+			'swiper',
 			{
 				'wp-block-newspack-blocks-carousel__autoplay-playing': autoplay,
 				'newspack-block--disabled': isUIDisabled,
@@ -339,7 +340,7 @@ class Edit extends Component {
 										ref={ this.btnNextRef }
 									/>
 									<div
-										className="swiper-pagination-bullets amp-pagination"
+										className="swiper-pagination swiper-pagination-bullets amp-pagination"
 										ref={ this.paginationRef }
 									/>
 								</>

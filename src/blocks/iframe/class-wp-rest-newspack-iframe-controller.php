@@ -257,7 +257,7 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 			if ( file_exists( path_join( $iframe_path, self::IFRAME_ENTRY_FILE ) ) ) {
 				$response = [
 					'mode' => 'iframe',
-					'src'  => $wp_upload_dir['url'] . self::IFRAME_UPLOAD_DIR . $iframe_folder,
+					'src'  => $wp_upload_dir['url'] . self::IFRAME_UPLOAD_DIR . $iframe_folder . DIRECTORY_SEPARATOR,
 					'dir'  => path_join( $wp_upload_dir['subdir'] . self::IFRAME_UPLOAD_DIR, $iframe_folder ),
 				];
 
@@ -279,7 +279,7 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 				if ( 1 === count( $archive_folders ) && file_exists( path_join( $archive_folders[0], self::IFRAME_ENTRY_FILE ) ) ) {
 					$response = [
 						'mode' => 'iframe',
-						'src'  => $wp_upload_dir['url'] . self::IFRAME_UPLOAD_DIR . $iframe_folder . DIRECTORY_SEPARATOR . basename( $archive_folders[0] ),
+						'src'  => $wp_upload_dir['url'] . self::IFRAME_UPLOAD_DIR . $iframe_folder . DIRECTORY_SEPARATOR . basename( $archive_folders[0] ) . DIRECTORY_SEPARATOR,
 						'dir'  => path_join( $wp_upload_dir['subdir'] . self::IFRAME_UPLOAD_DIR, $iframe_folder . DIRECTORY_SEPARATOR ),
 					];
 
