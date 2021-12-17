@@ -244,13 +244,30 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 								'last_name'  => ! empty( $last_name ) && in_array( $last_name, explode( ' ', $guest_author->post_title ), true ) ? $last_name : $guest_author->post_title,
 							];
 
-							$linked_account = get_post_meta( $guest_author->ID, 'cap-linked_account', true );
+							$guest_author   = ( new CoAuthors_Guest_Authors() )->get_guest_author_by( 'id', $guest_author->ID );
+							$author_term    = ( new CoAuthors_Plus() )->get_author_term( $guest_author );
+							$post_count     = is_object( $author_term ) && isset( $author_term->count ) ? $author_term->count : 0;
+							$linked_account = isset( $guest_author->linked_account ) ? $guest_author->linked_account : null;
+
+							// Post count = guest author posts + linked WP user posts.
 							if ( ! empty( $linked_account ) ) {
 								$linked_accounts[] = $linked_account;
-							}
+								$linked_user       = get_user_by( 'login', $linked_account );
 
-							$guest_author = ( new CoAuthors_Guest_Authors() )->get_guest_author_by( 'id', $guest_author->ID );
-							$post_count   = ( new CoAuthors_Plus() )->get_guest_author_post_count( $guest_author );
+								if ( $linked_user ) {
+									$post_count += function_exists( 'wpcom_vip_count_user_posts' ) ?
+										wpcom_vip_count_user_posts(
+											$linked_user->ID,
+											[ 'any' ], // Any post type.
+											true // But public posts only.
+										) :
+										count_user_posts( // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.count_user_posts_count_user_posts
+											$linked_user->ID,
+											[ 'any' ], // Any post type.
+											true // But public posts only.
+										);
+								}
+							}
 
 							// Only include users with at least one published post.
 							if ( 0 === $post_count && $options['exclude_empty'] ) {
