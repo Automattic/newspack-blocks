@@ -1,6 +1,6 @@
 <?php
 /**
- * Server-side render functions for the Author Profile block.
+ * Server-side render functions for the Author List block.
  *
  * @package WordPress
  */
