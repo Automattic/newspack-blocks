@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import fetchMock from 'fetch-mock-jest';
 import { encode } from 'html-entities';
 
-import { processStreamlinedElements } from './streamlined';
+import { processStreamlinedElements, computeFeeAmount } from './streamlined';
 
 const MONTHLY_AMOUNT = 7;
 
@@ -41,6 +41,21 @@ const createDOM = settings => {
 	document.body.appendChild( parentElement );
 	return document.body;
 };
+
+describe( 'fee computation', () => {
+	it( 'computes fee with default values', () => {
+		expect( computeFeeAmount( 1, 2.9, 0.3 ) ).toBe( 0.34 );
+		expect( computeFeeAmount( 15, 2.9, 0.3 ) ).toBe( 0.76 );
+		expect( computeFeeAmount( 100, 2.9, 0.3 ) ).toBe( 3.3 );
+	} );
+	it( 'computes fee with other values', () => {
+		expect( computeFeeAmount( 15, 0, 0 ) ).toBe( 0 );
+		expect( computeFeeAmount( 15, 2.3, 0.3 ) ).toBe( 0.66 );
+		expect( computeFeeAmount( 15, 2.3, 0 ) ).toBe( 0.35 );
+		expect( computeFeeAmount( 15, 50, 0 ) ).toBe( 15 );
+		expect( computeFeeAmount( 15, 50, 10 ) ).toBe( 35 );
+	} );
+} );
 
 describe( 'Streamlined Donate block processing', () => {
 	fetchMock.post( '/wp-json/newspack-blocks/v1/donate', () => {

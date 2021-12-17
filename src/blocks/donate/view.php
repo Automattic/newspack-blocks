@@ -6,20 +6,6 @@
  */
 
 /**
- * Get fee multiplier.
- */
-function newspack_blocks_render_get_fee_multiplier() {
-	return get_option( 'newspack_blocks_donate_fee_multiplier', '2.9' );
-}
-
-/**
- * Get fee static portion.
- */
-function newspack_blocks_render_get_fee_static() {
-	return get_option( 'newspack_blocks_donate_fee_static', '0.3' );
-}
-
-/**
  * Renders the footer of the donation form.
  *
  * @param array $attributes The block attributes.
@@ -43,9 +29,8 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 		$client_id = Newspack_Popups_Segmentation::NEWSPACK_SEGMENTATION_CID_NAME;
 	}
 
-	$fee_muliplier             = (float) newspack_blocks_render_get_fee_multiplier();
-	$fee_static                = (float) newspack_blocks_render_get_fee_static();
-	$is_rendering_fee_checkbox = 0 < $fee_muliplier + $fee_static;
+	$stripe_data               = \Newspack\Stripe_Connection::get_stripe_data();
+	$is_rendering_fee_checkbox = 0 < (float) $stripe_data['fee_multiplier'] + (float) $stripe_data['fee_static'];
 
 	ob_start();
 
@@ -179,13 +164,12 @@ function newspack_blocks_render_block_donate( $attributes ) {
 	$form_footer = newspack_blocks_render_block_donate_footer( $attributes );
 
 	if ( Newspack_Blocks::is_rendering_streamlined_block() ) {
-		$fee_muliplier         = newspack_blocks_render_get_fee_multiplier();
-		$fee_static            = newspack_blocks_render_get_fee_static();
+		$stripe_data           = \Newspack\Stripe_Connection::get_stripe_data();
 		$settings_for_frontend = [
 			$settings['currencySymbol'],
 			$frequencies,
-			$fee_muliplier,
-			$fee_static,
+			$stripe_data['fee_multiplier'],
+			$stripe_data['fee_static'],
 		];
 	} else {
 		$settings_for_frontend = [];
