@@ -134,14 +134,14 @@ export default ( { attributes, clientId, setAttributes } ) => {
 								label={ __( 'Author Type', 'newspack' ) }
 								help={ sprintf(
 									// translators: help text for author type selection.
-									__( 'Show %s.', 'newspack-blocks' ),
+									__( '%s will be displayed.', 'newspack-blocks' ),
 									'all' === authorType
-										? __( 'both guest authors and WP users', 'newspack-blocks' )
+										? __( 'Both guest authors and WP users', 'newspack-blocks' )
 										: sprintf(
 												// translators: currently selected author type option.
 												__( '%s only', 'newspack-blocks' ),
 												'guest-authors' === authorType
-													? __( 'guest authors', 'newspack-blocks' )
+													? __( 'Guest authors', 'newspack-blocks' )
 													: __( 'WP users', 'newspack-blocks' )
 										  )
 								) }
@@ -219,8 +219,10 @@ export default ( { attributes, clientId, setAttributes } ) => {
 							label={ __( 'Exclude authors with 0 posts', 'newspack-blocks' ) }
 							help={ sprintf(
 								// Translators: Help message for "include empty authors" toggle.
-								__( '%s authors with no published posts.', 'newspack-blocks' ),
-								excludeEmpty ? __( 'Hide', 'newspack-blocks' ) : __( 'Show', 'newspack-blocks' )
+								__( 'Authors with no published posts will be %s.', 'newspack-blocks' ),
+								excludeEmpty
+									? __( 'hidden', 'newspack-blocks' )
+									: __( 'displayed', 'newspack-blocks' )
 							) }
 							checked={ excludeEmpty }
 							onChange={ () => setAttributes( { excludeEmpty: ! excludeEmpty } ) }
@@ -229,7 +231,7 @@ export default ( { attributes, clientId, setAttributes } ) => {
 					<PanelRow>
 						<AutocompleteWithSuggestions
 							label={ __( 'Search by author name', 'newspack-blocks' ) }
-							help={ __( 'Authors selected here will not be shown.', 'newspack-blocks' ) }
+							help={ __( 'Authors selected here will not be displayed.', 'newspack-blocks' ) }
 							fetchSuggestions={ async ( search = null, offset = 0 ) => {
 								const response = await apiFetch( {
 									parse: false,
