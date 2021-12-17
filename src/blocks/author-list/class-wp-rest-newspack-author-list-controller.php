@@ -324,12 +324,13 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 							return $acc;
 						}
 
-						$last_name = get_user_meta( intval( $user->data->ID ), 'last_name', true );
-						$user_data = [
+						$last_name     = get_user_meta( intval( $user->data->ID ), 'last_name', true );
+						$fallback_name = ! empty( $user->data->display_name ) ? $user->data->display_name : $user->data->user_login;
+						$user_data     = [
 							'id'         => intval( $user->data->ID ),
 							'registered' => $user->data->user_registered,
 							'is_guest'   => false,
-							'last_name'  => ! empty( $last_name ) && in_array( $last_name, explode( ' ', $user->data->display_name ), true ) ? $last_name : $user->data->display_name,
+							'last_name'  => ! empty( $last_name ) && in_array( $last_name, explode( ' ', $fallback_name ), true ) ? $last_name : $fallback_name,
 						];
 
 						if ( in_array( 'login', $fields, true ) ) {
