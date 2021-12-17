@@ -156,7 +156,7 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 		$all_users         = [];
 
 		// Get Co-authors guest authors, only if CAP plugin is active and the author type specified includes guest authors.
-		if ( in_array( $options['author_type'], [ 'all', 'guest-authors' ] ) && class_exists( 'CoAuthors_Guest_Authors' ) ) {
+		if ( in_array( $options['author_type'], [ 'all', 'guest-authors' ], true ) && class_exists( 'CoAuthors_Guest_Authors' ) ) {
 			$guest_author_args = [
 				'post_type'      => 'guest-author',
 				'posts_per_page' => $options['per_page'],
@@ -183,7 +183,7 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 			}
 		}
 
-		if ( in_array( $options['author_type'], [ 'all', 'users' ] ) && class_exists( 'CoAuthors_Guest_Authors' ) ) {
+		if ( in_array( $options['author_type'], [ 'all', 'users' ], true ) && class_exists( 'CoAuthors_Guest_Authors' ) ) {
 			// Reset current page for new query.
 			$current_page         = 1;
 			$exclude_empty        = $options['exclude_empty'] ? true : false;
