@@ -49,6 +49,7 @@ function newspack_blocks_get_author_or_guest_author( $author_id, $avatar_size = 
 		}
 
 		$author = ( new CoAuthors_Guest_Authors() )->get_guest_author_by( 'id', $author_id );
+		$avatar = function_exists( 'coauthors_get_avatar' ) ? coauthors_get_avatar( $author, $avatar_size ) : false;
 
 		// Format CAP guest author object to return to the render function.
 		if ( $author && isset( $author->ID ) ) {
@@ -62,11 +63,10 @@ function newspack_blocks_get_author_or_guest_author( $author_id, $avatar_size = 
 				'email'  => WP_REST_Newspack_Authors_Controller::get_email( $author_id ),
 				'social' => WP_REST_Newspack_Authors_Controller::get_social( $author_id ),
 			];
-		}
 
-		$avatar = function_exists( 'coauthors_get_avatar' ) ? coauthors_get_avatar( $author, $avatar_size ) : false;
-		if ( $avatar && ( false === strpos( $avatar, 'avatar-default' ) || ! $hide_default ) ) {
-			$author['avatar'] = $avatar;
+			if ( $avatar && ( false === strpos( $avatar, 'avatar-default' ) || ! $hide_default ) ) {
+				$author['avatar'] = $avatar;
+			}
 		}
 	}
 
