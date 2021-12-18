@@ -40,7 +40,7 @@ call_user_func(
 		<div class="<?php echo esc_attr( $classes ); ?>">
 			<?php if ( $attributes['showAvatar'] && isset( $author['avatar'] ) ) : ?>
 				<div class="wp-block-newspack-blocks-author-profile__avatar">
-					<figure style="border-radius: <?php echo esc_attr( $attributes['avatarBorderRadius'] ); ?>; width: <?php echo esc_attr( $attributes['avatarSize'] ); ?>px;">
+					<figure style="border-radius: <?php echo esc_attr( $attributes['avatarBorderRadius'] ); ?>; height: <?php echo esc_attr( $attributes['avatarSize'] ); ?>px; width: <?php echo esc_attr( $attributes['avatarSize'] ); ?>px;">
 						<?php echo wp_kses_post( $author['avatar'] ); ?>
 					</figure>
 				</div>
