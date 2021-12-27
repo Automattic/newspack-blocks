@@ -14,7 +14,7 @@
 		"@testing-library/user-event": "^13.5.0",
 		"@wordpress/api-fetch": "^5.2.4",
 		"@wordpress/base-styles": "^4.0.4",
-		"@wordpress/block-editor": "^8.0.4",
+		"@wordpress/block-editor": "^8.0.12",
 		"@wordpress/blocks": "^11.1.2",
 		"@wordpress/components": "^17.0.0",
 		"@wordpress/element": "^4.0.1",
