@@ -1,3 +1,10 @@
+## [1.44.1](https://github.com/Automattic/newspack-blocks/compare/v1.44.0...v1.44.1) (2022-01-04)
+
+
+### Bug Fixes
+
+* validation errors for invalid attributes on amp-base-carousel ([#979](https://github.com/Automattic/newspack-blocks/issues/979)) ([cdce22f](https://github.com/Automattic/newspack-blocks/commit/cdce22f9d1df8ce7ec687e1aa26bc9bfa49660ac))
+
 ## [1.44.1-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.44.0...v1.44.1-alpha.1) (2021-12-16)
 
 
