@@ -135,7 +135,7 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 			if ( feesAmountEl ) {
 				const formValues = Object.fromEntries( new FormData( formElement ) );
 				const feeAmount = getFeeAmount( formElement );
-				feesAmountEl.innerHTML = `(${ CURRENCY_SYMBOL }${ feeAmount } ${ FREQUENCIES[
+				feesAmountEl.innerHTML = `(${ CURRENCY_SYMBOL }${ feeAmount.toFixed( 2 ) } ${ FREQUENCIES[
 					formValues.donation_frequency
 				].toLowerCase() })`;
 			}
