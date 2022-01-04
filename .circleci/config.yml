@@ -68,7 +68,7 @@ jobs:
     docker:
       - image: cimg/node:16.11.1
     steps:
-      - checkout_with_workspace
+      - checkout_code
       - run:
           name: Perform post-release chores
           command: |
