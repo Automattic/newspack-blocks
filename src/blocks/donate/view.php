@@ -29,6 +29,9 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 		$client_id = Newspack_Popups_Segmentation::NEWSPACK_SEGMENTATION_CID_NAME;
 	}
 
+	$stripe_data               = \Newspack\Stripe_Connection::get_stripe_data();
+	$is_rendering_fee_checkbox = 0 < (float) $stripe_data['fee_multiplier'] + (float) $stripe_data['fee_static'];
+
 	ob_start();
 
 	?>
@@ -53,13 +56,15 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 							</label>
 						</div>
 					<?php endif; ?>
-					<div class="stripe-payment__row stripe-payment__row--small">
-						<label class="stripe-payment__checkbox">
-							<input type="checkbox" name="agree_to_pay_fees" checked value="true"><?php echo esc_html__( 'Agree to pay fees?', 'newspack-blocks' ); ?>
-							<span id="stripe-fees-amount">($0)</span>
-						</label>
-						<div class="stripe-payment__info"><?php echo esc_html__( 'Paying the transaction fee is not required, but it directs more money in support of our mission.', 'newspack-blocks' ); ?></div>
-					</div>
+					<?php if ( $is_rendering_fee_checkbox ) : ?>
+						<div class="stripe-payment__row stripe-payment__row--small">
+							<label class="stripe-payment__checkbox">
+								<input type="checkbox" name="agree_to_pay_fees" checked value="true"><?php echo esc_html__( 'Agree to pay fees?', 'newspack-blocks' ); ?>
+								<span id="stripe-fees-amount">($0)</span>
+							</label>
+							<div class="stripe-payment__info"><?php echo esc_html__( 'Paying the transaction fee is not required, but it directs more money in support of our mission.', 'newspack-blocks' ); ?></div>
+						</div>
+					<?php endif; ?>
 					<div class="stripe-payment__messages">
 						<div class="type-error"></div>
 						<div class="type-success"></div>
@@ -159,13 +164,12 @@ function newspack_blocks_render_block_donate( $attributes ) {
 	$form_footer = newspack_blocks_render_block_donate_footer( $attributes );
 
 	if ( Newspack_Blocks::is_rendering_streamlined_block() ) {
-		$fee_muliplier         = get_option( 'newspack_blocks_donate_fee_multiplier', '2.9' );
-		$fee_static            = get_option( 'newspack_blocks_donate_fee_static', '0.3' );
+		$stripe_data           = \Newspack\Stripe_Connection::get_stripe_data();
 		$settings_for_frontend = [
 			$settings['currencySymbol'],
 			$frequencies,
-			$fee_muliplier,
-			$fee_static,
+			$stripe_data['fee_multiplier'],
+			$stripe_data['fee_static'],
 		];
 	} else {
 		$settings_for_frontend = [];
