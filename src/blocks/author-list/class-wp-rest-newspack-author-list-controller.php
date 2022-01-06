@@ -377,7 +377,10 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 		usort(
 			$combined_authors,
 			function( $a, $b ) {
-				return strcmp( $a['last_name'], $b['last_name'] );
+				return strcmp(
+					strtolower( $a['last_name'] ),
+					strtolower( $b['last_name'] )
+				);
 			}
 		);
 
