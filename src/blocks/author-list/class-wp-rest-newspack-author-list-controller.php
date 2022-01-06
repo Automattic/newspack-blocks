@@ -291,9 +291,10 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 								}
 							}
 							if ( in_array( 'avatar', $fields, true ) && function_exists( 'coauthors_get_avatar' ) ) {
-								$avatar = coauthors_get_avatar( $guest_author, 256 );
+								$avatar     = coauthors_get_avatar( $guest_author, 256, $options['avatar_hide_default'] ? 'blank' : '' );
+								$is_default = false !== strpos( $avatar, 'avatar-default' ) || false !== strpos( $avatar, 'd=blank' );
 
-								if ( $avatar && ( false === strpos( $avatar, 'avatar-default' ) || ! $options['avatar_hide_default'] ) ) {
+								if ( $avatar && ( ! $is_default || ! $options['avatar_hide_default'] ) ) {
 									$guest_author_data['avatar'] = $avatar;
 								}
 							}
@@ -350,9 +351,10 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 							}
 						}
 						if ( in_array( 'avatar', $fields, true ) ) {
-							$avatar = get_avatar( $user->data->ID, 256 );
+							$avatar     = get_avatar( $user->data->ID, 256, $options['avatar_hide_default'] ? 'blank' : '' );
+							$is_default = false !== strpos( $avatar, 'avatar-default' ) || false !== strpos( $avatar, 'd=blank' );
 
-							if ( $avatar && ( false === strpos( $avatar, 'avatar-default' ) || ! $options['avatar_hide_default'] ) ) {
+							if ( $avatar && ( ! $is_default || ! $options['avatar_hide_default'] ) ) {
 								$user_data['avatar'] = $avatar;
 							}
 						}
