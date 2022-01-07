@@ -60,6 +60,12 @@ const getAmount = formValues => {
 	return parseFloat( formValues.amount );
 };
 
+export const computeFeeAmount = ( amount, feeMultiplier, feeStatic ) => {
+	return parseFloat(
+		( ( ( amount + feeStatic ) / ( 100 - feeMultiplier ) ) * 100 - amount ).toFixed( 2 )
+	);
+};
+
 const getFeeAmount = formElement => {
 	const formValues = Object.fromEntries( new FormData( formElement ) );
 	const amount = getAmount( formValues );
@@ -67,12 +73,7 @@ const getFeeAmount = formElement => {
 	const [ CURRENCY_SYMBOL, FREQUENCIES, FEE_MULTIPLIER, FEE_STATIC ] = JSON.parse(
 		formElement.getAttribute( 'data-settings' )
 	);
-	return parseFloat(
-		(
-			( ( amount + parseFloat( FEE_STATIC ) ) / ( 100 - parseFloat( FEE_MULTIPLIER ) ) ) * 100 -
-			amount
-		).toFixed( 2 )
-	);
+	return computeFeeAmount( amount, parseFloat( FEE_MULTIPLIER ), parseFloat( FEE_STATIC ) );
 };
 
 export const processStreamlinedElements = ( parentElement = document ) =>
@@ -134,7 +135,7 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 			if ( feesAmountEl ) {
 				const formValues = Object.fromEntries( new FormData( formElement ) );
 				const feeAmount = getFeeAmount( formElement );
-				feesAmountEl.innerHTML = `(${ CURRENCY_SYMBOL }${ feeAmount } ${ FREQUENCIES[
+				feesAmountEl.innerHTML = `(${ CURRENCY_SYMBOL }${ feeAmount.toFixed( 2 ) } ${ FREQUENCIES[
 					formValues.donation_frequency
 				].toLowerCase() })`;
 			}

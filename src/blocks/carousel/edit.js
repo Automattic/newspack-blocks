@@ -174,6 +174,7 @@ class Edit extends Component {
 		const classes = classnames(
 			className,
 			'wp-block-newspack-blocks-carousel', // Default to make styles work for third-party consumers.
+			'wpnbpc', // Shortened version of the default classname.
 			'slides-per-view-' + slidesPerView,
 			'swiper',
 			{
