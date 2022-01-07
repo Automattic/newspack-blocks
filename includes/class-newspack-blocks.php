@@ -109,6 +109,39 @@ class Newspack_Blocks {
 	}
 
 	/**
+	 * Possible mimes for iframe archive source file.
+	 */
+	public static function iframe_archive_accepted_file_mimes() {
+		return [ 'application/zip' => 'zip' ];
+	}
+
+	/**
+	 * Possible mimes for iframe document source file.
+	 */
+	public static function iframe_document_accepted_file_mimes() {
+		$mimes = get_allowed_mime_types();
+		return [
+			$mimes['pdf']             => 'pdf',
+			$mimes['doc']             => 'doc',
+			$mimes['docx']            => 'docx',
+			$mimes['xla|xls|xlt|xlw'] => 'xls',
+			$mimes['xlsx']            => 'xlsx',
+			$mimes['pot|pps|ppt']     => 'ppt',
+			$mimes['pptx']            => 'pptx',
+		];
+	}
+
+	/**
+	 * Possible mimes for iframe source file.
+	 */
+	public static function iframe_accepted_file_mimes() {
+		return array_merge(
+			array_values( self::iframe_archive_accepted_file_mimes() ),
+			array_values( self::iframe_document_accepted_file_mimes() )
+		);
+	}
+
+	/**
 	 * Enqueue block scripts and styles for editor.
 	 */
 	public static function enqueue_block_editor_assets() {
@@ -132,6 +165,7 @@ class Newspack_Blocks {
 				'post_subtitle'                  => get_theme_support( 'post-subtitle' ),
 				'is_rendering_streamlined_block' => self::is_rendering_streamlined_block(),
 				'streamlined_block_stripe_badge' => self::streamlined_block_stripe_badge(),
+				'iframe_accepted_file_mimes'     => self::iframe_accepted_file_mimes(),
 			];
 
 			if ( class_exists( 'WP_REST_Newspack_Author_List_Controller' ) ) {
