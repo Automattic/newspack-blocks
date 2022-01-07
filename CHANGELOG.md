@@ -1,3 +1,15 @@
+# [1.45.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.44.1...v1.45.0-alpha.1) (2022-01-07)
+
+
+### Bug Fixes
+
+* add simplified CSS class to carousel to reduce style size ([#983](https://github.com/Automattic/newspack-blocks/issues/983)) ([f8b1b0a](https://github.com/Automattic/newspack-blocks/commit/f8b1b0a093a4b8530e0984e197b47df182388551))
+
+
+### Features
+
+* **donate-stripe:** hide fee checkbox if fees are zero ([#985](https://github.com/Automattic/newspack-blocks/issues/985)) ([04e7892](https://github.com/Automattic/newspack-blocks/commit/04e7892922e39425479c2da37c889fed895f2eda))
+
 ## [1.44.1](https://github.com/Automattic/newspack-blocks/compare/v1.44.0...v1.44.1) (2022-01-04)
 
 
