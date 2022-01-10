@@ -1,3 +1,15 @@
+# [1.45.0-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v1.45.0-alpha.1...v1.45.0-alpha.2) (2022-01-10)
+
+
+### Bug Fixes
+
+* lint errors ([#1010](https://github.com/Automattic/newspack-blocks/issues/1010)) ([c50a1f5](https://github.com/Automattic/newspack-blocks/commit/c50a1f57c6ef8fd1bdb815c763be37d0e6235587))
+
+
+### Features
+
+* author list block ([#947](https://github.com/Automattic/newspack-blocks/issues/947)) ([b98b8b8](https://github.com/Automattic/newspack-blocks/commit/b98b8b8dd100e4f247a532fe3ae364617d807f95))
+
 # [1.45.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.44.1...v1.45.0-alpha.1) (2022-01-07)
 
 
