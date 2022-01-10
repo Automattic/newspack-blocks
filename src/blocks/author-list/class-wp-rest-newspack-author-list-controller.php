@@ -108,7 +108,7 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 		}
 
 		if ( ! empty( $request->get_param( 'exclude' ) ) && is_array( $request->get_param( 'exclude' ) ) ) {
-			$options['exclude'] = $request->get_param( 'exclude' );
+			$options['exclude'] = $request->get_param( 'exclude' ); // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
 		}
 
 		if ( ! empty( $request->get_param( 'excludeEmpty' ) ) ) {
@@ -142,7 +142,7 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 			'author_type'         => 'all',
 			'author_roles'        => $this->get_editable_roles(),
 			'avatar_hide_default' => false,
-			'exclude'             => [],
+			'exclude'             => [], // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
 			'exclude_empty'       => false,
 			'fields'              => [ 'id', 'name', 'bio', 'email', 'social', 'avatar', 'url' ],
 			'per_page'            => 10,
@@ -209,7 +209,7 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 			];
 
 			if ( ! empty( $options['exclude'] ) ) {
-				$user_args['exclude'] = $options['exclude'];
+				$user_args['exclude'] = $options['exclude']; // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
 			}
 
 			$results         = new \WP_User_Query( $user_args );
