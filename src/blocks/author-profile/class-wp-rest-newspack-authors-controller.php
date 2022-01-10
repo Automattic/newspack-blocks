@@ -66,11 +66,12 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function get_authors( $request ) {
-		$author_id = ! empty( $request->get_param( 'author_id' ) ) ? $request->get_param( 'author_id' ) : 0; // Fetch a specific user or guest author by ID.
-		$search    = ! empty( $request->get_param( 'search' ) ) ? $request->get_param( 'search' ) : null; // Fetch authors by search string.
-		$offset    = ! empty( $request->get_param( 'offset' ) ) ? $request->get_param( 'offset' ) : 0; // Offset results (for pagination).
-		$per_page  = ! empty( $request->get_param( 'per_page' ) ) ? $request->get_param( 'per_page' ) : 10; // Number of results to return per page. This is applied to each query, so the actual number of results returned may be up to 2x this number.
-		$fields    = ! empty( $request->get_param( 'fields' ) ) ? explode( ',', $request->get_param( 'fields' ) ) : [ 'id' ]; // Fields to get. Will return at least id.
+		$author_id           = ! empty( $request->get_param( 'authorId' ) ) ? $request->get_param( 'authorId' ) : 0; // Fetch a specific user or guest author by ID.
+		$search              = ! empty( $request->get_param( 'search' ) ) ? $request->get_param( 'search' ) : null; // Fetch authors by search string.
+		$offset              = ! empty( $request->get_param( 'offset' ) ) ? $request->get_param( 'offset' ) : 0; // Offset results (for pagination).
+		$per_page            = ! empty( $request->get_param( 'perPage' ) ) ? $request->get_param( 'perPage' ) : 10; // Number of results to return per page. This is applied to each query, so the actual number of results returned may be up to 2x this number.
+		$avatar_hide_default = ! empty( $request->get_param( 'avatarHideDefault' ) ) ? true : false; // Hide the default avatar if the user has no custom avatar.
+		$fields              = ! empty( $request->get_param( 'fields' ) ) ? explode( ',', $request->get_param( 'fields' ) ) : [ 'id' ]; // Fields to get. Will return at least id.
 
 		// Total number of users and guest authors.
 		$guest_author_total = 0;
@@ -135,7 +136,7 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 		$combined_authors = array_merge(
 			array_reduce(
 				! empty( $guest_authors ) ? $guest_authors : [],
-				function( $acc, $guest_author ) use ( $fields ) {
+				function( $acc, $guest_author ) use ( $fields, $avatar_hide_default ) {
 					if ( $guest_author ) {
 						if ( class_exists( 'CoAuthors_Guest_Authors' ) ) {
 							$guest_author_data = [
@@ -163,7 +164,11 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 								}
 							}
 							if ( in_array( 'avatar', $fields, true ) && function_exists( 'coauthors_get_avatar' ) ) {
-								$guest_author_data['avatar'] = coauthors_get_avatar( $guest_author, 256 );
+								$avatar = coauthors_get_avatar( $guest_author, 256 );
+
+								if ( $avatar && ( false === strpos( $avatar, 'avatar-default' ) || ! $avatar_hide_default ) ) {
+									$guest_author_data['avatar'] = $avatar;
+								}
 							}
 							if ( in_array( 'url', $fields, true ) ) {
 								$guest_author_data['url'] = esc_urL(
@@ -183,7 +188,7 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 			),
 			array_reduce(
 				$users,
-				function( $acc, $user ) use ( $fields ) {
+				function( $acc, $user ) use ( $fields, $avatar_hide_default ) {
 					if ( $user ) {
 						$user_data = [
 							'id'         => intval( $user->data->ID ),
@@ -208,7 +213,11 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 							}
 						}
 						if ( in_array( 'avatar', $fields, true ) ) {
-							$user_data['avatar'] = get_avatar( $user->data->ID, 256 );
+							$avatar = get_avatar( $user->data->ID, 256 );
+
+							if ( $avatar && ( false === strpos( $avatar, 'avatar-default' ) || ! $avatar_hide_default ) ) {
+								$user_data['avatar'] = $avatar;
+							}
 						}
 						if ( in_array( 'url', $fields, true ) ) {
 							$user_data['url'] = esc_urL( get_author_posts_url( $user->data->ID ) );

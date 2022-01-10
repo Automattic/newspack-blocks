@@ -155,20 +155,29 @@ class Newspack_Blocks {
 				$script_data['version'],
 				true
 			);
+
+			$localized_data = [
+				'patterns'                       => self::get_patterns_for_post_type( get_post_type() ),
+				'posts_rest_url'                 => rest_url( 'newspack-blocks/v1/newspack-blocks-posts' ),
+				'specific_posts_rest_url'        => rest_url( 'newspack-blocks/v1/newspack-blocks-specific-posts' ),
+				'authors_rest_url'               => rest_url( 'newspack-blocks/v1/authors' ),
+				'assets_path'                    => plugins_url( '/src/assets', NEWSPACK_BLOCKS__PLUGIN_FILE ),
+				'post_subtitle'                  => get_theme_support( 'post-subtitle' ),
+				'is_rendering_streamlined_block' => self::is_rendering_streamlined_block(),
+				'streamlined_block_stripe_badge' => self::streamlined_block_stripe_badge(),
+				'iframe_accepted_file_mimes'     => self::iframe_accepted_file_mimes(),
+			];
+
+			if ( class_exists( 'WP_REST_Newspack_Author_List_Controller' ) ) {
+				$localized_data['can_use_cap']    = class_exists( 'CoAuthors_Guest_Authors' );
+				$author_list_controller           = new WP_REST_Newspack_Author_List_Controller();
+				$localized_data['editable_roles'] = $author_list_controller->get_editable_roles();
+			}
+
 			wp_localize_script(
 				'newspack-blocks-editor',
 				'newspack_blocks_data',
-				[
-					'patterns'                       => self::get_patterns_for_post_type( get_post_type() ),
-					'posts_rest_url'                 => rest_url( 'newspack-blocks/v1/newspack-blocks-posts' ),
-					'specific_posts_rest_url'        => rest_url( 'newspack-blocks/v1/newspack-blocks-specific-posts' ),
-					'authors_rest_url'               => rest_url( 'newspack-blocks/v1/authors' ),
-					'assets_path'                    => plugins_url( '/src/assets', NEWSPACK_BLOCKS__PLUGIN_FILE ),
-					'post_subtitle'                  => get_theme_support( 'post-subtitle' ),
-					'is_rendering_streamlined_block' => self::is_rendering_streamlined_block(),
-					'streamlined_block_stripe_badge' => self::streamlined_block_stripe_badge(),
-					'iframe_accepted_file_mimes'     => self::iframe_accepted_file_mimes(),
-				]
+				$localized_data
 			);
 
 			wp_set_script_translations(
@@ -1097,6 +1106,29 @@ class Newspack_Blocks {
 			'jetpack/donations',
 			esc_html__( 'Jetpack donations is disabled in favour of Newspack donations.', 'newspack-blocks' )
 		);
+	}
+
+	/**
+	 * Loads a template with given data in scope.
+	 *
+	 * @param string $template Name of the template to be included.
+	 * @param array  $data     Data to be passed into the template to be included.
+	 * @param string $path     (Optional) Path to the folder containing the template.
+	 * @return string
+	 */
+	public static function template_include( $template, $data = [], $path = NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/templates/' ) {
+		if ( ! strpos( $template, '.php' ) ) {
+			$template = $template . '.php';
+		}
+		$path .= $template;
+		if ( ! is_file( $path ) ) {
+			return '';
+		}
+		ob_start();
+		include $path;
+		$contents = ob_get_contents();
+		ob_end_clean();
+		return $contents;
 	}
 }
 Newspack_Blocks::init();
