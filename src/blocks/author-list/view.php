@@ -51,7 +51,7 @@ function newspack_blocks_render_block_author_list( $attributes ) {
 	$params              = [
 		'author_type'  => $author_type,
 		'author_roles' => $author_roles,
-		'exclude'      => $exclude_ids,
+		'exclude'      => $exclude_ids, // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
 		'fields'       => [ 'id', 'name', 'bio', 'email', 'social', 'avatar', 'url' ],
 	];
 

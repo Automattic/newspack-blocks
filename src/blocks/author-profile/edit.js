@@ -131,7 +131,7 @@ export const avatarSizeOptions = [
 	},
 ];
 
-export default ( { attributes, setAttributes } ) => {
+const AuthorProfile = ( { attributes, setAttributes } ) => {
 	const [ author, setAuthor ] = useState( null );
 	const [ error, setError ] = useState( null );
 	const [ isLoading, setIsLoading ] = useState( false );
@@ -426,3 +426,5 @@ export default ( { attributes, setAttributes } ) => {
 		</>
 	);
 };
+
+export default AuthorProfile;

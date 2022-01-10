@@ -45,7 +45,7 @@ import { SingleAuthor } from '../author-profile/single-author';
 import { AutocompleteWithSuggestions } from 'newspack-components';
 import classnames from 'classnames';
 
-export default ( { attributes, clientId, setAttributes } ) => {
+const AuthorList = ( { attributes, clientId, setAttributes } ) => {
 	const [ authors, setAuthors ] = useState( null );
 	const [ error, setError ] = useState( null );
 	const [ isLoading, setIsLoading ] = useState( false );
@@ -523,3 +523,5 @@ export default ( { attributes, clientId, setAttributes } ) => {
 		</>
 	);
 };
+
+export default AuthorList;
