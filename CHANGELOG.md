@@ -1,3 +1,10 @@
+# [1.45.0-alpha.3](https://github.com/Automattic/newspack-blocks/compare/v1.45.0-alpha.2...v1.45.0-alpha.3) (2022-01-11)
+
+
+### Bug Fixes
+
+* force alpha rebuild ([1e55132](https://github.com/Automattic/newspack-blocks/commit/1e551329b16ae68d28959eaaabdfd5e3ef7e505f))
+
 # [1.45.0-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v1.45.0-alpha.1...v1.45.0-alpha.2) (2022-01-10)
 
 
