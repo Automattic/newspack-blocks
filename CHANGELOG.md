@@ -1,3 +1,10 @@
+# [1.45.0-alpha.4](https://github.com/Automattic/newspack-blocks/compare/v1.45.0-alpha.3...v1.45.0-alpha.4) (2022-01-11)
+
+
+### Bug Fixes
+
+* add Author List block to manifest of blocks to build in production ([#1011](https://github.com/Automattic/newspack-blocks/issues/1011)) ([abd5b7c](https://github.com/Automattic/newspack-blocks/commit/abd5b7cbb18865f3d76259c185b5d70940abc6d9))
+
 # [1.45.0-alpha.3](https://github.com/Automattic/newspack-blocks/compare/v1.45.0-alpha.2...v1.45.0-alpha.3) (2022-01-11)
 
 
