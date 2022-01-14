@@ -1,3 +1,10 @@
+# [1.45.0-alpha.5](https://github.com/Automattic/newspack-blocks/compare/v1.45.0-alpha.4...v1.45.0-alpha.5) (2022-01-14)
+
+
+### Bug Fixes
+
+* **author-list:** user query when CAP is not installed ([#1015](https://github.com/Automattic/newspack-blocks/issues/1015)) ([e798d9b](https://github.com/Automattic/newspack-blocks/commit/e798d9b167bff934c8ec7e01bf462ed9cf790cf1))
+
 # [1.45.0-alpha.4](https://github.com/Automattic/newspack-blocks/compare/v1.45.0-alpha.3...v1.45.0-alpha.4) (2022-01-11)
 
 
