@@ -183,7 +183,7 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 			}
 		}
 
-		if ( in_array( $options['author_type'], [ 'all', 'users' ], true ) && class_exists( 'CoAuthors_Guest_Authors' ) ) {
+		if ( in_array( $options['author_type'], [ 'all', 'users' ], true ) ) {
 			// Reset current page for new query.
 			$current_page         = 1;
 			$exclude_empty        = $options['exclude_empty'] ? true : false;
@@ -234,81 +234,79 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 			array_reduce(
 				$all_guest_authors,
 				function( $acc, $guest_author ) use ( $fields, $options, &$linked_accounts ) {
-					if ( $guest_author ) {
-						if ( class_exists( 'CoAuthors_Guest_Authors' ) ) {
-							$last_name         = get_post_meta( $guest_author->ID, 'cap-last_name', true );
-							$guest_author_data = [
-								'id'         => intval( $guest_author->ID ),
-								'registered' => $guest_author->post_date,
-								'is_guest'   => true,
-								'last_name'  => ! empty( $last_name ) && in_array( $last_name, explode( ' ', $guest_author->post_title ), true ) ? $last_name : $guest_author->post_title,
-							];
+					if ( $guest_author && class_exists( 'CoAuthors_Guest_Authors' ) ) {
+						$last_name         = get_post_meta( $guest_author->ID, 'cap-last_name', true );
+						$guest_author_data = [
+							'id'         => intval( $guest_author->ID ),
+							'registered' => $guest_author->post_date,
+							'is_guest'   => true,
+							'last_name'  => ! empty( $last_name ) && in_array( $last_name, explode( ' ', $guest_author->post_title ), true ) ? $last_name : $guest_author->post_title,
+						];
 
-							$guest_author   = ( new CoAuthors_Guest_Authors() )->get_guest_author_by( 'id', $guest_author->ID );
-							$author_term    = ( new CoAuthors_Plus() )->get_author_term( $guest_author );
-							$post_count     = is_object( $author_term ) && isset( $author_term->count ) ? $author_term->count : 0;
-							$linked_account = isset( $guest_author->linked_account ) ? $guest_author->linked_account : null;
+						$guest_author   = ( new CoAuthors_Guest_Authors() )->get_guest_author_by( 'id', $guest_author->ID );
+						$author_term    = ( new CoAuthors_Plus() )->get_author_term( $guest_author );
+						$post_count     = is_object( $author_term ) && isset( $author_term->count ) ? $author_term->count : 0;
+						$linked_account = isset( $guest_author->linked_account ) ? $guest_author->linked_account : null;
 
-							// Post count = guest author posts + linked WP user posts.
-							if ( ! empty( $linked_account ) ) {
-								$linked_accounts[] = $linked_account;
-								$linked_user       = get_user_by( 'login', $linked_account );
+						// Post count = guest author posts + linked WP user posts.
+						if ( ! empty( $linked_account ) ) {
+							$linked_accounts[] = $linked_account;
+							$linked_user       = get_user_by( 'login', $linked_account );
 
-								if ( $linked_user ) {
-									$post_count += function_exists( 'wpcom_vip_count_user_posts' ) ?
-										wpcom_vip_count_user_posts(
-											$linked_user->ID,
-											[ 'any' ], // Any post type.
-											true // But public posts only.
-										) :
-										count_user_posts( // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.count_user_posts_count_user_posts
-											$linked_user->ID,
-											[ 'any' ], // Any post type.
-											true // But public posts only.
-										);
-								}
+							if ( $linked_user ) {
+								$post_count += function_exists( 'wpcom_vip_count_user_posts' ) ?
+									wpcom_vip_count_user_posts(
+										$linked_user->ID,
+										[ 'any' ], // Any post type.
+										true // But public posts only.
+									) :
+									count_user_posts( // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.count_user_posts_count_user_posts
+										$linked_user->ID,
+										[ 'any' ], // Any post type.
+										true // But public posts only.
+									);
 							}
-
-							// Only include users with at least one published post.
-							if ( 0 === $post_count && $options['exclude_empty'] ) {
-								return $acc;
-							}
-
-							if ( in_array( 'login', $fields, true ) ) {
-								$guest_author_data['login'] = $guest_author->user_login;
-							}
-							if ( in_array( 'name', $fields, true ) ) {
-								$guest_author_data['name'] = $guest_author->display_name;
-							}
-							if ( in_array( 'bio', $fields, true ) ) {
-								$guest_author_data['bio'] = get_post_meta( $guest_author->ID, 'cap-description', true );
-							}
-							if ( in_array( 'email', $fields, true ) ) {
-								$email_data = $this->get_email( $guest_author->ID );
-
-								if ( $email_data ) {
-									$guest_author_data['email'] = $email_data;
-								}
-							}
-							if ( in_array( 'avatar', $fields, true ) && function_exists( 'coauthors_get_avatar' ) ) {
-								$avatar     = coauthors_get_avatar( $guest_author, 256, $options['avatar_hide_default'] ? 'blank' : '' );
-								$is_default = false !== strpos( $avatar, 'avatar-default' ) || false !== strpos( $avatar, 'd=blank' );
-
-								if ( $avatar && ( ! $is_default || ! $options['avatar_hide_default'] ) ) {
-									$guest_author_data['avatar'] = $avatar;
-								}
-							}
-							if ( in_array( 'url', $fields, true ) ) {
-								$guest_author_data['url'] = esc_urL(
-									get_site_urL( null, '?author_name=' . get_post_meta( $guest_author->ID, 'cap-user_login', true ) )
-								);
-							}
-							if ( in_array( 'social', $fields, true ) ) {
-								$guest_author_data['social'] = $this->get_social( $guest_author->ID );
-							}
-
-							$acc[] = $guest_author_data;
 						}
+
+						// Only include users with at least one published post.
+						if ( 0 === $post_count && $options['exclude_empty'] ) {
+							return $acc;
+						}
+
+						if ( in_array( 'login', $fields, true ) ) {
+							$guest_author_data['login'] = $guest_author->user_login;
+						}
+						if ( in_array( 'name', $fields, true ) ) {
+							$guest_author_data['name'] = $guest_author->display_name;
+						}
+						if ( in_array( 'bio', $fields, true ) ) {
+							$guest_author_data['bio'] = get_post_meta( $guest_author->ID, 'cap-description', true );
+						}
+						if ( in_array( 'email', $fields, true ) ) {
+							$email_data = $this->get_email( $guest_author->ID );
+
+							if ( $email_data ) {
+								$guest_author_data['email'] = $email_data;
+							}
+						}
+						if ( in_array( 'avatar', $fields, true ) && function_exists( 'coauthors_get_avatar' ) ) {
+							$avatar     = coauthors_get_avatar( $guest_author, 256, $options['avatar_hide_default'] ? 'blank' : '' );
+							$is_default = false !== strpos( $avatar, 'avatar-default' ) || false !== strpos( $avatar, 'd=blank' );
+
+							if ( $avatar && ( ! $is_default || ! $options['avatar_hide_default'] ) ) {
+								$guest_author_data['avatar'] = $avatar;
+							}
+						}
+						if ( in_array( 'url', $fields, true ) ) {
+							$guest_author_data['url'] = esc_urL(
+								get_site_urL( null, '?author_name=' . get_post_meta( $guest_author->ID, 'cap-user_login', true ) )
+							);
+						}
+						if ( in_array( 'social', $fields, true ) ) {
+							$guest_author_data['social'] = $this->get_social( $guest_author->ID );
+						}
+
+						$acc[] = $guest_author_data;
 					}
 					return $acc;
 				},
