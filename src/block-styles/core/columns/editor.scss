@@ -37,11 +37,11 @@
 
 				&::after {
 					border-right: 1px solid $color__border;
-					bottom: 0;
+					bottom: 15px;
 					content: '';
 					position: absolute;
-					right: -30px;
-					top: 0;
+					right: -20px;
+					top: 15px;
 				}
 
 				&:nth-child( odd )::after {
