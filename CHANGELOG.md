@@ -1,3 +1,10 @@
+# [1.45.0-alpha.7](https://github.com/Automattic/newspack-blocks/compare/v1.45.0-alpha.6...v1.45.0-alpha.7) (2022-01-18)
+
+
+### Bug Fixes
+
+* re-add space between stacked columns ([#1022](https://github.com/Automattic/newspack-blocks/issues/1022)) ([d560199](https://github.com/Automattic/newspack-blocks/commit/d560199d0e568a20eaab24cb8131cdeaa14ea9a7))
+
 # [1.45.0-alpha.6](https://github.com/Automattic/newspack-blocks/compare/v1.45.0-alpha.5...v1.45.0-alpha.6) (2022-01-18)
 
 
