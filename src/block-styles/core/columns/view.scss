@@ -101,7 +101,7 @@
 		}
 
 		@include media( mobile ) {
-			&.is-style-border > .wp-block-column,
+			&.is-style-borders > .wp-block-column,
 			> .wp-block-column,
 			> .wp-block-column:not( :first-child ),
 			> .wp-block-column:nth-child( 2n ) {
