@@ -14,10 +14,6 @@
 		max-width: calc( 100% + 32px );
 		width: calc( 100% + 32px );
 
-		.wp-block-column {
-			margin-bottom: 0;
-		}
-
 		&.is-style-first-col-to-second .wp-block-column:nth-child( 2 ) {
 			order: -1;
 		}
