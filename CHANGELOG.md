@@ -1,3 +1,11 @@
+# [1.45.0-alpha.6](https://github.com/Automattic/newspack-blocks/compare/v1.45.0-alpha.5...v1.45.0-alpha.6) (2022-01-18)
+
+
+### Bug Fixes
+
+* update columns styles for WordPress 5.9 ([#1020](https://github.com/Automattic/newspack-blocks/issues/1020)) ([a38ce32](https://github.com/Automattic/newspack-blocks/commit/a38ce32ce3c6f9a199a7d16b6bcbb40d49bdae97))
+* update Subscribe patterns for WordPress 5.9 ([#1017](https://github.com/Automattic/newspack-blocks/issues/1017)) ([5cef283](https://github.com/Automattic/newspack-blocks/commit/5cef28393db292e01d4916be062a0a261ea6d905))
+
 # [1.45.0-alpha.5](https://github.com/Automattic/newspack-blocks/compare/v1.45.0-alpha.4...v1.45.0-alpha.5) (2022-01-14)
 
 
