@@ -1,3 +1,63 @@
+# [1.45.0-alpha.7](https://github.com/Automattic/newspack-blocks/compare/v1.45.0-alpha.6...v1.45.0-alpha.7) (2022-01-18)
+
+
+### Bug Fixes
+
+* re-add space between stacked columns ([#1022](https://github.com/Automattic/newspack-blocks/issues/1022)) ([d560199](https://github.com/Automattic/newspack-blocks/commit/d560199d0e568a20eaab24cb8131cdeaa14ea9a7))
+
+# [1.45.0-alpha.6](https://github.com/Automattic/newspack-blocks/compare/v1.45.0-alpha.5...v1.45.0-alpha.6) (2022-01-18)
+
+
+### Bug Fixes
+
+* update columns styles for WordPress 5.9 ([#1020](https://github.com/Automattic/newspack-blocks/issues/1020)) ([a38ce32](https://github.com/Automattic/newspack-blocks/commit/a38ce32ce3c6f9a199a7d16b6bcbb40d49bdae97))
+* update Subscribe patterns for WordPress 5.9 ([#1017](https://github.com/Automattic/newspack-blocks/issues/1017)) ([5cef283](https://github.com/Automattic/newspack-blocks/commit/5cef28393db292e01d4916be062a0a261ea6d905))
+
+# [1.45.0-alpha.5](https://github.com/Automattic/newspack-blocks/compare/v1.45.0-alpha.4...v1.45.0-alpha.5) (2022-01-14)
+
+
+### Bug Fixes
+
+* **author-list:** user query when CAP is not installed ([#1015](https://github.com/Automattic/newspack-blocks/issues/1015)) ([e798d9b](https://github.com/Automattic/newspack-blocks/commit/e798d9b167bff934c8ec7e01bf462ed9cf790cf1))
+
+# [1.45.0-alpha.4](https://github.com/Automattic/newspack-blocks/compare/v1.45.0-alpha.3...v1.45.0-alpha.4) (2022-01-11)
+
+
+### Bug Fixes
+
+* add Author List block to manifest of blocks to build in production ([#1011](https://github.com/Automattic/newspack-blocks/issues/1011)) ([abd5b7c](https://github.com/Automattic/newspack-blocks/commit/abd5b7cbb18865f3d76259c185b5d70940abc6d9))
+
+# [1.45.0-alpha.3](https://github.com/Automattic/newspack-blocks/compare/v1.45.0-alpha.2...v1.45.0-alpha.3) (2022-01-11)
+
+
+### Bug Fixes
+
+* force alpha rebuild ([1e55132](https://github.com/Automattic/newspack-blocks/commit/1e551329b16ae68d28959eaaabdfd5e3ef7e505f))
+
+# [1.45.0-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v1.45.0-alpha.1...v1.45.0-alpha.2) (2022-01-10)
+
+
+### Bug Fixes
+
+* lint errors ([#1010](https://github.com/Automattic/newspack-blocks/issues/1010)) ([c50a1f5](https://github.com/Automattic/newspack-blocks/commit/c50a1f57c6ef8fd1bdb815c763be37d0e6235587))
+
+
+### Features
+
+* author list block ([#947](https://github.com/Automattic/newspack-blocks/issues/947)) ([b98b8b8](https://github.com/Automattic/newspack-blocks/commit/b98b8b8dd100e4f247a532fe3ae364617d807f95))
+
+# [1.45.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.44.1...v1.45.0-alpha.1) (2022-01-07)
+
+
+### Bug Fixes
+
+* add simplified CSS class to carousel to reduce style size ([#983](https://github.com/Automattic/newspack-blocks/issues/983)) ([f8b1b0a](https://github.com/Automattic/newspack-blocks/commit/f8b1b0a093a4b8530e0984e197b47df182388551))
+
+
+### Features
+
+* **donate-stripe:** hide fee checkbox if fees are zero ([#985](https://github.com/Automattic/newspack-blocks/issues/985)) ([04e7892](https://github.com/Automattic/newspack-blocks/commit/04e7892922e39425479c2da37c889fed895f2eda))
+
 ## [1.44.1](https://github.com/Automattic/newspack-blocks/compare/v1.44.0...v1.44.1) (2022-01-04)
 
 
