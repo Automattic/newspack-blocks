@@ -1,3 +1,10 @@
+## [1.45.1-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.45.0...v1.45.1-alpha.1) (2022-01-24)
+
+
+### Bug Fixes
+
+* **video-playlist:** youtube embeds fetching ([5a6cd75](https://github.com/Automattic/newspack-blocks/commit/5a6cd7533008915bf8fcf9bb04d55ce0dee27ba7)), closes [#577](https://github.com/Automattic/newspack-blocks/issues/577)
+
 # [1.45.0](https://github.com/Automattic/newspack-blocks/compare/v1.44.1...v1.45.0) (2022-01-19)
 
 
