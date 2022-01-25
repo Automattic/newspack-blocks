@@ -1,3 +1,10 @@
+## [1.45.1-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v1.45.1-alpha.1...v1.45.1-alpha.2) (2022-01-25)
+
+
+### Bug Fixes
+
+* newspack-scripts usage ([af1b7d0](https://github.com/Automattic/newspack-blocks/commit/af1b7d00c70dc2660113221d3c3f49bcc8b7d558))
+
 ## [1.45.1-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.45.0...v1.45.1-alpha.1) (2022-01-24)
 
 
