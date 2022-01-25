@@ -71,6 +71,7 @@ jobs:
       - run:
           name: Perform post-release chores
           command: ./node_modules/newspack-scripts/post-release.sh
+
 workflows:
   version: 2
   all:
