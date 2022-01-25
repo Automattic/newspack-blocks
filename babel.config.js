@@ -1,10 +1,6 @@
-module.exports = ( { env } ) => {
-	const isTest = env( 'test' );
+module.exports = api => {
+	api.cache( true );
 	return {
-		presets: [
-			...( isTest ? [ '@babel/preset-env' ] : [] ),
-			'@automattic/calypso-build/babel/default',
-			'@automattic/calypso-build/babel/wordpress-element',
-		],
+		extends: 'newspack-scripts/config/babel.config.js',
 	};
 };
