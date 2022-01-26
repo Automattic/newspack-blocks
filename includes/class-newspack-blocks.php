@@ -1089,9 +1089,8 @@ class Newspack_Blocks {
 	 * Disable Jetpack's donate block when using Newspack donations.
 	 */
 	public static function disable_jetpack_donate() {
-
-		// Do nothing if Jetpack's blocks aren't being used.
-		if ( ! class_exists( 'Jetpack_Gutenberg' ) ) {
+		// Do nothing if Jetpack's blocks or Newspack aren't being used.
+		if ( ! class_exists( 'Jetpack_Gutenberg' ) || ! class_exists( 'Newspack' ) ) {
 			return;
 		}
 
