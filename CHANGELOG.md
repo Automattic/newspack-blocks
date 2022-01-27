@@ -1,3 +1,10 @@
+## [1.45.2-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.45.1...v1.45.2-alpha.1) (2022-01-27)
+
+
+### Bug Fixes
+
+* handle unavailable Newspack plugin ([#1026](https://github.com/Automattic/newspack-blocks/issues/1026)) ([b9350e7](https://github.com/Automattic/newspack-blocks/commit/b9350e7938c1771b9cc5b9b5f4a2c44b960b20bb))
+
 ## [1.45.1](https://github.com/Automattic/newspack-blocks/compare/v1.45.0...v1.45.1) (2022-01-25)
 
 
