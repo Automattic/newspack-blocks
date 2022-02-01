@@ -3,14 +3,15 @@ import userEvent from '@testing-library/user-event';
 import fetchMock from 'fetch-mock-jest';
 import { encode } from 'html-entities';
 
-import { processStreamlinedElements, computeFeeAmount } from './streamlined';
+import { processStreamlinedElements } from '.';
+import { computeFeeAmount } from './utils';
 
 const MONTHLY_AMOUNT = 7;
 
 const createDOM = settings => {
 	const parentElement = document.createElement( 'div' );
 	parentElement.innerHTML = `
-		<style>.stripe-payment__inputs--hidden {display:none;}</style>
+		<style>.stripe-payment--hidden {display:none;}</style>
 		<form data-settings="${ encode( JSON.stringify( settings ) ) }">
 			<div class='frequencies'>
 				<div class='frequency'>
@@ -24,7 +25,7 @@ const createDOM = settings => {
 				</div>
 			</div>
 			<div class="stripe-payment">
-				<div class="stripe-payment__inputs--hidden">
+				<div class="stripe-payment__inputs stripe-payment--hidden">
 					<input required="" placeholder="Email" type="email" name="email" value="">
 					<input required="" placeholder="Full Name" type="text" name="full_name" value="">
 				</div>
@@ -62,11 +63,19 @@ describe( 'Streamlined Donate block processing', () => {
 		return { data: { status: 200, client_secret: 'sec_123' } };
 	} );
 
-	const currencySymbol = '$';
 	const frequencies = { once: 'Once', month: 'Monthly', year: 'Annually' };
 	const feeMultiplier = '2.9';
 	const feeStatic = '0.3';
-	const settings = [ currencySymbol, frequencies, feeMultiplier, feeStatic ];
+	const settings = [
+		'USD',
+		'$',
+		'Testing Site',
+		false,
+		'US',
+		frequencies,
+		feeMultiplier,
+		feeStatic,
+	];
 	const container = createDOM( settings );
 	processStreamlinedElements( container );
 

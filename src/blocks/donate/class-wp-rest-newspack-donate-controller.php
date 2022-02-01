@@ -35,7 +35,7 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 			[
 				[
 					'methods'             => WP_REST_Server::EDITABLE,
-					'callback'            => [ $this, 'process_donation' ],
+					'callback'            => [ $this, 'api_process_donation' ],
 					'args'                => [
 						'tokenData'         => [
 							'type'       => 'object',
@@ -87,7 +87,7 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 	 * @param WP_REST_Request $request Request object.
 	 * @return WP_REST_Response
 	 */
-	public function process_donation( $request ) {
+	public function api_process_donation( $request ) {
 		$payment_metadata = [
 			'referer' => wp_get_referer(),
 		];

@@ -11,5 +11,6 @@ export const loadStripe = async () => {
 			token: 'abc',
 			error: null,
 		} ),
+		paymentRequest: () => ( { canMakePayment: () => false, on: () => {}, update: () => {} } ),
 	};
 };

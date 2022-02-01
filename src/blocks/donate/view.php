@@ -40,41 +40,44 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 		</p>
 
 		<?php if ( $is_streamlined ) : ?>
-			<div class="wp-block-newspack-blocks-donate__stripe stripe-payment stripe-payment--disabled" data-stripe-pub-key="<?php echo esc_attr( $payment_data['usedPublishableKey'] ); ?>">
-				<div class="stripe-payment__inputs stripe-payment__inputs--hidden">
+			<div class="wp-block-newspack-blocks-donate__stripe stripe-payment stripe-payment--invisible stripe-payment--disabled" data-stripe-pub-key="<?php echo esc_attr( $payment_data['usedPublishableKey'] ); ?>">
+				<div class="stripe-payment__inputs stripe-payment--hidden">
 					<div class="stripe-payment__row">
-						<div class="stripe-payment__card"></div>
+						<div class="stripe-payment__element stripe-payment__card"></div>
 					</div>
 					<div class="stripe-payment__row stripe-payment__row--flex">
 						<input required placeholder="<?php echo esc_html__( 'Email', 'newspack-blocks' ); ?>" type="email" name="email" value="">
 						<input required placeholder="<?php echo esc_html__( 'Full Name', 'newspack-blocks' ); ?>" type="text" name="full_name" value="">
 					</div>
-					<?php if ( $is_rendering_newsletter_list_opt_in ) : ?>
-						<div class="stripe-payment__row stripe-payment__row--small">
-							<label class="stripe-payment__checkbox">
-								<input type="checkbox" name="newsletter_opt_in" checked value="true"><?php echo esc_html__( 'Sign up for our newsletter', 'newspack-blocks' ); ?>
-							</label>
-						</div>
-					<?php endif; ?>
-					<?php if ( $is_rendering_fee_checkbox ) : ?>
-						<div class="stripe-payment__row stripe-payment__row--small">
-							<label class="stripe-payment__checkbox">
-								<input type="checkbox" name="agree_to_pay_fees" checked value="true"><?php echo esc_html__( 'Agree to pay fees?', 'newspack-blocks' ); ?>
-								<span id="stripe-fees-amount">($0)</span>
-							</label>
-							<div class="stripe-payment__info"><?php echo esc_html__( 'Paying the transaction fee is not required, but it directs more money in support of our mission.', 'newspack-blocks' ); ?></div>
-						</div>
-					<?php endif; ?>
-					<div class="stripe-payment__messages">
-						<div class="type-error"></div>
-						<div class="type-success"></div>
-						<div class="type-info"></div>
+				</div>
+				<?php if ( $is_rendering_fee_checkbox ) : ?>
+					<div class="stripe-payment__row stripe-payment__row--small">
+						<label class="stripe-payment__checkbox">
+							<input type="checkbox" name="agree_to_pay_fees" checked value="true"><?php echo esc_html__( 'Agree to pay fees?', 'newspack-blocks' ); ?>
+							<span id="stripe-fees-amount">($0)</span>
+						</label>
+						<div class="stripe-payment__info"><?php echo esc_html__( 'Paying the transaction fee is not required, but it directs more money in support of our mission.', 'newspack-blocks' ); ?></div>
 					</div>
+				<?php endif; ?>
+				<?php if ( $is_rendering_newsletter_list_opt_in ) : ?>
+					<div class="stripe-payment__row stripe-payment__row--small">
+						<label class="stripe-payment__checkbox">
+							<input type="checkbox" name="newsletter_opt_in" checked value="true"><?php echo esc_html__( 'Sign up for our newsletter', 'newspack-blocks' ); ?>
+						</label>
+					</div>
+				<?php endif; ?>
+				<div class="stripe-payment__messages">
+					<div class="type-error"></div>
+					<div class="type-success"></div>
+					<div class="type-info"></div>
 				</div>
 				<div class="stripe-payment__row stripe-payment__row--flex stripe-payment__footer">
-					<button type='submit' style="margin-left: 0; margin-top: 1em;">
-						<?php echo wp_kses_post( $button_text ); ?>
-					</button>
+					<div class="stripe-payment__methods">
+						<div class="stripe-payment__request-button stripe-payment--hidden stripe-payment__request-button--invisible stripe-payment--transition"></div>
+						<button type='submit'>
+							<?php echo esc_html__( 'Donate with card', 'newspack-blocks' ); ?>
+						</button>
+					</div>
 					<a target="_blank" rel="noreferrer" class="stripe-payment__branding" href="https://stripe.com">
 						<img width="111" height="26" src="<?php echo esc_attr( Newspack_Blocks::streamlined_block_stripe_badge() ); ?>" alt="Stripe">
 					</a>
@@ -165,8 +168,13 @@ function newspack_blocks_render_block_donate( $attributes ) {
 
 	if ( Newspack_Blocks::is_rendering_streamlined_block() ) {
 		$stripe_data           = \Newspack\Stripe_Connection::get_stripe_data();
+		$currency              = $stripe_data['currency'];
 		$settings_for_frontend = [
+			$currency,
 			$settings['currencySymbol'],
+			get_bloginfo( 'name' ),
+			Newspack\Stripe_Connection::is_currency_zero_decimal( $currency ),
+			$stripe_data['location_code'],
 			$frequencies,
 			$stripe_data['fee_multiplier'],
 			$stripe_data['fee_static'],
