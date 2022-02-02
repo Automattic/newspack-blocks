@@ -4,7 +4,6 @@ import fetchMock from 'fetch-mock-jest';
 import { encode } from 'html-entities';
 
 import { processStreamlinedElements } from '.';
-import { computeFeeAmount } from './utils';
 
 const MONTHLY_AMOUNT = 7;
 
@@ -17,11 +16,12 @@ const createDOM = settings => {
 				<div class='frequency'>
 					<input type="radio" value="once" id="once" name="donation_frequency">
 					<label for="once">Once</label>
+					<input type="number" name="donation_value_once" value="${ MONTHLY_AMOUNT * 12 }" />
 				</div>
 				<div class='frequency'>
 					<input type="radio" value="month" id="month" name="donation_frequency" checked>
 					<label for="month">Monthly</label>
-					<input type="radio" name="donation_value_month" value="${ MONTHLY_AMOUNT }" checked />
+					<input type="number" name="donation_value_month" value="${ MONTHLY_AMOUNT }" />
 				</div>
 			</div>
 			<div class="stripe-payment">
@@ -43,39 +43,16 @@ const createDOM = settings => {
 	return document.body;
 };
 
-describe( 'fee computation', () => {
-	it( 'computes fee with default values', () => {
-		expect( computeFeeAmount( 1, 2.9, 0.3 ) ).toBe( 0.34 );
-		expect( computeFeeAmount( 15, 2.9, 0.3 ) ).toBe( 0.76 );
-		expect( computeFeeAmount( 100, 2.9, 0.3 ) ).toBe( 3.3 );
-	} );
-	it( 'computes fee with other values', () => {
-		expect( computeFeeAmount( 15, 0, 0 ) ).toBe( 0 );
-		expect( computeFeeAmount( 15, 2.3, 0.3 ) ).toBe( 0.66 );
-		expect( computeFeeAmount( 15, 2.3, 0 ) ).toBe( 0.35 );
-		expect( computeFeeAmount( 15, 50, 0 ) ).toBe( 15 );
-		expect( computeFeeAmount( 15, 50, 10 ) ).toBe( 35 );
-	} );
+fetchMock.post( '/wp-json/newspack-blocks/v1/donate', () => {
+	return { status: 'success', client_secret: 'sec_123' };
 } );
 
-describe( 'Streamlined Donate block processing', () => {
-	fetchMock.post( '/wp-json/newspack-blocks/v1/donate', () => {
-		return { data: { status: 200, client_secret: 'sec_123' } };
-	} );
+const frequencies = { once: 'Once', month: 'Monthly', year: 'Annually' };
+const feeMultiplier = '2.9';
+const feeStatic = '0.3';
+const settings = [ 'USD', '$', 'Testing Site', false, 'US', frequencies, feeMultiplier, feeStatic ];
 
-	const frequencies = { once: 'Once', month: 'Monthly', year: 'Annually' };
-	const feeMultiplier = '2.9';
-	const feeStatic = '0.3';
-	const settings = [
-		'USD',
-		'$',
-		'Testing Site',
-		false,
-		'US',
-		frequencies,
-		feeMultiplier,
-		feeStatic,
-	];
+describe( 'Streamlined Donate block processing', () => {
 	const container = createDOM( settings );
 	processStreamlinedElements( container );
 
@@ -116,5 +93,32 @@ describe( 'Streamlined Donate block processing', () => {
 			testingLibrary.queryByText( container, 'Full name should be provided.' )
 		).not.toBeInTheDocument();
 		expect( testingLibrary.getByText( container, 'Processing payment…' ) ).toBeInTheDocument();
+	} );
+
+	it( 'final success message is displayed', () => {
+		expect(
+			testingLibrary.getByText(
+				container,
+				'Your payment has been processed. Thank you for your contribution! You will receive a confirmation email at foo@bar.com.'
+			)
+		).toBeInTheDocument();
+	} );
+
+	it( 'correct payload was sent to the API', () => {
+		expect( fetchMock ).toHaveLastFetched(
+			'/wp-json/newspack-blocks/v1/donate',
+			{
+				body: {
+					tokenData: 'abc',
+					amount: 7.52,
+					email: 'foo@bar.com',
+					full_name: 'Bax',
+					frequency: 'month',
+					newsletter_opt_in: false,
+					clientId: 'amp-123',
+				},
+			},
+			'post'
+		);
 	} );
 } );

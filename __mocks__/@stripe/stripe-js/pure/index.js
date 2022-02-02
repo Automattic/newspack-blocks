@@ -12,5 +12,8 @@ export const loadStripe = async () => {
 			error: null,
 		} ),
 		paymentRequest: () => ( { canMakePayment: () => false, on: () => {}, update: () => {} } ),
+		confirmCardPayment: () => ( {
+			paymentIntent: { status: 'succeeded' },
+		} ),
 	};
 };

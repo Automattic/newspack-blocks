@@ -138,7 +138,7 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 						full_name: event.payerName,
 					} );
 					// The UI messages are handled in payWithToken, this event listener only
-					// has to notify the browsert that the payment is done.
+					// has to notify the browser that the payment is done.
 					event.complete( result.error ? 'fail' : 'success' );
 				} );
 				// Save payment method ID to use it in payWithToken if a client secret is returned.
