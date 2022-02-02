@@ -115,14 +115,4 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 
 		return rest_ensure_response( $response );
 	}
-
-	/**
-	 * Retrieve Stripe data.
-	 */
-	public static function get_payment_data() {
-		if ( ! Newspack_Blocks::is_rendering_streamlined_block() ) {
-			return [];
-		}
-		return \Newspack\Stripe_Connection::get_stripe_data();
-	}
 }

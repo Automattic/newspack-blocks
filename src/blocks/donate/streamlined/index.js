@@ -110,8 +110,7 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 		};
 
 		const initStripe = async () => {
-			const stripePublishableKey = el.getAttribute( 'data-stripe-pub-key' );
-			stripe = await loadStripe( stripePublishableKey );
+			stripe = await loadStripe( settings.stripePublishableKey );
 
 			const elements = stripe.elements();
 

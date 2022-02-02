@@ -45,6 +45,7 @@ export const getSettings = formElement => {
 		frequencies,
 		feeMultiplier,
 		feeStatic,
+		stripePublishableKey,
 	] = JSON.parse( formElement.getAttribute( 'data-settings' ) );
 	return {
 		currency: currency.toLowerCase(),
@@ -55,6 +56,7 @@ export const getSettings = formElement => {
 		frequencies,
 		feeMultiplier: parseFloat( feeMultiplier ),
 		feeStatic: parseFloat( feeStatic ),
+		stripePublishableKey,
 	};
 };
 

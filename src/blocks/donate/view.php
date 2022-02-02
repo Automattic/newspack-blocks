@@ -15,32 +15,31 @@
 function newspack_blocks_render_block_donate_footer( $attributes ) {
 	$is_streamlined                      = Newspack_Blocks::is_rendering_streamlined_block();
 	$is_rendering_newsletter_list_opt_in = false;
+	$is_rendering_fee_checkbox           = false;
+
 	if ( $is_streamlined ) {
-		$payment_data = WP_REST_Newspack_Donate_Controller::get_payment_data();
+		$stripe_data               = \Newspack\Stripe_Connection::get_stripe_data();
+		$is_rendering_fee_checkbox = 0 < (float) $stripe_data['fee_multiplier'] + (float) $stripe_data['fee_static'];
 		if ( class_exists( 'Newspack_Newsletters' ) ) {
-			$is_rendering_newsletter_list_opt_in = isset( $payment_data['newsletter_list_id'] ) && ! empty( $payment_data['newsletter_list_id'] );
+			$is_rendering_newsletter_list_opt_in = isset( $stripe_data['newsletter_list_id'] ) && ! empty( $stripe_data['newsletter_list_id'] );
 		}
 	}
-	$thanks_text = $attributes['thanksText'];
-	$button_text = $attributes['buttonText'];
-	$campaign    = $attributes['campaign'] ?? false;
-	$client_id   = '';
+
+	$campaign  = $attributes['campaign'] ?? false;
+	$client_id = '';
 	if ( class_exists( 'Newspack_Popups_Segmentation' ) ) {
 		$client_id = Newspack_Popups_Segmentation::NEWSPACK_SEGMENTATION_CID_NAME;
 	}
-
-	$stripe_data               = \Newspack\Stripe_Connection::get_stripe_data();
-	$is_rendering_fee_checkbox = 0 < (float) $stripe_data['fee_multiplier'] + (float) $stripe_data['fee_static'];
 
 	ob_start();
 
 	?>
 		<p class='wp-block-newspack-blocks-donate__thanks thanks'>
-			<?php echo wp_kses_post( $thanks_text ); ?>
+			<?php echo wp_kses_post( $attributes['thanksText'] ); ?>
 		</p>
 
 		<?php if ( $is_streamlined ) : ?>
-			<div class="wp-block-newspack-blocks-donate__stripe stripe-payment stripe-payment--invisible stripe-payment--disabled" data-stripe-pub-key="<?php echo esc_attr( $payment_data['usedPublishableKey'] ); ?>">
+			<div class="wp-block-newspack-blocks-donate__stripe stripe-payment stripe-payment--invisible stripe-payment--disabled">
 				<div class="stripe-payment__inputs stripe-payment--hidden">
 					<div class="stripe-payment__row">
 						<div class="stripe-payment__element stripe-payment__card"></div>
@@ -85,18 +84,20 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 			</div>
 		<?php else : ?>
 			<button type='submit'>
-				<?php echo wp_kses_post( $button_text ); ?>
+				<?php echo wp_kses_post( $attributes['buttonText'] ); ?>
 			</button>
 		<?php endif; ?>
 		<?php if ( $campaign ) : ?>
 			<input type='hidden' name='campaign' value='<?php echo esc_attr( $campaign ); ?>' />
 		<?php endif; ?>
-		<input
-			name="cid"
-			type="hidden"
-			value="CLIENT_ID(<?php echo esc_attr( $client_id ); ?>)"
-			data-amp-replace="CLIENT_ID"
-		/>
+		<?php if ( $client_id ) : ?>
+			<input
+				name="cid"
+				type="hidden"
+				value="CLIENT_ID(<?php echo esc_attr( $client_id ); ?>)"
+				data-amp-replace="CLIENT_ID"
+			/>
+		<?php endif; ?>
 	<?php
 
 	return ob_get_clean();
@@ -178,6 +179,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 			$frequencies,
 			$stripe_data['fee_multiplier'],
 			$stripe_data['fee_static'],
+			$stripe_data['usedPublishableKey'],
 		];
 	} else {
 		$settings_for_frontend = [];
