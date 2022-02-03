@@ -169,6 +169,8 @@ class QueryControls extends Component {
 		} );
 	};
 
+	// Linter seems to be confused by returning an array.
+	// eslint-disable-next-line react/require-render-return
 	render = () => {
 		const {
 			specificMode,

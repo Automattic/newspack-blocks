@@ -10,7 +10,7 @@
 		"html-entities": "^2.3.2",
 		"identity-obj-proxy": "^3.0.0",
 		"lint-staged": "^12.3.2",
-		"newspack-scripts": "^3.0.0",
+		"newspack-scripts": "^3.1.0",
 		"prettier": "npm:wp-prettier@^2.2.1-beta-1",
 		"stylelint": "^13.3.1"
 	},
@@ -40,6 +40,7 @@
 		"format:scss": "prettier --write 'src/**/*.scss'",
 		"lint:scss:staged": "stylelint --syntax scss --config=./node_modules/newspack-scripts/config/stylelint.config.js",
 		"i18n": "NODE_ENV=production npm run build; bash ./bin/update-translations.sh",
+		"typescript:check": "newspack-scripts typescript-check",
 		"release": "npm run build && npm run semantic-release",
 		"release:archive": "rm -rf release && mkdir -p release && rsync -r . ./release/newspack-blocks --exclude-from='./.distignore' && cd release && zip -r newspack-blocks.zip newspack-blocks",
 		"postinstall": "rm -rf node_modules/newspack-scripts/node_modules/prettier"

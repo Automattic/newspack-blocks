@@ -39,6 +39,15 @@ jobs:
           name: Run JS Tests
           command: npm run test
 
+  typescript-check:
+    docker:
+      - image: cimg/node:16.11.1
+    steps:
+      - checkout_with_workspace
+      - run:
+          name: Run TypeScript check
+          command: npm run typescript:check
+
   php-lint:
     docker:
       - image: cimg/php:7.4
@@ -85,6 +94,9 @@ workflows:
           requires:
             - build
       - test-js:
+          requires:
+            - build
+      - typescript-check:
           requires:
             - build
       - php-lint:
