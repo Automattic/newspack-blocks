@@ -18,6 +18,9 @@ export const validateFormData = values => {
 	return errors;
 };
 
+/**
+ * Renders UI messages in a given DOM element.
+ */
 export const renderMessages = ( messages, el, type = 'error' ) => {
 	el.innerHTML = '';
 	messages.forEach( message => {
@@ -35,6 +38,10 @@ const getCookies = () =>
 		return acc;
 	}, {} );
 
+/**
+ * Retrieves donation settings passed via a `data-settings` HTML attribute
+ * on a `form` element.
+ */
 export const getSettings = formElement => {
 	const [
 		currency,
@@ -60,6 +67,9 @@ export const getSettings = formElement => {
 	};
 };
 
+/**
+ * Retrieves form values from the donation form HTML element.
+ */
 export const getFormValues = formElement => {
 	const formValues = Object.fromEntries( new FormData( formElement ) );
 	const valueKey = `donation_value_${ formValues.donation_frequency }`;
@@ -77,6 +87,10 @@ export const getFormValues = formElement => {
 	return formValues;
 };
 
+/**
+ * Computes the total amount of the donation, taking into account if the
+ * donor has opted to cover the processing fee.
+ */
 export const getTotalAmount = (
 	formElement,
 	// For the payment request button (Apple/Google Pay), the amount has to be
@@ -101,6 +115,9 @@ export const getTotalAmount = (
 	return amount;
 };
 
+/**
+ * Creates a `total` value for Stripe's `paymentRequest` creation and updating.
+ */
 export const getPaymentRequestTotal = formElement => {
 	const settings = getSettings( formElement );
 	const { donation_frequency: frequency } = getFormValues( formElement );
@@ -111,12 +128,18 @@ export const getPaymentRequestTotal = formElement => {
 	};
 };
 
+/**
+ * Computes the fee amount.
+ */
 export const computeFeeAmount = ( amount, feeMultiplier, feeStatic ) => {
 	return parseFloat(
 		( ( ( amount + feeStatic ) / ( 100 - feeMultiplier ) ) * 100 - amount ).toFixed( 2 )
 	);
 };
 
+/**
+ * Given the donation form HTML element, computes the fee amount.
+ */
 export const getFeeAmount = formElement => {
 	const { amount } = getFormValues( formElement );
 	const { feeMultiplier, feeStatic } = getSettings( formElement );
