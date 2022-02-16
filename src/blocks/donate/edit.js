@@ -319,20 +319,18 @@ class Edit extends Component {
 		const { attributes, setAttributes } = this.props;
 		const { buttonText } = attributes;
 		return (
-			<>
-				<button type="submit" onClick={ evt => evt.preventDefault() }>
-					{ this.isRenderingStreamlinedBlock() ? (
-						__( 'Donate with card', 'newspack-blocks' )
-					) : (
-						<RichText
-							onChange={ value => setAttributes( { buttonText: value } ) }
-							placeholder={ __( 'Button text…', 'newspack-blocks' ) }
-							value={ buttonText }
-							tagName="span"
-						/>
-					) }
-				</button>
-			</>
+			<button type="submit" onClick={ evt => evt.preventDefault() }>
+				{ this.isRenderingStreamlinedBlock() ? (
+					__( 'Donate with card', 'newspack-blocks' )
+				) : (
+					<RichText
+						onChange={ value => setAttributes( { buttonText: value } ) }
+						placeholder={ __( 'Button text…', 'newspack-blocks' ) }
+						value={ buttonText }
+						tagName="span"
+					/>
+				) }
+			</button>
 		);
 	}
 
