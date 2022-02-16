@@ -25,6 +25,19 @@ class Newspack_Blocks {
 		add_filter( 'script_loader_tag', [ __CLASS__, 'mark_view_script_as_amp_plus_allowed' ], 10, 2 );
 		add_action( 'jetpack_register_gutenberg_extensions', [ __CLASS__, 'disable_jetpack_donate' ], 99 );
 		add_filter( 'the_content', [ __CLASS__, 'hide_post_content_when_iframe_block_is_fullscreen' ] );
+
+		/**
+		 * Disable NextGEN's `C_NextGen_Shortcode_Manager`.
+		 *
+		 * The way it currently parses `the_content` conflicts with the REST API
+		 * request to save a post containing a Homepage Posts block. This is due to
+		 * how it uses output buffering through `ob_start()` on REST requests.
+		 *
+		 * @link https://plugins.trac.wordpress.org/browser/nextgen-gallery/tags/3.23/non_pope/class.nextgen_shortcode_manager.php#L193.
+		 */
+		if ( ! defined( 'NGG_DISABLE_SHORTCODE_MANAGER' ) ) {
+			define( 'NGG_DISABLE_SHORTCODE_MANAGER', true ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
+		}
 	}
 
 	/**
