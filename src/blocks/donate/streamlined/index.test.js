@@ -116,6 +116,7 @@ describe( 'Streamlined Donate block processing', () => {
 					frequency: 'month',
 					newsletter_opt_in: false,
 					clientId: 'amp-123',
+					payment_method_id: 'pm_123',
 				},
 			},
 			'post'
