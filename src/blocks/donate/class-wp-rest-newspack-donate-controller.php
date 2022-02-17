@@ -74,6 +74,9 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 						'agree_to_pay_fees' => [
 							'sanitize_callback' => 'rest_sanitize_boolean',
 						],
+						'payment_method_id' => [
+							'sanitize_callback' => 'sanitize_text_field',
+						],
 					],
 					'permission_callback' => '__return_true',
 				],
@@ -100,16 +103,17 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 
 		$response = \Newspack\Stripe_Connection::handle_donation(
 			[
-				'frequency'        => $request->get_param( 'frequency' ),
-				'token_data'       => $request->get_param( 'tokenData' ),
-				'email_address'    => $request->get_param( 'email' ),
-				'full_name'        => $request->get_param( 'full_name' ),
-				'amount'           => $request->get_param( 'amount' ),
-				'client_metadata'  => [
+				'frequency'         => $request->get_param( 'frequency' ),
+				'token_data'        => $request->get_param( 'tokenData' ),
+				'email_address'     => $request->get_param( 'email' ),
+				'full_name'         => $request->get_param( 'full_name' ),
+				'amount'            => $request->get_param( 'amount' ),
+				'client_metadata'   => [
 					'clientId'        => $request->get_param( 'clientId' ),
 					'newsletterOptIn' => $request->get_param( 'newsletter_opt_in' ),
 				],
-				'payment_metadata' => $payment_metadata,
+				'payment_metadata'  => $payment_metadata,
+				'payment_method_id' => $request->get_param( 'payment_method_id' ),
 			]
 		);
 

@@ -17,7 +17,7 @@ import './style.scss';
 
 export const processStreamlinedElements = ( parentElement = document ) =>
 	[ ...parentElement.querySelectorAll( '.stripe-payment' ) ].forEach( async el => {
-		let stripe, cardElement, paymentRequest, paymentMethod;
+		let stripe, cardElement, paymentRequest, paymentMethod, paymentRequestToken;
 
 		const formElement = el.closest( 'form' );
 		const messagesEl = el.querySelector( '.stripe-payment__messages' );
@@ -132,17 +132,19 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 			const rendersPaymentRequestButton = await paymentRequest.canMakePayment();
 			if ( rendersPaymentRequestButton ) {
 				paymentRequest.on( 'token', async event => {
-					const result = await payWithToken( event.token, {
+					paymentRequestToken = event.token;
+				} );
+				paymentRequest.on( 'paymentmethod', async event => {
+					// Save payment method ID to use it in payWithToken if a client secret is returned.
+					paymentMethod = event.paymentMethod.id;
+					const result = await payWithToken( paymentRequestToken, {
 						email: event.payerEmail,
 						full_name: event.payerName,
+						payment_method_id: paymentMethod,
 					} );
 					// The UI messages are handled in payWithToken, this event listener only
 					// has to notify the browser that the payment is done.
 					event.complete( result.error ? 'fail' : 'success' );
-				} );
-				// Save payment method ID to use it in payWithToken if a client secret is returned.
-				paymentRequest.on( 'paymentmethod', async event => {
-					paymentMethod = event.paymentMethod.id;
 				} );
 				// Update payment request when the form values are updated.
 				formElement.addEventListener( 'change', () => {
@@ -215,15 +217,31 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 				return;
 			}
 
-			const stripeTokenCreationResult = await stripe.createToken( cardElement );
-			if ( stripeTokenCreationResult.error ) {
-				validationErrors.push( stripeTokenCreationResult.error.message );
+			const handleStripeSDKError = error => {
+				validationErrors.push( error.message );
 				utils.renderMessages( validationErrors, messagesEl );
 				enableForm();
+			};
+
+			const stripeTokenCreationResult = await stripe.createToken( cardElement );
+			if ( stripeTokenCreationResult.error ) {
+				handleStripeSDKError( stripeTokenCreationResult.error );
 				return;
 			}
+			const paymentMethodCreationResult = await stripe.createPaymentMethod( {
+				type: 'card',
+				card: cardElement,
+				billing_details: { name: formValues.full_name, email: formValues.email },
+			} );
+			if ( paymentMethodCreationResult.error ) {
+				handleStripeSDKError( paymentMethodCreationResult.error );
+				return;
+			}
+			// Save payment method ID to use it in payWithToken if a client secret is returned.
 			paymentMethod = { card: cardElement };
-			await payWithToken( stripeTokenCreationResult.token );
+			await payWithToken( stripeTokenCreationResult.token, {
+				payment_method_id: paymentMethodCreationResult.paymentMethod.id,
+			} );
 		} );
 	} );
 
