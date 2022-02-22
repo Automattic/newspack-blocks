@@ -1,3 +1,10 @@
+## [1.45.3-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.45.2...v1.45.3-alpha.1) (2022-02-10)
+
+
+### Bug Fixes
+
+* **carousel:** width issues ([a15ba38](https://github.com/Automattic/newspack-blocks/commit/a15ba38143a5f53d1cbb0c8d30ce6d3dc07d2fd8)), closes [#504](https://github.com/Automattic/newspack-blocks/issues/504)
+
 ## [1.45.2](https://github.com/Automattic/newspack-blocks/compare/v1.45.1...v1.45.2) (2022-02-08)
 
 
