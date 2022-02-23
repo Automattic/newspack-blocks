@@ -65,6 +65,7 @@ function newspack_blocks_get_iframe( $args ) {
  * @param string  $height Iframe Height.
  * @param string  $width Iframe width.
  * @param boolean $is_full_screen If the Iframe should be rendered full screen.
+ * @param string  $align Iframe block alignment.
  * @return string HTML embed.
  */
 function newspack_blocks_get_iframe_html( $mode, $src, $height, $width, $is_full_screen, $align ) {
