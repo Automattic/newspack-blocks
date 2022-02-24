@@ -50,10 +50,11 @@ function newspack_blocks_get_iframe( $args ) {
 		'height'       => '600px',
 		'width'        => '100%',
 		'isFullScreen' => false,
+		'align'        => '',
 	);
 	$args     = wp_parse_args( $args, $defaults );
 
-	return newspack_blocks_get_iframe_html( $args['mode'], $args['src'], $args['height'], $args['width'], $args['isFullScreen'] );
+	return newspack_blocks_get_iframe_html( $args['mode'], $args['src'], $args['height'], $args['width'], $args['isFullScreen'], $args['align'] );
 }
 
 /**
@@ -64,18 +65,24 @@ function newspack_blocks_get_iframe( $args ) {
  * @param string  $height Iframe Height.
  * @param string  $width Iframe width.
  * @param boolean $is_full_screen If the Iframe should be rendered full screen.
+ * @param string  $align Iframe block alignment.
  * @return string HTML embed.
  */
-function newspack_blocks_get_iframe_html( $mode, $src, $height, $width, $is_full_screen ) {
+function newspack_blocks_get_iframe_html( $mode, $src, $height, $width, $is_full_screen, $align ) {
 	$is_document = 'document' === $mode;
 	$height      = $is_full_screen ? '100' : $height;
 	$width       = $is_full_screen ? '100' : $width;
 	$style       = "height: $height; width: $width;";
 	$layout      = 'responsive';
 	$iframe_id   = 'newspack-iframe-' . wp_generate_password( 12, false );
+	$classes[]   = 'wp-block-newspack-blocks-iframe';
 
 	if ( empty( $src ) ) {
 		return;
+	}
+
+	if ( ! empty( $align ) ) {
+		$classes[] = 'align' . $align;
 	}
 
 	if ( $is_full_screen ) {
@@ -89,7 +96,7 @@ function newspack_blocks_get_iframe_html( $mode, $src, $height, $width, $is_full
 
 	ob_start();
 	?>
-	<figure class='wp-block-newspack-blocks-iframe'>
+	<figure class='<?php echo esc_attr( implode( ' ', $classes ) ); ?>'>
 		<div class='wp-block-embed__wrapper' style="height:<?php echo esc_attr( $height ); ?>; width:<?php echo esc_attr( $width ); ?>;">
 			<iframe
 				id = '<?php echo esc_attr( $iframe_id ); ?>'
