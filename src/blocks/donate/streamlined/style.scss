@@ -1,13 +1,48 @@
-@import '../../shared/sass/colors';
-@import '../../shared/sass/mixins';
-@import '../../shared/sass/variables';
+@import '../../../shared/sass/colors';
+@import '../../../shared/sass/mixins';
+@import '../../../shared/sass/variables';
+
+@keyframes loader {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
 
 .wp-block-newspack-blocks-donate {
 	.stripe-payment {
+		// For the initial unravelling animation.
+		position: relative;
+		&,
+		&--transition,
+		&::after {
+			transition: all 300ms ease-out;
+		}
+		&::after {
+			content: '';
+			opacity: 0;
+			pointer-events: none;
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: linear-gradient( 318deg, #d5d5d5, #fff );
+			background-size: 400% 400%;
+			animation: loader 3s ease infinite;
+			border-radius: 5px;
+		}
+
 		&__card {
 			border: 1px solid $color__border;
 			border-radius: 3px;
 			padding: 0.34rem 0.66rem;
+			min-height: 32px;
 		}
 		input[type='text'],
 		input[type='email'],
@@ -31,15 +66,22 @@
 			}
 		}
 
-		&__inputs {
-			&--hidden {
-				display: none;
+		&--invisible {
+			> * {
+				opacity: 0;
 			}
+			&::after {
+				opacity: 1;
+			}
+		}
+		&--hidden {
+			display: none;
 		}
 
 		&__checkbox {
 			align-items: center;
-			display: flex;
+			display: inline-flex;
+			cursor: pointer;
 
 			input {
 				height: 1em;
@@ -79,11 +121,15 @@
 			}
 		}
 
+		&__element {
+			margin-bottom: 0.4rem;
+		}
+
 		&__row {
 			margin-bottom: 0.5rem;
 			&--small {
-				line-height: 1;
-				margin-bottom: 0;
+				margin-bottom: 5px;
+				line-height: 1.2;
 			}
 			&--flex {
 				display: flex;
@@ -114,18 +160,51 @@
 		}
 
 		&__footer {
-			margin-top: 1.5rem;
-			margin-bottom: 1.5rem;
-		}
-		button[type='submit'] {
-			margin: 0 10px 0 0 !important;
+			align-items: flex-end;
+			margin-bottom: 1.32rem;
+			margin-left: -10px;
+			margin-right: -10px;
+			> * {
+				padding-left: 10px;
+				padding-right: 10px;
+			}
 		}
 		&__branding {
+			margin-top: 1em;
+			height: 26px;
 			display: block;
 			text-decoration: none;
 
 			img {
 				display: block;
+			}
+		}
+
+		&__methods {
+			display: flex;
+			flex-wrap: wrap;
+			button {
+				margin-left: 0;
+				margin-right: 0;
+				margin-bottom: 0;
+				height: 46px;
+			}
+			> * {
+				margin-top: 10px;
+				width: 100%;
+				@include media( mobile ) {
+					width: auto;
+				}
+			}
+		}
+
+		&__request-button {
+			min-width: 190px;
+			@include media( mobile ) {
+				margin-right: 1em;
+			}
+			&--invisible {
+				opacity: 0;
 			}
 		}
 	}
@@ -142,6 +221,10 @@
 				margin-top: 0;
 			}
 		}
+	}
+
+	&__thanks {
+		margin-bottom: 0 !important;
 	}
 }
 
