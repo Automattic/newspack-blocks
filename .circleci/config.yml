@@ -1,108 +1,44 @@
 version: 2.1
 
-commands:
-  checkout_with_workspace:
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/
-
-jobs:
-  build:
-    docker:
-      - image: cimg/php:7.4-browsers
-    steps:
-      - checkout_with_workspace
-      - run:
-          name: Install dependencies
-          command: npm ci
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project
-
-  lint:
-    docker:
-      - image: cimg/php:7.4-browsers
-    steps:
-      - checkout_with_workspace
-      - run:
-          name: Run JS linter
-          command: npm run lint
-
-  test-js:
-    docker:
-      - image: cimg/php:7.4-browsers
-    steps:
-      - checkout_with_workspace
-      - run:
-          name: Run JS Tests
-          command: npm run test
-
-  php-lint:
-    docker:
-      - image: cimg/php:7.4
-    steps:
-      - checkout_with_workspace
-      - run:
-          name: Composer install
-          command: composer install
-      - run:
-          name: PHP lint
-          command: composer lint
-
-  release:
-    docker:
-      - image: cimg/php:7.4-browsers
-    steps:
-      - checkout_with_workspace
-      - run:
-          name: Install rsync
-          command: sudo apt-get update && sudo apt-get install rsync
-      - run:
-          name: Release new version
-          command: npm run release
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project
-
-  post_release:
-    docker:
-      - image: cimg/php:7.4-browsers
-    steps:
-      - checkout_with_workspace
-      - run:
-          name: Perform post-release chores
-          command: ./node_modules/newspack-scripts/post-release.sh
+orbs:
+  newspack: adekbadek/newspack@1.1.1
 
 workflows:
   version: 2
   all:
     jobs:
-      - build
-      - lint:
+      - newspack/build
+      - newspack/lint-js-scss:
           requires:
-            - build
-      - test-js:
+            - newspack/build
+      - newspack/test-js:
           requires:
-            - build
-      - php-lint:
+            - newspack/build
+      - newspack/build-distributable:
           requires:
-            - build
-      - release:
+            - newspack/build
+          archive-name: 'newspack-plugin'
+          filters:
+            branches:
+              only:
+                - master
+      - newspack/release:
           requires:
-            - build
+            - newspack/build
           filters:
             branches:
               only:
                 - release
                 - alpha
                 - /^hotfix\/.*/
-      - post_release:
+      - newspack/post-release:
           requires:
-            - release
+            - newspack/release
           filters:
             branches:
               only:
                 - release
+  php:
+    jobs:
+      - newspack/lint-php
+      - newspack/test-php
