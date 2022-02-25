@@ -17,7 +17,7 @@ workflows:
       - newspack/build-distributable:
           requires:
             - newspack/build
-          archive-name: 'newspack-plugin'
+          archive-name: 'newspack-blocks'
           filters:
             branches:
               only:
