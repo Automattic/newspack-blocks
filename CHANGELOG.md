@@ -1,3 +1,15 @@
+# [1.46.0](https://github.com/Automattic/newspack-blocks/compare/v1.45.3...v1.46.0) (2022-03-08)
+
+
+### Bug Fixes
+
+* disable ngg shortcode manager ([#1045](https://github.com/Automattic/newspack-blocks/issues/1045)) ([af5e516](https://github.com/Automattic/newspack-blocks/commit/af5e516bf6ec6c56887979918cbc6a277e1ce974))
+
+
+### Features
+
+* **donate-block:** stripe payment request button ([#1035](https://github.com/Automattic/newspack-blocks/issues/1035)) ([3d5c273](https://github.com/Automattic/newspack-blocks/commit/3d5c27331f68e54618e6886ebac284bf197478b9))
+
 # [1.46.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.45.3...v1.46.0-alpha.1) (2022-02-24)
 
 
