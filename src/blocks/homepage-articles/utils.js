@@ -173,7 +173,8 @@ export const postsBlockSelector = ( select, { clientId, attributes } ) => {
 	const { getBlocks } = select( 'core/block-editor' );
 	const editorBlocksIds = getEditorBlocksIds( getEditorBlocks() );
 	// The block might be rendered in the block styles preview, not in the editor.
-	const isEditorBlock = editorBlocksIds.indexOf( clientId ) >= 0;
+	const isWidgetEditor = getBlocks().some( block => block.name === 'core/widget-area' );
+	const isEditorBlock = editorBlocksIds.indexOf( clientId ) >= 0 || isWidgetEditor;
 
 	const { getPosts, getError, isUIDisabled } = select( STORE_NAMESPACE );
 	const props = {
