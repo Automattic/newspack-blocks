@@ -80,7 +80,7 @@ export const getFormValues = formElement => {
 	if ( ! formValues.amount ) {
 		formValues.amount = formValues[ `${ valueKey }_untiered` ];
 	}
-	if ( formValues.cid.indexOf( 'CLIENT_ID' ) === 0 ) {
+	if ( formValues.cid && formValues.cid.indexOf( 'CLIENT_ID' ) === 0 ) {
 		// In non-AMP environment, the value will not be dynamically substituted by AMP runtime.
 		formValues.cid = getCookies()[ 'newspack-cid' ];
 	}
