@@ -241,6 +241,9 @@
 		}
 
 		&__methods {
+			display: grid;
+			grid-gap: 0.56rem;
+
 			> * {
 				margin-top: 0;
 			}
@@ -259,6 +262,14 @@
 				margin: 0;
 				width: auto;
 			}
+		}
+
+		&__request-button {
+			margin: 0;
+		}
+
+		&__branding {
+			margin-top: 1.12rem;
 		}
 	}
 }
