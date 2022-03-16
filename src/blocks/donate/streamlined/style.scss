@@ -262,3 +262,52 @@
 		}
 	}
 }
+
+/* Minimal Style */
+
+.wpbnbd.is-style-minimal {
+	.wp-block-newspack-blocks-donate__stripe {
+		margin: 0;
+		text-align: left;
+	}
+
+	.stripe-payment {
+		&__row {
+			margin-bottom: 0.56rem;
+		}
+
+		&__inputs {
+			margin-bottom: 1.12rem;
+		}
+
+		&__methods {
+			display: grid;
+			grid-gap: 0.28rem;
+
+			> * {
+				margin-top: 0;
+			}
+		}
+
+		&__footer {
+			margin: 1.12rem 0 0;
+
+			> * {
+				padding: 0;
+			}
+
+			button {
+				margin: 0;
+				min-width: auto;
+			}
+		}
+
+		&__request-button {
+			margin: 0;
+		}
+
+		&__branding {
+			margin-top: 1.12rem;
+		}
+	}
+}

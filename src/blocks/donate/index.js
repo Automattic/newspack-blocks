@@ -88,7 +88,15 @@ export const settings = {
 	save: () => null, // to use view.php
 };
 
+/**
+ * Block Styles
+ */
 registerBlockStyle( 'newspack-blocks/donate', {
 	name: 'alternate',
 	label: __( 'Alternate', 'newapack-blocks' ),
+} );
+
+registerBlockStyle( 'newspack-blocks/donate', {
+	name: 'minimal',
+	label: __( 'Minimal', 'newapack-blocks' ),
 } );
