@@ -222,12 +222,43 @@
 			}
 		}
 	}
-
-	&__thanks {
-		margin-bottom: 0 !important;
-	}
 }
 
 #stripe-fees-amount {
 	padding-left: 3px;
+}
+
+/* Alternate Style */
+
+.wpbnbd.is-style-alternate {
+	.wp-block-newspack-blocks-donate__stripe {
+		margin: 1.12rem 1.12rem 0;
+	}
+
+	.stripe-payment {
+		&__row {
+			margin-bottom: 0.56rem;
+		}
+
+		&__methods {
+			> * {
+				margin-top: 0;
+			}
+		}
+
+		&__footer {
+			margin: 1.12rem 0;
+
+			> * {
+				padding: 0;
+			}
+
+			button {
+				border-top-left-radius: 5px;
+				border-top-right-radius: 5px;
+				margin: 0;
+				width: auto;
+			}
+		}
+	}
 }
