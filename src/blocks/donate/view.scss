@@ -305,6 +305,12 @@
 	}
 
 	&.untiered {
+		padding-top: calc( 3 * ( 0.82rem + 1.6em ) + 8px );
+
+		@include media( tablet ) {
+			padding-top: calc( 0.82rem + 1.6em + 4px );
+		}
+
 		.input-container {
 			margin: 1.12rem;
 		}
