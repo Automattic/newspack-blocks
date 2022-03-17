@@ -317,7 +317,7 @@ class Edit extends Component {
 
 	renderButton() {
 		const { attributes, setAttributes } = this.props;
-		const { buttonText } = attributes;
+		const { buttonText = __( 'Donate Now!', 'newspack-blocks' ) } = attributes;
 		return (
 			<button type="submit" onClick={ evt => evt.preventDefault() }>
 				{ this.isRenderingStreamlinedBlock() ? (
@@ -336,7 +336,9 @@ class Edit extends Component {
 
 	renderFooter() {
 		const { attributes, setAttributes } = this.props;
-		const { thanksText } = attributes;
+		const {
+			thanksText = __( 'Your contribution is appreciated.', 'newspack-blocks' ),
+		} = attributes;
 		return (
 			<>
 				<p className="wp-block-newspack-blocks-donate__thanks thanks">
