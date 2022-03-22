@@ -1,6 +1,6 @@
 {
 	"name": "newspack-blocks",
-	"version": "1.46.0",
+	"version": "1.46.1",
 	"author": "Automattic",
 	"devDependencies": {
 		"@rushstack/eslint-patch": "^1.1.1",
