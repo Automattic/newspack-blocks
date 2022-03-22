@@ -1,3 +1,12 @@
+## [1.46.1-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.46.0...v1.46.1-alpha.1) (2022-03-15)
+
+
+### Bug Fixes
+
+* add alignment classes to iframe block ([#1050](https://github.com/Automattic/newspack-blocks/issues/1050)) ([854d7cc](https://github.com/Automattic/newspack-blocks/commit/854d7cc355f94dbe36319bd9984e48c4a9b5f324))
+* handle inactive newspack-popups ([#1056](https://github.com/Automattic/newspack-blocks/issues/1056)) ([cb894b3](https://github.com/Automattic/newspack-blocks/commit/cb894b3c0f9260a561b4366eb14431bd16efdec1))
+* update listings class name to match after refactor ([#1064](https://github.com/Automattic/newspack-blocks/issues/1064)) ([ac87922](https://github.com/Automattic/newspack-blocks/commit/ac87922c44f04d02105642a08afc7dad23b142dc))
+
 # [1.46.0](https://github.com/Automattic/newspack-blocks/compare/v1.45.3...v1.46.0) (2022-03-08)
 
 
