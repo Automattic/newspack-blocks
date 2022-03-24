@@ -399,13 +399,10 @@
 			~ .tiers {
 				display: grid;
 				grid-gap: 0.56rem;
+				grid-template-columns: repeat( 2, 1fr );
 				margin: 1.12rem;
 
-				@include media( mobile ) {
-					grid-template-columns: repeat( 2, 1fr );
-				}
-
-				@include media( desktop ) {
+				@include media( tablet ) {
 					grid-template-columns: repeat( 4, 1fr );
 				}
 			}
@@ -560,13 +557,10 @@
 			~ .tiers {
 				display: grid;
 				grid-gap: 0.56rem;
+				grid-template-columns: repeat( 2, 1fr );
 				margin: 1.12rem 0;
 
-				@include media( mobile ) {
-					grid-template-columns: repeat( 2, 1fr );
-				}
-
-				@include media( desktop ) {
+				@include media( tablet ) {
 					grid-template-columns: repeat( 4, 1fr );
 				}
 			}
