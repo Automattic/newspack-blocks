@@ -398,15 +398,12 @@
 
 			~ .tiers {
 				display: grid;
-				grid-gap: 0.56rem;
+				grid-gap: 0.28rem;
+				grid-template-columns: repeat( 4, 1fr );
 				margin: 1.12rem;
 
 				@include media( mobile ) {
-					grid-template-columns: repeat( 2, 1fr );
-				}
-
-				@include media( desktop ) {
-					grid-template-columns: repeat( 4, 1fr );
+					grid-gap: 0.56rem;
 				}
 			}
 		}
@@ -558,15 +555,15 @@
 			}
 
 			~ .tiers {
-				display: grid;
-				grid-gap: 0.56rem;
+				display: flex;
+				flex-wrap: wrap;
+				grid-gap: 1.12rem;
+				justify-content: center;
 				margin: 1.12rem 0;
 
 				@include media( mobile ) {
-					grid-template-columns: repeat( 2, 1fr );
-				}
-
-				@include media( desktop ) {
+					display: grid;
+					grid-gap: 0.56rem;
 					grid-template-columns: repeat( 4, 1fr );
 				}
 			}
