@@ -1,3 +1,11 @@
+## [1.46.2-hotfix.1](https://github.com/Automattic/newspack-blocks/compare/v1.46.1...v1.46.2-hotfix.1) (2022-03-28)
+
+
+### Bug Fixes
+
+* clauses filter when querying CAP guest authors in homepage posts ([a13707f](https://github.com/Automattic/newspack-blocks/commit/a13707f472589ac8817e1d41fae5087e0f8e903e))
+* fetchSavedAuthors query in editor ([bcbea28](https://github.com/Automattic/newspack-blocks/commit/bcbea28df39b7c7a7457c548f81aed49e7f1022f))
+
 ## [1.46.1](https://github.com/Automattic/newspack-blocks/compare/v1.46.0...v1.46.1) (2022-03-22)
 
 
