@@ -542,11 +542,20 @@ class Newspack_Blocks {
 					foreach ( $authors as $index => $author_id ) {
 						$co_author = $co_authors_guest_authors->get_guest_author_by( 'id', $author_id );
 						if ( $co_author ) {
+							if ( ! empty( $co_author->linked_account ) ) {
+								$linked_account = get_user_by( 'login', $co_author->linked_account );
+								if ( $linked_account ) {
+									$authors[] = $linked_account->ID;
+								}
+							}
 							$co_authors_names[] = $co_author->user_nicename;
 							unset( $authors[ $index ] );
 						}
 					}
 				}
+
+				// Reset numeric indexes.
+				$authors = array_values( $authors );
 
 				if ( count( $co_authors_names ) ) {
 					// look for authors and co-authors posts.
@@ -1006,8 +1015,8 @@ class Newspack_Blocks {
 				$csv     = implode( ',', wp_parse_id_list( (array) $authors_ids ) );
 				$authors = " {$wpdb->posts}.post_author IN ( $csv ) ";
 
-				// Make sure the authors are set and the tax query is valid (doesn't contain 0 = 1).
-				if ( false === strpos( $tax_query['where'], ' 0 = 1' ) ) {
+				// Make sure the authors are set, the tax query is valid (doesn't contain 0 = 1), and the JOIN clause hasn't alreaady been added.
+				if ( false === strpos( $tax_query['where'], ' 0 = 1' ) && false === strpos( $clauses['join'], $tax_query['join'] ) ) {
 					// Append to the current join/where parts.
 					$clauses['join']  .= $tax_query['join'];
 					$clauses['where'] .= sprintf(
