@@ -561,7 +561,49 @@ class Newspack_Blocks {
 					// look for authors and co-authors posts.
 					self::filter_posts_clauses_when_co_authors( $authors, $co_authors_names );
 				} else {
-					$args['author__in'] = $authors;
+					$args['author__in']   = $authors;
+					$authors_controller   = new WP_REST_Newspack_Authors_Controller();
+					$linked_guest_authors = [];
+					$author_names         = array_reduce(
+						$authors,
+						function( $acc, $author_id ) use ( $authors_controller, &$linked_guest_authors ) {
+							$author_data = get_userdata( $author_id );
+							if ( $author_data ) {
+								$acc[] = $author_data->user_login;
+
+								// Check if the user has a linked guest author, and if so, get those posts, too.
+								$linked_guest_author = $authors_controller->get_linked_guest_author( $author_data->user_data );
+								if ( $linked_guest_author ) {
+									$linked_guest_authors[] = $linked_guest_author->post_name;
+								}
+							}
+							return $acc;
+						},
+						[]
+					);
+
+					// Don't get any posts that are attributed to other CAP guest authors.
+					$args['tax_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+						'relation' => 'OR',
+						[
+							'taxonomy' => 'author',
+							'operator' => 'NOT EXISTS',
+						],
+						[
+							'field'    => 'name',
+							'taxonomy' => 'author',
+							'terms'    => $author_names,
+						],
+					];
+
+					// But do get posts attributed to linked guest authors.
+					if ( 0 < count( $linked_guest_authors ) ) {
+						$tax_query[] = [
+							'field'    => 'name',
+							'taxonomy' => 'author',
+							'terms'    => $linked_guest_authors,
+						];
+					}
 				}
 			}
 			if ( $categories && count( $categories ) ) {
@@ -577,6 +619,7 @@ class Newspack_Blocks {
 				$args['category__not_in'] = $category_exclusions;
 			}
 		}
+
 		return $args;
 	}
 
@@ -999,21 +1042,50 @@ class Newspack_Blocks {
 				global $wpdb;
 
 				// co-author tax query.
-				$tax_query = array(
-					array(
+				$tax_query = [
+					[
 						'taxonomy' => 'author',
 						'field'    => 'name',
 						'terms'    => $co_authors_names,
-					),
-				);
+					],
+				];
 
 				// Generate the tax query SQL.
 				$tax_query = new WP_Tax_Query( $tax_query );
 				$tax_query = $tax_query->get_sql( $wpdb->posts, 'ID' );
 
 				// Generate the author query SQL.
-				$csv     = implode( ',', wp_parse_id_list( (array) $authors_ids ) );
-				$authors = " {$wpdb->posts}.post_author IN ( $csv ) ";
+				$csv          = implode( ',', wp_parse_id_list( (array) $authors_ids ) );
+				$author_names = array_reduce(
+					$authors_ids,
+					function( $acc, $author_id ) {
+						$author_data = get_userdata( $author_id );
+						if ( $author_data ) {
+							$acc[] = $author_data->user_login;
+						}
+						return $acc;
+					},
+					[]
+				);
+
+				// We don't want to get posts attributed to CAP guest authors not linked to the given WP users.
+				$exclude = new WP_Tax_Query(
+					[
+						'relation' => 'OR',
+						[
+							'taxonomy' => 'author',
+							'operator' => 'NOT EXISTS',
+						],
+						[
+							'field'    => 'name',
+							'taxonomy' => 'author',
+							'terms'    => $author_names,
+						],
+					]
+				);
+				$exclude = $exclude->get_sql( $wpdb->posts, 'ID' );
+				$exclude = $exclude['where'];
+				$authors = " ( {$wpdb->posts}.post_author IN ( $csv ) $exclude ) ";
 
 				// Make sure the authors are set, the tax query is valid (doesn't contain 0 = 1), and the JOIN clause hasn't alreaady been added.
 				if ( false === strpos( $tax_query['where'], ' 0 = 1' ) && false === strpos( $clauses['join'], $tax_query['join'] ) ) {
