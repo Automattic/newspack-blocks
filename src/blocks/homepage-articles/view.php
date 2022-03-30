@@ -22,6 +22,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	do_action( 'newspack_blocks_render_homepage_articles' );
 
 	$article_query = new WP_Query( Newspack_Blocks::build_articles_query( $attributes, apply_filters( 'newspack_blocks_block_name', 'newspack-blocks/homepage-articles' ) ) );
+	Newspack_Blocks::remove_filter_posts_clauses_when_co_authors_filter();
 
 	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes, [ 'wpnbha' ] );
 

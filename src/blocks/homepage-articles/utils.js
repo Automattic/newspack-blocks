@@ -81,22 +81,22 @@ export const queryCriteriaFromAttributes = attributes => {
 		isSpecificPostModeActive
 			? {
 					include: cleanPosts,
-					per_page: specificPosts.length,
-					post_type: postType,
+					postsToShow: specificPosts.length,
+					postType,
 			  }
 			: {
-					per_page: postsToShow,
+					postsToShow,
 					categories,
-					author: authors,
+					authors,
 					tags,
-					tags_exclude: tagExclusions,
-					categories_exclude: categoryExclusions,
-					post_type: postType,
+					tagExclusions,
+					categoryExclusions,
+					postType,
 			  },
 		value => ! isUndefined( value )
 	);
-	criteria.excerpt_length = excerptLength;
-	criteria.show_excerpt = showExcerpt;
+	criteria.excerptLength = excerptLength;
+	criteria.showExcerpt = showExcerpt;
 	return criteria;
 };
 
