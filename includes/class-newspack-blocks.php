@@ -16,6 +16,32 @@ class Newspack_Blocks {
 	const DONATE_STREAMLINED_SCRIPT_HANDLE = 'newspack-blocks-donate-streamlined';
 
 	/**
+	 * Regex pattern we can use to search for and remove custom SQL statements.
+	 * Custom statements added by this class are wrapped by `capwhere` comments.
+	 */
+	const SQL_PATTERN = '/\/\* capwhere \*\/(.|\n)*\/\* \/capwhere \*\//';
+
+	/**
+	 * Class property to store user IDs and CAP guest author names for building
+	 * custom SQL statements. In order to allow a single WP_Query to filter by
+	 * both WP users and CAP guest authors (a taxonomy), we need to directly
+	 * modify the JOIN and WHERE clauses in the SQL query.
+	 *
+	 * If this property is false, then the custom statements will be stripped
+	 * from all SQL clauses. If it's an array with `authors` and `coauthors`
+	 * keys, the custom statements will be added to the SQL query.
+	 *
+	 * Example array:
+	 * [
+	 *     'authors'   => [], // Array of numeric WP user IDs.
+	 *     'coauthors' => [], // Array of CAP guest author name slugs.
+	 * ]
+	 *
+	 * @var boolean|array
+	 */
+	protected static $filter_clauses = false;
+
+	/**
 	 * Add hooks and filters.
 	 */
 	public static function init() {
@@ -25,6 +51,8 @@ class Newspack_Blocks {
 		add_filter( 'script_loader_tag', [ __CLASS__, 'mark_view_script_as_amp_plus_allowed' ], 10, 2 );
 		add_action( 'jetpack_register_gutenberg_extensions', [ __CLASS__, 'disable_jetpack_donate' ], 99 );
 		add_filter( 'the_content', [ __CLASS__, 'hide_post_content_when_iframe_block_is_fullscreen' ] );
+		add_filter( 'posts_clauses', [ __CLASS__, 'filter_posts_clauses_when_co_authors' ], 999, 2 );
+		add_filter( 'posts_groupby', [ __CLASS__, 'group_by_post_id_filter' ], 999 );
 
 		/**
 		 * Disable NextGEN's `C_NextGen_Shortcode_Manager`.
@@ -468,6 +496,9 @@ class Newspack_Blocks {
 	 * @return array
 	 */
 	public static function build_articles_query( $attributes, $block_name ) {
+		// Reset author/CAP guest author SQL statements by default.
+		self::$filter_clauses = false;
+
 		global $newspack_blocks_post_id;
 		if ( ! $newspack_blocks_post_id ) {
 			$newspack_blocks_post_id = array();
@@ -511,7 +542,7 @@ class Newspack_Blocks {
 			'suppress_filters'    => false,
 			'ignore_sticky_posts' => true,
 			'has_password'        => false,
-			'is_homepage_posts'   => true,
+			'is_newspack_query'   => true,
 		);
 		if ( $specific_mode && $specific_posts ) {
 			$args['nopaging'] = true;
@@ -614,7 +645,11 @@ class Newspack_Blocks {
 						],
 					];
 				} else {
-					self::filter_posts_clauses_when_co_authors( $authors, $co_authors_names );
+					// The query contains both WP users and CAP guest authors. We need to filter the SQL query.
+					self::$filter_clauses = [
+						'authors'   => $authors,
+						'coauthors' => $co_authors_names,
+					];
 				}
 			}
 		}
@@ -1022,136 +1057,113 @@ class Newspack_Blocks {
 	}
 
 	/**
-	 * Closure for posts clauses when we have co-authors can be added and removed.
+	 * Filter posts by authors and co-authors. If the query is filtering posts
+	 * by both WP users and CAP guest authors, the SQL clauses must be modified
+	 * directly so that the filtering can happen with a single SQL query.
 	 *
-	 * @var $newspack_blocks_posts_clauses_when_co_authors_closure
+	 * @param string[] $clauses Associative array of the clauses for the query.
+	 * @param WP_Query $query The WP_Query instance (passed by reference).
 	 */
-	public static $newspack_blocks_posts_clauses_when_co_authors_closure = null;
+	public static function filter_posts_clauses_when_co_authors( $clauses, $query ) {
+		// Remove any lingering custom SQL statements.
+		$clauses['join']   = preg_replace( self::SQL_PATTERN, '', $clauses['join'] );
+		$clauses['where']  = preg_replace( self::SQL_PATTERN, '', $clauses['where'] );
+		$is_newspack_query = isset( $query->query_vars['is_newspack_query'] ) && $query->query_vars['is_newspack_query'];
 
-	/**
-	 * Filter posts by authors and co-authors.
-	 *
-	 * @param int[]    $authors_ids Authors IDs to filter with.
-	 * @param string[] $co_authors_names Co-authors names to filter with.
-	 */
-	public static function filter_posts_clauses_when_co_authors( $authors_ids, $co_authors_names ) {
-		self::$newspack_blocks_posts_clauses_when_co_authors_closure = add_filter(
-			'posts_clauses',
-			function( $clauses, $query ) use ( $authors_ids, $co_authors_names ) {
-				$is_homepage_posts = isset( $query->query_vars['is_homepage_posts'] ) && $query->query_vars['is_homepage_posts'];
-				if ( ! $is_homepage_posts ) {
-					return $clauses;
+		// If the query isn't coming from this plugin, or $filter_clauses lacks expected data.
+		if (
+			! $is_newspack_query ||
+			! self::$filter_clauses ||
+			! isset( self::$filter_clauses['authors'] ) ||
+			! isset( self::$filter_clauses['coauthors'] )
+		) {
+			return $clauses;
+		}
+
+		global $wpdb;
+
+		$authors_ids      = self::$filter_clauses['authors'];
+		$co_authors_names = self::$filter_clauses['coauthors'];
+
+		// co-author tax query.
+		$tax_query = [
+			[
+				'taxonomy' => 'author',
+				'field'    => 'name',
+				'terms'    => $co_authors_names,
+			],
+		];
+
+		// Generate the tax query SQL.
+		$tax_query = new WP_Tax_Query( $tax_query );
+		$tax_query = $tax_query->get_sql( $wpdb->posts, 'ID' );
+
+		// Generate the author query SQL.
+		$csv          = implode( ',', wp_parse_id_list( (array) $authors_ids ) );
+		$author_names = array_reduce(
+			$authors_ids,
+			function( $acc, $author_id ) {
+				$author_data = get_userdata( $author_id );
+				if ( $author_data ) {
+					$acc[] = $author_data->user_login;
 				}
-
-				global $wpdb;
-
-				// co-author tax query.
-				$tax_query = [
-					[
-						'taxonomy' => 'author',
-						'field'    => 'name',
-						'terms'    => $co_authors_names,
-					],
-				];
-
-				// Generate the tax query SQL.
-				$tax_query = new WP_Tax_Query( $tax_query );
-				$tax_query = $tax_query->get_sql( $wpdb->posts, 'ID' );
-
-				// Generate the author query SQL.
-				$csv          = implode( ',', wp_parse_id_list( (array) $authors_ids ) );
-				$author_names = array_reduce(
-					$authors_ids,
-					function( $acc, $author_id ) {
-						$author_data = get_userdata( $author_id );
-						if ( $author_data ) {
-							$acc[] = $author_data->user_login;
-						}
-						return $acc;
-					},
-					[]
-				);
-
-				// If getting only WP users, we don't want to get posts attributed to CAP guest authors not linked to the given WP users.
-				$exclude = new WP_Tax_Query(
-					[
-						'relation' => 'OR',
-						[
-							'taxonomy' => 'author',
-							'operator' => 'NOT EXISTS',
-						],
-						[
-							'field'    => 'name',
-							'taxonomy' => 'author',
-							'terms'    => $author_names,
-						],
-					]
-				);
-				$exclude = $exclude->get_sql( $wpdb->posts, 'ID' );
-				$exclude = $exclude['where'];
-				$authors = " ( {$wpdb->posts}.post_author IN ( $csv ) $exclude ) ";
-
-				// Make sure the authors are set, the tax query is valid (doesn't contain 0 = 1).
-				if ( false === strpos( $tax_query['where'], ' 0 = 1' ) ) {
-					// Append to the current join parts. The JOIN statment only needs to exist in the clause once.
-					if ( false === strpos( $clauses['join'], $tax_query['join'] ) ) {
-						$clauses['join'] .= $tax_query['join'];
-					}
-
-					// In case there are leftover clause modifications from prior filters, make sure to replace those with the new clauses.
-					$where_pattern     = '/\/\* capwhere \*\/(.|\n)*\/\* \/capwhere \*\//';
-					$already_coauthors = preg_match( $where_pattern, $clauses['where'] );
-
-					if ( $already_coauthors ) {
-						$clauses['where'] = preg_replace(
-							$where_pattern,
-							sprintf(
-								' AND ( %s ( 1=1 %s ) )',
-								empty( $authors_ids ) ? '' : $authors . ' OR',
-								$tax_query['where']
-							),
-							$clauses['where']
-						);
-					} else {
-						$clauses['where'] .= sprintf(
-						// The tax query SQL comes prepended with AND.
-							'%s AND ( %s ( 1=1 %s ) ) %s',
-							'/* capwhere */',
-							empty( $authors_ids ) ? '' : $authors . ' OR',
-							$tax_query['where'],
-							'/* /capwhere */'
-						);
-					}
-				}
-				return $clauses;
+				return $acc;
 			},
-			999,
-			2
+			[]
 		);
 
-		add_filter( 'posts_groupby', [ __CLASS__, 'group_by_post_id_filter' ], 999 );
+		// If getting only WP users, we don't want to get posts attributed to CAP guest authors not linked to the given WP users.
+		$exclude = new WP_Tax_Query(
+			[
+				'relation' => 'OR',
+				[
+					'taxonomy' => 'author',
+					'operator' => 'NOT EXISTS',
+				],
+				[
+					'field'    => 'name',
+					'taxonomy' => 'author',
+					'terms'    => $author_names,
+				],
+			]
+		);
+		$exclude = $exclude->get_sql( $wpdb->posts, 'ID' );
+		$exclude = $exclude['where'];
+		$authors = " ( {$wpdb->posts}.post_author IN ( $csv ) $exclude ) ";
+
+		// Make sure the authors are set, the tax query is valid (doesn't contain 0 = 1).
+		if ( false === strpos( $tax_query['where'], ' 0 = 1' ) ) {
+			// Append to the current join parts. The JOIN statment only needs to exist in the clause once.
+			if ( false === strpos( $clauses['join'], $tax_query['join'] ) ) {
+				$clauses['join'] .= '/* capwhere */ ' . $tax_query['join'] . ' /* /capwhere */';
+			}
+
+			$clauses['where'] .= sprintf(
+			// The tax query SQL comes prepended with AND.
+				'%s AND ( %s ( 1=1 %s ) ) %s',
+				'/* capwhere */',
+				empty( $authors_ids ) ? '' : $authors . ' OR',
+				$tax_query['where'],
+				'/* /capwhere */'
+			);
+		}
+		return $clauses;
 	}
 
 	/**
 	 * Group by post ID filter, used when we join taxonomies while getting posts.
+	 *
+	 * @param string $groupby The GROUP BY clause of the query.
+	 * @return string The filtered GROUP BY clause.
 	 */
-	public static function group_by_post_id_filter() {
+	public static function group_by_post_id_filter( $groupby ) {
 		global $wpdb;
-		return "{$wpdb->posts}.ID ";
-	}
 
-	/**
-	 * Remove posts clauses filter after Homepage Posts block loop.
-	 */
-	public static function remove_filter_posts_clauses_when_co_authors_filter() {
-		if ( self::$newspack_blocks_posts_clauses_when_co_authors_closure ) {
-			remove_filter(
-				'posts_clauses',
-				self::$newspack_blocks_posts_clauses_when_co_authors_closure,
-				999
-			);
-			remove_filter( 'posts_groupby', [ 'Newspack_Blocks', 'group_by_post_id_filter' ] );
+		if ( self::$filter_clauses ) {
+			return "{$wpdb->posts}.ID ";
 		}
+
+		return $groupby;
 	}
 
 	/**
