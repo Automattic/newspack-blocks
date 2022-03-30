@@ -286,6 +286,10 @@ class Newspack_Blocks_API {
 			$args['post__not_in'] = $attributes['exclude'];
 		}
 
+		if ( $attributes['include'] && count( $attributes['include'] ) ) {
+			$args['post__in'] = $attributes['include'];
+		}
+
 		$query = new WP_Query( $args );
 		$posts = [];
 

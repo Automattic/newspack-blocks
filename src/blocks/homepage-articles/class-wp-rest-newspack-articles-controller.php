@@ -66,6 +66,13 @@ class WP_REST_Newspack_Articles_Controller extends WP_REST_Controller {
 							),
 							'default' => array(),
 						],
+						'include' => [
+							'type'    => 'array',
+							'items'   => array(
+								'type' => 'integer',
+							),
+							'default' => array(),
+						],
 					]
 				),
 				'permission_callback' => function() {
