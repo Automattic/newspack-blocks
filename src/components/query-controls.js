@@ -31,10 +31,10 @@ class QueryControls extends Component {
 		return apiFetch( {
 			url: addQueryArgs( restUrl, {
 				search,
-				per_page: 20,
+				postsToShow: 20,
 				_fields: 'id,title',
 				type: 'post',
-				post_type: postType,
+				postType,
 			} ),
 		} ).then( function ( posts ) {
 			const result = posts.map( post => ( {
