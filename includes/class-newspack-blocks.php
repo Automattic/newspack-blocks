@@ -17,9 +17,9 @@ class Newspack_Blocks {
 
 	/**
 	 * Regex pattern we can use to search for and remove custom SQL statements.
-	 * Custom statements added by this class are wrapped by `capwhere` comments.
+	 * Custom statements added by this class are wrapped by `newspack-blocks` comments.
 	 */
-	const SQL_PATTERN = '/\/\* capwhere \*\/(.|\n)*\/\* \/capwhere \*\//';
+	const SQL_PATTERN = '/\/\* newspack-blocks \*\/(.|\n)*\/\* \/newspack-blocks \*\//';
 
 	/**
 	 * Class property to store user IDs and CAP guest author names for building
@@ -1135,16 +1135,16 @@ class Newspack_Blocks {
 		if ( false === strpos( $tax_query['where'], ' 0 = 1' ) ) {
 			// Append to the current join parts. The JOIN statment only needs to exist in the clause once.
 			if ( false === strpos( $clauses['join'], $tax_query['join'] ) ) {
-				$clauses['join'] .= '/* capwhere */ ' . $tax_query['join'] . ' /* /capwhere */';
+				$clauses['join'] .= '/* newspack-blocks */ ' . $tax_query['join'] . ' /* /newspack-blocks */';
 			}
 
 			$clauses['where'] .= sprintf(
 			// The tax query SQL comes prepended with AND.
 				'%s AND ( %s ( 1=1 %s ) ) %s',
-				'/* capwhere */',
+				'/* newspack-blocks */',
 				empty( $authors_ids ) ? '' : $authors . ' OR',
 				$tax_query['where'],
-				'/* /capwhere */'
+				'/* /newspack-blocks */'
 			);
 		}
 		return $clauses;
