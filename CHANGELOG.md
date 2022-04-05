@@ -1,3 +1,10 @@
+# [1.47.0-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v1.47.0-alpha.1...v1.47.0-alpha.2) (2022-04-05)
+
+
+### Bug Fixes
+
+* incorrect nesting of tax_query args ([#1087](https://github.com/Automattic/newspack-blocks/issues/1087)) ([a613874](https://github.com/Automattic/newspack-blocks/commit/a613874a398ffed6cfbeb699a3d49c95bb559a5a))
+
 # [1.47.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.46.1...v1.47.0-alpha.1) (2022-03-31)
 
 
