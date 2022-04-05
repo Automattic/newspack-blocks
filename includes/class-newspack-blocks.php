@@ -633,15 +633,17 @@ class Newspack_Blocks {
 
 					// Don't get any posts that are attributed to other CAP guest authors.
 					$args['tax_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
-						'relation' => 'OR',
 						[
-							'taxonomy' => 'author',
-							'operator' => 'NOT EXISTS',
-						],
-						[
-							'field'    => 'name',
-							'taxonomy' => 'author',
-							'terms'    => $author_names,
+							'relation' => 'OR',
+							[
+								'taxonomy' => 'author',
+								'operator' => 'NOT EXISTS',
+							],
+							[
+								'field'    => 'name',
+								'taxonomy' => 'author',
+								'terms'    => $author_names,
+							],
 						],
 					];
 				} else {
