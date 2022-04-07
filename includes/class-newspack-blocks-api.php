@@ -288,6 +288,8 @@ class Newspack_Blocks_API {
 
 		if ( $attributes['include'] && count( $attributes['include'] ) ) {
 			$args['post__in'] = $attributes['include'];
+			$args['orderby']  = 'post__in';
+			$args['order']    = 'ASC';
 		}
 
 		$query = new WP_Query( $args );
