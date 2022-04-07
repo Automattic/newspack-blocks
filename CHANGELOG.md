@@ -1,3 +1,10 @@
+## [1.47.1-hotfix.1](https://github.com/Automattic/newspack-blocks/compare/v1.47.0...v1.47.1-hotfix.1) (2022-04-07)
+
+
+### Bug Fixes
+
+* **posts-query:** specific posts getting ([f9326db](https://github.com/Automattic/newspack-blocks/commit/f9326dbe931522f4e7c66b44d8aee3ed095a378a))
+
 # [1.47.0](https://github.com/Automattic/newspack-blocks/compare/v1.46.1...v1.47.0) (2022-04-05)
 
 
