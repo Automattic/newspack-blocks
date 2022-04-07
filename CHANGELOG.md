@@ -1,3 +1,11 @@
+## [1.47.2](https://github.com/Automattic/newspack-blocks/compare/v1.47.1...v1.47.2) (2022-04-07)
+
+
+### Bug Fixes
+
+* force release ([af2c2ba](https://github.com/Automattic/newspack-blocks/commit/af2c2ba7279a6aa083deb2ed41dd00c50ae2b5ea))
+* restore post__in sort order for specific posts mode ([#1093](https://github.com/Automattic/newspack-blocks/issues/1093)) ([84dfa8f](https://github.com/Automattic/newspack-blocks/commit/84dfa8f637e12ff6c9cd31ee13cfe727715c308a))
+
 ## [1.47.2-hotfix.1](https://github.com/Automattic/newspack-blocks/compare/v1.47.1...v1.47.2-hotfix.1) (2022-04-07)
 
 
