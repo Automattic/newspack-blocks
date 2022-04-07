@@ -1,3 +1,10 @@
+## [1.47.1](https://github.com/Automattic/newspack-blocks/compare/v1.47.0...v1.47.1) (2022-04-07)
+
+
+### Bug Fixes
+
+* **posts-query:** specific posts getting ([#1090](https://github.com/Automattic/newspack-blocks/issues/1090)) ([231d62d](https://github.com/Automattic/newspack-blocks/commit/231d62d95a66986ad8f6e1490ee9324045b3416e))
+
 ## [1.47.1-hotfix.1](https://github.com/Automattic/newspack-blocks/compare/v1.47.0...v1.47.1-hotfix.1) (2022-04-07)
 
 
