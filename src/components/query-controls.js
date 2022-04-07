@@ -52,7 +52,7 @@ class QueryControls extends Component {
 				per_page: 100,
 				include: postIDs.join( ',' ),
 				_fields: 'id,title',
-				post_type: postType,
+				postType,
 			} ),
 		} ).then( function ( posts ) {
 			return posts.map( post => ( {
