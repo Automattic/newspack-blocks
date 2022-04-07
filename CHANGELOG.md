@@ -1,3 +1,10 @@
+## [1.47.2-hotfix.1](https://github.com/Automattic/newspack-blocks/compare/v1.47.1...v1.47.2-hotfix.1) (2022-04-07)
+
+
+### Bug Fixes
+
+* restore post__in sort order for specific posts mode ([a7e52e7](https://github.com/Automattic/newspack-blocks/commit/a7e52e757d0aec56e3300995ad0f5fdd4a199959))
+
 ## [1.47.1](https://github.com/Automattic/newspack-blocks/compare/v1.47.0...v1.47.1) (2022-04-07)
 
 
