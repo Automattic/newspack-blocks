@@ -49,10 +49,11 @@ class QueryControls extends Component {
 		const restUrl = window.newspack_blocks_data.posts_rest_url;
 		return apiFetch( {
 			url: addQueryArgs( restUrl, {
-				per_page: 100,
+				// These params use the block query parameters (see Newspack_Blocks::build_articles_query).
+				postsToShow: 100,
 				include: postIDs.join( ',' ),
 				_fields: 'id,title',
-				post_type: postType,
+				postType,
 			} ),
 		} ).then( function ( posts ) {
 			return posts.map( post => ( {
