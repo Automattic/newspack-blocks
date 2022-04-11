@@ -13,7 +13,7 @@
 class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 // phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
 
-	private static $current_user_id = 0;
+	private static $current_user_id = 0; // phpcs:ignore Squiz.Commenting.VariableComment.Missing
 
 	/**
 	 * Constructs the controller.
