@@ -12,7 +12,6 @@ bitbucket-pipelines.yml
 .circleci/config.yml
 composer.json
 composer.lock
-package.json
 package-lock.json
 phpunit.xml
 phpunit.xml.dist
@@ -22,7 +21,6 @@ multisite.xml.dist
 phpcs.xml
 .phpcs.xml.dist
 phpcs.xml.dist
-README.md
 wp-cli.local.yml
 yarn.lock
 node_modules

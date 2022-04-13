@@ -1,5 +1,5 @@
 {
-	"name": "newspack-blocks",
+	"name": "@automattic/newspack-blocks",
 	"version": "1.47.2",
 	"author": "Automattic",
 	"devDependencies": {
@@ -11,7 +11,7 @@
 		"html-entities": "^2.3.3",
 		"identity-obj-proxy": "^3.0.0",
 		"lint-staged": "^12.3.7",
-		"newspack-scripts": "^3.1.1",
+		"newspack-scripts": "^3.3.0",
 		"prettier": "npm:wp-prettier@^2.2.1-beta-1",
 		"stylelint": "^13.3.1"
 	},
