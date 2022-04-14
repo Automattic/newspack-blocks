@@ -115,13 +115,13 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 
 			if ( class_exists( 'Newspack\WooCommerce_Connection' ) && method_exists( 'Newspack\WooCommerce_Connection', 'set_up_membership' ) ) {
 				// Handle woocommerce-memberships integration, if there's no user logged in.
-				$memberships_result = \Newspack\WooCommerce_Connection::set_up_membership(
+				$user_id = \Newspack\WooCommerce_Connection::set_up_membership(
 					$email_address,
 					$full_name,
 					$frequency
 				);
-				if ( is_wp_error( $memberships_result ) ) {
-					return [ 'error' => wp_strip_all_tags( $memberships_result->get_error_message() ) ];
+				if ( is_wp_error( $user_id ) ) {
+					return [ 'error' => wp_strip_all_tags( $user_id->get_error_message() ) ];
 				}
 			}
 		} else {
