@@ -11,5 +11,13 @@ export const loadStripe = async () => {
 			token: 'abc',
 			error: null,
 		} ),
+		createPaymentMethod: () => ( {
+			paymentMethod: { id: 'pm_123' },
+			error: null,
+		} ),
+		paymentRequest: () => ( { canMakePayment: () => false, on: () => {}, update: () => {} } ),
+		confirmCardPayment: () => ( {
+			paymentIntent: { status: 'succeeded' },
+		} ),
 	};
 };
