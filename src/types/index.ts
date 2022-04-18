@@ -13,10 +13,11 @@ declare global {
 
 	type PostType = { name: string; slug: string; supports: { newspack_blocks: boolean } };
 
+	// As used by Newspack_Blocks_API::posts_endpoint.
 	type PostsQuery = {
 		include?: PostId[];
-		excerpt_length?: number;
-		show_excerpt?: boolean;
+		excerptLength?: number;
+		showExcerpt?: boolean;
 	};
 
 	type Block = {
