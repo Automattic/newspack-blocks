@@ -68,7 +68,7 @@ type HomepageArticlesProps = {
  * 2. The top-level blocks order changes. A Homepage Articles
  *    block might be nested somewhere.
  */
-export const shouldReflow = ( prevProps: HomepageArticlesProps, props: HomepageArticlesProps ) =>
+export const shouldReflow = ( prevProps: HomepageArticlesProps, props: HomepageArticlesProps ): boolean =>
 	! isEqual(
 		pick( prevProps.attributes, POST_QUERY_ATTRIBUTES ),
 		pick( props.attributes, POST_QUERY_ATTRIBUTES )
