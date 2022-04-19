@@ -737,7 +737,6 @@ class Edit extends Component {
 								value={ moreButtonText }
 								onChange={ value => setAttributes( { moreButtonText: value } ) }
 								className="wp-block-button__link"
-								keepPlaceholderOnFocus
 								allowedFormats={ [] }
 							/>
 						</div>
