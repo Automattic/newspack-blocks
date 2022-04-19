@@ -11,6 +11,7 @@ import {
 	formatSponsorLogos,
 	formatSponsorByline,
 } from '../../shared/js/utils';
+import { PostTypesPanel } from '../../components/editor-panels';
 
 /**
  * External dependencies
@@ -35,7 +36,6 @@ import {
 import {
 	Button,
 	ButtonGroup,
-	CheckboxControl,
 	PanelBody,
 	PanelRow,
 	RangeControl,
@@ -246,7 +246,7 @@ class Edit extends Component {
 	};
 
 	renderInspectorControls = () => {
-		const { attributes, availablePostTypes, setAttributes, textColor, setTextColor } = this.props;
+		const { attributes, setAttributes, textColor, setTextColor } = this.props;
 
 		const {
 			authors,
@@ -556,28 +556,7 @@ class Edit extends Component {
 						</PanelRow>
 					) }
 				</PanelBody>
-				<PanelBody title={ __( 'Post Types', 'newspack-blocks' ) }>
-					{ availablePostTypes &&
-						availablePostTypes.map( ( { name, slug } ) => (
-							<PanelRow key={ slug }>
-								<CheckboxControl
-									label={ name }
-									checked={ postType.indexOf( slug ) > -1 }
-									onChange={ value => {
-										const cleanPostType = [ ...new Set( postType ) ];
-										if ( value && cleanPostType.indexOf( slug ) === -1 ) {
-											cleanPostType.push( slug );
-										} else if ( ! value && cleanPostType.indexOf( slug ) > -1 ) {
-											cleanPostType.splice( cleanPostType.indexOf( slug ), 1 );
-										}
-										setAttributes( {
-											postType: cleanPostType,
-										} );
-									} }
-								/>
-							</PanelRow>
-						) ) }
-				</PanelBody>
+				<PostTypesPanel attributes={ attributes } setAttributes={ setAttributes } />
 			</Fragment>
 		);
 	};

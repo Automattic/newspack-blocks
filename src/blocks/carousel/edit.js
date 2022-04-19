@@ -18,7 +18,6 @@ import {
 	BaseControl,
 	Button,
 	ButtonGroup,
-	CheckboxControl,
 	PanelBody,
 	PanelRow,
 	Placeholder,
@@ -34,6 +33,7 @@ import { decodeEntities } from '@wordpress/html-entities';
  * Internal dependencies
  */
 import QueryControls from '../../components/query-controls';
+import { PostTypesPanel } from '../../components/editor-panels';
 import createSwiper from './create-swiper';
 import {
 	formatAvatars,
@@ -143,14 +143,7 @@ class Edit extends Component {
 	}
 
 	render() {
-		const {
-			attributes,
-			availablePostTypes,
-			className,
-			setAttributes,
-			latestPosts,
-			isUIDisabled,
-		} = this.props;
+		const { attributes, className, setAttributes, latestPosts, isUIDisabled } = this.props;
 		const {
 			aspectRatio,
 			authors,
@@ -280,7 +273,7 @@ class Edit extends Component {
 														alt=""
 													/>
 												) : (
-													<div className="wp-block-newspack-blocks-carousel__placeholder"></div>
+													<div className="wp-block-newspack-blocks-carousel__placeholder" />
 												) }
 											</a>
 										</figure>
@@ -530,28 +523,7 @@ class Edit extends Component {
 							</PanelRow>
 						) }
 					</PanelBody>
-					<PanelBody title={ __( 'Post Types', 'newspack-blocks' ) }>
-						{ availablePostTypes &&
-							availablePostTypes.map( ( { name, slug } ) => (
-								<PanelRow key={ slug }>
-									<CheckboxControl
-										label={ name }
-										checked={ postType.indexOf( slug ) > -1 }
-										onChange={ value => {
-											const cleanPostType = [ ...new Set( postType ) ];
-											if ( value && cleanPostType.indexOf( slug ) === -1 ) {
-												cleanPostType.push( slug );
-											} else if ( ! value && cleanPostType.indexOf( slug ) > -1 ) {
-												cleanPostType.splice( cleanPostType.indexOf( slug ), 1 );
-											}
-											setAttributes( {
-												postType: cleanPostType,
-											} );
-										} }
-									/>
-								</PanelRow>
-							) ) }
-					</PanelBody>
+					<PostTypesPanel attributes={ attributes } setAttributes={ setAttributes } />
 				</InspectorControls>
 			</Fragment>
 		);
