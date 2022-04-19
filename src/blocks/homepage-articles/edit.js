@@ -11,7 +11,7 @@ import {
 	formatSponsorLogos,
 	formatSponsorByline,
 } from '../../shared/js/utils';
-import { PostTypesPanel } from '../../components/editor-panels';
+import { PostTypesPanel, PostStatusesPanel } from '../../components/editor-panels';
 
 /**
  * External dependencies
@@ -134,6 +134,8 @@ class Edit extends Component {
 				minHeight / 5 + 'vh',
 		};
 
+		const isNotPublished = post.post_status !== 'publish';
+
 		const postClasses = classNames(
 			{
 				'post-has-image': post.newspack_featured_image_src,
@@ -146,6 +148,9 @@ class Edit extends Component {
 		const dateFormat = __experimentalGetSettings().formats.date;
 		return (
 			<article className={ postClasses } key={ post.id } style={ styles }>
+				{ isNotPublished && (
+					<div className="newspack-preview-label">{ __( 'Preview', 'newspack-blocks' ) }</div>
+				) }
 				{ showImage && post.newspack_featured_image_src && (
 					<figure className="post-thumbnail" key="thumbnail">
 						<a href="#">
@@ -321,6 +326,7 @@ class Edit extends Component {
 						onSpecificModeChange={ _specificMode =>
 							setAttributes( { specificMode: _specificMode } )
 						}
+						// TODO: handle includedPostStatuses to allow fetching drafts etc?
 						specificPosts={ specificPosts }
 						onSpecificPostsChange={ _specificPosts =>
 							setAttributes( { specificPosts: _specificPosts } )
@@ -557,6 +563,7 @@ class Edit extends Component {
 					) }
 				</PanelBody>
 				<PostTypesPanel attributes={ attributes } setAttributes={ setAttributes } />
+				<PostStatusesPanel attributes={ attributes } setAttributes={ setAttributes } />
 			</Fragment>
 		);
 	};

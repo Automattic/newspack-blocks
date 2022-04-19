@@ -76,6 +76,9 @@ call_user_func(
 		style="<?php echo esc_attr( $styles ); ?>"
 		<?php endif; ?>
 		>
+		<?php if ( 'publish' !== get_post_status() ) : ?>
+			<div class="newspack-preview-label"><?php echo esc_html__( 'Preview', 'newspack-blocks' ); ?></div>
+		<?php endif; ?>
 		<?php if ( has_post_thumbnail() && $attributes['showImage'] && $attributes['imageShape'] ) : ?>
 			<figure class="post-thumbnail">
 				<?php if ( $post_link ) : ?>

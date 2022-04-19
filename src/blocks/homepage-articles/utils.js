@@ -36,6 +36,7 @@ const POST_QUERY_ATTRIBUTES = [
 	'tagExclusions',
 	'categoryExclusions',
 	'postType',
+	'includedPostStatuses',
 ];
 
 /**
@@ -73,6 +74,7 @@ export const queryCriteriaFromAttributes = attributes => {
 		specificMode,
 		tagExclusions,
 		categoryExclusions,
+		includedPostStatuses,
 	} = pick( attributes, POST_QUERY_ATTRIBUTES );
 
 	const cleanPosts = sanitizePostList( specificPosts );
@@ -92,6 +94,7 @@ export const queryCriteriaFromAttributes = attributes => {
 					tagExclusions,
 					categoryExclusions,
 					postType,
+					includedPostStatuses,
 			  },
 		value => ! isUndefined( value )
 	);

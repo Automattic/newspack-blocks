@@ -76,6 +76,9 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 			?>
 
 			<article data-post-id="<?php echo esc_attr( $post_id ); ?>" class="<?php echo esc_attr( implode( ' ', $article_classes ) . ' ' . $post_type ); ?>">
+				<?php if ( 'publish' !== get_post_status() ) : ?>
+					<div class="newspack-preview-label"><?php echo esc_html__( 'Preview', 'newspack-blocks' ); ?></div>
+				<?php endif; ?>
 				<figure class="post-thumbnail">
 					<?php if ( $post_link ) : ?>
 					<a href="<?php echo esc_url( $post_link ); ?>" rel="bookmark">

@@ -33,7 +33,7 @@ import { decodeEntities } from '@wordpress/html-entities';
  * Internal dependencies
  */
 import QueryControls from '../../components/query-controls';
-import { PostTypesPanel } from '../../components/editor-panels';
+import { PostTypesPanel, PostStatusesPanel } from '../../components/editor-panels';
 import createSwiper from './create-swiper';
 import {
 	formatAvatars,
@@ -264,6 +264,11 @@ class Edit extends Component {
 										}` }
 										key={ post.id }
 									>
+										{ post.post_status !== 'publish' && (
+											<div className="newspack-preview-label">
+												{ __( 'Preview', 'newspack-blocks' ) }
+											</div>
+										) }
 										<figure className="post-thumbnail">
 											<a href="#" rel="bookmark">
 												{ post.newspack_featured_image_src ? (
@@ -386,7 +391,6 @@ class Edit extends Component {
 										const isCurrent = aspectRatio === option.value;
 										return (
 											<Button
-												isLarge
 												isPrimary={ isCurrent }
 												aria-pressed={ isCurrent }
 												aria-label={ option.label }
@@ -421,7 +425,6 @@ class Edit extends Component {
 									aria-label={ __( 'Image Fit', 'newspack-blocks' ) }
 								>
 									<Button
-										isLarge
 										isPrimary={ 'cover' === imageFit }
 										aria-pressed={ 'cover' === imageFit }
 										aria-label={ __( 'Cover', 'newspack-blocks' ) }
@@ -430,7 +433,6 @@ class Edit extends Component {
 										{ __( 'Cover', 'newspack-blocks' ) }
 									</Button>
 									<Button
-										isLarge
 										isPrimary={ 'contain' === imageFit }
 										aria-pressed={ 'contain' === imageFit }
 										aria-label={ __( 'Contain', 'newspack-blocks' ) }
@@ -524,6 +526,7 @@ class Edit extends Component {
 						) }
 					</PanelBody>
 					<PostTypesPanel attributes={ attributes } setAttributes={ setAttributes } />
+					<PostStatusesPanel attributes={ attributes } setAttributes={ setAttributes } />
 				</InspectorControls>
 			</Fragment>
 		);

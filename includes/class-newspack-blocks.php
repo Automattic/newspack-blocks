@@ -527,7 +527,11 @@ class Newspack_Blocks {
 			);
 		}
 
-		$post_type           = isset( $attributes['postType'] ) ? $attributes['postType'] : [ 'post' ];
+		$post_type              = isset( $attributes['postType'] ) ? $attributes['postType'] : [ 'post' ];
+		$included_post_statuses = [ 'publish' ];
+		if ( current_user_can( 'edit_others_posts' ) && isset( $attributes['includedPostStatuses'] ) ) {
+			$included_post_statuses = $attributes['includedPostStatuses'];
+		}
 		$authors             = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
 		$categories          = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
 		$tags                = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
@@ -538,7 +542,7 @@ class Newspack_Blocks {
 		$specific_mode       = isset( $attributes['specificMode'] ) ? intval( $attributes['specificMode'] ) : false;
 		$args                = array(
 			'post_type'           => $post_type,
-			'post_status'         => 'publish',
+			'post_status'         => $included_post_statuses,
 			'suppress_filters'    => false,
 			'ignore_sticky_posts' => true,
 			'has_password'        => false,
