@@ -68,7 +68,10 @@ type HomepageArticlesProps = {
  * 2. The top-level blocks order changes. A Homepage Articles
  *    block might be nested somewhere.
  */
-export const shouldReflow = ( prevProps: HomepageArticlesProps, props: HomepageArticlesProps ): boolean =>
+export const shouldReflow = (
+	prevProps: HomepageArticlesProps,
+	props: HomepageArticlesProps
+): boolean =>
 	! isEqual(
 		pick( prevProps.attributes, POST_QUERY_ATTRIBUTES ),
 		pick( props.attributes, POST_QUERY_ATTRIBUTES )
@@ -120,6 +123,12 @@ export const queryCriteriaFromAttributes = ( attributes: Block[ 'attributes' ] )
 export const sanitizePostList = ( postList: HomepageArticlesAttributes[ 'specificPosts' ] ) =>
 	postList.map( id => parseInt( id ) ).filter( id => id > 0 );
 
+/**
+ * Each eligible block's attributes can be used to create a posts query.
+ * This function is recursively traversing an array of blocks and creating an aray
+ * of {postsQuery, clientId} objects.
+ * The eligible blocks are identified by block name, passed in the second argument.
+ */
 export const getBlockQueries = (
 	blocks: Block[],
 	blockNames: Block[ 'name' ][]
@@ -203,6 +212,9 @@ type Select = (
 	isUIDisabled: () => boolean;
 };
 
+/**
+ * wordpress/data selector for blocks using this custom store.
+ */
 export const postsBlockSelector = (
 	select: Select,
 	{
@@ -236,6 +248,9 @@ export const postsBlockSelector = (
 	return props;
 };
 
+/**
+ * wordpress/data dispatch for blocks using this custom store.
+ */
 export const postsBlockDispatch = (
 	dispatch: typeof wpDataDispatch,
 	{ isEditorBlock }: { isEditorBlock: boolean }
