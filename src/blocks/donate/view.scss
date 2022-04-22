@@ -10,8 +10,10 @@
 	width: 100%;
 
 	input[type='radio'] {
-		display: none;
+		left: -99999em;
+		position: absolute;
 	}
+
 	input[readonly] {
 		background-color: $color__background-screen;
 		color: #666;
@@ -89,11 +91,17 @@
 			}
 		}
 
-		input[type='radio']:checked {
-			+ .tier-label {
+		input[type='radio'] {
+			&:checked + .tier-label {
 				background-color: $color__primary;
 				border-color: transparent;
 				color: $color__background-body;
+			}
+
+			&:focus + .tier-label {
+				background: $color__background-screen;
+				outline: 1px dotted black;
+				outline-offset: -4px;
 			}
 		}
 
@@ -245,26 +253,33 @@
 		}
 	}
 
-	input[type='radio']:checked {
-		+ .freq-label {
-			color: inherit;
+	input[type='radio'] {
+		&:checked {
+			+ .freq-label {
+				color: inherit;
 
-			&::before {
-				background: $color__text-main;
-				background-clip: content-box;
+				&::before {
+					background: $color__text-main;
+					background-clip: content-box;
+				}
+
+				@include media( tablet ) {
+					border-bottom-color: transparent;
+				}
+
+				&:hover {
+					background: $color__background-body;
+				}
 			}
 
-			@include media( tablet ) {
-				border-bottom-color: transparent;
-			}
-
-			&:hover {
-				background: $color__background-body;
+			~ .tiers {
+				display: flex;
 			}
 		}
 
-		~ .tiers {
-			display: flex;
+		&:focus + .freq-label {
+			text-decoration: underline;
+			text-decoration-style: dotted;
 		}
 	}
 
@@ -377,38 +392,44 @@
 			}
 		}
 
-		input[type='radio']:checked {
-			+ .freq-label {
-				&::after {
-					box-sizing: content-box;
-					background: white;
-					border-radius: 5px;
-					bottom: 0.19rem;
-					border: 0.19rem solid white;
-					box-shadow: 0 0 0 1px $color__border;
-					content: '';
-					display: block;
-					left: 0.19rem;
-					position: absolute;
-					right: 0.19rem;
-					top: 0.19rem;
-					z-index: -1;
+		input[type='radio'] {
+			&:checked {
+				+ .freq-label {
+					&::after {
+						box-sizing: content-box;
+						background: white;
+						border-radius: 5px;
+						bottom: 0.19rem;
+						border: 0.19rem solid white;
+						box-shadow: 0 0 0 1px $color__border;
+						content: '';
+						display: block;
+						left: 0.19rem;
+						position: absolute;
+						right: 0.19rem;
+						top: 0.19rem;
+						z-index: -1;
+					}
+
+					&:hover {
+						background: $color__background-screen;
+					}
 				}
 
-				&:hover {
-					background: $color__background-screen;
+				~ .tiers {
+					display: grid;
+					grid-gap: 0.28rem;
+					grid-template-columns: repeat( 4, 1fr );
+					margin: 1.12rem;
+
+					@include media( mobile ) {
+						grid-gap: 0.56rem;
+					}
 				}
 			}
-
-			~ .tiers {
-				display: grid;
-				grid-gap: 0.28rem;
-				grid-template-columns: repeat( 4, 1fr );
-				margin: 1.12rem;
-
-				@include media( mobile ) {
-					grid-gap: 0.56rem;
-				}
+			&:focus + .freq-label {
+				outline: 1px dotted black;
+				outline-offset: 4px;
 			}
 		}
 	}
