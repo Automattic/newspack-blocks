@@ -100,7 +100,7 @@
 
 			&:focus + .tier-label {
 				background: $color__background-screen;
-				outline: 1px dotted black;
+				outline: 1px dotted currentColor;
 				outline-offset: -4px;
 			}
 		}
@@ -392,44 +392,38 @@
 			}
 		}
 
-		input[type='radio'] {
-			&:checked {
-				+ .freq-label {
-					&::after {
-						box-sizing: content-box;
-						background: white;
-						border-radius: 5px;
-						bottom: 0.19rem;
-						border: 0.19rem solid white;
-						box-shadow: 0 0 0 1px $color__border;
-						content: '';
-						display: block;
-						left: 0.19rem;
-						position: absolute;
-						right: 0.19rem;
-						top: 0.19rem;
-						z-index: -1;
-					}
-
-					&:hover {
-						background: $color__background-screen;
-					}
+		input[type='radio']:checked {
+			+ .freq-label {
+				&::after {
+					box-sizing: content-box;
+					background: white;
+					border-radius: 5px;
+					bottom: 0.19rem;
+					border: 0.19rem solid white;
+					box-shadow: 0 0 0 1px $color__border;
+					content: '';
+					display: block;
+					left: 0.19rem;
+					position: absolute;
+					right: 0.19rem;
+					top: 0.19rem;
+					z-index: -1;
 				}
 
-				~ .tiers {
-					display: grid;
-					grid-gap: 0.28rem;
-					grid-template-columns: repeat( 4, 1fr );
-					margin: 1.12rem;
-
-					@include media( mobile ) {
-						grid-gap: 0.56rem;
-					}
+				&:hover {
+					background: $color__background-screen;
 				}
 			}
-			&:focus + .freq-label {
-				outline: 1px dotted black;
-				outline-offset: 4px;
+
+			~ .tiers {
+				display: grid;
+				grid-gap: 0.28rem;
+				grid-template-columns: repeat( 4, 1fr );
+				margin: 1.12rem;
+
+				@include media( mobile ) {
+					grid-gap: 0.56rem;
+				}
 			}
 		}
 	}
