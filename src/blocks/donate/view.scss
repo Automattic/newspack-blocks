@@ -92,16 +92,16 @@
 		}
 
 		input[type='radio'] {
-			&:checked + .tier-label {
-				background-color: $color__primary;
-				border-color: transparent;
-				color: $color__background-body;
-			}
-
 			&:focus + .tier-label {
 				background: $color__background-screen;
 				outline: 1px dotted currentColor;
 				outline-offset: -4px;
+			}
+
+			&:checked + .tier-label {
+				background-color: $color__primary;
+				border-color: transparent;
+				color: $color__background-body;
 			}
 		}
 
