@@ -85,15 +85,38 @@ div.wp-block-columns {
 
 			&.is-style-first-col-to-second,
 			&.is-style-first-col-to-third {
-				.wp-block-column:first-child::after {
+				> .wp-block-column:first-child::after {
 					display: none;
 				}
 			}
 
-			&.is-style-first-col-to-second .wp-block-column:nth-child( 2 )::after,
-			&.is-style-first-col-to-third .wp-block-column:nth-child( 3 )::after {
+			&.is-style-first-col-to-second > .wp-block-column:nth-child( 2 )::after,
+			&.is-style-first-col-to-third > .wp-block-column:nth-child( 3 )::after {
 				display: block;
 			}
 		}
+	}
+}
+
+/**
+ * Temporary WP<6.0 styles
+ * TODO: These styles can be removed once WP 6.0 is released.
+ */
+
+/* stylelint-disable no-duplicate-selectors  */
+.wp-block-columns {
+	&.is-not-stacked-on-mobile,
+	&:not( .is-not-stacked-on-mobile ) {
+		> .wp-block-column:not( :first-child ) {
+			margin-left: 0;
+		}
+	}
+}
+/* stylelint-enable */
+
+@media ( min-width: 600px ) and ( max-width: 781px ) {
+	.wp-block-columns:not( .is-not-stacked-on-mobile ) > .wp-block-column:not( :only-child ) {
+		flex-basis: unset !important;
+		flex-grow: 1;
 	}
 }
