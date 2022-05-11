@@ -10,7 +10,7 @@
 }
 
 .wp-block-columns {
-	@include media( mobile ) {
+	@include media( tablet ) {
 		&.is-style-first-col-to-second [data-type='core/column']:nth-child( 2 ),
 		&.is-style-first-col-to-third [data-type='core/column']:nth-child( 2 ),
 		&.is-style-first-col-to-third [data-type='core/column']:nth-child( 3 ) {
