@@ -325,7 +325,6 @@ class Edit extends Component {
 						onSpecificModeChange={ _specificMode =>
 							setAttributes( { specificMode: _specificMode } )
 						}
-						// TODO: handle includedPostStatuses to allow fetching drafts etc?
 						specificPosts={ specificPosts }
 						onSpecificPostsChange={ _specificPosts =>
 							setAttributes( { specificPosts: _specificPosts } )
