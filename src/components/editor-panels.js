@@ -51,7 +51,7 @@ export const PostTypesPanel = ( { attributes, setAttributes } ) => {
 
 export const PostStatusesPanel = ( { attributes, setAttributes } ) => {
 	return (
-		<PanelBody title={ __( 'Post Statuses', 'newspack-blocks' ) }>
+		<PanelBody title={ __( 'Additional Post Statuses', 'newspack-blocks' ) }>
 			<PanelRow>
 				<i>
 					{ __(
