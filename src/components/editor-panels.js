@@ -63,7 +63,6 @@ export const PostStatusesPanel = ( { attributes, setAttributes } ) => {
 			<CheckboxesGroup
 				values={ attributes.includedPostStatuses }
 				options={ [
-					{ name: 'Published', slug: 'publish' },
 					{ name: 'Draft', slug: 'draft' },
 					{ name: 'Scheduled', slug: 'future' },
 				] }

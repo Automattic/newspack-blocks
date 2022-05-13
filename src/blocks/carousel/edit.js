@@ -40,6 +40,7 @@ import {
 	formatByline,
 	formatSponsorLogos,
 	formatSponsorByline,
+	getPostStatusLabel,
 } from '../../shared/js/utils';
 // Use same posts store as Homepage Posts block.
 import { postsBlockSelector, postsBlockDispatch, shouldReflow } from '../homepage-articles/utils';
@@ -264,11 +265,7 @@ class Edit extends Component {
 										}` }
 										key={ post.id }
 									>
-										{ post.post_status !== 'publish' && (
-											<div className="newspack-preview-label">
-												{ __( 'Preview', 'newspack-blocks' ) }
-											</div>
-										) }
+										{ getPostStatusLabel( post ) }
 										<figure className="post-thumbnail">
 											<a href="#" rel="bookmark">
 												{ post.newspack_featured_image_src ? (

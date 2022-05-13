@@ -1266,5 +1266,23 @@ class Newspack_Blocks {
 		ob_end_clean();
 		return $contents;
 	}
+
+	/**
+	 * Get post status label.
+	 */
+	public static function get_post_status_label() {
+		$post_status          = get_post_status();
+		$post_statuses_labels = [
+			'draft'  => __( 'Draft', 'newspack-blocks' ),
+			'future' => __( 'Scheduled', 'newspack-blocks' ),
+		];
+		if ( 'publish' !== $post_status ) {
+			ob_start();
+			?>
+				<div class="newspack-preview-label"><?php echo esc_html( $post_statuses_labels[ $post_status ] ); ?></div>
+			<?php
+			return ob_get_clean();
+		}
+	}
 }
 Newspack_Blocks::init();

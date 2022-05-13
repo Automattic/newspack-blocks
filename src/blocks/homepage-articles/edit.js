@@ -10,6 +10,7 @@ import {
 	formatByline,
 	formatSponsorLogos,
 	formatSponsorByline,
+	getPostStatusLabel,
 } from '../../shared/js/utils';
 import { PostTypesPanel, PostStatusesPanel } from '../../components/editor-panels';
 
@@ -148,9 +149,7 @@ class Edit extends Component {
 		const dateFormat = __experimentalGetSettings().formats.date;
 		return (
 			<article className={ postClasses } key={ post.id } style={ styles }>
-				{ isNotPublished && (
-					<div className="newspack-preview-label">{ __( 'Preview', 'newspack-blocks' ) }</div>
-				) }
+				{ getPostStatusLabel( post ) }
 				{ showImage && post.newspack_featured_image_src && (
 					<figure className="post-thumbnail" key="thumbnail">
 						<a href="#">
