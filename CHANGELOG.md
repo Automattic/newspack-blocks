@@ -1,3 +1,10 @@
+# [1.51.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.50.0...v1.51.0-alpha.1) (2022-05-19)
+
+
+### Features
+
+* **homepage-posts:** query by post statuses ([#1114](https://github.com/Automattic/newspack-blocks/issues/1114)) ([7ec20a3](https://github.com/Automattic/newspack-blocks/commit/7ec20a39a562c9bdc90e4d10008f0b20113b9cf6)), closes [#38](https://github.com/Automattic/newspack-blocks/issues/38)
+
 # [1.50.0](https://github.com/Automattic/newspack-blocks/compare/v1.49.0...v1.50.0) (2022-05-18)
 
 
