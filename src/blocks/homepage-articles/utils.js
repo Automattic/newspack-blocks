@@ -163,7 +163,6 @@ const generatePreviewPost = id => {
 			uncropped: `${ PREVIEW_IMAGE_BASE }/newspack-1024x536.jpg`,
 		},
 		newspack_has_custom_excerpt: false,
-		newspack_post_format: 'standard',
 		newspack_post_sponsors: false,
 	};
 };
