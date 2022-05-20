@@ -35,7 +35,7 @@
 		"watch": "newspack-scripts watch",
 		"test": "newspack-scripts test",
 		"lint": "npm run lint:scss && npm run lint:js",
-		"lint:js": "prettier 'src/**/*.{js,jsx}' --write",
+		"lint:js": "eslint 'src/**/*.{js,jsx}'",
 		"lint:js:staged": "eslint --ext .js,.jsx",
 		"format:js": "prettier 'src/**/*.{js,jsx}' --write",
 		"lint:scss": "stylelint '**/*.scss' --syntax scss --config=./node_modules/newspack-scripts/config/stylelint.config.js",
