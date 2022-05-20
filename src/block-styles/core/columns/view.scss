@@ -7,6 +7,16 @@ div.wp-block-columns {
 	&.is-style-borders {
 		gap: 64px;
 	}
+
+	@include media( tabletonly ) {
+		&.is-not-stacked-on-mobile {
+			gap: 20px;
+
+			&.is-style-borders {
+				gap: 40px;
+			}
+		}
+	}
 }
 
 .wp-block-columns {
@@ -78,8 +88,12 @@ div.wp-block-columns {
 					border-top-width: 0;
 					bottom: 0;
 					left: auto;
-					right: -32px;
+					right: -20px;
 					top: 0;
+
+					@include media( tablet ) {
+						right: -32px;
+					}
 				}
 			}
 
