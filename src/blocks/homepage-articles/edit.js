@@ -135,8 +135,6 @@ class Edit extends Component {
 				minHeight / 5 + 'vh',
 		};
 
-		const isNotPublished = post.post_status !== 'publish';
-
 		const postClasses = classNames(
 			{
 				'post-has-image': post.newspack_featured_image_src,
