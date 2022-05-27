@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  newspack: adekbadek/newspack@1.1.1
+  newspack: adekbadek/newspack@1.2.0
 
 workflows:
   version: 2
@@ -12,6 +12,9 @@ workflows:
           requires:
             - newspack/build
       - newspack/test-js:
+          requires:
+            - newspack/build
+      - newspack/check-typescript:
           requires:
             - newspack/build
       - newspack/build-distributable:
