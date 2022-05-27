@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { _x } from '@wordpress/i18n';
+import { _x, __ } from '@wordpress/i18n';
 import { RawHTML, Fragment } from '@wordpress/element';
 
 export const formatAvatars = authorInfo =>
@@ -69,3 +69,14 @@ export const formatSponsorByline = sponsorInfo => (
 		}, [] ) }
 	</span>
 );
+
+export const getPostStatusLabel = ( post = {} ) =>
+	post.post_status !== 'publish' ? (
+		<div className="newspack-preview-label">
+			{
+				{ draft: __( 'Draft', 'newspack' ), future: __( 'Scheduled', 'newspack' ) }[
+					post.post_status
+				]
+			}
+		</div>
+	) : null;

@@ -1,3 +1,34 @@
+## [1.50.1](https://github.com/Automattic/newspack-blocks/compare/v1.50.0...v1.50.1) (2022-05-25)
+
+
+### Bug Fixes
+
+* force release build ([f58a2ed](https://github.com/Automattic/newspack-blocks/commit/f58a2ed069e8f1f1a0521e502180671fc6d19e58))
+* update columns block styles for WP 6.0 ([#1141](https://github.com/Automattic/newspack-blocks/issues/1141)) ([0d9583e](https://github.com/Automattic/newspack-blocks/commit/0d9583e0e7dd6f185f2fbb921af249a2252bfe94))
+
+## [1.50.1-hotfix.1](https://github.com/Automattic/newspack-blocks/compare/v1.50.0...v1.50.1-hotfix.1) (2022-05-25)
+
+
+### Bug Fixes
+
+* remove custom column block styles ([e08db2a](https://github.com/Automattic/newspack-blocks/commit/e08db2a7ea5eb73d454c53db5ed42f75b260ca86))
+
+# [1.50.0](https://github.com/Automattic/newspack-blocks/compare/v1.49.0...v1.50.0) (2022-05-18)
+
+
+### Features
+
+* improve alt text on images linked to posts ([#1118](https://github.com/Automattic/newspack-blocks/issues/1118)) ([d98f8ad](https://github.com/Automattic/newspack-blocks/commit/d98f8adc3a18b34cecd0e9d1c8b8bcf938c0e2d1))
+* update donate block styles to support keyboard navigation ([#1117](https://github.com/Automattic/newspack-blocks/issues/1117)) ([0f65dd7](https://github.com/Automattic/newspack-blocks/commit/0f65dd7e8293f611aa6d2d81e663b72ae7317931))
+
+# [1.50.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.49.0...v1.50.0-alpha.1) (2022-05-05)
+
+
+### Features
+
+* improve alt text on images linked to posts ([#1118](https://github.com/Automattic/newspack-blocks/issues/1118)) ([d98f8ad](https://github.com/Automattic/newspack-blocks/commit/d98f8adc3a18b34cecd0e9d1c8b8bcf938c0e2d1))
+* update donate block styles to support keyboard navigation ([#1117](https://github.com/Automattic/newspack-blocks/issues/1117)) ([0f65dd7](https://github.com/Automattic/newspack-blocks/commit/0f65dd7e8293f611aa6d2d81e663b72ae7317931))
+
 # [1.49.0](https://github.com/Automattic/newspack-blocks/compare/v1.48.0...v1.49.0) (2022-05-03)
 
 
