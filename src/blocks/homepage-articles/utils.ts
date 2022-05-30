@@ -7,16 +7,15 @@ import { times, isEqual, isUndefined, pick, pickBy } from 'lodash';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { dispatch as wpDataDispatch } from '@wordpress/data';
 
 import { STORE_NAMESPACE } from './store';
 
 /**
  * Based global WP.com blog_public option, checks whether current blog is
  * private or not.
- *
- * @return {boolean} a private WP.com blog flag
  */
-export const isBlogPrivate = () =>
+export const isBlogPrivate = (): boolean =>
 	typeof window === 'object' &&
 	window.wpcomGutenberg &&
 	Number( window.wpcomGutenberg.blogPublic ) === -1;
@@ -39,17 +38,40 @@ const POST_QUERY_ATTRIBUTES = [
 	'includedPostStatuses',
 ];
 
+type HomepageArticlesAttributes = {
+	postsToShow: number;
+	authors: AuthorId[];
+	categories: CategoryId[];
+	excerptLength: number;
+	postType: PostType[];
+	showExcerpt: boolean;
+	tags: TagId[];
+	specificPosts: string[];
+	specificMode: boolean;
+	tagExclusions: TagId[];
+	categoryExclusions: CategoryId[];
+};
+
+type HomepageArticlesProps = {
+	attributes: HomepageArticlesAttributes;
+	topBlocksClientIdsInOrder: Block[ 'clientId' ][];
+	latestPosts: Post[];
+	isEditorBlock: boolean;
+	isUIDisabled: boolean;
+	error: undefined | string;
+};
+
 /**
  * Does the props change necessitate a reflow?
  * A reflow should happen if:
  * 1. Query-changing attributes of a block change
  * 2. The top-level blocks order changes. A Homepage Articles
  *    block might be nested somewhere.
- *
- * @param {Object} prevProps Edit component props
- * @param {Object} props     Edit component props
  */
-export const shouldReflow = ( prevProps, props ) =>
+export const shouldReflow = (
+	prevProps: HomepageArticlesProps,
+	props: HomepageArticlesProps
+): boolean =>
 	! isEqual(
 		pick( prevProps.attributes, POST_QUERY_ATTRIBUTES ),
 		pick( props.attributes, POST_QUERY_ATTRIBUTES )
@@ -57,11 +79,8 @@ export const shouldReflow = ( prevProps, props ) =>
 
 /**
  * Builds query criteria from given attributes.
- *
- * @param {Object} attributes block attributes
- * @return {Object} criteria
  */
-export const queryCriteriaFromAttributes = attributes => {
+export const queryCriteriaFromAttributes = ( attributes: Block[ 'attributes' ] ): PostsQuery => {
 	const {
 		postsToShow,
 		authors,
@@ -79,7 +98,7 @@ export const queryCriteriaFromAttributes = attributes => {
 
 	const cleanPosts = sanitizePostList( specificPosts );
 	const isSpecificPostModeActive = specificMode && cleanPosts && cleanPosts.length;
-	const criteria = pickBy(
+	const criteria: PostsQuery = pickBy(
 		isSpecificPostModeActive
 			? {
 					include: cleanPosts,
@@ -103,11 +122,20 @@ export const queryCriteriaFromAttributes = attributes => {
 	return criteria;
 };
 
-export const sanitizePostList = postList =>
+export const sanitizePostList = ( postList: HomepageArticlesAttributes[ 'specificPosts' ] ) =>
 	postList.map( id => parseInt( id ) ).filter( id => id > 0 );
 
-export const getBlockQueries = ( blocks, blockNames ) =>
-	blocks.flatMap( block => {
+/**
+ * Each eligible block's attributes can be used to create a posts query.
+ * This function is recursively traversing an array of blocks and creating an aray
+ * of {postsQuery, clientId} objects.
+ * The eligible blocks are identified by block name, passed in the second argument.
+ */
+export const getBlockQueries = (
+	blocks: Block[],
+	blockNames: Block[ 'name' ][]
+): { postsQuery: PostsQuery; clientId: Block[ 'clientId' ] }[] =>
+	blocks.flatMap( ( block: Block ) => {
 		const homepageArticleBlocks = [];
 		if ( blockNames.indexOf( block.name ) >= 0 ) {
 			const postsQuery = queryCriteriaFromAttributes( block.attributes );
@@ -116,15 +144,15 @@ export const getBlockQueries = ( blocks, blockNames ) =>
 		return homepageArticleBlocks.concat( getBlockQueries( block.innerBlocks, blockNames ) );
 	} );
 
-export const getEditorBlocksIds = blocks =>
-	blocks.flatMap( block => {
+export const getEditorBlocksIds = ( blocks: Block[] ): Block[ 'clientId' ][] =>
+	blocks.flatMap( ( block: Block ) => {
 		const homepageArticleBlocks = [];
 		homepageArticleBlocks.push( block.clientId );
 		return homepageArticleBlocks.concat( getEditorBlocksIds( block.innerBlocks ) );
 	} );
 
 const PREVIEW_IMAGE_BASE = window.newspack_blocks_data.assets_path;
-const generatePreviewPost = id => {
+const generatePreviewPost = ( id: PostId ) => {
 	const now = new Date();
 	now.setHours( 12, 0, 0, 0 );
 	return {
@@ -167,9 +195,34 @@ const generatePreviewPost = id => {
 	};
 };
 
-const getPreviewPosts = attributes => times( attributes.postsToShow, generatePreviewPost );
+const getPreviewPosts = ( attributes: HomepageArticlesAttributes ) =>
+	times( attributes.postsToShow, generatePreviewPost );
 
-export const postsBlockSelector = ( select, { clientId, attributes } ) => {
+type Select = (
+	namespace: string
+) => {
+	// core/blocks-editor
+	getBlocks: () => Block[];
+	// core/editor
+	getEditorBlocks: () => Block[];
+	// core
+	getPostTypes: ( query: object ) => null | PostType[];
+	// STORE_NAMESPACE - TODO: move these to src/blocks/homepage-articles/store.js once it's TS
+	getPosts: ( query: object ) => Post[];
+	getError: ( config: { clientId: Block[ 'clientId' ] } ) => undefined | string;
+	isUIDisabled: () => boolean;
+};
+
+/**
+ * wordpress/data selector for blocks using this custom store.
+ */
+export const postsBlockSelector = (
+	select: Select,
+	{
+		clientId,
+		attributes,
+	}: { clientId: Block[ 'clientId' ]; attributes: HomepageArticlesAttributes }
+): Omit< HomepageArticlesProps, 'attributes' > => {
 	const { getEditorBlocks } = select( 'core/editor' );
 	const { getBlocks } = select( 'core/block-editor' );
 	const editorBlocksIds = getEditorBlocksIds( getEditorBlocks() );
@@ -183,21 +236,24 @@ export const postsBlockSelector = ( select, { clientId, attributes } ) => {
 		isUIDisabled: isUIDisabled(),
 		error: getError( { clientId } ),
 		topBlocksClientIdsInOrder: getBlocks().map( block => block.clientId ),
+		latestPosts: isEditorBlock
+			? getPosts( { clientId } )
+			: // For block preview, display static content.
+			  getPreviewPosts( attributes ),
 	};
-
-	if ( isEditorBlock ) {
-		props.latestPosts = getPosts( { clientId } );
-	} else {
-		// For block preview, display static content.
-		props.latestPosts = getPreviewPosts( attributes );
-	}
 
 	return props;
 };
 
-export const postsBlockDispatch = ( dispatch, { isEditorBlock } ) => {
+/**
+ * wordpress/data dispatch for blocks using this custom store.
+ */
+export const postsBlockDispatch = (
+	dispatch: typeof wpDataDispatch,
+	{ isEditorBlock }: { isEditorBlock: boolean }
+) => {
 	return {
 		// Only editor blocks can trigger reflows.
-		triggerReflow: isEditorBlock ? dispatch( STORE_NAMESPACE ).reflow : () => {},
+		triggerReflow: isEditorBlock ? dispatch( STORE_NAMESPACE ).reflow : () => undefined,
 	};
 };
