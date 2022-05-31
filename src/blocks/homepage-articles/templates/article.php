@@ -203,7 +203,7 @@ call_user_func(
 							}
 							echo esc_html( $byline['name'] );
 							if ( '' !== $byline['url'] ) {
-								'</a>';
+								echo '</a>';
 							}
 							echo '</span>' . esc_html( $byline['sep'] );
 						}
