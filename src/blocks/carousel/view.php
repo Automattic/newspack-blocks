@@ -103,14 +103,13 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 
 				<?php if ( ! empty( $sponsors ) || $attributes['showCategory'] || $attributes['showTitle'] || $show_author || $show_date ) : ?>
 					<div class="entry-wrapper">
-						<?php if ( ! empty( $sponsors ) ) : ?>
-						<span class="cat-links sponsor-label">
-							<span class="flag">
-								<?php echo esc_html( Newspack_Blocks::get_sponsor_label( $sponsors ) ); ?>
-							</span>
-						</span>
+						<div class="cat-links <?php if ( ! empty( $sponsors ) ) : ?>sponsor-label<?php endif; // phpcs:ignore Squiz.ControlStructures.ControlSignature.NewlineAfterOpenBrace ?>">
+							<?php if ( ! empty( $sponsors ) ) : ?>
+								<span class="flag">
+									<?php echo esc_html( Newspack_Blocks::get_sponsor_label( $sponsors ) ); ?>
+								</span>
 							<?php
-						else :
+							endif;
 							$category = false;
 
 							// Use Yoast primary category if set.
@@ -129,9 +128,8 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 								}
 							}
 
-							if ( $attributes['showCategory'] && $category ) :
+							if ( $attributes['showCategory'] && $category && ( empty( $sponsors ) || Newspack_Blocks::newspack_display_sponsors_and_categories( $sponsors ) ) ) :
 								?>
-								<div class="cat-links">
 									<?php $category_link = get_category_link( $category->term_id ); ?>
 									<?php if ( ! empty( $category_link ) ) : ?>
 										<a href="<?php echo esc_url( get_category_link( $category->term_id ) ); ?>">
@@ -143,8 +141,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 								</div>
 								<?php
 							endif;
-						endif;
-						?>
+							?>
 
 						<?php
 						if ( $attributes['showTitle'] ) {
@@ -154,6 +151,33 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 
 						<div class="entry-meta">
 							<?php
+							if ( $show_author && ( empty( $sponsors ) || Newspack_Blocks::newspack_display_sponsors_and_authors( $sponsors ) ) ) :
+								if ( $attributes['showAvatar'] ) :
+									echo wp_kses(
+										newspack_blocks_format_avatars( $authors ),
+										array(
+											'img'      => array(
+												'class'  => true,
+												'src'    => true,
+												'alt'    => true,
+												'width'  => true,
+												'height' => true,
+												'data-*' => true,
+												'srcset' => true,
+											),
+											'noscript' => array(),
+											'a'        => array(
+												'href' => true,
+											),
+										)
+									);
+								endif;
+								?>
+								<span class="byline">
+									<?php echo wp_kses_post( newspack_blocks_format_byline( $authors ) ); ?>
+								</span><!-- .author-name -->
+								<?php
+							endif;
 							if ( ! empty( $sponsors ) ) :
 								$logos = Newspack_Blocks::get_sponsor_logos( $sponsors );
 								if ( ! empty( $logos ) ) :
@@ -191,34 +215,6 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 									?>
 								</span>
 								<?php
-							else :
-								if ( $show_author ) :
-									if ( $attributes['showAvatar'] ) :
-										echo wp_kses(
-											newspack_blocks_format_avatars( $authors ),
-											array(
-												'img'      => array(
-													'class' => true,
-													'src' => true,
-													'alt' => true,
-													'width' => true,
-													'height' => true,
-													'data-*' => true,
-													'srcset' => true,
-												),
-												'noscript' => array(),
-												'a'        => array(
-													'href' => true,
-												),
-											)
-										);
-									endif;
-									?>
-									<span class="byline">
-										<?php echo wp_kses_post( newspack_blocks_format_byline( $authors ) ); ?>
-									</span><!-- .author-name -->
-									<?php
-								endif;
 							endif;
 							if ( $show_date ) :
 								printf(

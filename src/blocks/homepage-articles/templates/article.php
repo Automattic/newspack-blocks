@@ -95,20 +95,19 @@ call_user_func(
 		<?php endif; ?>
 
 		<div class="entry-wrapper">
-			<?php if ( ! empty( $sponsors ) ) : ?>
-				<span class="cat-links sponsor-label">
-					<span class="flag">
-						<?php echo esc_html( Newspack_Blocks::get_sponsor_label( $sponsors ) ); ?>
-					</span>
-				</span>
-			<?php elseif ( $attributes['showCategory'] && $category ) : ?>
+			<?php if ( ! empty( $sponsors ) || ( $attributes['showCategory'] && $category ) ) : ?>
 				<?php $category_link = get_category_link( $category->term_id ); ?>
-				<div class="cat-links">
-					<?php if ( ! empty( $category_link ) ) : ?>
+				<div class="cat-links <?php if ( ! empty( $sponsors ) ) : ?>sponsor-label<?php endif; // phpcs:ignore Squiz.ControlStructures.ControlSignature.NewlineAfterOpenBrace ?>">
+					<?php if ( ! empty( $sponsors ) ) : ?>
+						<span class="flag">
+							<?php echo esc_html( Newspack_Blocks::get_sponsor_label( $sponsors ) ); ?>
+						</span>
+					<?php endif; ?>
+					<?php if ( ! empty( $category_link ) && ( empty( $sponsors ) || Newspack_Blocks::newspack_display_sponsors_and_categories( $sponsors ) ) ) : ?>
 						<a href="<?php echo esc_url( $category_link ); ?>">
 					<?php endif; ?>
 						<?php echo esc_html( $category->name ); ?>
-					<?php if ( ! empty( $category_link ) ) : ?>
+					<?php if ( ! empty( $category_link ) && ( empty( $sponsors ) || Newspack_Blocks::newspack_display_sponsors_and_categories( $sponsors ) ) ) : ?>
 						</a>
 					<?php endif; ?>
 				</div>
@@ -173,8 +172,35 @@ call_user_func(
 			if ( $show_author || $show_date || ! empty( $sponsors ) ) :
 				?>
 				<div class="entry-meta">
-					<?php if ( ! empty( $sponsors ) ) : ?>
+					<?php
+					if ( $show_author && ( empty( $sponsors ) || Newspack_Blocks::newspack_display_sponsors_and_authors( $sponsors ) ) ) :
+						if ( $attributes['showAvatar'] ) :
+							echo wp_kses(
+								newspack_blocks_format_avatars( $authors ),
+								array(
+									'img'      => array(
+										'class'  => true,
+										'src'    => true,
+										'alt'    => true,
+										'width'  => true,
+										'height' => true,
+										'data-*' => true,
+										'srcset' => true,
+									),
+									'noscript' => array(),
+									'a'        => array(
+										'href' => true,
+									),
+								)
+							);
+						endif;
+						?>
+						<span class="byline">
+							<?php echo wp_kses_post( newspack_blocks_format_byline( $authors ) ); ?>
+						</span><!-- .author-name -->
 						<?php
+					endif;
+					if ( ! empty( $sponsors ) ) :
 						$logos = Newspack_Blocks::get_sponsor_logos( $sponsors );
 						if ( ! empty( $logos ) ) :
 							?>
@@ -210,34 +236,6 @@ call_user_func(
 						?>
 					</span>
 						<?php
-					else :
-						if ( $show_author ) :
-							if ( $attributes['showAvatar'] ) :
-								echo wp_kses(
-									newspack_blocks_format_avatars( $authors ),
-									array(
-										'img'      => array(
-											'class'  => true,
-											'src'    => true,
-											'alt'    => true,
-											'width'  => true,
-											'height' => true,
-											'data-*' => true,
-											'srcset' => true,
-										),
-										'noscript' => array(),
-										'a'        => array(
-											'href' => true,
-										),
-									)
-								);
-							endif;
-							?>
-							<span class="byline">
-								<?php echo wp_kses_post( newspack_blocks_format_byline( $authors ) ); ?>
-							</span><!-- .author-name -->
-							<?php
-						endif;
 					endif;
 					if ( $show_date ) :
 						$time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';

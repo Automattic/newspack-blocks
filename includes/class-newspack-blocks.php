@@ -924,6 +924,34 @@ class Newspack_Blocks {
 	}
 
 	/**
+	 * If at least one native sponsor is set to display both sponsors and authors, show the authors.
+	 *
+	 * @param array $sponsors Array of sponsors.
+	 *
+	 * @return boolean True if we should display both sponsors and categories, false if we should display only sponsors.
+	 */
+	public static function newspack_display_sponsors_and_authors( $sponsors ) {
+		if ( function_exists( '\Newspack_Sponsors\newspack_display_sponsors_and_authors' ) ) {
+			return \Newspack_Sponsors\newspack_display_sponsors_and_authors( $sponsors );
+		}
+		return false;
+	}
+
+	/**
+	 * If at least one native sponsor is set to display both sponsors and categories, show the categories.
+	 *
+	 * @param array $sponsors Array of sponsors.
+	 *
+	 * @return boolean True if we should display both sponsors and categories, false if we should display only sponsors.
+	 */
+	public static function newspack_display_sponsors_and_categories( $sponsors ) {
+		if ( function_exists( '\Newspack_Sponsors\newspack_display_sponsors_and_categories' ) ) {
+			return \Newspack_Sponsors\newspack_display_sponsors_and_categories( $sponsors );
+		}
+		return false;
+	}
+
+	/**
 	 * Closure for excerpt filtering that can be added and removed.
 	 *
 	 * @var Closure

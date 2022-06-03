@@ -285,16 +285,24 @@ class Edit extends Component {
 											showAuthor ||
 											showDate ) && (
 											<div className="entry-wrapper">
-												{ post.newspack_post_sponsors && (
-													<span className="cat-links sponsor-label">
-														<span className="flag">{ post.newspack_post_sponsors[ 0 ].flag }</span>
-													</span>
-												) }
-												{ showCategory &&
+												{ ( post.newspack_post_sponsors || showCategory ) &&
 													0 < post.newspack_category_info.length &&
-													! post.newspack_post_sponsors && (
-														<div className="cat-links">
-															<a href="#">{ decodeEntities( post.newspack_category_info ) }</a>
+													( ! post.newspack_post_sponsors ||
+														post.newspack_sponsors_show_categories ) && (
+														<div
+															className={
+																'cat-links' +
+																( post.newspack_post_sponsors ? ' sponsor-label' : '' )
+															}
+														>
+															{ post.newspack_post_sponsors && (
+																<span className="flag">
+																	{ post.newspack_post_sponsors[ 0 ].flag }
+																</span>
+															) }
+															{ showCategory && (
+																<a href="#">{ decodeEntities( post.newspack_category_info ) }</a>
+															) }
 														</div>
 													) }
 												{ showTitle && (
@@ -303,17 +311,19 @@ class Edit extends Component {
 													</h3>
 												) }
 												<div className="entry-meta">
+													{ showAuthor &&
+														showAvatar &&
+														( ! post.newspack_post_sponsors ||
+															post.newspack_sponsors_show_author ) &&
+														formatAvatars( post.newspack_author_info ) }
+													{ showAuthor &&
+														( ! post.newspack_post_sponsors ||
+															post.newspack_sponsors_show_author ) &&
+														formatByline( post.newspack_author_info ) }
 													{ post.newspack_post_sponsors &&
 														formatSponsorLogos( post.newspack_post_sponsors ) }
 													{ post.newspack_post_sponsors &&
 														formatSponsorByline( post.newspack_post_sponsors ) }
-													{ showAuthor &&
-														showAvatar &&
-														! post.newspack_post_sponsors &&
-														formatAvatars( post.newspack_author_info ) }
-													{ showAuthor &&
-														! post.newspack_post_sponsors &&
-														formatByline( post.newspack_author_info ) }
 													{ showDate && (
 														<time className="entry-date published" key="pub-date">
 															{ dateI18n( dateFormat, post.date_gmt ) }

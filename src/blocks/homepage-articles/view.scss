@@ -412,6 +412,14 @@ amp-script .wpnbha {
 		font-weight: bold;
 		margin: 0 0 0.5em;
 
+		&.sponsor-label {
+			align-items: center;
+
+			.flag + a {
+				margin-left: 0.5em;
+			}
+		}
+
 		a {
 			text-decoration: none;
 
