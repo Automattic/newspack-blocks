@@ -815,6 +815,20 @@ class Newspack_Blocks {
 		'maxheight' => 40,
 	) ) {
 		if ( function_exists( '\Newspack_Sponsors\get_sponsors_for_post' ) ) {
+			if ( is_singular() ) {
+				$scope_override = get_post_meta( $id, 'newspack_sponsor_sponsorship_scope', true );
+
+				// Scope override: if post is set to display as native-sponsored, return all sponsors.
+				if ( 'native' === $scope_override ) {
+					$scope = null;
+				}
+
+				// Scope override: if post is set to display as underwritten, return nothing.
+				if ( 'underwritten' === $scope_override ) {
+					return [];
+				}
+			}
+
 			return \Newspack_Sponsors\get_all_sponsors( $id, $scope, $type, $logo_options ); // phpcs:ignore PHPCompatibility.LanguageConstructs.NewLanguageConstructs.t_ns_separatorFound
 		}
 

@@ -103,33 +103,34 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 
 				<?php if ( ! empty( $sponsors ) || $attributes['showCategory'] || $attributes['showTitle'] || $show_author || $show_date ) : ?>
 					<div class="entry-wrapper">
-						<div class="cat-links <?php if ( ! empty( $sponsors ) ) : ?>sponsor-label<?php endif; // phpcs:ignore Squiz.ControlStructures.ControlSignature.NewlineAfterOpenBrace ?>">
-							<?php if ( ! empty( $sponsors ) ) : ?>
-								<span class="flag">
-									<?php echo esc_html( Newspack_Blocks::get_sponsor_label( $sponsors ) ); ?>
-								</span>
-							<?php
-							endif;
-							$category = false;
+						<?php if ( ! empty( $sponsors ) || $attributes['showCategory'] ) : ?>
+							<div class="cat-links <?php if ( ! empty( $sponsors ) ) : ?>sponsor-label<?php endif; // phpcs:ignore Squiz.ControlStructures.ControlSignature.NewlineAfterOpenBrace ?>">
+								<?php if ( ! empty( $sponsors ) ) : ?>
+									<span class="flag">
+										<?php echo esc_html( Newspack_Blocks::get_sponsor_label( $sponsors ) ); ?>
+									</span>
+									<?php
+								endif;
+								$category = false;
 
-							// Use Yoast primary category if set.
-							if ( class_exists( 'WPSEO_Primary_Term' ) ) {
-								$primary_term = new WPSEO_Primary_Term( 'category', $post_id );
-								$category_id  = $primary_term->get_primary_term();
-								if ( $category_id ) {
-									$category = get_term( $category_id );
+								// Use Yoast primary category if set.
+								if ( class_exists( 'WPSEO_Primary_Term' ) ) {
+									$primary_term = new WPSEO_Primary_Term( 'category', $post_id );
+									$category_id  = $primary_term->get_primary_term();
+									if ( $category_id ) {
+										$category = get_term( $category_id );
+									}
 								}
-							}
 
-							if ( ! $category ) {
-								$categories_list = get_the_category();
-								if ( ! empty( $categories_list ) ) {
-									$category = $categories_list[0];
+								if ( ! $category ) {
+									$categories_list = get_the_category();
+									if ( ! empty( $categories_list ) ) {
+										$category = $categories_list[0];
+									}
 								}
-							}
 
-							if ( $attributes['showCategory'] && $category && ( empty( $sponsors ) || Newspack_Blocks::newspack_display_sponsors_and_categories( $sponsors ) ) ) :
-								?>
+								if ( $attributes['showCategory'] && $category && ( empty( $sponsors ) || Newspack_Blocks::newspack_display_sponsors_and_categories( $sponsors ) ) ) :
+									?>
 									<?php $category_link = get_category_link( $category->term_id ); ?>
 									<?php if ( ! empty( $category_link ) ) : ?>
 										<a href="<?php echo esc_url( get_category_link( $category->term_id ) ); ?>">
@@ -137,13 +138,14 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 										<?php echo esc_html( $category->name ); ?>
 									<?php if ( ! empty( $category_link ) ) : ?>
 									</a>
-									<?php endif; ?>
+										<?php
+										endif;
+									endif;
+								?>
 								</div>
-								<?php
-							endif;
-							?>
+							<?php
+						endif;
 
-						<?php
 						if ( $attributes['showTitle'] ) {
 							the_title( '<h3 class="entry-title"><a href="' . esc_url( $post_link ) . '" rel="bookmark">', '</a></h3>' );
 						}
