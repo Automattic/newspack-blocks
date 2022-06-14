@@ -1,6 +1,32 @@
-.block-editor-block-patterns-list__item {
-	.block-editor-block-preview__container {
-		max-height: 316px;
-		overflow: hidden;
+.editor-styles-wrapper {
+	.block-editor-block-patterns-list__item {
+		.block-editor-block-preview__container {
+			max-height: 316px;
+			overflow: hidden;
+		}
+	}
+
+	.newspack-blocks-placeholder-block {
+		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu,
+			Cantarell, 'Helvetica Neue', sans-serif;
+		font-size: 13px;
+		padding: 0 1em;
+		border: 1px solid #1e1e1e;
+		background-color: #fff;
+		border-radius: 2px;
+		p {
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu,
+				Cantarell, 'Helvetica Neue', sans-serif;
+			font-size: 13px;
+		}
+		.components-button-group {
+			> * {
+				margin-right: 1em;
+				margin-bottom: 1em;
+			}
+		}
+		a.is-primary {
+			color: #fff;
+		}
 	}
 }

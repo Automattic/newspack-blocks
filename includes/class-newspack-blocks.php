@@ -183,6 +183,27 @@ class Newspack_Blocks {
 	}
 
 	/**
+	 * Enqueue placeholder blocks assets.
+	 */
+	public static function enqueue_placeholder_blocks_assets() {
+		$script_data = self::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'placeholder_blocks.js' );
+		if ( $script_data ) {
+			wp_enqueue_script(
+				'newspack-blocks-placeholder-blocks',
+				$script_data['script_path'],
+				$script_data['dependencies'],
+				$script_data['version'],
+				true
+			);
+			wp_set_script_translations(
+				'newspack-blocks-placeholder-blocks',
+				'newspack-blocks',
+				plugin_dir_path( NEWSPACK_BLOCKS__PLUGIN_FILE ) . 'languages'
+			);
+		}
+	}
+
+	/**
 	 * Enqueue block scripts and styles for editor.
 	 */
 	public static function enqueue_block_editor_assets() {
