@@ -2,6 +2,7 @@
  * WordPress dependencies.
  */
 import { __, sprintf } from '@wordpress/i18n';
+import { useBlockProps } from '@wordpress/block-editor';
 import { getBlockType, registerBlockType } from '@wordpress/blocks';
 import { Button } from '@wordpress/components';
 import { withDispatch } from '@wordpress/data';
@@ -23,31 +24,34 @@ function registerPlaceholderBlock( blockName, { title, description, icon, messag
 	}
 	title = title || blockName.split( '/' ).pop();
 	const edit = ( { clientId, removeBlocks } ) => {
+		const blockProps = useBlockProps(); // eslint-disable-line
 		return (
-			<div className="newspack-blocks-placeholder-block wp-block">
-				<div className="newspack-blocks-placeholder-block__label">
-					{ icon && <Icon icon={ icon } /> }
-					{ title }
-				</div>
-				<p>
-					<strong>
-						{ sprintf(
-							// translators: %s is the block name.
-							__( 'The "%s" block is currently not available.', 'newspack-blocks' ),
-							title
+			<div { ...blockProps }>
+				<div className="newspack-blocks-placeholder-block">
+					<div className="newspack-blocks-placeholder-block__label">
+						{ icon && <Icon icon={ icon } /> }
+						{ title }
+					</div>
+					<p>
+						<strong>
+							{ sprintf(
+								// translators: %s is the block name.
+								__( 'The "%s" block is currently not available.', 'newspack-blocks' ),
+								title
+							) }
+						</strong>
+					</p>
+					{ message && <p>{ message }</p> }
+					<div className="newspack-blocks-placeholder-block__buttons">
+						{ url && (
+							<Button variant="primary" target="_blank" rel="external" href={ url }>
+								{ __( 'Visit Plugin Page', 'newspack-blocks' ) }
+							</Button>
 						) }
-					</strong>
-				</p>
-				{ message && <p>{ message }</p> }
-				<div className="newspack-blocks-placeholder-block__buttons">
-					{ url && (
-						<Button variant="primary" target="_blank" rel="external" href={ url }>
-							{ __( 'Visit Plugin Page', 'newspack-blocks' ) }
+						<Button variant="secondary" isDestructive onClick={ () => removeBlocks( clientId ) }>
+							{ __( 'Remove Block', 'newspack-blocks' ) }
 						</Button>
-					) }
-					<Button variant="secondary" isDestructive onClick={ () => removeBlocks( clientId ) }>
-						{ __( 'Remove Block', 'newspack-blocks' ) }
-					</Button>
+					</div>
 				</div>
 			</div>
 		);
