@@ -114,13 +114,8 @@ class Edit extends Component {
 		this.setState( { isLoading: true }, () => {
 			apiFetch( { path } )
 				.then( settings => {
-					const {
-						suggestedAmounts,
-						suggestedAmountUntiered,
-						currencySymbol,
-						tiered,
-						created,
-					} = settings;
+					const { suggestedAmounts, suggestedAmountUntiered, currencySymbol, tiered, created } =
+						settings;
 					this.setState( {
 						suggestedAmounts,
 						suggestedAmountUntiered,
