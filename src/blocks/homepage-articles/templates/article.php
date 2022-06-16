@@ -172,7 +172,47 @@ call_user_func(
 			if ( $show_author || $show_date || ! empty( $sponsors ) ) :
 				?>
 				<div class="entry-meta">
-					<?php
+					<?php if ( ! empty( $sponsors ) ) : ?>
+						<span class="entry-sponsors">
+								<?php
+								$logos = Newspack_Blocks::get_sponsor_logos( $sponsors );
+								if ( ! empty( $logos ) ) :
+									?>
+								<span class="sponsor-logos">
+									<?php
+									foreach ( $logos as $logo ) {
+										if ( '' !== $logo['url'] ) {
+											echo '<a href="' . esc_url( $logo['url'] ) . '" target="_blank">';
+										}
+										echo '<img src="' . esc_url( $logo['src'] ) . '" alt="' . esc_attr( $logo['alt'] ) . '" width="' . esc_attr( $logo['width'] ) . '" height="' . esc_attr( $logo['height'] ) . '">';
+										if ( '' !== $logo['url'] ) {
+											echo '</a>';
+										}
+									}
+									?>
+								</span>
+							<?php endif; ?>
+							<span class="byline sponsor-byline">
+								<?php
+								$bylines = Newspack_Blocks::get_sponsor_byline( $sponsors );
+								echo esc_html( $bylines[0]['byline'] ) . ' ';
+								foreach ( $bylines as $byline ) {
+									echo '<span class="author">';
+									if ( '' !== $byline['url'] ) {
+										echo '<a target="_blank" href="' . esc_url( $byline['url'] ) . '">';
+									}
+									echo esc_html( $byline['name'] );
+									if ( '' !== $byline['url'] ) {
+										echo '</a>';
+									}
+									echo '</span>' . esc_html( $byline['sep'] );
+								}
+								?>
+							</span><!-- /.sponsor-byline -->
+						</span><!-- .entry-sponsors -->
+						<?php
+					endif;
+
 					if ( $show_author && ( empty( $sponsors ) || Newspack_Blocks::newspack_display_sponsors_and_authors( $sponsors ) ) ) :
 						if ( $attributes['showAvatar'] ) :
 							echo wp_kses(
@@ -198,43 +238,6 @@ call_user_func(
 						<span class="byline">
 							<?php echo wp_kses_post( newspack_blocks_format_byline( $authors ) ); ?>
 						</span><!-- .author-name -->
-						<?php
-					endif;
-					if ( ! empty( $sponsors ) ) :
-						$logos = Newspack_Blocks::get_sponsor_logos( $sponsors );
-						if ( ! empty( $logos ) ) :
-							?>
-						<span class="sponsor-logos">
-							<?php
-							foreach ( $logos as $logo ) {
-								if ( '' !== $logo['url'] ) {
-									echo '<a href="' . esc_url( $logo['url'] ) . '" target="_blank">';
-								}
-								echo '<img src="' . esc_url( $logo['src'] ) . '" alt="' . esc_attr( $logo['alt'] ) . '" width="' . esc_attr( $logo['width'] ) . '" height="' . esc_attr( $logo['height'] ) . '">';
-								if ( '' !== $logo['url'] ) {
-									echo '</a>';
-								}
-							}
-							?>
-						</span>
-					<?php endif; ?>
-					<span class="byline sponsor-byline">
-						<?php
-						$bylines = Newspack_Blocks::get_sponsor_byline( $sponsors );
-						echo esc_html( $bylines[0]['byline'] ) . ' ';
-						foreach ( $bylines as $byline ) {
-							echo '<span class="author">';
-							if ( '' !== $byline['url'] ) {
-								echo '<a target="_blank" href="' . esc_url( $byline['url'] ) . '">';
-							}
-							echo esc_html( $byline['name'] );
-							if ( '' !== $byline['url'] ) {
-								echo '</a>';
-							}
-							echo '</span>' . esc_html( $byline['sep'] );
-						}
-						?>
-					</span>
 						<?php
 					endif;
 					if ( $show_date ) :

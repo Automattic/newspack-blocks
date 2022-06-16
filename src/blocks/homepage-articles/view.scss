@@ -365,12 +365,8 @@
 	&.has-text-align-center {
 		.cat-links,
 		.entry-meta,
-		.sponsor-logos {
+		.entry-sponsors {
 			justify-content: center;
-		}
-
-		.sponsor-logos > * {
-			margin: 0;
 		}
 
 		&.image-alignbehind figcaption,
@@ -383,7 +379,7 @@
 	&.has-text-align-right {
 		.cat-links,
 		.entry-meta,
-		.sponsor-logos {
+		.entry-sponsors {
 			justify-content: flex-end;
 		}
 
@@ -395,8 +391,7 @@
 			margin-left: 1.5em;
 		}
 
-		.entry-meta .byline:not( :last-child ),
-		.sponsor-logos > * {
+		.entry-meta .byline:not( :last-child ) {
 			margin: 0;
 		}
 	}
@@ -408,6 +403,7 @@ amp-script .wpnbha {
 	/* Article meta */
 	.cat-links {
 		display: flex;
+		flex-wrap: wrap;
 		font-size: $font__size-xxs;
 		font-weight: bold;
 		margin: 0 0 0.5em;
@@ -415,8 +411,8 @@ amp-script .wpnbha {
 		&.sponsor-label {
 			align-items: center;
 
-			.flag + a {
-				margin-left: 0.5em;
+			.flag {
+				margin-right: 0.5em;
 			}
 		}
 

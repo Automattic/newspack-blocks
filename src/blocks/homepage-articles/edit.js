@@ -215,17 +215,23 @@ class Edit extends Component {
 						</a>
 					) }
 					<div className="entry-meta">
+						{ post.newspack_post_sponsors && (
+							<span className="entry-sponsors">
+								{ formatSponsorLogos( post.newspack_post_sponsors ) }
+								{ formatSponsorByline( post.newspack_post_sponsors ) }
+							</span>
+						) }
+
 						{ showAuthor &&
 							! post.newspack_listings_hide_author &&
 							showAvatar &&
 							( ! post.newspack_post_sponsors || post.newspack_sponsors_show_author ) &&
 							formatAvatars( post.newspack_author_info ) }
+
 						{ showAuthor &&
 							! post.newspack_listings_hide_author &&
 							( ! post.newspack_post_sponsors || post.newspack_sponsors_show_author ) &&
 							formatByline( post.newspack_author_info ) }
-						{ post.newspack_post_sponsors && formatSponsorLogos( post.newspack_post_sponsors ) }
-						{ post.newspack_post_sponsors && formatSponsorByline( post.newspack_post_sponsors ) }
 						{ showDate && ! post.newspack_listings_hide_publish_date && (
 							<time className="entry-date published" key="pub-date">
 								{ dateI18n( dateFormat, post.date_gmt ) }
