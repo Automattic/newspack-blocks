@@ -168,7 +168,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 	Newspack_Blocks::enqueue_view_assets( 'donate' );
 
 	$settings = Newspack\Donations::get_donation_settings();
-	if ( is_wp_error( $settings ) || ! $settings['created'] ) {
+	if ( is_wp_error( $settings ) ) {
 		return '';
 	}
 

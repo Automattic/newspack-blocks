@@ -1228,7 +1228,7 @@ class Newspack_Blocks {
 
 		// Allow Jetpack donations if Newspack donations isn't set up.
 		$donate_settings = Newspack\Donations::get_donation_settings();
-		if ( is_wp_error( $donate_settings ) || ! $donate_settings['created'] ) {
+		if ( is_wp_error( $donate_settings ) ) {
 			return;
 		}
 

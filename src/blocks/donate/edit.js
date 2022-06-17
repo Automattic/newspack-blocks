@@ -28,7 +28,6 @@ class Edit extends Component {
 			suggestedAmountUntiered: 0,
 			currencySymbol: '$',
 			tiered: false,
-			created: false,
 
 			isLoading: false,
 			activeTier: 1,
@@ -109,24 +108,17 @@ class Edit extends Component {
 	};
 
 	getSettings() {
-		const path = '/newspack/v1/wizard/newspack-donations-wizard/donation';
+		const path = '/newspack/v1/wizard/newspack-reader-revenue-wizard/donation';
 
 		this.setState( { isLoading: true }, () => {
 			apiFetch( { path } )
 				.then( settings => {
-					const {
-						suggestedAmounts,
-						suggestedAmountUntiered,
-						currencySymbol,
-						tiered,
-						created,
-					} = settings;
+					const { suggestedAmounts, suggestedAmountUntiered, currencySymbol, tiered } = settings;
 					this.setState( {
 						suggestedAmounts,
 						suggestedAmountUntiered,
 						currencySymbol,
 						tiered,
-						created,
 						isLoading: false,
 						customDonationAmounts: {
 							once: tiered ? 12 * suggestedAmounts[ 1 ] : 12 * suggestedAmountUntiered,
@@ -379,7 +371,7 @@ class Edit extends Component {
 	}
 
 	renderPlaceholder() {
-		const { created, error, isLoading, manual } = this.blockData();
+		const { error, isLoading, manual } = this.blockData();
 
 		if ( manual ) {
 			return null;
@@ -400,27 +392,11 @@ class Edit extends Component {
 				</Placeholder>
 			);
 		}
-		if ( ! created ) {
-			return (
-				<Placeholder
-					icon="warning"
-					label={ __( 'Not ready', 'newspack-blocks' ) }
-					instructions={ __(
-						'You have not set up your donation settings yet. You need to do that before you can use the Donate Block.',
-						'newspack-blocks'
-					) }
-				>
-					<ExternalLink href="/wp-admin/admin.php?page=newspack-reader-revenue-wizard#/donations">
-						{ __( 'Set up donation settings.', 'newspack-blocks' ) }
-					</ExternalLink>
-				</Placeholder>
-			);
-		}
 	}
 
 	renderForm() {
-		const { created, error, manual, tiered } = this.blockData();
-		if ( ! manual && ( error.length || ! created ) ) {
+		const { error, manual, tiered } = this.blockData();
+		if ( ! manual && error.length ) {
 			return null;
 		}
 		return tiered ? this.renderTieredForm() : this.renderUntieredForm();
