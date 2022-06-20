@@ -257,7 +257,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 				<div class='wp-block-newspack-blocks-donate__options'>
 					<?php foreach ( $frequencies as $frequency_slug => $frequency_name ) : ?>
 						<?php
-							$formatted_amount = $settings['suggestedAmountUntieredByFrequency'][ $frequency_slug ];
+							$formatted_amount = $settings['amounts'][ $frequency_slug ][3];
 						?>
 
 						<div class='wp-block-newspack-blocks-donate__frequency frequency'>
@@ -290,7 +290,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 
 		<?php
 		else :
-			$suggested_amounts = $settings['suggestedAmountsByFrequency'];
+			$suggested_amounts = $settings['amounts'];
 			?>
 
 		<div class="wp-block-newspack-blocks-donate wpbnbd tiered <?php echo esc_html( $classname ); ?>">
@@ -306,58 +306,63 @@ function newspack_blocks_render_block_donate( $attributes ) {
 								<div class='wp-block-newspack-blocks-donate__tiers tiers'>
 									<?php foreach ( $suggested_amounts[ $frequency_slug ] as $index => $amount ) : ?>
 										<div class='wp-block-newspack-blocks-donate__tier'>
-											<input
-												type='radio'
-												name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>'
-												value='<?php echo esc_attr( $amount ); ?>'
-												id='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-<?php echo (int) $index; ?>'
-												<?php checked( 1, $index ); ?>
-											/>
-											<label
-												class='tier-select-label tier-label'
-												for='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-<?php echo (int) $index; ?>'
-											>
-												<?php echo esc_html( $settings['currencySymbol'] . $amount ); ?>
-											</label>
+											<?php
+											if ( 3 === $index ) : // The "other" tier.
+												?>
+												<input
+													type='radio'
+													class='other-input'
+													name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>'
+													value='other'
+													id='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-other'
+												/>
+												<label
+													class='tier-select-label tier-label'
+													for='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-other'
+												>
+												<?php echo esc_html__( 'Other', 'newspack-blocks' ); ?>
+												</label>
+												<label
+													class='odl'
+													for='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-other-input'
+												>
+												<?php echo esc_html__( 'Donation amount', 'newspack-blocks' ); ?>
+												</label>
+												<div class='wp-block-newspack-blocks-donate__money-input money-input'>
+													<span class='currency'>
+													<?php echo esc_html( $settings['currencySymbol'] ); ?>
+													</span>
+													<input
+														type='number'
+														name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>_other'
+														value='<?php echo esc_attr( $amount ); ?>'
+														id='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-other-input'
+													/>
+												</div>
+												<?php
+												else :
+													?>
+												<input
+													type='radio'
+													name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>'
+													value='<?php echo esc_attr( $amount ); ?>'
+													id='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-<?php echo (int) $index; ?>'
+													<?php checked( 1, $index ); ?>
+												/>
+												<label
+													class='tier-select-label tier-label'
+													for='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-<?php echo (int) $index; ?>'
+												>
+													<?php echo esc_html( $settings['currencySymbol'] . $amount ); ?>
+												</label>
+													<?php
+												endif;
+												?>
 										</div>
 									<?php endforeach; ?>
-
-									<div class='wp-block-newspack-blocks-donate__tier'>
-										<?php $other_suggested_amount = $suggested_amounts[ $frequency_slug ][1]; ?>
-										<input
-											type='radio'
-											class='other-input'
-											name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>'
-											value='other'
-											id='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-other'
-										/>
-										<label
-											class='tier-select-label tier-label'
-											for='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-other'
-										>
-											<?php echo esc_html__( 'Other', 'newspack-blocks' ); ?>
-										</label>
-										<label
-											class='other-donate-label odl'
-											for='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-other-input'
-										>
-											<?php echo esc_html__( 'Donation amount', 'newspack-blocks' ); ?>
-										</label>
-										<div class='wp-block-newspack-blocks-donate__money-input money-input'>
-											<span class='currency'>
-												<?php echo esc_html( $settings['currencySymbol'] ); ?>
-											</span>
-											<input
-												type='number'
-												name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>_other'
-												value='<?php echo esc_attr( $other_suggested_amount ); ?>'
-												id='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-other-input'
-											/>
-										</div>
-									</div>
-
 								</div>
 							</div>
+
 						<?php endforeach; ?>
 					</div>
 				</div>

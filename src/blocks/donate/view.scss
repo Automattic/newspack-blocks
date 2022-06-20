@@ -124,7 +124,8 @@
 			&:checked ~ .money-input {
 				display: flex;
 			}
-			&:checked ~ .other-label {
+
+			&:checked ~ .odl {
 				display: block;
 			}
 
