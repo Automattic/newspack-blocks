@@ -99,16 +99,16 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 		apiFetch< DonationSettings >( {
 			path: '/newspack/v1/wizard/newspack-reader-revenue-wizard/donations',
 		} )
-			.then( ( settings: DonationSettings ) => {
+			.then( ( donationSettings: DonationSettings ) => {
 				setSettings( {
-					amounts: settings.amounts,
-					currencySymbol: settings.currencySymbol,
-					tiered: settings.tiered,
-					disabledFrequencies: settings.disabledFrequencies,
+					amounts: donationSettings.amounts,
+					currencySymbol: donationSettings.currencySymbol,
+					tiered: donationSettings.tiered,
+					disabledFrequencies: donationSettings.disabledFrequencies,
 				} );
 
 				if ( isEmpty( attributes.disabledFrequencies ) ) {
-					setAttributes( { disabledFrequencies: settings.disabledFrequencies } );
+					setAttributes( { disabledFrequencies: donationSettings.disabledFrequencies } );
 				}
 
 				// Migrate old attributes.
@@ -117,7 +117,8 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 					attributes.suggestedAmounts &&
 					attributes.suggestedAmounts.length
 				) {
-					const untieredAmount = attributes.suggestedAmountUntiered || settings.amounts.month[ 3 ];
+					const untieredAmount =
+						attributes.suggestedAmountUntiered || donationSettings.amounts.month[ 3 ];
 					setAttributes( {
 						suggestedAmounts: undefined,
 						suggestedAmountUntiered: undefined,
@@ -128,7 +129,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 						},
 					} );
 				} else {
-					setAttributes( { amounts: { ...settings.amounts, ...attributes.amounts } } );
+					setAttributes( { amounts: { ...donationSettings.amounts, ...attributes.amounts } } );
 				}
 			} )
 			.catch( setError )
@@ -307,6 +308,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 												? __( 'Other', 'newspack-blocks' )
 												: settings.currencySymbol + displayAmount( suggestedAmount ) }
 										</label>
+										{ /* eslint-disable-next-line no-nested-ternary */ }
 										{ isOtherTier ? (
 											<>
 												<label className="odl" htmlFor={ id + '-other-input' }>
