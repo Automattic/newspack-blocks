@@ -9,7 +9,7 @@ import { hooks } from 'newspack-components';
  */
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
-import { useState, useEffect, useMemo } from '@wordpress/element';
+import { useState, useEffect, useMemo, useRef } from '@wordpress/element';
 import {
 	PanelBody,
 	ExternalLink,
@@ -18,6 +18,8 @@ import {
 	SelectControl,
 	ToggleControl,
 	TextControl,
+	ButtonGroup,
+	Button,
 } from '@wordpress/components';
 import { InspectorControls, RichText } from '@wordpress/block-editor';
 import { isEmpty } from 'lodash';
@@ -35,15 +37,21 @@ type DonationAmounts = {
 	[ Key in FrequencySlug as string ]: [ number, number, number, number ];
 };
 
-type DonateBlockAttributes = {
+type OverridableConfiguration = {
+	amounts: DonationAmounts;
+	tiered: boolean;
+	disabledFrequencies: {
+		[ Key in FrequencySlug as string ]: boolean;
+	};
+};
+
+type DonateBlockAttributes = OverridableConfiguration & {
 	buttonText: string;
 	thanksText: string;
 	defaultFrequency: FrequencySlug;
 	campaign: string;
 	// Manual mode enables block-level overrides of the global Donate settings.
 	manual: boolean;
-	tiered: boolean;
-	amounts: DonationAmounts;
 	// Legacy attributes.
 	suggestedAmounts?: [ number, number, number ];
 	suggestedAmountUntiered?: number;
@@ -53,10 +61,8 @@ type EditProps = {
 	setAttributes: ( attributes: Partial< DonateBlockAttributes > ) => void;
 	className: string;
 };
-type DonationSettings = {
-	amounts: DonationAmounts;
+type DonationSettings = OverridableConfiguration & {
 	currencySymbol: string;
-	tiered: boolean;
 };
 
 type EditState = DonationSettings;
@@ -86,6 +92,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 		amounts: {},
 		currencySymbol: '$',
 		tiered: false,
+		disabledFrequencies: {},
 	} );
 
 	useEffect( () => {
@@ -97,7 +104,12 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 					amounts: settings.amounts,
 					currencySymbol: settings.currencySymbol,
 					tiered: settings.tiered,
+					disabledFrequencies: settings.disabledFrequencies,
 				} );
+
+				if ( isEmpty( attributes.disabledFrequencies ) ) {
+					setAttributes( { disabledFrequencies: settings.disabledFrequencies } );
+				}
 
 				// Migrate old attributes.
 				if (
@@ -127,6 +139,26 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 		window.newspack_blocks_data?.is_rendering_streamlined_block;
 
 	const amounts = attributes.manual ? attributes.amounts : settings.amounts;
+	const availableFrequencies = FREQUENCY_SLUGS.filter( slug =>
+		attributes.manual ? ! attributes.disabledFrequencies[ slug ] : true
+	);
+
+	const formRef = useRef< HTMLFormElement >( null );
+
+	useEffect( () => {
+		if ( formRef.current ) {
+			const formValues = Object.fromEntries( new FormData( formRef.current ) );
+			if ( ! formValues.donation_frequency && formRef.current.elements ) {
+				const frequencyRadioInput = formRef.current.elements[ 0 ];
+				if ( frequencyRadioInput instanceof HTMLInputElement ) {
+					frequencyRadioInput.click();
+				}
+			}
+		}
+		if ( availableFrequencies.indexOf( attributes.defaultFrequency ) === -1 ) {
+			setAttributes( { defaultFrequency: availableFrequencies[ 0 ] } );
+		}
+	}, [ attributes.disabledFrequencies ] );
 
 	const handleCustomDonationChange = ( {
 		value,
@@ -172,45 +204,44 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 	);
 
 	const displayAmount = ( amount: number ) => amount.toFixed( 2 ).replace( /\.?0*$/, '' );
+	const getClassNames = ( classes: string ) =>
+		classNames(
+			classes,
+			className,
+			'wpbnbd',
+			`wpbnbd-frequencies--${ availableFrequencies.length }`
+		);
 
 	const renderUntieredForm = () => (
-		<div className={ classNames( className, 'untiered wpbnbd' ) }>
-			<form>
-				<div className="wp-block-newspack-blocks-donate__options">
-					{ FREQUENCY_SLUGS.map( frequencySlug => (
-						<div
-							className="wp-block-newspack-blocks-donate__frequency frequency"
-							key={ frequencySlug }
+		<div className="wp-block-newspack-blocks-donate__options">
+			{ availableFrequencies.map( frequencySlug => (
+				<div className="wp-block-newspack-blocks-donate__frequency frequency" key={ frequencySlug }>
+					{ renderFrequencySelect( frequencySlug ) }
+					<div className="input-container">
+						<label
+							className="donate-label"
+							htmlFor={ 'newspack-' + frequencySlug + '-' + uid + '-untiered-input' }
 						>
-							{ renderFrequencySelect( frequencySlug ) }
-							<div className="input-container">
-								<label
-									className="donate-label"
-									htmlFor={ 'newspack-' + frequencySlug + '-' + uid + '-untiered-input' }
-								>
-									{ __( 'Donation amount', 'newspack-blocks' ) }
-								</label>
-								<div className="wp-block-newspack-blocks-donate__money-input money-input">
-									<span className="currency">{ settings.currencySymbol }</span>
-									<input
-										type="number"
-										onChange={ evt =>
-											handleCustomDonationChange( {
-												value: evt.target.value,
-												frequency: frequencySlug,
-												tierIndex: 3,
-											} )
-										}
-										value={ amounts[ frequencySlug ][ 3 ] }
-										id={ 'newspack-' + frequencySlug + '-' + uid + '-untiered-input' }
-									/>
-								</div>
-							</div>
+							{ __( 'Donation amount', 'newspack-blocks' ) }
+						</label>
+						<div className="wp-block-newspack-blocks-donate__money-input money-input">
+							<span className="currency">{ settings.currencySymbol }</span>
+							<input
+								type="number"
+								onChange={ evt =>
+									handleCustomDonationChange( {
+										value: evt.target.value,
+										frequency: frequencySlug,
+										tierIndex: 3,
+									} )
+								}
+								value={ amounts[ frequencySlug ][ 3 ] }
+								id={ 'newspack-' + frequencySlug + '-' + uid + '-untiered-input' }
+							/>
 						</div>
-					) ) }
+					</div>
 				</div>
-				{ renderFooter() }
-			</form>
+			) ) }
 		</div>
 	);
 
@@ -234,73 +265,64 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 	);
 
 	const renderTieredForm = () => (
-		<div className={ classNames( className, 'tiered wpbnbd' ) }>
-			<form>
-				<div className="wp-block-newspack-blocks-donate__options">
-					<div className="wp-block-newspack-blocks-donate__frequencies frequencies">
-						{ FREQUENCY_SLUGS.map( frequencySlug => (
-							<div
-								className="wp-block-newspack-blocks-donate__frequency frequency"
-								key={ frequencySlug }
-							>
-								{ renderFrequencySelect( frequencySlug ) }
+		<div className="wp-block-newspack-blocks-donate__options">
+			<div className="wp-block-newspack-blocks-donate__frequencies frequencies">
+				{ availableFrequencies.map( frequencySlug => (
+					<div
+						className="wp-block-newspack-blocks-donate__frequency frequency"
+						key={ frequencySlug }
+					>
+						{ renderFrequencySelect( frequencySlug ) }
 
-								<div className="wp-block-newspack-blocks-donate__tiers tiers">
-									{ amounts[ frequencySlug ].map( ( suggestedAmount, index ) => {
-										const isOtherTier = index === 3;
-										const id = `newspack-tier-${ frequencySlug }-${ uid }-${
-											isOtherTier ? 'other' : index
-										}`;
-										return (
-											<div
-												className={ classNames(
-													'wp-block-newspack-blocks-donate__tier',
-													`wp-block-newspack-blocks-donate__tier--${
-														isOtherTier ? 'other' : 'frequency'
-													}`
-												) }
-												key={ index }
-											>
-												<input
-													type="radio"
-													value={ isOtherTier ? 'other' : suggestedAmount }
-													className={ isOtherTier ? 'other-input' : 'frequency-input' }
-													id={ id }
-													name={ `donation_value_${ frequencySlug }` }
-													defaultChecked={ index === 1 }
-												/>
-												<label className="tier-select-label tier-label" htmlFor={ id }>
-													{ isOtherTier
-														? __( 'Other', 'newspack-blocks' )
-														: settings.currencySymbol + displayAmount( suggestedAmount ) }
+						<div className="wp-block-newspack-blocks-donate__tiers tiers">
+							{ amounts[ frequencySlug ].map( ( suggestedAmount, index ) => {
+								const isOtherTier = index === 3;
+								const id = `newspack-tier-${ frequencySlug }-${ uid }-${
+									isOtherTier ? 'other' : index
+								}`;
+								return (
+									<div
+										className={ classNames(
+											'wp-block-newspack-blocks-donate__tier',
+											`wp-block-newspack-blocks-donate__tier--${
+												isOtherTier ? 'other' : 'frequency'
+											}`
+										) }
+										key={ index }
+									>
+										<input
+											type="radio"
+											value={ isOtherTier ? 'other' : suggestedAmount }
+											className={ isOtherTier ? 'other-input' : 'frequency-input' }
+											id={ id }
+											name={ `donation_value_${ frequencySlug }` }
+											defaultChecked={ index === 1 }
+										/>
+										<label className="tier-select-label tier-label" htmlFor={ id }>
+											{ isOtherTier
+												? __( 'Other', 'newspack-blocks' )
+												: settings.currencySymbol + displayAmount( suggestedAmount ) }
+										</label>
+										{ isOtherTier ? (
+											<>
+												<label className="odl" htmlFor={ id + '-other-input' }>
+													{ __( 'Donation amount', 'newspack-blocks' ) }
 												</label>
-												{ isOtherTier ? (
-													<>
-														<label className="odl" htmlFor={ id + '-other-input' }>
-															{ __( 'Donation amount', 'newspack-blocks' ) }
-														</label>
-														<div className="wp-block-newspack-blocks-donate__money-input money-input">
-															<span className="currency">{ settings.currencySymbol }</span>
-															{ renderAmountValueInput(
-																frequencySlug,
-																index,
-																id + '-other-input'
-															) }
-														</div>
-													</>
-												) : attributes.manual ? (
-													renderAmountValueInput( frequencySlug, index, id )
-												) : null }
-											</div>
-										);
-									} ) }
-								</div>
-							</div>
-						) ) }
+												<div className="wp-block-newspack-blocks-donate__money-input money-input">
+													<span className="currency">{ settings.currencySymbol }</span>
+													{ renderAmountValueInput( frequencySlug, index, id + '-other-input' ) }
+												</div>
+											</>
+										) : attributes.manual ? (
+											renderAmountValueInput( frequencySlug, index, id )
+										) : null }
+									</div>
+								);
+							} ) }
+						</div>
 					</div>
-				</div>
-				{ renderFooter() }
-			</form>
+				) ) }
+			</div>
 		</div>
 	);
 
@@ -377,13 +399,19 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 
 	return (
 		<>
-			{ isTiered ? renderTieredForm() : renderUntieredForm() }
+			<div className={ getClassNames( isTiered ? 'tiered' : 'untiered' ) }>
+				<form ref={ formRef }>
+					{ isTiered ? renderTieredForm() : renderUntieredForm() }
+					{ renderFooter() }
+				</form>
+			</div>
+
 			<InspectorControls>
 				<PanelBody title={ __( 'Donate Settings', 'newspack-blocks' ) }>
 					<SelectControl
 						label={ __( 'Default Tab', 'newspack' ) }
 						value={ attributes.defaultFrequency }
-						options={ Object.keys( FREQUENCIES ).map( key => ( {
+						options={ availableFrequencies.map( key => ( {
 							label: FREQUENCIES[ key ],
 							value: key,
 						} ) ) }
@@ -397,11 +425,38 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 						label={ __( 'Configure manually', 'newspack-blocks' ) }
 					/>
 					{ attributes.manual ? (
-						<ToggleControl
-							checked={ Boolean( attributes.tiered ) }
-							onChange={ () => setAttributes( { tiered: ! attributes.tiered } ) }
-							label={ __( 'Tiered', 'newspack-blocks' ) }
-						/>
+						<>
+							<ToggleControl
+								checked={ Boolean( attributes.tiered ) }
+								onChange={ () => setAttributes( { tiered: ! attributes.tiered } ) }
+								label={ __( 'Tiered', 'newspack-blocks' ) }
+							/>
+							<ButtonGroup>
+								{ FREQUENCY_SLUGS.map( ( frequency: FrequencySlug ) => {
+									const isFrequencyDisabled = attributes.disabledFrequencies[ frequency ];
+									const isOneFrequencyActive =
+										Object.values( attributes.disabledFrequencies ).filter( Boolean ).length ===
+										FREQUENCY_SLUGS.length - 1;
+									return (
+										<Button
+											key={ frequency }
+											variant={ isFrequencyDisabled ? '' : 'primary' }
+											disabled={ ! isFrequencyDisabled && isOneFrequencyActive }
+											onClick={ () => {
+												setAttributes( {
+													disabledFrequencies: {
+														...attributes.disabledFrequencies,
+														[ frequency ]: ! isFrequencyDisabled,
+													},
+												} );
+											} }
+										>
+											{ FREQUENCIES[ frequency ] }
+										</Button>
+									);
+								} ) }
+							</ButtonGroup>
+						</>
 					) : (
 						<p>
 							{ __(

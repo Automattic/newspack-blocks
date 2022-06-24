@@ -247,7 +247,6 @@
 
 		@include media( tablet ) {
 			justify-content: center;
-			width: 33.33%;
 
 			&::before {
 				display: none;
@@ -292,7 +291,6 @@
 		@include media( tablet ) {
 			border-left-width: 1px;
 			border-right-width: 1px;
-			left: 33.33%;
 			top: 0;
 		}
 	}
@@ -303,6 +301,32 @@
 		@include media( tablet ) {
 			left: 66.66%;
 			top: 0;
+		}
+	}
+}
+
+@include media( tablet ) {
+	.wpbnbd-frequencies {
+		&--2 {
+			&.wpbnbd .frequency {
+				.freq-label {
+					width: 50%;
+				}
+				&:nth-of-type( 2 ) .freq-label {
+					left: 50%;
+				}
+			}
+		}
+
+		&--3 {
+			&.wpbnbd .frequency {
+				.freq-label {
+					width: 33.33%;
+				}
+				&:nth-of-type( 2 ) .freq-label {
+					left: 33.33%;
+				}
+			}
 		}
 	}
 }

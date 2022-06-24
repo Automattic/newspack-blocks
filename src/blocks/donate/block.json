@@ -16,6 +16,10 @@
 			"type": "object",
 			"default": {}
 		},
+		"disabledFrequencies": {
+			"type": "object",
+			"default": {}
+		},
 		"thanksText": {
 			"type": "string",
 			"default": "Your contribution is appreciated."
