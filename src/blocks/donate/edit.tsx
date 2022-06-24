@@ -214,6 +214,25 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 		</div>
 	);
 
+	const renderAmountValueInput = (
+		frequencySlug: FrequencySlug,
+		tierIndex: number,
+		id: string
+	) => (
+		<input
+			type="number"
+			onChange={ evt =>
+				handleCustomDonationChange( {
+					value: evt.target.value,
+					frequency: frequencySlug,
+					tierIndex,
+				} )
+			}
+			value={ amounts[ frequencySlug ][ tierIndex ] }
+			id={ id }
+		/>
+	);
+
 	const renderTieredForm = () => (
 		<div className={ classNames( className, 'tiered wpbnbd' ) }>
 			<form>
@@ -233,11 +252,19 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 											isOtherTier ? 'other' : index
 										}`;
 										return (
-											<div className="wp-block-newspack-blocks-donate__tier" key={ index }>
+											<div
+												className={ classNames(
+													'wp-block-newspack-blocks-donate__tier',
+													`wp-block-newspack-blocks-donate__tier--${
+														isOtherTier ? 'other' : 'frequency'
+													}`
+												) }
+												key={ index }
+											>
 												<input
 													type="radio"
 													value={ isOtherTier ? 'other' : suggestedAmount }
-													className={ isOtherTier ? 'other-input' : '' }
+													className={ isOtherTier ? 'other-input' : 'frequency-input' }
 													id={ id }
 													name={ `donation_value_${ frequencySlug }` }
 													defaultChecked={ index === 1 }
@@ -247,28 +274,23 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 														? __( 'Other', 'newspack-blocks' )
 														: settings.currencySymbol + displayAmount( suggestedAmount ) }
 												</label>
-												{ isOtherTier && (
+												{ isOtherTier ? (
 													<>
 														<label className="odl" htmlFor={ id + '-other-input' }>
 															{ __( 'Donation amount', 'newspack-blocks' ) }
 														</label>
 														<div className="wp-block-newspack-blocks-donate__money-input money-input">
 															<span className="currency">{ settings.currencySymbol }</span>
-															<input
-																type="number"
-																onChange={ evt =>
-																	handleCustomDonationChange( {
-																		value: evt.target.value,
-																		frequency: frequencySlug,
-																		tierIndex: index,
-																	} )
-																}
-																value={ amounts[ frequencySlug ][ 3 ] }
-																id={ id + '-other-input' }
-															/>
+															{ renderAmountValueInput(
+																frequencySlug,
+																index,
+																id + '-other-input'
+															) }
 														</div>
 													</>
-												) }
+												) : attributes.manual ? (
+													renderAmountValueInput( frequencySlug, index, id )
+												) : null }
 											</div>
 										);
 									} ) }

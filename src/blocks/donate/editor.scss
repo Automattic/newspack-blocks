@@ -33,6 +33,28 @@
 	}
 }
 
+.wp-block-newspack-blocks-donate__tier--frequency {
+	position: relative;
+}
+.wpbnbd.tiered {
+	.tiers {
+		input.frequency-input {
+			~ input[type='number'] {
+				position: absolute;
+				max-width: 81px;
+				top: -31px;
+				z-index: 9;
+				left: 5px;
+				display: none;
+			}
+
+			&:checked ~ input[type='number'] {
+				display: flex;
+			}
+		}
+	}
+}
+
 .block-editor-block-list__layout
 	.block-editor-block-list__block
 	.wp-block-newspack-blocks-donate.tiered.is-style-minimal
