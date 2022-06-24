@@ -8,16 +8,14 @@
 /**
  * Renders the frequency selection of the donation form.
  *
- * @param array  $attributes The block attributes.
  * @param string $frequency_slug Frequency slug.
  * @param string $frequency_name Frequency name.
  * @param number $uid Unique ID.
+ * @param array  $configuration The donations settings.
  *
  * @return string
  */
-function newspack_blocks_render_block_donate_frequency_selection( $attributes, $frequency_slug, $frequency_name, $uid ) {
-	$selected_frequency = $attributes['defaultFrequency'] ?? 'month';
-
+function newspack_blocks_render_block_donate_frequency_selection( $frequency_slug, $frequency_name, $uid, $configuration ) {
 	ob_start();
 	?>
 		<input
@@ -25,7 +23,12 @@ function newspack_blocks_render_block_donate_frequency_selection( $attributes, $
 			value='<?php echo esc_attr( $frequency_slug ); ?>'
 			id='newspack-donate-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>'
 			name='donation_frequency'
-			<?php checked( $selected_frequency, $frequency_slug ); ?>
+			<?php
+			checked(
+				$configuration['defaultFrequency'],
+				$frequency_slug
+			);
+			?>
 		/>
 		<label
 			for='newspack-donate-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>'
@@ -199,8 +202,8 @@ function newspack_blocks_render_block_donate( $attributes ) {
 
 	Newspack_Blocks::enqueue_view_assets( 'donate' );
 
-	$settings = Newspack\Donations::get_donation_settings();
-	if ( is_wp_error( $settings ) ) {
+	$configuration = Newspack\Donations::get_donation_settings();
+	if ( is_wp_error( $configuration ) ) {
 		return '';
 	}
 
@@ -219,26 +222,50 @@ function newspack_blocks_render_block_donate( $attributes ) {
 
 	/* If block is in "manual" mode, override certain state properties with values stored in attributes */
 	if ( $attributes['manual'] ?? false ) {
-		$settings = array_merge( $settings, $attributes );
-		if ( $attributes['disabledFrequencies']['once'] ) {
-			unset( $frequencies['once'] );
+		if ( isset( $attributes['tiered'] ) ) {
+			$configuration['tiered'] = $attributes['tiered'];
 		}
-		if ( $attributes['disabledFrequencies']['month'] ) {
-			unset( $frequencies['month'] );
+		if ( isset( $attributes['amounts'] ) && ! empty( $attributes['amounts'] ) ) {
+			$configuration['amounts'] = $attributes['amounts'];
 		}
-		if ( $attributes['disabledFrequencies']['year'] ) {
-			unset( $frequencies['year'] );
+
+		if ( isset( $attributes['disabledFrequencies'] ) ) {
+			foreach ( $attributes['disabledFrequencies'] as $frequency_slug => $is_disabled ) {
+				if ( $is_disabled ) {
+					$configuration['disabledFrequencies'][ $frequency_slug ] = true;          }
+			}
+		}
+	}
+
+	foreach ( array_keys( $frequencies ) as $frequency_slug ) {
+		if ( $configuration['disabledFrequencies'][ $frequency_slug ] ) {
+			unset( $frequencies[ $frequency_slug ] );
+		}
+	}
+
+	// Ensure default frequency is valid (not disabled).
+	foreach ( array_keys( $configuration['disabledFrequencies'] ) as $frequency_slug ) {
+		if ( $configuration['defaultFrequency'] === $frequency_slug && $configuration['disabledFrequencies'][ $frequency_slug ] ) {
+			$non_disabled_frequencies          = array_keys(
+				array_filter(
+					$configuration['disabledFrequencies'],
+					function ( $item ) {
+						return ! $item;
+					}
+				)
+			);
+			$configuration['defaultFrequency'] = $non_disabled_frequencies[0];
 		}
 	}
 
 	$uid = wp_rand( 10000, 99999 ); // Unique identifier to prevent labels colliding with other instances of Donate block.
 
 	if ( Newspack_Blocks::is_rendering_streamlined_block() ) {
-		$stripe_data           = \Newspack\Stripe_Connection::get_stripe_data();
-		$currency              = $stripe_data['currency'];
-		$settings_for_frontend = [
+		$stripe_data                = \Newspack\Stripe_Connection::get_stripe_data();
+		$currency                   = $stripe_data['currency'];
+		$configuration_for_frontend = [
 			$currency,
-			$settings['currencySymbol'],
+			$configuration['currencySymbol'],
 			get_bloginfo( 'name' ),
 			Newspack\Stripe_Connection::is_currency_zero_decimal( $currency ),
 			$stripe_data['location_code'],
@@ -248,7 +275,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 			$stripe_data['usedPublishableKey'],
 		];
 	} else {
-		$settings_for_frontend = [];
+		$configuration_for_frontend = [];
 	}
 
 	$classnames = 'wp-block-newspack-blocks-donate wpbnbd ' . $classname . ' wpbnbd-frequencies--' . count( $frequencies );
@@ -260,19 +287,19 @@ function newspack_blocks_render_block_donate( $attributes ) {
 	 * Each frequency and tier option is a radio input, styled to look like a button.
 	 * As the radio inputs are checked/unchecked, fields are hidden/displayed using only CSS.
 	 */
-	if ( ! $settings['tiered'] ) :
+	if ( ! $configuration['tiered'] ) :
 		?>
 		<div class="untiered <?php echo esc_html( $classnames ); ?>">
-			<form data-settings="<?php echo esc_html( htmlspecialchars( wp_json_encode( $settings_for_frontend ), ENT_QUOTES, 'UTF-8' ) ); ?>">
+			<form data-settings="<?php echo esc_html( htmlspecialchars( wp_json_encode( $configuration_for_frontend ), ENT_QUOTES, 'UTF-8' ) ); ?>">
 				<input type='hidden' name='newspack_donate' value='1' />
 				<div class='wp-block-newspack-blocks-donate__options'>
 					<?php foreach ( $frequencies as $frequency_slug => $frequency_name ) : ?>
 						<?php
-							$formatted_amount = $settings['amounts'][ $frequency_slug ][3];
+							$formatted_amount = $configuration['amounts'][ $frequency_slug ][3];
 						?>
 
 						<div class='wp-block-newspack-blocks-donate__frequency frequency'>
-							<?php echo newspack_blocks_render_block_donate_frequency_selection( $attributes, $frequency_slug, $frequency_name, $uid ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+							<?php echo newspack_blocks_render_block_donate_frequency_selection( $frequency_slug, $frequency_name, $uid, $configuration ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 							<div class='input-container'>
 								<label
 									class='donate-label'
@@ -282,10 +309,11 @@ function newspack_blocks_render_block_donate( $attributes ) {
 								</label>
 								<div class='wp-block-newspack-blocks-donate__money-input money-input'>
 									<span class='currency'>
-										<?php echo esc_html( $settings['currencySymbol'] ); ?>
+										<?php echo esc_html( $configuration['currencySymbol'] ); ?>
 									</span>
 									<input
 										type='number'
+										min='0'
 										name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>_untiered'
 										value='<?php echo esc_attr( $formatted_amount ); ?>'
 										id='newspack-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-untiered-input'
@@ -301,18 +329,18 @@ function newspack_blocks_render_block_donate( $attributes ) {
 
 		<?php
 		else :
-			$suggested_amounts = $settings['amounts'];
+			$suggested_amounts = $configuration['amounts'];
 			?>
 
 		<div class="tiered <?php echo esc_html( $classnames ); ?>">
-			<form data-settings="<?php echo esc_html( htmlspecialchars( wp_json_encode( $settings_for_frontend ), ENT_QUOTES, 'UTF-8' ) ); ?>">
+			<form data-settings="<?php echo esc_html( htmlspecialchars( wp_json_encode( $configuration_for_frontend ), ENT_QUOTES, 'UTF-8' ) ); ?>">
 				<input type='hidden' name='newspack_donate' value='1' />
 				<div class='wp-block-newspack-blocks-donate__options'>
 					<div class='wp-block-newspack-blocks-donate__frequencies frequencies'>
 						<?php foreach ( $frequencies as $frequency_slug => $frequency_name ) : ?>
 
 							<div class='wp-block-newspack-blocks-donate__frequency frequency'>
-								<?php echo newspack_blocks_render_block_donate_frequency_selection( $attributes, $frequency_slug, $frequency_name, $uid ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+								<?php echo newspack_blocks_render_block_donate_frequency_selection( $frequency_slug, $frequency_name, $uid, $configuration ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 
 								<div class='wp-block-newspack-blocks-donate__tiers tiers'>
 									<?php foreach ( $suggested_amounts[ $frequency_slug ] as $index => $amount ) : ?>
@@ -341,10 +369,11 @@ function newspack_blocks_render_block_donate( $attributes ) {
 												</label>
 												<div class='wp-block-newspack-blocks-donate__money-input money-input'>
 													<span class='currency'>
-													<?php echo esc_html( $settings['currencySymbol'] ); ?>
+													<?php echo esc_html( $configuration['currencySymbol'] ); ?>
 													</span>
 													<input
 														type='number'
+														min='0'
 														name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>_other'
 														value='<?php echo esc_attr( $amount ); ?>'
 														id='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-other-input'
@@ -364,7 +393,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 													class='tier-select-label tier-label'
 													for='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-<?php echo (int) $index; ?>'
 												>
-													<?php echo esc_html( $settings['currencySymbol'] . $amount ); ?>
+													<?php echo esc_html( $configuration['currencySymbol'] . $amount ); ?>
 												</label>
 													<?php
 												endif;

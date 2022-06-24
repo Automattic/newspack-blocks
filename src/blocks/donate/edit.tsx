@@ -140,7 +140,9 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 
 	const amounts = attributes.manual ? attributes.amounts : settings.amounts;
 	const availableFrequencies = FREQUENCY_SLUGS.filter( slug =>
-		attributes.manual ? ! attributes.disabledFrequencies[ slug ] : true
+		attributes.manual
+			? ! attributes.disabledFrequencies[ slug ]
+			: ! settings.disabledFrequencies[ slug ]
 	);
 
 	const formRef = useRef< HTMLFormElement >( null );
@@ -228,6 +230,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 							<span className="currency">{ settings.currencySymbol }</span>
 							<input
 								type="number"
+								min="0"
 								onChange={ evt =>
 									handleCustomDonationChange( {
 										value: evt.target.value,
@@ -252,6 +255,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 	) => (
 		<input
 			type="number"
+			min="0"
 			onChange={ evt =>
 				handleCustomDonationChange( {
 					value: evt.target.value,
