@@ -172,8 +172,14 @@ call_user_func(
 			if ( $show_author || $show_date || ! empty( $sponsors ) ) :
 				?>
 				<div class="entry-meta">
-					<?php if ( ! empty( $sponsors ) ) : ?>
-						<span class="entry-sponsors <?php if ( Newspack_Blocks::newspack_display_sponsors_and_authors( $sponsors ) ) { echo 'plus-author'; } ?>">
+					<?php 
+					if ( ! empty( $sponsors ) ) : 
+						$sponsor_classes[] = 'entry-sponsors';
+						if ( Newspack_Blocks::newspack_display_sponsors_and_authors( $sponsors ) ) {
+							$sponsor_classes[] = 'plus-author';
+						}
+						?>
+						<span class="<?php echo esc_attr( implode( ' ', $sponsor_classes ) ); ?>">
 								<?php
 								$logos = Newspack_Blocks::get_sponsor_logos( $sponsors );
 								if ( ! empty( $logos ) ) :
