@@ -283,6 +283,7 @@
 		display: block;
 		margin-right: 0.5em;
 	}
+
 	&.wp-block-newspack-blocks-carousel__autoplay-playing .amp-carousel-button-pause,
 	&.wp-block-newspack-blocks-carousel__autoplay-playing .swiper-button-pause,
 	.amp-carousel-button-play,
@@ -342,3 +343,23 @@
 		}
 	}
 }
+
+/* stylelint-disable selector-type-no-unknown  */
+.wpnbpc,
+amp-script .wpnbpc {
+	.entry-sponsors {
+		align-items: center;
+		display: inline-flex;
+		flex-wrap: wrap;
+		width: 100%;
+
+		&.plus-author {
+			font-size: 0.9em;
+
+			&:not( :last-child ) {
+				margin-bottom: 0.5rem;
+			}
+		}
+	}
+}
+/* stylelint-enable */

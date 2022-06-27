@@ -424,6 +424,25 @@ amp-script .wpnbha {
 			}
 		}
 	}
+
+	.sponsor-label {
+		display: flex;
+	}
+
+	.entry-sponsors {
+		align-items: center;
+		display: inline-flex;
+		flex-wrap: wrap;
+		width: 100%;
+
+		&.plus-author {
+			font-size: 0.9em;
+
+			&:not( :last-child ) {
+				margin-bottom: 0.5rem;
+			}
+		}
+	}
 }
 /* stylelint-enable */
 

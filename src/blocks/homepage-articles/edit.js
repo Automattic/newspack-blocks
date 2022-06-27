@@ -216,7 +216,11 @@ class Edit extends Component {
 					) }
 					<div className="entry-meta">
 						{ post.newspack_post_sponsors && (
-							<span className="entry-sponsors">
+							<span
+								className={ `entry-sponsors ${
+									post.newspack_sponsors_show_author ? 'plus-author' : ''
+								}` }
+							>
 								{ formatSponsorLogos( post.newspack_post_sponsors ) }
 								{ formatSponsorByline( post.newspack_post_sponsors ) }
 							</span>
@@ -232,6 +236,7 @@ class Edit extends Component {
 							! post.newspack_listings_hide_author &&
 							( ! post.newspack_post_sponsors || post.newspack_sponsors_show_author ) &&
 							formatByline( post.newspack_author_info ) }
+
 						{ showDate && ! post.newspack_listings_hide_publish_date && (
 							<time className="entry-date published" key="pub-date">
 								{ dateI18n( dateFormat, post.date_gmt ) }
