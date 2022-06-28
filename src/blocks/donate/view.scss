@@ -20,7 +20,8 @@
 	}
 
 	.freq-label,
-	.tier-label {
+	.tier-label,
+	.input-container {
 		display: block;
 		font-weight: bold;
 		cursor: pointer;
@@ -143,30 +144,12 @@
 }
 
 .wpbnbd.untiered {
-	padding-top: 7.65em;
-	padding-top: calc( 3 * ( 0.76rem + 1.28em + 1px ) );
-	position: relative;
-
-	@include media( tablet ) {
-		padding-top: 2.55em;
-		padding-top: calc( 0.76rem + 1.28em + 1px );
-	}
-
-	.freq-label {
-		font-size: $font__size-sm;
-	}
-
 	.input-container {
 		margin: 0.76rem;
 		display: none;
 
 		@include media( tablet ) {
 			margin: 1.5rem 1.5rem 0.76rem;
-		}
-
-		label {
-			font-size: $font__size-sm;
-			font-weight: bold;
 		}
 	}
 
@@ -214,12 +197,10 @@
 .wpbnbd .frequencies {
 	font-size: $font__size-sm;
 	padding-top: 7.65em;
-	padding-top: calc( 3 * ( 0.76rem + 1.6em + 1px ) );
 	position: relative;
 
 	@include media( tablet ) {
-		padding-top: 2.55em;
-		padding-top: calc( 0.76rem + 1.6em + 1px );
+		padding-top: calc( 0.76rem + 1.6em + 1px ) !important;
 	}
 }
 
@@ -351,12 +332,6 @@
 	}
 
 	&.untiered {
-		padding-top: calc( 3 * ( 1.14rem + 1.28em ) + 8px );
-
-		@include media( tablet ) {
-			padding-top: calc( 1.14rem + 1.28em + 4px );
-		}
-
 		.input-container {
 			margin: 1.12rem;
 		}
@@ -384,8 +359,6 @@
 	}
 
 	.frequencies {
-		padding-top: calc( 3 * ( 1.14rem + 1.6em ) + 8px );
-
 		@include media( tablet ) {
 			padding-top: calc( 1.14rem + 1.6em + 4px );
 		}
@@ -486,12 +459,6 @@
 	}
 
 	&.untiered {
-		padding-top: calc( 3 * ( 0.76rem + 1.28em + 4px ) );
-
-		@include media( tablet ) {
-			padding-top: calc( 0.76rem + 1.28em + 4px );
-		}
-
 		.input-container {
 			margin: 0.56rem 0 1.12rem;
 			text-align: left;
