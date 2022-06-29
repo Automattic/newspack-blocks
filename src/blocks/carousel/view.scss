@@ -351,6 +351,7 @@ amp-script .wpnbpc {
 		align-items: center;
 		display: inline-flex;
 		flex-wrap: wrap;
+		gap: 0.5em;
 		width: 100%;
 
 		&.plus-author {
@@ -360,6 +361,12 @@ amp-script .wpnbpc {
 				margin-bottom: 0.5rem;
 			}
 		}
+	}
+
+	.sponsor-logos {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5em;
 	}
 }
 /* stylelint-enable */

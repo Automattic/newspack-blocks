@@ -410,10 +410,8 @@ amp-script .wpnbha {
 
 		&.sponsor-label {
 			align-items: center;
-
-			.flag {
-				margin-right: 0.5em;
-			}
+			display: flex;
+			gap: 0.5em;
 		}
 
 		a {
@@ -425,14 +423,11 @@ amp-script .wpnbha {
 		}
 	}
 
-	.sponsor-label {
-		display: flex;
-	}
-
 	.entry-sponsors {
 		align-items: center;
 		display: inline-flex;
 		flex-wrap: wrap;
+		gap: 0.5em;
 		width: 100%;
 
 		&.plus-author {
@@ -442,6 +437,12 @@ amp-script .wpnbha {
 				margin-bottom: 0.5rem;
 			}
 		}
+	}
+
+	.sponsor-logos {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5em;
 	}
 }
 /* stylelint-enable */
