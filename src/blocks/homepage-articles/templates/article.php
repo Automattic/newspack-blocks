@@ -103,12 +103,10 @@ call_user_func(
 							<?php echo esc_html( Newspack_Blocks::get_sponsor_label( $sponsors ) ); ?>
 						</span>
 					<?php endif; ?>
-					<?php if ( ! empty( $category_link ) && ( empty( $sponsors ) || Newspack_Blocks::newspack_display_sponsors_and_categories( $sponsors ) ) ) : ?>
-						<a href="<?php echo esc_url( $category_link ); ?>">
-					<?php endif; ?>
+					<?php if ( $attributes['showCategory'] && ! empty( $category_link ) && ( empty( $sponsors ) || Newspack_Blocks::newspack_display_sponsors_and_categories( $sponsors ) ) ) : ?>
+					<a href="<?php echo esc_url( $category_link ); ?>">
 						<?php echo esc_html( $category->name ); ?>
-					<?php if ( ! empty( $category_link ) && ( empty( $sponsors ) || Newspack_Blocks::newspack_display_sponsors_and_categories( $sponsors ) ) ) : ?>
-						</a>
+					</a>
 					<?php endif; ?>
 				</div>
 				<?php
