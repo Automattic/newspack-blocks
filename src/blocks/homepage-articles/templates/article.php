@@ -161,7 +161,13 @@ call_user_func(
 			<?php endif; ?>
 			<?php
 			if ( $attributes['showExcerpt'] ) :
+				if ( ! empty( $data['jetpack_share_buttons_disabled'] ) ) {
+					add_filter( 'sharing_show', '__return_false' );
+				}
 				the_excerpt();
+				if ( ! empty( $data['jetpack_share_buttons_disabled'] ) ) {
+					remove_filter( 'sharing_show', '__return_false' );
+				}
 			endif;
 			if ( $post_link && ( $attributes['showReadMore'] ) ) :
 				?>
