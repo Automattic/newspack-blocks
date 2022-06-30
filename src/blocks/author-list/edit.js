@@ -248,8 +248,6 @@ const AuthorList = ( { attributes, clientId, setAttributes } ) => {
 								const total = parseInt( response.headers.get( 'x-wp-total' ) || 0 );
 								const suggestions = await response.json();
 
-								console.log( suggestions );
-
 								// Set max items for "load more" functionality in suggestions list.
 								if ( ! maxItemsToSuggest && ! search ) {
 									setMaxItemsToSuggest( total );
