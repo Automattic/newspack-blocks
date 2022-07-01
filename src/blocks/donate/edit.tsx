@@ -11,6 +11,7 @@ import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import { useState, useEffect, useMemo, useRef } from '@wordpress/element';
 import {
+	CheckboxControl,
 	PanelBody,
 	ExternalLink,
 	Placeholder,
@@ -438,7 +439,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 			</div>
 
 			<InspectorControls>
-				<PanelBody title={ __( 'Donate Settings', 'newspack-blocks' ) }>
+				<PanelBody title={ __( 'Suggested Donations', 'newspack-blocks' ) }>
 					<SelectControl
 						label={ __( 'Default Tab', 'newspack' ) }
 						value={ attributes.defaultFrequency }
@@ -462,18 +463,20 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 								onChange={ () => setAttributes( { tiered: ! attributes.tiered } ) }
 								label={ __( 'Tiered', 'newspack-blocks' ) }
 							/>
-							<ButtonGroup>
+							<div className="components-frequency-donations">
+								<p>{ __( 'Frequency', 'newspack-blocks' ) }</p>
 								{ FREQUENCY_SLUGS.map( ( frequency: FrequencySlug ) => {
 									const isFrequencyDisabled = attributes.disabledFrequencies[ frequency ];
 									const isOneFrequencyActive =
 										Object.values( attributes.disabledFrequencies ).filter( Boolean ).length ===
 										FREQUENCY_SLUGS.length - 1;
 									return (
-										<Button
+										<CheckboxControl
 											key={ frequency }
-											variant={ isFrequencyDisabled ? '' : 'primary' }
+											label={ FREQUENCIES[ frequency ] }
+											checked={ ! isFrequencyDisabled }
 											disabled={ ! isFrequencyDisabled && isOneFrequencyActive }
-											onClick={ () => {
+											onChange={ () => {
 												setAttributes( {
 													disabledFrequencies: {
 														...attributes.disabledFrequencies,
@@ -481,12 +484,10 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 													},
 												} );
 											} }
-										>
-											{ FREQUENCIES[ frequency ] }
-										</Button>
+										/>
 									);
 								} ) }
-							</ButtonGroup>
+							</div>
 						</>
 					) : (
 						<p>

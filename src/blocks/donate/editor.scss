@@ -64,3 +64,21 @@
 	background: transparent;
 	color: $color__text-main;
 }
+
+.components-frequency-donations {
+	p {
+		margin-bottom: 8px;
+	}
+
+	.components-base-control {
+		margin-bottom: 0;
+
+		&:last-child {
+			margin-bottom: 0;
+
+			.components-base-control__field {
+				margin-bottom: 0;
+			}
+		}
+	}
+}
