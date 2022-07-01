@@ -1,0 +1,47 @@
+{
+  "name": "donate",
+  "category": "newspack",
+  "attributes": {
+    "className": {
+      "type": "string"
+    },
+    "manual": {
+      "type": "boolean"
+    },
+    "suggestedAmounts": {
+      "type": "array",
+      "default": [
+        0,
+        0,
+        0
+      ]
+    },
+    "suggestedAmountUntiered": {
+      "type": "integer",
+      "default": 0
+    },
+    "tiered": {
+      "type": "boolean",
+      "default": true
+    },
+    "campaign": {
+      "type": "string"
+    },
+    "thanksText": {
+      "type": "string",
+      "default": "Your contribution is appreciated."
+    },
+    "buttonText": {
+      "type": "string",
+      "default": "Donate Now"
+    },
+    "defaultFrequency": {
+      "type": "string",
+      "default": "month"
+    }
+  },
+  "supports": {
+    "html": false,
+    "align": false
+  }
+}

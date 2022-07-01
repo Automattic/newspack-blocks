@@ -374,49 +374,18 @@ function newspack_blocks_render_block_donate( $attributes ) {
  * Registers the `newspack-blocks/donate` block on server.
  */
 function newspack_blocks_register_donate() {
+	$block_json = json_decode(
+		file_get_contents( __DIR__ . '/block.json' ), // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		true
+	);
+
 	register_block_type(
-		'newspack-blocks/donate',
-		array(
-			'attributes'      => array(
-				'className'               => [
-					'type' => 'string',
-				],
-				'manual'                  => [
-					'type' => 'boolean',
-				],
-				'suggestedAmounts'        => [
-					'type'    => 'array',
-					'items'   => [
-						'type' => 'number',
-					],
-					'default' => [ 0, 0, 0 ],
-				],
-				'suggestedAmountUntiered' => [
-					'type' => 'number',
-				],
-				'tiered'                  => [
-					'type'    => 'boolean',
-					'default' => true,
-				],
-				'campaign'                => [
-					'type' => 'string',
-				],
-				'thanksText'              => [
-					'type'    => 'string',
-					'default' => __( 'Your contribution is appreciated.', 'newspack-blocks' ),
-				],
-				'buttonText'              => [
-					'type'    => 'string',
-					'default' => __( 'Donate Now', 'newspack-blocks' ),
-				],
-				'defaultFrequency'        => [
-					'type'    => 'string',
-					'default' => 'month',
-				],
-			),
+		'newspack-blocks/' . $block_json['name'],
+		[
+			'attributes'      => $block_json['attributes'],
 			'render_callback' => 'newspack_blocks_render_block_donate',
-			'supports'        => [],
-		)
+			'supports'        => $block_json['supports'],
+		]
 	);
 }
 add_action( 'init', 'newspack_blocks_register_donate' );
