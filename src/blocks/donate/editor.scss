@@ -4,6 +4,18 @@
 @import './streamlined/style.scss';
 
 .wp-block-newspack-blocks-donate {
+	&__tier--frequency {
+		position: relative;
+	}
+
+	&__panel-inputs {
+		display: flex;
+		margin-bottom: 21px;
+		input {
+			min-width: 0;
+		}
+	}
+
 	button[type='submit'] {
 		border: none;
 		border-radius: 5px;
@@ -33,10 +45,7 @@
 	}
 }
 
-.wp-block-newspack-blocks-donate__tier--frequency {
-	position: relative;
-}
-.wpbnbd.tiered {
+.wp-block-newspack-blocks-donate.wpbnbd.tiered {
 	.tiers {
 		input.frequency-input {
 			~ input[type='number'] {

@@ -241,6 +241,27 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 		return { paddingTop: `calc(${ availableFrequencies.length }*${ padding })` };
 	};
 
+	const renderAmountValueInput = (
+		frequencySlug: FrequencySlug,
+		tierIndex: number,
+		id?: string
+	) => (
+		<input
+			key={ `${ frequencySlug }-${ tierIndex }` }
+			type="number"
+			min="0"
+			onChange={ evt =>
+				handleCustomDonationChange( {
+					value: evt.target.value,
+					frequency: frequencySlug,
+					tierIndex,
+				} )
+			}
+			value={ amounts[ frequencySlug ][ tierIndex ] }
+			id={ id }
+		/>
+	);
+
 	const renderUntieredForm = () => (
 		<div className="wp-block-newspack-blocks-donate__options">
 			<div
@@ -262,45 +283,17 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 							</label>
 							<div className="wp-block-newspack-blocks-donate__money-input money-input">
 								<span className="currency">{ settings.currencySymbol }</span>
-								<input
-									type="number"
-									min="0"
-									onChange={ evt =>
-										handleCustomDonationChange( {
-											value: evt.target.value,
-											frequency: frequencySlug,
-											tierIndex: 3,
-										} )
-									}
-									value={ amounts[ frequencySlug ][ 3 ] }
-									id={ 'newspack-' + frequencySlug + '-' + uid + '-untiered-input' }
-								/>
+								{ renderAmountValueInput(
+									frequencySlug,
+									3,
+									`newspack-${ frequencySlug }-${ uid }-untiered-input`
+								) }
 							</div>
 						</div>
 					</div>
 				) ) }
 			</div>
 		</div>
-	);
-
-	const renderAmountValueInput = (
-		frequencySlug: FrequencySlug,
-		tierIndex: number,
-		id: string
-	) => (
-		<input
-			type="number"
-			min="0"
-			onChange={ evt =>
-				handleCustomDonationChange( {
-					value: evt.target.value,
-					frequency: frequencySlug,
-					tierIndex,
-				} )
-			}
-			value={ amounts[ frequencySlug ][ tierIndex ] }
-			id={ id }
-		/>
 	);
 
 	const renderTieredForm = () => (
@@ -345,7 +338,6 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 												? __( 'Other', 'newspack-blocks' )
 												: settings.currencySymbol + displayAmount( suggestedAmount ) }
 										</label>
-										{ /* eslint-disable-next-line no-nested-ternary */ }
 										{ isOtherTier ? (
 											<>
 												<label className="odl" htmlFor={ id + '-other-input' }>
@@ -356,8 +348,6 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 													{ renderAmountValueInput( frequencySlug, index, id + '-other-input' ) }
 												</div>
 											</>
-										) : attributes.manual ? (
-											renderAmountValueInput( frequencySlug, index, id )
 										) : null }
 									</div>
 								);
@@ -482,20 +472,29 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 										Object.values( attributes.disabledFrequencies ).filter( Boolean ).length ===
 										FREQUENCY_SLUGS.length - 1;
 									return (
-										<CheckboxControl
-											key={ frequency }
-											label={ FREQUENCIES[ frequency ] }
-											checked={ ! isFrequencyDisabled }
-											disabled={ ! isFrequencyDisabled && isOneFrequencyActive }
-											onChange={ () => {
-												setAttributes( {
-													disabledFrequencies: {
-														...attributes.disabledFrequencies,
-														[ frequency ]: ! isFrequencyDisabled,
-													},
-												} );
-											} }
-										/>
+										<>
+											<CheckboxControl
+												key={ frequency }
+												label={ FREQUENCIES[ frequency ] }
+												checked={ ! isFrequencyDisabled }
+												disabled={ ! isFrequencyDisabled && isOneFrequencyActive }
+												onChange={ () => {
+													setAttributes( {
+														disabledFrequencies: {
+															...attributes.disabledFrequencies,
+															[ frequency ]: ! isFrequencyDisabled,
+														},
+													} );
+												} }
+											/>
+											{ ! isFrequencyDisabled && (
+												<div className="wp-block-newspack-blocks-donate__panel-inputs">
+													{ amounts[ frequency ].map( ( suggestedAmount, index ) =>
+														renderAmountValueInput( frequency, index )
+													) }
+												</div>
+											) }
+										</>
 									);
 								} ) }
 							</div>
