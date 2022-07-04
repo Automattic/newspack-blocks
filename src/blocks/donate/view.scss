@@ -344,10 +344,6 @@
 				margin: 0;
 				text-align: center;
 			}
-
-			input.other-input:checked + label {
-				margin-bottom: calc( 1.28rem + 1.6em + 2px );
-			}
 		}
 
 		.money-input {
@@ -495,10 +491,6 @@
 				&:hover {
 					color: inherit;
 				}
-			}
-
-			input.other-input:checked + label {
-				margin-bottom: calc( 1.28rem + 1.6em + 2px );
 			}
 
 			input[type='radio']:checked + .tier-select-label {
