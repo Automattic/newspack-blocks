@@ -268,12 +268,6 @@
 
 	&:nth-of-type( 2 ) .freq-label {
 		top: calc( 0.76rem + 1.6em + 1px );
-
-		@include media( tablet ) {
-			border-left-width: 1px;
-			border-right-width: 1px;
-			top: 0;
-		}
 	}
 
 	&:nth-of-type( 3 ) .freq-label {
@@ -294,7 +288,9 @@
 					width: 50%;
 				}
 				&:nth-of-type( 2 ) .freq-label {
+					border-left-width: 1px;
 					left: 50%;
+					top: 0;
 				}
 			}
 		}
@@ -305,7 +301,10 @@
 					width: 33.33%;
 				}
 				&:nth-of-type( 2 ) .freq-label {
+					border-left-width: 1px;
+					border-right-width: 1px;
 					left: 33.33%;
+					top: 0;
 				}
 			}
 		}
