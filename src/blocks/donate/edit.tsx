@@ -19,8 +19,6 @@ import {
 	SelectControl,
 	ToggleControl,
 	TextControl,
-	ButtonGroup,
-	Button,
 } from '@wordpress/components';
 import { InspectorControls, RichText } from '@wordpress/block-editor';
 import { isEmpty } from 'lodash';
@@ -150,6 +148,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 
 	const formRef = useRef< HTMLFormElement >( null );
 
+	// Update selected frequency when available frequencies change.
 	useEffect( () => {
 		if ( formRef.current ) {
 			const formValues = Object.fromEntries( new FormData( formRef.current ) );
@@ -164,6 +163,18 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 			setAttributes( { defaultFrequency: availableFrequencies[ 0 ] } );
 		}
 	}, [ attributes.disabledFrequencies ] );
+
+	// Update selected frequency when the default frequency attribute is updated.
+	useEffect( () => {
+		if ( formRef.current ) {
+			const defaultFrequencyInput = formRef.current.querySelector(
+				`[name="donation_frequency"][value="${ attributes.defaultFrequency }"]`
+			);
+			if ( defaultFrequencyInput instanceof HTMLInputElement ) {
+				defaultFrequencyInput.click();
+			}
+		}
+	}, [ attributes.defaultFrequency ] );
 
 	const handleCustomDonationChange = ( {
 		value,
