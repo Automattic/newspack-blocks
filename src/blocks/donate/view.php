@@ -222,6 +222,30 @@ function newspack_blocks_render_block_donate( $attributes ) {
 
 	/* If block is in "manual" mode, override certain state properties with values stored in attributes */
 	if ( $attributes['manual'] ?? false ) {
+		// Migrate old attributes.
+		if ( empty( $attributes['amounts'] ) && isset( $attributes['suggestedAmounts'] ) ) {
+			$other_amount = $configuration['amounts']['month'][3];
+			if ( isset( $attributes['suggestedAmountUntiered'] ) ) {
+				$other_amount = $attributes['suggestedAmountUntiered'];
+			}
+			$suggested_amounts     = $attributes['suggestedAmounts'];
+			$multiplied_amounts    = [
+				$suggested_amounts[0] * 12,
+				$suggested_amounts[1] * 12,
+				$suggested_amounts[2] * 12,
+				$other_amount * 12,
+			];
+			$attributes['amounts'] = [
+				'once'  => $multiplied_amounts,
+				'month' => [
+					$suggested_amounts[0],
+					$suggested_amounts[1],
+					$suggested_amounts[2],
+					$other_amount,
+				],
+				'year'  => $multiplied_amounts,
+			];
+		}
 		if ( isset( $attributes['tiered'] ) ) {
 			$configuration['tiered'] = $attributes['tiered'];
 		}
