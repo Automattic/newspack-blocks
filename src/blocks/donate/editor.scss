@@ -10,9 +10,20 @@
 
 	&__panel-inputs {
 		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
 		margin-bottom: 21px;
-		input {
+		input,
+		span {
 			min-width: 0;
+		}
+		span {
+			margin-bottom: 7px;
+			display: inline-block;
+			width: 48%;
+		}
+		input {
+			max-width: 100%;
 		}
 	}
 

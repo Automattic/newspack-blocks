@@ -9,7 +9,7 @@ import { hooks } from 'newspack-components';
  */
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
-import { useState, useEffect, useMemo, useRef } from '@wordpress/element';
+import { useState, useEffect, useMemo, useRef, Fragment } from '@wordpress/element';
 import {
 	CheckboxControl,
 	PanelBody,
@@ -66,6 +66,13 @@ type DonationSettings = OverridableConfiguration & {
 };
 
 type EditState = DonationSettings;
+
+const TIER_LABELS = [
+	__( 'Low-tier', 'newspack' ),
+	__( 'Mid-tier', 'newspack' ),
+	__( 'High-tier', 'newspack' ),
+	__( 'Other', 'newspack' ),
+];
 
 const getMigratedAmount = (
 	frequency: FrequencySlug,
@@ -241,25 +248,33 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 		return { paddingTop: `calc(${ availableFrequencies.length }*${ padding })` };
 	};
 
-	const renderAmountValueInput = (
-		frequencySlug: FrequencySlug,
-		tierIndex: number,
-		id?: string
-	) => (
-		<input
-			key={ `${ frequencySlug }-${ tierIndex }` }
-			type="number"
-			min="0"
-			onChange={ evt =>
-				handleCustomDonationChange( {
-					value: evt.target.value,
-					frequency: frequencySlug,
-					tierIndex,
-				} )
-			}
-			value={ amounts[ frequencySlug ][ tierIndex ] }
-			id={ id }
-		/>
+	const renderAmountValueInput = ( {
+		frequencySlug,
+		tierIndex,
+		id,
+		label,
+	}: {
+		frequencySlug: FrequencySlug;
+		tierIndex: number;
+		id: string;
+		label?: string;
+	} ) => (
+		<span key={ `${ frequencySlug }-${ tierIndex }` }>
+			{ label && <label htmlFor={ id }>{ label }</label> }
+			<input
+				type="number"
+				min="0"
+				onChange={ evt =>
+					handleCustomDonationChange( {
+						value: evt.target.value,
+						frequency: frequencySlug,
+						tierIndex,
+					} )
+				}
+				value={ amounts[ frequencySlug ][ tierIndex ] }
+				id={ id }
+			/>
+		</span>
 	);
 
 	const renderUntieredForm = () => (
@@ -283,11 +298,11 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 							</label>
 							<div className="wp-block-newspack-blocks-donate__money-input money-input">
 								<span className="currency">{ settings.currencySymbol }</span>
-								{ renderAmountValueInput(
+								{ renderAmountValueInput( {
 									frequencySlug,
-									3,
-									`newspack-${ frequencySlug }-${ uid }-untiered-input`
-								) }
+									tierIndex: 3,
+									id: `newspack-${ frequencySlug }-${ uid }-untiered-input`,
+								} ) }
 							</div>
 						</div>
 					</div>
@@ -345,7 +360,11 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 												</label>
 												<div className="wp-block-newspack-blocks-donate__money-input money-input">
 													<span className="currency">{ settings.currencySymbol }</span>
-													{ renderAmountValueInput( frequencySlug, index, id + '-other-input' ) }
+													{ renderAmountValueInput( {
+														frequencySlug,
+														tierIndex: index,
+														id: `${ id }-other-input`,
+													} ) }
 												</div>
 											</>
 										) : null }
@@ -464,40 +483,58 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 								onChange={ () => setAttributes( { tiered: ! attributes.tiered } ) }
 								label={ __( 'Tiered', 'newspack-blocks' ) }
 							/>
-							<div className="components-frequency-donations">
-								<p>{ __( 'Frequency', 'newspack-blocks' ) }</p>
-								{ FREQUENCY_SLUGS.map( ( frequency: FrequencySlug ) => {
-									const isFrequencyDisabled = attributes.disabledFrequencies[ frequency ];
-									const isOneFrequencyActive =
-										Object.values( attributes.disabledFrequencies ).filter( Boolean ).length ===
-										FREQUENCY_SLUGS.length - 1;
-									return (
-										<>
-											<CheckboxControl
-												key={ frequency }
-												label={ FREQUENCIES[ frequency ] }
-												checked={ ! isFrequencyDisabled }
-												disabled={ ! isFrequencyDisabled && isOneFrequencyActive }
-												onChange={ () => {
-													setAttributes( {
-														disabledFrequencies: {
-															...attributes.disabledFrequencies,
-															[ frequency ]: ! isFrequencyDisabled,
-														},
-													} );
-												} }
-											/>
-											{ ! isFrequencyDisabled && (
-												<div className="wp-block-newspack-blocks-donate__panel-inputs">
-													{ amounts[ frequency ].map( ( suggestedAmount, index ) =>
-														renderAmountValueInput( frequency, index )
-													) }
-												</div>
-											) }
-										</>
-									);
-								} ) }
-							</div>
+							{ attributes.tiered ? (
+								<div className="components-frequency-donations">
+									{ FREQUENCY_SLUGS.map( ( frequency: FrequencySlug ) => {
+										const isFrequencyDisabled = attributes.disabledFrequencies[ frequency ];
+										const isOneFrequencyActive =
+											Object.values( attributes.disabledFrequencies ).filter( Boolean ).length ===
+											FREQUENCY_SLUGS.length - 1;
+										return (
+											<Fragment key={ frequency }>
+												<CheckboxControl
+													label={ FREQUENCIES[ frequency ] }
+													checked={ ! isFrequencyDisabled }
+													disabled={ ! isFrequencyDisabled && isOneFrequencyActive }
+													onChange={ () => {
+														setAttributes( {
+															disabledFrequencies: {
+																...attributes.disabledFrequencies,
+																[ frequency ]: ! isFrequencyDisabled,
+															},
+														} );
+													} }
+												/>
+												{ ! isFrequencyDisabled && (
+													<div className="wp-block-newspack-blocks-donate__panel-inputs">
+														{ amounts[ frequency ].map( ( suggestedAmount, tierIndex ) =>
+															renderAmountValueInput( {
+																frequencySlug: frequency,
+																tierIndex,
+																label: TIER_LABELS[ tierIndex ],
+																id: `${ frequency }-${ tierIndex }-amount`,
+															} )
+														) }
+													</div>
+												) }
+											</Fragment>
+										);
+									} ) }
+								</div>
+							) : (
+								<div className="components-frequency-donations">
+									<div className="wp-block-newspack-blocks-donate__panel-inputs">
+										{ FREQUENCY_SLUGS.map( ( frequencySlug: FrequencySlug ) =>
+											renderAmountValueInput( {
+												frequencySlug,
+												tierIndex: 3,
+												label: FREQUENCIES[ frequencySlug ],
+												id: `${ frequencySlug }-${ 3 }-amount`,
+											} )
+										) }
+									</div>
+								</div>
+							) }
 						</>
 					) : (
 						<p>
