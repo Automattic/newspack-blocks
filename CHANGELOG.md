@@ -1,3 +1,10 @@
+## [1.53.1](https://github.com/Automattic/newspack-blocks/compare/v1.53.0...v1.53.1) (2022-07-05)
+
+
+### Bug Fixes
+
+* guest author selection in Author Profile block ([#1188](https://github.com/Automattic/newspack-blocks/issues/1188)) ([085efaf](https://github.com/Automattic/newspack-blocks/commit/085efaf431b70ad15514a0d33c7ad0ce0697387e))
+
 # [1.53.0](https://github.com/Automattic/newspack-blocks/compare/v1.52.0...v1.53.0) (2022-06-27)
 
 
