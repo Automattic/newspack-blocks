@@ -29,7 +29,8 @@
 			"default": "Donate Now"
 		},
 		"defaultFrequency": {
-			"type": "string"
+			"type": "string",
+			"default": "month"
 		},
 		"campaign": {
 			"type": "string"
