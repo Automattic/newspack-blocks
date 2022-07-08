@@ -20,7 +20,7 @@ import {
 	ToggleControl,
 	TextControl,
 } from '@wordpress/components';
-import { InspectorControls, RichText } from '@wordpress/block-editor';
+import { InspectorControls, RichText, ColorPaletteControl } from '@wordpress/block-editor';
 import { isEmpty } from 'lodash';
 
 type FrequencySlug = 'once' | 'month' | 'year';
@@ -46,6 +46,7 @@ type OverridableConfiguration = {
 
 type DonateBlockAttributes = OverridableConfiguration & {
 	buttonText: string;
+	buttonColor: string;
 	thanksText: string;
 	defaultFrequency: FrequencySlug;
 	campaign: string;
@@ -379,7 +380,11 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 	);
 
 	const renderButton = () => (
-		<button type="submit" onClick={ evt => evt.preventDefault() }>
+		<button
+			type="submit"
+			onClick={ evt => evt.preventDefault() }
+			style={ { backgroundColor: attributes.buttonColor } }
+		>
 			{ isRenderingStreamlinedBlock() ? (
 				__( 'Donate with card', 'newspack-blocks' )
 			) : (
@@ -549,6 +554,13 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 							</ExternalLink>
 						</p>
 					) }
+				</PanelBody>
+				<PanelBody title={ __( 'Styling', 'newspack-blocks' ) } initialOpen={ false }>
+					<ColorPaletteControl
+						value={ attributes.buttonColor }
+						onChange={ ( buttonColor: string ) => setAttributes( { buttonColor } ) }
+						label={ __( 'Button Color', 'newspack-blocks' ) }
+					/>
 				</PanelBody>
 				<PanelBody title={ __( 'Campaign', 'newspack-blocks' ) } initialOpen={ false }>
 					<TextControl
