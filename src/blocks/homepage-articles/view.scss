@@ -379,8 +379,10 @@
 	&.has-text-align-right {
 		.cat-links,
 		.entry-meta,
-		.entry-sponsors {
+		.entry-sponsors,
+		.sponsor-logos {
 			justify-content: flex-end;
+			text-align: right;
 		}
 
 		figcaption {
@@ -440,9 +442,11 @@ amp-script .wpnbha {
 	}
 
 	.sponsor-logos {
-		display: flex;
+		align-items: center;
+		display: inline-flex;
 		flex-wrap: wrap;
 		gap: 0.5em;
+		line-height: 1;
 	}
 }
 /* stylelint-enable */

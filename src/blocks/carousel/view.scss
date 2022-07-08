@@ -364,9 +364,11 @@ amp-script .wpnbpc {
 	}
 
 	.sponsor-logos {
-		display: flex;
+		align-items: center;
+		display: inline-flex;
 		flex-wrap: wrap;
 		gap: 0.5em;
+		line-height: 1;
 	}
 }
 /* stylelint-enable */
