@@ -20,7 +20,8 @@
 	}
 
 	.freq-label,
-	.tier-label {
+	.tier-label,
+	.input-container {
 		display: block;
 		font-weight: bold;
 		cursor: pointer;
@@ -124,7 +125,8 @@
 			&:checked ~ .money-input {
 				display: flex;
 			}
-			&:checked ~ .other-label {
+
+			&:checked ~ .odl {
 				display: block;
 			}
 
@@ -142,30 +144,12 @@
 }
 
 .wpbnbd.untiered {
-	padding-top: 7.65em;
-	padding-top: calc( 3 * ( 0.76rem + 1.28em + 1px ) );
-	position: relative;
-
-	@include mixins.media( tablet ) {
-		padding-top: 2.55em;
-		padding-top: calc( 0.76rem + 1.28em + 1px );
-	}
-
-	.freq-label {
-		font-size: variables.$font__size-sm;
-	}
-
 	.input-container {
 		margin: 0.76rem;
 		display: none;
 
 		@include mixins.media( tablet ) {
 			margin: 1.5rem 1.5rem 0.76rem;
-		}
-
-		label {
-			font-size: variables.$font__size-sm;
-			font-weight: bold;
 		}
 	}
 
@@ -213,12 +197,10 @@
 .wpbnbd .frequencies {
 	font-size: variables.$font__size-sm;
 	padding-top: 7.65em;
-	padding-top: calc( 3 * ( 0.76rem + 1.6em + 1px ) );
 	position: relative;
 
 	@include mixins.media( tablet ) {
-		padding-top: 2.55em;
-		padding-top: calc( 0.76rem + 1.6em + 1px );
+		padding-top: calc( 0.76rem + 1.6em + 1px ) !important;
 	}
 }
 
@@ -246,7 +228,6 @@
 
 		@include mixins.media( tablet ) {
 			justify-content: center;
-			width: 33.33%;
 
 			&::before {
 				display: none;
@@ -287,13 +268,6 @@
 
 	&:nth-of-type( 2 ) .freq-label {
 		top: calc( 0.76rem + 1.6em + 1px );
-
-		@include mixins.media( tablet ) {
-			border-left-width: 1px;
-			border-right-width: 1px;
-			left: 33.33%;
-			top: 0;
-		}
 	}
 
 	&:nth-of-type( 3 ) .freq-label {
@@ -302,6 +276,37 @@
 		@include mixins.media( tablet ) {
 			left: 66.66%;
 			top: 0;
+		}
+	}
+}
+
+@include mixins.media( tablet ) {
+	.wpbnbd-frequencies {
+		&--2 {
+			&.wpbnbd .frequency {
+				.freq-label {
+					width: 50%;
+				}
+				&:nth-of-type( 2 ) .freq-label {
+					border-left-width: 1px;
+					left: 50%;
+					top: 0;
+				}
+			}
+		}
+
+		&--3 {
+			&.wpbnbd .frequency {
+				.freq-label {
+					width: 33.33%;
+				}
+				&:nth-of-type( 2 ) .freq-label {
+					border-left-width: 1px;
+					border-right-width: 1px;
+					left: 33.33%;
+					top: 0;
+				}
+			}
 		}
 	}
 }
@@ -326,12 +331,6 @@
 	}
 
 	&.untiered {
-		padding-top: calc( 3 * ( 1.14rem + 1.28em ) + 8px );
-
-		@include mixins.media( tablet ) {
-			padding-top: calc( 1.14rem + 1.28em + 4px );
-		}
-
 		.input-container {
 			margin: 1.12rem;
 		}
@@ -345,10 +344,6 @@
 				margin: 0;
 				text-align: center;
 			}
-
-			input.other-input:checked + label {
-				margin-bottom: calc( 1.28rem + 1.6em + 2px );
-			}
 		}
 
 		.money-input {
@@ -359,8 +354,6 @@
 	}
 
 	.frequencies {
-		padding-top: calc( 3 * ( 1.14rem + 1.6em ) + 8px );
-
 		@include mixins.media( tablet ) {
 			padding-top: calc( 1.14rem + 1.6em + 4px );
 		}
@@ -461,12 +454,6 @@
 	}
 
 	&.untiered {
-		padding-top: calc( 3 * ( 0.76rem + 1.28em + 4px ) );
-
-		@include mixins.media( tablet ) {
-			padding-top: calc( 0.76rem + 1.28em + 4px );
-		}
-
 		.input-container {
 			margin: 0.56rem 0 1.12rem;
 			text-align: left;
@@ -504,10 +491,6 @@
 				&:hover {
 					color: inherit;
 				}
-			}
-
-			input.other-input:checked + label {
-				margin-bottom: calc( 1.28rem + 1.6em + 2px );
 			}
 
 			input[type='radio']:checked + .tier-select-label {
