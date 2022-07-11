@@ -351,7 +351,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 										</span>
 										<input
 											type='number'
-											min='0'
+											min='1'
 											name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>_untiered'
 											value='<?php echo esc_attr( $formatted_amount ); ?>'
 											id='newspack-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-untiered-input'
@@ -412,7 +412,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 													</span>
 													<input
 														type='number'
-														min='0'
+														min='1'
 														name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>_other'
 														value='<?php echo esc_attr( $amount ); ?>'
 														id='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-other-input'
