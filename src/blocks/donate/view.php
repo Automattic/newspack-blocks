@@ -306,17 +306,6 @@ function newspack_blocks_render_block_donate( $attributes ) {
 	$frequencies_count    = count( $frequencies );
 	$container_classnames = 'wp-block-newspack-blocks-donate wpbnbd ' . $classname . ' wpbnbd-frequencies--' . $frequencies_count;
 
-	$frequency_padding = '(0.76rem + 1.6em + 1px)';
-	switch ( $classname ) {
-		case 'is-style-alternate':
-			$frequency_padding = '( 1.14rem + 1.6em ) + 8px';
-			break;
-		case 'is-style-minimal':
-			$frequency_padding = '( 0.76rem + 1.6em + 4px )';
-			break;
-	}
-	$frequencies_container_styles = 'padding-top: calc( ' . $frequencies_count . ' * ' . $frequency_padding . ' );';
-
 	ob_start();
 
 	/**
@@ -330,7 +319,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 			<form data-settings="<?php echo esc_html( htmlspecialchars( wp_json_encode( $configuration_for_frontend ), ENT_QUOTES, 'UTF-8' ) ); ?>">
 				<input type='hidden' name='newspack_donate' value='1' />
 				<div class='wp-block-newspack-blocks-donate__options'>
-					<div class='wp-block-newspack-blocks-donate__frequencies frequencies' style="<?php echo esc_attr( $frequencies_container_styles ); ?>">
+					<div class='wp-block-newspack-blocks-donate__frequencies frequencies'>
 						<?php foreach ( $frequencies as $frequency_slug => $frequency_name ) : ?>
 							<?php
 								$formatted_amount = $configuration['amounts'][ $frequency_slug ][3];
@@ -376,7 +365,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 			<form data-settings="<?php echo esc_html( htmlspecialchars( wp_json_encode( $configuration_for_frontend ), ENT_QUOTES, 'UTF-8' ) ); ?>">
 				<input type='hidden' name='newspack_donate' value='1' />
 				<div class='wp-block-newspack-blocks-donate__options'>
-					<div class='wp-block-newspack-blocks-donate__frequencies frequencies' style="<?php echo esc_attr( $frequencies_container_styles ); ?>">
+					<div class='wp-block-newspack-blocks-donate__frequencies frequencies'>
 						<?php foreach ( $frequencies as $frequency_slug => $frequency_name ) : ?>
 
 							<div class='wp-block-newspack-blocks-donate__frequency frequency'>

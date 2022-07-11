@@ -228,19 +228,6 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 			`wpbnbd-frequencies--${ availableFrequencies.length }`
 		);
 
-	const getFrequenciesContainerStyle = () => {
-		let padding = '(0.76rem + 1.6em + 1px)';
-		switch ( attributes.className ) {
-			case 'is-style-alternate':
-				padding = '( 1.14rem + 1.6em ) + 8px';
-				break;
-			case 'is-style-minimal':
-				padding = '( 0.76rem + 1.6em + 4px )';
-				break;
-		}
-		return { paddingTop: `calc(${ availableFrequencies.length }*${ padding })` };
-	};
-
 	const renderAmountValueInput = ( {
 		frequencySlug,
 		tierIndex,
@@ -272,10 +259,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 
 	const renderUntieredForm = () => (
 		<div className="wp-block-newspack-blocks-donate__options">
-			<div
-				className="wp-block-newspack-blocks-donate__frequencies frequencies"
-				style={ getFrequenciesContainerStyle() }
-			>
+			<div className="wp-block-newspack-blocks-donate__frequencies frequencies">
 				{ availableFrequencies.map( frequencySlug => (
 					<div
 						className="wp-block-newspack-blocks-donate__frequency frequency"
@@ -306,10 +290,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 
 	const renderTieredForm = () => (
 		<div className="wp-block-newspack-blocks-donate__options">
-			<div
-				className="wp-block-newspack-blocks-donate__frequencies frequencies"
-				style={ getFrequenciesContainerStyle() }
-			>
+			<div className="wp-block-newspack-blocks-donate__frequencies frequencies">
 				{ availableFrequencies.map( frequencySlug => (
 					<div
 						className="wp-block-newspack-blocks-donate__frequency frequency"
