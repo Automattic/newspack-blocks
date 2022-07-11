@@ -62,7 +62,6 @@ import {
 	pullLeft,
 	pullRight,
 } from '@wordpress/icons';
-import { padStart } from 'lodash';
 
 let IS_SUBTITLE_SUPPORTED_IN_THEME;
 if (
@@ -593,15 +592,8 @@ class Edit extends Component {
 		 * Constants
 		 */
 
-		const {
-			attributes,
-			className,
-			setAttributes,
-			isSelected,
-			latestPosts,
-			textColor,
-			error,
-		} = this.props;
+		const { attributes, className, setAttributes, isSelected, latestPosts, textColor, error } =
+			this.props;
 
 		const {
 			showImage,
