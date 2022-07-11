@@ -63,7 +63,11 @@
 		color: colors.$color__text-light;
 		font-size: variables.$font__size-sm;
 		margin: 0.38rem 0.76rem 0.76rem;
+		display: none;
 
+		@include mixins.media( mobile ) {
+			display: inline;
+		}
 		@include mixins.media( tablet ) {
 			margin-left: 1.5rem;
 			margin-right: 1.5rem;
@@ -413,10 +417,11 @@
 			~ .tiers {
 				display: grid;
 				grid-gap: 0.28rem;
-				grid-template-columns: repeat( 4, 1fr );
+				grid-template-columns: repeat( 2, 1fr );
 				margin: 1.12rem;
 
 				@include mixins.media( mobile ) {
+					grid-template-columns: repeat( 4, 1fr );
 					grid-gap: 0.56rem;
 				}
 			}

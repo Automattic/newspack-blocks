@@ -157,6 +157,10 @@
 			font-size: 0.7em;
 			font-style: italic;
 			padding-left: 1.5em;
+			display: none;
+			@include mixins.media( mobile ) {
+				display: block;
+			}
 		}
 
 		&__footer {
@@ -173,6 +177,10 @@
 		&__methods {
 			display: flex;
 			flex-wrap: wrap;
+			width: 100%;
+			@include mixins.media( mobile ) {
+				width: auto;
+			}
 			button {
 				margin-left: 0;
 				margin-right: 0;
@@ -180,7 +188,9 @@
 				height: 46px;
 			}
 			> * {
-				margin-top: 10px;
+				&:not( :first-child ) {
+					margin-top: 10px;
+				}
 				width: 100%;
 				@include mixins.media( mobile ) {
 					width: auto;
@@ -240,7 +250,7 @@
 		}
 
 		&__footer {
-			margin: 1.12rem 0;
+			margin: 0 0 1.12rem 0;
 
 			> * {
 				padding: 0;
@@ -287,7 +297,7 @@
 		}
 
 		&__footer {
-			margin: 1.12rem 0 0;
+			margin: 0 0 1.12rem 0;
 
 			> * {
 				padding: 0;
