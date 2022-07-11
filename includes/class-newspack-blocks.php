@@ -143,13 +143,6 @@ class Newspack_Blocks {
 	}
 
 	/**
-	 * Path of the Stripe badge file.
-	 */
-	public static function streamlined_block_stripe_badge() {
-		return plugins_url( '/src/assets', NEWSPACK_BLOCKS__PLUGIN_FILE ) . '/stripe-badge.svg';
-	}
-
-	/**
 	 * Possible mimes for iframe archive source file.
 	 */
 	public static function iframe_archive_accepted_file_mimes() {
@@ -226,7 +219,6 @@ class Newspack_Blocks {
 				'assets_path'                    => plugins_url( '/src/assets', NEWSPACK_BLOCKS__PLUGIN_FILE ),
 				'post_subtitle'                  => get_theme_support( 'post-subtitle' ),
 				'is_rendering_streamlined_block' => self::is_rendering_streamlined_block(),
-				'streamlined_block_stripe_badge' => self::streamlined_block_stripe_badge(),
 				'iframe_accepted_file_mimes'     => self::iframe_accepted_file_mimes(),
 			];
 

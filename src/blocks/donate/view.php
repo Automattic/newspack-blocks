@@ -137,9 +137,6 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 							<?php echo esc_html__( 'Donate with card', 'newspack-blocks' ); ?>
 						</button>
 					</div>
-					<a target="_blank" rel="noreferrer" class="stripe-payment__branding" href="https://stripe.com">
-						<img width="111" height="26" src="<?php echo esc_attr( Newspack_Blocks::streamlined_block_stripe_badge() ); ?>" alt="Stripe">
-					</a>
 				</div>
 			</div>
 		<?php else : ?>

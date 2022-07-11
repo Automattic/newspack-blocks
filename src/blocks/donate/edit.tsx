@@ -417,19 +417,6 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 							</div>
 							{ renderButton() }
 						</div>
-						<a
-							target="_blank"
-							rel="noreferrer"
-							className="stripe-payment__branding"
-							href="https://stripe.com"
-						>
-							<img
-								width="111"
-								height="26"
-								src={ window.newspack_blocks_data?.streamlined_block_stripe_badge }
-								alt="Stripe"
-							/>
-						</a>
 					</div>
 				</div>
 			) : (
