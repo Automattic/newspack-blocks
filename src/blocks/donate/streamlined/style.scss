@@ -91,6 +91,7 @@
 		}
 
 		&__messages {
+			margin-bottom: 10px;
 			> div {
 				border: 0 solid colors.$color__info;
 				border-left-width: 4px;
@@ -188,8 +189,8 @@
 				height: 46px;
 			}
 			> * {
-				&:not( :first-child ) {
-					margin-top: 10px;
+				&:not( :last-child ) {
+					margin-bottom: 10px;
 				}
 				width: 100%;
 				@include mixins.media( mobile ) {

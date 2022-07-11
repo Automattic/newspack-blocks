@@ -22,7 +22,8 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 			cardElement: Stripe.StripeCardElement,
 			paymentRequest: Stripe.PaymentRequest,
 			paymentMethod: Stripe.ConfirmCardPaymentData[ 'payment_method' ],
-			paymentRequestToken: Stripe.Token;
+			paymentRequestToken: Stripe.Token,
+			isCardUIVisible = false;
 
 		const formElement: HTMLFormElement | null = el.closest( 'form' );
 		if ( ! formElement ) {
@@ -38,6 +39,18 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 		const disableForm = () => el.classList.add( 'stripe-payment--disabled' );
 		const enableForm = () => el.classList.remove( 'stripe-payment--disabled' );
 		enableForm();
+
+		// Display CC UI.
+		const displayCardUI = () => {
+			if ( isCardUIVisible ) {
+				return;
+			}
+			const inputsHiddenEl = el.querySelector( '.stripe-payment__inputs.stripe-payment--hidden' );
+			if ( inputsHiddenEl ) {
+				inputsHiddenEl.classList.remove( 'stripe-payment--hidden' );
+				isCardUIVisible = true;
+			}
+		};
 
 		// Universal payment handling, for both card and payment request button flows.
 		// In card flow, this will happen after user submits their card data in the HTML form.
@@ -193,6 +206,8 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 				setTimeout( () => {
 					prButtonElement.classList.remove( 'stripe-payment__request-button--invisible' );
 				}, 0 );
+			} else {
+				displayCardUI();
 			}
 
 			el.classList.remove( 'stripe-payment--invisible' );
@@ -204,10 +219,9 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 		const submitButtonEl: HTMLButtonElement | null = el.querySelector( 'button[type="submit"]' );
 		if ( submitButtonEl ) {
 			submitButtonEl.onclick = e => {
-				const inputsHiddenEl = el.querySelector( '.stripe-payment__inputs.stripe-payment--hidden' );
-				if ( inputsHiddenEl ) {
+				if ( ! isCardUIVisible ) {
 					e.preventDefault();
-					inputsHiddenEl.classList.remove( 'stripe-payment--hidden' );
+					displayCardUI();
 				}
 			};
 		}
