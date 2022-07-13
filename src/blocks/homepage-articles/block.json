@@ -26,6 +26,10 @@
       "type": "boolean",
       "default": true
     },
+    "showComments": {
+      "type": "boolean",
+      "default": false
+    },
     "showImage": {
       "type": "boolean",
       "default": true

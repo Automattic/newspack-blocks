@@ -234,6 +234,17 @@ class Newspack_Blocks_API {
 	}
 
 	/**
+	 * Pass comment count to the editor.
+	 *
+	 * @param array $object The object info.
+	 * @return array Comment count.
+	 */
+	public static function newspack_blocks_comment_count_format( $object ) {
+		$post_comment_count = get_comments_number( $object['id'] );
+		return $post_comment_count;
+	}
+
+	/**
 	 * Register the video-playlist endpoint.
 	 */
 	public static function register_video_playlist_endpoint() {
@@ -322,6 +333,7 @@ class Newspack_Blocks_API {
 				'newspack_featured_image_caption' => self::newspack_blocks_get_image_caption( $data ),
 				'newspack_featured_image_src'     => self::newspack_blocks_get_image_src( $data ),
 				'newspack_has_custom_excerpt'     => self::newspack_blocks_has_custom_excerpt( $data ),
+				'newspack_comment_count_format'   => self::newspack_blocks_comment_count_format( $data ),
 				'newspack_post_sponsors'          => self::newspack_blocks_sponsor_info( $data ),
 				'post_status'                     => $post->post_status,
 				'post_type'                       => $post->post_type,

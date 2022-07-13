@@ -259,6 +259,31 @@ function newspack_blocks_format_byline( $author_info ) {
 }
 
 /**
+ * Renders comments markup.
+ *
+ * @return string Returns comments markup.
+ */
+function newspack_blocks_comments() {
+
+	// TODO: Check if Disqus plugin is active and alter markup accordingly
+
+	if ( ! post_password_required() && ( comments_open() || get_comments_number() ) ) {
+		$allowed_comment_html = array(
+			'span' => array(
+				'class' => array(),
+			),
+		);
+		echo '<span class="comments-link">';
+		comments_popup_link(
+			wp_kses( __( '0 <span class="screen-reader-text">Comments</span>', 'newspack-blocks' ), $allowed_comment_html ),
+			wp_kses( __( '1 <span class="screen-reader-text">Comment</span>', 'newspack-blocks' ), $allowed_comment_html ),
+			wp_kses( __( '% <span class="screen-reader-text">Comments</span>', 'newspack-blocks' ), $allowed_comment_html ),
+		);
+		echo '</span>';
+	}
+}
+
+/**
  * Inject amp-state containing all post IDs visible on page load.
  */
 function newspack_blocks_inject_amp_state() {

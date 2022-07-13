@@ -192,6 +192,7 @@ const generatePreviewPost = ( id: PostId ) => {
 		},
 		newspack_has_custom_excerpt: false,
 		newspack_post_sponsors: false,
+		newspack_comment_count: '0',
 	};
 };
 

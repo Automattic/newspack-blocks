@@ -69,6 +69,7 @@ call_user_func(
 		$hide_publish_date = apply_filters( 'newspack_listings_hide_publish_date', false ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		$show_author       = $attributes['showAuthor'] && ! $hide_author;
 		$show_date         = $attributes['showDate'] && ! $hide_publish_date;
+		$show_comments     = $attributes['showComments'];
 		?>
 
 	<article data-post-id="<?php the_id(); ?>"
@@ -260,6 +261,13 @@ call_user_func(
 							esc_html( get_the_modified_date() )
 						);
 					endif;
+
+
+
+					if ( $show_comments ) {
+						newspack_blocks_comments();
+					}
+
 					?>
 				</div><!-- .entry-meta -->
 			<?php endif; ?>

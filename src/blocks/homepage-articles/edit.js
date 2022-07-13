@@ -119,6 +119,7 @@ class Edit extends Component {
 			showAvatar,
 			showDate,
 			showCategory,
+			showComments,
 			sectionHeader,
 		} = attributes;
 
@@ -227,6 +228,9 @@ class Edit extends Component {
 								{ dateI18n( dateFormat, post.date_gmt ) }
 							</time>
 						) }
+						{ showComments && (
+							<div className="comments">{ post.newspack_comment_count_format }</div>
+						) }
 					</div>
 				</div>
 			</article>
@@ -272,6 +276,7 @@ class Edit extends Component {
 			showAuthor,
 			showAvatar,
 			showCategory,
+			showComments,
 			postLayout,
 			mediaPosition,
 			specificMode,
@@ -555,6 +560,13 @@ class Edit extends Component {
 							/>
 						</PanelRow>
 					) }
+					<PanelRow>
+						<ToggleControl
+							label={ __( 'Show Comment Count', 'newspack-blocks' ) }
+							checked={ showComments }
+							onChange={ () => setAttributes( { showComments: ! showComments } ) }
+						/>
+					</PanelRow>
 				</PanelBody>
 				<PostTypesPanel attributes={ attributes } setAttributes={ setAttributes } />
 				<PostStatusesPanel attributes={ attributes } setAttributes={ setAttributes } />
