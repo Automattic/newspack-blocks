@@ -5,7 +5,7 @@
 	"devDependencies": {
 		"@rushstack/eslint-patch": "^1.1.4",
 		"@testing-library/dom": "^8.16.0",
-		"@testing-library/user-event": "^14.2.1",
+		"@testing-library/user-event": "^14.2.6",
 		"eslint": "^7.32.0",
 		"fetch-mock-jest": "^1.5.1",
 		"html-entities": "^2.3.3",
