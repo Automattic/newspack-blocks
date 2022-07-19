@@ -23,7 +23,11 @@ import {
 import { InspectorControls, RichText, ColorPaletteControl } from '@wordpress/block-editor';
 import { isEmpty } from 'lodash';
 
-type FrequencySlug = 'once' | 'month' | 'year';
+/**
+ * Internal dependencies
+ */
+import { getColorForContrast, getMigratedAmount } from './utils';
+import type { FrequencySlug } from './types';
 
 const FREQUENCIES: { [ Key in FrequencySlug as string ]: string } = {
 	once: __( 'One-time', 'newspack-blocks' ),
@@ -74,20 +78,6 @@ const TIER_LABELS = [
 	__( 'High-tier', 'newspack' ),
 	__( 'Other', 'newspack' ),
 ];
-
-const getMigratedAmount = (
-	frequency: FrequencySlug,
-	amounts: [ number, number, number ],
-	untieredAmount: number
-): [ number, number, number, number ] => {
-	const multiplier = frequency === 'month' ? 1 : 12;
-	return [
-		amounts[ 0 ] * multiplier,
-		amounts[ 1 ] * multiplier,
-		amounts[ 2 ] * multiplier,
-		untieredAmount * multiplier,
-	];
-};
 
 const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 	const [ isLoading, setIsLoading ] = useState( true );
@@ -383,7 +373,10 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 		<button
 			type="submit"
 			onClick={ evt => evt.preventDefault() }
-			style={ { backgroundColor: attributes.buttonColor } }
+			style={ {
+				backgroundColor: attributes.buttonColor,
+				color: getColorForContrast( attributes.buttonColor ),
+			} }
 		>
 			{ isRenderingStreamlinedBlock() ? (
 				__( 'Donate with card', 'newspack-blocks' )

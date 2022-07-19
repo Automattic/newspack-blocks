@@ -74,7 +74,9 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 		$user_display_name = $current_user->display_name;
 	}
 
-	$button_style_attr = 'style="background-color: ' . esc_attr( $attributes['buttonColor'] ) . '";';
+	$button_color      = $attributes['buttonColor'];
+	$button_text_color = Newspack_Blocks::get_color_for_contrast( $button_color );
+	$button_style_attr = 'style="background-color: ' . esc_attr( $button_color ) . '; color: ' . esc_attr( $button_text_color ) . ';"';
 
 	ob_start();
 
