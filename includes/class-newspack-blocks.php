@@ -183,6 +183,27 @@ class Newspack_Blocks {
 	}
 
 	/**
+	 * Enqueue placeholder blocks assets.
+	 */
+	public static function enqueue_placeholder_blocks_assets() {
+		$script_data = self::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'placeholder_blocks.js' );
+		if ( $script_data ) {
+			wp_enqueue_script(
+				'newspack-blocks-placeholder-blocks',
+				$script_data['script_path'],
+				$script_data['dependencies'],
+				$script_data['version'],
+				true
+			);
+			wp_set_script_translations(
+				'newspack-blocks-placeholder-blocks',
+				'newspack-blocks',
+				plugin_dir_path( NEWSPACK_BLOCKS__PLUGIN_FILE ) . 'languages'
+			);
+		}
+	}
+
+	/**
 	 * Enqueue block scripts and styles for editor.
 	 */
 	public static function enqueue_block_editor_assets() {
@@ -815,6 +836,20 @@ class Newspack_Blocks {
 		'maxheight' => 40,
 	) ) {
 		if ( function_exists( '\Newspack_Sponsors\get_sponsors_for_post' ) ) {
+			if ( is_singular() ) {
+				$scope_override = get_post_meta( $id, 'newspack_sponsor_sponsorship_scope', true );
+
+				// Scope override: if post is set to display as native-sponsored, return all sponsors.
+				if ( 'native' === $scope_override ) {
+					$scope = null;
+				}
+
+				// Scope override: if post is set to display as underwritten, return nothing.
+				if ( 'underwritten' === $scope_override ) {
+					return [];
+				}
+			}
+
 			return \Newspack_Sponsors\get_all_sponsors( $id, $scope, $type, $logo_options ); // phpcs:ignore PHPCompatibility.LanguageConstructs.NewLanguageConstructs.t_ns_separatorFound
 		}
 
@@ -920,6 +955,34 @@ class Newspack_Blocks {
 			return $sponsor_logos;
 		}
 
+		return false;
+	}
+
+	/**
+	 * If at least one native sponsor is set to display both sponsors and authors, show the authors.
+	 *
+	 * @param array $sponsors Array of sponsors.
+	 *
+	 * @return boolean True if we should display both sponsors and categories, false if we should display only sponsors.
+	 */
+	public static function newspack_display_sponsors_and_authors( $sponsors ) {
+		if ( function_exists( '\Newspack_Sponsors\newspack_display_sponsors_and_authors' ) ) {
+			return \Newspack_Sponsors\newspack_display_sponsors_and_authors( $sponsors );
+		}
+		return false;
+	}
+
+	/**
+	 * If at least one native sponsor is set to display both sponsors and categories, show the categories.
+	 *
+	 * @param array $sponsors Array of sponsors.
+	 *
+	 * @return boolean True if we should display both sponsors and categories, false if we should display only sponsors.
+	 */
+	public static function newspack_display_sponsors_and_categories( $sponsors ) {
+		if ( function_exists( '\Newspack_Sponsors\newspack_display_sponsors_and_categories' ) ) {
+			return \Newspack_Sponsors\newspack_display_sponsors_and_categories( $sponsors );
+		}
 		return false;
 	}
 
@@ -1228,7 +1291,7 @@ class Newspack_Blocks {
 
 		// Allow Jetpack donations if Newspack donations isn't set up.
 		$donate_settings = Newspack\Donations::get_donation_settings();
-		if ( is_wp_error( $donate_settings ) || ! $donate_settings['created'] ) {
+		if ( is_wp_error( $donate_settings ) ) {
 			return;
 		}
 
