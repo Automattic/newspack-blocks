@@ -169,16 +169,6 @@
 				padding-right: 10px;
 			}
 		}
-		&__branding {
-			margin-top: 1em;
-			height: 26px;
-			display: block;
-			text-decoration: none;
-
-			img {
-				display: block;
-			}
-		}
 
 		&__methods {
 			display: flex;
@@ -267,10 +257,6 @@
 		&__request-button {
 			margin: 0;
 		}
-
-		&__branding {
-			margin-top: 1.12rem;
-		}
 	}
 }
 
@@ -315,10 +301,6 @@
 
 		&__request-button {
 			margin: 0;
-		}
-
-		&__branding {
-			margin-top: 1.12rem;
 		}
 	}
 }

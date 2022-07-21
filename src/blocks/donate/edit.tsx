@@ -20,10 +20,14 @@ import {
 	ToggleControl,
 	TextControl,
 } from '@wordpress/components';
-import { InspectorControls, RichText } from '@wordpress/block-editor';
+import { InspectorControls, RichText, ColorPaletteControl } from '@wordpress/block-editor';
 import { isEmpty } from 'lodash';
 
-type FrequencySlug = 'once' | 'month' | 'year';
+/**
+ * Internal dependencies
+ */
+import { getColorForContrast, getMigratedAmount } from './utils';
+import type { FrequencySlug } from './types';
 
 const FREQUENCIES: { [ Key in FrequencySlug as string ]: string } = {
 	once: __( 'One-time', 'newspack-blocks' ),
@@ -46,6 +50,7 @@ type OverridableConfiguration = {
 
 type DonateBlockAttributes = OverridableConfiguration & {
 	buttonText: string;
+	buttonColor: string;
 	thanksText: string;
 	defaultFrequency: FrequencySlug;
 	campaign: string;
@@ -73,20 +78,6 @@ const TIER_LABELS = [
 	__( 'High-tier', 'newspack' ),
 	__( 'Other', 'newspack' ),
 ];
-
-const getMigratedAmount = (
-	frequency: FrequencySlug,
-	amounts: [ number, number, number ],
-	untieredAmount: number
-): [ number, number, number, number ] => {
-	const multiplier = frequency === 'month' ? 1 : 12;
-	return [
-		amounts[ 0 ] * multiplier,
-		amounts[ 1 ] * multiplier,
-		amounts[ 2 ] * multiplier,
-		untieredAmount * multiplier,
-	];
-};
 
 const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 	const [ isLoading, setIsLoading ] = useState( true );
@@ -379,7 +370,14 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 	);
 
 	const renderButton = () => (
-		<button type="submit" onClick={ evt => evt.preventDefault() }>
+		<button
+			type="submit"
+			onClick={ evt => evt.preventDefault() }
+			style={ {
+				backgroundColor: attributes.buttonColor,
+				color: getColorForContrast( attributes.buttonColor ),
+			} }
+		>
 			{ isRenderingStreamlinedBlock() ? (
 				__( 'Donate with card', 'newspack-blocks' )
 			) : (
@@ -412,19 +410,6 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 							</div>
 							{ renderButton() }
 						</div>
-						<a
-							target="_blank"
-							rel="noreferrer"
-							className="stripe-payment__branding"
-							href="https://stripe.com"
-						>
-							<img
-								width="111"
-								height="26"
-								src={ window.newspack_blocks_data?.streamlined_block_stripe_badge }
-								alt="Stripe"
-							/>
-						</a>
 					</div>
 				</div>
 			) : (
@@ -549,6 +534,13 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 							</ExternalLink>
 						</p>
 					) }
+				</PanelBody>
+				<PanelBody title={ __( 'Styling', 'newspack-blocks' ) } initialOpen={ false }>
+					<ColorPaletteControl
+						value={ attributes.buttonColor }
+						onChange={ ( buttonColor: string ) => setAttributes( { buttonColor } ) }
+						label={ __( 'Button Color', 'newspack-blocks' ) }
+					/>
 				</PanelBody>
 				<PanelBody title={ __( 'Campaign', 'newspack-blocks' ) } initialOpen={ false }>
 					<TextControl

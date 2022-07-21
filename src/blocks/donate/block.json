@@ -35,6 +35,10 @@
 		"campaign": {
 			"type": "string"
 		},
+		"buttonColor": {
+			"type": "string",
+			"default": "#dd3333"
+		},
 		"suggestedAmounts": {
 			"type": "array"
 		},

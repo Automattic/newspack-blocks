@@ -74,6 +74,10 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 		$user_display_name = $current_user->display_name;
 	}
 
+	$button_color      = $attributes['buttonColor'];
+	$button_text_color = Newspack_Blocks::get_color_for_contrast( $button_color );
+	$button_style_attr = 'style="background-color: ' . esc_attr( $button_color ) . '; color: ' . esc_attr( $button_text_color ) . ';"';
+
 	ob_start();
 
 	?>
@@ -131,17 +135,14 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 				<div class="stripe-payment__row stripe-payment__row--flex stripe-payment__footer">
 					<div class="stripe-payment__methods">
 						<div class="stripe-payment__request-button stripe-payment--hidden stripe-payment__request-button--invisible stripe-payment--transition"></div>
-						<button type='submit'>
+						<button type='submit' <?php echo $button_style_attr; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 							<?php echo esc_html__( 'Donate with card', 'newspack-blocks' ); ?>
 						</button>
 					</div>
-					<a target="_blank" rel="noreferrer" class="stripe-payment__branding" href="https://stripe.com">
-						<img width="111" height="26" src="<?php echo esc_attr( Newspack_Blocks::streamlined_block_stripe_badge() ); ?>" alt="Stripe">
-					</a>
 				</div>
 			</div>
 		<?php else : ?>
-			<button type='submit'>
+			<button type='submit' <?php echo $button_style_attr; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 				<?php echo wp_kses_post( $attributes['buttonText'] ); ?>
 			</button>
 		<?php endif; ?>
