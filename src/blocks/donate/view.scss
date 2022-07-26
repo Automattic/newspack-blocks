@@ -1,11 +1,11 @@
-@import '../../shared/sass/colors';
-@import '../../shared/sass/mixins';
-@import '../../shared/sass/variables';
+@use '../../shared/sass/colors';
+@use '../../shared/sass/mixins';
+@use '../../shared/sass/variables';
 
 .wpbnbd {
-	background: $color__background-body;
-	border: 1px solid $color__border;
-	color: $color__text-main;
+	background: colors.$color__background-body;
+	border: 1px solid variables.$color__border;
+	color: colors.$color__text-main;
 	position: relative;
 	width: 100%;
 
@@ -15,22 +15,23 @@
 	}
 
 	input[readonly] {
-		background-color: $color__background-screen;
+		background-color: colors.$color__background-screen;
 		color: #666;
 	}
 
 	.freq-label,
-	.tier-label {
+	.tier-label,
+	.input-container {
 		display: block;
 		font-weight: bold;
 		cursor: pointer;
 	}
 
 	.freq-label {
-		background: $color__background-body;
+		background: colors.$color__background-body;
 		box-sizing: border-box;
-		color: $color__text-light;
-		line-height: $font__line-height-body;
+		color: colors.$color__text-light;
+		line-height: variables.$font__line-height-body;
 		overflow: hidden;
 		padding: 0.38rem 0.76rem;
 		text-overflow: ellipsis;
@@ -39,31 +40,31 @@
 		width: 100%;
 		z-index: 1;
 
-		@include media( tablet ) {
+		@include mixins.media( tablet ) {
 			text-align: center;
 		}
 
 		&:focus,
 		&:hover {
-			background: $color__background-screen;
-			color: $color__text-main;
+			background: colors.$color__background-screen;
+			color: colors.$color__text-main;
 		}
 	}
 
 	button {
 		margin: 0 0.76rem 0.76rem;
 
-		@include media( tablet ) {
+		@include mixins.media( tablet ) {
 			margin: 0 1.5rem 1.5rem;
 		}
 	}
 
 	.thanks {
-		color: $color__text-light;
-		font-size: $font__size-sm;
+		color: colors.$color__text-light;
+		font-size: variables.$font__size-sm;
 		margin: 0.38rem 0.76rem 0.76rem;
 
-		@include media( tablet ) {
+		@include mixins.media( tablet ) {
 			margin-left: 1.5rem;
 			margin-right: 1.5rem;
 		}
@@ -77,32 +78,32 @@
 		flex-wrap: wrap;
 		position: relative;
 
-		@include media( tablet ) {
+		@include mixins.media( tablet ) {
 			margin: 1.12rem 1.12rem 0.38rem;
 		}
 
 		.tier-label {
-			border: 1px solid $color__border;
+			border: 1px solid variables.$color__border;
 			border-radius: 5px;
 			margin: 0.38rem;
 			padding: 0.38rem 0.76rem;
 
 			&:hover {
-				background: $color__background-screen;
+				background: colors.$color__background-screen;
 			}
 		}
 
 		input[type='radio'] {
 			&:focus + .tier-label {
-				background: $color__background-screen;
-				outline: 1px dotted currentColor;
+				background: colors.$color__background-screen;
+				outline: 1px dotted currentcolor;
 				outline-offset: -4px;
 			}
 
 			&:checked + .tier-label {
-				background-color: $color__primary;
+				background-color: colors.$color__primary;
 				border-color: transparent;
-				color: $color__background-body;
+				color: colors.$color__background-body;
 			}
 		}
 
@@ -124,7 +125,8 @@
 			&:checked ~ .money-input {
 				display: flex;
 			}
-			&:checked ~ .other-label {
+
+			&:checked ~ .odl {
 				display: block;
 			}
 
@@ -142,30 +144,12 @@
 }
 
 .wpbnbd.untiered {
-	padding-top: 7.65em;
-	padding-top: calc( 3 * ( 0.76rem + 1.28em + 1px ) );
-	position: relative;
-
-	@include media( tablet ) {
-		padding-top: 2.55em;
-		padding-top: calc( 0.76rem + 1.28em + 1px );
-	}
-
-	.freq-label {
-		font-size: $font__size-sm;
-	}
-
 	.input-container {
 		margin: 0.76rem;
 		display: none;
 
-		@include media( tablet ) {
+		@include mixins.media( tablet ) {
 			margin: 1.5rem 1.5rem 0.76rem;
-		}
-
-		label {
-			font-size: $font__size-sm;
-			font-weight: bold;
 		}
 	}
 
@@ -179,19 +163,19 @@
 	align-items: center;
 	position: relative;
 	max-width: 200px;
-	background-color: $color__background-input;
+	background-color: colors.$color__background-input;
 	border-radius: 3px;
-	border: 1px solid $color__border;
+	border: 1px solid variables.$color__border;
 
 	&:focus-within {
-		border-color: $color__text-input-focus;
-		outline: thin solid rgba( $color__text-input-focus, 0.15 );
+		border-color: colors.$color__text-input-focus;
+		outline: thin solid rgba( colors.$color__text-input-focus, 0.15 );
 		outline-offset: -4px;
 	}
 
 	.currency {
 		cursor: default;
-		font-size: $font__size-sm;
+		font-size: variables.$font__size-sm;
 		padding-left: 0.5em;
 	}
 
@@ -211,21 +195,19 @@
 }
 
 .wpbnbd .frequencies {
-	font-size: $font__size-sm;
+	font-size: variables.$font__size-sm;
 	padding-top: 7.65em;
-	padding-top: calc( 3 * ( 0.76rem + 1.6em + 1px ) );
 	position: relative;
 
-	@include media( tablet ) {
-		padding-top: 2.55em;
-		padding-top: calc( 0.76rem + 1.6em + 1px );
+	@include mixins.media( tablet ) {
+		padding-top: calc( 0.76rem + 1.6em + 1px ) !important;
 	}
 }
 
 .wpbnbd .frequency {
 	.freq-label {
 		align-items: center;
-		border: 0 solid $color__border;
+		border: 0 solid variables.$color__border;
 		border-width: 0 0 1px;
 		display: flex;
 		left: 0;
@@ -234,7 +216,7 @@
 		width: 100%;
 
 		&::before {
-			border: 2px solid currentColor;
+			border: 2px solid currentcolor;
 			border-radius: 100%;
 			content: '';
 			display: block;
@@ -244,9 +226,8 @@
 			width: 20px;
 		}
 
-		@include media( tablet ) {
+		@include mixins.media( tablet ) {
 			justify-content: center;
-			width: 33.33%;
 
 			&::before {
 				display: none;
@@ -260,16 +241,16 @@
 				color: inherit;
 
 				&::before {
-					background: $color__text-main;
+					background: colors.$color__text-main;
 					background-clip: content-box;
 				}
 
-				@include media( tablet ) {
+				@include mixins.media( tablet ) {
 					border-bottom-color: transparent;
 				}
 
 				&:hover {
-					background: $color__background-body;
+					background: colors.$color__background-body;
 				}
 			}
 
@@ -287,21 +268,45 @@
 
 	&:nth-of-type( 2 ) .freq-label {
 		top: calc( 0.76rem + 1.6em + 1px );
-
-		@include media( tablet ) {
-			border-left-width: 1px;
-			border-right-width: 1px;
-			left: 33.33%;
-			top: 0;
-		}
 	}
 
 	&:nth-of-type( 3 ) .freq-label {
 		top: calc( 2 * ( 0.76rem + 1.6em + 1px ) );
 
-		@include media( tablet ) {
+		@include mixins.media( tablet ) {
 			left: 66.66%;
 			top: 0;
+		}
+	}
+}
+
+@include mixins.media( tablet ) {
+	.wpbnbd-frequencies {
+		&--2 {
+			&.wpbnbd .frequency {
+				.freq-label {
+					width: 50%;
+				}
+				&:nth-of-type( 2 ) .freq-label {
+					border-left-width: 1px;
+					left: 50%;
+					top: 0;
+				}
+			}
+		}
+
+		&--3 {
+			&.wpbnbd .frequency {
+				.freq-label {
+					width: 33.33%;
+				}
+				&:nth-of-type( 2 ) .freq-label {
+					border-left-width: 1px;
+					border-right-width: 1px;
+					left: 33.33%;
+					top: 0;
+				}
+			}
 		}
 	}
 }
@@ -309,7 +314,7 @@
 /* Alternate Style */
 
 .wpbnbd.is-style-alternate {
-	border-color: $color__background-screen;
+	border-color: colors.$color__background-screen;
 	border-radius: 5px;
 
 	.thanks {
@@ -326,12 +331,6 @@
 	}
 
 	&.untiered {
-		padding-top: calc( 3 * ( 1.14rem + 1.28em ) + 8px );
-
-		@include media( tablet ) {
-			padding-top: calc( 1.14rem + 1.28em + 4px );
-		}
-
 		.input-container {
 			margin: 1.12rem;
 		}
@@ -340,14 +339,10 @@
 	&.tiered {
 		.tiers {
 			.tier-label {
-				background: $color__background-screen;
-				border-color: $color__background-screen;
+				background: colors.$color__background-screen;
+				border-color: colors.$color__background-screen;
 				margin: 0;
 				text-align: center;
-			}
-
-			input.other-input:checked + label {
-				margin-bottom: calc( 1.28rem + 1.6em + 2px );
 			}
 		}
 
@@ -359,17 +354,15 @@
 	}
 
 	.frequencies {
-		padding-top: calc( 3 * ( 1.14rem + 1.6em ) + 8px );
-
-		@include media( tablet ) {
+		@include mixins.media( tablet ) {
 			padding-top: calc( 1.14rem + 1.6em + 4px );
 		}
 	}
 
 	.frequency {
 		.freq-label {
-			background: $color__background-screen;
-			border-color: $color__background-screen;
+			background: colors.$color__background-screen;
+			border-color: colors.$color__background-screen;
 			border-width: 1px;
 			padding: calc( 0.57rem + 1px ) 0.76rem;
 
@@ -381,7 +374,7 @@
 		&:nth-of-type( 2 ) .freq-label {
 			top: calc( 1.14rem + 1.6em + 2px );
 
-			@include media( tablet ) {
+			@include mixins.media( tablet ) {
 				top: 0;
 			}
 		}
@@ -389,7 +382,7 @@
 		&:nth-of-type( 3 ) .freq-label {
 			top: calc( 2 * ( 1.14rem + 1.6em + 2px ) );
 
-			@include media( tablet ) {
+			@include mixins.media( tablet ) {
 				top: 0;
 			}
 		}
@@ -402,7 +395,7 @@
 					border-radius: 5px;
 					bottom: 0.19rem;
 					border: 0.19rem solid white;
-					box-shadow: 0 0 0 1px $color__border;
+					box-shadow: 0 0 0 1px variables.$color__border;
 					content: '';
 					display: block;
 					left: 0.19rem;
@@ -413,7 +406,7 @@
 				}
 
 				&:hover {
-					background: $color__background-screen;
+					background: colors.$color__background-screen;
 				}
 			}
 
@@ -423,7 +416,7 @@
 				grid-template-columns: repeat( 4, 1fr );
 				margin: 1.12rem;
 
-				@include media( mobile ) {
+				@include mixins.media( mobile ) {
 					grid-gap: 0.56rem;
 				}
 			}
@@ -461,12 +454,6 @@
 	}
 
 	&.untiered {
-		padding-top: calc( 3 * ( 0.76rem + 1.28em + 4px ) );
-
-		@include media( tablet ) {
-			padding-top: calc( 0.76rem + 1.28em + 4px );
-		}
-
 		.input-container {
 			margin: 0.56rem 0 1.12rem;
 			text-align: left;
@@ -480,7 +467,7 @@
 				display: grid;
 				background: transparent;
 				border: none;
-				color: $color__text-light;
+				color: colors.$color__text-light;
 				font-family: inherit;
 				font-weight: inherit;
 				grid-gap: 0.25rem;
@@ -491,7 +478,7 @@
 
 				&::before {
 					background: white;
-					border: 1px solid $color__border;
+					border: 1px solid variables.$color__border;
 					border-radius: 100%;
 					box-shadow: inset 0 0 0 3px white;
 					content: '';
@@ -506,16 +493,12 @@
 				}
 			}
 
-			input.other-input:checked + label {
-				margin-bottom: calc( 1.28rem + 1.6em + 2px );
-			}
-
 			input[type='radio']:checked + .tier-select-label {
 				background: none;
 				color: inherit;
 
 				&::before {
-					background: currentColor;
+					background: currentcolor;
 				}
 			}
 		}
@@ -530,7 +513,7 @@
 	.frequencies {
 		padding-top: calc( 3 * ( 0.76rem + 1.6em + 4px ) );
 
-		@include media( tablet ) {
+		@include mixins.media( tablet ) {
 			padding-top: calc( 0.76rem + 1.6em + 4px );
 		}
 	}
@@ -539,25 +522,25 @@
 		.freq-label {
 			background: transparent;
 			border: none;
-			box-shadow: 0 3px 0 white, 0 4px 0 0 $color__border;
+			box-shadow: 0 3px 0 white, 0 4px 0 0 variables.$color__border;
 			padding: 0.38rem 0;
 			transition: none;
 
-			@include media( tablet ) {
+			@include mixins.media( tablet ) {
 				padding-left: 0.76rem;
 				padding-right: 0.76rem;
 			}
 
 			&::before {
 				border-width: 1px;
-				border-color: $color__border;
+				border-color: variables.$color__border;
 			}
 		}
 
 		&:nth-of-type( 2 ) .freq-label {
 			top: calc( 0.76rem + 1.6em + 4px );
 
-			@include media( tablet ) {
+			@include mixins.media( tablet ) {
 				top: 0;
 			}
 		}
@@ -565,14 +548,14 @@
 		&:nth-of-type( 3 ) .freq-label {
 			top: calc( 2 * ( 0.76rem + 1.6em + 4px ) );
 
-			@include media( tablet ) {
+			@include mixins.media( tablet ) {
 				top: 0;
 			}
 		}
 
 		input[type='radio']:checked {
 			+ .freq-label {
-				box-shadow: 0 4px 0 currentColor;
+				box-shadow: 0 4px 0 currentcolor;
 			}
 
 			~ .tiers {
@@ -582,7 +565,7 @@
 				justify-content: center;
 				margin: 1.12rem 0;
 
-				@include media( mobile ) {
+				@include mixins.media( mobile ) {
 					display: grid;
 					grid-gap: 0.56rem;
 					grid-template-columns: repeat( 4, 1fr );
