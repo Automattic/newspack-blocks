@@ -1,3 +1,31 @@
+# [1.54.0](https://github.com/Automattic/newspack-blocks/compare/v1.53.1...v1.54.0) (2022-07-26)
+
+
+### Bug Fixes
+
+* resolve merge conflict with release ([#1199](https://github.com/Automattic/newspack-blocks/issues/1199)) ([ce82826](https://github.com/Automattic/newspack-blocks/commit/ce82826fdabda6a68caf9c65eae46b762caf6eef))
+
+
+### Features
+
+* **donate-block:** amounts and frequencies customisation ([#1191](https://github.com/Automattic/newspack-blocks/issues/1191)) ([99d967f](https://github.com/Automattic/newspack-blocks/commit/99d967f46f7a0da2f8f74ad799456193252ffc31))
+* homepage posts patterns with ad unit ([#1170](https://github.com/Automattic/newspack-blocks/issues/1170)) ([a2e652e](https://github.com/Automattic/newspack-blocks/commit/a2e652ebe363adcd7e15484bf5b72b7d6d63bc38))
+* support new sponsor options to show authors and categories ([#1156](https://github.com/Automattic/newspack-blocks/issues/1156)) ([67e8834](https://github.com/Automattic/newspack-blocks/commit/67e8834e5a1bfe0dbe1d3eb9d899be412c3197ac))
+
+# [1.54.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.53.1...v1.54.0-alpha.1) (2022-07-14)
+
+
+### Bug Fixes
+
+* resolve merge conflict with release ([#1199](https://github.com/Automattic/newspack-blocks/issues/1199)) ([ce82826](https://github.com/Automattic/newspack-blocks/commit/ce82826fdabda6a68caf9c65eae46b762caf6eef))
+
+
+### Features
+
+* **donate-block:** amounts and frequencies customisation ([#1191](https://github.com/Automattic/newspack-blocks/issues/1191)) ([99d967f](https://github.com/Automattic/newspack-blocks/commit/99d967f46f7a0da2f8f74ad799456193252ffc31))
+* homepage posts patterns with ad unit ([#1170](https://github.com/Automattic/newspack-blocks/issues/1170)) ([a2e652e](https://github.com/Automattic/newspack-blocks/commit/a2e652ebe363adcd7e15484bf5b72b7d6d63bc38))
+* support new sponsor options to show authors and categories ([#1156](https://github.com/Automattic/newspack-blocks/issues/1156)) ([67e8834](https://github.com/Automattic/newspack-blocks/commit/67e8834e5a1bfe0dbe1d3eb9d899be412c3197ac))
+
 ## [1.53.1](https://github.com/Automattic/newspack-blocks/compare/v1.53.0...v1.53.1) (2022-07-05)
 
 
