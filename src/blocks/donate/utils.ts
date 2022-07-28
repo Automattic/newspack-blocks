@@ -11,9 +11,12 @@ const hexToRGB = ( hex: string ): number[] => {
 	return parts.map( x => parseInt( x, 16 ) );
 };
 
-export const getColorForContrast = ( color: string ): string => {
+export const getColorForContrast = ( color?: string ): string => {
 	const blackColor = '#000000';
 	const whiteColor = '#ffffff';
+	if ( color === undefined ) {
+		return blackColor;
+	}
 
 	const backgroundColorRGB = hexToRGB( color );
 	const blackRGB = hexToRGB( blackColor );
