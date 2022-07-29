@@ -298,6 +298,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 			$stripe_data['fee_multiplier'],
 			$stripe_data['fee_static'],
 			$stripe_data['usedPublishableKey'],
+			$attributes['paymentRequestType'],
 		];
 	} else {
 		$configuration_for_frontend = [];

@@ -46,12 +46,18 @@
 			}
 		}
 		&__request-button {
+			display: flex;
+			align-items: center;
+			gap: 0.8em;
 			font-size: 0.8em;
 			border-radius: 5px;
 			color: colors.$color__secondary;
 			border: colors.$color__secondary 1px dashed;
 			padding: 0 20px;
 			opacity: 0.5;
+			.components-base-control__field {
+				margin: 0;
+			}
 		}
 	}
 }
