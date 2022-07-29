@@ -208,6 +208,8 @@ function newspack_blocks_render_block_donate( $attributes ) {
 		return '';
 	}
 
+	$configuration['defaultFrequency'] = $attributes['defaultFrequency'];
+
 	/* If block has additional CSS class(es)  */
 	if ( isset( $attributes['className'] ) ) {
 		$classname = $attributes['className'];

@@ -1,3 +1,10 @@
+## [1.54.1](https://github.com/Automattic/newspack-blocks/compare/v1.54.0...v1.54.1) (2022-07-29)
+
+
+### Bug Fixes
+
+* **donate-block:** handle default frequency from attributes ([4de797a](https://github.com/Automattic/newspack-blocks/commit/4de797a396c7ca3f7f07416c44a9f87a8ce37af1))
+
 # [1.54.0](https://github.com/Automattic/newspack-blocks/compare/v1.53.1...v1.54.0) (2022-07-26)
 
 
