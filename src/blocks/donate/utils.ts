@@ -1,4 +1,4 @@
-import type { FrequencySlug } from './types';
+import type { DonationFrequencySlug } from './types';
 
 const hexToRGB = ( hex: string ): number[] => {
 	const parts = hex
@@ -11,9 +11,12 @@ const hexToRGB = ( hex: string ): number[] => {
 	return parts.map( x => parseInt( x, 16 ) );
 };
 
-export const getColorForContrast = ( color: string ): string => {
+export const getColorForContrast = ( color?: string ): string => {
 	const blackColor = '#000000';
 	const whiteColor = '#ffffff';
+	if ( color === undefined ) {
+		return blackColor;
+	}
 
 	const backgroundColorRGB = hexToRGB( color );
 	const blackRGB = hexToRGB( blackColor );
@@ -33,7 +36,7 @@ export const getColorForContrast = ( color: string ): string => {
 };
 
 export const getMigratedAmount = (
-	frequency: FrequencySlug,
+	frequency: DonationFrequencySlug,
 	amounts: [ number, number, number ],
 	untieredAmount: number
 ): [ number, number, number, number ] => {
