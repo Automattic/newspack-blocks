@@ -136,7 +136,7 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 					<div class="stripe-payment__methods">
 						<div class="stripe-payment__request-button stripe-payment--hidden stripe-payment__request-button--invisible stripe-payment--transition"></div>
 						<button type='submit' <?php echo $button_style_attr; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-							<?php echo esc_html__( 'Donate with card', 'newspack-blocks' ); ?>
+							<?php echo esc_html( $attributes['buttonWithCCText'] ); ?>
 						</button>
 					</div>
 				</div>

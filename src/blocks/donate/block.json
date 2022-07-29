@@ -28,6 +28,10 @@
 			"type": "string",
 			"default": "Donate Now"
 		},
+		"buttonWithCCText": {
+			"type": "string",
+			"default": "Donate with card"
+		},
 		"defaultFrequency": {
 			"type": "string",
 			"default": "month"

@@ -50,6 +50,7 @@ type OverridableConfiguration = {
 
 type DonateBlockAttributes = OverridableConfiguration & {
 	buttonText: string;
+	buttonWithCCText: string;
 	buttonColor: string;
 	thanksText: string;
 	defaultFrequency: FrequencySlug;
@@ -379,7 +380,12 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 			} }
 		>
 			{ isRenderingStreamlinedBlock() ? (
-				__( 'Donate with card', 'newspack-blocks' )
+				<RichText
+					onChange={ ( value: string ) => setAttributes( { buttonWithCCText: value } ) }
+					placeholder={ __( 'Button text…', 'newspack-blocks' ) }
+					value={ attributes.buttonWithCCText }
+					tagName="span"
+				/>
 			) : (
 				<RichText
 					onChange={ ( value: string ) => setAttributes( { buttonText: value } ) }
