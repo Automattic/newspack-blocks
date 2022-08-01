@@ -70,6 +70,7 @@ export const getSettings = ( formElement: HTMLFormElement ) => {
 		feeMultiplier,
 		feeStatic,
 		stripePublishableKey,
+		paymentRequestType,
 	] = JSON.parse( settings );
 	return {
 		currency: currency.toLowerCase(),
@@ -81,6 +82,7 @@ export const getSettings = ( formElement: HTMLFormElement ) => {
 		feeMultiplier: parseFloat( feeMultiplier ),
 		feeStatic: parseFloat( feeStatic ),
 		stripePublishableKey,
+		paymentRequestType,
 	};
 };
 

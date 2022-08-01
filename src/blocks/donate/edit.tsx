@@ -52,6 +52,9 @@ type OverridableConfiguration = {
 
 type DonateBlockAttributes = OverridableConfiguration & {
 	buttonText: string;
+	buttonWithCCText: string;
+	// https://stripe.com/docs/stripe-js/elements/payment-request-button
+	paymentRequestType: 'donate' | 'default' | 'book' | 'buy';
 	buttonColor: string;
 	thanksText: string;
 	defaultFrequency: DonationFrequencySlug;
@@ -79,6 +82,16 @@ const TIER_LABELS = [
 	__( 'Mid-tier', 'newspack' ),
 	__( 'High-tier', 'newspack' ),
 	__( 'Other', 'newspack' ),
+];
+
+const PAYMENT_REQUEST_BUTTON_TYPE_OPTIONS: {
+	label: string;
+	value: DonateBlockAttributes[ 'paymentRequestType' ];
+}[] = [
+	{ label: 'Donate', value: 'donate' },
+	{ label: 'Pay', value: 'default' },
+	{ label: 'Book', value: 'book' },
+	{ label: 'Buy', value: 'buy' },
 ];
 
 const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
@@ -362,7 +375,12 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 			} }
 		>
 			{ isRenderingStreamlinedBlock() ? (
-				__( 'Donate with card', 'newspack-blocks' )
+				<RichText
+					onChange={ ( value: string ) => setAttributes( { buttonWithCCText: value } ) }
+					placeholder={ __( 'Button text…', 'newspack-blocks' ) }
+					value={ attributes.buttonWithCCText }
+					tagName="span"
+				/>
 			) : (
 				<RichText
 					onChange={ ( value: string ) => setAttributes( { buttonText: value } ) }
@@ -373,6 +391,13 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 			) }
 		</button>
 	);
+
+	const selectedPaymentRequestTypeOption = PAYMENT_REQUEST_BUTTON_TYPE_OPTIONS.find(
+		option => option.value === attributes.paymentRequestType
+	);
+	const selectedPaymentRequestType = selectedPaymentRequestTypeOption
+		? selectedPaymentRequestTypeOption.value
+		: 'donate';
 
 	const renderFooter = () => (
 		<>
@@ -389,7 +414,14 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 					<div className="stripe-payment__row stripe-payment__row--flex stripe-payment__footer">
 						<div className="stripe-payment__methods">
 							<div className="stripe-payment__request-button">
-								{ __( 'Apple/Google Pay Button', 'newspack-blocks' ) }
+								<SelectControl
+									options={ PAYMENT_REQUEST_BUTTON_TYPE_OPTIONS }
+									value={ selectedPaymentRequestType }
+									onChange={ (
+										paymentRequestType: DonateBlockAttributes[ 'paymentRequestType' ]
+									) => setAttributes( { paymentRequestType } ) }
+								/>
+								{ __( 'with Apple/Google Pay', 'newspack-blocks' ) }
 							</div>
 							{ renderButton() }
 						</div>

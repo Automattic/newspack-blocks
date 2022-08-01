@@ -190,7 +190,7 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 					paymentRequest,
 					style: {
 						paymentRequestButton: {
-							type: 'donate',
+							type: settings.paymentRequestType,
 							height: '46px',
 						},
 					},
