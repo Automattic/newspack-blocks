@@ -6,7 +6,6 @@ declare global {
 		newspack_blocks_data: {
 			assets_path: string;
 			is_rendering_streamlined_block?: boolean;
-			streamlined_block_stripe_badge?: string;
 		};
 	}
 

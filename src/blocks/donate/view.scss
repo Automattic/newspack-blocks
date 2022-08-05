@@ -39,11 +39,7 @@
 		white-space: nowrap;
 		width: 100%;
 		z-index: 1;
-
-		@include mixins.media( tablet ) {
-			text-align: center;
-		}
-
+		text-align: center;
 		&:focus,
 		&:hover {
 			background: colors.$color__background-screen;
@@ -63,7 +59,11 @@
 		color: colors.$color__text-light;
 		font-size: variables.$font__size-sm;
 		margin: 0.38rem 0.76rem 0.76rem;
+		display: none;
 
+		@include mixins.media( mobile ) {
+			display: inline;
+		}
 		@include mixins.media( tablet ) {
 			margin-left: 1.5rem;
 			margin-right: 1.5rem;
@@ -101,7 +101,7 @@
 			}
 
 			&:checked + .tier-label {
-				background-color: colors.$color__primary;
+				background-color: #757575;
 				border-color: transparent;
 				color: colors.$color__background-body;
 			}
@@ -195,59 +195,28 @@
 }
 
 .wpbnbd .frequencies {
-	font-size: variables.$font__size-sm;
-	padding-top: 7.65em;
 	position: relative;
-
-	@include mixins.media( tablet ) {
-		padding-top: calc( 0.76rem + 1.6em + 1px ) !important;
+	font-size: variables.$font__size-xs;
+	@include mixins.media( mobile ) {
+		font-size: variables.$font__size-sm;
 	}
+	padding-top: 2.65em;
 }
 
 .wpbnbd .frequency {
 	.freq-label {
-		align-items: center;
-		border: 0 solid variables.$color__border;
-		border-width: 0 0 1px;
-		display: flex;
-		left: 0;
 		position: absolute;
 		top: 0;
-		width: 100%;
-
-		&::before {
-			border: 2px solid currentcolor;
-			border-radius: 100%;
-			content: '';
-			display: block;
-			height: 20px;
-			padding: 3px;
-			margin-right: 0.25rem;
-			width: 20px;
-		}
-
-		@include mixins.media( tablet ) {
-			justify-content: center;
-
-			&::before {
-				display: none;
-			}
-		}
+		left: 0;
+		border: 0 solid variables.$color__border;
+		border-width: 0 0 1px;
 	}
 
 	input[type='radio'] {
 		&:checked {
 			+ .freq-label {
 				color: inherit;
-
-				&::before {
-					background: colors.$color__text-main;
-					background-clip: content-box;
-				}
-
-				@include mixins.media( tablet ) {
-					border-bottom-color: transparent;
-				}
+				border-bottom-color: transparent;
 
 				&:hover {
 					background: colors.$color__background-body;
@@ -266,46 +235,34 @@
 		}
 	}
 
-	&:nth-of-type( 2 ) .freq-label {
-		top: calc( 0.76rem + 1.6em + 1px );
-	}
-
 	&:nth-of-type( 3 ) .freq-label {
-		top: calc( 2 * ( 0.76rem + 1.6em + 1px ) );
-
-		@include mixins.media( tablet ) {
-			left: 66.66%;
-			top: 0;
-		}
+		left: 66.66%;
 	}
 }
 
-@include mixins.media( tablet ) {
-	.wpbnbd-frequencies {
-		&--2 {
-			&.wpbnbd .frequency {
-				.freq-label {
-					width: 50%;
-				}
-				&:nth-of-type( 2 ) .freq-label {
-					border-left-width: 1px;
-					left: 50%;
-					top: 0;
-				}
+.wpbnbd-frequencies {
+	&--2 {
+		&.wpbnbd .frequency {
+			.freq-label {
+				width: 50%;
+			}
+			&:nth-of-type( 2 ) .freq-label {
+				border-left-width: 1px;
+				left: 50%;
+				top: 0;
 			}
 		}
-
-		&--3 {
-			&.wpbnbd .frequency {
-				.freq-label {
-					width: 33.33%;
-				}
-				&:nth-of-type( 2 ) .freq-label {
-					border-left-width: 1px;
-					border-right-width: 1px;
-					left: 33.33%;
-					top: 0;
-				}
+	}
+	&--3 {
+		&.wpbnbd .frequency {
+			.freq-label {
+				width: 33.33%;
+			}
+			&:nth-of-type( 2 ) .freq-label {
+				border-left-width: 1px;
+				border-right-width: 1px;
+				left: 33.33%;
+				top: 0;
 			}
 		}
 	}
@@ -364,26 +321,9 @@
 			background: colors.$color__background-screen;
 			border-color: colors.$color__background-screen;
 			border-width: 1px;
-			padding: calc( 0.57rem + 1px ) 0.76rem;
-
-			&::before {
-				display: none;
-			}
-		}
-
-		&:nth-of-type( 2 ) .freq-label {
-			top: calc( 1.14rem + 1.6em + 2px );
-
-			@include mixins.media( tablet ) {
-				top: 0;
-			}
-		}
-
-		&:nth-of-type( 3 ) .freq-label {
-			top: calc( 2 * ( 1.14rem + 1.6em + 2px ) );
-
-			@include mixins.media( tablet ) {
-				top: 0;
+			padding: calc( 0.57rem + 1px ) 0.5rem;
+			@include mixins.media( mobile ) {
+				padding: calc( 0.57rem + 1px ) 0.76rem;
 			}
 		}
 
@@ -413,10 +353,11 @@
 			~ .tiers {
 				display: grid;
 				grid-gap: 0.28rem;
-				grid-template-columns: repeat( 4, 1fr );
+				grid-template-columns: repeat( 2, 1fr );
 				margin: 1.12rem;
 
 				@include mixins.media( mobile ) {
+					grid-template-columns: repeat( 4, 1fr );
 					grid-gap: 0.56rem;
 				}
 			}
@@ -511,11 +452,7 @@
 	}
 
 	.frequencies {
-		padding-top: calc( 3 * ( 0.76rem + 1.6em + 4px ) );
-
-		@include mixins.media( tablet ) {
-			padding-top: calc( 0.76rem + 1.6em + 4px );
-		}
+		padding-top: calc( 0.76rem + 1.6em + 4px );
 	}
 
 	.frequency {
@@ -534,22 +471,6 @@
 			&::before {
 				border-width: 1px;
 				border-color: variables.$color__border;
-			}
-		}
-
-		&:nth-of-type( 2 ) .freq-label {
-			top: calc( 0.76rem + 1.6em + 4px );
-
-			@include mixins.media( tablet ) {
-				top: 0;
-			}
-		}
-
-		&:nth-of-type( 3 ) .freq-label {
-			top: calc( 2 * ( 0.76rem + 1.6em + 4px ) );
-
-			@include mixins.media( tablet ) {
-				top: 0;
 			}
 		}
 

@@ -28,12 +28,24 @@
 			"type": "string",
 			"default": "Donate Now"
 		},
+		"buttonWithCCText": {
+			"type": "string",
+			"default": "Donate with card"
+		},
+		"paymentRequestType": {
+			"type": "string",
+			"default": "donate"
+		},
 		"defaultFrequency": {
 			"type": "string",
 			"default": "month"
 		},
 		"campaign": {
 			"type": "string"
+		},
+		"buttonColor": {
+			"type": "string",
+			"default": "#dd3333"
 		},
 		"suggestedAmounts": {
 			"type": "array"

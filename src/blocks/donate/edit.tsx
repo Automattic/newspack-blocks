@@ -20,34 +20,44 @@ import {
 	ToggleControl,
 	TextControl,
 } from '@wordpress/components';
-import { InspectorControls, RichText } from '@wordpress/block-editor';
+import { InspectorControls, RichText, ColorPaletteControl } from '@wordpress/block-editor';
 import { isEmpty } from 'lodash';
 
-type FrequencySlug = 'once' | 'month' | 'year';
+/**
+ * Internal dependencies
+ */
+import { getColorForContrast, getMigratedAmount } from './utils';
+import type { DonationFrequencySlug } from './types';
 
-const FREQUENCIES: { [ Key in FrequencySlug as string ]: string } = {
+const FREQUENCIES: { [ Key in DonationFrequencySlug as string ]: string } = {
 	once: __( 'One-time', 'newspack-blocks' ),
 	month: __( 'Monthly', 'newspack-blocks' ),
 	year: __( 'Annually', 'newspack-blocks' ),
 };
-const FREQUENCY_SLUGS: FrequencySlug[] = Object.keys( FREQUENCIES ) as FrequencySlug[];
+const FREQUENCY_SLUGS: DonationFrequencySlug[] = Object.keys(
+	FREQUENCIES
+) as DonationFrequencySlug[];
 
 type DonationAmounts = {
-	[ Key in FrequencySlug as string ]: [ number, number, number, number ];
+	[ Key in DonationFrequencySlug as string ]: [ number, number, number, number ];
 };
 
 type OverridableConfiguration = {
 	amounts: DonationAmounts;
 	tiered: boolean;
 	disabledFrequencies: {
-		[ Key in FrequencySlug as string ]: boolean;
+		[ Key in DonationFrequencySlug as string ]: boolean;
 	};
 };
 
 type DonateBlockAttributes = OverridableConfiguration & {
 	buttonText: string;
+	buttonWithCCText: string;
+	// https://stripe.com/docs/stripe-js/elements/payment-request-button
+	paymentRequestType: 'donate' | 'default' | 'book' | 'buy';
+	buttonColor: string;
 	thanksText: string;
-	defaultFrequency: FrequencySlug;
+	defaultFrequency: DonationFrequencySlug;
 	campaign: string;
 	className: string;
 	// Manual mode enables block-level overrides of the global Donate settings.
@@ -74,19 +84,15 @@ const TIER_LABELS = [
 	__( 'Other', 'newspack' ),
 ];
 
-const getMigratedAmount = (
-	frequency: FrequencySlug,
-	amounts: [ number, number, number ],
-	untieredAmount: number
-): [ number, number, number, number ] => {
-	const multiplier = frequency === 'month' ? 1 : 12;
-	return [
-		amounts[ 0 ] * multiplier,
-		amounts[ 1 ] * multiplier,
-		amounts[ 2 ] * multiplier,
-		untieredAmount * multiplier,
-	];
-};
+const PAYMENT_REQUEST_BUTTON_TYPE_OPTIONS: {
+	label: string;
+	value: DonateBlockAttributes[ 'paymentRequestType' ];
+}[] = [
+	{ label: 'Donate', value: 'donate' },
+	{ label: 'Pay', value: 'default' },
+	{ label: 'Book', value: 'book' },
+	{ label: 'Buy', value: 'buy' },
+];
 
 const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 	const [ isLoading, setIsLoading ] = useState( true );
@@ -189,7 +195,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 		tierIndex,
 	}: {
 		value: string;
-		frequency: FrequencySlug;
+		frequency: DonationFrequencySlug;
 		tierIndex: number;
 	} ) => {
 		const subject = attributes.manual ? attributes : settings;
@@ -208,7 +214,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 		}
 	};
 
-	const renderFrequencySelect = ( frequencySlug: FrequencySlug ) => (
+	const renderFrequencySelect = ( frequencySlug: DonationFrequencySlug ) => (
 		<>
 			<input
 				type="radio"
@@ -235,26 +241,13 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 			`wpbnbd-frequencies--${ availableFrequencies.length }`
 		);
 
-	const getFrequenciesContainerStyle = () => {
-		let padding = '(0.76rem + 1.6em + 1px)';
-		switch ( attributes.className ) {
-			case 'is-style-alternate':
-				padding = '( 1.14rem + 1.6em ) + 8px';
-				break;
-			case 'is-style-minimal':
-				padding = '( 0.76rem + 1.6em + 4px )';
-				break;
-		}
-		return { paddingTop: `calc(${ availableFrequencies.length }*${ padding })` };
-	};
-
 	const renderAmountValueInput = ( {
 		frequencySlug,
 		tierIndex,
 		id,
 		label,
 	}: {
-		frequencySlug: FrequencySlug;
+		frequencySlug: DonationFrequencySlug;
 		tierIndex: number;
 		id: string;
 		label?: string;
@@ -279,10 +272,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 
 	const renderUntieredForm = () => (
 		<div className="wp-block-newspack-blocks-donate__options">
-			<div
-				className="wp-block-newspack-blocks-donate__frequencies frequencies"
-				style={ getFrequenciesContainerStyle() }
-			>
+			<div className="wp-block-newspack-blocks-donate__frequencies frequencies">
 				{ availableFrequencies.map( frequencySlug => (
 					<div
 						className="wp-block-newspack-blocks-donate__frequency frequency"
@@ -313,10 +303,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 
 	const renderTieredForm = () => (
 		<div className="wp-block-newspack-blocks-donate__options">
-			<div
-				className="wp-block-newspack-blocks-donate__frequencies frequencies"
-				style={ getFrequenciesContainerStyle() }
-			>
+			<div className="wp-block-newspack-blocks-donate__frequencies frequencies">
 				{ availableFrequencies.map( frequencySlug => (
 					<div
 						className="wp-block-newspack-blocks-donate__frequency frequency"
@@ -379,9 +366,21 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 	);
 
 	const renderButton = () => (
-		<button type="submit" onClick={ evt => evt.preventDefault() }>
+		<button
+			type="submit"
+			onClick={ evt => evt.preventDefault() }
+			style={ {
+				backgroundColor: attributes.buttonColor,
+				color: getColorForContrast( attributes.buttonColor ),
+			} }
+		>
 			{ isRenderingStreamlinedBlock() ? (
-				__( 'Donate with card', 'newspack-blocks' )
+				<RichText
+					onChange={ ( value: string ) => setAttributes( { buttonWithCCText: value } ) }
+					placeholder={ __( 'Button text…', 'newspack-blocks' ) }
+					value={ attributes.buttonWithCCText }
+					tagName="span"
+				/>
 			) : (
 				<RichText
 					onChange={ ( value: string ) => setAttributes( { buttonText: value } ) }
@@ -392,6 +391,13 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 			) }
 		</button>
 	);
+
+	const selectedPaymentRequestTypeOption = PAYMENT_REQUEST_BUTTON_TYPE_OPTIONS.find(
+		option => option.value === attributes.paymentRequestType
+	);
+	const selectedPaymentRequestType = selectedPaymentRequestTypeOption
+		? selectedPaymentRequestTypeOption.value
+		: 'donate';
 
 	const renderFooter = () => (
 		<>
@@ -408,23 +414,17 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 					<div className="stripe-payment__row stripe-payment__row--flex stripe-payment__footer">
 						<div className="stripe-payment__methods">
 							<div className="stripe-payment__request-button">
-								{ __( 'Apple/Google Pay Button', 'newspack-blocks' ) }
+								<SelectControl
+									options={ PAYMENT_REQUEST_BUTTON_TYPE_OPTIONS }
+									value={ selectedPaymentRequestType }
+									onChange={ (
+										paymentRequestType: DonateBlockAttributes[ 'paymentRequestType' ]
+									) => setAttributes( { paymentRequestType } ) }
+								/>
+								{ __( 'with Apple/Google Pay', 'newspack-blocks' ) }
 							</div>
 							{ renderButton() }
 						</div>
-						<a
-							target="_blank"
-							rel="noreferrer"
-							className="stripe-payment__branding"
-							href="https://stripe.com"
-						>
-							<img
-								width="111"
-								height="26"
-								src={ window.newspack_blocks_data?.streamlined_block_stripe_badge }
-								alt="Stripe"
-							/>
-						</a>
 					</div>
 				</div>
 			) : (
@@ -467,7 +467,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 							label: FREQUENCIES[ key ],
 							value: key,
 						} ) ) }
-						onChange={ ( defaultFrequency: FrequencySlug ) =>
+						onChange={ ( defaultFrequency: DonationFrequencySlug ) =>
 							setAttributes( { defaultFrequency } )
 						}
 					/>
@@ -485,7 +485,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 							/>
 							{ attributes.tiered ? (
 								<div className="components-frequency-donations">
-									{ FREQUENCY_SLUGS.map( ( frequency: FrequencySlug ) => {
+									{ FREQUENCY_SLUGS.map( ( frequency: DonationFrequencySlug ) => {
 										const isFrequencyDisabled = attributes.disabledFrequencies[ frequency ];
 										const isOneFrequencyActive =
 											Object.values( attributes.disabledFrequencies ).filter( Boolean ).length ===
@@ -524,7 +524,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 							) : (
 								<div className="components-frequency-donations">
 									<div className="wp-block-newspack-blocks-donate__panel-inputs">
-										{ FREQUENCY_SLUGS.map( ( frequencySlug: FrequencySlug ) =>
+										{ FREQUENCY_SLUGS.map( ( frequencySlug: DonationFrequencySlug ) =>
 											renderAmountValueInput( {
 												frequencySlug,
 												tierIndex: 3,
@@ -549,6 +549,13 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 							</ExternalLink>
 						</p>
 					) }
+				</PanelBody>
+				<PanelBody title={ __( 'Styling', 'newspack-blocks' ) } initialOpen={ false }>
+					<ColorPaletteControl
+						value={ attributes.buttonColor }
+						onChange={ ( buttonColor: string ) => setAttributes( { buttonColor } ) }
+						label={ __( 'Button Color', 'newspack-blocks' ) }
+					/>
 				</PanelBody>
 				<PanelBody title={ __( 'Campaign', 'newspack-blocks' ) } initialOpen={ false }>
 					<TextControl
