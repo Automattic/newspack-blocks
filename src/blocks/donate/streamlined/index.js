@@ -31,6 +31,11 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 		const getCaptchaToken = async reCaptchaKey => {
 			return new Promise( ( res, rej ) => {
 				const { grecaptcha } = window;
+
+				if ( ! grecaptcha?.ready ) {
+					rej( __( 'Error loading the reCaptcha library.', 'newspack-blocks' ) );
+				}
+
 				grecaptcha.ready( async () => {
 					try {
 						const token = await grecaptcha.execute( reCaptchaKey, { action: 'submit' } );
