@@ -175,7 +175,7 @@ function newspack_blocks_enqueue_streamlined_donate_block_scripts() {
 			// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 			wp_register_script(
 				Newspack_Blocks::DONATE_STREAMLINED_CAPTCHA_HANDLE,
-				'https://www.google.com/recaptcha/api.js?render=' . $captcha_site_key,
+				esc_url( 'https://www.google.com/recaptcha/api.js?render=' . $captcha_site_key ),
 				null,
 				null,
 				true
