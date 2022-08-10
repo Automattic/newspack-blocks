@@ -1,3 +1,18 @@
+# [1.55.0](https://github.com/Automattic/newspack-blocks/compare/v1.54.1...v1.55.0) (2022-08-10)
+
+
+### Bug Fixes
+
+* check that grecaptcha library exists before using its methods ([97b7832](https://github.com/Automattic/newspack-blocks/commit/97b783251c0f1f8d9d6921b6fc6453757a442bd1))
+* esc user-inputted key value before appending to URL ([be1acb1](https://github.com/Automattic/newspack-blocks/commit/be1acb15e424f1077ad6b54d9688f182e0c49600))
+* phpcs lint ([cd8fe6f](https://github.com/Automattic/newspack-blocks/commit/cd8fe6f3c7b2529adc00f17b2e8ba354ebb611be))
+* replace hardcoded test secret key ([4fd9d8f](https://github.com/Automattic/newspack-blocks/commit/4fd9d8fecb718918da41f08330eb51edf747c858))
+
+
+### Features
+
+* use reCaptcha v3 to secure Stripe donate forms ([e3c6639](https://github.com/Automattic/newspack-blocks/commit/e3c6639a066694f15404ec2c9910c71509143fec))
+
 ## [1.54.1](https://github.com/Automattic/newspack-blocks/compare/v1.54.0...v1.54.1) (2022-07-29)
 
 
