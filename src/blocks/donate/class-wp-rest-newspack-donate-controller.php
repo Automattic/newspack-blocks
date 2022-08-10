@@ -102,10 +102,7 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 		// If reCaptcha is available, verify the user action.
 		$use_captcha = \Newspack\Stripe_Connection::can_use_captcha();
 		if ( $use_captcha ) {
-			$stripe_settings = \Newspack\Stripe_Connection::get_stripe_data();
-			$captcha_secret  = $stripe_settings['captchaSiteSecret'];
-			$captcha_token   = $request->get_param( 'captchaToken' );
-
+			$captcha_token = $request->get_param( 'captchaToken' );
 			if ( ! $captcha_token ) {
 				return rest_ensure_response(
 					[
@@ -114,7 +111,9 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 				);
 			}
 
-			$captcha_verify = wp_safe_remote_post(
+			$stripe_settings = \Newspack\Stripe_Connection::get_stripe_data();
+			$captcha_secret  = $stripe_settings['captchaSiteSecret'];
+			$captcha_verify  = wp_safe_remote_post(
 				add_query_arg(
 					[
 						'secret'   => $captcha_secret,
