@@ -1,3 +1,12 @@
+# [1.56.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.55.0...v1.56.0-alpha.1) (2022-08-10)
+
+
+### Features
+
+* **donate:** add current_page_url to client metadata ([32e18a4](https://github.com/Automattic/newspack-blocks/commit/32e18a4f74a59723ab96ea9905fba0837a75c935))
+* **donate:** customise donate button texts ([#1219](https://github.com/Automattic/newspack-blocks/issues/1219)) ([8bda0f0](https://github.com/Automattic/newspack-blocks/commit/8bda0f0ef23895455fd99aa17069aeed2c8468a4))
+* **donate:** mobile style; UX tweaks ([#1201](https://github.com/Automattic/newspack-blocks/issues/1201)) ([65a1285](https://github.com/Automattic/newspack-blocks/commit/65a1285b49ffa86b145d24eac6968cdfd0530770))
+
 # [1.55.0](https://github.com/Automattic/newspack-blocks/compare/v1.54.1...v1.55.0) (2022-08-10)
 
 
