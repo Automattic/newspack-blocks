@@ -147,8 +147,8 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 
 			// If the reCaptcha verification score is below our threshold for valid user input.
 			if (
-			isset( $captcha_verify['score'] ) &&
-			Newspack_Blocks::DONATE_STREAMLINED_CAPTCHA_THRESHOLD > floatval( $captcha_verify['score'] )
+				isset( $captcha_verify['score'] ) &&
+				Newspack_Blocks::DONATE_STREAMLINED_CAPTCHA_THRESHOLD > floatval( $captcha_verify['score'] )
 			) {
 				return rest_ensure_response(
 					[
