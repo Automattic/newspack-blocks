@@ -29,6 +29,10 @@ export const renderMessages = ( messages, el, type = 'error' ) => {
 		messageEl.innerHTML = message;
 		el.appendChild( messageEl );
 	} );
+
+	if ( 'success' === type ) {
+		el.parentElement.replaceWith( el );
+	}
 };
 
 const getCookies = () =>
@@ -53,6 +57,7 @@ export const getSettings = formElement => {
 		feeMultiplier,
 		feeStatic,
 		stripePublishableKey,
+		captchaSiteKey,
 	] = JSON.parse( formElement.getAttribute( 'data-settings' ) );
 	return {
 		currency: currency.toLowerCase(),
@@ -64,6 +69,7 @@ export const getSettings = formElement => {
 		feeMultiplier: parseFloat( feeMultiplier ),
 		feeStatic: parseFloat( feeStatic ),
 		stripePublishableKey,
+		captchaSiteKey,
 	};
 };
 
@@ -162,7 +168,7 @@ export const sendAPIRequest = async ( endpoint, data, method = 'POST' ) =>
 	} );
 
 export const renderSuccessMessageWithEmail = ( emailAddress, messagesEl ) => {
-	const successMessge = sprintf(
+	const successMessage = sprintf(
 		/* Translators: %s is the email address of the current user. */
 		__(
 			'Your payment has been processed. Thank you for your contribution! You will receive a confirmation email at %s.',
@@ -170,5 +176,5 @@ export const renderSuccessMessageWithEmail = ( emailAddress, messagesEl ) => {
 		),
 		emailAddress
 	);
-	renderMessages( [ successMessge ], messagesEl, 'success' );
+	renderMessages( [ successMessage ], messagesEl, 'success' );
 };

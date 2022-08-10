@@ -166,11 +166,29 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
  */
 function newspack_blocks_enqueue_streamlined_donate_block_scripts() {
 	if ( Newspack_Blocks::is_rendering_streamlined_block() ) {
+		$dependencies = [ 'wp-i18n' ];
+
+		if ( \Newspack\Stripe_Connection::can_use_captcha() ) {
+			$stripe_settings  = \Newspack\Stripe_Connection::get_stripe_data();
+			$captcha_site_key = $stripe_settings['captchaSiteKey'];
+
+			// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+			wp_register_script(
+				Newspack_Blocks::DONATE_STREAMLINED_CAPTCHA_HANDLE,
+				esc_url( 'https://www.google.com/recaptcha/api.js?render=' . $captcha_site_key ),
+				null,
+				null,
+				true
+			);
+
+			$dependencies[] = Newspack_Blocks::DONATE_STREAMLINED_CAPTCHA_HANDLE;
+		}
+
 		$script_data = Newspack_Blocks::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . '/donateStreamlined.js' );
 		wp_enqueue_script(
 			Newspack_Blocks::DONATE_STREAMLINED_SCRIPT_HANDLE,
 			$script_data['script_path'],
-			[ 'wp-i18n' ],
+			$dependencies,
 			$script_data['version'],
 			true
 		);
@@ -299,6 +317,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 			$stripe_data['fee_multiplier'],
 			$stripe_data['fee_static'],
 			$stripe_data['usedPublishableKey'],
+			\Newspack\Stripe_Connection::can_use_captcha() ? $stripe_data['captchaSiteKey'] : null,
 		];
 	} else {
 		$configuration_for_frontend = [];
