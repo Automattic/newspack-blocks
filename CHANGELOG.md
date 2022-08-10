@@ -1,11 +1,17 @@
-# [1.55.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.54.1...v1.55.0-alpha.1) (2022-08-05)
+# [1.55.0](https://github.com/Automattic/newspack-blocks/compare/v1.54.1...v1.55.0) (2022-08-10)
+
+
+### Bug Fixes
+
+* check that grecaptcha library exists before using its methods ([97b7832](https://github.com/Automattic/newspack-blocks/commit/97b783251c0f1f8d9d6921b6fc6453757a442bd1))
+* esc user-inputted key value before appending to URL ([be1acb1](https://github.com/Automattic/newspack-blocks/commit/be1acb15e424f1077ad6b54d9688f182e0c49600))
+* phpcs lint ([cd8fe6f](https://github.com/Automattic/newspack-blocks/commit/cd8fe6f3c7b2529adc00f17b2e8ba354ebb611be))
+* replace hardcoded test secret key ([4fd9d8f](https://github.com/Automattic/newspack-blocks/commit/4fd9d8fecb718918da41f08330eb51edf747c858))
 
 
 ### Features
 
-* **donate:** add current_page_url to client metadata ([32e18a4](https://github.com/Automattic/newspack-blocks/commit/32e18a4f74a59723ab96ea9905fba0837a75c935))
-* **donate:** customise donate button texts ([#1219](https://github.com/Automattic/newspack-blocks/issues/1219)) ([8bda0f0](https://github.com/Automattic/newspack-blocks/commit/8bda0f0ef23895455fd99aa17069aeed2c8468a4))
-* **donate:** mobile style; UX tweaks ([#1201](https://github.com/Automattic/newspack-blocks/issues/1201)) ([65a1285](https://github.com/Automattic/newspack-blocks/commit/65a1285b49ffa86b145d24eac6968cdfd0530770))
+* use reCaptcha v3 to secure Stripe donate forms ([e3c6639](https://github.com/Automattic/newspack-blocks/commit/e3c6639a066694f15404ec2c9910c71509143fec))
 
 ## [1.54.1](https://github.com/Automattic/newspack-blocks/compare/v1.54.0...v1.54.1) (2022-07-29)
 
