@@ -100,11 +100,11 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 	 */
 	public function api_process_donation( $request ) {
 		// If reCaptcha is available, verify the user action.
-		$use_captcha     = \Newspack\Stripe_Connection::can_use_captcha();
-		$stripe_settings = \Newspack\Stripe_Connection::get_stripe_data();
-		$captcha_secret  = $stripe_settings['captchaSiteSecret'];
+		$use_captcha = \Newspack\Stripe_Connection::can_use_captcha();
 		if ( $use_captcha ) {
-			$captcha_token = $request->get_param( 'captchaToken' );
+			$stripe_settings = \Newspack\Stripe_Connection::get_stripe_data();
+			$captcha_secret  = $stripe_settings['captchaSiteSecret'];
+			$captcha_token   = $request->get_param( 'captchaToken' );
 
 			if ( ! $captcha_token ) {
 				return rest_ensure_response(
