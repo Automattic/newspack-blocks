@@ -290,6 +290,9 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 			await payWithToken( stripeTokenCreationResult.token, {
 				payment_method_id: paymentMethodCreationResult.paymentMethod.id,
 			} );
+			if ( window.newspackReaderActivation?.refreshAuthentication ) {
+				window.newspackReaderActivation.refreshAuthentication();
+			}
 		} );
 	} );
 
