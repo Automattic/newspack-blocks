@@ -44,7 +44,9 @@ export const renderMessages = (
 	} );
 
 	if ( 'success' === type ) {
-		el.parentElement.replaceWith( el );
+		if ( el.parentElement ) {
+			el.parentElement.replaceWith( el );
+		}
 	}
 };
 
@@ -74,8 +76,9 @@ export const getSettings = ( formElement: HTMLFormElement ) => {
 		feeMultiplier,
 		feeStatic,
 		stripePublishableKey,
+		paymentRequestType,
 		captchaSiteKey,
-	] = JSON.parse( formElement.getAttribute( 'data-settings' ) );
+	] = JSON.parse( settings );
 	return {
 		currency: currency.toLowerCase(),
 		currencySymbol,
@@ -86,6 +89,7 @@ export const getSettings = ( formElement: HTMLFormElement ) => {
 		feeMultiplier: parseFloat( feeMultiplier ),
 		feeStatic: parseFloat( feeStatic ),
 		stripePublishableKey,
+		paymentRequestType,
 		captchaSiteKey,
 	};
 };
@@ -188,7 +192,7 @@ export const sendAPIRequest = async ( endpoint: string, data: object, method = '
 		return { error: responseData };
 	} );
 
-export const renderSuccessMessageWithEmail = ( emailAddress, messagesEl ) => {
+export const renderSuccessMessageWithEmail = ( emailAddress: string, messagesEl: HTMLElement ) => {
 	const successMessage = sprintf(
 		/* Translators: %s is the email address of the current user. */
 		__(

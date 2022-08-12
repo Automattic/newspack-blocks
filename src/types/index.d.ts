@@ -7,6 +7,7 @@ declare global {
 			assets_path: string;
 			is_rendering_streamlined_block?: boolean;
 		};
+		grecaptcha: any
 	}
 
 	type PostId = number;
@@ -28,7 +29,7 @@ declare global {
 		clientId: string;
 		attributes: {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			[ key: string ]: any;
+			[key: string]: any;
 		};
 		innerBlocks: Block[];
 	};
@@ -38,4 +39,4 @@ declare global {
 	};
 }
 
-export {};
+export { };

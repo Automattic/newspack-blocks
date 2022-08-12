@@ -40,7 +40,19 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 		const enableForm = () => el.classList.remove( 'stripe-payment--disabled' );
 		enableForm();
 
-		const getCaptchaToken = async reCaptchaKey => {
+		// Display CC UI.
+		const displayCardUI = () => {
+			if ( isCardUIVisible ) {
+				return;
+			}
+			const inputsHiddenEl = el.querySelector( '.stripe-payment__inputs.stripe-payment--hidden' );
+			if ( inputsHiddenEl ) {
+				inputsHiddenEl.classList.remove( 'stripe-payment--hidden' );
+				isCardUIVisible = true;
+			}
+		};
+
+		const getCaptchaToken = async ( reCaptchaKey: string ) => {
 			return new Promise( ( res, rej ) => {
 				const { grecaptcha } = window;
 
@@ -72,6 +84,10 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 			 */
 			requestPayloadOverrides = {}
 		) => {
+			if ( ! stripe ) {
+				return;
+			}
+
 			// Add reCaptcha challenge to form submission, if available.
 			const reCaptchaKey = settings?.captchaSiteKey;
 			let reCaptchaToken;
@@ -87,7 +103,7 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 					return { error: true };
 				}
 			}
-			const formValues = utils.getFormValues( formElement );
+			const formValues = utils.getDonationFormValues( formElement );
 			const apiRequestPayload = {
 				captchaToken: reCaptchaToken,
 				tokenData: token,
