@@ -1,3 +1,15 @@
+# [1.56.0-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v1.56.0-alpha.1...v1.56.0-alpha.2) (2022-08-12)
+
+
+### Bug Fixes
+
+* ensure amount is always defined for totalAmount calculation ([#1227](https://github.com/Automattic/newspack-blocks/issues/1227)) ([b1910dc](https://github.com/Automattic/newspack-blocks/commit/b1910dc117140c489d6a8ff960722e9693cd3327))
+
+
+### Features
+
+* **donate:** refresh reader authentication ([#1236](https://github.com/Automattic/newspack-blocks/issues/1236)) ([f21904b](https://github.com/Automattic/newspack-blocks/commit/f21904b59a3a9d4295f74f34eebf3e9b8773cb4c))
+
 # [1.56.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.55.0...v1.56.0-alpha.1) (2022-08-10)
 
 
