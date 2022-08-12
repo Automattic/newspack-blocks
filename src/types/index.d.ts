@@ -7,6 +7,17 @@ declare global {
 			assets_path: string;
 			is_rendering_streamlined_block?: boolean;
 		};
+		newspackReaderActivation: {
+			on: function;
+			off: function;
+			setReaderEmail: function;
+			setAuthenticated: function;
+			refreshAuthentication: function;
+			getReader: function;
+			hasAuthLink: function;
+			setAuthStrategy: function;
+			getAuthStrategy: function;
+		};
 	}
 
 	type PostId = number;
