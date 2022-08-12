@@ -13,7 +13,9 @@ class Newspack_Blocks {
 	/**
 	 * Script handle for the streamlined donate block script.
 	 */
-	const DONATE_STREAMLINED_SCRIPT_HANDLE = 'newspack-blocks-donate-streamlined';
+	const DONATE_STREAMLINED_SCRIPT_HANDLE     = 'newspack-blocks-donate-streamlined';
+	const DONATE_STREAMLINED_CAPTCHA_HANDLE    = 'newspack-blocks-recaptcha';
+	const DONATE_STREAMLINED_CAPTCHA_THRESHOLD = 0.5;
 
 	/**
 	 * Regex pattern we can use to search for and remove custom SQL statements.
@@ -75,7 +77,7 @@ class Newspack_Blocks {
 	 * @param string $handle The script handle.
 	 */
 	public static function mark_view_script_as_amp_plus_allowed( $tag, $handle ) {
-		if ( self::DONATE_STREAMLINED_SCRIPT_HANDLE === $handle ) {
+		if ( self::DONATE_STREAMLINED_SCRIPT_HANDLE === $handle || self::DONATE_STREAMLINED_CAPTCHA_HANDLE === $handle ) {
 			return str_replace( '<script', '<script data-amp-plus-allowed', $tag );
 		}
 		return $tag;

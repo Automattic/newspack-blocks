@@ -52,6 +52,25 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 			}
 		};
 
+		const getCaptchaToken = async ( reCaptchaKey: string ) => {
+			return new Promise( ( res, rej ) => {
+				const { grecaptcha } = window;
+
+				if ( ! grecaptcha?.ready ) {
+					rej( __( 'Error loading the reCaptcha library.', 'newspack-blocks' ) );
+				}
+
+				grecaptcha.ready( async () => {
+					try {
+						const token = await grecaptcha.execute( reCaptchaKey, { action: 'submit' } );
+						return res( token );
+					} catch ( e ) {
+						rej( e );
+					}
+				} );
+			} );
+		};
+
 		// Universal payment handling, for both card and payment request button flows.
 		// In card flow, this will happen after user submits their card data in the HTML form.
 		// In payment request flow, this will happen after the user validates the payment in
@@ -68,8 +87,25 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 			if ( ! stripe ) {
 				return;
 			}
+
+			// Add reCaptcha challenge to form submission, if available.
+			const reCaptchaKey = settings?.captchaSiteKey;
+			let reCaptchaToken;
+			if ( reCaptchaKey ) {
+				try {
+					reCaptchaToken = await getCaptchaToken( reCaptchaKey );
+				} catch ( e ) {
+					const errorMessage =
+						e instanceof Error
+							? e.message
+							: __( 'Error processing captcha request.', 'newspack-blocks' );
+					utils.renderMessages( [ errorMessage ], messagesEl );
+					return { error: true };
+				}
+			}
 			const formValues = utils.getDonationFormValues( formElement );
 			const apiRequestPayload = {
+				captchaToken: reCaptchaToken,
 				tokenData: token,
 				amount: utils.getTotalAmount( formElement ),
 				email: formValues.email,
