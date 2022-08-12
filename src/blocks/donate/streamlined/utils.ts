@@ -129,7 +129,7 @@ export const getTotalAmount = (
 	{ convertToSubunit } = { convertToSubunit: false }
 ) => {
 	const settings = getSettings( formElement );
-	const { amount, agree_to_pay_fees: paysFees } = getDonationFormValues( formElement );
+	const { amount = '0', agree_to_pay_fees: paysFees } = getDonationFormValues( formElement );
 
 	const processAmount = ( amountToProcess: number ) =>
 		convertToSubunit
