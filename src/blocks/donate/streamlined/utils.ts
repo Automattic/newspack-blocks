@@ -43,10 +43,8 @@ export const renderMessages = (
 		el.appendChild( messageEl );
 	} );
 
-	if ( 'success' === type ) {
-		if ( el.parentElement ) {
-			el.parentElement.replaceWith( el );
-		}
+	if ( 'success' === type && el.parentElement ) {
+		el.parentElement.replaceWith( el );
 	}
 };
 
