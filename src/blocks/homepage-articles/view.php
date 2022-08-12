@@ -275,9 +275,9 @@ function newspack_blocks_comments() {
 		);
 		echo '<span class="comments-link">';
 		comments_popup_link(
-			wp_kses( __( '0 <span class="screen-reader-text">Comments</span>', 'newspack-blocks' ), $allowed_comment_html ),
-			wp_kses( __( '1 <span class="screen-reader-text">Comment</span>', 'newspack-blocks' ), $allowed_comment_html ),
-			wp_kses( __( '% <span class="screen-reader-text">Comments</span>', 'newspack-blocks' ), $allowed_comment_html ),
+			wp_kses( __( '0 <span>Comments</span>', 'newspack-blocks' ), $allowed_comment_html ),
+			wp_kses( __( '1 <span>Comment</span>', 'newspack-blocks' ), $allowed_comment_html ),
+			wp_kses( __( '% <span>Comments</span>', 'newspack-blocks' ), $allowed_comment_html ),
 		);
 		echo '</span>';
 	}

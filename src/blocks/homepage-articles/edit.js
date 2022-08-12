@@ -229,7 +229,7 @@ class Edit extends Component {
 							</time>
 						) }
 						{ showComments && (
-							<div className="comments">{ post.newspack_comment_count_format }</div>
+							<div className="comment-count">{ post.newspack_comment_count_format }</div>
 						) }
 					</div>
 				</div>
