@@ -1,3 +1,10 @@
+# [1.56.0-alpha.4](https://github.com/Automattic/newspack-blocks/compare/v1.56.0-alpha.3...v1.56.0-alpha.4) (2022-08-12)
+
+
+### Bug Fixes
+
+* merge conflicts and force new build again ([b9020c6](https://github.com/Automattic/newspack-blocks/commit/b9020c67eff7bf09af7b10117b33b34592501356))
+
 # [1.56.0-alpha.3](https://github.com/Automattic/newspack-blocks/compare/v1.56.0-alpha.2...v1.56.0-alpha.3) (2022-08-12)
 
 
