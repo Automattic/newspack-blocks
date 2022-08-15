@@ -21,7 +21,7 @@ import {
 	TextControl,
 } from '@wordpress/components';
 import { InspectorControls, RichText, ColorPaletteControl } from '@wordpress/block-editor';
-import { isEmpty } from 'lodash';
+import { at, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -272,7 +272,11 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 						tierIndex,
 					} )
 				}
-				value={ amounts[ frequencySlug ][ tierIndex ] }
+				value={
+					amounts[ frequencySlug ][ tierIndex ] >= attributes.minimumDonation
+						? amounts[ frequencySlug ][ tierIndex ]
+						: attributes.minimumDonation
+				}
 				id={ id }
 			/>
 		</span>
