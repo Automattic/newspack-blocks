@@ -21,7 +21,7 @@ import {
 	TextControl,
 } from '@wordpress/components';
 import { InspectorControls, RichText, ColorPaletteControl } from '@wordpress/block-editor';
-import { at, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
