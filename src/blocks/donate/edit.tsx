@@ -264,7 +264,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 			{ label && <label htmlFor={ id }>{ label }</label> }
 			<input
 				type="number"
-				min="0"
+				min={ attributes.minimumDonation }
 				onChange={ evt =>
 					handleCustomDonationChange( {
 						value: evt.target.value,
