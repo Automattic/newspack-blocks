@@ -292,7 +292,9 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 			);
 
 			const formValues = utils.getDonationFormValues( formElement );
-			const validationErrors = Object.values( utils.validateFormData( formValues ) );
+			const validationErrors = Object.values(
+				utils.validateFormData( formValues, settings?.minimumDonation || 5 )
+			);
 			if ( validationErrors.length > 0 ) {
 				utils.renderMessages( validationErrors, messagesEl );
 				enableForm();

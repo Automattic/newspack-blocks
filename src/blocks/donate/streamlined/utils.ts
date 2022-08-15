@@ -10,13 +10,17 @@ import type { DonationFormValues, DonationFormInputName } from '../types';
 
 const isValidEmail = ( string: string ) => /\S+@\S+/.test( string );
 
-export const validateFormData = ( values: DonationFormValues ) => {
+export const validateFormData = ( values: DonationFormValues, minimumDonation: number ) => {
 	const errors: { [ key: string ]: string } = {};
 	if ( ! isValidEmail( values.email ) ) {
 		errors.email = __( 'Email address is invalid.', 'newspack-blocks' );
 	}
-	if ( parseFloat( values.amount ) <= 0 ) {
-		errors.amount = __( 'Amount must be greater than zero.', 'newspack-blocks' );
+	if ( parseFloat( values.amount ) < minimumDonation ) {
+		errors.amount = sprintf(
+			/* Translators: %d is minimum donation amount set in Reader Revenue wizard or block attributes. */
+			__( 'Amount must be at least %d.', 'newspack-blocks' ),
+			minimumDonation
+		);
 	}
 	if ( values.full_name.length === 0 ) {
 		errors.amount = __( 'Full name should be provided.', 'newspack-blocks' );
@@ -76,6 +80,7 @@ export const getSettings = ( formElement: HTMLFormElement ) => {
 		stripePublishableKey,
 		paymentRequestType,
 		captchaSiteKey,
+		minimumDonation,
 	] = JSON.parse( settings );
 	return {
 		currency: currency.toLowerCase(),
@@ -89,6 +94,7 @@ export const getSettings = ( formElement: HTMLFormElement ) => {
 		stripePublishableKey,
 		paymentRequestType,
 		captchaSiteKey,
+		minimumDonation: parseFloat( minimumDonation ),
 	};
 };
 
