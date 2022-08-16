@@ -91,6 +91,7 @@
 		}
 
 		&__messages {
+			margin-bottom: 10px;
 			> div {
 				border: 0 solid colors.$color__info;
 				border-left-width: 4px;
@@ -158,6 +159,10 @@
 			font-size: 0.7em;
 			font-style: italic;
 			padding-left: 1.5em;
+			display: none;
+			@include mixins.media( mobile ) {
+				display: block;
+			}
 		}
 
 		&__footer {
@@ -170,20 +175,14 @@
 				padding-right: 10px;
 			}
 		}
-		&__branding {
-			margin-top: 1em;
-			height: 26px;
-			display: block;
-			text-decoration: none;
-
-			img {
-				display: block;
-			}
-		}
 
 		&__methods {
 			display: flex;
 			flex-wrap: wrap;
+			width: 100%;
+			@include mixins.media( mobile ) {
+				width: auto;
+			}
 			button {
 				margin-left: 0;
 				margin-right: 0;
@@ -191,7 +190,9 @@
 				height: 46px;
 			}
 			> * {
-				margin-top: 10px;
+				&:not( :last-child ) {
+					margin-bottom: 10px;
+				}
 				width: 100%;
 				@include mixins.media( mobile ) {
 					width: auto;
@@ -251,7 +252,7 @@
 		}
 
 		&__footer {
-			margin: 1.12rem 0;
+			margin: 0 0 1.12rem 0;
 
 			> * {
 				padding: 0;
@@ -267,10 +268,6 @@
 
 		&__request-button {
 			margin: 0;
-		}
-
-		&__branding {
-			margin-top: 1.12rem;
 		}
 	}
 }
@@ -302,7 +299,7 @@
 		}
 
 		&__footer {
-			margin: 1.12rem 0 0;
+			margin: 0 0 1.12rem 0;
 
 			> * {
 				padding: 0;
@@ -316,10 +313,6 @@
 
 		&__request-button {
 			margin: 0;
-		}
-
-		&__branding {
-			margin-top: 1.12rem;
 		}
 	}
 }

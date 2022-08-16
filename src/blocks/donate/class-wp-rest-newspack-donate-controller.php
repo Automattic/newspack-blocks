@@ -199,9 +199,10 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 				'full_name'         => $full_name,
 				'amount'            => $request->get_param( 'amount' ),
 				'client_metadata'   => [
-					'clientId'        => $request->get_param( 'clientId' ),
-					'newsletterOptIn' => $request->get_param( 'newsletter_opt_in' ),
-					'userId'          => $user_id,
+					'clientId'         => $request->get_param( 'clientId' ),
+					'newsletterOptIn'  => $request->get_param( 'newsletter_opt_in' ),
+					'userId'           => $user_id,
+					'current_page_url' => \wp_get_referer(),
 				],
 				'payment_metadata'  => $payment_metadata,
 				'payment_method_id' => $request->get_param( 'payment_method_id' ),

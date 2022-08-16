@@ -74,6 +74,10 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 		$user_display_name = $current_user->display_name;
 	}
 
+	$button_color      = $attributes['buttonColor'];
+	$button_text_color = Newspack_Blocks::get_color_for_contrast( $button_color );
+	$button_style_attr = 'style="background-color: ' . esc_attr( $button_color ) . '; color: ' . esc_attr( $button_text_color ) . ';"';
+
 	ob_start();
 
 	?>
@@ -131,17 +135,14 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 				<div class="stripe-payment__row stripe-payment__row--flex stripe-payment__footer">
 					<div class="stripe-payment__methods">
 						<div class="stripe-payment__request-button stripe-payment--hidden stripe-payment__request-button--invisible stripe-payment--transition"></div>
-						<button type='submit'>
-							<?php echo esc_html__( 'Donate with card', 'newspack-blocks' ); ?>
+						<button type='submit' <?php echo $button_style_attr; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+							<?php echo esc_html( $attributes['buttonWithCCText'] ); ?>
 						</button>
 					</div>
-					<a target="_blank" rel="noreferrer" class="stripe-payment__branding" href="https://stripe.com">
-						<img width="111" height="26" src="<?php echo esc_attr( Newspack_Blocks::streamlined_block_stripe_badge() ); ?>" alt="Stripe">
-					</a>
 				</div>
 			</div>
 		<?php else : ?>
-			<button type='submit'>
+			<button type='submit' <?php echo $button_style_attr; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 				<?php echo wp_kses_post( $attributes['buttonText'] ); ?>
 			</button>
 		<?php endif; ?>
@@ -317,6 +318,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 			$stripe_data['fee_multiplier'],
 			$stripe_data['fee_static'],
 			$stripe_data['usedPublishableKey'],
+			$attributes['paymentRequestType'],
 			\Newspack\Stripe_Connection::can_use_captcha() ? $stripe_data['captchaSiteKey'] : null,
 		];
 	} else {
@@ -325,17 +327,6 @@ function newspack_blocks_render_block_donate( $attributes ) {
 
 	$frequencies_count    = count( $frequencies );
 	$container_classnames = 'wp-block-newspack-blocks-donate wpbnbd ' . $classname . ' wpbnbd-frequencies--' . $frequencies_count;
-
-	$frequency_padding = '(0.76rem + 1.6em + 1px)';
-	switch ( $classname ) {
-		case 'is-style-alternate':
-			$frequency_padding = '( 1.14rem + 1.6em ) + 8px';
-			break;
-		case 'is-style-minimal':
-			$frequency_padding = '( 0.76rem + 1.6em + 4px )';
-			break;
-	}
-	$frequencies_container_styles = 'padding-top: calc( ' . $frequencies_count . ' * ' . $frequency_padding . ' );';
 
 	ob_start();
 
@@ -350,7 +341,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 			<form data-settings="<?php echo esc_html( htmlspecialchars( wp_json_encode( $configuration_for_frontend ), ENT_QUOTES, 'UTF-8' ) ); ?>">
 				<input type='hidden' name='newspack_donate' value='1' />
 				<div class='wp-block-newspack-blocks-donate__options'>
-					<div class='wp-block-newspack-blocks-donate__frequencies frequencies' style="<?php echo esc_attr( $frequencies_container_styles ); ?>">
+					<div class='wp-block-newspack-blocks-donate__frequencies frequencies'>
 						<?php foreach ( $frequencies as $frequency_slug => $frequency_name ) : ?>
 							<?php
 								$formatted_amount = $configuration['amounts'][ $frequency_slug ][3];
@@ -371,7 +362,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 										</span>
 										<input
 											type='number'
-											min='0'
+											min='1'
 											name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>_untiered'
 											value='<?php echo esc_attr( $formatted_amount ); ?>'
 											id='newspack-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-untiered-input'
@@ -396,7 +387,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 			<form data-settings="<?php echo esc_html( htmlspecialchars( wp_json_encode( $configuration_for_frontend ), ENT_QUOTES, 'UTF-8' ) ); ?>">
 				<input type='hidden' name='newspack_donate' value='1' />
 				<div class='wp-block-newspack-blocks-donate__options'>
-					<div class='wp-block-newspack-blocks-donate__frequencies frequencies' style="<?php echo esc_attr( $frequencies_container_styles ); ?>">
+					<div class='wp-block-newspack-blocks-donate__frequencies frequencies'>
 						<?php foreach ( $frequencies as $frequency_slug => $frequency_name ) : ?>
 
 							<div class='wp-block-newspack-blocks-donate__frequency frequency'>
@@ -432,7 +423,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 													</span>
 													<input
 														type='number'
-														min='0'
+														min='1'
 														name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>_other'
 														value='<?php echo esc_attr( $amount ); ?>'
 														id='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-other-input'

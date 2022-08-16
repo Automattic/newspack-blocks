@@ -3,13 +3,19 @@
  */
 import { __, sprintf } from '@wordpress/i18n';
 
-const isValidEmail = string => /\S+@\S+/.test( string );
-export const validateFormData = values => {
-	const errors = {};
+/**
+ * Internal dependencies
+ */
+import type { DonationFormValues, DonationFormInputName } from '../types';
+
+const isValidEmail = ( string: string ) => /\S+@\S+/.test( string );
+
+export const validateFormData = ( values: DonationFormValues ) => {
+	const errors: { [ key: string ]: string } = {};
 	if ( ! isValidEmail( values.email ) ) {
 		errors.email = __( 'Email address is invalid.', 'newspack-blocks' );
 	}
-	if ( values.amount <= 0 ) {
+	if ( parseFloat( values.amount ) <= 0 ) {
 		errors.amount = __( 'Amount must be greater than zero.', 'newspack-blocks' );
 	}
 	if ( values.full_name.length === 0 ) {
@@ -21,22 +27,29 @@ export const validateFormData = values => {
 /**
  * Renders UI messages in a given DOM element.
  */
-export const renderMessages = ( messages, el, type = 'error' ) => {
+export const renderMessages = (
+	messages: ( string | undefined )[],
+	el: HTMLElement,
+	type = 'error'
+) => {
 	el.innerHTML = '';
 	messages.forEach( message => {
+		if ( ! message ) {
+			return;
+		}
 		const messageEl = document.createElement( 'div' );
 		messageEl.classList.add( `type-${ type }` );
 		messageEl.innerHTML = message;
 		el.appendChild( messageEl );
 	} );
 
-	if ( 'success' === type ) {
+	if ( 'success' === type && el.parentElement ) {
 		el.parentElement.replaceWith( el );
 	}
 };
 
 const getCookies = () =>
-	document.cookie.split( '; ' ).reduce( ( acc, cookieStr ) => {
+	document.cookie.split( '; ' ).reduce< { [ key: string ]: string } >( ( acc, cookieStr ) => {
 		const cookie = cookieStr.split( '=' );
 		acc[ cookie[ 0 ] ] = cookie[ 1 ];
 		return acc;
@@ -46,7 +59,11 @@ const getCookies = () =>
  * Retrieves donation settings passed via a `data-settings` HTML attribute
  * on a `form` element.
  */
-export const getSettings = formElement => {
+export const getSettings = ( formElement: HTMLFormElement ) => {
+	const settings = formElement.getAttribute( 'data-settings' );
+	if ( ! settings ) {
+		return {};
+	}
 	const [
 		currency,
 		currencySymbol,
@@ -57,8 +74,9 @@ export const getSettings = formElement => {
 		feeMultiplier,
 		feeStatic,
 		stripePublishableKey,
+		paymentRequestType,
 		captchaSiteKey,
-	] = JSON.parse( formElement.getAttribute( 'data-settings' ) );
+	] = JSON.parse( settings );
 	return {
 		currency: currency.toLowerCase(),
 		currencySymbol,
@@ -69,6 +87,7 @@ export const getSettings = formElement => {
 		feeMultiplier: parseFloat( feeMultiplier ),
 		feeStatic: parseFloat( feeStatic ),
 		stripePublishableKey,
+		paymentRequestType,
 		captchaSiteKey,
 	};
 };
@@ -76,9 +95,9 @@ export const getSettings = formElement => {
 /**
  * Retrieves form values from the donation form HTML element.
  */
-export const getFormValues = formElement => {
-	const formValues = Object.fromEntries( new FormData( formElement ) );
-	const valueKey = `donation_value_${ formValues.donation_frequency }`;
+export const getDonationFormValues = ( formElement: HTMLFormElement ): DonationFormValues => {
+	const formValues = Object.fromEntries( new FormData( formElement ) ) as DonationFormValues;
+	const valueKey: DonationFormInputName = `donation_value_${ formValues.donation_frequency }`;
 	formValues.amount = formValues[ valueKey ];
 	if ( formValues.amount === 'other' ) {
 		formValues.amount = formValues[ `${ valueKey }_other` ];
@@ -86,7 +105,11 @@ export const getFormValues = formElement => {
 	if ( ! formValues.amount ) {
 		formValues.amount = formValues[ `${ valueKey }_untiered` ];
 	}
-	if ( formValues.cid && formValues.cid.indexOf( 'CLIENT_ID' ) === 0 ) {
+	if (
+		formValues.cid &&
+		typeof formValues.cid === 'string' &&
+		formValues.cid.indexOf( 'CLIENT_ID' ) === 0
+	) {
 		// In non-AMP environment, the value will not be dynamically substituted by AMP runtime.
 		formValues.cid = getCookies()[ 'newspack-cid' ];
 	}
@@ -98,35 +121,32 @@ export const getFormValues = formElement => {
  * donor has opted to cover the processing fee.
  */
 export const getTotalAmount = (
-	formElement,
+	formElement: HTMLFormElement,
 	// For the payment request button (Apple/Google Pay), the amount has to be
 	// delivered in subunits.
 	{ convertToSubunit } = { convertToSubunit: false }
 ) => {
 	const settings = getSettings( formElement );
-	let { amount, agree_to_pay_fees: paysFees } = getFormValues( formElement );
+	const { amount = '0', agree_to_pay_fees: paysFees } = getDonationFormValues( formElement );
 
-	const processAmount = amountToProcess =>
-		parseFloat(
-			convertToSubunit
-				? amountToProcess * ( settings.isCurrencyZeroDecimal ? 1 : 100 )
-				: amountToProcess
-		);
+	const processAmount = ( amountToProcess: number ) =>
+		convertToSubunit
+			? amountToProcess * ( settings.isCurrencyZeroDecimal ? 1 : 100 )
+			: amountToProcess;
 
-	amount = processAmount( amount );
+	let feesAmount = 0;
 	if ( paysFees ) {
-		const feesAmount = processAmount( getFeeAmount( formElement ) );
-		amount = amount + feesAmount;
+		feesAmount = processAmount( getFeeAmount( formElement ) || 0 );
 	}
-	return amount;
+	return processAmount( parseFloat( amount ) ) + feesAmount;
 };
 
 /**
  * Creates a `total` value for Stripe's `paymentRequest` creation and updating.
  */
-export const getPaymentRequestTotal = formElement => {
+export const getPaymentRequestTotal = ( formElement: HTMLFormElement ) => {
 	const settings = getSettings( formElement );
-	const { donation_frequency: frequency } = getFormValues( formElement );
+	const { donation_frequency: frequency } = getDonationFormValues( formElement );
 	const frequencyLabel = settings.frequencies[ frequency ];
 	return {
 		label: `${ settings.siteName } (${ frequencyLabel })`,
@@ -137,7 +157,7 @@ export const getPaymentRequestTotal = formElement => {
 /**
  * Computes the fee amount.
  */
-export const computeFeeAmount = ( amount, feeMultiplier, feeStatic ) => {
+export const computeFeeAmount = ( amount: number, feeMultiplier: number, feeStatic: number ) => {
 	return parseFloat(
 		( ( ( amount + feeStatic ) / ( 100 - feeMultiplier ) ) * 100 - amount ).toFixed( 2 )
 	);
@@ -146,13 +166,16 @@ export const computeFeeAmount = ( amount, feeMultiplier, feeStatic ) => {
 /**
  * Given the donation form HTML element, computes the fee amount.
  */
-export const getFeeAmount = formElement => {
-	const { amount } = getFormValues( formElement );
+export const getFeeAmount = ( formElement: HTMLFormElement ) => {
 	const { feeMultiplier, feeStatic } = getSettings( formElement );
+	if ( ! feeMultiplier || ! feeStatic ) {
+		return 0;
+	}
+	const { amount } = getDonationFormValues( formElement );
 	return computeFeeAmount( parseFloat( amount ), feeMultiplier, feeStatic );
 };
 
-export const sendAPIRequest = async ( endpoint, data, method = 'POST' ) =>
+export const sendAPIRequest = async ( endpoint: string, data: object, method = 'POST' ) =>
 	fetch( `/wp-json/newspack-blocks/v1${ endpoint }`, {
 		method,
 		headers: {
@@ -167,7 +190,7 @@ export const sendAPIRequest = async ( endpoint, data, method = 'POST' ) =>
 		return { error: responseData };
 	} );
 
-export const renderSuccessMessageWithEmail = ( emailAddress, messagesEl ) => {
+export const renderSuccessMessageWithEmail = ( emailAddress: string, messagesEl: HTMLElement ) => {
 	const successMessage = sprintf(
 		/* Translators: %s is the email address of the current user. */
 		__(

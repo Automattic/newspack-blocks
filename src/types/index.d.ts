@@ -6,7 +6,18 @@ declare global {
 		newspack_blocks_data: {
 			assets_path: string;
 			is_rendering_streamlined_block?: boolean;
-			streamlined_block_stripe_badge?: string;
+		};
+		grecaptcha: any;
+		newspackReaderActivation: {
+			on: function;
+			off: function;
+			setReaderEmail: function;
+			setAuthenticated: function;
+			refreshAuthentication: function;
+			getReader: function;
+			hasAuthLink: function;
+			setAuthStrategy: function;
+			getAuthStrategy: function;
 		};
 	}
 
@@ -29,7 +40,7 @@ declare global {
 		clientId: string;
 		attributes: {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			[ key: string ]: any;
+			[key: string]: any;
 		};
 		innerBlocks: Block[];
 	};
@@ -39,4 +50,4 @@ declare global {
 	};
 }
 
-export {};
+export { };

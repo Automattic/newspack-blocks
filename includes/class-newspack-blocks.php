@@ -145,13 +145,6 @@ class Newspack_Blocks {
 	}
 
 	/**
-	 * Path of the Stripe badge file.
-	 */
-	public static function streamlined_block_stripe_badge() {
-		return plugins_url( '/src/assets', NEWSPACK_BLOCKS__PLUGIN_FILE ) . '/stripe-badge.svg';
-	}
-
-	/**
 	 * Possible mimes for iframe archive source file.
 	 */
 	public static function iframe_archive_accepted_file_mimes() {
@@ -228,7 +221,6 @@ class Newspack_Blocks {
 				'assets_path'                    => plugins_url( '/src/assets', NEWSPACK_BLOCKS__PLUGIN_FILE ),
 				'post_subtitle'                  => get_theme_support( 'post-subtitle' ),
 				'is_rendering_streamlined_block' => self::is_rendering_streamlined_block(),
-				'streamlined_block_stripe_badge' => self::streamlined_block_stripe_badge(),
 				'iframe_accepted_file_mimes'     => self::iframe_accepted_file_mimes(),
 			];
 
@@ -1344,5 +1336,47 @@ class Newspack_Blocks {
 			return ob_get_clean();
 		}
 	}
+
+	/**
+	 * Pick either white or black, whatever has sufficient contrast with the color being passed to it.
+	 * From Newspack Theme functions.
+	 *
+	 * @param  string $hex Hexidecimal value of the color to adjust.
+	 * @return string Either black or white hexidecimal values.
+	 *
+	 * @ref https://stackoverflow.com/questions/1331591/given-a-background-color-black-or-white-text
+	 */
+	public static function get_color_for_contrast( $hex ) {
+		// Hex RGB.
+		$r1 = hexdec( substr( $hex, 1, 2 ) );
+		$g1 = hexdec( substr( $hex, 3, 2 ) );
+		$b1 = hexdec( substr( $hex, 5, 2 ) );
+		// Black RGB.
+		$black_color    = '#000';
+		$r2_black_color = hexdec( substr( $black_color, 1, 2 ) );
+		$g2_black_color = hexdec( substr( $black_color, 3, 2 ) );
+		$b2_black_color = hexdec( substr( $black_color, 5, 2 ) );
+		// Calc contrast ratio.
+		$l1             = 0.2126 * pow( $r1 / 255, 2.2 ) +
+		0.7152 * pow( $g1 / 255, 2.2 ) +
+		0.0722 * pow( $b1 / 255, 2.2 );
+		$l2             = 0.2126 * pow( $r2_black_color / 255, 2.2 ) +
+		0.7152 * pow( $g2_black_color / 255, 2.2 ) +
+		0.0722 * pow( $b2_black_color / 255, 2.2 );
+		$contrast_ratio = 0;
+		if ( $l1 > $l2 ) {
+			$contrast_ratio = (int) ( ( $l1 + 0.05 ) / ( $l2 + 0.05 ) );
+		} else {
+			$contrast_ratio = (int) ( ( $l2 + 0.05 ) / ( $l1 + 0.05 ) );
+		}
+		if ( $contrast_ratio > 5 ) {
+			// If contrast is more than 5, return black color.
+			return 'black';
+		} else {
+			// if not, return white color.
+			return 'white';
+		}
+	}
+
 }
 Newspack_Blocks::init();
