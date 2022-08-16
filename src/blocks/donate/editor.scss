@@ -107,4 +107,8 @@
 			}
 		}
 	}
+
+	&__error {
+		color: colors.$color__error;
+	}
 }

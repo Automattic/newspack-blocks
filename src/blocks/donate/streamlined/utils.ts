@@ -6,15 +6,16 @@ import { __, sprintf } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import type { DonationFormValues, DonationFormInputName } from '../types';
+import type { DonationFormValues, DonationFormInputName, DonationSettings } from '../types';
 
 const isValidEmail = ( string: string ) => /\S+@\S+/.test( string );
 
-export const validateFormData = ( values: DonationFormValues, minimumDonation: number ) => {
+export const validateFormData = ( values: DonationFormValues, settings: DonationSettings ) => {
 	const errors: { [ key: string ]: string } = {};
 	if ( ! isValidEmail( values.email ) ) {
 		errors.email = __( 'Email address is invalid.', 'newspack-blocks' );
 	}
+	const { minimumDonation } = settings;
 	if ( parseFloat( values.amount ) < minimumDonation ) {
 		errors.amount = sprintf(
 			/* Translators: %d is minimum donation amount set in Reader Revenue wizard or block attributes. */

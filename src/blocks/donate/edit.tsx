@@ -272,11 +272,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 						tierIndex,
 					} )
 				}
-				value={
-					amounts[ frequencySlug ][ tierIndex ] >= attributes.minimumDonation
-						? amounts[ frequencySlug ][ tierIndex ]
-						: attributes.minimumDonation
-				}
+				value={ amounts[ frequencySlug ][ tierIndex ] }
 				id={ id }
 			/>
 		</span>
@@ -520,6 +516,22 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 													/>
 													{ ! isFrequencyDisabled && (
 														<div className="wp-block-newspack-blocks-donate__panel-inputs">
+															{ amounts[ frequency ].reduce(
+																( acc: boolean, suggestedAmount: number ) => {
+																	if ( suggestedAmount < attributes.minimumDonation ) {
+																		return true;
+																	}
+																	return acc;
+																},
+																false
+															) && (
+																<p className="components-frequency-donations__error">
+																	{ __(
+																		'Warning: suggested donations should be at least the minimum donation amount.',
+																		'newspack-blocks'
+																	) }
+																</p>
+															) }
 															{ amounts[ frequency ].map( ( suggestedAmount, tierIndex ) =>
 																renderAmountValueInput( {
 																	frequencySlug: frequency,
@@ -534,17 +546,26 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 											);
 										} ) }
 									</div>
-									<TextControl
-										type="number"
-										label={ __( 'Minimum donation', 'newspack-blocks' ) }
-										min={ 1 }
-										onChange={ ( value: number ) => setAttributes( { minimumDonation: value } ) }
-										value={ attributes.minimumDonation }
-									/>
 								</>
 							) : (
 								<div className="components-frequency-donations">
 									<div className="wp-block-newspack-blocks-donate__panel-inputs">
+										{ FREQUENCY_SLUGS.reduce(
+											( acc: boolean, frequencySlug: DonationFrequencySlug ) => {
+												if ( amounts[ frequencySlug ][ 3 ] < attributes.minimumDonation ) {
+													return true;
+												}
+												return acc;
+											},
+											false
+										) && (
+											<p className="components-frequency-donations__error">
+												{ __(
+													'Warning: suggested donations should be at least the minimum donation amount.',
+													'newspack-blocks'
+												) }
+											</p>
+										) }
 										{ FREQUENCY_SLUGS.map( ( frequencySlug: DonationFrequencySlug ) =>
 											renderAmountValueInput( {
 												frequencySlug,
@@ -556,6 +577,13 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 									</div>
 								</div>
 							) }
+							<TextControl
+								type="number"
+								label={ __( 'Minimum donation', 'newspack-blocks' ) }
+								min={ 1 }
+								onChange={ ( value: number ) => setAttributes( { minimumDonation: value } ) }
+								value={ attributes.minimumDonation }
+							/>
 						</>
 					) : (
 						<p>
