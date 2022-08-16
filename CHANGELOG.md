@@ -1,3 +1,57 @@
+# [1.56.0](https://github.com/Automattic/newspack-blocks/compare/v1.55.0...v1.56.0) (2022-08-16)
+
+
+### Bug Fixes
+
+* ensure amount is always defined for totalAmount calculation ([#1227](https://github.com/Automattic/newspack-blocks/issues/1227)) ([b1910dc](https://github.com/Automattic/newspack-blocks/commit/b1910dc117140c489d6a8ff960722e9693cd3327))
+* force a new alpha build ([8bf60a8](https://github.com/Automattic/newspack-blocks/commit/8bf60a8ca1ffc739b3b0f0f62c595c44c4e7615f))
+* merge conflicts and force new build again ([b9020c6](https://github.com/Automattic/newspack-blocks/commit/b9020c67eff7bf09af7b10117b33b34592501356))
+* resolve merge conflicts with [#1234](https://github.com/Automattic/newspack-blocks/issues/1234) ([15fe247](https://github.com/Automattic/newspack-blocks/commit/15fe2472a98d2938e64cdcf711eb61cfa15a40e8))
+
+
+### Features
+
+* **donate:** add current_page_url to client metadata ([32e18a4](https://github.com/Automattic/newspack-blocks/commit/32e18a4f74a59723ab96ea9905fba0837a75c935))
+* **donate:** customise donate button texts ([#1219](https://github.com/Automattic/newspack-blocks/issues/1219)) ([8bda0f0](https://github.com/Automattic/newspack-blocks/commit/8bda0f0ef23895455fd99aa17069aeed2c8468a4))
+* **donate:** mobile style; UX tweaks ([#1201](https://github.com/Automattic/newspack-blocks/issues/1201)) ([65a1285](https://github.com/Automattic/newspack-blocks/commit/65a1285b49ffa86b145d24eac6968cdfd0530770))
+* **donate:** refresh reader authentication ([#1236](https://github.com/Automattic/newspack-blocks/issues/1236)) ([f21904b](https://github.com/Automattic/newspack-blocks/commit/f21904b59a3a9d4295f74f34eebf3e9b8773cb4c))
+
+# [1.56.0-alpha.4](https://github.com/Automattic/newspack-blocks/compare/v1.56.0-alpha.3...v1.56.0-alpha.4) (2022-08-12)
+
+
+### Bug Fixes
+
+* merge conflicts and force new build again ([b9020c6](https://github.com/Automattic/newspack-blocks/commit/b9020c67eff7bf09af7b10117b33b34592501356))
+
+# [1.56.0-alpha.3](https://github.com/Automattic/newspack-blocks/compare/v1.56.0-alpha.2...v1.56.0-alpha.3) (2022-08-12)
+
+
+### Bug Fixes
+
+* force a new alpha build ([8bf60a8](https://github.com/Automattic/newspack-blocks/commit/8bf60a8ca1ffc739b3b0f0f62c595c44c4e7615f))
+
+# [1.56.0-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v1.56.0-alpha.1...v1.56.0-alpha.2) (2022-08-12)
+
+
+### Bug Fixes
+
+* ensure amount is always defined for totalAmount calculation ([#1227](https://github.com/Automattic/newspack-blocks/issues/1227)) ([b1910dc](https://github.com/Automattic/newspack-blocks/commit/b1910dc117140c489d6a8ff960722e9693cd3327))
+* resolve merge conflicts with [#1234](https://github.com/Automattic/newspack-blocks/issues/1234) ([15fe247](https://github.com/Automattic/newspack-blocks/commit/15fe2472a98d2938e64cdcf711eb61cfa15a40e8))
+
+
+### Features
+
+* **donate:** refresh reader authentication ([#1236](https://github.com/Automattic/newspack-blocks/issues/1236)) ([f21904b](https://github.com/Automattic/newspack-blocks/commit/f21904b59a3a9d4295f74f34eebf3e9b8773cb4c))
+
+# [1.56.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.55.0...v1.56.0-alpha.1) (2022-08-10)
+
+
+### Features
+
+* **donate:** add current_page_url to client metadata ([32e18a4](https://github.com/Automattic/newspack-blocks/commit/32e18a4f74a59723ab96ea9905fba0837a75c935))
+* **donate:** customise donate button texts ([#1219](https://github.com/Automattic/newspack-blocks/issues/1219)) ([8bda0f0](https://github.com/Automattic/newspack-blocks/commit/8bda0f0ef23895455fd99aa17069aeed2c8468a4))
+* **donate:** mobile style; UX tweaks ([#1201](https://github.com/Automattic/newspack-blocks/issues/1201)) ([65a1285](https://github.com/Automattic/newspack-blocks/commit/65a1285b49ffa86b145d24eac6968cdfd0530770))
+
 # [1.55.0](https://github.com/Automattic/newspack-blocks/compare/v1.54.1...v1.55.0) (2022-08-10)
 
 
