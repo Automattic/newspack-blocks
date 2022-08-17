@@ -3,17 +3,29 @@
 @use '../../shared/sass/preview';
 
 :root {
-	--wpnbha-gap: 16px;
-}
+	--wpnbha-gap: 8px;
 
-@include mixins.media( mobile ) {
-	:root {
-		--wpnbha-gap: 24px;
+	@include mixins.media( tablet ) {
+		--wpnbha-gap: 12px;
 	}
 }
 
-@include mixins.media( tablet ) {
-	:root {
+.colgap-2 {
+	--wpnbha-gap: 12px;
+
+	@include mixins.media( tablet ) {
+		--wpnbha-gap: 16px;
+	}
+}
+
+.colgap-3 {
+	--wpnbha-gap: 16px;
+
+	@include mixins.media( mobile ) {
+		--wpnbha-gap: 24px;
+	}
+
+	@include mixins.media( tablet ) {
 		--wpnbha-gap: 32px;
 	}
 }
