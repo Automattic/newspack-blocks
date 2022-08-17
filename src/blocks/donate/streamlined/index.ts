@@ -102,7 +102,7 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 					const errorMessage =
 						e instanceof Error
 							? e.message
-							: __( 'Error processing captcha request.', 'newspackblocks' );
+							: __( 'Error processing captcha request.', 'newspack-blocks' );
 					utils.renderMessages( [ errorMessage ], messagesEl );
 					return { error: true };
 				}
