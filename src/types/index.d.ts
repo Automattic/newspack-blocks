@@ -8,7 +8,6 @@ declare global {
 			is_rendering_streamlined_block?: boolean;
 		};
 		grecaptcha: any;
-		newspack_recaptcha_data: any,
 		newspackReaderActivation: {
 			on: function;
 			off: function;
