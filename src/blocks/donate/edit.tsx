@@ -578,6 +578,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 								</div>
 							) }
 							<TextControl
+								className="components-frequency-donations__minimum-donation"
 								type="number"
 								label={ __( 'Minimum donation', 'newspack-blocks' ) }
 								min={ 1 }
