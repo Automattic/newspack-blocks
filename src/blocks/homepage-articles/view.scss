@@ -3,30 +3,30 @@
 @use '../../shared/sass/preview';
 
 :root {
-	--wpnbha-gap: 1em;
+	--wpnbha-col-gap: 1em;
 }
 
 @include mixins.media( mobile ) {
 	:root {
-		--wpnbha-gap: 16px;
+		--wpnbha-col-gap: 16px;
 	}
 }
 
 @include mixins.media( tablet ) {
 	:root {
-		--wpnbha-gap: 32px;
+		--wpnbha-col-gap: 32px;
 	}
 }
 
 .colgap-2 {
 	@include mixins.media( mobile ) {
-		--wpnbha-gap: 16px;
+		--wpnbha-col-gap: 16px;
 	}
 }
 
 .colgap-1 {
 	@include mixins.media( mobile ) {
-		--wpnbha-gap: 8px;
+		--wpnbha-col-gap: 8px;
 	}
 }
 
@@ -59,7 +59,7 @@
 			flex-wrap: wrap;
 			justify-content: flex-start;
 			flex-direction: row;
-			gap: var( --wpnbha-gap );
+			gap: var( --wpnbha-col-gap );
 			padding: 0;
 			list-style: none;
 		}
@@ -70,31 +70,32 @@
 		}
 
 		.article-section-title {
-			margin-bottom: calc( 1em - var( --wpnbha-gap ) );
+			margin-bottom: calc( 1em - var( --wpnbha-col-gap ) );
 		}
 	}
 
 	@include mixins.media( mobile ) {
+		// width of column - ( column gap / number of columns * number of gaps )
 		&.columns-3 article,
 		&.columns-6 article {
-			flex-basis: calc( 33.33% - ( var( --wpnbha-gap ) / 3 * 2 ) );
+			flex-basis: calc( 33.33% - ( var( --wpnbha-col-gap ) / 3 * 2 ) );
 		}
 
 		&.is-style-borders.columns-3 article,
 		&.is-style-borders.columns-6 article {
-			flex-basis: calc( 33.33% - ( 2 * var( --wpnbha-gap ) / 3 * 2 ) - 1px );
+			flex-basis: calc( 33.33% - ( 2 * var( --wpnbha-col-gap ) / 3 * 2 ) - 1px );
 		}
 
 		&.columns-2 article,
 		&.columns-4 article,
 		&.columns-5 article {
-			flex-basis: calc( 50% - ( var( --wpnbha-gap ) / 2 ) );
+			flex-basis: calc( 50% - ( var( --wpnbha-col-gap ) / 2 ) );
 		}
 
 		&.is-style-borders.columns-2 article,
 		&.is-style-borders.columns-4 article,
 		&.is-style-borders.columns-5 article {
-			flex-basis: calc( 50% - ( 2 * var( --wpnbha-gap ) / 2 ) - 1px );
+			flex-basis: calc( 50% - ( 2 * var( --wpnbha-col-gap ) / 2 ) - 1px );
 		}
 
 		&.columns-5 article:last-of-type,
@@ -105,29 +106,29 @@
 
 	@include mixins.media( tablet ) {
 		&.columns-4 article {
-			flex-basis: calc( 25% - ( var( --wpnbha-gap ) / 4 * 3 ) );
+			flex-basis: calc( 25% - ( var( --wpnbha-col-gap ) / 4 * 3 ) );
 		}
 
 		&.is-style-borders.columns-4 article {
-			flex-basis: calc( 25% - ( 2 * var( --wpnbha-gap ) / 4 * 3 ) - 1px );
+			flex-basis: calc( 25% - ( 2 * var( --wpnbha-col-gap ) / 4 * 3 ) - 1px );
 		}
 
 		&.columns-5 article,
 		&.columns-5 article:last-of-type {
-			flex-basis: calc( 20% - ( var( --wpnbha-gap ) / 5 * 4 ) );
+			flex-basis: calc( 20% - ( var( --wpnbha-col-gap ) / 5 * 4 ) );
 		}
 
 		&.is-style-borders.columns-5 article,
 		&.is-style-borders.columns-5 article:last-of-type {
-			flex-basis: calc( 20% - ( 2 * var( --wpnbha-gap ) / 5 * 4 ) - 1px );
+			flex-basis: calc( 20% - ( 2 * var( --wpnbha-col-gap ) / 5 * 4 ) - 1px );
 		}
 
 		&.columns-6 article {
-			flex-basis: calc( 16.66667% - ( var( --wpnbha-gap ) / 6 * 5 ) );
+			flex-basis: calc( 16.66667% - ( var( --wpnbha-col-gap ) / 6 * 5 ) );
 		}
 
 		&.is-style-borders.columns-6 article {
-			flex-basis: calc( 16.66667% - ( 2 * var( --wpnbha-gap ) / 6 * 5 ) - 1px );
+			flex-basis: calc( 16.66667% - ( 2 * var( --wpnbha-col-gap ) / 6 * 5 ) - 1px );
 		}
 	}
 
@@ -780,7 +781,7 @@ amp-script .wpnbha {
 		&.columns-5 {
 			article:nth-of-type( odd ):not( :last-of-type ) {
 				border-width: 0 1px 0 0;
-				padding-right: var( --wpnbha-gap );
+				padding-right: var( --wpnbha-col-gap );
 			}
 		}
 
@@ -790,7 +791,7 @@ amp-script .wpnbha {
 				&:nth-of-type( 3n + 1 ):not( :last-of-type ),
 				&:nth-of-type( 3n + 2 ):not( :last-of-type ) {
 					border-width: 0 1px 0 0;
-					padding-right: var( --wpnbha-gap );
+					padding-right: var( --wpnbha-col-gap );
 				}
 			}
 		}
@@ -800,7 +801,7 @@ amp-script .wpnbha {
 		&.is-grid {
 			article {
 				border-width: 0 1px 0 0;
-				padding-right: var( --wpnbha-gap );
+				padding-right: var( --wpnbha-col-gap );
 			}
 		}
 
