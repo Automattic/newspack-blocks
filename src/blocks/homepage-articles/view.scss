@@ -3,12 +3,12 @@
 @use '../../shared/sass/preview';
 
 :root {
-	--wpnbha-gap: 16px;
+	--wpnbha-gap: 1em;
 }
 
 @include mixins.media( mobile ) {
 	:root {
-		--wpnbha-gap: 24px;
+		--wpnbha-gap: 16px;
 	}
 }
 
@@ -19,15 +19,15 @@
 }
 
 .colgap-2 {
-	--wpnbha-gap: 12px;
-
-	@include mixins.media( tablet ) {
+	@include mixins.media( mobile ) {
 		--wpnbha-gap: 16px;
 	}
 }
 
 .colgap-1 {
-	--wpnbha-gap: 8px;
+	@include mixins.media( mobile ) {
+		--wpnbha-gap: 8px;
+	}
 }
 
 .wpnbha {
