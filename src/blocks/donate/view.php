@@ -280,6 +280,10 @@ function newspack_blocks_render_block_donate( $attributes ) {
 					$configuration['disabledFrequencies'][ $frequency_slug ] = true;          }
 			}
 		}
+
+		if ( isset( $attributes['minimumDonation'] ) ) {
+			$configuration['minimumDonation'] = $attributes['minimumDonation'];
+		}
 	}
 
 	foreach ( array_keys( $frequencies ) as $frequency_slug ) {
@@ -320,6 +324,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 			$stripe_data['usedPublishableKey'],
 			$attributes['paymentRequestType'],
 			\Newspack\Stripe_Connection::can_use_captcha() ? $stripe_data['captchaSiteKey'] : null,
+			$configuration['minimumDonation'],
 		];
 	} else {
 		$configuration_for_frontend = [];
@@ -362,7 +367,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 										</span>
 										<input
 											type='number'
-											min='1'
+											min='<?php echo esc_attr( $configuration['minimumDonation'] ); ?>'
 											name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>_untiered'
 											value='<?php echo esc_attr( $formatted_amount ); ?>'
 											id='newspack-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-untiered-input'
@@ -423,7 +428,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 													</span>
 													<input
 														type='number'
-														min='1'
+														min='<?php echo esc_attr( $configuration['minimumDonation'] ); ?>'
 														name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>_other'
 														value='<?php echo esc_attr( $amount ); ?>'
 														id='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-other-input'

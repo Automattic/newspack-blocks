@@ -15,6 +15,7 @@ import 'regenerator-runtime'; // Required in WP >=5.8.
  */
 import * as utils from './utils';
 import './style.scss';
+import type { DonationSettings } from '../types';
 
 export const processStreamlinedElements = ( parentElement = document ) =>
 	[ ...parentElement.querySelectorAll( '.stripe-payment' ) ].forEach( async el => {
@@ -292,7 +293,9 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 			);
 
 			const formValues = utils.getDonationFormValues( formElement );
-			const validationErrors = Object.values( utils.validateFormData( formValues ) );
+			const validationErrors = Object.values(
+				utils.validateFormData( formValues, settings as DonationSettings )
+			);
 			if ( validationErrors.length > 0 ) {
 				utils.renderMessages( validationErrors, messagesEl );
 				enableForm();
