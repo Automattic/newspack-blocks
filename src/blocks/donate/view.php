@@ -169,7 +169,7 @@ function newspack_blocks_enqueue_streamlined_donate_block_scripts() {
 	if ( Newspack_Blocks::is_rendering_streamlined_block() ) {
 		$dependencies = [ 'wp-i18n' ];
 
-		if ( \Newspack\Recaptcha::can_use_captcha() ) {
+		if ( method_exists( '\Newspack\Recaptcha', 'can_use_captcha' ) && \Newspack\Recaptcha::can_use_captcha() ) {
 			$dependencies[] = \Newspack\Recaptcha::RECAPTCHA_SCRIPT_HANDLE;
 		}
 
