@@ -169,20 +169,8 @@ function newspack_blocks_enqueue_streamlined_donate_block_scripts() {
 	if ( Newspack_Blocks::is_rendering_streamlined_block() ) {
 		$dependencies = [ 'wp-i18n' ];
 
-		if ( \Newspack\Stripe_Connection::can_use_captcha() ) {
-			$stripe_settings  = \Newspack\Stripe_Connection::get_stripe_data();
-			$captcha_site_key = $stripe_settings['captchaSiteKey'];
-
-			// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
-			wp_register_script(
-				Newspack_Blocks::DONATE_STREAMLINED_CAPTCHA_HANDLE,
-				esc_url( 'https://www.google.com/recaptcha/api.js?render=' . $captcha_site_key ),
-				null,
-				null,
-				true
-			);
-
-			$dependencies[] = Newspack_Blocks::DONATE_STREAMLINED_CAPTCHA_HANDLE;
+		if ( \Newspack\Recaptcha::can_use_captcha() ) {
+			$dependencies[] = \Newspack\Recaptcha::RECAPTCHA_SCRIPT_HANDLE;
 		}
 
 		$script_data = Newspack_Blocks::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . '/donateStreamlined.js' );
@@ -193,6 +181,7 @@ function newspack_blocks_enqueue_streamlined_donate_block_scripts() {
 			$script_data['version'],
 			true
 		);
+
 		$style_path = NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'donateStreamlined' . ( is_rtl() ? '.rtl' : '' ) . '.css';
 		wp_enqueue_style(
 			Newspack_Blocks::DONATE_STREAMLINED_SCRIPT_HANDLE,
@@ -310,8 +299,14 @@ function newspack_blocks_render_block_donate( $attributes ) {
 	$uid = wp_rand( 10000, 99999 ); // Unique identifier to prevent labels colliding with other instances of Donate block.
 
 	if ( Newspack_Blocks::is_rendering_streamlined_block() ) {
-		$stripe_data                = \Newspack\Stripe_Connection::get_stripe_data();
-		$currency                   = $stripe_data['currency'];
+		$stripe_data      = \Newspack\Stripe_Connection::get_stripe_data();
+		$currency         = $stripe_data['currency'];
+		$captcha_site_key = null;
+
+		if ( method_exists( '\Newspack\Recaptcha', 'can_use_captcha' ) && \Newspack\Recaptcha::can_use_captcha() ) {
+			$captcha_site_key = \Newspack\Recaptcha::get_setting( 'site_key' );
+		}
+
 		$configuration_for_frontend = [
 			$currency,
 			$configuration['currencySymbol'],
@@ -323,7 +318,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 			$stripe_data['fee_static'],
 			$stripe_data['usedPublishableKey'],
 			$attributes['paymentRequestType'],
-			\Newspack\Stripe_Connection::can_use_captcha() ? $stripe_data['captchaSiteKey'] : null,
+			$captcha_site_key,
 			$configuration['minimumDonation'],
 		];
 	} else {
