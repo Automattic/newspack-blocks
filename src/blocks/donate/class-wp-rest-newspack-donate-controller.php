@@ -99,9 +99,9 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function api_process_donation( $request ) {
-		$captcha_token = $request->get_param( 'captchaToken' );
-		if ( ! empty( $captcha_token ) ) {
-			$captcha_result = \Newspack\Reader_Activation::verify_captcha( $captcha_token );
+		if ( method_exists( '\Newspack\Recaptcha', 'can_use_captcha' ) && \Newspack\Recaptcha::can_use_captcha() ) {
+			$captcha_token  = $request->get_param( 'captchaToken' );
+			$captcha_result = \Newspack\Recaptcha::verify_captcha( $captcha_token );
 			if ( \is_wp_error( $captcha_result ) ) {
 				return rest_ensure_response(
 					[
