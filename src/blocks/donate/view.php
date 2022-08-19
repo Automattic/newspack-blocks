@@ -369,7 +369,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 											type='number'
 											min='<?php echo esc_attr( $configuration['minimumDonation'] ); ?>'
 											name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>_untiered'
-											value='<?php echo esc_attr( $formatted_amount ); ?>'
+											value='<?php echo esc_attr( max( $configuration['minimumDonation'], $formatted_amount ) ); ?>'
 											id='newspack-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-untiered-input'
 										/>
 									</div>
