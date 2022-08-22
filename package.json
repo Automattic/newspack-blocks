@@ -24,7 +24,7 @@
 		"newspack-components": "^2.1.0",
 		"react": "^17.0.2",
 		"redux": "^4.2.0",
-		"redux-saga": "^1.2.0",
+		"redux-saga": "^1.2.1",
 		"regenerator-runtime": "^0.13.9",
 		"swiper": "8.3.2"
 	},
