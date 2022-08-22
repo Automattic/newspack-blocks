@@ -430,7 +430,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 														type='number'
 														min='<?php echo esc_attr( $configuration['minimumDonation'] ); ?>'
 														name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>_other'
-														value='<?php echo esc_attr( $amount ); ?>'
+														value='<?php echo esc_attr( max( $configuration['minimumDonation'], $amount ) ); ?>'
 														id='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-other-input'
 													/>
 												</div>
