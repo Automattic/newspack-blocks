@@ -170,7 +170,7 @@ function newspack_blocks_enqueue_streamlined_donate_block_scripts() {
 		$dependencies = [ 'wp-i18n' ];
 
 		if ( method_exists( '\Newspack\Recaptcha', 'can_use_captcha' ) && \Newspack\Recaptcha::can_use_captcha() ) {
-			$dependencies[] = \Newspack\Recaptcha::RECAPTCHA_SCRIPT_HANDLE;
+			$dependencies[] = \Newspack\Recaptcha::SCRIPT_HANDLE;
 		}
 
 		$script_data = Newspack_Blocks::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . '/donateStreamlined.js' );
