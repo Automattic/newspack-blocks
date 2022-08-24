@@ -140,7 +140,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 			if ( $has_more_button ) :
 				?>
-				<button type="button" data-next="<?php echo esc_url( $articles_rest_url ); ?>">
+				<button type="button" class="wp-block-button__link" data-next="<?php echo esc_url( $articles_rest_url ); ?>">
 				<?php
 				if ( ! empty( $attributes['moreButtonText'] ) ) {
 					echo esc_html( $attributes['moreButtonText'] );
