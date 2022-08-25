@@ -108,7 +108,7 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 				}
 			}
 			const formValues = utils.getDonationFormValues( formElement );
-			const promptOrigin = formElement.closest( '.newspack-popup' );
+			const promptOrigin = formElement.closest( 'amp-layout.newspack-popup' );
 
 			// If the donation originated from a Campaigns prompt, append the prompt ID to the event label.
 			const origin =
