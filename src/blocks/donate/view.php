@@ -71,7 +71,7 @@ function newspack_blocks_render_block_donate_footer( $attributes ) {
 	$user_display_name = '';
 	if ( 0 !== $current_user->ID ) {
 		$user_email        = $current_user->user_email;
-		$user_display_name = $current_user->display_name;
+		$user_display_name = trim( $current_user->first_name . ' ' . $current_user->last_name );
 	}
 
 	$button_color      = $attributes['buttonColor'];
