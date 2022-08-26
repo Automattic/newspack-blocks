@@ -108,6 +108,14 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 				}
 			}
 			const formValues = utils.getDonationFormValues( formElement );
+			const promptOrigin = formElement.closest( 'amp-layout.newspack-popup' );
+
+			// If the donation originated from a Campaigns prompt, append the prompt ID to the event label.
+			const origin =
+				promptOrigin && promptOrigin.hasAttribute( 'amp-access' )
+					? promptOrigin.getAttribute( 'amp-access' )
+					: null;
+
 			const apiRequestPayload = {
 				captchaToken,
 				tokenData: token,
@@ -117,8 +125,10 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 				frequency: formValues.donation_frequency,
 				newsletter_opt_in: Boolean( formValues.newsletter_opt_in ),
 				clientId: formValues.cid,
+				origin,
 				...requestPayloadOverrides,
 			};
+
 			const chargeResultData = await utils.sendAPIRequest( '/donate', apiRequestPayload );
 
 			// Error handling.

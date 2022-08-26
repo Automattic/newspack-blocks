@@ -85,6 +85,9 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 						'payment_method_id' => [
 							'sanitize_callback' => 'sanitize_text_field',
 						],
+						'origin'            => [
+							'sanitize_callback' => 'sanitize_text_field',
+						],
 					],
 					'permission_callback' => '__return_true',
 				],
@@ -123,6 +126,7 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 
 		$frequency = $request->get_param( 'frequency' );
 		$full_name = $request->get_param( 'full_name' );
+		$origin    = $request->get_param( 'origin' );
 
 		$user_id = self::$current_user_id;
 
@@ -156,6 +160,7 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 					'newsletterOptIn'  => $request->get_param( 'newsletter_opt_in' ),
 					'userId'           => $user_id,
 					'current_page_url' => \wp_get_referer(),
+					'origin'           => $origin,
 				],
 				'payment_metadata'  => $payment_metadata,
 				'payment_method_id' => $request->get_param( 'payment_method_id' ),
