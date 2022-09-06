@@ -1,3 +1,11 @@
+# [1.57.0-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v1.57.0-alpha.1...v1.57.0-alpha.2) (2022-09-06)
+
+
+### Bug Fixes
+
+* correct Donate thank you message alignment ([#1258](https://github.com/Automattic/newspack-blocks/issues/1258)) ([e838e61](https://github.com/Automattic/newspack-blocks/commit/e838e61c58ad8f3aef85b8c6b73ef61526e7bfa0))
+* update Homepage Posts grid spacing and add control  ([#1245](https://github.com/Automattic/newspack-blocks/issues/1245)) ([9fa6972](https://github.com/Automattic/newspack-blocks/commit/9fa6972793d3ae82b008e098736337e4dd332dba))
+
 # [1.57.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.56.0...v1.57.0-alpha.1) (2022-08-26)
 
 
