@@ -27,5 +27,8 @@ function newspack_blocks_manually_load_plugin() {
 }
 tests_add_filter( 'muplugins_loaded', 'newspack_blocks_manually_load_plugin' );
 
+// Load the composer autoloader.
+require_once __DIR__ . '/../vendor/autoload.php';
+
 // Start up the WP testing environment.
 require $newspack_blocks_tests_dir . '/includes/bootstrap.php';
