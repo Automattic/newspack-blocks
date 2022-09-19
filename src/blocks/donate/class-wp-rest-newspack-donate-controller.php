@@ -153,9 +153,10 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 				}
 			}
 		} else {
-			$email_address             = \get_userdata( $user_id )->user_email;
-			$client_metadata['userId'] = $user_id;
+			$email_address = \get_userdata( $user_id )->user_email;
 		}
+
+		$client_metadata['userId'] = $user_id;
 
 		$response = \Newspack\Stripe_Connection::handle_donation(
 			[
