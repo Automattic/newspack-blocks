@@ -326,7 +326,17 @@ function newspack_blocks_render_block_donate( $attributes ) {
 	}
 
 	$frequencies_count    = count( $frequencies );
-	$container_classnames = 'wp-block-newspack-blocks-donate wpbnbd ' . $classname . ' wpbnbd-frequencies--' . $frequencies_count;
+	$layout_version       = 'frequency-based';
+	$container_classnames = implode(
+		' ',
+		[
+			'wp-block-newspack-blocks-donate',
+			'wpbnbd',
+			'wpbnbd--' . $layout_version,
+			$classname,
+			'wpbnbd-frequencies--' . $frequencies_count,
+		]
+	);
 
 	ob_start();
 

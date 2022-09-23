@@ -108,21 +108,6 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 			.finally( () => setIsLoading( false ) );
 	}, [] );
 
-	const amounts = attributes.manual ? attributes.amounts : settings.amounts;
-	const availableFrequencies = FREQUENCY_SLUGS.filter( slug =>
-		attributes.manual
-			? ! attributes.disabledFrequencies[ slug ]
-			: ! settings.disabledFrequencies[ slug ]
-	);
-
-	const getClassNames = ( classes = '' ) =>
-		classNames(
-			classes,
-			className,
-			'wpbnbd',
-			`wpbnbd-frequencies--${ availableFrequencies.length }`
-		);
-
 	if ( error.length ) {
 		return (
 			<Placeholder icon="warning" label={ __( 'Error', 'newspack-blocks' ) } instructions={ error }>
@@ -138,6 +123,21 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 	}
 
 	const isTiered = attributes.manual ? attributes.tiered : settings.tiered;
+	const amounts = attributes.manual ? attributes.amounts : settings.amounts;
+	const availableFrequencies = FREQUENCY_SLUGS.filter( slug =>
+		attributes.manual
+			? ! attributes.disabledFrequencies[ slug ]
+			: ! settings.disabledFrequencies[ slug ]
+	);
+
+	const getWrapperClassNames = ( classes: string[] = [] ) =>
+		classNames(
+			classes,
+			className,
+			'wpbnbd',
+			`wpbnbd--frequency-based`,
+			`wpbnbd-frequencies--${ availableFrequencies.length }`
+		);
 
 	const componentProps = {
 		attributes,
@@ -150,7 +150,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 
 	return (
 		<>
-			<div className={ getClassNames( isTiered ? 'tiered' : 'untiered' ) }>
+			<div className={ getWrapperClassNames( [ isTiered ? 'tiered' : 'untiered' ] ) }>
 				<FrequencyBasedLayout isTiered={ isTiered } { ...componentProps } />
 			</div>
 
