@@ -60,6 +60,12 @@ export type OverridableConfiguration = {
 	minimumDonation: number;
 };
 
+export type TierBasedOptionValue = {
+	heading: string;
+	description: string;
+	buttonText: string;
+};
+
 export type DonateBlockAttributes = OverridableConfiguration & {
 	buttonText: string;
 	buttonWithCCText: string;
@@ -70,6 +76,9 @@ export type DonateBlockAttributes = OverridableConfiguration & {
 	defaultFrequency: DonationFrequencySlug;
 	campaign: string;
 	className: string;
+	layoutOption: 'frequency' | 'tiers';
+	// For tiers-based layout option.
+	tiersBasedOptions: [ TierBasedOptionValue, TierBasedOptionValue, TierBasedOptionValue ];
 	// Manual mode enables block-level overrides of the global Donate settings.
 	manual: boolean;
 	// Legacy attributes.

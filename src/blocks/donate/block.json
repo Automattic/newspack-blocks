@@ -55,6 +55,30 @@
 		},
 		"minimumDonation": {
 			"type": "number"
+		},
+		"layoutOption": {
+			"type": "string",
+			"default": "frequency"
+		},
+		"tiersBasedOptions": {
+			"type": "array",
+			"default": [
+				{
+					"heading": "Small",
+					"description": "Small tier description",
+					"buttonText": "Select"
+				},
+				{
+					"heading": "Medium",
+					"description": "Medium tier description",
+					"buttonText": "Select"
+				},
+				{
+					"heading": "Large",
+					"description": "Large tier description",
+					"buttonText": "Select"
+				}
+			]
 		}
 	},
 	"supports": {

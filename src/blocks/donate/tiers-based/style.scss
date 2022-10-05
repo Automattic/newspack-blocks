@@ -1,0 +1,58 @@
+@use '../../../shared/sass/colors';
+
+.wpbnbd {
+	&__tiers {
+		&__selection {
+			display: flex;
+			justify-content: center;
+			margin-bottom: 1em;
+			&__item {
+				border-radius: 0;
+				line-height: 1;
+				padding: 11px 23px;
+				&:first-child {
+					border-top-left-radius: 20px;
+					border-bottom-left-radius: 20px;
+				}
+				&:last-child {
+					border-top-right-radius: 20px;
+					border-bottom-right-radius: 20px;
+				}
+				background-color: #efefef;
+				color: black;
+				&--active {
+					background-color: var( --newspack-primary-color );
+					color: var( --newspack-primary-contrast-color );
+				}
+			}
+		}
+		&__options {
+			display: flex;
+			margin-left: -10px;
+			margin-right: -10px;
+			> div {
+				flex: 1;
+			}
+		}
+		&__tier {
+			display: flex;
+			flex-direction: column;
+			text-align: center;
+			margin-left: 10px;
+			margin-right: 10px;
+			padding: 10px;
+			background: colors.$color__background-body;
+		}
+		&__description {
+			flex: 1;
+			text-align: left;
+			margin-bottom: 1em;
+		}
+		&__amount {
+			text-align: center;
+			&__number {
+				font-size: 3em;
+			}
+		}
+	}
+}

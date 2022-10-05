@@ -16,6 +16,7 @@ class Newspack_Blocks {
 	const SCRIPT_HANDLES = [
 		'streamlined'     => 'newspack-blocks-donate-streamlined',
 		'frequency-based' => 'newspack-blocks-donate-frequency-based',
+		'tiers-based'     => 'newspack-blocks-donate-tiers-based',
 	];
 
 	/**

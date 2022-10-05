@@ -10,11 +10,13 @@ export const AmountValueInput = ( {
 	amounts,
 	setAttributes,
 	setSettings,
+	disabled,
 }: ComponentProps & {
 	frequencySlug: DonationFrequencySlug;
 	tierIndex: number;
 	id: string;
 	label?: string;
+	disabled?: boolean;
 } ) => {
 	const onChange = ( {
 		value,
@@ -53,6 +55,7 @@ export const AmountValueInput = ( {
 				}
 				value={ amounts[ frequencySlug ][ tierIndex ] }
 				id={ id }
+				disabled={ disabled }
 			/>
 		</span>
 	);

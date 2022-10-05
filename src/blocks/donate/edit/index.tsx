@@ -19,6 +19,7 @@ import {
 	SelectControl,
 	ToggleControl,
 	TextControl,
+	Button,
 } from '@wordpress/components';
 import { InspectorControls, ColorPaletteControl } from '@wordpress/block-editor';
 import { isEmpty } from 'lodash';
@@ -33,9 +34,15 @@ import type {
 	DonationFrequencySlug,
 	EditState,
 } from '../types';
+import TierBasedLayout from './TierBasedLayout';
 import FrequencyBasedLayout from './FrequencyBasedLayout';
 import { AmountValueInput } from './components';
-import { FREQUENCIES, FREQUENCY_SLUGS } from '../consts';
+import {
+	FREQUENCIES,
+	FREQUENCY_SLUGS,
+	LAYOUT_OPTIONS,
+	DISABLED_IN_TIERS_BASED_LAYOUT_TIER_INDEX,
+} from '../consts';
 
 type EditProps = {
 	attributes: DonateBlockAttributes;
@@ -123,19 +130,21 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 	}
 
 	const isTiered = attributes.manual ? attributes.tiered : settings.tiered;
+	const isTierBasedLayoutEnabled = isTiered && attributes.layoutOption === 'tiers';
+
 	const amounts = attributes.manual ? attributes.amounts : settings.amounts;
 	const availableFrequencies = FREQUENCY_SLUGS.filter( slug =>
 		attributes.manual
 			? ! attributes.disabledFrequencies[ slug ]
 			: ! settings.disabledFrequencies[ slug ]
-	);
+	).filter( slug => ( isTierBasedLayoutEnabled ? slug !== 'once' : true ) );
 
 	const getWrapperClassNames = ( classes: string[] = [] ) =>
 		classNames(
 			classes,
 			className,
 			'wpbnbd',
-			`wpbnbd--frequency-based`,
+			`wpbnbd--${ isTierBasedLayoutEnabled ? 'tiers-based' : 'frequency-based' }`,
 			`wpbnbd-frequencies--${ availableFrequencies.length }`
 		);
 
@@ -150,23 +159,57 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 
 	return (
 		<>
-			<div className={ getWrapperClassNames( [ isTiered ? 'tiered' : 'untiered' ] ) }>
-				<FrequencyBasedLayout isTiered={ isTiered } { ...componentProps } />
-			</div>
+			{ isTierBasedLayoutEnabled ? (
+				<div className={ getWrapperClassNames() }>
+					<TierBasedLayout { ...componentProps } />
+				</div>
+			) : (
+				<div className={ getWrapperClassNames( [ isTiered ? 'tiered' : 'untiered' ] ) }>
+					<FrequencyBasedLayout isTiered={ isTiered } { ...componentProps } />
+				</div>
+			) }
 
 			<InspectorControls>
 				<PanelBody title={ __( 'Layout', 'newspack-blocks' ) }>
-					<SelectControl
-						label={ __( 'Default Tab', 'newspack' ) }
-						value={ attributes.defaultFrequency }
-						options={ availableFrequencies.map( key => ( {
-							label: FREQUENCIES[ key ],
-							value: key,
-						} ) ) }
-						onChange={ ( defaultFrequency: DonationFrequencySlug ) =>
-							setAttributes( { defaultFrequency } )
-						}
-					/>
+					<div className="newspack-blocks-layout-selector">
+						{ LAYOUT_OPTIONS.map( ( { label, key } ) => {
+							let isSelected, disabled;
+							switch ( key ) {
+								case 'tiers':
+									isSelected = isTierBasedLayoutEnabled;
+									disabled = key === 'tiers' && ! isTiered;
+									break;
+								case 'frequency':
+									isSelected = ! isTierBasedLayoutEnabled;
+									break;
+							}
+							return (
+								<Button
+									key={ key }
+									variant={ isSelected ? 'primary' : 'secondary' }
+									isPressed={ isSelected }
+									onClick={ () => setAttributes( { layoutOption: key } ) }
+									aria-current={ isSelected }
+									disabled={ disabled }
+								>
+									{ label }
+								</Button>
+							);
+						} ) }
+					</div>
+					{ ! isTierBasedLayoutEnabled && (
+						<SelectControl
+							label={ __( 'Default Tab', 'newspack' ) }
+							value={ attributes.defaultFrequency }
+							options={ availableFrequencies.map( key => ( {
+								label: FREQUENCIES[ key ],
+								value: key,
+							} ) ) }
+							onChange={ ( defaultFrequency: DonationFrequencySlug ) =>
+								setAttributes( { defaultFrequency } )
+							}
+						/>
+					) }
 				</PanelBody>
 				<PanelBody title={ __( 'Suggested Donations', 'newspack-blocks' ) }>
 					<ToggleControl
@@ -230,6 +273,10 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 																	tierIndex={ tierIndex }
 																	label={ TIER_LABELS[ tierIndex ] }
 																	id={ `${ frequency }-${ tierIndex }-amount` }
+																	disabled={
+																		isTierBasedLayoutEnabled &&
+																		tierIndex === DISABLED_IN_TIERS_BASED_LAYOUT_TIER_INDEX
+																	}
 																/>
 															) ) }
 														</div>
