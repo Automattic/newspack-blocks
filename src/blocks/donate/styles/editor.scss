@@ -2,7 +2,8 @@
 @use '../../../shared/sass/colors';
 @use '../../../shared/sass/variables';
 
-@use '../streamlined/style.scss';
+@import '../streamlined/style';
+@import '../frequency-based/style';
 
 .wp-block-newspack-blocks-donate {
 	&__tier--frequency {
