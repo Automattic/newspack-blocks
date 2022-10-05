@@ -11,7 +11,7 @@ const createDOM = settings => {
 	const parentElement = document.createElement( 'div' );
 	parentElement.innerHTML = `
 		<style>.stripe-payment--hidden {display:none;}</style>
-		<form data-settings="${ encode( JSON.stringify( settings ) ) }">
+		<form data-streamlined-config="${ encode( JSON.stringify( settings ) ) }">
 			<div class='frequencies'>
 				<div class='frequency'>
 					<input type="radio" value="once" id="once" name="donation_frequency">

@@ -26,11 +26,8 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 			isCardUIVisible = false;
 
 		const formElement: HTMLFormElement | null = el.closest( 'form' );
-		if ( ! formElement ) {
-			return;
-		}
 		const messagesEl: HTMLDivElement | null = el.querySelector( '.stripe-payment__messages' );
-		if ( ! messagesEl ) {
+		if ( ! formElement || ! messagesEl ) {
 			return;
 		}
 

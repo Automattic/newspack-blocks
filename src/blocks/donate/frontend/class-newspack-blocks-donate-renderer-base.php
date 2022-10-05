@@ -132,7 +132,7 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 				$captcha_site_key = \Newspack\Recaptcha::get_setting( 'site_key' );
 			}
 
-			$configuration_for_frontend                      = [
+			$configuration_for_streamlined                   = [
 				$currency,
 				$configuration['currencySymbol'],
 				get_bloginfo( 'name' ),
@@ -148,9 +148,9 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 			];
 			$configuration['is_rendering_streamlined_block'] = true;
 		} else {
-			$configuration_for_frontend = [];
+			$configuration_for_streamlined = [];
 		}
-		$configuration['configuration_for_frontend'] = $configuration_for_frontend;
+		$configuration['configuration_for_streamlined'] = $configuration_for_streamlined;
 
 		self::$configurations_cache[ $attributes_hash ] = $configuration;
 
