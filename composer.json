@@ -12,7 +12,7 @@
     "phpcompatibility/phpcompatibility-wp": "*",
     "sirbrillig/phpcs-variable-analysis": "^2.10",
     "yoast/phpunit-polyfills": "^1.0",
-    "phpunit/phpunit": "^7.0"
+    "phpunit/phpunit": "^7.0 || ^9.5"
   },
   "license": "GPL-3.0-or-later",
   "scripts": {
@@ -35,6 +35,9 @@
     }
   },
   "config": {
+    "platform": {
+      "php": "7.4"
+    },
     "allow-plugins": {
       "composer/installers": true,
       "dealerdirect/phpcodesniffer-composer-installer": true
