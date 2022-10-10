@@ -187,7 +187,7 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 		};
 
 		const initStripe = async () => {
-			stripe = await loadStripe( settings.stripePublishableKey );
+			stripe = await loadStripe( settings.stripePublishableKey, { stripeAccount: settings.connectedAccount } );
 			if ( ! stripe ) {
 				return;
 			}

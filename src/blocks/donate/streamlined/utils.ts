@@ -82,7 +82,9 @@ export const getSettings = ( formElement: HTMLFormElement ) => {
 		paymentRequestType,
 		captchaSiteKey,
 		minimumDonation,
+		connectedAccount
 	] = JSON.parse( settings );
+	console.log( settings );
 	return {
 		currency: currency.toLowerCase(),
 		currencySymbol,
@@ -96,6 +98,7 @@ export const getSettings = ( formElement: HTMLFormElement ) => {
 		paymentRequestType,
 		captchaSiteKey,
 		minimumDonation: parseFloat( minimumDonation ),
+		connectedAccount
 	};
 };
 

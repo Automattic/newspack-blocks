@@ -320,6 +320,7 @@ function newspack_blocks_render_block_donate( $attributes ) {
 			$attributes['paymentRequestType'],
 			$captcha_site_key,
 			$configuration['minimumDonation'],
+			NEWSPACK_STRIPE_CONNECTED_CHILD_ACCOUNT
 		];
 	} else {
 		$configuration_for_frontend = [];
