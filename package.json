@@ -26,7 +26,7 @@
 		"redux": "^4.2.0",
 		"redux-saga": "^1.2.1",
 		"regenerator-runtime": "^0.13.9",
-		"swiper": "8.4.2"
+		"swiper": "8.4.3"
 	},
 	"scripts": {
 		"cm": "newspack-scripts commit",
