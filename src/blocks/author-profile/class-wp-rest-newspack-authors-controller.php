@@ -260,6 +260,22 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 			$guest_author_data['social'] = self::get_social( $guest_author->ID );
 		}
 
+		if ( class_exists( '\Newspack\Authors_Custom_Fields' ) ) {
+			foreach ( \Newspack\Authors_Custom_Fields::get_custom_fields() as $custom_field ) {
+				$key   = $custom_field['name'];
+				$value = $guest_author->$key;
+				if ( ! empty( $value ) && 'newspack_phone_number' === $custom_field['name'] ) {
+					$value = [
+						'url' => 'tel:' . $value,
+					];
+					if ( class_exists( 'Newspack_SVG_Icons' ) ) {
+						$value['svg'] = Newspack_SVG_Icons::get_social_link_svg( $value['url'], 24 );
+					}
+				}
+				$guest_author_data[ $custom_field['name'] ] = $value;
+			}
+		}
+
 		return $guest_author_data;
 	}
 
@@ -295,8 +311,7 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 		}
 
 		if ( class_exists( '\Newspack\Authors_Custom_Fields' ) ) {
-			$author_custom_fields = \Newspack\Authors_Custom_Fields::get_custom_fields();
-			foreach ( $author_custom_fields as $custom_field ) {
+			foreach ( \Newspack\Authors_Custom_Fields::get_custom_fields() as $custom_field ) {
 				$value = \get_user_meta( $user->data->ID, $custom_field['name'], true );
 				if ( ! empty( $value ) && 'newspack_phone_number' === $custom_field['name'] ) {
 					$value = [
