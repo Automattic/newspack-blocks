@@ -231,6 +231,10 @@ class Newspack_Blocks {
 				$localized_data['editable_roles'] = $author_list_controller->get_editable_roles();
 			}
 
+			if ( class_exists( '\Newspack\Authors_Custom_Fields' ) ) {
+				$localized_data['author_custom_fields'] = \Newspack\Authors_Custom_Fields::get_custom_fields();
+			}
+
 			wp_localize_script(
 				'newspack-blocks-editor',
 				'newspack_blocks_data',

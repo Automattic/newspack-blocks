@@ -339,7 +339,7 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 								$guest_author_data['avatar'] = $avatar;
 							}
 						}
-						$guest_author_data = $this->fill_guest_author_data( $guest_author_data, $fields, $guest_author );
+						$guest_author_data = self::fill_guest_author_data( $guest_author_data, $guest_author, $fields );
 
 						$acc[] = $guest_author_data;
 					}
@@ -376,7 +376,7 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 							}
 						}
 
-						$user_data = $this->fill_user_data( $user_data, $fields, $user );
+						$user_data = self::fill_user_data( $user_data, $user, $fields );
 
 						$acc[] = $user_data;
 					}

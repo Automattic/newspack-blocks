@@ -176,7 +176,7 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 								}
 							}
 
-							$guest_author_data = $this->fill_guest_author_data( $guest_author_data, $fields, $guest_author );
+							$guest_author_data = self::fill_guest_author_data( $guest_author_data, $guest_author, $fields );
 
 							$acc[] = $guest_author_data;
 						}
@@ -204,9 +204,8 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 							}
 						}
 
-						$user_data = $this->fill_user_data( $user_data, $fields, $user );
-
-						$acc[] = $user_data;
+						$user_data = self::fill_user_data( $user_data, $user, $fields );
+						$acc[]     = $user_data;
 					}
 					return $acc;
 				},
@@ -232,33 +231,33 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 	 * Fill guest author data.
 	 *
 	 * @param array  $guest_author_data Guest author data.
-	 * @param array  $fields Fields requested.
 	 * @param object $guest_author The guest author object.
+	 * @param array  $fields Fields requested.
 	 */
-	protected function fill_guest_author_data( $guest_author_data, $fields, $guest_author ) {
-		if ( in_array( 'login', $fields, true ) ) {
+	public static function fill_guest_author_data( $guest_author_data, $guest_author, $fields = false ) {
+		if ( false === $fields || in_array( 'login', $fields, true ) ) {
 			$guest_author_data['login'] = $guest_author->user_login;
 		}
-		if ( in_array( 'name', $fields, true ) ) {
+		if ( false === $fields || in_array( 'name', $fields, true ) ) {
 			$guest_author_data['name'] = $guest_author->display_name;
 		}
-		if ( in_array( 'bio', $fields, true ) ) {
+		if ( false === $fields || in_array( 'bio', $fields, true ) ) {
 			$guest_author_data['bio'] = get_post_meta( $guest_author->ID, 'cap-description', true );
 		}
-		if ( in_array( 'email', $fields, true ) ) {
-			$email_data = $this->get_email( $guest_author->ID );
+		if ( false === $fields || in_array( 'email', $fields, true ) ) {
+			$email_data = self::get_email( $guest_author->ID );
 
 			if ( $email_data ) {
 				$guest_author_data['email'] = $email_data;
 			}
 		}
-		if ( in_array( 'url', $fields, true ) ) {
-			$guest_author_data['url'] = esc_urL(
-				get_site_urL( null, '?author_name=' . get_post_meta( $guest_author->ID, 'cap-user_login', true ) )
+		if ( false === $fields || in_array( 'url', $fields, true ) ) {
+			$guest_author_data['url'] = esc_url(
+				get_site_url( null, '?author_name=' . get_post_meta( $guest_author->ID, 'cap-user_login', true ) )
 			);
 		}
-		if ( in_array( 'social', $fields, true ) ) {
-			$guest_author_data['social'] = $this->get_social( $guest_author->ID );
+		if ( false === $fields || in_array( 'social', $fields, true ) ) {
+			$guest_author_data['social'] = self::get_social( $guest_author->ID );
 		}
 
 		return $guest_author_data;
@@ -268,31 +267,47 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 	 * Fill user data.
 	 *
 	 * @param array   $user_data User data.
-	 * @param array   $fields Fields requested.
 	 * @param WP_User $user The current WP_User object.
+	 * @param array   $fields Fields requested.
 	 */
-	protected function fill_user_data( $user_data, $fields, $user ) {
-		if ( in_array( 'login', $fields, true ) ) {
+	public static function fill_user_data( $user_data, $user, $fields = false ) {
+		if ( false === $fields || in_array( 'login', $fields, true ) ) {
 			$user_data['login'] = $user->data->user_login;
 		}
-		if ( in_array( 'name', $fields, true ) ) {
+		if ( false === $fields || in_array( 'name', $fields, true ) ) {
 			$user_data['name'] = $user->data->display_name;
 		}
-		if ( in_array( 'bio', $fields, true ) ) {
+		if ( false === $fields || in_array( 'bio', $fields, true ) ) {
 			$user_data['bio'] = get_the_author_meta( 'description', $user->data->ID );
 		}
-		if ( in_array( 'email', $fields, true ) ) {
-			$email_data = $this->get_email( $user->data->ID, false, $user->data->user_email );
+		if ( false === $fields || in_array( 'email', $fields, true ) ) {
+			$email_data = self::get_email( $user->data->ID, false, $user->data->user_email );
 
 			if ( $email_data ) {
 				$user_data['email'] = $email_data;
 			}
 		}
-		if ( in_array( 'url', $fields, true ) ) {
+		if ( false === $fields || in_array( 'url', $fields, true ) ) {
 			$user_data['url'] = esc_urL( get_author_posts_url( $user->data->ID ) );
 		}
-		if ( in_array( 'social', $fields, true ) ) {
-			$user_data['social'] = $this->get_social( $user->data->ID );
+		if ( false === $fields || in_array( 'social', $fields, true ) ) {
+			$user_data['social'] = self::get_social( $user->data->ID );
+		}
+
+		if ( class_exists( '\Newspack\Authors_Custom_Fields' ) ) {
+			$author_custom_fields = \Newspack\Authors_Custom_Fields::get_custom_fields();
+			foreach ( $author_custom_fields as $custom_field ) {
+				$value = \get_user_meta( $user->data->ID, $custom_field['name'], true );
+				if ( ! empty( $value ) && 'newspack_phone_number' === $custom_field['name'] ) {
+					$value = [
+						'url' => 'tel:' . $value,
+					];
+					if ( class_exists( 'Newspack_SVG_Icons' ) ) {
+						$value['svg'] = Newspack_SVG_Icons::get_social_link_svg( $value['url'], 24 );
+					}
+				}
+				$user_data[ $custom_field['name'] ] = $value;
+			}
 		}
 		return $user_data;
 	}
