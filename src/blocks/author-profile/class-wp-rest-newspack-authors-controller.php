@@ -304,7 +304,7 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 			}
 		}
 		if ( false === $fields || in_array( 'url', $fields, true ) ) {
-			$user_data['url'] = esc_urL( get_author_posts_url( $user->data->ID ) );
+			$user_data['url'] = esc_url( get_author_posts_url( $user->data->ID ) );
 		}
 		if ( false === $fields || in_array( 'social', $fields, true ) ) {
 			$user_data['social'] = self::get_social( $user->data->ID );
