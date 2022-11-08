@@ -216,14 +216,14 @@ class Newspack_Blocks {
 			);
 
 			$localized_data = [
-				'patterns'                       => self::get_patterns_for_post_type( get_post_type() ),
-				'posts_rest_url'                 => rest_url( 'newspack-blocks/v1/newspack-blocks-posts' ),
-				'specific_posts_rest_url'        => rest_url( 'newspack-blocks/v1/newspack-blocks-specific-posts' ),
-				'authors_rest_url'               => rest_url( 'newspack-blocks/v1/authors' ),
-				'assets_path'                    => plugins_url( '/src/assets', NEWSPACK_BLOCKS__PLUGIN_FILE ),
-				'post_subtitle'                  => get_theme_support( 'post-subtitle' ),
-				'is_rendering_streamlined_block' => self::is_rendering_streamlined_block(),
-				'iframe_accepted_file_mimes'     => self::iframe_accepted_file_mimes(),
+				'patterns'                         => self::get_patterns_for_post_type( get_post_type() ),
+				'posts_rest_url'                   => rest_url( 'newspack-blocks/v1/newspack-blocks-posts' ),
+				'specific_posts_rest_url'          => rest_url( 'newspack-blocks/v1/newspack-blocks-specific-posts' ),
+				'authors_rest_url'                 => rest_url( 'newspack-blocks/v1/authors' ),
+				'assets_path'                      => plugins_url( '/src/assets', NEWSPACK_BLOCKS__PLUGIN_FILE ),
+				'post_subtitle'                    => get_theme_support( 'post-subtitle' ),
+				'is_rendering_stripe_payment_form' => self::is_rendering_stripe_payment_form(),
+				'iframe_accepted_file_mimes'       => self::iframe_accepted_file_mimes(),
 			];
 
 			if ( class_exists( 'WP_REST_Newspack_Author_List_Controller' ) ) {
@@ -264,7 +264,7 @@ class Newspack_Blocks {
 	 *
 	 * @return bool True if it can.
 	 */
-	public static function is_rendering_streamlined_block() {
+	public static function is_rendering_stripe_payment_form() {
 		if (
 			class_exists( 'Newspack\Donations' )
 			&& method_exists( 'Newspack\Donations', 'can_use_streamlined_donate_block' )

@@ -66,7 +66,7 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 			<?php echo wp_kses_post( $attributes['thanksText'] ); ?>
 		</p>
 
-		<?php if ( $configuration['is_rendering_streamlined_block'] ) : ?>
+		<?php if ( $configuration['is_rendering_stripe_payment_form'] ) : ?>
 			<?php echo self::render_streamlined_payment_ui( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		<?php else : ?>
 			<button type='submit' <?php echo $button_style_attr; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>

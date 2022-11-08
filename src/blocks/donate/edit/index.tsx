@@ -130,7 +130,10 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 	}
 
 	const isTiered = attributes.manual ? attributes.tiered : settings.tiered;
-	const isTierBasedLayoutEnabled = isTiered && attributes.layoutOption === 'tiers';
+	const isRenderingStripePaymentForm =
+		window.newspack_blocks_data?.is_rendering_stripe_payment_form;
+	const isTierBasedLayoutEnabled =
+		isRenderingStripePaymentForm && isTiered && attributes.layoutOption === 'tiers';
 
 	const amounts = attributes.manual ? attributes.amounts : settings.amounts;
 	const availableFrequencies = FREQUENCY_SLUGS.filter( slug =>
@@ -177,7 +180,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 							switch ( key ) {
 								case 'tiers':
 									isSelected = isTierBasedLayoutEnabled;
-									disabled = key === 'tiers' && ! isTiered;
+									disabled = ( key === 'tiers' && ! isTiered ) || ! isRenderingStripePaymentForm;
 									break;
 								case 'frequency':
 									isSelected = ! isTierBasedLayoutEnabled;

@@ -82,7 +82,7 @@ class Newspack_Blocks_Donate_Renderer {
 			return '';
 		}
 
-		if ( $configuration['is_rendering_streamlined_block'] ) {
+		if ( $configuration['is_rendering_stripe_payment_form'] ) {
 			self::enqueue_scripts( 'streamlined' );
 		}
 

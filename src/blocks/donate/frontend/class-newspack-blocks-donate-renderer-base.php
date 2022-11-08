@@ -90,7 +90,11 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 			}
 		}
 
-		$is_tiers_based                        = $configuration['tiered'] && 'tiers' === $attributes['layoutOption'];
+		$is_tiers_based = $configuration['tiered'] && 'tiers' === $attributes['layoutOption'];
+		if ( ! Newspack_Blocks::is_rendering_stripe_payment_form() ) {
+			// The tiers-based layout works only with Stripe payment form.
+			$is_tiers_based = false;
+		}
 		$configuration['is_tier_based_layout'] = $is_tiers_based;
 
 		$frequencies = [
@@ -128,9 +132,9 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 		);
 		$configuration['container_classnames'] = $container_classnames;
 
-		$configuration['is_rendering_streamlined_block'] = false;
+		$configuration['is_rendering_stripe_payment_form'] = false;
 
-		if ( Newspack_Blocks::is_rendering_streamlined_block() ) {
+		if ( Newspack_Blocks::is_rendering_stripe_payment_form() ) {
 			$stripe_data      = \Newspack\Stripe_Connection::get_stripe_data();
 			$currency         = $stripe_data['currency'];
 			$captcha_site_key = null;
@@ -139,7 +143,7 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 				$captcha_site_key = \Newspack\Recaptcha::get_setting( 'site_key' );
 			}
 
-			$configuration_for_streamlined                   = [
+			$configuration_for_streamlined                     = [
 				$currency,
 				$configuration['currencySymbol'],
 				get_bloginfo( 'name' ),
@@ -153,7 +157,7 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 				$captcha_site_key,
 				$configuration['minimumDonation'],
 			];
-			$configuration['is_rendering_streamlined_block'] = true;
+			$configuration['is_rendering_stripe_payment_form'] = true;
 		} else {
 			$configuration_for_streamlined = [];
 		}
