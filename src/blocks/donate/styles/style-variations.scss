@@ -50,17 +50,17 @@
 		}
 	}
 
-	.frequency {
-		.freq-label {
-			background: colors.$color__background-screen;
-			border-color: colors.$color__background-screen;
-			border-width: 1px;
-			padding: calc( 0.57rem + 1px ) 0.5rem;
-			@include mixins.media( mobile ) {
-				padding: calc( 0.57rem + 1px ) 0.76rem;
-			}
+	.freq-label {
+		background: colors.$color__background-screen;
+		border-color: colors.$color__background-screen;
+		border-width: 1px;
+		padding: calc( 0.57rem + 1px ) 0.5rem;
+		@include mixins.media( mobile ) {
+			padding: calc( 0.57rem + 1px ) 0.76rem;
 		}
+	}
 
+	.frequency {
 		input[type='radio']:checked {
 			+ .freq-label {
 				&::after {
@@ -189,25 +189,25 @@
 		padding-top: calc( 0.76rem + 1.6em + 4px );
 	}
 
-	.frequency {
-		.freq-label {
-			background: transparent;
-			border: none;
-			box-shadow: 0 3px 0 white, 0 4px 0 0 variables.$color__border;
-			padding: 0.38rem 0;
-			transition: none;
+	.freq-label {
+		background: transparent;
+		border: none;
+		box-shadow: 0 3px 0 white, 0 4px 0 0 variables.$color__border;
+		padding: 0.38rem 0;
+		transition: none;
 
-			@include mixins.media( tablet ) {
-				padding-left: 0.76rem;
-				padding-right: 0.76rem;
-			}
-
-			&::before {
-				border-width: 1px;
-				border-color: variables.$color__border;
-			}
+		@include mixins.media( tablet ) {
+			padding-left: 0.76rem;
+			padding-right: 0.76rem;
 		}
 
+		&::before {
+			border-width: 1px;
+			border-color: variables.$color__border;
+		}
+	}
+
+	.frequency {
 		input[type='radio']:checked {
 			+ .freq-label {
 				box-shadow: 0 4px 0 currentcolor;

@@ -28,23 +28,11 @@
 	}
 
 	.freq-label {
-		background: colors.$color__background-body;
 		box-sizing: border-box;
-		color: colors.$color__text-light;
-		line-height: variables.$font__line-height-body;
 		overflow: hidden;
-		padding: 0.38rem 0.76rem;
-		text-overflow: ellipsis;
-		text-transform: uppercase;
 		white-space: nowrap;
 		width: 100%;
 		z-index: 1;
-		text-align: center;
-		&:focus,
-		&:hover {
-			background: colors.$color__background-screen;
-			color: colors.$color__text-main;
-		}
 	}
 
 	button {
@@ -208,7 +196,6 @@
 		position: absolute;
 		top: 0;
 		left: 0;
-		border: 0 solid variables.$color__border;
 		border-width: 0 0 1px;
 	}
 

@@ -30,12 +30,14 @@
 		}
 	}
 
-	button,
-	button[type='submit'] {
-		border: none;
+	button {
 		font-size: variables.$font__size-sm;
 		font-weight: bold;
 		outline: none;
+	}
+	button:not( .wpbnbd__button ),
+	button[type='submit'] {
+		border: none;
 	}
 	button[type='submit'] {
 		border-radius: 5px;

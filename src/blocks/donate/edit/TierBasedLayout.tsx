@@ -55,15 +55,15 @@ const TierBasedLayout = ( props: ComponentProps ) => {
 		};
 
 	return (
-		<form className="wpbnbd__tiers">
+		<form className="wpbnbd__tiers" onSubmit={ e => e.preventDefault() }>
 			<div className="wpbnbd__tiers__selection">
 				{ availableFrequencies.map( frequencySlug => {
 					const isActive = currentFrequency === frequencySlug;
 					return (
 						<button
 							key={ frequencySlug }
-							className={ classNames( 'wpbnbd__tiers__selection__item', {
-								'wpbnbd__tiers__selection__item--active': isActive,
+							className={ classNames( 'wpbnbd__button', {
+								'wpbnbd__button--active': isActive,
 							} ) }
 							onClick={ () => setCurrencyFrequency( frequencySlug ) }
 						>
@@ -85,19 +85,13 @@ const TierBasedLayout = ( props: ComponentProps ) => {
 								/>
 							</div>
 							<div className="wpbnbd__tiers__amount">
-								<span>
+								<span className="wpbnbd__tiers__amount__number">
 									{ props.settings.currencySymbol }
 									<span>{ amount }</span>
 								</span>
-								<span>/ { getFrequencyLabel( currentFrequency ) }</span>
-							</div>
-							<div className="wpbnbd__tiers__description">
-								<RichText
-									onChange={ handleTierOptionChange( index, 'description' ) }
-									placeholder={ __( 'Description…', 'newspack-blocks' ) }
-									value={ attributes.tiersBasedOptions[ index ].description }
-									tagName="span"
-								/>
+								<span className="wpbnbd__tiers__amount__frequency">
+									/ { getFrequencyLabel( currentFrequency ) }
+								</span>
 							</div>
 							<button
 								type="submit"
@@ -113,6 +107,14 @@ const TierBasedLayout = ( props: ComponentProps ) => {
 									tagName="span"
 								/>
 							</button>
+							<div className="wpbnbd__tiers__description">
+								<RichText
+									onChange={ handleTierOptionChange( index, 'description' ) }
+									placeholder={ __( 'Description…', 'newspack-blocks' ) }
+									value={ attributes.tiersBasedOptions[ index ].description }
+									tagName="span"
+								/>
+							</div>
 						</div>
 					);
 				} ) }

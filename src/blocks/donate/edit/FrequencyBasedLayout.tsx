@@ -79,7 +79,7 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 			/>
 			<label
 				htmlFor={ 'newspack-donate-' + frequencySlug + '-' + uid }
-				className="donation-frequency-label freq-label"
+				className="wpbnbd__button freq-label"
 			>
 				{ FREQUENCIES[ frequencySlug ] }
 			</label>

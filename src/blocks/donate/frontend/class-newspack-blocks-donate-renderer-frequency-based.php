@@ -40,7 +40,7 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 		/>
 		<label
 			for='newspack-donate-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>'
-			class='donation-frequency-label freq-label'
+			class='wpbnbd__button freq-label'
 		>
 			<?php echo esc_html( $frequency_name ); ?>
 		</label>

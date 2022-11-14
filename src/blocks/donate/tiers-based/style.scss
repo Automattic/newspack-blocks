@@ -1,57 +1,120 @@
 @use '../../../shared/sass/colors';
+@use '../../../shared/sass/variables';
 
-.wpbnbd {
-	&__tiers {
-		&__selection {
-			display: flex;
-			justify-content: center;
-			margin-bottom: 1em;
-			&__item {
-				border-radius: 0;
-				line-height: 1;
-				padding: 11px 23px;
-				&:first-child {
-					border-top-left-radius: 20px;
-					border-bottom-left-radius: 20px;
-				}
-				&:last-child {
-					border-top-right-radius: 20px;
-					border-bottom-right-radius: 20px;
-				}
-				background-color: #efefef;
-				color: black;
-				&--active {
-					background-color: var( --newspack-primary-color );
-					color: var( --newspack-primary-contrast-color );
-				}
+.wpbnbd--tiers-based {
+	.wpbnbd {
+		&__button {
+			border-width: 1px;
+			border-color: transparent;
+			border-radius: 0;
+			background: none;
+			&:focus,
+			&:hover {
+				background: colors.$color__background-screen;
+			}
+			&--active {
+				border-color: variables.$color__border;
 			}
 		}
-		&__options {
-			display: flex;
-			margin-left: -10px;
-			margin-right: -10px;
-			> div {
+		&__tiers {
+			&__view {
+				&--hidden {
+					display: none;
+				}
+				.wp-block-newspack-blocks-donate__stripe,
+				.stripe-payment__messages > div {
+					margin: 0 !important;
+				}
+			}
+			&__selection {
+				display: flex;
+				justify-content: center;
+				margin-bottom: 1em;
+				> button {
+					flex: 1;
+				}
+			}
+			&__options {
+				display: flex;
+				margin-left: -10px;
+				margin-right: -10px;
+				> div {
+					flex: 1;
+				}
+			}
+			&__tier {
+				display: flex;
+				flex-direction: column;
+				margin-left: 10px;
+				margin-right: 10px;
+				padding: 10px;
+				background: colors.$color__background-body;
+				border: 1px solid variables.$color__border;
+				border-radius: 5px;
+				button {
+					margin-bottom: 1em;
+				}
+			}
+			&__heading {
+				font-size: 16px;
+				font-weight: bold;
+			}
+			&__amount {
+				margin-bottom: 7px;
+				&__number {
+					font-size: 26px;
+				}
+				&__frequency {
+					font-size: 13px;
+				}
+			}
+			button[type='submit'] {
+				border-radius: 3px;
+				padding: 6px 16px 6px 16px;
+			}
+			&__description {
 				flex: 1;
+				font-size: 13px;
 			}
-		}
-		&__tier {
-			display: flex;
-			flex-direction: column;
-			text-align: center;
-			margin-left: 10px;
-			margin-right: 10px;
-			padding: 10px;
-			background: colors.$color__background-body;
-		}
-		&__description {
-			flex: 1;
-			text-align: left;
-			margin-bottom: 1em;
-		}
-		&__amount {
-			text-align: center;
-			&__number {
-				font-size: 3em;
+
+			&__back-button {
+				background: none;
+				padding: 0;
+				margin-bottom: 13px;
+				color: colors.$color__text-light;
+				span {
+					text-decoration: underline;
+				}
+				&:hover,
+				&:focus {
+					color: colors.$color__text-main;
+					background: none;
+				}
+			}
+			&__tier-tile {
+				display: flex;
+				justify-content: space-between;
+				margin-bottom: 17px;
+				padding: 5px 14px 16px 14px;
+				border: 2px solid colors.$color__text-main;
+				border-radius: 4px;
+				h2 {
+					font-size: 0.8em;
+					margin-top: 13px;
+				}
+				> div {
+					text-align: right;
+				}
+				[data-amount] {
+					font-weight: bold;
+					font-size: 1.4em;
+				}
+				[data-frequency] {
+					font-size: 0.7em;
+				}
+				&__note {
+					font-size: 0.6em;
+				}
 			}
 		}
 	}
