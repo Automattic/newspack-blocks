@@ -1,7 +1,9 @@
-@use '../../shared/sass/colors';
-@use '../../shared/sass/variables';
+@use '~@wordpress/base-styles/colors' as wp-colors;
+@use '../../../shared/sass/colors';
+@use '../../../shared/sass/variables';
 
-@use 'streamlined/style.scss';
+@import '../streamlined/style';
+@import '../frequency-based/style';
 
 .wp-block-newspack-blocks-donate {
 	&__tier--frequency {
@@ -62,7 +64,7 @@
 	}
 }
 
-.wp-block-newspack-blocks-donate.wpbnbd.tiered {
+.wp-block-newspack-blocks-donate.wpbnbd--frequency-based.tiered {
 	.tiers {
 		input.frequency-input {
 			~ input[type='number'] {
