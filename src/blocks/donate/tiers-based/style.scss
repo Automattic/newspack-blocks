@@ -8,10 +8,6 @@
 			border-color: transparent;
 			border-radius: 0;
 			background: none;
-			&:focus,
-			&:hover {
-				background: colors.$color__background-screen;
-			}
 			&--active {
 				border-color: variables.$color__border;
 			}
@@ -30,9 +26,6 @@
 				display: flex;
 				justify-content: center;
 				margin-bottom: 1em;
-				> button {
-					flex: 1;
-				}
 			}
 			&__options {
 				display: flex;
@@ -70,6 +63,7 @@
 			}
 			button[type='submit'] {
 				border-radius: 3px;
+				line-height: 1;
 				padding: 6px 16px 6px 16px;
 			}
 			&__description {
