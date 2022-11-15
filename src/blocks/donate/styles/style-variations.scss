@@ -181,6 +181,31 @@
 		}
 	}
 
+	// Tiers-based version.
+	.wpbnbd__tiers__selection {
+		.wpbnbd__button {
+			position: relative;
+			border: none;
+			padding: 8px;
+			&::after {
+				position: absolute;
+				content: '';
+				display: block;
+				height: 1px;
+				background: variables.$color__border;
+				width: 100%;
+				left: 0;
+				bottom: 0;
+			}
+			&--active {
+				&::after {
+					height: 3px;
+					background: colors.$color__text-main;
+				}
+			}
+		}
+	}
+
 	&.tiered {
 		.tiers {
 			.tier-label {
