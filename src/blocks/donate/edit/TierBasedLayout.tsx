@@ -23,9 +23,9 @@ const getFrequencyLabel = ( frequencySlug: DonationFrequencySlug ) => {
 		case 'once':
 			return __( 'once', 'newspack-blocks' );
 		case 'month':
-			return __( 'month', 'newspack-blocks' );
+			return __( 'per month', 'newspack-blocks' );
 		case 'year':
-			return __( 'year', 'newspack-blocks' );
+			return __( 'per year', 'newspack-blocks' );
 	}
 };
 
@@ -76,21 +76,22 @@ const TierBasedLayout = ( props: ComponentProps ) => {
 				{ displayedAmounts.map( ( amount, index ) => {
 					return (
 						<div key={ index } className="wpbnbd__tiers__tier">
-							<div className="wpbnbd__tiers__heading">
+							<h2 className="wpbnbd__tiers__heading">
 								<RichText
 									onChange={ handleTierOptionChange( index, 'heading' ) }
 									placeholder={ __( 'Heading…', 'newspack-blocks' ) }
 									value={ attributes.tiersBasedOptions[ index ].heading }
 									tagName="span"
 								/>
-							</div>
+							</h2>
 							<div className="wpbnbd__tiers__amount">
-								<span className="wpbnbd__tiers__amount__number">
+								<h3 className="wpbnbd__tiers__amount__number">
 									{ props.settings.currencySymbol }
 									<span>{ amount }</span>
-								</span>
+								</h3>
 								<span className="wpbnbd__tiers__amount__frequency">
-									/ { getFrequencyLabel( currentFrequency ) }
+									{ ' ' }
+									{ getFrequencyLabel( currentFrequency ) }
 								</span>
 							</div>
 							<button

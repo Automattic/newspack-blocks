@@ -230,11 +230,11 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 							{ attributes.tiered ? (
 								<>
 									<div className="components-frequency-donations">
-										{ FREQUENCY_SLUGS.map( ( frequency: DonationFrequencySlug ) => {
+										{ availableFrequencies.map( ( frequency: DonationFrequencySlug ) => {
 											const isFrequencyDisabled = attributes.disabledFrequencies[ frequency ];
 											const isOneFrequencyActive =
 												Object.values( attributes.disabledFrequencies ).filter( Boolean ).length ===
-												FREQUENCY_SLUGS.length - 1;
+												availableFrequencies.length - 1;
 											return (
 												<Fragment key={ frequency }>
 													<CheckboxControl

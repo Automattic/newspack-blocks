@@ -21,11 +21,11 @@ class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate
 	private static function get_frequency_label( $frequency_slug ) {
 		switch ( $frequency_slug ) {
 			case 'once':
-				return __( '/once', 'newspack-blocks' );
+				return ' ' . __( 'once', 'newspack-blocks' );
 			case 'month':
-				return __( '/month', 'newspack-blocks' );
+				return ' ' . __( 'per month', 'newspack-blocks' );
 			case 'year':
-				return __( '/year', 'newspack-blocks' );
+				return ' ' . __( 'per year', 'newspack-blocks' );
 		}
 	}
 
@@ -55,9 +55,9 @@ class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate
 		ob_start();
 		?>
 		<div class="wpbnbd__tiers__tier">
-			<div class="wpbnbd__tiers__heading">
+			<h3 class="wpbnbd__tiers__heading">
 				<?php echo esc_html( $attributes['tiersBasedOptions'][ $index ]['heading'] ); ?>
-			</div>
+			</h3>
 			<div class="wpbnbd__tiers__amount">
 				<span>
 					<?php foreach ( $configuration['frequencies'] as $frequency_slug => $frequency_name ) : ?>
@@ -67,7 +67,8 @@ class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate
 							data-amount="<?php echo esc_attr( $configuration['amounts'][ $frequency_slug ][ $index ] ); ?>"
 							data-tier-index="<?php echo esc_attr( $index ); ?>"
 						>
-							<span class="wpbnbd__tiers__amount__number"><?php echo esc_html( $configuration['currencySymbol'] ); ?><?php echo esc_html( $configuration['amounts'][ $frequency_slug ][ $index ] ); ?></span><span class="wpbnbd__tiers__amount__frequency"><?php echo esc_html( self::get_frequency_label( $frequency_slug ) ); ?></span>
+							<h3 class="wpbnbd__tiers__amount__number"><?php echo esc_html( $configuration['currencySymbol'] ); ?><?php echo esc_html( $configuration['amounts'][ $frequency_slug ][ $index ] ); ?></h3>
+							<span class="wpbnbd__tiers__amount__frequency"><?php echo esc_html( self::get_frequency_label( $frequency_slug ) ); ?></span>
 						</span>
 					<?php endforeach; ?>
 				</span>
@@ -162,8 +163,10 @@ class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate
 						</h2>
 						<div>
 							<div>
-								<span><?php echo esc_html( $configuration['currencySymbol'] ); ?></span>
-								<span data-amount><?php echo esc_html( $configuration['amounts'][ $intial_selected_frequency ][ $intial_selected_tier_index ] ); ?></span>
+								<h3>
+									<span><?php echo esc_html( $configuration['currencySymbol'] ); ?></span>
+									<span data-amount><?php echo esc_html( $configuration['amounts'][ $intial_selected_frequency ][ $intial_selected_tier_index ] ); ?></span>
+								</h3>
 								<span data-frequency><?php echo esc_html( self::get_frequency_label( $intial_selected_frequency ) ); ?></span>
 							</div>
 							<div class="wpbnbd__tiers__tier-tile__note">

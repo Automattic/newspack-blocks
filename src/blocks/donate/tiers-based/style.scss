@@ -25,7 +25,11 @@
 			&__selection {
 				display: flex;
 				justify-content: center;
-				margin-bottom: 1em;
+				margin-bottom: 14px;
+				button {
+					font-size: 13px;
+					white-space: nowrap;
+				}
 			}
 			&__options {
 				display: flex;
@@ -68,21 +72,20 @@
 				flex-direction: column;
 				margin-left: 10px;
 				margin-right: 10px;
-				padding: 10px;
+				padding: 19px 14px;
 				background: colors.$color__background-body;
 				border: 1px solid variables.$color__border;
 				border-radius: 5px;
-				button {
-					margin-bottom: 1em;
-				}
 			}
 			&__heading {
 				font-size: 16px;
 				font-weight: bold;
+				margin: 0 0 7px 0;
 			}
 			&__amount {
-				margin-bottom: 7px;
+				margin-bottom: 16px;
 				&__number {
+					display: inline;
 					font-size: 26px;
 				}
 				&__frequency {
@@ -91,11 +94,14 @@
 			}
 			button[type='submit'] {
 				border-radius: 3px;
+				font-size: 14px;
 				line-height: 1;
-				padding: 6px 16px 6px 16px;
+				padding: 10px 16px;
+				margin-bottom: 16px;
 			}
 			&__description {
 				flex: 1;
+				line-height: 1.4;
 				font-size: 13px;
 			}
 
@@ -123,6 +129,12 @@
 				h2 {
 					font-size: 0.8em;
 					margin-top: 13px;
+				}
+				h3 {
+					display: inline-block;
+					font-size: 19px;
+					padding-top: 6px;
+					margin: 0 0 7px 0;
 				}
 				> div {
 					text-align: right;
