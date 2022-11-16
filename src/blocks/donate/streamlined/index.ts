@@ -140,6 +140,7 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 			const exitWithError = ( errorMessage: Stripe.StripeError[ 'message' ] ) => {
 				utils.renderMessages( [ errorMessage ], messagesEl );
 				enableForm();
+				window.dispatchEvent( new Event( 'newspackPaymentFlowComplete' ) );
 				return { error: true };
 			};
 
@@ -179,6 +180,7 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 			if ( chargeResultData.status === 'success' ) {
 				utils.renderSuccessMessageWithEmail( apiRequestPayload.email, messagesEl );
 			}
+			window.dispatchEvent( new Event( 'newspackPaymentFlowComplete' ) );
 			return {};
 		};
 

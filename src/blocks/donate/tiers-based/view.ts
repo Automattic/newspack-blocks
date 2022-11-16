@@ -78,7 +78,7 @@ export default ( parentEl: HTMLElement ) => {
 	} );
 
 	// View transitions.
-	const backButton = parentEl.querySelector( 'button.wpbnbd__tiers__back-button' );
+	const backButton = parentEl.querySelector( 'button.wpbnbd__tiers__back-button' ) as HTMLElement;
 	const tierSelectionButtonsEls = parentEl.querySelectorAll( '.wpbnbd__tiers__tier button' );
 	const viewEls = parentEl.querySelectorAll( '.wpbnbd__tiers__view' );
 	const toggleView = () =>
@@ -153,4 +153,10 @@ export default ( parentEl: HTMLElement ) => {
 		} );
 		backButton?.addEventListener( 'click', toggleView );
 	}
+
+	window.addEventListener( 'newspackPaymentFlowComplete', () => {
+		if ( backButton ) {
+			backButton.style.display = 'none';
+		}
+	} );
 };
