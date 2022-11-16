@@ -64,6 +64,7 @@ export type TierBasedOptionValue = {
 	heading: string;
 	description: string;
 	buttonText: string;
+	recommendLabel: string;
 };
 
 export type DonateBlockAttributes = OverridableConfiguration & {

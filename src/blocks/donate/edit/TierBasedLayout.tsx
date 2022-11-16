@@ -74,16 +74,35 @@ const TierBasedLayout = ( props: ComponentProps ) => {
 			</div>
 			<div className="wpbnbd__tiers__options">
 				{ displayedAmounts.map( ( amount, index ) => {
+					const recommendLabel = attributes.tiersBasedOptions[ index ].recommendLabel || '';
 					return (
-						<div key={ index } className="wpbnbd__tiers__tier">
-							<h2 className="wpbnbd__tiers__heading">
-								<RichText
-									onChange={ handleTierOptionChange( index, 'heading' ) }
-									placeholder={ __( 'Heading…', 'newspack-blocks' ) }
-									value={ attributes.tiersBasedOptions[ index ].heading }
-									tagName="span"
-								/>
-							</h2>
+						<div
+							key={ index }
+							className={ classNames( 'wpbnbd__tiers__tier', {
+								'wpbnbd__tiers__tier--recommended': recommendLabel.length,
+							} ) }
+						>
+							<div className="wpbnbd__tiers__top">
+								<h2 className="wpbnbd__tiers__heading">
+									<RichText
+										onChange={ handleTierOptionChange( index, 'heading' ) }
+										placeholder={ __( 'Heading…', 'newspack-blocks' ) }
+										value={ attributes.tiersBasedOptions[ index ].heading }
+										tagName="span"
+									/>
+								</h2>
+								<h3
+									className="wpbnbd__tiers__recommend-label"
+									style={ { opacity: recommendLabel ? 1 : 0.5 } }
+								>
+									<RichText
+										onChange={ handleTierOptionChange( index, 'recommendLabel' ) }
+										placeholder={ __( '…', 'newspack-blocks' ) }
+										value={ recommendLabel }
+										tagName="span"
+									/>
+								</h3>
+							</div>
 							<div className="wpbnbd__tiers__amount">
 								<h3 className="wpbnbd__tiers__amount__number">
 									{ props.settings.currencySymbol }

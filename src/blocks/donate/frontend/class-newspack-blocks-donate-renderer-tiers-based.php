@@ -50,14 +50,22 @@ class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate
 	private static function render_single_tier( $attributes, $index, $amount, $selected_frequency ) {
 		$configuration = self::get_configuration( $attributes );
 
-		$button_style_attr = 'style="' . self::get_button_style( $attributes ) . '"';
+		$button_style_attr   = 'style="' . self::get_button_style( $attributes ) . '"';
+		$has_recommend_label = isset( $attributes['tiersBasedOptions'][ $index ]['recommendLabel'] ) && ! empty( $attributes['tiersBasedOptions'][ $index ]['recommendLabel'] );
 
 		ob_start();
 		?>
-		<div class="wpbnbd__tiers__tier">
-			<h3 class="wpbnbd__tiers__heading">
-				<?php echo esc_html( $attributes['tiersBasedOptions'][ $index ]['heading'] ); ?>
-			</h3>
+		<div class="wpbnbd__tiers__tier <?php echo $has_recommend_label ? 'wpbnbd__tiers__tier--recommended' : ''; ?>">
+			<div class="wpbnbd__tiers__top">
+				<h2 class="wpbnbd__tiers__heading">
+					<?php echo esc_html( $attributes['tiersBasedOptions'][ $index ]['heading'] ); ?>
+				</h2>
+				<?php if ( $has_recommend_label ) : ?>
+				<h3 class="wpbnbd__tiers__recommend-label">
+					<?php echo esc_html( $attributes['tiersBasedOptions'][ $index ]['recommendLabel'] ); ?>
+				</h3>
+				<?php endif; ?>
+			</div>
 			<div class="wpbnbd__tiers__amount">
 				<span>
 					<?php foreach ( $configuration['frequencies'] as $frequency_slug => $frequency_name ) : ?>

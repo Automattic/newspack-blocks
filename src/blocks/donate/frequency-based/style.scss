@@ -89,7 +89,7 @@
 			}
 
 			&:checked + .tier-label {
-				background-color: #757575;
+				background-color: colors.$color__gray;
 				border-color: transparent;
 				color: colors.$color__background-body;
 			}

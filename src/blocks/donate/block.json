@@ -66,17 +66,20 @@
 				{
 					"heading": "Small",
 					"description": "Small tier description",
-					"buttonText": "Select"
+					"buttonText": "Select",
+					"recommendLabel": ""
 				},
 				{
 					"heading": "Medium",
 					"description": "Medium tier description",
-					"buttonText": "Select"
+					"buttonText": "Select",
+					"recommendLabel": "BEST VALUE"
 				},
 				{
 					"heading": "Large",
 					"description": "Large tier description",
-					"buttonText": "Select"
+					"buttonText": "Select",
+					"recommendLabel": ""
 				}
 			]
 		}
