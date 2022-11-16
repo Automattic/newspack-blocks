@@ -28,6 +28,9 @@ function domReady( callback: () => void ): void {
 
 if ( typeof window !== 'undefined' ) {
 	domReady( () => {
-		document.querySelectorAll( '.wpbnbd--tiers-based' ).forEach( handleTiersBasedElement );
+		const elements = document.querySelectorAll(
+			'.wpbnbd--tiers-based'
+		) as NodeListOf< HTMLElement >;
+		elements.forEach( handleTiersBasedElement );
 	} );
 }
