@@ -26,11 +26,11 @@ function domReady( callback: () => void ): void {
 	document.addEventListener( 'DOMContentLoaded', callback );
 }
 
+export const processTiersBasedElements = ( parentEl = document ) => {
+	const elements = parentEl.querySelectorAll( '.wpbnbd--tiers-based' ) as NodeListOf< HTMLElement >;
+	elements.forEach( handleTiersBasedElement );
+};
+
 if ( typeof window !== 'undefined' ) {
-	domReady( () => {
-		const elements = document.querySelectorAll(
-			'.wpbnbd--tiers-based'
-		) as NodeListOf< HTMLElement >;
-		elements.forEach( handleTiersBasedElement );
-	} );
+	domReady( () => processTiersBasedElements() );
 }

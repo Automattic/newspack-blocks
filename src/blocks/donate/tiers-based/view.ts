@@ -114,10 +114,10 @@ export default ( parentEl: HTMLElement ) => {
 			const frequencyLabel = parentEl
 				.querySelector( `[data-frequency-slug="${ selectedFrequency }"]` )
 				?.getAttribute( 'data-frequency-label' );
-			tierHeadingEl.innerText = tierOption.heading;
-			tierFrequencyLabelEl.innerText = frequencyLabel || '';
-			tierAmountEl.innerText = config.amounts[ selectedFrequency ][ tierIndex ];
-			renewsOnEl.innerText = config.renewsAt[ selectedFrequency ];
+			tierHeadingEl.textContent = tierOption.heading;
+			tierFrequencyLabelEl.textContent = frequencyLabel || '';
+			tierAmountEl.textContent = config.amounts[ selectedFrequency ][ tierIndex ];
+			renewsOnEl.textContent = config.renewsAt[ selectedFrequency ];
 
 			toggleView();
 		} );
