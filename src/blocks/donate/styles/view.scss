@@ -11,6 +11,7 @@
 		line-height: variables.$font__line-height-body;
 		text-overflow: ellipsis;
 		text-align: center;
+		text-transform: uppercase;
 		&--active,
 		&:focus,
 		&:hover {
