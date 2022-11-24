@@ -46,12 +46,14 @@ class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate
 	 * @param int    $index Option index.
 	 * @param int    $amount Option amount.
 	 * @param string $selected_frequency Selected frequency.
+	 * @param bool   $is_any_recommended Is any option recommended.
 	 */
-	private static function render_single_tier( $attributes, $index, $amount, $selected_frequency ) {
+	private static function render_single_tier( $attributes, $index, $amount, $selected_frequency, $is_any_recommended ) {
 		$configuration = self::get_configuration( $attributes );
 
-		$button_style_attr   = 'style="' . self::get_button_style( $attributes ) . '"';
 		$has_recommend_label = isset( $attributes['tiersBasedOptions'][ $index ]['recommendLabel'] ) && ! empty( $attributes['tiersBasedOptions'][ $index ]['recommendLabel'] );
+		$is_reverse_style    = ! $has_recommend_label && $is_any_recommended;
+		$button_style_attr   = 'style="' . self::get_button_style( $attributes, $is_reverse_style ) . '"';
 
 		ob_start();
 		?>
@@ -62,7 +64,7 @@ class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate
 				</h2>
 				<?php if ( $has_recommend_label ) : ?>
 				<h3 class="wpbnbd__tiers__recommend-label">
-					<?php echo esc_html( $attributes['tiersBasedOptions'][ $index ]['recommendLabel'] ); ?>
+					<?php echo esc_html( wp_strip_all_tags( $attributes['tiersBasedOptions'][ $index ]['recommendLabel'] ) ); ?>
 				</h3>
 				<?php endif; ?>
 			</div>
@@ -129,6 +131,14 @@ class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate
 			$attributes['buttonColor'],
 		];
 
+		$is_any_recommended = array_reduce(
+			$attributes['tiersBasedOptions'],
+			function ( $carry, $item ) {
+				return $carry || isset( $item['recommendLabel'] ) && ! empty( $item['recommendLabel'] );
+			},
+			false
+		);
+
 		ob_start();
 		?>
 		<div
@@ -154,7 +164,7 @@ class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate
 						<div class="wpbnbd__tiers__options">
 							<?php foreach ( $displayed_amounts as $index => $amount ) : ?>
 								<?php
-									echo self::render_single_tier( $attributes, $index, $amount, $intial_selected_frequency ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+									echo self::render_single_tier( $attributes, $index, $amount, $intial_selected_frequency, $is_any_recommended ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 								?>
 							<?php endforeach; ?>
 						</div>

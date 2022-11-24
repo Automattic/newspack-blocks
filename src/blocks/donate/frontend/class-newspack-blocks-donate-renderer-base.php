@@ -172,11 +172,16 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 	 * Get style for a button.
 	 *
 	 * @param array $attributes Block attributes.
+	 * @param array $is_reverse_style Reverse background/foreground colors.
 	 */
-	protected static function get_button_style( $attributes ) {
+	protected static function get_button_style( $attributes, $is_reverse_style = false ) {
 		$button_color      = $attributes['buttonColor'];
 		$button_text_color = Newspack_Blocks::get_color_for_contrast( $button_color );
-		return 'background-color: ' . esc_attr( $button_color ) . '; color: ' . esc_attr( $button_text_color ) . ';';
+		if ( $is_reverse_style ) {
+			return 'border-color: ' . esc_attr( $button_color ) . '; color: ' . esc_attr( $button_color ) . '; background: transparent;';
+		} else {
+			return 'border-color: ' . esc_attr( $button_color ) . '; background-color: ' . esc_attr( $button_color ) . '; color: ' . esc_attr( $button_text_color ) . ';';
+		}
 	}
 
 	/**

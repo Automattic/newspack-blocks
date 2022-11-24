@@ -54,6 +54,10 @@ const TierBasedLayout = ( props: ComponentProps ) => {
 			props.setAttributes( { tiersBasedOptions } );
 		};
 
+	const isAnyRecommended = attributes.tiersBasedOptions.some( tier =>
+		Boolean( tier.recommendLabel )
+	);
+
 	return (
 		<form className="wpbnbd__tiers" onSubmit={ e => e.preventDefault() }>
 			<div className="wpbnbd__tiers__selection">
@@ -116,8 +120,16 @@ const TierBasedLayout = ( props: ComponentProps ) => {
 							<button
 								type="submit"
 								style={ {
-									backgroundColor: attributes.buttonColor,
-									color: getColorForContrast( attributes.buttonColor ),
+									borderColor: attributes.buttonColor,
+									...( isAnyRecommended && ! recommendLabel
+										? {
+												backgroundColor: 'transparent',
+												color: attributes.buttonColor,
+										  }
+										: {
+												backgroundColor: attributes.buttonColor,
+												color: getColorForContrast( attributes.buttonColor ),
+										  } ),
 								} }
 							>
 								<RichText
