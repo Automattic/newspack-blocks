@@ -42,6 +42,11 @@
 			margin: 0 1.5rem 1.5rem;
 		}
 	}
+	.wpbnbd {
+		&__button {
+			text-transform: uppercase;
+		}
+	}
 
 	.thanks {
 		color: colors.$color__text-light;
