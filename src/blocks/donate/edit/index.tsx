@@ -142,6 +142,10 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 			: ! settings.disabledFrequencies[ slug ]
 	).filter( slug => ( isTierBasedLayoutEnabled ? slug !== 'once' : true ) );
 
+	// Editor bug – initially, the default style is selected, but the class not applied.
+	if ( className.indexOf( 'is-style' ) === -1 ) {
+		className = className + ' is-style-default';
+	}
 	const getWrapperClassNames = ( classes: string[] = [] ) =>
 		classNames(
 			classes,
