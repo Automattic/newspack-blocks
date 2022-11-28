@@ -6,7 +6,7 @@
 		"@rushstack/eslint-patch": "^1.2.0",
 		"@testing-library/dom": "^8.19.0",
 		"@testing-library/user-event": "^14.4.3",
-		"@types/lodash": "^4.14.189",
+		"@types/lodash": "^4.14.190",
 		"eslint": "^7.32.0",
 		"fetch-mock-jest": "^1.5.1",
 		"html-entities": "^2.3.3",
