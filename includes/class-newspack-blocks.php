@@ -421,8 +421,8 @@ class Newspack_Blocks {
 					900,
 				),
 				'medium' => array(
-					800,
 					600,
+					450,
 				),
 				'small'  => array(
 					400,
@@ -439,8 +439,8 @@ class Newspack_Blocks {
 					1200,
 				),
 				'medium' => array(
+					450,
 					600,
-					800,
 				),
 				'small'  => array(
 					300,
@@ -457,8 +457,8 @@ class Newspack_Blocks {
 					1200,
 				),
 				'medium' => array(
-					800,
-					800,
+					600,
+					600,
 				),
 				'small'  => array(
 					400,
@@ -492,9 +492,9 @@ class Newspack_Blocks {
 		add_image_size( 'newspack-article-block-portrait-large', 900, 1200, true );
 		add_image_size( 'newspack-article-block-square-large', 1200, 1200, true );
 
-		add_image_size( 'newspack-article-block-landscape-medium', 800, 600, true );
-		add_image_size( 'newspack-article-block-portrait-medium', 600, 800, true );
-		add_image_size( 'newspack-article-block-square-medium', 800, 800, true );
+		add_image_size( 'newspack-article-block-landscape-medium', 600, 450, true );
+		add_image_size( 'newspack-article-block-portrait-medium', 450, 600, true );
+		add_image_size( 'newspack-article-block-square-medium', 600, 600, true );
 
 		add_image_size( 'newspack-article-block-landscape-small', 400, 300, true );
 		add_image_size( 'newspack-article-block-portrait-small', 300, 400, true );
