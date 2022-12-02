@@ -88,10 +88,8 @@ call_user_func(
 				<?php if ( $post_link ) : ?>
 				<a href="<?php echo esc_url( $post_link ); ?>" rel="bookmark" tabindex="-1" aria-hidden="true">
 				<?php endif; ?>
-				<?php add_filter( 'wp_calculate_image_srcset', 'newspack_blocks_filter_hpb_srcset' ); ?>
 				<?php add_filter( 'wp_calculate_image_sizes', 'newspack_blocks_filter_hpb_sizes' ); ?>
 				<?php the_post_thumbnail( $image_size, $thumbnail_args ); ?>
-				<?php remove_filter( 'wp_calculate_image_srcset', 'newspack_blocks_filter_hpb_srcset' ); ?>
 				<?php remove_filter( 'wp_calculate_image_sizes', 'newspack_blocks_filter_hpb_sizes' ); ?>
 				<?php if ( $post_link ) : ?>
 				</a>

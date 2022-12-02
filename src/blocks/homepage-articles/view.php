@@ -34,23 +34,6 @@ function newspack_blocks_hpb_maximum_image_width() {
 }
 
 /**
- * Remove unnecessary image sources based on the maximum image width.
- *
- * @param array $sources Sources for the srcset attribute.
- */
-function newspack_blocks_filter_hpb_srcset( $sources ) {
-	$max_width = newspack_blocks_hpb_maximum_image_width();
-	if ( 0 !== $max_width ) {
-		foreach ( $sources as $key => $source ) {
-			if ( $max_width < $source['value'] ) {
-				unset( $sources[ $key ] );
-			}
-		}
-	}
-	return $sources;
-}
-
-/**
  * Set image `sizes` attribute based on the maximum image width.
  *
  * @param array $sizes Sizes for the sizes attribute.
