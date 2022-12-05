@@ -60,6 +60,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 		tiered: false,
 		disabledFrequencies: {},
 		minimumDonation: 5,
+		platform: '',
 	} );
 
 	useEffect( () => {
@@ -73,6 +74,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 					tiered: donationSettings.tiered,
 					disabledFrequencies: donationSettings.disabledFrequencies,
 					minimumDonation: donationSettings.minimumDonation,
+					platform: donationSettings.platform,
 				} );
 
 				if ( isEmpty( attributes.disabledFrequencies ) ) {
@@ -113,6 +115,20 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 			<Placeholder icon="warning" label={ __( 'Error', 'newspack-blocks' ) } instructions={ error }>
 				<ExternalLink href="/wp-admin/admin.php?page=newspack-reader-revenue-wizard#/donations">
 					{ __( 'Go to donation settings to troubleshoot.', 'newspack-blocks' ) }
+				</ExternalLink>
+			</Placeholder>
+		);
+	}
+
+	if ( settings.platform === 'other' ) {
+		return (
+			<Placeholder
+				icon="warning"
+				label={ __( 'The Donate block will not be rendered.', 'newspack-blocks' ) }
+				instructions={ __( 'The Reader Revenue platform is set to "other".', 'newspack' ) }
+			>
+				<ExternalLink href="/wp-admin/admin.php?page=newspack-reader-revenue-wizard#/donations">
+					{ __( 'Go to donation settings to update the platform.', 'newspack-blocks' ) }
 				</ExternalLink>
 			</Placeholder>
 		);
