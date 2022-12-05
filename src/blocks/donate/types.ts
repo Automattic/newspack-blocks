@@ -40,11 +40,12 @@ export type DonationSettings = {
 	disabledFrequencies: {
 		[ Key in DonationFrequencySlug as string ]: boolean;
 	};
+	platform: string;
 };
 
 export type EditState = Pick<
 	DonationSettings,
-	'amounts' | 'currencySymbol' | 'tiered' | 'disabledFrequencies' | 'minimumDonation'
+	'amounts' | 'currencySymbol' | 'tiered' | 'disabledFrequencies' | 'minimumDonation' | 'platform'
 >;
 
 export type DonationAmounts = {
