@@ -1,29 +1,10 @@
+import { setupSlider } from './slider';
+import { parseTiersBasedConfig } from './utils';
+
 const BUTTON_ACTIVE_CLASSNAME = 'wpbnbd__button--active';
 
 const getSelectedAmountSelector = ( frequency: string ) =>
 	`.wpbnbd__tiers__amount [data-frequency-slug="${ frequency }"]`;
-
-const parseTiersBasedConfig = ( rawConfig = '' ) => {
-	try {
-		const items = JSON.parse( rawConfig );
-		return {
-			params: {
-				frequency: items[ 0 ],
-				tierPrefix: items[ 1 ],
-			},
-			initialFrequency: items[ 2 ],
-			tiersBasedOptions: items[ 3 ],
-			amounts: items[ 4 ],
-			renewsAt: {
-				month: items[ 5 ] as string,
-				year: items[ 6 ] as string,
-			},
-			isRenderingStripePaymentForm: items[ 7 ],
-		};
-	} catch ( error ) {
-		return false;
-	}
-};
 
 type SelectedFrequency = 'month' | 'year';
 
@@ -41,6 +22,8 @@ export default ( parentEl: HTMLElement ) => {
 	if ( ! frequencyButtonsEls || ! amountsEls || ! frequencyInputEl || ! initFormEl ) {
 		return;
 	}
+
+	setupSlider( parentEl, config );
 
 	let selectedFrequency: SelectedFrequency = config.initialFrequency;
 	let selectedTierIndex = 0;

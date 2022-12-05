@@ -31,10 +31,40 @@
 				display: flex;
 				margin-left: -10px;
 				margin-right: -10px;
+
+				// Slider.
+				&__dots {
+					display: none;
+				}
+				@media screen and ( max-width: 600px ) {
+					overflow-x: scroll;
+					scroll-snap-type: x mandatory;
+					scroll-padding: 10%;
+					&__dots {
+						display: flex;
+						justify-content: center;
+						margin-top: 1em;
+						list-style: none;
+						li {
+							height: 8px;
+							width: 36px;
+							border-radius: 50px;
+							background: variables.$color__border;
+							margin: 0 5px;
+						}
+					}
+				}
 			}
 			&__tier {
+				// Slider.
 				flex: 1;
+				@media screen and ( max-width: 600px ) {
+					width: 80%;
+					flex: 0 0 auto;
+				}
+
 				display: flex;
+				scroll-snap-align: start;
 				flex-direction: column;
 				margin-left: 10px;
 				margin-right: 10px;

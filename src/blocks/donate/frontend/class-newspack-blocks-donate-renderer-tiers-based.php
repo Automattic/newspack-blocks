@@ -111,6 +111,7 @@ class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate
 			( new DateTime() )->modify( '+1 month' )->format( 'F d, Y' ),
 			( new DateTime() )->modify( '+1 year' )->format( 'F d, Y' ),
 			$configuration['is_rendering_stripe_payment_form'],
+			$attributes['buttonColor'],
 		];
 
 		ob_start();
@@ -142,6 +143,11 @@ class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate
 								?>
 							<?php endforeach; ?>
 						</div>
+						<ul class="wpbnbd__tiers__options__dots">
+							<?php foreach ( $displayed_amounts as $index => $amount ) : ?>
+								<li></li>
+							<?php endforeach; ?>
+						</ul>
 					</div>
 				</div>
 
