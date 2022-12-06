@@ -149,6 +149,7 @@ class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate
 		?>
 		<div
 			class="<?php echo esc_html( $configuration['container_classnames'] ); ?>"
+			id="<?php echo esc_html( $configuration['uid'] ); ?>"
 			data-streamlined-config="<?php echo esc_html( htmlspecialchars( wp_json_encode( $configuration['configuration_for_streamlined'] ), ENT_QUOTES, 'UTF-8' ) ); ?>"
 			data-tiers-based-config="<?php echo esc_html( htmlspecialchars( wp_json_encode( $configuration_for_tiers_based ), ENT_QUOTES, 'UTF-8' ) ); ?>"
 		>

@@ -171,6 +171,8 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 			}
 		}
 
+		$configuration['uid'] = uniqid();
+
 		self::$configurations_cache[ $attributes_hash ] = $configuration;
 
 		return $configuration;

@@ -154,7 +154,7 @@ export default ( parentEl: HTMLElement ) => {
 		backButton?.addEventListener( 'click', toggleView );
 	}
 
-	window.addEventListener( 'newspackPaymentFlowComplete', () => {
+	window.addEventListener( `newspackPaymentFlowComplete-${ parentEl.id }`, () => {
 		if ( backButton ) {
 			backButton.style.display = 'none';
 		}

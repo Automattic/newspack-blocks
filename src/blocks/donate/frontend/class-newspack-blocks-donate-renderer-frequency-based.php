@@ -101,7 +101,10 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 		 */
 		if ( ! $configuration['tiered'] ) :
 			?>
-		<div class="untiered <?php echo esc_html( $configuration['container_classnames'] ); ?>">
+		<div
+			class="untiered <?php echo esc_html( $configuration['container_classnames'] ); ?>"
+			id="<?php echo esc_html( $configuration['uid'] ); ?>"
+		>
 			<form data-streamlined-config="<?php echo esc_html( htmlspecialchars( wp_json_encode( $configuration['configuration_for_streamlined'] ), ENT_QUOTES, 'UTF-8' ) ); ?>">
 				<?php echo self::render_donate_form_input(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				<div class='wp-block-newspack-blocks-donate__options'>
@@ -147,7 +150,10 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 				$suggested_amounts = $configuration['amounts'];
 				?>
 
-		<div class="tiered <?php echo esc_html( $configuration['container_classnames'] ); ?>">
+		<div
+			class="tiered <?php echo esc_html( $configuration['container_classnames'] ); ?>"
+			id="<?php echo esc_html( $configuration['uid'] ); ?>"
+		>
 			<form data-streamlined-config="<?php echo esc_html( htmlspecialchars( wp_json_encode( $configuration['configuration_for_streamlined'] ), ENT_QUOTES, 'UTF-8' ) ); ?>">
 				<?php echo self::render_donate_form_input(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				<div class='wp-block-newspack-blocks-donate__options'>
