@@ -146,10 +146,9 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 	}
 
 	const isTiered = attributes.manual ? attributes.tiered : settings.tiered;
-	const isRenderingStripePaymentForm =
-		window.newspack_blocks_data?.is_rendering_stripe_payment_form;
+	const canRenderTiersBasedLayout = window.newspack_blocks_data?.can_render_tiers_based_layout;
 	const isTierBasedLayoutEnabled =
-		isRenderingStripePaymentForm && isTiered && attributes.layoutOption === 'tiers';
+		canRenderTiersBasedLayout && isTiered && attributes.layoutOption === 'tiers';
 
 	const amounts = attributes.manual ? attributes.amounts : settings.amounts;
 	const availableFrequencies = FREQUENCY_SLUGS.filter( slug =>
@@ -200,16 +199,8 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 				<PanelBody title={ __( 'Layout', 'newspack-blocks' ) }>
 					<div className="newspack-blocks-layout-selector">
 						{ LAYOUT_OPTIONS.map( ( { label, key } ) => {
-							let isSelected, disabled;
-							switch ( key ) {
-								case 'tiers':
-									isSelected = isTierBasedLayoutEnabled;
-									disabled = ( key === 'tiers' && ! isTiered ) || ! isRenderingStripePaymentForm;
-									break;
-								case 'frequency':
-									isSelected = ! isTierBasedLayoutEnabled;
-									break;
-							}
+							const isSelected =
+								key === 'tiers' ? isTierBasedLayoutEnabled : ! isTierBasedLayoutEnabled;
 							return (
 								<Button
 									key={ key }
@@ -217,7 +208,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 									isPressed={ isSelected }
 									onClick={ () => setAttributes( { layoutOption: key } ) }
 									aria-current={ isSelected }
-									disabled={ disabled }
+									disabled={ key === 'tiers' && ! canRenderTiersBasedLayout }
 								>
 									{ label }
 								</Button>

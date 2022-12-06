@@ -91,8 +91,7 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 		}
 
 		$is_tiers_based = $configuration['tiered'] && 'tiers' === $attributes['layoutOption'];
-		if ( ! Newspack_Blocks::is_rendering_stripe_payment_form() ) {
-			// The tiers-based layout works only with Stripe payment form.
+		if ( ! Newspack_Blocks::can_render_tiers_based_layout() ) {
 			$is_tiers_based = false;
 		}
 		$configuration['is_tier_based_layout'] = $is_tiers_based;

@@ -223,6 +223,7 @@ class Newspack_Blocks {
 				'assets_path'                      => plugins_url( '/src/assets', NEWSPACK_BLOCKS__PLUGIN_FILE ),
 				'post_subtitle'                    => get_theme_support( 'post-subtitle' ),
 				'is_rendering_stripe_payment_form' => self::is_rendering_stripe_payment_form(),
+				'can_render_tiers_based_layout'    => self::can_render_tiers_based_layout(),
 				'iframe_accepted_file_mimes'       => self::iframe_accepted_file_mimes(),
 			];
 
@@ -273,6 +274,18 @@ class Newspack_Blocks {
 			return \Newspack\Donations::can_use_streamlined_donate_block() && \Newspack\Donations::is_platform_stripe();
 		}
 		return false;
+	}
+
+	/**
+	 * Can the tiers-based layout of the Donate block be rendered?
+	 */
+	public static function can_render_tiers_based_layout() {
+		if ( method_exists( '\Newspack\AMP_Enhancements', 'is_amp_plus_configured' ) ) {
+			return \Newspack\AMP_Enhancements::is_amp_plus_configured();
+		} else {
+			return ! is_plugin_active( 'amp/amp.php' );
+		}
+		return true;
 	}
 
 	/**
@@ -1383,6 +1396,5 @@ class Newspack_Blocks {
 			return 'white';
 		}
 	}
-
 }
 Newspack_Blocks::init();
