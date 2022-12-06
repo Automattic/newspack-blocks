@@ -11,12 +11,14 @@ export const AmountValueInput = ( {
 	setAttributes,
 	setSettings,
 	disabled,
+	ignoreMinimumAmount,
 }: ComponentProps & {
 	frequencySlug: DonationFrequencySlug;
 	tierIndex: number;
 	id: string;
 	label?: string;
 	disabled?: boolean;
+	ignoreMinimumAmount?: boolean;
 } ) => {
 	const onChange = ( {
 		value,
@@ -40,20 +42,25 @@ export const AmountValueInput = ( {
 			setSettings( update );
 		}
 	};
+	const amount = amounts[ frequencySlug ][ tierIndex ];
+	const value =
+		settings.minimumDonation && ! ignoreMinimumAmount
+			? Math.max( amount, settings.minimumDonation )
+			: amount;
 
 	return (
 		<span key={ `${ frequencySlug }-${ tierIndex }` }>
 			{ label && <label htmlFor={ id }>{ label }</label> }
 			<input
 				type="number"
-				min={ attributes.minimumDonation }
+				min={ ignoreMinimumAmount ? undefined : attributes.minimumDonation }
 				onChange={ evt =>
 					onChange( {
 						value: evt.target.value,
 						frequency: frequencySlug,
 					} )
 				}
-				value={ amounts[ frequencySlug ][ tierIndex ] }
+				value={ value }
 				id={ id }
 				disabled={ disabled }
 			/>

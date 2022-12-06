@@ -274,6 +274,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 															) }
 															{ amounts[ frequency ].map( ( suggestedAmount, tierIndex ) => (
 																<AmountValueInput
+																	ignoreMinimumAmount
 																	{ ...componentProps }
 																	key={ `amount-${ frequency }-${ tierIndex }` }
 																	frequencySlug={ frequency }
@@ -314,6 +315,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 										) }
 										{ FREQUENCY_SLUGS.map( ( frequencySlug: DonationFrequencySlug ) => (
 											<AmountValueInput
+												ignoreMinimumAmount
 												{ ...componentProps }
 												key={ frequencySlug }
 												frequencySlug={ frequencySlug }
