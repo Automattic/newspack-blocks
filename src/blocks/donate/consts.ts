@@ -19,8 +19,8 @@ export const FREQUENCY_SLUGS: DonationFrequencySlug[] = Object.keys(
 ) as DonationFrequencySlug[];
 
 export const LAYOUT_OPTIONS: { label: string; key: DonateBlockAttributes[ 'layoutOption' ] }[] = [
-	{ label: __( 'Frequency-first', 'newspack-blocks' ), key: 'frequency' },
-	{ label: __( 'Tiers-first', 'newspack-blocks' ), key: 'tiers' },
+	{ label: __( 'Frequency', 'newspack-blocks' ), key: 'frequency' },
+	{ label: __( 'Tiers', 'newspack-blocks' ), key: 'tiers' },
 ];
 
 // The item at fourth position is the "other" value, it is not a tier.
