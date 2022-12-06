@@ -22,7 +22,7 @@ import {
 	Button,
 } from '@wordpress/components';
 import { InspectorControls, ColorPaletteControl } from '@wordpress/block-editor';
-import { isEmpty } from 'lodash';
+import { isEmpty, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -157,6 +157,9 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 			? ! attributes.disabledFrequencies[ slug ]
 			: ! settings.disabledFrequencies[ slug ]
 	).filter( slug => ( isTierBasedLayoutEnabled ? slug !== 'once' : true ) );
+	const displayedFrequencies = FREQUENCY_SLUGS.filter( slug =>
+		isTierBasedLayoutEnabled ? slug !== 'once' : true
+	);
 
 	// Editor bug – initially, the default style is selected, but the class not applied.
 	if ( className.indexOf( 'is-style' ) === -1 ) {
@@ -251,17 +254,19 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 							{ attributes.tiered ? (
 								<>
 									<div className="components-frequency-donations">
-										{ availableFrequencies.map( ( frequency: DonationFrequencySlug ) => {
+										{ displayedFrequencies.map( ( frequency: DonationFrequencySlug ) => {
 											const isFrequencyDisabled = attributes.disabledFrequencies[ frequency ];
-											const isOneFrequencyActive =
-												Object.values( attributes.disabledFrequencies ).filter( Boolean ).length ===
-												availableFrequencies.length - 1;
+											const disabledDisplayedFrequencyCount = Object.values(
+												pick( attributes.disabledFrequencies, displayedFrequencies )
+											).filter( Boolean ).length;
+											const isOnlyOneFrequencyActive =
+												displayedFrequencies.length - disabledDisplayedFrequencyCount === 1;
 											return (
 												<Fragment key={ frequency }>
 													<CheckboxControl
 														label={ FREQUENCIES[ frequency ] }
 														checked={ ! isFrequencyDisabled }
-														disabled={ ! isFrequencyDisabled && isOneFrequencyActive }
+														disabled={ ! isFrequencyDisabled && isOnlyOneFrequencyActive }
 														onChange={ () => {
 															setAttributes( {
 																disabledFrequencies: {
