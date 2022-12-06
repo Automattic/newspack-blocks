@@ -168,6 +168,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 			className,
 			'wpbnbd',
 			`wpbnbd--${ isTierBasedLayoutEnabled ? 'tiers-based' : 'frequency-based' }`,
+			`wpbnbd--platform-${ settings.platform }`,
 			`wpbnbd-frequencies--${ availableFrequencies.length }`
 		);
 

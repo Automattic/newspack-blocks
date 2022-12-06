@@ -126,6 +126,7 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 				'wp-block-newspack-blocks-donate',
 				'wpbnbd',
 				'wpbnbd--' . $layout_version . '-based',
+				'wpbnbd--platform-' . $configuration['platform'],
 				$classname,
 				'wpbnbd-frequencies--' . count( $configuration['frequencies'] ),
 			]
@@ -306,5 +307,5 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 	 *
 	 * @param array $attributes Block attributes.
 	 */
-	abstract public static function render( $attributes);
+	abstract public static function render( $attributes );
 }

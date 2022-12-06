@@ -157,7 +157,7 @@
 .wpbnbd.is-style-minimal {
 	border: none;
 
-	form {
+	form:not( [data-is-streamlined-form] ) {
 		text-align: center;
 	}
 
@@ -182,27 +182,34 @@
 	}
 
 	// Tiers-based version.
-	.wpbnbd__tiers__selection {
-		.wpbnbd__button {
-			position: relative;
-			border: none;
-			padding: 8px;
-			&::after {
-				position: absolute;
-				content: '';
-				display: block;
-				height: 1px;
-				background: variables.$color__border;
-				width: 100%;
-				left: 0;
-				bottom: 0;
-			}
-			&--active {
+	.wpbnbd__tiers {
+		&__selection {
+			.wpbnbd__button {
+				position: relative;
+				border: none;
+				padding: 8px;
+				min-width: 50%;
 				&::after {
-					height: 3px;
-					background: colors.$color__text-main;
+					position: absolute;
+					content: '';
+					display: block;
+					height: 1px;
+					background: variables.$color__border;
+					width: 100%;
+					left: 0;
+					bottom: 0;
+				}
+				&--active {
+					&::after {
+						height: 3px;
+						background: colors.$color__text-main;
+					}
 				}
 			}
+		}
+
+		&__back-button {
+			margin-bottom: 10px;
 		}
 	}
 
@@ -299,9 +306,10 @@
 			}
 		}
 	}
-
-	button {
-		margin: 0 auto;
-		min-width: 50%;
+	&:not( .wpbnbd--platform-stripe ) {
+		button[type='submit'] {
+			margin: 0 auto;
+			min-width: 50%;
+		}
 	}
 }
