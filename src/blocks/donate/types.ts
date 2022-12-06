@@ -48,8 +48,9 @@ export type EditState = Pick<
 	'amounts' | 'currencySymbol' | 'tiered' | 'disabledFrequencies' | 'minimumDonation' | 'platform'
 >;
 
+export type DonationAmountsArray = [ number, number, number, number ];
 export type DonationAmounts = {
-	[ Key in DonationFrequencySlug as string ]: [ number, number, number, number ];
+	[ Key in DonationFrequencySlug as string ]: DonationAmountsArray;
 };
 
 export type OverridableConfiguration = {

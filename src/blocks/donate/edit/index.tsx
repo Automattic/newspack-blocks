@@ -32,6 +32,7 @@ import type {
 	DonateBlockAttributes,
 	DonationSettings,
 	DonationFrequencySlug,
+	DonationAmountsArray,
 	EditState,
 } from '../types';
 import TierBasedLayout from './TierBasedLayout';
@@ -151,6 +152,13 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 		canRenderTiersBasedLayout && isTiered && attributes.layoutOption === 'tiers';
 
 	const amounts = attributes.manual ? attributes.amounts : settings.amounts;
+	const minimumDonation = attributes.manual ? attributes.minimumDonation : settings.minimumDonation;
+	Object.keys( amounts ).forEach( frequency => {
+		const amountsWithMinimum = amounts[ frequency ].map( amount =>
+			Math.max( amount, minimumDonation )
+		) as DonationAmountsArray;
+		amounts[ frequency ] = amountsWithMinimum;
+	} );
 	const availableFrequencies = FREQUENCY_SLUGS.filter( slug =>
 		attributes.manual
 			? ! attributes.disabledFrequencies[ slug ]
@@ -269,22 +277,6 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 													/>
 													{ ! isFrequencyDisabled && (
 														<div className="wp-block-newspack-blocks-donate__panel-inputs">
-															{ amounts[ frequency ].reduce(
-																( acc: boolean, suggestedAmount: number ) => {
-																	if ( suggestedAmount < attributes.minimumDonation ) {
-																		return true;
-																	}
-																	return acc;
-																},
-																false
-															) && (
-																<p className="components-frequency-donations__error">
-																	{ __(
-																		'Warning: suggested donations should be at least the minimum donation amount.',
-																		'newspack-blocks'
-																	) }
-																</p>
-															) }
 															{ amounts[ frequency ].map( ( suggestedAmount, tierIndex ) => (
 																<AmountValueInput
 																	ignoreMinimumAmount
@@ -310,22 +302,6 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 							) : (
 								<div className="components-frequency-donations">
 									<div className="wp-block-newspack-blocks-donate__panel-inputs">
-										{ FREQUENCY_SLUGS.reduce(
-											( acc: boolean, frequencySlug: DonationFrequencySlug ) => {
-												if ( amounts[ frequencySlug ][ 3 ] < attributes.minimumDonation ) {
-													return true;
-												}
-												return acc;
-											},
-											false
-										) && (
-											<p className="components-frequency-donations__error">
-												{ __(
-													'Warning: suggested donations should be at least the minimum donation amount.',
-													'newspack-blocks'
-												) }
-											</p>
-										) }
 										{ FREQUENCY_SLUGS.map( ( frequencySlug: DonationFrequencySlug ) => (
 											<AmountValueInput
 												ignoreMinimumAmount

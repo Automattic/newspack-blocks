@@ -163,6 +163,14 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 		}
 		$configuration['configuration_for_streamlined'] = $configuration_for_streamlined;
 
+		if ( isset( $configuration['minimumDonation'] ) ) {
+			foreach ( $configuration['amounts'] as $frequency => $amounts ) {
+				foreach ( $amounts as $index => $amount ) {
+					$configuration['amounts'][ $frequency ][ $index ] = max( $configuration['minimumDonation'], $amount );
+				}
+			}
+		}
+
 		self::$configurations_cache[ $attributes_hash ] = $configuration;
 
 		return $configuration;

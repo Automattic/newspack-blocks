@@ -128,7 +128,7 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 											type='number'
 											min='<?php echo esc_attr( $configuration['minimumDonation'] ); ?>'
 											name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>_untiered'
-											value='<?php echo esc_attr( max( $configuration['minimumDonation'], $formatted_amount ) ); ?>'
+											value='<?php echo esc_attr( $formatted_amount ); ?>'
 											id='newspack-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-untiered-input'
 										/>
 									</div>
@@ -189,7 +189,7 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 														type='number'
 														min='<?php echo esc_attr( $configuration['minimumDonation'] ); ?>'
 														name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>_other'
-														value='<?php echo esc_attr( max( $configuration['minimumDonation'], $amount ) ); ?>'
+														value='<?php echo esc_attr( $amount ); ?>'
 														id='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-other-input'
 													/>
 												</div>
@@ -199,7 +199,7 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 												<input
 													type='radio'
 													name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>'
-													value='<?php echo esc_attr( max( $configuration['minimumDonation'], $amount ) ); ?>'
+													value='<?php echo esc_attr( $amount ); ?>'
 													id='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-<?php echo (int) $index; ?>'
 													<?php checked( 1, $index ); ?>
 												/>
@@ -207,7 +207,7 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 													class='tier-select-label tier-label'
 													for='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-<?php echo (int) $index; ?>'
 												>
-													<?php echo esc_html( $configuration['currencySymbol'] . max( $configuration['minimumDonation'], $amount ) ); ?>
+													<?php echo esc_html( $configuration['currencySymbol'] . $amount ); ?>
 												</label>
 													<?php
 												endif;
