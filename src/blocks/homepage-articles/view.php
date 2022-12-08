@@ -39,6 +39,10 @@ function newspack_blocks_hpb_maximum_image_width() {
  * @param array $sizes Sizes for the sizes attribute.
  */
 function newspack_blocks_filter_hpb_sizes( $sizes ) {
+	if ( defined( 'NEWSPACK_DISABLE_HPB_IMAGE_OPTIMISATION' ) || NEWSPACK_DISABLE_HPB_IMAGE_OPTIMISATION ) {
+		// Allow disabling the image optimisation per-site.
+		return $sizes;
+	}
 	global $newspack_blocks_hpb_current_theme;
 	if ( ! $newspack_blocks_hpb_current_theme ) {
 		$newspack_blocks_hpb_current_theme = wp_get_theme()->template;
