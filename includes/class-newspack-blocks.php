@@ -416,55 +416,67 @@ class Newspack_Blocks {
 	public static function image_size_for_orientation( $orientation = 'landscape' ) {
 		$sizes = array(
 			'landscape' => array(
-				'large'  => array(
+				'large'        => array(
 					1200,
 					900,
 				),
-				'medium' => array(
+				'medium'       => array(
+					800,
+					600,
+				),
+				'intermediate' => array(
 					600,
 					450,
 				),
-				'small'  => array(
+				'small'        => array(
 					400,
 					300,
 				),
-				'tiny'   => array(
+				'tiny'         => array(
 					200,
 					150,
 				),
 			),
 			'portrait'  => array(
-				'large'  => array(
+				'large'        => array(
 					900,
 					1200,
 				),
-				'medium' => array(
+				'medium'       => array(
+					600,
+					800,
+				),
+				'intermediate' => array(
 					450,
 					600,
 				),
-				'small'  => array(
+				'small'        => array(
 					300,
 					400,
 				),
-				'tiny'   => array(
+				'tiny'         => array(
 					150,
 					200,
 				),
 			),
 			'square'    => array(
-				'large'  => array(
+				'large'        => array(
 					1200,
 					1200,
 				),
-				'medium' => array(
+				'medium'       => array(
+					800,
+					800,
+				),
+				'intermediate' => array(
 					600,
 					600,
 				),
-				'small'  => array(
+				'small'        => array(
 					400,
 					400,
 				),
-				'tiny'   => array(
+				'tiny'         => array(
 					200,
 					200,
 				),
@@ -492,9 +504,13 @@ class Newspack_Blocks {
 		add_image_size( 'newspack-article-block-portrait-large', 900, 1200, true );
 		add_image_size( 'newspack-article-block-square-large', 1200, 1200, true );
 
-		add_image_size( 'newspack-article-block-landscape-medium', 600, 450, true );
-		add_image_size( 'newspack-article-block-portrait-medium', 450, 600, true );
-		add_image_size( 'newspack-article-block-square-medium', 600, 600, true );
+		add_image_size( 'newspack-article-block-landscape-medium', 800, 600, true );
+		add_image_size( 'newspack-article-block-portrait-medium', 600, 800, true );
+		add_image_size( 'newspack-article-block-square-medium', 800, 800, true );
+
+		add_image_size( 'newspack-article-block-landscape-intermediate', 600, 450, true );
+		add_image_size( 'newspack-article-block-portrait-intermediate', 450, 600, true );
+		add_image_size( 'newspack-article-block-square-intermediate', 600, 600, true );
 
 		add_image_size( 'newspack-article-block-landscape-small', 400, 300, true );
 		add_image_size( 'newspack-article-block-portrait-small', 300, 400, true );
