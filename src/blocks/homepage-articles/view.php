@@ -39,6 +39,14 @@ function newspack_blocks_hpb_maximum_image_width() {
  * @param array $sizes Sizes for the sizes attribute.
  */
 function newspack_blocks_filter_hpb_sizes( $sizes ) {
+	global $newspack_blocks_hpb_current_theme;
+	if ( ! $newspack_blocks_hpb_current_theme ) {
+		$newspack_blocks_hpb_current_theme = wp_get_theme()->template;
+	}
+	if ( stripos( $newspack_blocks_hpb_current_theme, 'newspack' ) === false ) {
+		// Bail if not using a Newspack theme – assumptions about the site content width can't be made then.
+		return $sizes;
+	}
 	$max_width = newspack_blocks_hpb_maximum_image_width();
 	if ( 0 !== $max_width ) {
 		// >=782px is the desktop size – set width as computed.
