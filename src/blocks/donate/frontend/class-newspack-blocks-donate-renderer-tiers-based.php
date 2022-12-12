@@ -108,13 +108,8 @@ class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate
 	 */
 	public static function render( $attributes ) {
 		$configuration             = self::get_configuration( $attributes );
-		$intial_selected_frequency = 'month';
-		foreach ( $configuration['disabledFrequencies'] as $frequency_key => $is_disabled ) {
-			if ( ! $is_disabled ) {
-				$intial_selected_frequency = $frequency_key;
-				break;
-			}
-		}
+		$displayed_frequencies     = array_keys( $configuration['frequencies'] );
+		$intial_selected_frequency = $displayed_frequencies[0];
 
 		$intial_selected_tier_index = 0;
 		$displayed_amounts          = self::get_displayed_amounts( $configuration['amounts'][ $intial_selected_frequency ] );
