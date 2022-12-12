@@ -20,6 +20,7 @@ import {
 	ToggleControl,
 	TextControl,
 	Button,
+	Notice,
 } from '@wordpress/components';
 import { InspectorControls, ColorPaletteControl } from '@wordpress/block-editor';
 import { isEmpty, pick } from 'lodash';
@@ -147,7 +148,9 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 	}
 
 	const isTiered = attributes.manual ? attributes.tiered : settings.tiered;
-	const canRenderTiersBasedLayout = window.newspack_blocks_data?.can_render_tiers_based_layout;
+	const canRenderTiersBasedLayout = Boolean(
+		window.newspack_blocks_data?.can_render_tiers_based_layout
+	);
 	const isTierBasedLayoutEnabled =
 		canRenderTiersBasedLayout && isTiered && attributes.layoutOption === 'tiers';
 
@@ -205,7 +208,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 
 			<InspectorControls>
 				<PanelBody title={ __( 'Layout', 'newspack-blocks' ) }>
-					<div className="newspack-blocks-layout-selector">
+					<div className="newspack-blocks-donate__layout-selector">
 						{ LAYOUT_OPTIONS.map( ( { label, key } ) => {
 							const isSelected =
 								key === 'tiers' ? isTierBasedLayoutEnabled : ! isTierBasedLayoutEnabled;
@@ -216,13 +219,21 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 									isPressed={ isSelected }
 									onClick={ () => setAttributes( { layoutOption: key } ) }
 									aria-current={ isSelected }
-									disabled={ key === 'tiers' && ! canRenderTiersBasedLayout }
+									disabled={ key === 'tiers' && ( ! canRenderTiersBasedLayout || ! isTiered ) }
 								>
 									{ label }
 								</Button>
 							);
 						} ) }
 					</div>
+					{ ! isTiered && (
+						<Notice isDismissible={ false } className="newspack-blocks-donate__notice">
+							{ __(
+								'Tiers layout is disabled if the block is set to render untiered.',
+								'newspack-blocks'
+							) }
+						</Notice>
+					) }
 					{ ! isTierBasedLayoutEnabled && (
 						<SelectControl
 							label={ __( 'Default Tab', 'newspack' ) }
