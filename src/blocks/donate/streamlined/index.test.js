@@ -124,6 +124,7 @@ describe( 'Streamlined Donate block processing', () => {
 					clientId: 'amp-123',
 					payment_method_id: 'pm_123',
 					origin: null,
+					additional_fields: [],
 				},
 			},
 			'post'

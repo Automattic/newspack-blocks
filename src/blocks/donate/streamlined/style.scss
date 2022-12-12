@@ -146,7 +146,7 @@
 					@include mixins.media( tablet ) {
 						margin-bottom: 0;
 						width: 50%;
-						&:last-child {
+						+ input {
 							margin-left: 0.5rem;
 						}
 					}

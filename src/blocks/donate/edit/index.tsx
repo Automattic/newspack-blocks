@@ -30,27 +30,21 @@ import { isEmpty, pick } from 'lodash';
  */
 import { getMigratedAmount } from '../utils';
 import type {
-	DonateBlockAttributes,
 	DonationSettings,
 	DonationFrequencySlug,
 	DonationAmountsArray,
 	EditState,
+	EditProps,
 } from '../types';
 import TierBasedLayout from './TierBasedLayout';
 import FrequencyBasedLayout from './FrequencyBasedLayout';
-import { AmountValueInput } from './components';
+import { AmountValueInput, AdditionalFields } from './components';
 import {
 	FREQUENCIES,
 	FREQUENCY_SLUGS,
 	LAYOUT_OPTIONS,
 	DISABLED_IN_TIERS_BASED_LAYOUT_TIER_INDEX,
 } from '../consts';
-
-type EditProps = {
-	attributes: DonateBlockAttributes;
-	setAttributes: ( attributes: Partial< DonateBlockAttributes > ) => void;
-	className: string;
-};
 
 const TIER_LABELS = [
 	__( 'Low-tier', 'newspack' ),
@@ -388,6 +382,12 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 						onChange={ ( buttonColor: string ) => setAttributes( { buttonColor } ) }
 						label={ __( 'Button Color', 'newspack-blocks' ) }
 					/>
+				</PanelBody>
+				<PanelBody
+					title={ __( 'Additional data fields', 'newspack-blocks' ) }
+					initialOpen={ false }
+				>
+					<AdditionalFields attributes={ attributes } setAttributes={ setAttributes } />
 				</PanelBody>
 				<PanelBody title={ __( 'Campaign', 'newspack-blocks' ) } initialOpen={ false }>
 					<TextControl

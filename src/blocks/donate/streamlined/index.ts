@@ -16,6 +16,13 @@ import 'regenerator-runtime'; // Required in WP >=5.8.
 import * as utils from './utils';
 import './style.scss';
 
+const getAdditionalFieldsValues = ( formElement: HTMLFormElement ) => {
+	const fields = [
+		...formElement.querySelectorAll( 'input[data-is-additional-field]' ),
+	] as HTMLInputElement[];
+	return fields.map( field => ( { name: field.name, value: field.value } ) );
+};
+
 export const processStreamlinedElements = ( parentElement = document ) =>
 	[ ...parentElement.querySelectorAll( '.stripe-payment' ) ].forEach( async el => {
 		let stripe: Stripe.Stripe | null,
@@ -117,6 +124,9 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 					? promptOrigin.getAttribute( 'amp-access' )
 					: null;
 
+			const additionalFields: { name: string; value: string }[] =
+				getAdditionalFieldsValues( formElement );
+
 			const apiRequestPayload = {
 				captchaToken,
 				tokenData: token,
@@ -127,6 +137,7 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 				newsletter_opt_in: Boolean( formValues.newsletter_opt_in ),
 				clientId: formValues.cid,
 				origin,
+				additional_fields: additionalFields,
 				...requestPayloadOverrides,
 			};
 

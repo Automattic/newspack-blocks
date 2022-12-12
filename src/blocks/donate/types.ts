@@ -69,6 +69,13 @@ export type TierBasedOptionValue = {
 	recommendLabel: string;
 };
 
+export type AdditionalField = {
+	type: 'text';
+	name: string;
+	label: string;
+	isRequired: boolean;
+};
+
 export type DonateBlockAttributes = OverridableConfiguration & {
 	buttonText: string;
 	buttonWithCCText: string;
@@ -88,6 +95,7 @@ export type DonateBlockAttributes = OverridableConfiguration & {
 	suggestedAmounts?: [ number, number, number ];
 	suggestedAmountUntiered?: number;
 	minimumDonation: number;
+	additionalFields: AdditionalField[];
 };
 
 export type ComponentProps = {
@@ -97,4 +105,10 @@ export type ComponentProps = {
 	setSettings: ( settings: Partial< EditState > ) => void;
 	amounts: DonationAmounts;
 	availableFrequencies: typeof FREQUENCY_SLUGS;
+};
+
+export type EditProps = {
+	attributes: DonateBlockAttributes;
+	setAttributes: ( attributes: Partial< DonateBlockAttributes > ) => void;
+	className: string;
 };
