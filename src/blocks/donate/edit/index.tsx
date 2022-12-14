@@ -7,7 +7,7 @@ import { hooks } from 'newspack-components';
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import { useState, useEffect, Fragment } from '@wordpress/element';
 import {
@@ -23,7 +23,7 @@ import {
 	Notice,
 } from '@wordpress/components';
 import { InspectorControls, ColorPaletteControl } from '@wordpress/block-editor';
-import { isEmpty, pick } from 'lodash';
+import { add, isEmpty, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -155,13 +155,6 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 		canRenderTiersBasedLayout && isTiered && attributes.layoutOption === 'tiers';
 
 	const amounts = attributes.manual ? attributes.amounts : settings.amounts;
-	const minimumDonation = attributes.manual ? attributes.minimumDonation : settings.minimumDonation;
-	Object.keys( amounts ).forEach( frequency => {
-		const amountsWithMinimum = amounts[ frequency ].map( amount =>
-			Math.max( amount, minimumDonation )
-		) as DonationAmountsArray;
-		amounts[ frequency ] = amountsWithMinimum;
-	} );
 	const availableFrequencies = FREQUENCY_SLUGS.filter( slug =>
 		attributes.manual
 			? ! attributes.disabledFrequencies[ slug ]
@@ -185,6 +178,15 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 			`wpbnbd-frequencies--${ availableFrequencies.length }`
 		);
 
+	const minimumDonation = attributes.manual ? attributes.minimumDonation : settings.minimumDonation;
+	const displayedAmounts = { ...amounts };
+	Object.keys( amounts ).forEach( frequency => {
+		const amountsWithMinimum = amounts[ frequency ].map( amount =>
+			Math.max( amount, minimumDonation )
+		) as DonationAmountsArray;
+		displayedAmounts[ frequency ] = amountsWithMinimum;
+	} );
+
 	const componentProps = {
 		attributes,
 		amounts,
@@ -194,15 +196,33 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 		setSettings,
 	};
 
+	const renderMinAmountWarning = () => (
+		<p className="components-frequency-donations__error">
+			{ sprintf(
+				// Translators: %s is the currency symbol, %d is the minimum donation amount.
+				__(
+					'Warning: suggested donations should be at least the minimum donation amount (%1$s%2$d).',
+					'newspack-blocks'
+				),
+				settings.currencySymbol,
+				minimumDonation
+			) }
+		</p>
+	);
+
 	return (
 		<>
 			{ isTierBasedLayoutEnabled ? (
 				<div className={ getWrapperClassNames() }>
-					<TierBasedLayout { ...componentProps } />
+					<TierBasedLayout { ...componentProps } amounts={ displayedAmounts } />
 				</div>
 			) : (
 				<div className={ getWrapperClassNames( [ isTiered ? 'tiered' : 'untiered' ] ) }>
-					<FrequencyBasedLayout isTiered={ isTiered } { ...componentProps } />
+					<FrequencyBasedLayout
+						isTiered={ isTiered }
+						{ ...componentProps }
+						amounts={ displayedAmounts }
+					/>
 				</div>
 			) }
 
@@ -288,6 +308,12 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 													/>
 													{ ! isFrequencyDisabled && (
 														<div className="wp-block-newspack-blocks-donate__panel-inputs">
+															{ amounts[ frequency ].reduce(
+																( acc: boolean, suggestedAmount: number ) =>
+																	suggestedAmount < minimumDonation ? true : acc,
+																false
+															) && renderMinAmountWarning() }
+
 															{ amounts[ frequency ].map( ( suggestedAmount, tierIndex ) => (
 																<AmountValueInput
 																	ignoreMinimumAmount
@@ -313,6 +339,12 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 							) : (
 								<div className="components-frequency-donations">
 									<div className="wp-block-newspack-blocks-donate__panel-inputs">
+										{ FREQUENCY_SLUGS.reduce(
+											( acc: boolean, frequencySlug: DonationFrequencySlug ) =>
+												amounts[ frequencySlug ][ 3 ] < attributes.minimumDonation ? true : acc,
+											false
+										) && renderMinAmountWarning() }
+
 										{ FREQUENCY_SLUGS.map( ( frequencySlug: DonationFrequencySlug ) => (
 											<AmountValueInput
 												ignoreMinimumAmount
