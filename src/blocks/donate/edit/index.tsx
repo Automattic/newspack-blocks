@@ -23,7 +23,7 @@ import {
 	Notice,
 } from '@wordpress/components';
 import { InspectorControls, ColorPaletteControl } from '@wordpress/block-editor';
-import { add, isEmpty, pick } from 'lodash';
+import { isEmpty, pick } from 'lodash';
 
 /**
  * Internal dependencies
