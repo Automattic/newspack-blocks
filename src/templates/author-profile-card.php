@@ -63,6 +63,7 @@ call_user_func(
 									'data-*'   => true,
 									'decoding' => true,
 									'height'   => true,
+									'loading'  => true,
 									'sizes'    => true,
 									'src'      => true,
 									'srcset'   => true,
