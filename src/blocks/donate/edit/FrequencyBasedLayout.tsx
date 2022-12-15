@@ -65,8 +65,8 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 		}
 	}, [ attributes.defaultFrequency ] );
 
-	const isRenderingStreamlinedBlock = () =>
-		window.newspack_blocks_data?.is_rendering_streamlined_block;
+	const isRenderingStripePaymentForm =
+		window.newspack_blocks_data?.is_rendering_stripe_payment_form;
 
 	const renderFrequencySelect = ( frequencySlug: DonationFrequencySlug ) => (
 		<>
@@ -79,7 +79,7 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 			/>
 			<label
 				htmlFor={ 'newspack-donate-' + frequencySlug + '-' + uid }
-				className="donation-frequency-label freq-label"
+				className="wpbnbd__button freq-label"
 			>
 				{ FREQUENCIES[ frequencySlug ] }
 			</label>
@@ -194,7 +194,7 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 				color: getColorForContrast( attributes.buttonColor ),
 			} }
 		>
-			{ isRenderingStreamlinedBlock() ? (
+			{ isRenderingStripePaymentForm ? (
 				<RichText
 					onChange={ ( value: string ) => setAttributes( { buttonWithCCText: value } ) }
 					placeholder={ __( 'Button text…', 'newspack-blocks' ) }
@@ -229,7 +229,7 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 					tagName="span"
 				/>
 			</p>
-			{ isRenderingStreamlinedBlock() ? (
+			{ isRenderingStripePaymentForm ? (
 				<div className="wp-block-newspack-blocks-donate__stripe stripe-payment">
 					<div className="stripe-payment__row stripe-payment__row--flex stripe-payment__footer">
 						<div className="stripe-payment__methods">

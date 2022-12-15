@@ -26,13 +26,15 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 			isCardUIVisible = false;
 
 		const formElement: HTMLFormElement | null = el.closest( 'form' );
-		if ( ! formElement ) {
-			return;
-		}
 		const messagesEl: HTMLDivElement | null = el.querySelector( '.stripe-payment__messages' );
-		if ( ! messagesEl ) {
+		if ( ! formElement || ! messagesEl ) {
 			return;
 		}
+
+		const blockWrapperElement = el.closest( '.wpbnbd' );
+		const paymentFlowCompleteEventName = `newspackPaymentFlowComplete-${
+			blockWrapperElement?.id || ''
+		}`;
 
 		const settings = utils.getSettings( formElement );
 
@@ -143,6 +145,7 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 			const exitWithError = ( errorMessage: Stripe.StripeError[ 'message' ] ) => {
 				utils.renderMessages( [ errorMessage ], messagesEl );
 				enableForm();
+				window.dispatchEvent( new Event( paymentFlowCompleteEventName ) );
 				return { error: true };
 			};
 
@@ -182,6 +185,7 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 			if ( chargeResultData.status === 'success' ) {
 				utils.renderSuccessMessageWithEmail( apiRequestPayload.email, messagesEl );
 			}
+			window.dispatchEvent( new Event( paymentFlowCompleteEventName ) );
 			return {};
 		};
 
