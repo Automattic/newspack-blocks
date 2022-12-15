@@ -17,6 +17,11 @@ function newspack_blocks_hpb_maximum_image_width() {
 		if ( empty( $attributes ) ) {
 			return $max_width;
 		}
+		if ( isset( $attributes['align'] ) && in_array( $attributes['align'], [ 'full', 'wide' ], true ) ) {
+			// For full and wide alignments, the image width is more than 100% of the content width
+			// and depends on site width. Can't make assumptions about the site width.
+			return $max_width;
+		}
 		$site_content_width  = 1200;
 		$is_image_half_width = in_array( $attributes['mediaPosition'], [ 'left', 'right' ], true );
 		if ( 'grid' === $attributes['postLayout'] ) {
