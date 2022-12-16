@@ -75,6 +75,7 @@ export type AdditionalField = {
 	label: string;
 	isRequired: boolean;
 	isNew?: boolean;
+	fieldIndex?: number;
 };
 
 export type DonateBlockAttributes = OverridableConfiguration & {

@@ -168,8 +168,23 @@
 		}
 	}
 	&__field-edited {
+		&__help,
+		&__validation-message {
+			font-size: 12px;
+			line-height: 1.4;
+		}
+		&__help {
+			margin-bottom: 20px;
+		}
+		&__validation-message {
+			margin-bottom: 8px;
+			color: wp-colors.$alert-red !important;
+		}
 		&--name input {
 			font-family: monospace !important;
+		}
+		&--invalid input {
+			border-color: wp-colors.$alert-red !important;
 		}
 	}
 	&__modal {

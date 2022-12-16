@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { TextControl, ToggleControl, Button, MenuItem } from '@wordpress/components';
-import { Icon, edit, trash, moreVertical } from '@wordpress/icons';
+import { moreVertical } from '@wordpress/icons';
 import { useState } from '@wordpress/element';
 import { ESCAPE } from '@wordpress/keycodes';
 
@@ -11,6 +11,7 @@ import { ESCAPE } from '@wordpress/keycodes';
  * External dependencies
  */
 import { omit } from 'lodash';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -83,12 +84,12 @@ const FieldEditor = ( {
 	updateField: ( key: EditableKey ) => ( value: string | boolean ) => void;
 } ) => {
 	const onSave = () => {
-		const fieldToSave = omit( field, [ 'isNew' ] );
+		const fieldToSave = omit( field, [ 'isNew', 'fieldIndex' ] );
 		setAttributes( {
 			additionalFields: field.isNew
 				? [ ...attributes.additionalFields, fieldToSave ]
-				: attributes.additionalFields.map( _field =>
-						_field.name === field.name ? fieldToSave : _field
+				: attributes.additionalFields.map( ( _field, i ) =>
+						field.fieldIndex === i ? fieldToSave : _field
 				  ),
 		} );
 		closeEditor();
@@ -99,19 +100,43 @@ const FieldEditor = ( {
 		} );
 		closeEditor();
 	};
+	const getValidationMessage = ( key: EditableKey ) => {
+		switch ( key ) {
+			case 'name':
+				const isValid =
+					attributes.additionalFields.filter(
+						( { name }, i ) => i !== field.fieldIndex && name === field.name
+					).length === 0;
+				return ! isValid ? __( 'Name already exists.', 'newspack' ) : '';
+		}
+	};
 	return (
 		<>
-			{ FIELD_PROPS.map( ( [ key, label, help ] ) => (
-				<TextControl
-					key={ key }
-					label={ label }
-					placeholder={ label }
-					value={ field[ key ] }
-					onChange={ updateField( key ) }
-					help={ help }
-					className={ key === 'name' ? `${ BASE_CSS_CLASSNAME }__field-edited--name` : '' }
-				/>
-			) ) }
+			{ FIELD_PROPS.map( ( [ key, label, help ] ) => {
+				const validationMessage = getValidationMessage( key );
+				return (
+					<div key={ key }>
+						<TextControl
+							label={ label }
+							placeholder={ label }
+							value={ field[ key ] }
+							onChange={ updateField( key ) }
+							className={ classnames( {
+								[ `${ BASE_CSS_CLASSNAME }__field-edited--name` ]: key === 'name',
+								[ `${ BASE_CSS_CLASSNAME }__field-edited--invalid` ]: validationMessage,
+							} ) }
+						/>
+						{ validationMessage && (
+							<div className={ `${ BASE_CSS_CLASSNAME }__field-edited__validation-message` }>
+								{ validationMessage }
+							</div>
+						) }
+						{ help && (
+							<div className={ `${ BASE_CSS_CLASSNAME }__field-edited__help` }>{ help }</div>
+						) }
+					</div>
+				);
+			} ) }
 			<ToggleControl
 				label={ __( 'Required', 'newspack' ) }
 				checked={ field.isRequired }
@@ -153,7 +178,7 @@ const AdditionalFields = ( {
 						<div key={ i } className={ `${ BASE_CSS_CLASSNAME }__field` }>
 							<span>{ field.label }</span>
 							<FieldOptions
-								onEdit={ () => setEditedField( field ) }
+								onEdit={ () => setEditedField( { ...field, fieldIndex: i } ) }
 								onRemove={ () =>
 									setAttributes( {
 										additionalFields: attributes.additionalFields.filter(
