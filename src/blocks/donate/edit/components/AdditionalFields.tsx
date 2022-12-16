@@ -17,6 +17,8 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import type { AdditionalField, EditProps } from '../../types';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore – these *are* exported by newspack-components.
 import { Modal, Popover } from 'newspack-components';
 
 const getUniqID = () => Math.random().toString( 36 ).substring( 2, 7 );
