@@ -2,19 +2,143 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { TextControl, CheckboxControl, Button } from '@wordpress/components';
+import { TextControl, ToggleControl, Button, MenuItem } from '@wordpress/components';
+import { Icon, edit, trash, moreVertical } from '@wordpress/icons';
+import { useState } from '@wordpress/element';
+import { ESCAPE } from '@wordpress/keycodes';
+
+/**
+ * External dependencies
+ */
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import type { AdditionalField, EditProps } from '../../types';
+import { Modal, Popover } from 'newspack-components';
 
 const getUniqID = () => Math.random().toString( 36 ).substring( 2, 7 );
+const BASE_CSS_CLASSNAME = 'newspack-blocks-additional-fields-editor';
+
+type EditableKey = keyof Omit< AdditionalField, 'type' >;
+const FIELD_PROPS = [
+	[ 'label', __( 'Label', 'newspack' ) ],
+	[
+		'name',
+		__( 'Name', 'newspack' ),
+		__(
+			'Name of the field which will be sent to the payment procesor and other third parties. Field names must be unique.',
+			'newspack'
+		),
+	],
+] as [ EditableKey, string, string ][];
+
+const FieldOptions = ( { onEdit, onRemove }: { onEdit: () => void; onRemove: () => void } ) => {
+	const [ isVisible, setIsVisible ] = useState( false );
+	const toggleVisible = () => setIsVisible( ! isVisible );
+	return (
+		<div>
+			<Button
+				onClick={ toggleVisible }
+				icon={ moreVertical }
+				label={ __( 'Options', 'newspack' ) }
+				tooltipPosition="bottom center"
+			/>
+			{ isVisible && (
+				<Popover
+					position="bottom left"
+					onFocusOutside={ toggleVisible }
+					onKeyDown={ ( event: KeyboardEvent ) => ESCAPE === event.keyCode && toggleVisible }
+					className={ `${ BASE_CSS_CLASSNAME }__options-popover` }
+				>
+					<MenuItem onClick={ onEdit } isLink>
+						{ __( 'Edit', 'newspack' ) }
+					</MenuItem>
+					<MenuItem
+						isDestructive
+						onClick={ () => {
+							onRemove();
+							toggleVisible();
+						} }
+						isLink
+					>
+						{ __( 'Remove', 'newspack' ) }
+					</MenuItem>
+				</Popover>
+			) }
+		</div>
+	);
+};
+
+const FieldEditor = ( {
+	attributes,
+	setAttributes,
+	field,
+	closeEditor,
+	updateField,
+}: Pick< EditProps, 'attributes' | 'setAttributes' > & {
+	field: AdditionalField;
+	closeEditor: () => void;
+	updateField: ( key: EditableKey ) => ( value: string | boolean ) => void;
+} ) => {
+	const onSave = () => {
+		const fieldToSave = omit( field, [ 'isNew' ] );
+		setAttributes( {
+			additionalFields: field.isNew
+				? [ ...attributes.additionalFields, fieldToSave ]
+				: attributes.additionalFields.map( _field =>
+						_field.name === field.name ? fieldToSave : _field
+				  ),
+		} );
+		closeEditor();
+	};
+	const onRemove = () => {
+		setAttributes( {
+			additionalFields: attributes.additionalFields.filter( ( { name } ) => name !== field.name ),
+		} );
+		closeEditor();
+	};
+	return (
+		<>
+			{ FIELD_PROPS.map( ( [ key, label, help ] ) => (
+				<TextControl
+					key={ key }
+					label={ label }
+					placeholder={ label }
+					value={ field[ key ] }
+					onChange={ updateField( key ) }
+					help={ help }
+					className={ key === 'name' ? `${ BASE_CSS_CLASSNAME }__field-edited--name` : '' }
+				/>
+			) ) }
+			<ToggleControl
+				label={ __( 'Required', 'newspack' ) }
+				checked={ field.isRequired }
+				onChange={ updateField( 'isRequired' ) }
+			/>
+			<div className={ `${ BASE_CSS_CLASSNAME }__edit-buttons` }>
+				<Button isLink onClick={ closeEditor }>
+					{ __( 'Cancel', 'newspack-blocks' ) }
+				</Button>
+				{ ! field.isNew && (
+					<Button variant="secondary" isDestructive onClick={ onRemove }>
+						{ __( 'Remove', 'newspack-blocks' ) }
+					</Button>
+				) }
+				<Button isPrimary onClick={ onSave }>
+					{ field.isNew ? __( 'Save', 'newspack-blocks' ) : __( 'Update', 'newspack-blocks' ) }
+				</Button>
+			</div>
+		</>
+	);
+};
 
 const AdditionalFields = ( {
 	attributes,
 	setAttributes,
 }: Pick< EditProps, 'attributes' | 'setAttributes' > ) => {
+	const [ editedField, setEditedField ] = useState< AdditionalField | null >( null );
 	return (
 		<>
 			<p>
@@ -23,70 +147,65 @@ const AdditionalFields = ( {
 					'newspack-blocks'
 				) }
 			</p>
-			<div className="newspack-blocks-additional-fields-editor">
+			<div className={ BASE_CSS_CLASSNAME }>
 				{ attributes.additionalFields.map( ( field, i ) => {
-					type EditableKey = keyof Omit< AdditionalField, 'type' >;
-					const updateField = ( key: EditableKey ) => ( value: string | boolean ) => {
-						const additionalFields = [ ...attributes.additionalFields ];
-						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-						// @ts-ignore – `key` is a valid key of `AdditionalField`.
-						additionalFields[ i ][ key ] = value;
-						setAttributes( { additionalFields } );
-					};
-					const fieldProps = [
-						[ 'name', __( 'Name', 'newspack' ) ],
-						[ 'label', __( 'Label', 'newspack' ) ],
-					] as [ EditableKey, string ][];
 					return (
-						<div key={ i }>
-							{ fieldProps.map( ( [ key, label ] ) => (
-								<TextControl
-									key={ key }
-									label={ label }
-									placeholder={ label }
-									value={ field[ key ] }
-									onChange={ updateField( key ) }
-								/>
-							) ) }
-							<CheckboxControl
-								label={ __( 'Required', 'newspack' ) }
-								checked={ field.isRequired }
-								onChange={ updateField( 'isRequired' ) }
-							/>
-							<Button
-								isDestructive
-								onClick={ () =>
+						<div key={ i } className={ `${ BASE_CSS_CLASSNAME }__field` }>
+							<span>{ field.label }</span>
+							<FieldOptions
+								onEdit={ () => setEditedField( field ) }
+								onRemove={ () =>
 									setAttributes( {
 										additionalFields: attributes.additionalFields.filter(
 											( value, index ) => index !== i
 										),
 									} )
 								}
-							>
-								{ __( 'Remove this field', 'newspack' ) }
-							</Button>
+							/>
 						</div>
 					);
 				} ) }
 				<Button
-					isPrimary
-					onClick={ () =>
-						setAttributes( {
-							additionalFields: [
-								...attributes.additionalFields,
-								{
-									type: 'text',
-									name: `field-${ getUniqID() }`,
-									label: `Field ${ attributes.additionalFields.length }`,
-									isRequired: false,
-								},
-							],
-						} )
-					}
+					variant="secondary"
+					onClick={ () => {
+						const newField: AdditionalField = {
+							type: 'text',
+							name: `field-${ getUniqID() }`,
+							label: `Field ${ attributes.additionalFields.length }`,
+							isRequired: false,
+							isNew: true,
+						};
+						setEditedField( newField );
+					} }
 				>
-					{ __( 'Add a field', 'newspack' ) }
+					{ __( 'Add data field', 'newspack' ) }
 				</Button>
 			</div>
+
+			{ editedField && (
+				<Modal
+					className={ `${ BASE_CSS_CLASSNAME }__modal` }
+					title={
+						editedField.isNew
+							? __( 'Add data field', 'newspack-blocks' )
+							: __( 'Edit data field', 'newspack-blocks' )
+					}
+					onRequestClose={ () => setEditedField( null ) }
+				>
+					<FieldEditor
+						field={ editedField }
+						setAttributes={ setAttributes }
+						attributes={ attributes }
+						closeEditor={ () => setEditedField( null ) }
+						updateField={ ( key: EditableKey ) => ( value: string | boolean ) => {
+							setEditedField( {
+								...editedField,
+								[ key ]: value,
+							} );
+						} }
+					/>
+				</Modal>
+			) }
 		</>
 	);
 };
