@@ -166,7 +166,25 @@
 			border-bottom-left-radius: 3px;
 			border-bottom-right-radius: 3px;
 		}
+		&__left-section {
+			display: flex;
+			align-items: center;
+			> div {
+				display: flex;
+				flex-direction: column;
+				button {
+					padding: 0 !important;
+					height: 15px;
+					min-width: 0 !important;
+					width: 24px;
+				}
+			}
+			&__icon {
+				margin-right: 8px;
+			}
+		}
 		&__label {
+			flex: 1;
 			padding: 0 0 0 8px;
 		}
 	}

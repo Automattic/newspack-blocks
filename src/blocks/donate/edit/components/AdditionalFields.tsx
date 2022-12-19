@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { TextControl, ToggleControl, Button, MenuItem } from '@wordpress/components';
-import { moreVertical } from '@wordpress/icons';
+import { moreVertical, chevronUp, chevronDown } from '@wordpress/icons';
 import { useState } from '@wordpress/element';
 import { ESCAPE } from '@wordpress/keycodes';
 
@@ -46,7 +46,6 @@ const FieldOptions = ( { onEdit, onRemove }: { onEdit: () => void; onRemove: () 
 				onClick={ toggleVisible }
 				icon={ moreVertical }
 				label={ __( 'Options', 'newspack-blocks' ) }
-				tooltipPosition="bottom center"
 			/>
 			{ isVisible && (
 				<Popover
@@ -166,6 +165,16 @@ const AdditionalFields = ( {
 	setAttributes,
 }: Pick< EditProps, 'attributes' | 'setAttributes' > ) => {
 	const [ editedField, setEditedField ] = useState< AdditionalField | null >( null );
+	const moveField = ( fieldIndex: number, targetIndex: number ) => () => {
+		const withoutMovedField = attributes.additionalFields.filter( ( _, i ) => i !== fieldIndex );
+		setAttributes( {
+			additionalFields: [
+				...withoutMovedField.slice( 0, targetIndex ),
+				attributes.additionalFields[ fieldIndex ],
+				...withoutMovedField.slice( targetIndex ),
+			],
+		} );
+	};
 	return (
 		<>
 			<p>
@@ -179,9 +188,26 @@ const AdditionalFields = ( {
 					const onEdit = () => setEditedField( { ...field, fieldIndex: i } );
 					return (
 						<div key={ i } className={ `${ BASE_CSS_CLASSNAME }__field` }>
-							<Button className={ `${ BASE_CSS_CLASSNAME }__field__label` } onClick={ onEdit }>
-								{ field.label }
-							</Button>
+							<div className={ `${ BASE_CSS_CLASSNAME }__field__left-section` }>
+								<div>
+									<Button
+										onClick={ moveField( i, i - 1 ) }
+										icon={ chevronUp }
+										label={ __( 'Move up', 'newspack-blocks' ) }
+										disabled={ i === 0 }
+									/>
+									<Button
+										onClick={ moveField( i, i + 1 ) }
+										icon={ chevronDown }
+										label={ __( 'Move down', 'newspack-blocks' ) }
+										disabled={ i === attributes.additionalFields.length - 1 }
+									/>
+								</div>
+								<Button className={ `${ BASE_CSS_CLASSNAME }__field__label` } onClick={ onEdit }>
+									{ field.label }
+								</Button>
+							</div>
+
 							<FieldOptions
 								onEdit={ onEdit }
 								onRemove={ () =>
