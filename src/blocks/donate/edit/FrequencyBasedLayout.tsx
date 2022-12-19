@@ -23,10 +23,10 @@ const PAYMENT_REQUEST_BUTTON_TYPE_OPTIONS: {
 	label: string;
 	value: DonateBlockAttributes[ 'paymentRequestType' ];
 }[] = [
-	{ label: __( 'Donate', 'newspack' ), value: 'donate' },
-	{ label: __( 'Pay', 'newspack' ), value: 'default' },
-	{ label: __( 'Book', 'newspack' ), value: 'book' },
-	{ label: __( 'Buy', 'newspack' ), value: 'buy' },
+	{ label: __( 'Donate', 'newspack-blocks' ), value: 'donate' },
+	{ label: __( 'Pay', 'newspack-blocks' ), value: 'default' },
+	{ label: __( 'Book', 'newspack-blocks' ), value: 'book' },
+	{ label: __( 'Buy', 'newspack-blocks' ), value: 'buy' },
 ];
 
 const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) => {

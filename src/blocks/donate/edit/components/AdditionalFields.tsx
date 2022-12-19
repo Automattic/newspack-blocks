@@ -26,13 +26,13 @@ const BASE_CSS_CLASSNAME = 'newspack-blocks-additional-fields-editor';
 
 type EditableKey = keyof Omit< AdditionalField, 'type' >;
 const FIELD_PROPS = [
-	[ 'label', __( 'Label', 'newspack' ) ],
+	[ 'label', __( 'Label', 'newspack-blocks' ) ],
 	[
 		'name',
-		__( 'Name', 'newspack' ),
+		__( 'Name', 'newspack-blocks' ),
 		__(
 			'Name of the field which will be sent to the payment procesor and other third parties. Field names must be unique.',
-			'newspack'
+			'newspack-blocks'
 		),
 	],
 ] as [ EditableKey, string, string ][];
@@ -45,7 +45,7 @@ const FieldOptions = ( { onEdit, onRemove }: { onEdit: () => void; onRemove: () 
 			<Button
 				onClick={ toggleVisible }
 				icon={ moreVertical }
-				label={ __( 'Options', 'newspack' ) }
+				label={ __( 'Options', 'newspack-blocks' ) }
 				tooltipPosition="bottom center"
 			/>
 			{ isVisible && (
@@ -56,7 +56,7 @@ const FieldOptions = ( { onEdit, onRemove }: { onEdit: () => void; onRemove: () 
 					className={ `${ BASE_CSS_CLASSNAME }__options-popover` }
 				>
 					<MenuItem onClick={ onEdit } isLink>
-						{ __( 'Edit', 'newspack' ) }
+						{ __( 'Edit', 'newspack-blocks' ) }
 					</MenuItem>
 					<MenuItem
 						isDestructive
@@ -66,7 +66,7 @@ const FieldOptions = ( { onEdit, onRemove }: { onEdit: () => void; onRemove: () 
 						} }
 						isLink
 					>
-						{ __( 'Remove', 'newspack' ) }
+						{ __( 'Remove', 'newspack-blocks' ) }
 					</MenuItem>
 				</Popover>
 			) }
@@ -109,7 +109,7 @@ const FieldEditor = ( {
 					attributes.additionalFields.filter(
 						( { name }, i ) => i !== field.fieldIndex && name === field.name
 					).length === 0;
-				return ! isValid ? __( 'Name already exists.', 'newspack' ) : '';
+				return ! isValid ? __( 'Name already exists.', 'newspack-blocks' ) : '';
 		}
 	};
 	return (
@@ -140,7 +140,7 @@ const FieldEditor = ( {
 				);
 			} ) }
 			<ToggleControl
-				label={ __( 'Required', 'newspack' ) }
+				label={ __( 'Required', 'newspack-blocks' ) }
 				checked={ field.isRequired }
 				onChange={ updateField( 'isRequired' ) }
 			/>
@@ -205,7 +205,7 @@ const AdditionalFields = ( {
 						setEditedField( newField );
 					} }
 				>
-					{ __( 'Add data field', 'newspack' ) }
+					{ __( 'Add data field', 'newspack-blocks' ) }
 				</Button>
 			</div>
 
