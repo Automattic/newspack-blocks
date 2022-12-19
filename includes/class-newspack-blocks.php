@@ -616,11 +616,13 @@ class Newspack_Blocks {
 				$args['category__not_in'] = $category_exclusions;
 			}
 
+			$is_co_authors_plus_active = class_exists( 'CoAuthors_Guest_Authors' );
+
 			if ( $authors && count( $authors ) ) {
 				$co_authors_names = [];
 				$author_names     = [];
 
-				if ( class_exists( 'CoAuthors_Guest_Authors' ) ) {
+				if ( $is_co_authors_plus_active ) {
 					$co_authors_guest_authors = new CoAuthors_Guest_Authors();
 
 					foreach ( $authors as $index => $author_id ) {
@@ -669,21 +671,23 @@ class Newspack_Blocks {
 				} elseif ( empty( $co_authors_names ) && count( $authors ) ) {
 					$args['author__in'] = $authors;
 
-					// Don't get any posts that are attributed to other CAP guest authors.
-					$args['tax_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
-						[
-							'relation' => 'OR',
+					if ( $is_co_authors_plus_active ) {
+						// Don't get any posts that are attributed to other CAP guest authors.
+						$args['tax_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 							[
-								'taxonomy' => 'author',
-								'operator' => 'NOT EXISTS',
+								'relation' => 'OR',
+								[
+									'taxonomy' => 'author',
+									'operator' => 'NOT EXISTS',
+								],
+								[
+									'field'    => 'name',
+									'taxonomy' => 'author',
+									'terms'    => $author_names,
+								],
 							],
-							[
-								'field'    => 'name',
-								'taxonomy' => 'author',
-								'terms'    => $author_names,
-							],
-						],
-					];
+						];
+					}
 				} else {
 					// The query contains both WP users and CAP guest authors. We need to filter the SQL query.
 					self::$filter_clauses = [
