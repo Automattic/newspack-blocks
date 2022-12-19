@@ -201,6 +201,12 @@
 			margin-bottom: 8px;
 			color: wp-colors.$alert-red !important;
 		}
+		&__width {
+			margin-bottom: 20px;
+			div:first-child {
+				margin-bottom: 8px;
+			}
+		}
 		&--name input {
 			font-family: monospace !important;
 		}

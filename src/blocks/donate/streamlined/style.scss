@@ -152,6 +152,17 @@
 					}
 				}
 			}
+			&--additional-fields {
+				display: flex;
+				flex-wrap: wrap;
+				margin-left: -0.25rem;
+				margin-right: -0.25rem;
+				> input {
+					margin-bottom: 0.5rem;
+					margin-left: 0.25rem;
+					margin-right: 0.25rem;
+				}
+			}
 		}
 
 		&__info {

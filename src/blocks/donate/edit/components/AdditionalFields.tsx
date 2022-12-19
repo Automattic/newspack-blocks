@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { TextControl, ToggleControl, Button, MenuItem } from '@wordpress/components';
+import { TextControl, ToggleControl, Button, ButtonGroup, MenuItem } from '@wordpress/components';
 import { moreVertical, chevronUp, chevronDown } from '@wordpress/icons';
 import { useState } from '@wordpress/element';
 import { ESCAPE } from '@wordpress/keycodes';
@@ -82,7 +82,7 @@ const FieldEditor = ( {
 }: Pick< EditProps, 'attributes' | 'setAttributes' > & {
 	field: AdditionalField;
 	closeEditor: () => void;
-	updateField: ( key: EditableKey ) => ( value: string | boolean ) => void;
+	updateField: ( key: EditableKey ) => ( value: string | boolean | number ) => void;
 } ) => {
 	const onSave = () => {
 		const fieldToSave = omit( field, [ 'isNew', 'fieldIndex' ] );
@@ -143,6 +143,20 @@ const FieldEditor = ( {
 				checked={ field.isRequired }
 				onChange={ updateField( 'isRequired' ) }
 			/>
+			<div className={ `${ BASE_CSS_CLASSNAME }__field-edited__width` }>
+				<div>{ __( 'Field width:', 'newspack-blocks' ) }</div>
+				<ButtonGroup>
+					{ [ 100, 50, 33 ].map( width => (
+						<Button
+							key={ width }
+							onClick={ () => updateField( 'width' )( width ) }
+							isPrimary={ field.width === width }
+						>
+							{ width }%
+						</Button>
+					) ) }
+				</ButtonGroup>
+			</div>
 			<div className={ `${ BASE_CSS_CLASSNAME }__edit-buttons` }>
 				<Button isLink onClick={ closeEditor }>
 					{ __( 'Cancel', 'newspack-blocks' ) }
@@ -229,6 +243,7 @@ const AdditionalFields = ( {
 							name: `field-${ getUniqID() }`,
 							label: `Field ${ attributes.additionalFields.length }`,
 							isRequired: false,
+							width: 100,
 							isNew: true,
 						};
 						setEditedField( newField );
@@ -253,7 +268,7 @@ const AdditionalFields = ( {
 						setAttributes={ setAttributes }
 						attributes={ attributes }
 						closeEditor={ () => setEditedField( null ) }
-						updateField={ ( key: EditableKey ) => ( value: string | boolean ) => {
+						updateField={ ( key: EditableKey ) => ( value: string | boolean | number ) => {
 							setEditedField( {
 								...editedField,
 								[ key ]: value,

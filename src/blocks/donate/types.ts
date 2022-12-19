@@ -74,6 +74,7 @@ export type AdditionalField = {
 	name: string;
 	label: string;
 	isRequired: boolean;
+	width: number;
 	isNew?: boolean;
 	fieldIndex?: number;
 };
