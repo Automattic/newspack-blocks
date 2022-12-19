@@ -217,9 +217,7 @@ const AdditionalFields = ( {
 										disabled={ i === attributes.additionalFields.length - 1 }
 									/>
 								</div>
-								<Button className={ `${ BASE_CSS_CLASSNAME }__field__label` } onClick={ onEdit }>
-									{ field.label }
-								</Button>
+								<span>{ field.label }</span>
 							</div>
 
 							<FieldOptions
