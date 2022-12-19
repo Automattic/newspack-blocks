@@ -166,6 +166,9 @@
 			border-bottom-left-radius: 3px;
 			border-bottom-right-radius: 3px;
 		}
+		&__label {
+			padding: 0 0 0 8px;
+		}
 	}
 	&__field-edited {
 		&__help,

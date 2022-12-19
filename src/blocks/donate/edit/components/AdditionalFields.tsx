@@ -176,11 +176,14 @@ const AdditionalFields = ( {
 			</p>
 			<div className={ BASE_CSS_CLASSNAME }>
 				{ attributes.additionalFields.map( ( field, i ) => {
+					const onEdit = () => setEditedField( { ...field, fieldIndex: i } );
 					return (
 						<div key={ i } className={ `${ BASE_CSS_CLASSNAME }__field` }>
-							<span>{ field.label }</span>
+							<Button className={ `${ BASE_CSS_CLASSNAME }__field__label` } onClick={ onEdit }>
+								{ field.label }
+							</Button>
 							<FieldOptions
-								onEdit={ () => setEditedField( { ...field, fieldIndex: i } ) }
+								onEdit={ onEdit }
 								onRemove={ () =>
 									setAttributes( {
 										additionalFields: attributes.additionalFields.filter(
