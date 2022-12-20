@@ -1,3 +1,16 @@
+# [1.60.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.59.1...v1.60.0-alpha.1) (2022-12-20)
+
+
+### Bug Fixes
+
+* allow all img tag attributes in avatar output ([#1333](https://github.com/Automattic/newspack-blocks/issues/1333)) ([2f57019](https://github.com/Automattic/newspack-blocks/commit/2f570192c4fc4e29a7b532c53309bdcef5cab9cb))
+
+
+### Features
+
+* **donate block:** tiers layout ([#1311](https://github.com/Automattic/newspack-blocks/issues/1311)) ([9228ee4](https://github.com/Automattic/newspack-blocks/commit/9228ee46e4059fecb0a964919a295a72f5691032))
+* handle 'other' reader revenue platform in the editor ([0e6ca8a](https://github.com/Automattic/newspack-blocks/commit/0e6ca8a4e78f66db35e9d95a1ba9810a08aeaebb))
+
 ## [1.59.1](https://github.com/Automattic/newspack-blocks/compare/v1.59.0...v1.59.1) (2022-12-12)
 
 
