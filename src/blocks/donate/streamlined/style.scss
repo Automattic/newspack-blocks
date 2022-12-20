@@ -242,15 +242,6 @@
 			margin-bottom: 0.56rem;
 		}
 
-		&__methods {
-			display: grid;
-			grid-gap: 0.56rem;
-
-			> * {
-				margin-top: 0;
-			}
-		}
-
 		&__footer {
 			margin: 0 0 1.12rem 0;
 
@@ -264,10 +255,6 @@
 				margin: 0;
 				width: auto;
 			}
-		}
-
-		&__request-button {
-			margin: 0;
 		}
 	}
 }
@@ -289,30 +276,12 @@
 			margin-bottom: 1.12rem;
 		}
 
-		&__methods {
-			display: grid;
-			grid-gap: 0.28rem;
-
-			> * {
-				margin-top: 0;
-			}
-		}
-
 		&__footer {
 			margin: 0 0 1.12rem 0;
 
 			> * {
 				padding: 0;
 			}
-
-			button {
-				margin: 0;
-				min-width: auto;
-			}
-		}
-
-		&__request-button {
-			margin: 0;
 		}
 	}
 }

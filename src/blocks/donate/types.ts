@@ -40,15 +40,17 @@ export type DonationSettings = {
 	disabledFrequencies: {
 		[ Key in DonationFrequencySlug as string ]: boolean;
 	};
+	platform: string;
 };
 
 export type EditState = Pick<
 	DonationSettings,
-	'amounts' | 'currencySymbol' | 'tiered' | 'disabledFrequencies' | 'minimumDonation'
+	'amounts' | 'currencySymbol' | 'tiered' | 'disabledFrequencies' | 'minimumDonation' | 'platform'
 >;
 
+export type DonationAmountsArray = [ number, number, number, number ];
 export type DonationAmounts = {
-	[ Key in DonationFrequencySlug as string ]: [ number, number, number, number ];
+	[ Key in DonationFrequencySlug as string ]: DonationAmountsArray;
 };
 
 export type OverridableConfiguration = {
@@ -58,6 +60,13 @@ export type OverridableConfiguration = {
 		[ Key in DonationFrequencySlug as string ]: boolean;
 	};
 	minimumDonation: number;
+};
+
+export type TierBasedOptionValue = {
+	heading: string;
+	description: string;
+	buttonText: string;
+	recommendLabel: string;
 };
 
 export type DonateBlockAttributes = OverridableConfiguration & {
@@ -70,6 +79,9 @@ export type DonateBlockAttributes = OverridableConfiguration & {
 	defaultFrequency: DonationFrequencySlug;
 	campaign: string;
 	className: string;
+	layoutOption: 'frequency' | 'tiers';
+	// For tiers-based layout option.
+	tiersBasedOptions: [ TierBasedOptionValue, TierBasedOptionValue, TierBasedOptionValue ];
 	// Manual mode enables block-level overrides of the global Donate settings.
 	manual: boolean;
 	// Legacy attributes.
