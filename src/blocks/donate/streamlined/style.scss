@@ -39,10 +39,14 @@
 		}
 
 		&__card {
-			border: 1px solid variables.$color__border;
-			border-radius: 3px;
 			padding: 0.34rem 0.66rem;
 			min-height: 32px;
+		}
+		input[type='text'],
+		input[type='email'],
+		&__card {
+			border: 1px solid variables.$color__border;
+			border-radius: 3px;
 		}
 		input[type='text'],
 		input[type='email'],
