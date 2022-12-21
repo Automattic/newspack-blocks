@@ -146,13 +146,13 @@ const FieldEditor = ( {
 			<div className={ `${ BASE_CSS_CLASSNAME }__field-edited__width` }>
 				<div>{ __( 'Field width:', 'newspack-blocks' ) }</div>
 				<ButtonGroup>
-					{ [ 100, 66, 50, 33 ].map( width => (
+					{ [ 100, 66, 50, 33.33 ].map( width => (
 						<Button
 							key={ width }
 							onClick={ () => updateField( 'width' )( width ) }
 							isPrimary={ field.width === width }
 						>
-							{ width }%
+							{ Math.round( width ) }%
 						</Button>
 					) ) }
 				</ButtonGroup>
