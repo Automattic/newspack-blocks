@@ -56,7 +56,7 @@ class HomepagePostsBlockTest extends WP_UnitTestCase_Blocks { // phpcs:ignore
 	}
 
 	/**
-	 * Test the query manipulation.
+	 * Query with a CAP (guest) author.
 	 */
 	public function test_hpb_wp_query() {
 		$cap_author = self::create_guest_author();
@@ -65,12 +65,12 @@ class HomepagePostsBlockTest extends WP_UnitTestCase_Blocks { // phpcs:ignore
 		// Create another post.
 		self::create_post();
 
-		$block_attributes = [
-			'postsToShow' => 1,
-			'authors'     => [ $cap_author['id'] ],
-		];
-		$query_args       = Newspack_Blocks::build_articles_query( $block_attributes, 'newspack-blocks/homepage-articles' );
-		$query            = new WP_Query( $query_args );
+		$query = self::query_from_attributes(
+			[
+				'postsToShow' => 1,
+				'authors'     => [ $cap_author['id'] ],
+			]
+		);
 
 		self::assertEquals( 1, count( $query->posts ), 'There is one post returned.' );
 		self::assertEquals( $post_id, $query->posts[0]->ID, 'The post returned is the one with the CAP author assigned.' );

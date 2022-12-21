@@ -59,6 +59,16 @@ class WP_UnitTestCase_Blocks extends WP_UnitTestCase { // phpcs:ignore
 	}
 
 	/**
+	 * Return a WP Query from block attributes.
+	 *
+	 * @param array $attrs Block attributes.
+	 */
+	protected function query_from_attributes( $attrs ) {
+		$query_args = Newspack_Blocks::build_articles_query( $attrs, 'newspack-blocks/homepage-articles' );
+		return new WP_Query( $query_args );
+	}
+
+	/**
 	 * Create a CAP author (guest author).
 	 *
 	 * @param string $name Author name.
