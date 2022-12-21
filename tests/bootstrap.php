@@ -32,3 +32,4 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 // Start up the WP testing environment.
 require $newspack_blocks_tests_dir . '/includes/bootstrap.php';
+require dirname( dirname( __FILE__ ) ) . '/tests/wp-unittestcase-blocks.php';
