@@ -727,18 +727,7 @@ class Newspack_Blocks {
 		if ( function_exists( 'coauthors_posts_links' ) && ! empty( get_coauthors() ) ) {
 			$authors = get_coauthors();
 			foreach ( $authors as $author ) {
-				// Check if this is a guest author post type.
-				if ( 'guest-author' === get_post_type( $author->ID ) ) {
-					// If yes, make sure the author actually has an avatar set; otherwise, coauthors_get_avatar returns a featured image.
-					if ( get_post_thumbnail_id( $author->ID ) ) {
-						$author->avatar = coauthors_get_avatar( $author, 48 );
-					} else {
-						// If there is no avatar, force it to return the current fallback image.
-						$author->avatar = get_avatar( ' ' );
-					}
-				} else {
-					$author->avatar = coauthors_get_avatar( $author, 48 );
-				}
+				$author->avatar = coauthors_get_avatar( $author, 48 );
 				$author->url = get_author_posts_url( $author->ID, $author->user_nicename );
 			}
 			return $authors;
