@@ -30,15 +30,15 @@ import { isEmpty, pick } from 'lodash';
  */
 import { getMigratedAmount } from '../utils';
 import type {
-	DonateBlockAttributes,
 	DonationSettings,
 	DonationFrequencySlug,
 	DonationAmountsArray,
 	EditState,
+	EditProps,
 } from '../types';
 import TierBasedLayout from './TierBasedLayout';
 import FrequencyBasedLayout from './FrequencyBasedLayout';
-import { AmountValueInput } from './components';
+import { AmountValueInput, AdditionalFields } from './components';
 import {
 	FREQUENCIES,
 	FREQUENCY_SLUGS,
@@ -46,17 +46,11 @@ import {
 	DISABLED_IN_TIERS_BASED_LAYOUT_TIER_INDEX,
 } from '../consts';
 
-type EditProps = {
-	attributes: DonateBlockAttributes;
-	setAttributes: ( attributes: Partial< DonateBlockAttributes > ) => void;
-	className: string;
-};
-
 const TIER_LABELS = [
-	__( 'Low-tier', 'newspack' ),
-	__( 'Mid-tier', 'newspack' ),
-	__( 'High-tier', 'newspack' ),
-	__( 'Other', 'newspack' ),
+	__( 'Low-tier', 'newspack-blocks' ),
+	__( 'Mid-tier', 'newspack-blocks' ),
+	__( 'High-tier', 'newspack-blocks' ),
+	__( 'Other', 'newspack-blocks' ),
 ];
 
 const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
@@ -134,7 +128,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 			<Placeholder
 				icon="warning"
 				label={ __( 'The Donate block will not be rendered.', 'newspack-blocks' ) }
-				instructions={ __( 'The Reader Revenue platform is set to "other".', 'newspack' ) }
+				instructions={ __( 'The Reader Revenue platform is set to "other".', 'newspack-blocks' ) }
 			>
 				<ExternalLink href="/wp-admin/admin.php?page=newspack-reader-revenue-wizard#/donations">
 					{ __( 'Go to donation settings to update the platform.', 'newspack-blocks' ) }
@@ -256,7 +250,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 					) }
 					{ ! isTierBasedLayoutEnabled && (
 						<SelectControl
-							label={ __( 'Default Tab', 'newspack' ) }
+							label={ __( 'Default Tab', 'newspack-blocks' ) }
 							value={ attributes.defaultFrequency }
 							options={ availableFrequencies.map( key => ( {
 								label: FREQUENCIES[ key ],
@@ -388,6 +382,12 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 						onChange={ ( buttonColor: string ) => setAttributes( { buttonColor } ) }
 						label={ __( 'Button Color', 'newspack-blocks' ) }
 					/>
+				</PanelBody>
+				<PanelBody
+					title={ __( 'Additional data fields', 'newspack-blocks' ) }
+					initialOpen={ false }
+				>
+					<AdditionalFields attributes={ attributes } setAttributes={ setAttributes } />
 				</PanelBody>
 				<PanelBody title={ __( 'Campaign', 'newspack-blocks' ) } initialOpen={ false }>
 					<TextControl

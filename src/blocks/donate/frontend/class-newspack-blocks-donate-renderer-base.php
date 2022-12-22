@@ -246,6 +246,20 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 							value="<?php echo esc_attr( $user_display_name ); ?>"
 						>
 					</div>
+					<div class="stripe-payment__row stripe-payment__row--additional-fields">
+						<?php foreach ( $attributes['additionalFields'] as $field ) : ?>
+							<input
+								data-is-additional-field
+								type="<?php echo esc_attr( $field['type'] ); ?>"
+								name="<?php echo esc_attr( $field['name'] ); ?>"
+								placeholder="<?php echo esc_attr( $field['label'] ); ?>"
+								style="width: calc(<?php echo esc_attr( $field['width'] ); ?>% - 0.5rem);"
+								<?php if ( $field['isRequired'] ) : ?>
+									required
+								<?php endif; ?>
+							>
+						<?php endforeach; ?>
+					</div>
 				</div>
 				<?php if ( $is_rendering_fee_checkbox ) : ?>
 					<div class="stripe-payment__row stripe-payment__row--small" id="stripe-fees-amount-container">

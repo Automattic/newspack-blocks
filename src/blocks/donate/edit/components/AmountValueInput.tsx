@@ -1,6 +1,6 @@
-import type { DonateBlockAttributes, ComponentProps, DonationFrequencySlug } from '../types';
+import type { DonateBlockAttributes, ComponentProps, DonationFrequencySlug } from '../../types';
 
-export const AmountValueInput = ( {
+const AmountValueInput = ( {
 	frequencySlug,
 	tierIndex,
 	id,
@@ -67,3 +67,5 @@ export const AmountValueInput = ( {
 		</span>
 	);
 };
+
+export default AmountValueInput;
