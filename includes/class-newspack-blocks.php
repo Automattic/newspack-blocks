@@ -728,7 +728,7 @@ class Newspack_Blocks {
 			$authors = get_coauthors();
 			foreach ( $authors as $author ) {
 				$author->avatar = coauthors_get_avatar( $author, 48 );
-				$author->url = get_author_posts_url( $author->ID, $author->user_nicename );
+				$author->url    = get_author_posts_url( $author->ID, $author->user_nicename );
 			}
 			return $authors;
 		}
