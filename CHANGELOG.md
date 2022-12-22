@@ -1,3 +1,11 @@
+# [1.60.0-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v1.60.0-alpha.1...v1.60.0-alpha.2) (2022-12-22)
+
+
+### Features
+
+* **donate:** additional fields on the form ([#1330](https://github.com/Automattic/newspack-blocks/issues/1330)) ([1f6869d](https://github.com/Automattic/newspack-blocks/commit/1f6869d2c11c374eda7e56e9aa1425383d9dcd97))
+* unregister Jetpack Subscriptions block to avoid confusion with Newspack blocks ([#1337](https://github.com/Automattic/newspack-blocks/issues/1337)) ([7dab5fc](https://github.com/Automattic/newspack-blocks/commit/7dab5fcff9bcf38636becc030bdab1c612a8d0ab))
+
 # [1.60.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.59.1...v1.60.0-alpha.1) (2022-12-20)
 
 
