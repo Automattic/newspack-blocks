@@ -82,6 +82,10 @@
 					"recommendLabel": ""
 				}
 			]
+		},
+		"additionalFields": {
+			"type": "array",
+			"default": []
 		}
 	},
 	"supports": {
