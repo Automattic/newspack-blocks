@@ -84,10 +84,10 @@ class WP_UnitTestCase_Blocks extends WP_UnitTestCase { // phpcs:ignore
 			]
 		);
 		$cap_term_id   = $this->factory->term->create(
-			array(
+			[
 				'name'     => $name,
 				'taxonomy' => 'author',
-			)
+			]
 		);
 		return [
 			'id'      => $cap_author_id,
@@ -98,10 +98,11 @@ class WP_UnitTestCase_Blocks extends WP_UnitTestCase { // phpcs:ignore
 	/**
 	 * Create a post with a CAP author.
 	 *
-	 * @param int $cap_author_term_id CAP author term ID.
+	 * @param array $create_post_args Arguments for post creation.
+	 * @param int   $cap_author_term_id CAP author term ID.
 	 */
-	protected function create_post( $cap_author_term_id = false ) {
-		$post_id = self::factory()->post->create( [ 'post_title' => 'Test Post' ] );
+	protected function create_post( $create_post_args = [], $cap_author_term_id = false ) {
+		$post_id = self::factory()->post->create( $create_post_args );
 		if ( false !== $cap_author_term_id ) {
 			wp_set_post_terms( $post_id, [ $cap_author_term_id ], 'author' );
 		}

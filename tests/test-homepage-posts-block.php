@@ -60,7 +60,7 @@ class HomepagePostsBlockTest extends WP_UnitTestCase_Blocks { // phpcs:ignore
 	 */
 	public function test_hpb_wp_query() {
 		$cap_author = self::create_guest_author();
-		$post_id    = self::create_post( $cap_author['term_id'] );
+		$post_id    = self::create_post( null, $cap_author['term_id'] );
 
 		// Create another post.
 		self::create_post();
