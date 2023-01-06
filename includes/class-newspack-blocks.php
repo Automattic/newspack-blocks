@@ -573,7 +573,7 @@ class Newspack_Blocks {
 		$tag_exclusions       = isset( $attributes['tagExclusions'] ) ? $attributes['tagExclusions'] : array();
 		$category_exclusions  = isset( $attributes['categoryExclusions'] ) ? $attributes['categoryExclusions'] : array();
 		$specific_posts       = isset( $attributes['specificPosts'] ) ? $attributes['specificPosts'] : array();
-		$posts_to_show        = intval( $attributes['postsToShow'] );
+		$posts_to_show        = isset( $attributes['postsToShow'] ) ? intval( $attributes['postsToShow'] ) : get_option( 'posts_per_page' );
 		$specific_mode        = isset( $attributes['specificMode'] ) ? intval( $attributes['specificMode'] ) : false;
 		$args                 = array(
 			'post_type'           => $post_type,

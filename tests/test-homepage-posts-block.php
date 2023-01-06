@@ -95,8 +95,7 @@ class HomepagePostsBlockTest extends WP_UnitTestCase_Blocks { // phpcs:ignore
 
 		$query_with_category_1 = self::query_from_attributes(
 			[
-				'postsToShow' => 5,
-				'categories'  => [ $cat_1_id ],
+				'categories' => [ $cat_1_id ],
 			]
 		);
 		self::assertEquals(
@@ -107,8 +106,7 @@ class HomepagePostsBlockTest extends WP_UnitTestCase_Blocks { // phpcs:ignore
 
 		$query_with_tag_1 = self::query_from_attributes(
 			[
-				'postsToShow' => 5,
-				'tags'        => [ $tag_1_id ],
+				'tags' => [ $tag_1_id ],
 			]
 		);
 		self::assertEquals(
@@ -119,9 +117,8 @@ class HomepagePostsBlockTest extends WP_UnitTestCase_Blocks { // phpcs:ignore
 
 		$query_with_tag_and_category = self::query_from_attributes(
 			[
-				'postsToShow' => 5,
-				'categories'  => [ $cat_1_id ],
-				'tags'        => [ $tag_1_id ],
+				'categories' => [ $cat_1_id ],
+				'tags'       => [ $tag_1_id ],
 			]
 		);
 		self::assertEquals(
@@ -132,7 +129,6 @@ class HomepagePostsBlockTest extends WP_UnitTestCase_Blocks { // phpcs:ignore
 
 		$query_with_tag_and_category_but_dont_match_all = self::query_from_attributes(
 			[
-				'postsToShow'        => 5,
 				'categories'         => [ $cat_1_id ],
 				'tags'               => [ $tag_1_id ],
 				'matchAllConditions' => false,
