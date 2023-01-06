@@ -566,15 +566,16 @@ class Newspack_Blocks {
 		if ( current_user_can( 'edit_others_posts' ) && isset( $attributes['includedPostStatuses'] ) ) {
 			$included_post_statuses = $attributes['includedPostStatuses'];
 		}
-		$authors             = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
-		$categories          = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
-		$tags                = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
-		$tag_exclusions      = isset( $attributes['tagExclusions'] ) ? $attributes['tagExclusions'] : array();
-		$category_exclusions = isset( $attributes['categoryExclusions'] ) ? $attributes['categoryExclusions'] : array();
-		$specific_posts      = isset( $attributes['specificPosts'] ) ? $attributes['specificPosts'] : array();
-		$posts_to_show       = intval( $attributes['postsToShow'] );
-		$specific_mode       = isset( $attributes['specificMode'] ) ? intval( $attributes['specificMode'] ) : false;
-		$args                = array(
+		$match_all_conditions = isset( $attributes['matchAllConditions'] ) ? $attributes['matchAllConditions'] : true;
+		$authors              = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
+		$categories           = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
+		$tags                 = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
+		$tag_exclusions       = isset( $attributes['tagExclusions'] ) ? $attributes['tagExclusions'] : array();
+		$category_exclusions  = isset( $attributes['categoryExclusions'] ) ? $attributes['categoryExclusions'] : array();
+		$specific_posts       = isset( $attributes['specificPosts'] ) ? $attributes['specificPosts'] : array();
+		$posts_to_show        = intval( $attributes['postsToShow'] );
+		$specific_mode        = isset( $attributes['specificMode'] ) ? intval( $attributes['specificMode'] ) : false;
+		$args                 = array(
 			'post_type'           => $post_type,
 			'post_status'         => $included_post_statuses,
 			'suppress_filters'    => false,
@@ -603,17 +604,53 @@ class Newspack_Blocks {
 				);
 			}
 
-			if ( $categories && count( $categories ) ) {
-				$args['category__in'] = $categories;
-			}
-			if ( $tags && count( $tags ) ) {
-				$args['tag__in'] = $tags;
-			}
-			if ( $tag_exclusions && count( $tag_exclusions ) ) {
-				$args['tag__not_in'] = $tag_exclusions;
-			}
-			if ( $category_exclusions && count( $category_exclusions ) ) {
-				$args['category__not_in'] = $category_exclusions;
+			if ( $match_all_conditions ) {
+				if ( $categories && count( $categories ) ) {
+					$args['category__in'] = $categories;
+				}
+				if ( $tags && count( $tags ) ) {
+					$args['tag__in'] = $tags;
+				}
+				if ( $tag_exclusions && count( $tag_exclusions ) ) {
+					$args['tag__not_in'] = $tag_exclusions;
+				}
+				if ( $category_exclusions && count( $category_exclusions ) ) {
+					$args['category__not_in'] = $category_exclusions;
+				}
+			} else {
+				$args['tax_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+					'relation' => 'OR',
+				];
+				if ( $categories && count( $categories ) ) {
+					$args['tax_query'][] = [
+						'taxonomy' => 'category',
+						'field'    => 'term_id',
+						'terms'    => $categories,
+					];
+				}
+				if ( $tags && count( $tags ) ) {
+					$args['tax_query'][] = [
+						'taxonomy' => 'post_tag',
+						'field'    => 'term_id',
+						'terms'    => $tags,
+					];
+				}
+				if ( $tag_exclusions && count( $tag_exclusions ) ) {
+					$args['tax_query'][] = [
+						'taxonomy' => 'post_tag',
+						'field'    => 'term_id',
+						'terms'    => $tag_exclusions,
+						'relation' => 'NOT IN',
+					];
+				}
+				if ( $category_exclusions && count( $category_exclusions ) ) {
+					$args['tax_query'][] = [
+						'taxonomy' => 'category',
+						'field'    => 'term_id',
+						'terms'    => $category_exclusions,
+						'relation' => 'NOT IN',
+					];
+				}
 			}
 
 			$is_co_authors_plus_active = class_exists( 'CoAuthors_Guest_Authors' );

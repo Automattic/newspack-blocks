@@ -32,6 +32,7 @@ const POST_QUERY_ATTRIBUTES = [
 	'showExcerpt',
 	'specificPosts',
 	'specificMode',
+	'matchAllConditions',
 	'tagExclusions',
 	'categoryExclusions',
 	'postType',
@@ -48,6 +49,7 @@ type HomepageArticlesAttributes = {
 	tags: TagId[];
 	specificPosts: string[];
 	specificMode: boolean;
+	matchAllConditions: boolean;
 	tagExclusions: TagId[];
 	categoryExclusions: CategoryId[];
 };
@@ -90,6 +92,7 @@ export const queryCriteriaFromAttributes = ( attributes: Block[ 'attributes' ] )
 		showExcerpt,
 		tags,
 		specificPosts = [],
+		matchAllConditions,
 		specificMode,
 		tagExclusions,
 		categoryExclusions,
@@ -106,6 +109,7 @@ export const queryCriteriaFromAttributes = ( attributes: Block[ 'attributes' ] )
 					postType,
 			  }
 			: {
+					matchAllConditions,
 					postsToShow,
 					categories,
 					authors,

@@ -75,4 +75,73 @@ class HomepagePostsBlockTest extends WP_UnitTestCase_Blocks { // phpcs:ignore
 		self::assertEquals( 1, count( $query->posts ), 'There is one post returned.' );
 		self::assertEquals( $post_id, $query->posts[0]->ID, 'The post returned is the one with the CAP author assigned.' );
 	}
+
+	/**
+	 * `matchAllConditions` option, using taxonomies.
+	 */
+	public function test_hpb_match_all_conditions_taxonomies() {
+		$cat_1_id           = wp_create_term( 'cat-1', 'category' )['term_id'];
+		$tag_1_id           = wp_create_term( 'tag-1' )['term_id'];
+		$post_with_cat_1_id = self::create_post(
+			[
+				'post_category' => [ $cat_1_id ],
+			]
+		);
+		$post_with_tag_1_id = self::create_post(
+			[
+				'tags_input' => [ $tag_1_id ],
+			]
+		);
+
+		$query_with_category_1 = self::query_from_attributes(
+			[
+				'postsToShow' => 5,
+				'categories'  => [ $cat_1_id ],
+			]
+		);
+		self::assertEquals(
+			[ $post_with_cat_1_id ],
+			array_column( $query_with_category_1->posts, 'ID' ),
+			'Only the post with the selected category is returned.'
+		);
+
+		$query_with_tag_1 = self::query_from_attributes(
+			[
+				'postsToShow' => 5,
+				'tags'        => [ $tag_1_id ],
+			]
+		);
+		self::assertEquals(
+			[ $post_with_tag_1_id ],
+			array_column( $query_with_tag_1->posts, 'ID' ),
+			'Only the post with the selected tag is returned.'
+		);
+
+		$query_with_tag_and_category = self::query_from_attributes(
+			[
+				'postsToShow' => 5,
+				'categories'  => [ $cat_1_id ],
+				'tags'        => [ $tag_1_id ],
+			]
+		);
+		self::assertEquals(
+			[],
+			$query_with_tag_and_category->posts,
+			'No posts are returned since no posts have both category-1 and tag-1.'
+		);
+
+		$query_with_tag_and_category_but_dont_match_all = self::query_from_attributes(
+			[
+				'postsToShow'        => 5,
+				'categories'         => [ $cat_1_id ],
+				'tags'               => [ $tag_1_id ],
+				'matchAllConditions' => false,
+			]
+		);
+		self::assertEquals(
+			[ $post_with_cat_1_id, $post_with_tag_1_id ],
+			array_column( $query_with_tag_and_category_but_dont_match_all->posts, 'ID' ),
+			'Both posts are returned if not all conditions should be matched.'
+		);
+	}
 }

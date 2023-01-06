@@ -289,6 +289,7 @@ class Edit extends Component {
 			postLayout,
 			mediaPosition,
 			specificMode,
+			matchAllConditions,
 			tags,
 			tagExclusions,
 			categoryExclusions,
@@ -357,6 +358,8 @@ class Edit extends Component {
 						onSpecificPostsChange={ handleAttributeChange( 'specificPosts' ) }
 						authors={ authors }
 						onAuthorsChange={ handleAttributeChange( 'authors' ) }
+						matchAllConditions={ matchAllConditions }
+						onMatchAllConditionsChange={ handleAttributeChange( 'matchAllConditions' ) }
 						categories={ categories }
 						onCategoriesChange={ handleAttributeChange( 'categories' ) }
 						tags={ tags }

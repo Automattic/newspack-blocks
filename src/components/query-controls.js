@@ -172,6 +172,8 @@ class QueryControls extends Component {
 			onSpecificModeChange,
 			specificPosts,
 			onSpecificPostsChange,
+			matchAllConditions,
+			onMatchAllConditionsChange,
 			authors,
 			onAuthorsChange,
 			categories,
@@ -210,6 +212,17 @@ class QueryControls extends Component {
 				) : (
 					<>
 						<BasicQueryControls { ...this.props } />
+
+						<ToggleControl
+							checked={ matchAllConditions }
+							onChange={ onMatchAllConditionsChange }
+							label={ __( 'Match all conditions', 'newspack-blocks' ) }
+							help={ __(
+								'If selected, only posts matching all conditions below will be shown. Otherwise, the posts will only have to match one of the conditions.',
+								'newspack-blocks'
+							) }
+						/>
+
 						{ onAuthorsChange && (
 							<AutocompleteTokenField
 								tokens={ authors || [] }
