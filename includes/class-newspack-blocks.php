@@ -698,13 +698,23 @@ class Newspack_Blocks {
 				$authors = array_values( $authors );
 				if ( empty( $authors ) && count( $co_authors_names ) ) {
 					// Look for co-authors posts.
-					$args['tax_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+					$co_authors_tax_query = [
 						[
 							'field'    => 'name',
 							'taxonomy' => 'author',
 							'terms'    => $co_authors_names,
 						],
 					];
+
+					if ( isset( $args['tax_query'] ) ) {
+						$args['tax_query']   = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+							'relation' => $match_all_conditions ? 'AND' : 'OR',
+							$args['tax_query'],
+						];
+						$args['tax_query'][] = $co_authors_tax_query; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+					} else {
+						$args['tax_query'] = $co_authors_tax_query; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+					}
 				} elseif ( empty( $co_authors_names ) && count( $authors ) ) {
 					$args['author__in'] = $authors;
 

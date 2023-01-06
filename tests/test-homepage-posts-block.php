@@ -140,4 +140,42 @@ class HomepagePostsBlockTest extends WP_UnitTestCase_Blocks { // phpcs:ignore
 			'Both posts are returned if not all conditions should be matched.'
 		);
 	}
+
+	/**
+	 * `matchAllConditions` option, using taxonomies and co-authors.
+	 */
+	public function test_hpb_match_all_conditions_taxonomies_and_co_authors() {
+		$cat_1_id              = wp_create_term( 'cat-1', 'category' )['term_id'];
+		$post_with_cat_1_id    = self::create_post(
+			[
+				'post_category' => [ $cat_1_id ],
+			]
+		);
+		$cap_author            = self::create_guest_author();
+		$post_by_cap_author_id = self::create_post( null, $cap_author['term_id'] );
+
+		$query_with_cap_author_and_category = self::query_from_attributes(
+			[
+				'categories' => [ $cat_1_id ],
+				'authors'    => [ $cap_author['id'] ],
+			]
+		);
+		self::assertEquals(
+			[],
+			$query_with_cap_author_and_category->posts,
+			'No posts are returned since no posts by the cap-author have category-1.'
+		);
+		$query_with_author_and_category_but_dont_match_all = self::query_from_attributes(
+			[
+				'categories'         => [ $cat_1_id ],
+				'authors'            => [ $cap_author['id'] ],
+				'matchAllConditions' => false,
+			]
+		);
+		self::assertEquals(
+			[ $post_with_cat_1_id, $post_by_cap_author_id ],
+			array_column( $query_with_author_and_category_but_dont_match_all->posts, 'ID' ),
+			'Both posts are returned if not all conditions should be matched.'
+		);
+	}
 }
