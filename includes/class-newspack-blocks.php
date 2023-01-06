@@ -55,7 +55,7 @@ class Newspack_Blocks {
 		add_filter( 'script_loader_tag', [ __CLASS__, 'mark_view_script_as_amp_plus_allowed' ], 10, 2 );
 		add_action( 'jetpack_register_gutenberg_extensions', [ __CLASS__, 'disable_jetpack_donate' ], 99 );
 		add_filter( 'the_content', [ __CLASS__, 'hide_post_content_when_iframe_block_is_fullscreen' ] );
-		add_filter( 'posts_clauses', [ __CLASS__, 'filter_posts_clauses_when_co_authors' ], 999, 2 );
+		add_filter( 'posts_clauses', [ __CLASS__, 'filter_posts_clauses' ], 999, 2 );
 		add_filter( 'posts_groupby', [ __CLASS__, 'group_by_post_id_filter' ], 999 );
 
 		/**
@@ -702,6 +702,100 @@ class Newspack_Blocks {
 	}
 
 	/**
+	 * Filter posts by authors and co-authors. If the query is filtering posts
+	 * by both WP users and CAP guest authors, the SQL clauses must be modified
+	 * directly so that the filtering can happen with a single SQL query.
+	 *
+	 * @param string[] $clauses Associative array of the clauses for the query.
+	 * @param WP_Query $query The WP_Query instance (passed by reference).
+	 */
+	public static function filter_posts_clauses( $clauses, $query ) {
+		// Remove any lingering custom SQL statements.
+		$clauses['join']   = preg_replace( self::SQL_PATTERN, '', $clauses['join'] );
+		$clauses['where']  = preg_replace( self::SQL_PATTERN, '', $clauses['where'] );
+		$is_newspack_query = isset( $query->query_vars['is_newspack_query'] ) && $query->query_vars['is_newspack_query'];
+
+		// If the query isn't coming from this plugin, or $filter_clauses lacks expected data.
+		if (
+			! $is_newspack_query ||
+			! self::$filter_clauses ||
+			! isset( self::$filter_clauses['authors'] ) ||
+			! isset( self::$filter_clauses['coauthors'] )
+		) {
+			return $clauses;
+		}
+
+		global $wpdb;
+
+		$authors_ids      = self::$filter_clauses['authors'];
+		$co_authors_names = self::$filter_clauses['coauthors'];
+
+		// co-author tax query.
+		$tax_query = [
+			[
+				'taxonomy' => 'author',
+				'field'    => 'name',
+				'terms'    => $co_authors_names,
+			],
+		];
+
+		// Generate the tax query SQL.
+		$tax_query = new WP_Tax_Query( $tax_query );
+		$tax_query = $tax_query->get_sql( $wpdb->posts, 'ID' );
+
+		// Generate the author query SQL.
+		$csv          = implode( ',', wp_parse_id_list( (array) $authors_ids ) );
+		$author_names = array_reduce(
+			$authors_ids,
+			function( $acc, $author_id ) {
+				$author_data = get_userdata( $author_id );
+				if ( $author_data ) {
+					$acc[] = $author_data->user_login;
+				}
+				return $acc;
+			},
+			[]
+		);
+
+		// If getting only WP users, we don't want to get posts attributed to CAP guest authors not linked to the given WP users.
+		$exclude = new WP_Tax_Query(
+			[
+				'relation' => 'OR',
+				[
+					'taxonomy' => 'author',
+					'operator' => 'NOT EXISTS',
+				],
+				[
+					'field'    => 'name',
+					'taxonomy' => 'author',
+					'terms'    => $author_names,
+				],
+			]
+		);
+		$exclude = $exclude->get_sql( $wpdb->posts, 'ID' );
+		$exclude = $exclude['where'];
+		$authors = " ( {$wpdb->posts}.post_author IN ( $csv ) $exclude ) ";
+
+		// Make sure the authors are set, the tax query is valid (doesn't contain 0 = 1).
+		if ( false === strpos( $tax_query['where'], ' 0 = 1' ) ) {
+			// Append to the current join parts. The JOIN statment only needs to exist in the clause once.
+			if ( false === strpos( $clauses['join'], $tax_query['join'] ) ) {
+				$clauses['join'] .= '/* newspack-blocks */ ' . $tax_query['join'] . ' /* /newspack-blocks */';
+			}
+
+			$clauses['where'] .= sprintf(
+			// The tax query SQL comes prepended with AND.
+				'%s AND ( %s ( 1=1 %s ) ) %s',
+				'/* newspack-blocks */',
+				empty( $authors_ids ) ? '' : $authors . ' OR',
+				$tax_query['where'],
+				'/* /newspack-blocks */'
+			);
+		}
+		return $clauses;
+	}
+
+	/**
 	 * Loads a template with given data in scope.
 	 *
 	 * @param string $template full Path to the template to be included.
@@ -1135,100 +1229,6 @@ class Newspack_Blocks {
 	 */
 	public static function remove_excerpt_more_filter() {
 		remove_filter( 'excerpt_more', [ __CLASS__, 'more_excerpt' ], 999 );
-	}
-
-	/**
-	 * Filter posts by authors and co-authors. If the query is filtering posts
-	 * by both WP users and CAP guest authors, the SQL clauses must be modified
-	 * directly so that the filtering can happen with a single SQL query.
-	 *
-	 * @param string[] $clauses Associative array of the clauses for the query.
-	 * @param WP_Query $query The WP_Query instance (passed by reference).
-	 */
-	public static function filter_posts_clauses_when_co_authors( $clauses, $query ) {
-		// Remove any lingering custom SQL statements.
-		$clauses['join']   = preg_replace( self::SQL_PATTERN, '', $clauses['join'] );
-		$clauses['where']  = preg_replace( self::SQL_PATTERN, '', $clauses['where'] );
-		$is_newspack_query = isset( $query->query_vars['is_newspack_query'] ) && $query->query_vars['is_newspack_query'];
-
-		// If the query isn't coming from this plugin, or $filter_clauses lacks expected data.
-		if (
-			! $is_newspack_query ||
-			! self::$filter_clauses ||
-			! isset( self::$filter_clauses['authors'] ) ||
-			! isset( self::$filter_clauses['coauthors'] )
-		) {
-			return $clauses;
-		}
-
-		global $wpdb;
-
-		$authors_ids      = self::$filter_clauses['authors'];
-		$co_authors_names = self::$filter_clauses['coauthors'];
-
-		// co-author tax query.
-		$tax_query = [
-			[
-				'taxonomy' => 'author',
-				'field'    => 'name',
-				'terms'    => $co_authors_names,
-			],
-		];
-
-		// Generate the tax query SQL.
-		$tax_query = new WP_Tax_Query( $tax_query );
-		$tax_query = $tax_query->get_sql( $wpdb->posts, 'ID' );
-
-		// Generate the author query SQL.
-		$csv          = implode( ',', wp_parse_id_list( (array) $authors_ids ) );
-		$author_names = array_reduce(
-			$authors_ids,
-			function( $acc, $author_id ) {
-				$author_data = get_userdata( $author_id );
-				if ( $author_data ) {
-					$acc[] = $author_data->user_login;
-				}
-				return $acc;
-			},
-			[]
-		);
-
-		// If getting only WP users, we don't want to get posts attributed to CAP guest authors not linked to the given WP users.
-		$exclude = new WP_Tax_Query(
-			[
-				'relation' => 'OR',
-				[
-					'taxonomy' => 'author',
-					'operator' => 'NOT EXISTS',
-				],
-				[
-					'field'    => 'name',
-					'taxonomy' => 'author',
-					'terms'    => $author_names,
-				],
-			]
-		);
-		$exclude = $exclude->get_sql( $wpdb->posts, 'ID' );
-		$exclude = $exclude['where'];
-		$authors = " ( {$wpdb->posts}.post_author IN ( $csv ) $exclude ) ";
-
-		// Make sure the authors are set, the tax query is valid (doesn't contain 0 = 1).
-		if ( false === strpos( $tax_query['where'], ' 0 = 1' ) ) {
-			// Append to the current join parts. The JOIN statment only needs to exist in the clause once.
-			if ( false === strpos( $clauses['join'], $tax_query['join'] ) ) {
-				$clauses['join'] .= '/* newspack-blocks */ ' . $tax_query['join'] . ' /* /newspack-blocks */';
-			}
-
-			$clauses['where'] .= sprintf(
-			// The tax query SQL comes prepended with AND.
-				'%s AND ( %s ( 1=1 %s ) ) %s',
-				'/* newspack-blocks */',
-				empty( $authors_ids ) ? '' : $authors . ' OR',
-				$tax_query['where'],
-				'/* /newspack-blocks */'
-			);
-		}
-		return $clauses;
 	}
 
 	/**
