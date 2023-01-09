@@ -716,26 +716,41 @@ class Newspack_Blocks {
 						$args['tax_query'] = $co_authors_tax_query; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 					}
 				} elseif ( empty( $co_authors_names ) && count( $authors ) ) {
-					$args['author__in'] = $authors;
+					if ( $match_all_conditions ) {
+						$args['author__in'] = $authors;
+					} else {
+						error_log( 'match not all conditions, with taxonomy and authors ' );
+						// TODO: another query - use clauses.
+					}
 
 					if ( $is_co_authors_plus_active ) {
 						// Don't get any posts that are attributed to other CAP guest authors.
-						$args['tax_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+						$no_author_or_cap_author_tax_query = [
+							'relation' => 'OR',
 							[
-								'relation' => 'OR',
-								[
-									'taxonomy' => 'author',
-									'operator' => 'NOT EXISTS',
-								],
-								[
-									'field'    => 'name',
-									'taxonomy' => 'author',
-									'terms'    => $author_names,
-								],
+								'taxonomy' => 'author',
+								'operator' => 'NOT EXISTS',
+							],
+							[
+								'field'    => 'name',
+								'taxonomy' => 'author',
+								'terms'    => $author_names,
 							],
 						];
+						if ( isset( $args['tax_query'] ) ) {
+							// TODO: with $match_all_conditions
+							$args['tax_query']   = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+								'relation' => 'AND',
+								$args['tax_query'],
+							];
+							$args['tax_query'][] = $no_author_or_cap_author_tax_query; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+						} else {
+							$args['tax_query'] = [ $no_author_or_cap_author_tax_query ]; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+						}
 					}
+					// error_log( print_r( $args, true ) );
 				} else {
+					// TODO: with $match_all_conditions
 					// The query contains both WP users and CAP guest authors. We need to filter the SQL query.
 					self::$filter_clauses = [
 						'authors'   => $authors,
