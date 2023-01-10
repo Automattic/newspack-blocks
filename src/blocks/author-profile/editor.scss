@@ -2,7 +2,7 @@
 @use '../../shared/sass/mixins';
 
 .editor-styles-wrapper {
-	.newspack-blocks-author-profile {
+	.wp-block-newspack-blocks-author-profile {
 		.components-notice {
 			margin: 0 0 2rem 0;
 			width: 100%;
@@ -20,6 +20,14 @@
 
 		a.no-op {
 			pointer-events: none;
+		}
+
+		p {
+			font-size: 1em;
+		}
+
+		.wp-block-newspack-blocks-author-profile__employment {
+			font-size: 0.8em;
 		}
 
 		&__bio {
