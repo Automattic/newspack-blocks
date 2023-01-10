@@ -26,8 +26,8 @@
 			font-size: 1em;
 		}
 
-		.wp-block-newspack-blocks-author-profile__employment {
-			font-size: 0.8em;
+		&__employment {
+			font-size: 0.8em !important;
 		}
 
 		&__bio {
