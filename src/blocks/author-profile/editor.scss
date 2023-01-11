@@ -26,10 +26,6 @@
 			font-size: 1em;
 		}
 
-		&__employment {
-			font-size: 0.8em !important;
-		}
-
 		&__bio {
 			@include mixins.media( mobile ) {
 				flex: 4;
