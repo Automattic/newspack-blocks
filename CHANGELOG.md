@@ -1,3 +1,17 @@
+## [1.60.1](https://github.com/Automattic/newspack-blocks/compare/v1.60.0...v1.60.1) (2023-01-12)
+
+
+### Bug Fixes
+
+* use release version number instead of filemtime for JS asset versions ([623b620](https://github.com/Automattic/newspack-blocks/commit/623b620ffa50c8bd7907188db7529b44cfdf9209))
+
+## [1.60.1-hotfix.1](https://github.com/Automattic/newspack-blocks/compare/v1.60.0...v1.60.1-hotfix.1) (2023-01-12)
+
+
+### Bug Fixes
+
+* use release version number instead of filemtime for JS asset versions ([623b620](https://github.com/Automattic/newspack-blocks/commit/623b620ffa50c8bd7907188db7529b44cfdf9209))
+
 # [1.60.0](https://github.com/Automattic/newspack-blocks/compare/v1.59.1...v1.60.0) (2023-01-09)
 
 
