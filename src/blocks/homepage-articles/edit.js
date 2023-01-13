@@ -237,7 +237,7 @@ class Edit extends Component {
 
 						{ showDate && ! post.newspack_listings_hide_publish_date && (
 							<time className="entry-date published" key="pub-date">
-								{ dateI18n( dateFormat, post.date_gmt ) }
+								{ dateI18n( dateFormat, post.date ) }
 							</time>
 						) }
 					</div>
