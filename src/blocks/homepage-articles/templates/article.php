@@ -8,7 +8,7 @@
 
 call_user_func(
 	function( $data ) {
-		$attributes = $data['attributes'];
+		$attributes = apply_filters( 'newspack_homepage_posts_block_attributes', $data['attributes'] );
 		$authors    = Newspack_Blocks::prepare_authors();
 		$classes    = array();
 		$styles     = '';
