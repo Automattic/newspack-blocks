@@ -113,8 +113,8 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 			<form data-streamlined-config="<?php echo esc_html( htmlspecialchars( wp_json_encode( $configuration['configuration_for_streamlined'] ), ENT_QUOTES, 'UTF-8' ) ); ?>" target="<?php echo esc_attr( $form_target ); ?>">
 				<?php echo self::render_donate_form_input(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				<?php if ( true === $attributes['useModalCheckout'] ) : ?>
-						<input type="hidden" name="modal_checkout" value="1">
-					<?php endif; ?>
+					<input type="hidden" name="modal_checkout" value="1">
+				<?php endif; ?>
 				<div class='wp-block-newspack-blocks-donate__options'>
 					<div class='wp-block-newspack-blocks-donate__frequencies frequencies'>
 						<?php foreach ( $configuration['frequencies'] as $frequency_slug => $frequency_name ) : ?>
@@ -162,8 +162,11 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 			class="tiered <?php echo esc_html( $configuration['container_classnames'] ); ?>"
 			id="<?php echo esc_html( $configuration['uid'] ); ?>"
 		>
-			<form data-streamlined-config="<?php echo esc_html( htmlspecialchars( wp_json_encode( $configuration['configuration_for_streamlined'] ), ENT_QUOTES, 'UTF-8' ) ); ?>">
+			<form data-streamlined-config="<?php echo esc_html( htmlspecialchars( wp_json_encode( $configuration['configuration_for_streamlined'] ), ENT_QUOTES, 'UTF-8' ) ); ?>" target="<?php echo esc_attr( $form_target ); ?>">
 				<?php echo self::render_donate_form_input(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<?php if ( true === $attributes['useModalCheckout'] ) : ?>
+					<input type="hidden" name="modal_checkout" value="1">
+				<?php endif; ?>
 				<div class='wp-block-newspack-blocks-donate__options'>
 					<div class='wp-block-newspack-blocks-donate__frequencies frequencies'>
 						<?php foreach ( $configuration['frequencies'] as $frequency_slug => $frequency_name ) : ?>

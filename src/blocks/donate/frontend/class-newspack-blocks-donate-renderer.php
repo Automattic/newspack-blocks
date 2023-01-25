@@ -29,6 +29,41 @@ class Newspack_Blocks_Donate_Renderer {
 		add_action( 'wp_footer', [ __CLASS__, 'render_modal_checkout_iframe' ] );
 		add_action( 'template_include', [ __CLASS__, 'get_modal_checkout_template' ] );
 		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 2 );
+		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'woocommerce_checkout_fields' ] );
+	}
+
+	/**
+	 * Modify fields for modal checkout.
+	 *
+	 * @param array $fields Checkout fields.
+	 *
+	 * @return array
+	 */
+	public static function woocommerce_checkout_fields( $fields ) {
+		if ( ! class_exists( 'Newspack\Donations' ) || ! method_exists( 'Newspack\Donations', 'is_donation_cart' ) ) {
+			return $fields;
+		}
+		if ( ! \Newspack\Donations::is_donation_cart() ) {
+			return $fields;
+		}
+		if ( is_user_logged_in() ) {
+			$fields['billing'] = [];
+		} elseif ( ! empty( $fields['billing'] ) ) {
+			$fields_to_keep = [
+				'billing_first_name',
+				'billing_last_name',
+				'billing_email',
+				'billing_phone',
+			];
+			$shipping_keys  = array_keys( $fields['billing'] );
+			foreach ( $shipping_keys as $key ) {
+				if ( in_array( $key, $fields_to_keep, true ) ) {
+					continue;
+				}
+				unset( $fields['billing'][ $key ] );
+			}
+		}
+		return $fields;
 	}
 
 	/**
@@ -161,6 +196,9 @@ class Newspack_Blocks_Donate_Renderer {
 					<span class="screen-reader-text"><?php esc_html_e( 'Close', 'newspack-blocks' ); ?></span>
 					<span class="dashicons dashicons-no-alt"></span>
 				</a>
+				<div class="newspack-blocks-donate-checkout-modal__spinner">
+					<span class="spinner is-active"></span>
+				</div>
 				<iframe src="about:blank" name="newspack_modal_checkout"></iframe>
 			</div>
 		</div>

@@ -33,8 +33,9 @@
 		left: 50%;
 		transform: translate( -50%, -50% );
 		width: 100%;
-		max-width: 600px;
-		height: 80%;
+		max-width: 550px;
+		min-height: 200px;
+		max-height: 80%;
 		background: colors.$color__background-body;
 		border-radius: 5px;
 		iframe {
@@ -42,6 +43,27 @@
 			height: 100%;
 			border: 0;
 			border-radius: 5px;
+		}
+	}
+	&__spinner {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate( -50%, -50% );
+		width: 100%;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: #fff;
+		border-radius: 5px;
+		.spinner {
+			width: 25px;
+			height: 25px;
+			border: 2px solid colors.$color__background-body;
+			border-top-color: colors.$color__text-light;
+			border-radius: 50%;
+			animation: spin 1s linear infinite;
 		}
 	}
 	&__close {

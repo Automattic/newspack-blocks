@@ -70,9 +70,11 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 
 		<?php do_action( 'woocommerce_checkout_before_customer_details' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound ?>
 
-		<div id="customer_details">
-			<?php do_action( 'woocommerce_checkout_billing' ); ?>
-		</div>
+		<?php if ( ! is_user_logged_in() ) : ?>
+			<div id="customer_details">
+				<?php do_action( 'woocommerce_checkout_billing' ); ?>
+			</div>
+		<?php endif; ?>
 
 		<?php do_action( 'woocommerce_checkout_after_customer_details' ); ?>
 
