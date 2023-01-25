@@ -55,6 +55,16 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 								],
 							],
 						],
+						'sourceData'        => [
+							'type'       => 'object',
+							'properties' => [
+								'id' => [
+									'type'              => 'string',
+									'sanitize_callback' => 'sanitize_text_field',
+									'required'          => true,
+								],
+							],
+						],
 						'amount'            => [
 							'sanitize_callback' => function ( $amount ) {
 								return (float) abs( $amount );
@@ -81,9 +91,6 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 						],
 						'agree_to_pay_fees' => [
 							'sanitize_callback' => 'rest_sanitize_boolean',
-						],
-						'payment_method_id' => [
-							'sanitize_callback' => 'sanitize_text_field',
 						],
 						'origin'            => [
 							'sanitize_callback' => 'sanitize_text_field',
@@ -188,6 +195,7 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 			[
 				'frequency'         => $frequency,
 				'token_data'        => $request->get_param( 'tokenData' ),
+				'source_data'       => $request->get_param( 'sourceData' ),
 				'email_address'     => $email_address,
 				'full_name'         => $full_name,
 				'amount'            => $request->get_param( 'amount' ),

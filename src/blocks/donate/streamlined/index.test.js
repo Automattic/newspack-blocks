@@ -116,13 +116,13 @@ describe( 'Streamlined Donate block processing', () => {
 			{
 				body: {
 					tokenData: 'abc',
+					source: null,
 					amount: 7.52,
 					email: 'foo@bar.com',
 					full_name: 'Bax',
 					frequency: 'month',
 					newsletter_opt_in: false,
 					clientId: 'amp-123',
-					payment_method_id: 'pm_123',
 					origin: null,
 					additional_fields: [],
 				},
