@@ -115,8 +115,7 @@ describe( 'Streamlined Donate block processing', () => {
 			'/wp-json/newspack-blocks/v1/donate',
 			{
 				body: {
-					tokenData: 'abc',
-					source: null,
+					stripe_source_id: 'src_123',
 					amount: 7.52,
 					email: 'foo@bar.com',
 					full_name: 'Bax',

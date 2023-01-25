@@ -86,9 +86,9 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 		// In card flow, this will happen after user submits their card data in the HTML form.
 		// In payment request flow, this will happen after the user validates the payment in
 		// the browser/OS UI.
-		const payWithToken = async (
-			token: Stripe.Token,
+		const payWithSource = async (
 			source: Stripe.Source,
+			token: Stripe.Token | undefined = undefined,
 			/**
 			 * Overrides for sent donation data. In a card flow the data is
 			 * provided explicitly by the user (via the form), but in payment request flow
@@ -129,8 +129,8 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 
 			const apiRequestPayload = {
 				captchaToken,
-				tokenData: token,
-				sourceData: source || undefined,
+				stripe_tokenization_method: token ? token.card?.tokenization_method : 'card',
+				stripe_source_id: source.id,
 				amount: utils.getTotalAmount( formElement ),
 				email: formValues.email,
 				full_name: formValues.full_name,
@@ -227,11 +227,11 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 			const rendersPaymentRequestButton = await paymentRequest.canMakePayment();
 			if ( rendersPaymentRequestButton ) {
 				paymentRequest.on( 'source', async event => {
-					const result = await payWithToken( paymentRequestToken, event.source, {
+					const result = await payWithSource( event.source, paymentRequestToken, {
 						email: event.payerEmail,
 						full_name: event.payerName,
 					} );
-					// The UI messages are handled in payWithToken, this event listener only
+					// The UI messages are handled in payWithSource, this event listener only
 					// has to notify the browser that the payment is done.
 					event.complete( result?.error ? 'fail' : 'success' );
 				} );
@@ -344,11 +344,6 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 				enableForm();
 			};
 
-			const stripeTokenCreationResult = await stripe.createToken( cardElement );
-			if ( stripeTokenCreationResult.error ) {
-				handleStripeSDKError( stripeTokenCreationResult.error );
-				return;
-			}
 			const sourceCreationResult = await stripe.createSource( cardElement, {
 				type: 'card',
 				owner: { name: formValues.full_name, email: formValues.email },
@@ -357,7 +352,7 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 				handleStripeSDKError( sourceCreationResult.error );
 				return;
 			}
-			await payWithToken( stripeTokenCreationResult.token, sourceCreationResult.source );
+			await payWithSource( sourceCreationResult.source );
 			if ( window.newspackReaderActivation?.refreshAuthentication ) {
 				window.newspackReaderActivation.refreshAuthentication();
 			}
