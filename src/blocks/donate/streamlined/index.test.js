@@ -116,6 +116,7 @@ describe( 'Streamlined Donate block processing', () => {
 			{
 				body: {
 					stripe_source_id: 'src_123',
+					stripe_tokenization_method: 'card',
 					amount: 7.52,
 					email: 'foo@bar.com',
 					full_name: 'Bax',
