@@ -26,6 +26,8 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 
 <form name="checkout" method="post" class="checkout woocommerce-checkout newspack-modal-checkout" action="<?php echo esc_url( wc_get_checkout_url() ); ?>" enctype="multipart/form-data">
 
+	<input type="hidden" name="modal_checkout" value="1" />
+
 	<?php if ( 'toggle' === $order_details_display ) : ?>
 	<div class="cart-summary-header">
 		<h3><?php esc_html_e( 'Summary', 'newspack-blocks' ); ?></h3>

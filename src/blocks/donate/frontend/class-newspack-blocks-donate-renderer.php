@@ -27,9 +27,30 @@ class Newspack_Blocks_Donate_Renderer {
 	public function __construct() {
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'enqueue_modal_checkout_scripts' ] );
 		add_action( 'wp_footer', [ __CLASS__, 'render_modal_checkout_iframe' ] );
+		add_filter( 'woocommerce_get_return_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
 		add_action( 'template_include', [ __CLASS__, 'get_modal_checkout_template' ] );
 		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 2 );
 		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'woocommerce_checkout_fields' ] );
+	}
+
+	/**
+	 * Get the keys of the billing fields to render for logged out users.
+	 *
+	 * @return array
+	 */
+	public static function get_billing_fields_keys() {
+		$fields = [
+			'billing_first_name',
+			'billing_last_name',
+			'billing_email',
+			'billing_phone',
+		];
+		/**
+		 * Filters the billing fields used on modal checkout.
+		 *
+		 * @param array $fields Billing fields.
+		 */
+		return apply_filters( 'newspack_blocks_donate_billing_fields_keys', $fields );
 	}
 
 	/**
@@ -49,15 +70,10 @@ class Newspack_Blocks_Donate_Renderer {
 		if ( is_user_logged_in() ) {
 			$fields['billing'] = [];
 		} elseif ( ! empty( $fields['billing'] ) ) {
-			$fields_to_keep = [
-				'billing_first_name',
-				'billing_last_name',
-				'billing_email',
-				'billing_phone',
-			];
+			$billing_fields = self::get_billing_fields_keys();
 			$shipping_keys  = array_keys( $fields['billing'] );
 			foreach ( $shipping_keys as $key ) {
-				if ( in_array( $key, $fields_to_keep, true ) ) {
+				if ( in_array( $key, $billing_fields, true ) ) {
 					continue;
 				}
 				unset( $fields['billing'][ $key ] );
@@ -194,24 +210,55 @@ class Newspack_Blocks_Donate_Renderer {
 			<div class="newspack-blocks-donate-checkout-modal__content">
 				<a href="#" class="newspack-blocks-donate-checkout-modal__close">
 					<span class="screen-reader-text"><?php esc_html_e( 'Close', 'newspack-blocks' ); ?></span>
-					<span class="dashicons dashicons-no-alt"></span>
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+						<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
+					</svg>
 				</a>
 				<div class="newspack-blocks-donate-checkout-modal__spinner">
 					<span class="spinner is-active"></span>
 				</div>
 				<iframe src="about:blank" name="newspack_modal_checkout"></iframe>
+				<div class="newspack-blocks-donate-checkout-modal__success-message" style="display: none;">
+					<?php esc_html_e( 'Thank you for your donation!', 'newspack-blocks' ); ?>
+				</div>
 			</div>
 		</div>
 		<?php
 	}
 
 	/**
+	 * Return URL for modal checkout "thank you" page.
+	 *
+	 * @param string $url The URL to redirect to.
+	 *
+	 * @return string
+	 */
+	public static function woocommerce_get_return_url( $url ) {
+		if ( ! isset( $_REQUEST['modal_checkout'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return $url;
+		}
+		return add_query_arg(
+			[
+				'modal_checkout' => '1',
+				'order'          => false,
+				'key'            => false,
+			],
+			$url
+		);
+	}
+
+	/**
 	 * Use stripped down template for modal checkout.
 	 *
 	 * @param string $template The template to render.
+	 *
+	 * @return string
 	 */
 	public static function get_modal_checkout_template( $template ) {
-		if ( ! function_exists( 'is_checkout' ) || ! is_checkout() ) {
+		if ( ! function_exists( 'is_checkout' ) || ! function_exists( 'is_order_received_page' ) ) {
+			return $template;
+		}
+		if ( ! is_checkout() && ! is_order_received_page() ) {
 			return $template;
 		}
 		if ( ! isset( $_REQUEST['modal_checkout'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended

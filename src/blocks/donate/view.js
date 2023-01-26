@@ -26,14 +26,14 @@ function domReady( callback ) {
 	document.addEventListener( 'DOMContentLoaded', callback );
 }
 
-let iframeRo;
+let iframeResizeObserver;
 
 function closeCheckout( element ) {
 	const iframe = element.querySelector( 'iframe' );
 	if ( iframe ) {
 		iframe.src = 'about:blank';
 	}
-	iframeRo.disconnect();
+	iframeResizeObserver.disconnect();
 	element.style.display = 'none';
 }
 
@@ -53,22 +53,29 @@ domReady( () => {
 						'.newspack-blocks-donate-checkout-modal__content'
 					);
 					const iframe = modalCheckout.querySelector( 'iframe' );
-					iframeRo = new ResizeObserver( entries => {
+					iframeResizeObserver = new ResizeObserver( entries => {
 						if ( ! entries || ! entries.length ) {
 							return;
 						}
 						const contentRect = entries[ 0 ].contentRect;
 						if ( contentRect ) {
-							modalContent.style.height = contentRect.height + 'px';
+							modalContent.style.height = contentRect.top + contentRect.bottom + 'px';
 						}
 					} );
 					modalCheckout.style.display = 'block';
 					iframe.addEventListener( 'load', () => {
-						// Wait a bit for the iframe to load.
-						iframeRo.observe( iframe.contentWindow.document.body.querySelector( '.woocommerce' ) );
+						iframeResizeObserver.observe(
+							iframe.contentWindow.document.body.querySelector( '.woocommerce' )
+						);
 						spinner.style.display = 'none';
 					} );
 				} );
+			} else {
+				// Unable to use modal checkout, so submit the form normally.
+				form.target = '_top';
+				if ( modalCheckoutInput ) {
+					form.removeChild( modalCheckoutInput );
+				}
 			}
 		} );
 	} );

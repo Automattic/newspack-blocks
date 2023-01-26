@@ -35,7 +35,7 @@
 		width: 100%;
 		max-width: 550px;
 		min-height: 200px;
-		max-height: 80%;
+		max-height: 90%;
 		background: colors.$color__background-body;
 		border-radius: 5px;
 		iframe {
@@ -68,10 +68,8 @@
 	}
 	&__close {
 		position: absolute;
-		top: 0;
-		right: 0;
-		width: 1.5em;
-		height: 1.5em;
+		top: 0.5rem;
+		right: 0.5rem;
 		padding: 0;
 		border: 0;
 		background: transparent;

@@ -1,8 +1,14 @@
+body {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
 .woocommerce {
+	padding: 1rem;
+	font-size: 0.9em;
 	.newspack-modal-checkout {
-		padding: 1rem;
 		margin: 0;
-		font-size: 0.9em;
 		#wc-stripe-payment-request-button-separator {
 			margin: 0;
 		}
