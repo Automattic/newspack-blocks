@@ -41,18 +41,24 @@ domReady( () => {
 	const blocks = document.querySelectorAll( '.wpbnbd' );
 	const modalCheckout = document.querySelector( '.newspack-blocks-donate-checkout-modal' );
 	const spinner = document.querySelector( '.newspack-blocks-donate-checkout-modal__spinner' );
+	const iframeName = 'newspack_modal_checkout';
+	let modalContent, iframe;
+	if ( modalCheckout ) {
+		modalContent = modalCheckout.querySelector( '.newspack-blocks-donate-checkout-modal__content' );
+		iframe = document.createElement( 'iframe' );
+		iframe.name = iframeName;
+		modalContent.appendChild( iframe );
+	}
 	blocks.forEach( block => {
 		const forms = block.querySelectorAll( 'form' );
 		forms.forEach( form => {
 			const modalCheckoutInput = form.querySelector( 'form input[name="modal_checkout"]' );
 			const isModalCheckout = modalCheckoutInput && modalCheckoutInput.value === '1';
-			if ( isModalCheckout && modalCheckout ) {
+			if ( isModalCheckout && modalContent && iframe ) {
+				form.target = iframeName;
 				form.addEventListener( 'submit', () => {
 					spinner.style.display = 'flex';
-					const modalContent = modalCheckout.querySelector(
-						'.newspack-blocks-donate-checkout-modal__content'
-					);
-					const iframe = modalCheckout.querySelector( 'iframe' );
+					modalCheckout.style.display = 'block';
 					iframeResizeObserver = new ResizeObserver( entries => {
 						if ( ! entries || ! entries.length ) {
 							return;
@@ -62,8 +68,22 @@ domReady( () => {
 							modalContent.style.height = contentRect.top + contentRect.bottom + 'px';
 						}
 					} );
-					modalCheckout.style.display = 'block';
 					iframe.addEventListener( 'load', () => {
+						const location = iframe.contentWindow.location;
+						// If RAS is available, set the front-end authentication.
+						if (
+							window.newspackReaderActivation &&
+							location.href.indexOf( 'order-received' ) > -1
+						) {
+							const ras = window.newspackReaderActivation;
+							const params = new Proxy( new URLSearchParams( location.search ), {
+								get: ( searchParams, prop ) => searchParams.get( prop ),
+							} );
+							if ( params.email ) {
+								ras.setReaderEmail( params.email );
+								ras.setAuthenticated( true );
+							}
+						}
 						iframeResizeObserver.observe(
 							iframe.contentWindow.document.body.querySelector( '.woocommerce' )
 						);

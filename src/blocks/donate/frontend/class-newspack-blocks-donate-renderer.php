@@ -43,7 +43,6 @@ class Newspack_Blocks_Donate_Renderer {
 			'billing_first_name',
 			'billing_last_name',
 			'billing_email',
-			'billing_phone',
 		];
 		/**
 		 * Filters the billing fields used on modal checkout.
@@ -238,6 +237,7 @@ class Newspack_Blocks_Donate_Renderer {
 		return add_query_arg(
 			[
 				'modal_checkout' => '1',
+				'email'          => isset( $_REQUEST['billing_email'] ) ? rawurlencode( sanitize_email( wp_unslash( $_REQUEST['billing_email'] ) ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				'order'          => false,
 				'key'            => false,
 			],
