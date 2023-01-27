@@ -93,19 +93,23 @@ class Newspack_Blocks_Donate_Renderer {
 		if ( ! isset( $_REQUEST['modal_checkout'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
-		Newspack_Blocks::enqueue_view_assets( 'donate' );
+
 		$filename    = 'donateCheckoutModal';
+		$handle_slug = 'modal-checkout';
+		$handle      = Newspack_Blocks::SCRIPT_HANDLES[ $handle_slug ];
 		$script_data = Newspack_Blocks::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . '/' . $filename . '.js' );
 		wp_enqueue_script(
-			'donate-modal-checkout',
+			$handle,
 			$script_data['script_path'],
 			[],
 			NEWSPACK_BLOCKS__VERSION,
 			true
 		);
+		wp_script_add_data( $handle, 'async', true );
+		wp_script_add_data( $handle, 'amp-plus', true );
 		$style_path = NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $filename . ( is_rtl() ? '.rtl' : '' ) . '.css';
 		wp_enqueue_style(
-			'donate-modal-checkout',
+			$handle,
 			plugins_url( $style_path, NEWSPACK_BLOCKS__PLUGIN_FILE ),
 			[],
 			NEWSPACK_BLOCKS__VERSION
@@ -185,6 +189,8 @@ class Newspack_Blocks_Donate_Renderer {
 		}
 
 		Newspack_Blocks::enqueue_view_assets( 'donate' );
+		wp_script_add_data( 'newspack-blocks-donate', 'async', true );
+		wp_script_add_data( 'newspack-blocks-donate', 'amp-plus', true );
 
 		if ( true === $attributes['useModalCheckout'] ) {
 			self::$has_modal_checkout = true;

@@ -14,6 +14,7 @@ class Newspack_Blocks {
 	 * Script handles.
 	 */
 	const SCRIPT_HANDLES = [
+		'modal-checkout'  => 'newspack-blocks-donate-modal-checkout',
 		'streamlined'     => 'newspack-blocks-donate-streamlined',
 		'frequency-based' => 'newspack-blocks-donate-frequency-based',
 		'tiers-based'     => 'newspack-blocks-donate-tiers-based',
@@ -364,9 +365,6 @@ class Newspack_Blocks {
 				array(),
 				NEWSPACK_BLOCKS__VERSION
 			);
-		}
-		if ( static::is_amp() ) {
-			return;
 		}
 		$script_data = static::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $type . '/view.js' );
 		if ( $script_data ) {

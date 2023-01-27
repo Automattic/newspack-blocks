@@ -42,8 +42,12 @@ domReady( () => {
 	const modalCheckout = document.querySelector( '.newspack-blocks-donate-checkout-modal' );
 	const spinner = document.querySelector( '.newspack-blocks-donate-checkout-modal__spinner' );
 	const iframeName = 'newspack_modal_checkout';
-	let modalContent, iframe;
+	let modalContent, modalCheckoutInput, iframe;
 	if ( modalCheckout ) {
+		modalCheckoutInput = document.createElement( 'input' );
+		modalCheckoutInput.type = 'hidden';
+		modalCheckoutInput.name = 'modal_checkout';
+		modalCheckoutInput.value = '1';
 		modalContent = modalCheckout.querySelector( '.newspack-blocks-donate-checkout-modal__content' );
 		iframe = document.createElement( 'iframe' );
 		iframe.name = iframeName;
@@ -52,9 +56,8 @@ domReady( () => {
 	blocks.forEach( block => {
 		const forms = block.querySelectorAll( 'form' );
 		forms.forEach( form => {
-			const modalCheckoutInput = form.querySelector( 'form input[name="modal_checkout"]' );
-			const isModalCheckout = modalCheckoutInput && modalCheckoutInput.value === '1';
-			if ( isModalCheckout && modalContent && iframe ) {
+			if ( modalContent && iframe ) {
+				form.appendChild( modalCheckoutInput.cloneNode() );
 				form.target = iframeName;
 				form.addEventListener( 'submit', () => {
 					spinner.style.display = 'flex';
