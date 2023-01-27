@@ -15,7 +15,7 @@ require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/donate/frontend/class-new
  */
 class Newspack_Blocks_Donate_Renderer {
 	/**
-	 * Whether the modal checkout is used by donate block.
+	 * Whether the modal checkout is used by donate any block.
 	 *
 	 * @var boolean
 	 */
