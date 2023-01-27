@@ -57,7 +57,7 @@
 		justify-content: center;
 		background: #fff;
 		border-radius: 5px;
-		.spinner {
+		> span {
 			width: 25px;
 			height: 25px;
 			border: 2px solid colors.$color__background-body;

@@ -222,7 +222,7 @@ class Newspack_Blocks_Donate_Renderer {
 					</svg>
 				</a>
 				<div class="newspack-blocks-donate-checkout-modal__spinner">
-					<span class="spinner is-active"></span>
+					<span></span>
 				</div>
 			</div>
 		</div>
