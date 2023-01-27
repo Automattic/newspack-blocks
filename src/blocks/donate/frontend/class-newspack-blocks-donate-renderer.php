@@ -68,10 +68,12 @@ class Newspack_Blocks_Donate_Renderer {
 			return $fields;
 		}
 		if ( is_user_logged_in() ) {
-			$fields['billing'] = [];
-		} elseif ( ! empty( $fields['billing'] ) ) {
+			$billing_fields = [ 'billing_email' ];
+		} else {
 			$billing_fields = self::get_billing_fields_keys();
-			$shipping_keys  = array_keys( $fields['billing'] );
+		}
+		if ( ! empty( $fields['billing'] ) ) {
+			$shipping_keys = array_keys( $fields['billing'] );
 			foreach ( $shipping_keys as $key ) {
 				if ( in_array( $key, $billing_fields, true ) ) {
 					continue;
@@ -216,10 +218,6 @@ class Newspack_Blocks_Donate_Renderer {
 				</a>
 				<div class="newspack-blocks-donate-checkout-modal__spinner">
 					<span class="spinner is-active"></span>
-				</div>
-				<iframe src="about:blank" name="newspack_modal_checkout"></iframe>
-				<div class="newspack-blocks-donate-checkout-modal__success-message" style="display: none;">
-					<?php esc_html_e( 'Thank you for your donation!', 'newspack-blocks' ); ?>
 				</div>
 			</div>
 		</div>

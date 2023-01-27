@@ -76,6 +76,8 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 			<div id="customer_details">
 				<?php do_action( 'woocommerce_checkout_billing' ); ?>
 			</div>
+		<?php else : ?>
+			<input type="hidden" name="billing_email" value="<?php echo esc_attr( wp_get_current_user()->user_email ); ?>" />
 		<?php endif; ?>
 
 		<?php do_action( 'woocommerce_checkout_after_customer_details' ); ?>
