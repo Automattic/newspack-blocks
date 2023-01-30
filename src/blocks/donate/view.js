@@ -87,9 +87,10 @@ domReady( () => {
 								ras.setAuthenticated( true );
 							}
 						}
-						iframeResizeObserver.observe(
-							iframe.contentWindow.document.body.querySelector( '.woocommerce' )
+						const container = iframe.contentWindow.document.querySelector(
+							'#newspack_modal_checkout'
 						);
+						if ( container ) iframeResizeObserver.observe( container );
 						spinner.style.display = 'none';
 					} );
 				} );

@@ -8,6 +8,8 @@
 wp_head();
 while ( have_posts() ) {
 	the_post();
-	the_content();
+	echo '<div id="newspack_modal_checkout">';
+		the_content();
+	echo '</div>';
 }
 wp_footer();
