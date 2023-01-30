@@ -93,3 +93,19 @@
 		}
 	}
 }
+
+@media ( max-width: 600px ) {
+	.newspack-blocks-donate-checkout-modal {
+		&__content {
+			max-width: 100%;
+			border-radius: 0;
+			top: auto;
+			bottom: 0;
+			left: 0;
+			transform: none;
+			> *:not( .newspack-blocks-donate-checkout-modal__close ) {
+				border-radius: 0;
+			}
+		}
+	}
+}
