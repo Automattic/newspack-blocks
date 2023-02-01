@@ -139,6 +139,7 @@ class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate
 			},
 			false
 		);
+
 		ob_start();
 		?>
 		<div
