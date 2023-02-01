@@ -38,85 +38,74 @@ function closeCheckout( element ) {
 }
 
 domReady( () => {
-	const blocks = document.querySelectorAll( '.wpbnbd' );
 	const modalCheckout = document.querySelector( '.newspack-blocks-donate-checkout-modal' );
+	if ( ! modalCheckout ) {
+		return;
+	}
 	const spinner = document.querySelector( '.newspack-blocks-donate-checkout-modal__spinner' );
 	const iframeName = 'newspack_modal_checkout';
-	let modalContent, modalCheckoutInput, iframe;
-	if ( modalCheckout ) {
-		modalCheckoutInput = document.createElement( 'input' );
-		modalCheckoutInput.type = 'hidden';
-		modalCheckoutInput.name = 'modal_checkout';
-		modalCheckoutInput.value = '1';
-		modalContent = modalCheckout.querySelector( '.newspack-blocks-donate-checkout-modal__content' );
-		iframe = document.createElement( 'iframe' );
-		iframe.name = iframeName;
-		modalContent.appendChild( iframe );
-	}
+	const modalCheckoutInput = document.createElement( 'input' );
+	modalCheckoutInput.type = 'hidden';
+	modalCheckoutInput.name = 'modal_checkout';
+	modalCheckoutInput.value = '1';
+	const modalContent = modalCheckout.querySelector(
+		'.newspack-blocks-donate-checkout-modal__content'
+	);
+	const iframe = document.createElement( 'iframe' );
+	iframe.name = iframeName;
+	modalContent.appendChild( iframe );
+	const blocks = document.querySelectorAll( '.wpbnbd' );
 	blocks.forEach( block => {
 		const forms = block.querySelectorAll( 'form' );
 		forms.forEach( form => {
-			if ( modalContent && iframe ) {
-				form.appendChild( modalCheckoutInput.cloneNode() );
-				form.target = iframeName;
-				form.addEventListener( 'submit', () => {
-					spinner.style.display = 'flex';
-					modalCheckout.style.display = 'block';
-					iframeResizeObserver = new ResizeObserver( entries => {
-						if ( ! entries || ! entries.length ) {
-							return;
-						}
-						const contentRect = entries[ 0 ].contentRect;
-						if ( contentRect ) {
-							modalContent.style.height = contentRect.top + contentRect.bottom + 'px';
-						}
-					} );
-					iframe.addEventListener( 'load', () => {
-						const location = iframe.contentWindow.location;
-						// If RAS is available, set the front-end authentication.
-						if (
-							window.newspackReaderActivation &&
-							location.href.indexOf( 'order-received' ) > -1
-						) {
-							const ras = window.newspackReaderActivation;
-							const params = new Proxy( new URLSearchParams( location.search ), {
-								get: ( searchParams, prop ) => searchParams.get( prop ),
-							} );
-							if ( params.email ) {
-								ras.setReaderEmail( params.email );
-								ras.setAuthenticated( true );
-							}
-						}
-						const container = iframe.contentWindow.document.querySelector(
-							'#newspack_modal_checkout'
-						);
-						if ( container ) iframeResizeObserver.observe( container );
-						spinner.style.display = 'none';
-					} );
+			form.appendChild( modalCheckoutInput.cloneNode() );
+			form.target = iframeName;
+			form.addEventListener( 'submit', () => {
+				spinner.style.display = 'flex';
+				modalCheckout.style.display = 'block';
+				iframeResizeObserver = new ResizeObserver( entries => {
+					if ( ! entries || ! entries.length ) {
+						return;
+					}
+					const contentRect = entries[ 0 ].contentRect;
+					if ( contentRect ) {
+						modalContent.style.height = contentRect.top + contentRect.bottom + 'px';
+					}
 				} );
-			} else {
-				// Unable to use modal checkout, so submit the form normally.
-				form.target = '_top';
-				if ( modalCheckoutInput ) {
-					form.removeChild( modalCheckoutInput );
-				}
-			}
-		} );
-	} );
-	if ( modalCheckout ) {
-		modalCheckout.addEventListener( 'click', ev => {
-			if ( ev.target === modalCheckout ) {
-				closeCheckout( modalCheckout );
-			}
-		} );
-		const closeButtons = modalCheckout.querySelectorAll(
-			'.newspack-blocks-donate-checkout-modal__close'
-		);
-		closeButtons.forEach( button => {
-			button.addEventListener( 'click', ev => {
-				ev.preventDefault();
-				closeCheckout( modalCheckout );
+				iframe.addEventListener( 'load', () => {
+					const location = iframe.contentWindow.location;
+					// If RAS is available, set the front-end authentication.
+					if ( window.newspackReaderActivation && location.href.indexOf( 'order-received' ) > -1 ) {
+						const ras = window.newspackReaderActivation;
+						const params = new Proxy( new URLSearchParams( location.search ), {
+							get: ( searchParams, prop ) => searchParams.get( prop ),
+						} );
+						if ( params.email ) {
+							ras.setReaderEmail( params.email );
+							ras.setAuthenticated( true );
+						}
+					}
+					const container = iframe.contentWindow.document.querySelector(
+						'#newspack_modal_checkout'
+					);
+					if ( container ) iframeResizeObserver.observe( container );
+					spinner.style.display = 'none';
+				} );
 			} );
 		} );
-	}
+	} );
+	modalCheckout.addEventListener( 'click', ev => {
+		if ( ev.target === modalCheckout ) {
+			closeCheckout( modalCheckout );
+		}
+	} );
+	const closeButtons = modalCheckout.querySelectorAll(
+		'.newspack-blocks-donate-checkout-modal__close'
+	);
+	closeButtons.forEach( button => {
+		button.addEventListener( 'click', ev => {
+			ev.preventDefault();
+			closeCheckout( modalCheckout );
+		} );
+	} );
 } );
