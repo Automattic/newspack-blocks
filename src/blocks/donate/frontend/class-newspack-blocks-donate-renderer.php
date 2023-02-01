@@ -26,7 +26,7 @@ class Newspack_Blocks_Donate_Renderer {
 	 */
 	public function __construct() {
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'enqueue_modal_checkout_scripts' ] );
-		add_action( 'wp_footer', [ __CLASS__, 'render_modal_checkout_iframe' ] );
+		add_action( 'wp_footer', [ __CLASS__, 'render_modal_checkout_markup' ] );
 		add_filter( 'woocommerce_get_return_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
 		add_action( 'template_include', [ __CLASS__, 'get_modal_checkout_template' ] );
 		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 2 );
@@ -206,9 +206,9 @@ class Newspack_Blocks_Donate_Renderer {
 	}
 
 	/**
-	 * Render the modal checkout iframe.
+	 * Render the markup necessary for the modal checkout.
 	 */
-	public static function render_modal_checkout_iframe() {
+	public static function render_modal_checkout_markup() {
 		if ( ! self::$has_modal_checkout ) {
 			return;
 		}
