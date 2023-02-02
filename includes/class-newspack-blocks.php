@@ -1047,7 +1047,7 @@ class Newspack_Blocks {
 			// If we have a manually entered excerpt, use that and allow some tags.
 			if ( ! empty( $post->post_excerpt ) ) {
 				$excerpt = $post->post_excerpt;
-				$allowed_tags = '<em>,<i>,<strong>,<b>,<u>,<ul>,<ol>,<li>,<h1>,<h2>,<h3>,<h4>,<h5>,<h6>,<img>,<a>, <p>';
+				$allowed_tags = '<em>,<i>,<strong>,<b>,<u>,<ul>,<ol>,<li>,<h1>,<h2>,<h3>,<h4>,<h5>,<h6>,<img>,<a>,<p>';
 			} else {
 				// If we don't, built an excerpt but allow no tags.
 				$excerpt = $post->post_content;
