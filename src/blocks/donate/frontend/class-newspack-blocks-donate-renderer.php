@@ -29,7 +29,6 @@ class Newspack_Blocks_Donate_Renderer {
 		add_action( 'wp_footer', [ __CLASS__, 'render_modal_checkout_markup' ] );
 		add_filter( 'woocommerce_get_return_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
 		add_action( 'template_include', [ __CLASS__, 'get_modal_checkout_template' ] );
-		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 2 );
 		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'woocommerce_checkout_fields' ] );
 	}
 
@@ -66,19 +65,36 @@ class Newspack_Blocks_Donate_Renderer {
 		if ( ! \Newspack\Donations::is_donation_cart() ) {
 			return $fields;
 		}
-		if ( is_user_logged_in() ) {
-			$billing_fields = [ 'billing_email' ];
-		} else {
-			$billing_fields = self::get_billing_fields_keys();
+		$billing_fields = self::get_billing_fields_keys();
+		if ( empty( $billing_fields ) ) {
+			return $fields;
 		}
-		if ( ! empty( $fields['billing'] ) && ! empty( $billing_fields ) ) {
-			$billing_keys = array_keys( $fields['billing'] );
-			foreach ( $billing_keys as $key ) {
-				if ( in_array( $key, $billing_fields, true ) ) {
+		// If user is logged in, remove fields that are already filled.
+		if ( is_user_logged_in() ) {
+			$customer        = new WC_Customer( get_current_user_id() );
+			$customer_fields = $customer->get_billing();
+			foreach ( $customer_fields as $key => $value ) {
+				$key = 'billing_' . $key;
+
+				// Don't remove email field.
+				if ( 'billing_email' === $key ) {
 					continue;
 				}
-				unset( $fields['billing'][ $key ] );
+				if ( empty( $value ) ) {
+					continue;
+				}
+				$index = array_search( $key, $billing_fields, true );
+				if ( false !== $index ) {
+					unset( $billing_fields[ $index ] );
+				}
 			}
+		}
+		$billing_keys = array_keys( $fields['billing'] );
+		foreach ( $billing_keys as $key ) {
+			if ( in_array( $key, $billing_fields, true ) ) {
+				continue;
+			}
+			unset( $fields['billing'][ $key ] );
 		}
 		return $fields;
 	}
@@ -266,22 +282,16 @@ class Newspack_Blocks_Donate_Renderer {
 		if ( ! isset( $_REQUEST['modal_checkout'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return $template;
 		}
-		return NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/donate/templates/modal-checkout.php';
-	}
-
-	/**
-	 * Use modal checkout template when rendering the checkout form.
-	 *
-	 * @param string $located       Template file.
-	 * @param string $template_name Template name.
-	 *
-	 * @return string Template file.
-	 */
-	public static function wc_get_template( $located, $template_name ) {
-		if ( 'checkout/form-checkout.php' === $template_name && isset( $_REQUEST['modal_checkout'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$located = NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/donate/templates/modal-checkout-form.php';
+		ob_start();
+		wp_head();
+		while ( have_posts() ) {
+			the_post();
+			echo '<div id="newspack_modal_checkout">';
+			the_content();
+			echo '</div>';
 		}
-		return $located;
+		wp_footer();
+		ob_end_flush();
 	}
 }
 new Newspack_Blocks_Donate_Renderer();
