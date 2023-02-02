@@ -244,8 +244,6 @@ class Newspack_Blocks_Donate_Renderer {
 			[
 				'modal_checkout' => '1',
 				'email'          => isset( $_REQUEST['billing_email'] ) ? rawurlencode( sanitize_email( wp_unslash( $_REQUEST['billing_email'] ) ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				'order'          => false,
-				'key'            => false,
 			],
 			$url
 		);
