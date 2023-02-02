@@ -1,6 +1,9 @@
 #newspack_modal_checkout { /* stylelint-disable-line */
 	padding: 1rem;
 	font-size: 0.9em;
+	.order-details-summary h4 {
+		margin: 0;
+	}
 	form {
 		margin: 0;
 		#wc-stripe-payment-request-button-separator {
@@ -12,9 +15,6 @@
 		h3 {
 			margin-top: 1rem;
 			font-size: 1em;
-		}
-		h4 {
-			margin: 0 0 1rem;
 		}
 		p {
 			margin: 0.5rem 0;
