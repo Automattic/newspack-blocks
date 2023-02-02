@@ -71,9 +71,9 @@ class Newspack_Blocks_Donate_Renderer {
 		} else {
 			$billing_fields = self::get_billing_fields_keys();
 		}
-		if ( ! empty( $fields['billing'] ) ) {
-			$shipping_keys = array_keys( $fields['billing'] );
-			foreach ( $shipping_keys as $key ) {
+		if ( ! empty( $fields['billing'] ) && ! empty( $billing_fields ) ) {
+			$billing_keys = array_keys( $fields['billing'] );
+			foreach ( $billing_keys as $key ) {
 				if ( in_array( $key, $billing_fields, true ) ) {
 					continue;
 				}
