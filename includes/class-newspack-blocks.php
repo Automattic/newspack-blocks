@@ -1046,11 +1046,11 @@ class Newspack_Blocks {
 		self::$newspack_blocks_excerpt_closure = function( $text = '', $post = null ) use ( $attributes ) {
 			// If we have a manually entered excerpt, use that and allow some tags.
 			if ( ! empty( $post->post_excerpt ) ) {
-				$excerpt = $post->post_excerpt;
+				$excerpt      = $post->post_excerpt;
 				$allowed_tags = '<em>,<i>,<strong>,<b>,<u>,<ul>,<ol>,<li>,<h1>,<h2>,<h3>,<h4>,<h5>,<h6>,<img>,<a>,<p>';
 			} else {
 				// If we don't, built an excerpt but allow no tags.
-				$excerpt = $post->post_content;
+				$excerpt      = $post->post_content;
 				$allowed_tags = '';
 			}
 
@@ -1070,8 +1070,8 @@ class Newspack_Blocks {
 				$excerpt_length = $attributes['excerptLength'];
 			}
 
-			// Set excerpt length. (https://core.trac.wordpress.org/ticket/29533#comment:3)
-			$excerpt = force_balance_tags( html_entity_decode( wp_trim_words( htmlentities( $excerpt ), $attributes['excerptLength'], static::more_excerpt() ) ) );
+			// Set excerpt length (https://core.trac.wordpress.org/ticket/29533#comment:3).
+			$excerpt = force_balance_tags( html_entity_decode( wp_trim_words( htmlentities( $excerpt ), $excerpt_length, static::more_excerpt() ) ) );
 
 			return $excerpt;
 		};
