@@ -44,10 +44,10 @@
 		top: 50%;
 		left: 50%;
 		transform: translate( -50%, -50% );
-		width: 100%;
-		max-width: 550px;
+		width: calc(100vw - 32px);
+		max-width: 580px;
 		min-height: 200px;
-		max-height: 90%;
+		max-height: calc(100vh - 32px);
 		background: colors.$color__background-body;
 		border-radius: 5px;
 		> *:not( .newspack-blocks-donate-checkout-modal__close ) {
@@ -80,16 +80,19 @@
 	}
 	&__close {
 		position: absolute;
-		top: 0.5rem;
-		right: 0.5rem;
-		padding: 0;
+		top: 0;
+		right: 0;
+		padding: 8px;
 		border: 0;
 		background: transparent;
-		color: colors.$color__text-light;
+		color: colors.$color__text-main;
 		cursor: pointer;
 		&:focus,
 		&:hover {
-			color: colors.$color__text-main;
+			color: colors.$color__text-light;
+		}
+		svg {
+			display: block;
 		}
 	}
 }
@@ -98,6 +101,7 @@
 	.newspack-blocks-donate-checkout-modal {
 		&__content {
 			max-width: 100%;
+			width: 100%;
 			border-radius: 0;
 			top: auto;
 			bottom: 0;
