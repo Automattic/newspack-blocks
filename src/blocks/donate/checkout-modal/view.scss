@@ -10,6 +10,18 @@
 			margin: 0;
 		}
 	}
+	.checkout-billing-summary {
+		border-bottom: 1px solid;
+		p {
+			font-size: 0.9em;
+		}
+		.edit-billing-link {
+			font-size: 0.9em;
+			margin-top: 0.5rem;
+			text-align: right;
+			display: block;
+		}
+	}
 	form {
 		margin: 0;
 		#wc-stripe-payment-request-button-separator {
@@ -27,6 +39,10 @@
 		}
 		#payment button#place_order { /* stylelint-disable-line */
 			margin-bottom: 0;
+		}
+		button {
+			width: 100%;
+			display: block;
 		}
 	}
 }

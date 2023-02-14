@@ -29,6 +29,7 @@ class Newspack_Blocks_Donate_Renderer {
 		add_action( 'wp_footer', [ __CLASS__, 'render_modal_checkout_markup' ] );
 		add_filter( 'woocommerce_get_return_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
 		add_action( 'template_include', [ __CLASS__, 'get_modal_checkout_template' ] );
+		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 2 );
 		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'woocommerce_checkout_fields' ] );
 	}
 
@@ -68,26 +69,6 @@ class Newspack_Blocks_Donate_Renderer {
 		$billing_fields = self::get_billing_fields_keys();
 		if ( empty( $billing_fields ) ) {
 			return $fields;
-		}
-		// If user is logged in, remove fields that are already filled.
-		if ( is_user_logged_in() ) {
-			$customer        = new WC_Customer( get_current_user_id() );
-			$customer_fields = $customer->get_billing();
-			foreach ( $customer_fields as $key => $value ) {
-				$key = 'billing_' . $key;
-
-				// Don't remove email field.
-				if ( 'billing_email' === $key ) {
-					continue;
-				}
-				if ( empty( $value ) ) {
-					continue;
-				}
-				$index = array_search( $key, $billing_fields, true );
-				if ( false !== $index ) {
-					unset( $billing_fields[ $index ] );
-				}
-			}
 		}
 		$billing_keys = array_keys( $fields['billing'] );
 		foreach ( $billing_keys as $key ) {
@@ -292,6 +273,95 @@ class Newspack_Blocks_Donate_Renderer {
 		}
 		wp_footer();
 		ob_end_flush();
+	}
+
+	/**
+	 * Check the nonce for the edit billing request.
+	 *
+	 * @return bool
+	 */
+	private static function validate_edit_billing_request() {
+		if ( ! isset( $_REQUEST['newspack_donate_edit_billing_nonce'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return false;
+		}
+		if ( ! wp_verify_nonce( sanitize_key( $_REQUEST['newspack_donate_edit_billing_nonce'] ), 'newspack_donate_edit_billing' ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Get the prefilled values for billing fields.
+	 *
+	 * @return array
+	 */
+	public static function get_prefilled_fields() {
+		$prefilled_fields = [];
+		if ( ! is_user_logged_in() ) {
+			return $prefilled_fields;
+		}
+		$customer = new WC_Customer( get_current_user_id() );
+		foreach ( $customer->get_billing() as $field_name => $field_value ) {
+			if ( self::validate_edit_billing_request() && isset( $_REQUEST[ 'billing_' . $field_name ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$field_value = sanitize_text_field( wp_unslash( $_REQUEST[ 'billing_' . $field_name ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			}
+			if ( ! empty( $field_value ) ) {
+				$prefilled_fields[ $field_name ] = $field_value;
+			}
+		}
+		return $prefilled_fields;
+	}
+
+	/**
+	 * Whether the current checkout session has all required billing fields filled.
+	 *
+	 * @return bool
+	 */
+	public static function has_filled_required_fields() {
+		if ( ! is_user_logged_in() ) {
+			return false;
+		}
+		$checkout        = WC()->checkout();
+		$fields          = $checkout->get_checkout_fields( 'billing' );
+		$required        = array_filter(
+			$fields,
+			function( $field ) {
+				return isset( $field['required'] ) && $field['required'];
+			}
+		);
+		$required_keys   = array_keys( $required );
+		$customer        = new WC_Customer( get_current_user_id() );
+		$customer_fields = $customer->get_billing();
+		foreach ( $customer_fields as $field_name => $field_value ) {
+			$is_request = false;
+			if ( self::validate_edit_billing_request() && isset( $_REQUEST[ 'billing_' . $field_name ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$field_value = sanitize_text_field( wp_unslash( $_REQUEST[ 'billing_' . $field_name ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$is_request  = true;
+			}
+			if ( in_array( 'billing_' . $field_name, $required_keys, true ) && empty( $field_value ) ) {
+				if ( $is_request ) {
+					/* translators: %s: field name */
+					wc_add_notice( sprintf( __( '%s is a required field.', 'newspack-blocks' ), $fields[ 'billing_' . $field_name ]['label'] ), 'error' );
+				}
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Use modal checkout template when rendering the checkout form.
+	 *
+	 * @param string $located       Template file.
+	 * @param string $template_name Template name.
+	 *
+	 * @return string Template file.
+	 */
+	public static function wc_get_template( $located, $template_name ) {
+		if ( 'checkout/form-checkout.php' === $template_name && isset( $_REQUEST['modal_checkout'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$located = NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/donate/templates/checkout-form.php';
+		}
+		return $located;
 	}
 }
 new Newspack_Blocks_Donate_Renderer();
