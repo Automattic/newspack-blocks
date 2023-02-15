@@ -1,3 +1,5 @@
+@use '../../../shared/sass/colors';
+
 #newspack_modal_checkout { /* stylelint-disable-line */
 	padding: 32px;
 	font-size: 1rem;
@@ -7,7 +9,20 @@
 		padding: 16px;
 
 		h4 {
+			font-size: 1rem;
 			margin: 0;
+
+			> span {
+				color: inherit;
+				font-size: clamp( 1.75rem, 1.75rem + ( ( 1vw - 0.48rem ) * 0.962 ), 2.25rem );
+				font-weight: bold;
+				line-height: 1.434;
+			}
+			
+			.subscription-details {
+				font-size: 1rem;
+				font-weight: normal;
+			}
 		}
 	}
 	.checkout-billing-summary {
@@ -31,18 +46,45 @@
 			margin-bottom: 1rem;
 		}
 		h3 {
-			margin-top: 32px;
-			font-size: 1em;
+			font-size: 1.37rem;
+			margin: 32px 0 0;
 		}
 		p {
-			margin: 0.5rem 0;
+			margin: 16px 0;
+		}
+		.select2-container .select2-selection--single {
+			margin: 0;
 		}
 		#payment button#place_order { /* stylelint-disable-line */
 			margin-bottom: 0;
 		}
 		button {
-			width: 100%;
 			display: block;
+			width: 100%;
+		}
+	}
+	.form-row-first,
+	.form-row-last {
+		width: calc( 50% - 8px );
+	}
+	.form-row-wide + .form-row-first,
+	.form-row-wide + .form-row-first + .form-row-last,
+	.form-row-last + .form-row-first {
+		margin-top: 0;
+	}
+	.select2-container--default {
+		.select2-selection--single {
+			border-color: colors.$color__border;
+			border-radius: 0;
+			height: 44px;
+
+			.select2-selection__rendered {
+				color: inherit;
+				line-height: 44px;
+			}
+			.select2-selection__arrow {
+				height: 42px;
+			}
 		}
 	}
 }
