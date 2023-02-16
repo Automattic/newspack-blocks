@@ -31,6 +31,7 @@ class Newspack_Blocks_Donate_Renderer {
 		add_action( 'template_include', [ __CLASS__, 'get_modal_checkout_template' ] );
 		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 2 );
 		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'woocommerce_checkout_fields' ] );
+		add_filter( 'show_admin_bar', [ __CLASS__, 'show_admin_bar' ] );
 	}
 
 	/**
@@ -244,6 +245,20 @@ class Newspack_Blocks_Donate_Renderer {
 			],
 			$url
 		);
+	}
+
+	/**
+	 * Disable admin bar for modal checkout.
+	 *
+	 * @param bool $show Whether to show the admin bar.
+	 *
+	 * @return bool
+	 */
+	public static function show_admin_bar( $show ) {
+		if ( ! isset( $_REQUEST['modal_checkout'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return $show;
+		}
+		return false;
 	}
 
 	/**
