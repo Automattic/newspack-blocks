@@ -311,18 +311,20 @@ class Newspack_Blocks_Donate_Renderer {
 	 * @return array
 	 */
 	public static function get_prefilled_fields() {
+		$checkout         = WC()->checkout();
+		$fields           = $checkout->get_checkout_fields( 'billing' );
+		$customer         = new WC_Customer( get_current_user_id() );
+		$customer_fields  = $customer->get_billing();
+		$valid_request    = self::validate_edit_billing_request();
 		$prefilled_fields = [];
-		if ( ! is_user_logged_in() ) {
-			return $prefilled_fields;
-		}
-		$customer = new WC_Customer( get_current_user_id() );
-		foreach ( $customer->get_billing() as $field_name => $field_value ) {
-			if ( self::validate_edit_billing_request() && isset( $_REQUEST[ 'billing_' . $field_name ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$field_value = sanitize_text_field( wp_unslash( $_REQUEST[ 'billing_' . $field_name ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		foreach ( $fields as $key => $field ) {
+			$key = str_replace( 'billing_', '', $key );
+			if ( $valid_request && isset( $_REQUEST[ 'billing_' . $key ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$value = sanitize_text_field( wp_unslash( $_REQUEST[ 'billing_' . $key ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			} elseif ( isset( $customer_fields[ $key ] ) ) {
+				$value = $customer_fields[ $key ];
 			}
-			if ( ! empty( $field_value ) ) {
-				$prefilled_fields[ $field_name ] = $field_value;
-			}
+			$prefilled_fields[ $key ] = $value;
 		}
 		return $prefilled_fields;
 	}
@@ -333,9 +335,6 @@ class Newspack_Blocks_Donate_Renderer {
 	 * @return bool
 	 */
 	public static function has_filled_required_fields() {
-		if ( ! is_user_logged_in() ) {
-			return false;
-		}
 		$checkout        = WC()->checkout();
 		$fields          = $checkout->get_checkout_fields( 'billing' );
 		$required        = array_filter(
@@ -347,16 +346,21 @@ class Newspack_Blocks_Donate_Renderer {
 		$required_keys   = array_keys( $required );
 		$customer        = new WC_Customer( get_current_user_id() );
 		$customer_fields = $customer->get_billing();
-		foreach ( $customer_fields as $field_name => $field_value ) {
+		$valid_request   = self::validate_edit_billing_request();
+		foreach ( $required_keys as $key ) {
+			$key        = str_replace( 'billing_', '', $key );
 			$is_request = false;
-			if ( self::validate_edit_billing_request() && isset( $_REQUEST[ 'billing_' . $field_name ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$field_value = sanitize_text_field( wp_unslash( $_REQUEST[ 'billing_' . $field_name ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$is_request  = true;
+			$value      = null;
+			if ( $valid_request && isset( $_REQUEST[ 'billing_' . $key ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$value      = sanitize_text_field( wp_unslash( $_REQUEST[ 'billing_' . $key ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$is_request = true;
+			} elseif ( isset( $customer_fields[ $key ] ) ) {
+				$value = $customer_fields[ $key ];
 			}
-			if ( in_array( 'billing_' . $field_name, $required_keys, true ) && empty( $field_value ) ) {
+			if ( empty( $value ) ) {
 				if ( $is_request ) {
 					/* translators: %s: field name */
-					wc_add_notice( sprintf( __( '%s is a required field.', 'newspack-blocks' ), $fields[ 'billing_' . $field_name ]['label'] ), 'error' );
+					wc_add_notice( sprintf( __( '%s is a required field.', 'newspack-blocks' ), $fields[ 'billing_' . $key ]['label'] ), 'error' );
 				}
 				return false;
 			}
