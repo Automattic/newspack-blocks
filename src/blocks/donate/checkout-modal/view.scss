@@ -7,11 +7,9 @@
 		border: 2px solid;
 		border-radius: 3px;
 		padding: 16px;
-
 		h4 {
 			font-size: 1rem;
 			margin: 0;
-
 			> span {
 				color: inherit;
 				font-size: clamp( 1.75rem, 1.75rem + ( ( 1vw - 0.48rem ) * 0.962 ), 2.25rem );
@@ -24,16 +22,32 @@
 			}
 		}
 	}
+	.woocommerce-billing-fields {
+		margin-bottom: 16px;
+	}
 	.checkout-billing-summary {
-		border-bottom: 1px solid;
+		border-bottom: 1px solid colors.$color__border;
+		padding-bottom: 32px;
+		&__grid {
+			align-items: baseline;
+			display: flex;
+			flex-wrap: wrap;
+			gap: 8px;
+			justify-content: space-between;
+		}
 		p {
-			font-size: 0.9em;
+			font-size: clamp( 0.75rem, 0.75rem + ( ( 1vw - 0.48rem ) * 0.481 ), 1rem );
+			margin: 16px 0 0;
 		}
 		.edit-billing-link {
-			font-size: 0.9em;
-			margin-top: 0.5rem;
-			text-align: right;
-			display: block;
+			color: colors.$color__text-light;
+			font-size: clamp( 0.75rem, 0.75rem + ( ( 1vw - 0.48rem ) * 0.481 ), 1rem );
+			display: inline-block;
+			text-decoration: underline;
+			&:focus,
+			&:hover {
+				color: inherit;
+			}
 		}
 	}
 	form {
@@ -42,7 +56,7 @@
 			margin: 0;
 		}
 		.woocommerce-terms-and-conditions-wrapper {
-			margin-bottom: 1rem;
+			margin: 16px 0;
 		}
 		h3 {
 			font-size: 1.37rem;
@@ -76,7 +90,6 @@
 			border-color: colors.$color__border;
 			border-radius: 0;
 			height: 44px;
-
 			.select2-selection__rendered {
 				color: inherit;
 				line-height: 44px;
@@ -85,5 +98,75 @@
 				height: 42px;
 			}
 		}
+	}
+	.wc_payment_method .payment_box {
+		background: colors.$color__gray-lighter;
+		border-radius: 3px;
+		padding: 16px;
+		p {
+			margin-top: 0;
+		}
+	}
+	.wc-saved-payment-methods {
+		padding: 0;
+	}
+	.woocommerce-error {
+		border-radius: 3px;
+		margin: 0;
+	}
+	.woocommerce-notices-wrapper:not( :empty ) {
+		margin-bottom: 32px;
+	}
+	.woocommerce-privacy-policy-text {
+		color: colors.$color__text-light;
+		p {
+			font-size: clamp( 0.75rem, 0.75rem + ( ( 1vw - 0.48rem ) * 0.481 ), 1rem );
+			margin: 0;
+		}
+	}
+	.woocommerce-thankyou-order-received {
+		align-items: center;
+		border-bottom: 1px solid colors.$color__border;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		margin: 0 0 32px;
+		padding: 0 0 32px;
+		&::before {
+			animation: bounce 250ms ease-in;
+			animation-delay: 1s;
+			animation-fill-mode: forwards;
+			background-color: colors.$color__success;
+			background-image: url( "data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16.7 7.1l-6.3 8.5-3.3-2.5-.9 1.2 4.5 3.4L17.9 8z' fill='white'/%3E%3C/svg%3E" );
+			background-position: 50% 50%;
+			background-repeat: no-repeat;
+			background-size: 24px;
+			border-radius: 50%;
+			content: '';
+			display: block;
+			height: 40px;
+			margin-bottom: 16px;
+			padding: 8px;
+			transform: scale( 0 );
+			width: 40px;
+		}
+	}
+	.woocommerce-order-overview {
+		color: colors.$color__text-light;
+		list-style: none;
+		margin: 16px 0 0;
+		padding: 0;
+	}
+}
+
+@keyframes bounce {
+	0% {
+		transform: scale( 0 );
+	}
+	90% {
+		transform: scale( 1.4 );
+	}
+	100% {
+		transform: scale( 1 );
 	}
 }
