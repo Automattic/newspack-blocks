@@ -1064,7 +1064,7 @@ class Newspack_Blocks {
 			$excerpt = strip_tags( $excerpt, $allowed_tags ); // phpcs:ignore WordPressVIPMinimum.Functions.StripTags.StripTagsTwoParameters
 
 			// Get excerpt length. If not provided a valid length, use the default excerpt length.
-			if ( empty( $attributes['excerptLength'] ) || ! is_int( $attributes['excerptLength'] ) ) {
+			if ( empty( $attributes['excerptLength'] ) || ! is_numeric( $attributes['excerptLength'] ) ) {
 				$excerpt_length = 55;
 			} else {
 				$excerpt_length = $attributes['excerptLength'];
@@ -1075,7 +1075,6 @@ class Newspack_Blocks {
 
 			return $excerpt;
 		};
-
 		add_filter( 'get_the_excerpt', self::$newspack_blocks_excerpt_closure, 11, 2 );
 	}
 
