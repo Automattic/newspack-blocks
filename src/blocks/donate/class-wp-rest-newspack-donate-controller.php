@@ -134,6 +134,10 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 			}
 		}
 
+		if ( ! empty( $request->get_param( 'newspack_popup_id' ) ) ) {
+			$payment_metadata['newspack_popup_id'] = $request->get_param( 'newspack_popup_id' );
+		}
+
 		$frequency = $request->get_param( 'frequency' );
 		$full_name = $request->get_param( 'full_name' );
 		$origin    = $request->get_param( 'origin' );
