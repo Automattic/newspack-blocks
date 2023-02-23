@@ -137,6 +137,7 @@ export const processStreamlinedElements = ( parentElement = document ) =>
 				frequency: formValues.donation_frequency,
 				newsletter_opt_in: Boolean( formValues.newsletter_opt_in ),
 				newspack_popup_id: formValues.newspack_popup_id,
+				_wp_http_referer: formValues._wp_http_referer,
 				clientId: formValues.cid,
 				origin,
 				additional_fields: additionalFields,

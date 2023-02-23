@@ -124,9 +124,15 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 			}
 		}
 
+		$referer = $request->get_param( '_wp_http_referer' );
+		if ( ! $referer ) {
+			$referer = \wp_get_referer();
+		}
+
 		$payment_metadata = [
-			'referer' => \wp_get_referer(),
+			'referer' => $referer,
 		];
+
 		if ( class_exists( 'Newspack\NRH' ) && method_exists( 'Newspack\NRH', 'get_nrh_config' ) ) {
 			$nrh_config = \Newspack\NRH::get_nrh_config();
 			if ( isset( $nrh_config['nrh_salesforce_campaign_id'] ) ) {
