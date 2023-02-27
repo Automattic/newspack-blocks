@@ -311,10 +311,14 @@ class Newspack_Blocks_Donate_Renderer {
 	 * @return array
 	 */
 	public static function get_prefilled_fields() {
-		$checkout         = WC()->checkout();
-		$fields           = $checkout->get_checkout_fields( 'billing' );
-		$customer         = new WC_Customer( get_current_user_id() );
-		$customer_fields  = $customer->get_billing();
+		$checkout        = WC()->checkout();
+		$fields          = $checkout->get_checkout_fields( 'billing' );
+		$customer        = new WC_Customer( get_current_user_id() );
+		$customer_fields = $customer->get_billing();
+		// If the user is logged in and there's no billing email, use the user's email.
+		if ( is_user_logged_in() && empty( $customer_fields['email'] ) ) {
+			$customer_fields['email'] = $customer->get_email();
+		}
 		$valid_request    = self::validate_edit_billing_request();
 		$prefilled_fields = [];
 		foreach ( $fields as $key => $field ) {
@@ -344,20 +348,11 @@ class Newspack_Blocks_Donate_Renderer {
 			}
 		);
 		$required_keys   = array_keys( $required );
-		$customer        = new WC_Customer( get_current_user_id() );
-		$customer_fields = $customer->get_billing();
-		$valid_request   = self::validate_edit_billing_request();
+		$customer_fields = self::get_prefilled_fields();
+		$is_request      = self::validate_edit_billing_request();
 		foreach ( $required_keys as $key ) {
-			$key        = str_replace( 'billing_', '', $key );
-			$is_request = false;
-			$value      = null;
-			if ( $valid_request && isset( $_REQUEST[ 'billing_' . $key ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$value      = sanitize_text_field( wp_unslash( $_REQUEST[ 'billing_' . $key ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$is_request = true;
-			} elseif ( isset( $customer_fields[ $key ] ) ) {
-				$value = $customer_fields[ $key ];
-			}
-			if ( empty( $value ) ) {
+			$key = str_replace( 'billing_', '', $key );
+			if ( empty( $customer_fields[ $key ] ) ) {
 				if ( $is_request ) {
 					/* translators: %s: field name */
 					wc_add_notice( sprintf( __( '%s is a required field.', 'newspack-blocks' ), $fields[ 'billing_' . $key ]['label'] ), 'error' );
