@@ -95,7 +95,10 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 					<h3><?php esc_html_e( 'Billing details', 'newspack-blocks' ); ?></h3>
 					<a href="<?php echo esc_url( add_query_arg( 'edit_billing', 1 ) ); ?>" class="edit-billing-link"><?php esc_html_e( 'Edit', 'newspack-blocks' ); ?></a>
 				</div>
-				<p><?php echo WC()->countries->get_formatted_address( $form_billing_fields ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
+				<p>
+					<?php echo esc_html( $form_billing_fields['email'] ); ?><br/>
+					<?php echo WC()->countries->get_formatted_address( $form_billing_fields ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				</p>
 			</div>
 			<?php foreach ( $form_billing_fields as $key => $value ) : ?>
 				<input type="hidden" name="<?php echo esc_attr( 'billing_' . $key ); ?>" value="<?php echo esc_attr( $value ); ?>" />
