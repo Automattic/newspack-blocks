@@ -41,54 +41,48 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 					'methods'             => \WP_REST_Server::EDITABLE,
 					'callback'            => [ $this, 'api_process_donation' ],
 					'args'                => [
-						'captchaToken'      => [
+						'captchaToken'               => [
 							'sanitize_callback' => 'sanitize_text_field',
 							'required'          => false,
 						],
-						'tokenData'         => [
-							'type'       => 'object',
-							'properties' => [
-								'id' => [
-									'type'              => 'string',
-									'sanitize_callback' => 'sanitize_text_field',
-									'required'          => true,
-								],
-							],
+						'stripe_tokenization_method' => [
+							'sanitize_callback' => 'sanitize_text_field',
 						],
-						'amount'            => [
+						'stripe_source_id'           => [
+							'sanitize_callback' => 'sanitize_text_field',
+							'required'          => true,
+						],
+						'amount'                     => [
 							'sanitize_callback' => function ( $amount ) {
 								return (float) abs( $amount );
 							},
 							'required'          => true,
 						],
-						'frequency'         => [
+						'frequency'                  => [
 							'sanitize_callback' => 'sanitize_text_field',
 							'required'          => true,
 						],
-						'email'             => [
+						'email'                      => [
 							'sanitize_callback' => 'sanitize_text_field',
 							'required'          => true,
 						],
-						'full_name'         => [
+						'full_name'                  => [
 							'sanitize_callback' => 'sanitize_text_field',
 							'required'          => true,
 						],
-						'clientId'          => [
+						'clientId'                   => [
 							'sanitize_callback' => 'sanitize_text_field',
 						],
-						'newsletter_opt_in' => [
+						'newsletter_opt_in'          => [
 							'sanitize_callback' => 'rest_sanitize_boolean',
 						],
-						'agree_to_pay_fees' => [
+						'agree_to_pay_fees'          => [
 							'sanitize_callback' => 'rest_sanitize_boolean',
 						],
-						'payment_method_id' => [
+						'origin'                     => [
 							'sanitize_callback' => 'sanitize_text_field',
 						],
-						'origin'            => [
-							'sanitize_callback' => 'sanitize_text_field',
-						],
-						'additional_fields' => [
+						'additional_fields'          => [
 							'type'  => 'array',
 							'items' => [
 								'type'       => 'object',
@@ -130,14 +124,24 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 			}
 		}
 
+		$referer = $request->get_param( '_wp_http_referer' );
+		if ( ! $referer ) {
+			$referer = \wp_get_referer();
+		}
+
 		$payment_metadata = [
-			'referer' => \wp_get_referer(),
+			'referer' => $referer,
 		];
+
 		if ( class_exists( 'Newspack\NRH' ) && method_exists( 'Newspack\NRH', 'get_nrh_config' ) ) {
 			$nrh_config = \Newspack\NRH::get_nrh_config();
 			if ( isset( $nrh_config['nrh_salesforce_campaign_id'] ) ) {
 				$payment_metadata['sf_campaign_id'] = $nrh_config['nrh_salesforce_campaign_id'];
 			}
+		}
+
+		if ( ! empty( $request->get_param( 'newspack_popup_id' ) ) ) {
+			$payment_metadata['newspack_popup_id'] = $request->get_param( 'newspack_popup_id' );
 		}
 
 		$frequency = $request->get_param( 'frequency' );
@@ -186,14 +190,14 @@ class WP_REST_Newspack_Donate_Controller extends WP_REST_Controller {
 
 		$response = \Newspack\Stripe_Connection::handle_donation(
 			[
-				'frequency'         => $frequency,
-				'token_data'        => $request->get_param( 'tokenData' ),
-				'email_address'     => $email_address,
-				'full_name'         => $full_name,
-				'amount'            => $request->get_param( 'amount' ),
-				'client_metadata'   => $client_metadata,
-				'payment_metadata'  => $payment_metadata,
-				'payment_method_id' => $request->get_param( 'payment_method_id' ),
+				'frequency'           => $frequency,
+				'tokenization_method' => $request->get_param( 'stripe_tokenization_method' ),
+				'source_id'           => $request->get_param( 'stripe_source_id' ),
+				'email_address'       => $email_address,
+				'full_name'           => $full_name,
+				'amount'              => $request->get_param( 'amount' ),
+				'client_metadata'     => $client_metadata,
+				'payment_metadata'    => $payment_metadata,
 			]
 		);
 
