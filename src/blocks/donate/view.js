@@ -54,7 +54,7 @@ domReady( () => {
 	const iframe = document.createElement( 'iframe' );
 	iframe.name = iframeName;
 	modalContent.appendChild( iframe );
-	const blocks = document.querySelectorAll( '.wpbnbd' );
+	const blocks = document.querySelectorAll( '.wpbnbd.wpbnbd--platform-wc' );
 	blocks.forEach( block => {
 		const forms = block.querySelectorAll( 'form' );
 		forms.forEach( form => {
