@@ -31,6 +31,7 @@ class Newspack_Blocks_Donate_Renderer {
 		add_action( 'template_include', [ __CLASS__, 'get_modal_checkout_template' ] );
 		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 2 );
 		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'woocommerce_checkout_fields' ] );
+		add_filter( 'woocommerce_checkout_get_value', [ __CLASS__, 'woocommerce_checkout_get_value' ], 10, 2 );
 		add_filter( 'show_admin_bar', [ __CLASS__, 'show_admin_bar' ] );
 	}
 
@@ -361,6 +362,28 @@ class Newspack_Blocks_Donate_Renderer {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Modify WC checkout field value.
+	 *
+	 * @param null   $value Value.
+	 * @param string $input Input name.
+	 *
+	 * @return string|null Value or null if unaltered.
+	 */
+	public static function woocommerce_checkout_get_value( $value, $input ) {
+		if ( ! isset( $_REQUEST['modal_checkout'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return $value;
+		}
+		$valid_request = self::validate_edit_billing_request(); // This performs nonce verification.
+		if ( ! $valid_request ) {
+			return $value;
+		}
+		if ( isset( $_REQUEST[ $input ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$value = sanitize_text_field( wp_unslash( $_REQUEST[ $input ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		}
+		return $value;
 	}
 
 	/**
