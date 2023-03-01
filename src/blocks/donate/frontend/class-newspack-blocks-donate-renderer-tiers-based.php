@@ -140,6 +140,11 @@ class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate
 			false
 		);
 
+		$is_rendering_stripe_payment_form = false;
+		if ( method_exists( 'Newspack\Donations', 'is_using_streamlined_donate_block' ) ) {
+			$is_rendering_stripe_payment_form = \Newspack\Donations::is_using_streamlined_donate_block();
+		}
+
 		ob_start();
 		?>
 		<div
@@ -148,7 +153,7 @@ class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate
 			data-streamlined-config="<?php echo esc_html( htmlspecialchars( wp_json_encode( $configuration['configuration_for_streamlined'] ), ENT_QUOTES, 'UTF-8' ) ); ?>"
 			data-tiers-based-config="<?php echo esc_html( htmlspecialchars( wp_json_encode( $configuration_for_tiers_based ), ENT_QUOTES, 'UTF-8' ) ); ?>"
 		>
-			<form data-is-init-form <?php echo 'stripe' === $configuration['platform'] ? 'onsubmit="return false;"' : ''; ?>>
+			<form data-is-init-form <?php echo $is_rendering_stripe_payment_form ? 'onsubmit="return false;"' : ''; ?>>
 				<div class="wpbnbd__tiers__view">
 					<?php echo self::render_donate_form_input(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					<input type="hidden" name="<?php echo esc_attr( self::FREQUENCY_PARAM ); ?>" value="<?php echo esc_attr( $intial_selected_frequency ); ?>">

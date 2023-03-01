@@ -263,17 +263,16 @@ class Newspack_Blocks {
 	}
 
 	/**
-	 * Should the Donate block be a "streamlined" block?
+	 * Should the Donate block be a Stripe-only block?
 	 *
 	 * @return bool True if it can.
 	 */
 	public static function is_rendering_stripe_payment_form() {
 		if (
 			class_exists( 'Newspack\Donations' )
-			&& method_exists( 'Newspack\Donations', 'can_use_streamlined_donate_block' )
-			&& method_exists( 'Newspack\Donations', 'is_platform_stripe' )
+			&& method_exists( 'Newspack\Donations', 'is_using_streamlined_donate_block' )
 		) {
-			return \Newspack\Donations::can_use_streamlined_donate_block() && \Newspack\Donations::is_platform_stripe();
+			return \Newspack\Donations::is_using_streamlined_donate_block();
 		}
 		return false;
 	}
