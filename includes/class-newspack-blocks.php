@@ -14,10 +14,11 @@ class Newspack_Blocks {
 	 * Script handles.
 	 */
 	const SCRIPT_HANDLES = [
-		'modal-checkout'  => 'newspack-blocks-donate-modal-checkout',
-		'streamlined'     => 'newspack-blocks-donate-streamlined',
-		'frequency-based' => 'newspack-blocks-donate-frequency-based',
-		'tiers-based'     => 'newspack-blocks-donate-tiers-based',
+		'modal-checkout'       => 'newspack-blocks-donate-modal-checkout',
+		'modal-checkout-block' => 'newspack-blocks-donate-modal-checkout-block',
+		'streamlined'          => 'newspack-blocks-donate-streamlined',
+		'frequency-based'      => 'newspack-blocks-donate-frequency-based',
+		'tiers-based'          => 'newspack-blocks-donate-tiers-based',
 	];
 
 	/**
@@ -74,7 +75,7 @@ class Newspack_Blocks {
 	}
 
 	/**
-	 * Modify the Donate block script to allow it as an "AMP Plus" script.
+	 * Modify the Donate block scripts to allow it as an "AMP Plus" script.
 	 *
 	 * @param string $tag HTML of the script tag.
 	 * @param string $handle The script handle.
