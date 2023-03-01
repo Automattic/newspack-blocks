@@ -92,37 +92,16 @@ class Newspack_Blocks_Donate_Renderer {
 		if ( ! isset( $_REQUEST['modal_checkout'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
-
-		$filename    = 'donateCheckoutModal';
-		$handle_slug = 'modal-checkout';
-		$handle      = Newspack_Blocks::SCRIPT_HANDLES[ $handle_slug ];
-		$script_data = Newspack_Blocks::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . '/' . $filename . '.js' );
-		wp_enqueue_script(
-			$handle,
-			$script_data['script_path'],
-			[],
-			NEWSPACK_BLOCKS__VERSION,
-			true
-		);
-		wp_script_add_data( $handle, 'async', true );
-		wp_script_add_data( $handle, 'amp-plus', true );
-		$style_path = NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $filename . ( is_rtl() ? '.rtl' : '' ) . '.css';
-		wp_enqueue_style(
-			$handle,
-			plugins_url( $style_path, NEWSPACK_BLOCKS__PLUGIN_FILE ),
-			[],
-			NEWSPACK_BLOCKS__VERSION
-		);
+		self::enqueue_scripts( 'modal-checkout', [] );
 	}
 
 	/**
 	 * Enqueue frontend scripts and styles.
 	 *
 	 * @param string $handle_slug The slug of the script to enqueue.
+	 * @param array  $dependencies The dependencies of the script to enqueue.
 	 */
-	private static function enqueue_scripts( $handle_slug ) {
-		$dependencies = [ 'wp-i18n' ];
-
+	private static function enqueue_scripts( $handle_slug, $dependencies = [ 'wp-i18n' ] ) {
 		if ( 'streamlined' === $handle_slug ) {
 			if ( method_exists( '\Newspack\Recaptcha', 'can_use_captcha' ) && \Newspack\Recaptcha::can_use_captcha() ) {
 				$dependencies[] = \Newspack\Recaptcha::SCRIPT_HANDLE;
@@ -139,6 +118,9 @@ class Newspack_Blocks_Donate_Renderer {
 			case 'tiers-based':
 				$filename = 'tiersBased';
 				break;
+			case 'modal-checkout':
+				$filename = 'donateCheckoutModal';
+				break;
 			default:
 				$filename = false;
 				break;
@@ -148,18 +130,20 @@ class Newspack_Blocks_Donate_Renderer {
 			return;
 		}
 
+		$handle      = Newspack_Blocks::SCRIPT_HANDLES[ $handle_slug ];
 		$script_data = Newspack_Blocks::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . '/' . $filename . '.js' );
 		wp_enqueue_script(
-			Newspack_Blocks::SCRIPT_HANDLES[ $handle_slug ],
+			$handle,
 			$script_data['script_path'],
 			$dependencies,
 			NEWSPACK_BLOCKS__VERSION,
 			true
 		);
+		wp_script_add_data( $handle, 'async', true );
 
 		$style_path = NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $filename . ( is_rtl() ? '.rtl' : '' ) . '.css';
 		wp_enqueue_style(
-			Newspack_Blocks::SCRIPT_HANDLES[ $handle_slug ],
+			$handle,
 			plugins_url( $style_path, NEWSPACK_BLOCKS__PLUGIN_FILE ),
 			[],
 			NEWSPACK_BLOCKS__VERSION
