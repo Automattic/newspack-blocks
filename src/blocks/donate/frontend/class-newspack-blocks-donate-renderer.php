@@ -83,7 +83,7 @@ class Newspack_Blocks_Donate_Renderer {
 	}
 
 	/**
-	 * Enqueue frontend scripts and styles.
+	 * Enqueue scripts for the checkout page rendered in a modal.
 	 */
 	public static function enqueue_modal_checkout_scripts() {
 		if ( ! function_exists( 'is_checkout' ) || ! is_checkout() ) {
@@ -120,6 +120,9 @@ class Newspack_Blocks_Donate_Renderer {
 				break;
 			case 'modal-checkout':
 				$filename = 'donateCheckoutModal';
+				break;
+			case 'modal-checkout-block':
+				$filename = 'donateCheckoutBlock';
 				break;
 			default:
 				$filename = false;
@@ -175,7 +178,8 @@ class Newspack_Blocks_Donate_Renderer {
 		wp_script_add_data( 'newspack-blocks-donate', 'async', true );
 		wp_script_add_data( 'newspack-blocks-donate', 'amp-plus', true );
 
-		if ( true === $attributes['useModalCheckout'] ) {
+		if ( true === $attributes['useModalCheckout'] && ! $configuration['is_rendering_stripe_payment_form'] ) {
+			self::enqueue_scripts( 'modal-checkout-block' );
 			self::$has_modal_checkout = true;
 		}
 
