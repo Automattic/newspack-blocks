@@ -1,3 +1,10 @@
+# [1.64.0-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v1.64.0-alpha.1...v1.64.0-alpha.2) (2023-03-08)
+
+
+### Bug Fixes
+
+* **modal-checkout:** z-index when used w/ Campaigns ([d47c1e8](https://github.com/Automattic/newspack-blocks/commit/d47c1e84269a0e20fbbc8df204ab189cd3fc1144))
+
 # [1.64.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.63.0...v1.64.0-alpha.1) (2023-03-03)
 
 
