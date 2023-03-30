@@ -713,7 +713,7 @@ class Newspack_Blocks {
 			}
 		}
 
-		return $args;
+		return apply_filters( 'newspack_blocks_build_articles_query', $args, $attributes, $block_name ); 
 	}
 
 	/**
