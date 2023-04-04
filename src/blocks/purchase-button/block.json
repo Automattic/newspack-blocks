@@ -1,0 +1,84 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "newspack-blocks/purchase-button",
+	"title": "Purchase Button",
+	"category": "newspack",
+	"description": "Button for purchasing a product with a single click.",
+	"keywords": [ "woocommerce", "product", "purchase" ],
+	"textdomain": "newspack-blocks",
+	"attributes": {
+		"title": {
+			"type": "string",
+			"source": "attribute",
+			"selector": "a",
+			"attribute": "title"
+		},
+		"text": {
+			"type": "string",
+			"source": "html",
+			"selector": "a"
+		},
+		"placeholder": {
+			"type": "string"
+		},
+		"backgroundColor": {
+			"type": "string"
+		},
+		"textColor": {
+			"type": "string"
+		},
+		"gradient": {
+			"type": "string"
+		}
+	},
+	"supports": {
+		"anchor": true,
+		"align": true,
+		"alignWide": true,
+		"color": {
+			"__experimentalSkipSerialization": true,
+			"gradients": true,
+			"__experimentalDefaultControls": {
+				"background": true,
+				"text": true
+			}
+		},
+		"typography": {
+			"fontSize": true,
+			"lineHeight": true,
+			"__experimentalFontFamily": true,
+			"__experimentalFontWeight": true,
+			"__experimentalFontStyle": true,
+			"__experimentalTextTransform": true,
+			"__experimentalTextDecoration": true,
+			"__experimentalLetterSpacing": true,
+			"__experimentalDefaultControls": {
+				"fontSize": true
+			}
+		},
+		"reusable": false,
+		"shadow": true,
+		"spacing": {
+			"__experimentalSkipSerialization": true,
+			"padding": [ "horizontal", "vertical" ],
+			"__experimentalDefaultControls": {
+				"padding": true
+			}
+		},
+		"__experimentalBorder": {
+			"radius": true,
+			"__experimentalSkipSerialization": true,
+			"__experimentalDefaultControls": {
+				"radius": true
+			}
+		},
+		"__experimentalSelector": ".wp-block-button .wp-block-button__link"
+	},
+	"styles": [
+		{ "name": "fill", "label": "Fill", "isDefault": true },
+		{ "name": "outline", "label": "Outline" }
+	],
+	"editorStyle": "wp-block-button-editor",
+	"style": "wp-block-button"
+}
