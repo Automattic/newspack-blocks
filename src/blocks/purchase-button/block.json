@@ -8,6 +8,9 @@
 	"keywords": [ "woocommerce", "product", "purchase" ],
 	"textdomain": "newspack-blocks",
 	"attributes": {
+		"product": {
+			"type": "string"
+		},
 		"title": {
 			"type": "string",
 			"source": "attribute",
@@ -15,9 +18,7 @@
 			"attribute": "title"
 		},
 		"text": {
-			"type": "string",
-			"source": "html",
-			"selector": "a"
+			"type": "string"
 		},
 		"placeholder": {
 			"type": "string"
@@ -57,7 +58,6 @@
 				"fontSize": true
 			}
 		},
-		"reusable": false,
 		"shadow": true,
 		"spacing": {
 			"__experimentalSkipSerialization": true,
@@ -72,8 +72,7 @@
 			"__experimentalDefaultControls": {
 				"radius": true
 			}
-		},
-		"__experimentalSelector": ".wp-block-button .wp-block-button__link"
+		}
 	},
 	"styles": [
 		{ "name": "fill", "label": "Fill", "isDefault": true },

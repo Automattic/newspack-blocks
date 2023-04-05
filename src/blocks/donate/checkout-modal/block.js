@@ -33,23 +33,23 @@ function closeCheckout( element ) {
 }
 
 domReady( () => {
-	const modalCheckout = document.querySelector( '.newspack-blocks-donate-checkout-modal' );
+	const modalCheckout = document.querySelector( '.newspack-blocks-checkout-modal' );
 	if ( ! modalCheckout ) {
 		return;
 	}
-	const spinner = document.querySelector( '.newspack-blocks-donate-checkout-modal__spinner' );
+	const spinner = document.querySelector( '.newspack-blocks-checkout-modal__spinner' );
 	const iframeName = 'newspack_modal_checkout';
 	const modalCheckoutInput = document.createElement( 'input' );
 	modalCheckoutInput.type = 'hidden';
 	modalCheckoutInput.name = 'modal_checkout';
 	modalCheckoutInput.value = '1';
-	const modalContent = modalCheckout.querySelector(
-		'.newspack-blocks-donate-checkout-modal__content'
-	);
+	const modalContent = modalCheckout.querySelector( '.newspack-blocks-checkout-modal__content' );
 	const iframe = document.createElement( 'iframe' );
 	iframe.name = iframeName;
 	modalContent.appendChild( iframe );
-	const blocks = document.querySelectorAll( '.wpbnbd.wpbnbd--platform-wc' );
+	const blocks = document.querySelectorAll(
+		'.wpbnbd.wpbnbd--platform-wc,.wp-block-newspack-blocks-purchase-button'
+	);
 	blocks.forEach( block => {
 		const forms = block.querySelectorAll( 'form' );
 		forms.forEach( form => {
@@ -95,9 +95,7 @@ domReady( () => {
 			closeCheckout( modalCheckout );
 		}
 	} );
-	const closeButtons = modalCheckout.querySelectorAll(
-		'.newspack-blocks-donate-checkout-modal__close'
-	);
+	const closeButtons = modalCheckout.querySelectorAll( '.newspack-blocks-checkout-modal__close' );
 	closeButtons.forEach( button => {
 		button.addEventListener( 'click', ev => {
 			ev.preventDefault();

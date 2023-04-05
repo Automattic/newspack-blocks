@@ -1,0 +1,17 @@
+@use '~@wordpress/base-styles/colors' as wp-colors;
+
+.newspack-purchase-button {
+	&__product-field {
+		&__selected {
+			.components-button {
+				display: block;
+				width: 100%;
+				text-align: left;
+			}
+		}
+		/* Workaround for hard-coded help text in FormTokenField. */
+		.components-form-token-field__help {
+			display: none;
+		}
+	}
+}
