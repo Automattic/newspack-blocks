@@ -1,11 +1,11 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 2,
-	"name": "newspack-blocks/purchase-button",
-	"title": "Purchase Button",
+	"name": "newspack-blocks/checkout-button",
+	"title": "Checkout Button",
 	"category": "newspack",
-	"description": "Button for purchasing a product with a single click.",
-	"keywords": [ "woocommerce", "product", "purchase" ],
+	"description": "Quick checkout button for WooCommerce products.",
+	"keywords": [ "woocommerce", "product", "checkout", "button" ],
 	"textdomain": "newspack-blocks",
 	"attributes": {
 		"product": {

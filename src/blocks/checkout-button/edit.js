@@ -26,7 +26,7 @@ import apiFetch from '@wordpress/api-fetch';
  */
 import './edit.scss';
 
-function ProductField( props ) {
+function ProductControl( props ) {
 	const [ suggestions, setSuggestions ] = useState( {} );
 	const [ selected, setSelected ] = useState( false );
 	const [ isChanging, setIsChanging ] = useState( false );
@@ -64,10 +64,10 @@ function ProductField( props ) {
 	}
 	const debouncedFetchProductSuggestions = debounce( fetchSuggestions, 200 );
 	return (
-		<div className="newspack-purchase-button__product-field">
+		<div className="newspack-checkout-button__product-field">
 			{ selected && ! isChanging ? (
 				<BaseControl
-					className="newspack-purchase-button__product-field__selected"
+					className="newspack-checkout-button__product-field__selected"
 					help={ __( 'Click to change the selected product', 'newspack-blocks' ) }
 				>
 					<Button
@@ -101,7 +101,7 @@ function ProductField( props ) {
 	);
 }
 
-function PurchaseButtonEdit( props ) {
+function CheckoutButtonEdit( props ) {
 	const { attributes, setAttributes, className } = props;
 	const { placeholder, style, text, product } = attributes;
 
@@ -150,7 +150,7 @@ function PurchaseButtonEdit( props ) {
 			</div>
 			<InspectorControls>
 				<PanelBody title={ __( 'Product', 'newspack-blocks' ) }>
-					<ProductField
+					<ProductControl
 						value={ product }
 						onChange={ value => setAttributes( { product: value } ) }
 					/>
@@ -160,4 +160,4 @@ function PurchaseButtonEdit( props ) {
 	);
 }
 
-export default PurchaseButtonEdit;
+export default CheckoutButtonEdit;
