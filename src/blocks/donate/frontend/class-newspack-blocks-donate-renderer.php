@@ -149,7 +149,7 @@ class Newspack_Blocks_Donate_Renderer {
 		wp_script_add_data( 'newspack-blocks-donate', 'amp-plus', true );
 
 		if ( true === $attributes['useModalCheckout'] && ! $configuration['is_rendering_stripe_payment_form'] ) {
-			\Newspack_Blocks\Modal_Checkout::enqueue_trigger_script();
+			\Newspack_Blocks\Modal_Checkout::enqueue_trigger();
 		}
 
 		if ( $configuration['is_tier_based_layout'] ) {

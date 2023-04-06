@@ -118,7 +118,7 @@ final class Modal_Checkout {
 		);
 
 		// Redirect to checkout.
-		\wp_safe_redirect( apply_filters( 'newspack_blocks_checkout_url', $checkout_url, $donation_value, $donation_frequency ) );
+		\wp_safe_redirect( apply_filters( 'newspack_blocks_checkout_url', $checkout_url ) );
 		exit;
 	}
 
@@ -174,7 +174,7 @@ final class Modal_Checkout {
 	/**
 	 * Enqueue script for triggering modal checkout.
 	 */
-	public static function enqueue_trigger_script() {
+	public static function enqueue_trigger() {
 		self::$has_modal_checkout = true;
 		wp_enqueue_script(
 			'newspack-blocks-modal-checkout-trigger',
@@ -182,6 +182,12 @@ final class Modal_Checkout {
 			[],
 			\NEWSPACK_BLOCKS__VERSION,
 			true
+		);
+		wp_enqueue_style(
+			'newspack-blocks-modal-checkout-trigger',
+			plugins_url( 'dist/modalCheckoutTrigger.css', \NEWSPACK_BLOCKS__PLUGIN_FILE ),
+			[],
+			\NEWSPACK_BLOCKS__VERSION
 		);
 	}
 
