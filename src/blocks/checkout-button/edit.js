@@ -17,7 +17,7 @@ import {
 	__experimentalUseColorProps as useColorProps,
 	__experimentalGetSpacingClassesAndStyles as useSpacingProps,
 } from '@wordpress/block-editor';
-import { PanelBody, BaseControl, FormTokenField, Button } from '@wordpress/components';
+import { PanelBody, BaseControl, TextControl, FormTokenField, Button } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 
@@ -30,6 +30,9 @@ function ProductControl( props ) {
 	const [ suggestions, setSuggestions ] = useState( {} );
 	const [ selected, setSelected ] = useState( false );
 	const [ isChanging, setIsChanging ] = useState( false );
+	function isNYP() {
+		return selected?.meta_data?.some( meta => meta.key === '_nyp' && meta.value === 'yes' );
+	}
 	function fetchSuggestions( search ) {
 		return apiFetch( {
 			path: `/wc/v2/products?search=${ encodeURIComponent( search ) }`,
@@ -61,23 +64,37 @@ function ProductControl( props ) {
 		const productName = tokens[ 0 ];
 		const productId = invert( suggestions )[ productName ];
 		props.onChange( productId );
+		props.onChangePrice(); // Reset custom price.
 	}
 	const debouncedFetchProductSuggestions = debounce( fetchSuggestions, 200 );
 	return (
 		<div className="newspack-checkout-button__product-field">
 			{ selected && ! isChanging ? (
-				<BaseControl
-					className="newspack-checkout-button__product-field__selected"
-					help={ __( 'Click to change the selected product', 'newspack-blocks' ) }
-				>
-					<Button
-						isSecondary
-						onClick={ () => setIsChanging( true ) }
-						aria-label={ __( 'Change the selected product', 'newspack-blocks' ) }
+				<>
+					<BaseControl
+						className="newspack-checkout-button__product-field__selected"
+						help={ __( 'Click to change the selected product', 'newspack-blocks' ) }
 					>
-						{ selected.name }
-					</Button>
-				</BaseControl>
+						<Button
+							isSecondary
+							onClick={ () => setIsChanging( true ) }
+							aria-label={ __( 'Change the selected product', 'newspack-blocks' ) }
+						>
+							{ selected.name }
+						</Button>
+					</BaseControl>
+					{ isNYP() && (
+						<TextControl
+							label={ __( 'Custom Price', 'newspack-blocks' ) }
+							help={ __(
+								'This product has "Name Your Price" toggled on. You can set the custom price for this checkout.',
+								'newspack-blocks'
+							) }
+							value={ props.price || selected.price }
+							onChange={ props.onChangePrice }
+						/>
+					) }
+				</>
 			) : (
 				<>
 					<FormTokenField
@@ -103,7 +120,7 @@ function ProductControl( props ) {
 
 function CheckoutButtonEdit( props ) {
 	const { attributes, setAttributes, className } = props;
-	const { placeholder, style, text, product } = attributes;
+	const { placeholder, style, text, product, price } = attributes;
 
 	function setButtonText( newText ) {
 		// Remove anchor tags from button text content.
@@ -152,7 +169,9 @@ function CheckoutButtonEdit( props ) {
 				<PanelBody title={ __( 'Product', 'newspack-blocks' ) }>
 					<ProductControl
 						value={ product }
+						price={ price }
 						onChange={ value => setAttributes( { product: value } ) }
+						onChangePrice={ value => setAttributes( { price: value } ) }
 					/>
 				</PanelBody>
 			</InspectorControls>

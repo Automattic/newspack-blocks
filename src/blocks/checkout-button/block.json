@@ -11,6 +11,9 @@
 		"product": {
 			"type": "string"
 		},
+		"price": {
+			"type": "string"
+		},
 		"title": {
 			"type": "string",
 			"source": "attribute",

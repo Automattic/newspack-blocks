@@ -1,4 +1,4 @@
 /**
  * Style dependencies
  */
-import './view.scss';
+import './checkout.scss';

@@ -18,7 +18,7 @@ final class Modal_Checkout {
 	 *
 	 * @var boolean
 	 */
-	private static $has_modal_checkout = false;
+	private static $has_modal = false;
 
 	/**
 	 * Initialize hooks.
@@ -27,10 +27,10 @@ final class Modal_Checkout {
 		add_action( 'template_redirect', [ __CLASS__, 'process_checkout_request' ] );
 		add_action( 'wp_footer', [ __CLASS__, 'render_modal_markup' ], 100 );
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'enqueue_scripts' ] );
+		add_filter( 'show_admin_bar', [ __CLASS__, 'show_admin_bar' ] );
 		add_action( 'template_include', [ __CLASS__, 'get_checkout_template' ] );
 		add_filter( 'woocommerce_get_return_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
 		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 2 );
-		add_filter( 'show_admin_bar', [ __CLASS__, 'show_admin_bar' ] );
 		add_filter( 'woocommerce_checkout_get_value', [ __CLASS__, 'woocommerce_checkout_get_value' ], 10, 2 );
 	}
 
@@ -83,16 +83,23 @@ final class Modal_Checkout {
 			);
 		}
 
-		\WC()->cart->add_to_cart(
-			$product_id,
-			1,
-			0,
-			[],
-			[
-				'referer'           => $referer,
-				'newspack_popup_id' => filter_input( INPUT_GET, 'newspack_popup_id', FILTER_SANITIZE_NUMBER_INT ),
-			]
-		);
+		$cart_item_data = [ 'referer' => $referer ];
+
+		$newspack_popup_id = filter_input( INPUT_GET, 'newspack_popup_id', FILTER_SANITIZE_NUMBER_INT );
+		if ( $newspack_popup_id ) {
+			$cart_item_data['newspack_popup_id'] = $newspack_popup_id;
+		}
+
+		/** Apply NYP custom price */
+		if ( class_exists( 'WC_Name_Your_Price_Helpers' ) ) {
+			$is_product_nyp = \WC_Name_Your_Price_Helpers::is_nyp( $product_id );
+			$price          = filter_input( INPUT_GET, 'price', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+			if ( $is_product_nyp && $price ) {
+				$cart_item_data['nyp'] = (float) \WC_Name_Your_Price_Helpers::standardize_number( $price );
+			}
+		}
+
+		\WC()->cart->add_to_cart( $product_id, 1, 0, [], $cart_item_data );
 
 		$query_args = [];
 
@@ -126,7 +133,7 @@ final class Modal_Checkout {
 	 * Render the markup necessary for the modal checkout.
 	 */
 	public static function render_modal_markup() {
-		if ( ! self::$has_modal_checkout ) {
+		if ( ! self::$has_modal ) {
 			return;
 		}
 		?>
@@ -174,18 +181,18 @@ final class Modal_Checkout {
 	/**
 	 * Enqueue script for triggering modal checkout.
 	 */
-	public static function enqueue_trigger() {
-		self::$has_modal_checkout = true;
+	public static function enqueue_modal() {
+		self::$has_modal = true;
 		wp_enqueue_script(
-			'newspack-blocks-modal-checkout-trigger',
-			plugins_url( 'dist/modalCheckoutTrigger.js', \NEWSPACK_BLOCKS__PLUGIN_FILE ),
+			'newspack-blocks-modal',
+			plugins_url( 'dist/modal.js', \NEWSPACK_BLOCKS__PLUGIN_FILE ),
 			[],
 			\NEWSPACK_BLOCKS__VERSION,
 			true
 		);
 		wp_enqueue_style(
-			'newspack-blocks-modal-checkout-trigger',
-			plugins_url( 'dist/modalCheckoutTrigger.css', \NEWSPACK_BLOCKS__PLUGIN_FILE ),
+			'newspack-blocks-modal',
+			plugins_url( 'dist/modal.css', \NEWSPACK_BLOCKS__PLUGIN_FILE ),
 			[],
 			\NEWSPACK_BLOCKS__VERSION
 		);
@@ -295,11 +302,11 @@ final class Modal_Checkout {
 	 */
 	public static function woocommerce_checkout_get_value( $value, $input ) {
 		if ( ! isset( $_REQUEST['modal_checkout'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			return $value;
+			return null;
 		}
 		$valid_request = self::validate_edit_billing_request(); // This performs nonce verification.
 		if ( ! $valid_request ) {
-			return $value;
+			return null;
 		}
 		if ( isset( $_REQUEST[ $input ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$value = sanitize_text_field( wp_unslash( $_REQUEST[ $input ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended

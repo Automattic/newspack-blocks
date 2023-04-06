@@ -29,6 +29,6 @@ add_action( 'init', __NAMESPACE__ . '\\register_block' );
  * @return string
  */
 function render_callback( $attributes, $content ) {
-	\Newspack_Blocks\Modal_Checkout::enqueue_trigger();
+	\Newspack_Blocks\Modal_Checkout::enqueue_modal();
 	return $content;
 }
