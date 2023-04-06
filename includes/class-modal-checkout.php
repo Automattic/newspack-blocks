@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final class Modal_Checkout {
 	/**
-	 * Whether the modal checkout is used by donate any block.
+	 * Whether the modal checkout has been enqueued.
 	 *
 	 * @var boolean
 	 */
