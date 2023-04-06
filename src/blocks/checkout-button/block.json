@@ -38,6 +38,7 @@
 	},
 	"supports": {
 		"anchor": true,
+		"align": [ "center", "full" ],
 		"color": {
 			"__experimentalSkipSerialization": true,
 			"gradients": true,
@@ -79,6 +80,6 @@
 		{ "name": "fill", "label": "Fill", "isDefault": true },
 		{ "name": "outline", "label": "Outline" }
 	],
-	"editorStyle": "wp-block-button-editor",
-	"style": "wp-block-button"
+	"editorStyle": "newspack-checkout-button-editor",
+	"style": "newspack-checkout-block-button"
 }

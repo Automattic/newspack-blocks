@@ -30,5 +30,6 @@ add_action( 'init', __NAMESPACE__ . '\\register_block' );
  */
 function render_callback( $attributes, $content ) {
 	\Newspack_Blocks\Modal_Checkout::enqueue_modal();
+	\Newspack_Blocks::enqueue_view_assets( 'checkout-button' );
 	return $content;
 }

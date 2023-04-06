@@ -166,6 +166,7 @@ function CheckoutButtonEdit( props ) {
 					className={ classnames(
 						className,
 						'wp-block-button__link',
+						'wp-block-newspack-blocks-checkout-button__button',
 						colorProps.className,
 						borderProps.className,
 						{
