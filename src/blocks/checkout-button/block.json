@@ -4,7 +4,7 @@
 	"name": "newspack-blocks/checkout-button",
 	"title": "Checkout Button",
 	"category": "newspack",
-	"description": "Quick checkout button for WooCommerce products.",
+	"description": "Modal checkout button for WooCommerce products.",
 	"keywords": [ "woocommerce", "product", "checkout", "button" ],
 	"textdomain": "newspack-blocks",
 	"attributes": {
@@ -38,8 +38,6 @@
 	},
 	"supports": {
 		"anchor": true,
-		"align": true,
-		"alignWide": true,
 		"color": {
 			"__experimentalSkipSerialization": true,
 			"gradients": true,

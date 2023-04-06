@@ -17,7 +17,14 @@ import {
 	__experimentalUseColorProps as useColorProps,
 	__experimentalGetSpacingClassesAndStyles as useSpacingProps,
 } from '@wordpress/block-editor';
-import { PanelBody, BaseControl, TextControl, FormTokenField, Button } from '@wordpress/components';
+import {
+	PanelBody,
+	BaseControl,
+	TextControl,
+	FormTokenField,
+	Button,
+	Spinner,
+} from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 
@@ -27,6 +34,7 @@ import apiFetch from '@wordpress/api-fetch';
 import './edit.scss';
 
 function ProductControl( props ) {
+	const [ inFlight, setInFlight ] = useState( false );
 	const [ suggestions, setSuggestions ] = useState( {} );
 	const [ selected, setSelected ] = useState( false );
 	const [ isChanging, setIsChanging ] = useState( false );
@@ -34,23 +42,29 @@ function ProductControl( props ) {
 		return selected?.meta_data?.some( meta => meta.key === '_nyp' && meta.value === 'yes' );
 	}
 	function fetchSuggestions( search ) {
+		setInFlight( true );
 		return apiFetch( {
 			path: `/wc/v2/products?search=${ encodeURIComponent( search ) }`,
-		} ).then( products => {
-			const _suggestions = {};
-			products.forEach( product => {
-				_suggestions[ product.id ] = `${ product.id }: ${ product.name }`;
-			} );
-			setSuggestions( _suggestions );
-		} );
+		} )
+			.then( products => {
+				const _suggestions = {};
+				products.forEach( product => {
+					_suggestions[ product.id ] = `${ product.id }: ${ product.name }`;
+				} );
+				setSuggestions( _suggestions );
+			} )
+			.finally( () => setInFlight( false ) );
 	}
 	function fetchSaved() {
+		setInFlight( true );
 		return apiFetch( {
 			path: `/wc/v2/products/${ props.value }`,
-		} ).then( product => {
-			setSuggestions( { [ product.id ]: `${ product.id }: ${ product.name }` } );
-			setSelected( product );
-		} );
+		} )
+			.then( product => {
+				setSuggestions( { [ product.id ]: `${ product.id }: ${ product.name }` } );
+				setSelected( product );
+			} )
+			.finally( () => setInFlight( false ) );
 	}
 	useEffect( () => {
 		setIsChanging( false );
@@ -67,6 +81,9 @@ function ProductControl( props ) {
 		props.onChangePrice(); // Reset custom price.
 	}
 	const debouncedFetchProductSuggestions = debounce( fetchSuggestions, 200 );
+	if ( props.value && ! selected && inFlight ) {
+		return <Spinner />;
+	}
 	return (
 		<div className="newspack-checkout-button__product-field">
 			{ selected && ! isChanging ? (
