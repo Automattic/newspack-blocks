@@ -14,12 +14,6 @@
 		"price": {
 			"type": "string"
 		},
-		"title": {
-			"type": "string",
-			"source": "attribute",
-			"selector": "a",
-			"attribute": "title"
-		},
 		"text": {
 			"type": "string"
 		},

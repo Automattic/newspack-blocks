@@ -16,7 +16,7 @@ import {
 } from '@wordpress/block-editor';
 
 export default function save( { attributes, className } ) {
-	const { textAlign, fontSize, style, text, title, product, price } = attributes;
+	const { textAlign, fontSize, style, text, product, price } = attributes;
 
 	if ( ! text || ! product ) {
 		return null;
@@ -42,10 +42,6 @@ export default function save( { attributes, className } ) {
 		...spacingProps.style,
 	};
 
-	// The use of a `title` attribute here is soft-deprecated, but still applied
-	// if it had already been assigned, for the sake of backward-compatibility.
-	// A title will no longer be assigned for new or updated button block links.
-
 	const wrapperClasses = classnames( className, {
 		[ `has-custom-font-size` ]: fontSize || style?.typography?.fontSize,
 	} );
@@ -56,7 +52,6 @@ export default function save( { attributes, className } ) {
 				<RichText.Content
 					tagName="button"
 					className={ buttonClasses }
-					title={ title }
 					style={ buttonStyle }
 					value={ text }
 				/>
