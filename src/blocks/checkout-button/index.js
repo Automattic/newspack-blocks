@@ -1,4 +1,9 @@
 /**
+ * WordPress dependencies
+ */
+import { Icon, button } from '@wordpress/icons';
+
+/**
  * Internal dependencies
  */
 import edit from './edit';
@@ -12,6 +17,11 @@ export { name };
 
 export const settings = {
 	...metadata,
+
+	icon: {
+		src: <Icon icon={ button } />,
+		foreground: '#36f',
+	},
 	edit,
 	save,
 };
