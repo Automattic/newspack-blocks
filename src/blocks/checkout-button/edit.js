@@ -154,6 +154,7 @@ function CheckoutButtonEdit( props ) {
 			<div
 				{ ...blockProps }
 				className={ classnames( blockProps.className, {
+					[ `wp-block-button` ]: true,
 					[ `has-custom-font-size` ]: blockProps.style.fontSize,
 				} ) }
 			>
