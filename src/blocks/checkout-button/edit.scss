@@ -11,6 +11,14 @@
 		.components-form-token-field__help {
 			display: none;
 		}
+		&__tokenfield {
+			position: relative;
+			.components-spinner {
+				position: absolute;
+				top: 2em;
+				right: 0;
+			}
+		}
 	}
 }
 

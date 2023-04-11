@@ -77,10 +77,17 @@ function ProductControl( props ) {
 	function onChange( tokens ) {
 		const productName = tokens[ 0 ];
 		const productId = invert( suggestions )[ productName ];
+		setIsChanging( false );
 		props.onChange( productId );
 		props.onChangePrice(); // Reset custom price.
 	}
 	const debouncedFetchProductSuggestions = debounce( fetchSuggestions, 200 );
+	const handleInputChange = value => {
+		setInFlight( true );
+		if ( value.length > 2 ) {
+			debouncedFetchProductSuggestions( value );
+		}
+	};
 	if ( props.value && ! selected && inFlight ) {
 		return <Spinner />;
 	}
@@ -114,16 +121,19 @@ function ProductControl( props ) {
 				</>
 			) : (
 				<>
-					<FormTokenField
-						placeholder={
-							props.placeholder || __( 'Type to search for a product…', 'newspack-blocks' )
-						}
-						label={ __( 'Select a product', 'newspack-blocks' ) }
-						maxLength={ 1 }
-						onChange={ onChange }
-						onInputChange={ input => debouncedFetchProductSuggestions( input ) }
-						suggestions={ Object.values( suggestions ) }
-					/>
+					<div className="newspack-checkout-button__product-field__tokenfield">
+						<FormTokenField
+							placeholder={
+								props.placeholder || __( 'Type to search for a product…', 'newspack-blocks' )
+							}
+							label={ __( 'Select a product', 'newspack-blocks' ) }
+							maxLength={ 1 }
+							onChange={ onChange }
+							onInputChange={ handleInputChange }
+							suggestions={ Object.values( suggestions ) }
+						/>
+						{ inFlight && <Spinner /> }
+					</div>
 					{ selected && (
 						<Button isSecondary onClick={ () => setIsChanging( false ) }>
 							{ __( 'Cancel', 'newspack-blocks' ) }
