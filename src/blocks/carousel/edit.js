@@ -150,6 +150,7 @@ class Edit extends Component {
 			authors,
 			autoplay,
 			categories,
+			brands,
 			delay,
 			hideControls,
 			imageFit,
@@ -373,6 +374,8 @@ class Edit extends Component {
 								onCategoriesChange={ value => setAttributes( { categories: value } ) }
 								tags={ tags }
 								onTagsChange={ value => setAttributes( { tags: value } ) }
+								brands={ brands }
+								onBrandsChange={ value => setAttributes( { brands: value } ) }
 								specificMode={ specificMode }
 								onSpecificModeChange={ _specificMode =>
 									setAttributes( { specificMode: _specificMode } )

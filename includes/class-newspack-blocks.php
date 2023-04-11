@@ -593,6 +593,15 @@ class Newspack_Blocks {
 		$specific_posts      = isset( $attributes['specificPosts'] ) ? $attributes['specificPosts'] : array();
 		$posts_to_show       = intval( $attributes['postsToShow'] );
 		$specific_mode       = isset( $attributes['specificMode'] ) ? intval( $attributes['specificMode'] ) : false;
+
+		/*
+		TODO: Work out how to abstract the supported custom taxonomies
+		$supported_custom_taxonomies = apply_filters( 'newspack_block_supported_custom_taxonomies', [] );
+		foreach ( $supported_custom_taxonomies as $custom_tax ) {
+			$custom_tax = isset( $attributes[$custom_tax] ) ? $attributes[$custom_tax] : array();
+		}
+		*/
+
 		$args                = array(
 			'post_type'           => $post_type,
 			'post_status'         => $included_post_statuses,
@@ -621,23 +630,18 @@ class Newspack_Blocks {
 					get_the_ID() ? [ get_the_ID() ] : []
 				);
 			}
-
 			if ( $categories && count( $categories ) ) {
 				$args['category__in'] = $categories;
 			}
-
 			if ( $tags && count( $tags ) ) {
 				$args['tag__in'] = $tags;
 			}
-
 			if ( $tag_exclusions && count( $tag_exclusions ) ) {
 				$args['tag__not_in'] = $tag_exclusions;
 			}
-
 			if ( $category_exclusions && count( $category_exclusions ) ) {
 				$args['category__not_in'] = $category_exclusions;
 			}
-
 			if ( class_exists( 'Newspack_Multibranded_Site\Customizations\Theme_Colors' ) ) {
 				if ( $brands && count( $brands ) ) {
 					$args['tax_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
@@ -650,7 +654,6 @@ class Newspack_Blocks {
 					];
 				}
 			}
-
 			$is_co_authors_plus_active = class_exists( 'CoAuthors_Guest_Authors' );
 
 			if ( $authors && count( $authors ) ) {
