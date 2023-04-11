@@ -72,6 +72,15 @@ if (
 	IS_SUBTITLE_SUPPORTED_IN_THEME = true;
 }
 
+let IS_MULTIBRANDED_SITE;
+if (
+	typeof window === 'object' &&
+	window.newspack_blocks_data &&
+	window.newspack_blocks_data.multibranded_sites_enabled
+) {
+	IS_MULTIBRANDED_SITE = true;
+}
+
 const landscapeIcon = (
 	<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
 		<Path
@@ -343,6 +352,14 @@ class Edit extends Component {
 
 		const handleAttributeChange = key => value => setAttributes( { [ key ]: value } );
 
+		let brandProps = '';
+		{ IS_MULTIBRANDED_SITE && (
+			brandProps = {
+				brands: brands,
+				onBrandsChange: handleAttributeChange( 'brands' )
+			}
+		) }
+
 		return (
 			<Fragment>
 				<PanelBody title={ __( 'Display Settings', 'newspack-blocks' ) } initialOpen={ true }>
@@ -359,15 +376,17 @@ class Edit extends Component {
 						onAuthorsChange={ handleAttributeChange( 'authors' ) }
 						categories={ categories }
 						onCategoriesChange={ handleAttributeChange( 'categories' ) }
-						brands={ brands }
-						onBrandsChange={ handleAttributeChange( 'brands' ) }
 						tags={ tags }
 						onTagsChange={ handleAttributeChange( 'tags' ) }
+						{ ...brandProps }
 						tagExclusions={ tagExclusions }
 						onTagExclusionsChange={ handleAttributeChange( 'tagExclusions' ) }
 						categoryExclusions={ categoryExclusions }
 						onCategoryExclusionsChange={ handleAttributeChange( 'categoryExclusions' ) }
 						postType={ postType }
+
+
+
 					/>
 					{ postLayout === 'grid' && (
 						<Fragment>
