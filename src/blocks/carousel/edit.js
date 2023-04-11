@@ -244,13 +244,12 @@ class Edit extends Component {
 			},
 		];
 
-		let brandProps = '';
-		{ IS_MULTIBRANDED_SITE && (
-			brandProps = {
-				brands: brands,
-				onBrandsChange: value => setAttributes( { brands: value } )
-			}
-		) }
+		const brandProps = IS_MULTIBRANDED_SITE
+			? {
+					brands,
+					onBrandsChange: value => setAttributes( { brands: value } ),
+			  }
+			: '';
 
 		return (
 			<Fragment>

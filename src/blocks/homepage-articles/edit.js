@@ -352,13 +352,12 @@ class Edit extends Component {
 
 		const handleAttributeChange = key => value => setAttributes( { [ key ]: value } );
 
-		let brandProps = '';
-		{ IS_MULTIBRANDED_SITE && (
-			brandProps = {
-				brands: brands,
-				onBrandsChange: handleAttributeChange( 'brands' )
-			}
-		) }
+		const brandProps = IS_MULTIBRANDED_SITE
+			? {
+					brands,
+					onBrandsChange: handleAttributeChange( 'brands' ),
+			  }
+			: '';
 
 		return (
 			<Fragment>
@@ -384,9 +383,6 @@ class Edit extends Component {
 						categoryExclusions={ categoryExclusions }
 						onCategoryExclusionsChange={ handleAttributeChange( 'categoryExclusions' ) }
 						postType={ postType }
-
-
-
 					/>
 					{ postLayout === 'grid' && (
 						<Fragment>
