@@ -593,7 +593,6 @@ class Newspack_Blocks {
 		$specific_posts      = isset( $attributes['specificPosts'] ) ? $attributes['specificPosts'] : array();
 		$posts_to_show       = intval( $attributes['postsToShow'] );
 		$specific_mode       = isset( $attributes['specificMode'] ) ? intval( $attributes['specificMode'] ) : false;
-
 		$args                = array(
 			'post_type'           => $post_type,
 			'post_status'         => $included_post_statuses,
@@ -641,14 +640,14 @@ class Newspack_Blocks {
 
 			if ( class_exists( 'Newspack_Multibranded_Site\Customizations\Theme_Colors' ) ) {
 				if ( $brands && count( $brands ) ) {
-					$args['tax_query'] = array(
-						array(
+					$args['tax_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+						[
 							'taxonomy'         => 'brand',
 							'field'            => 'term_id',
 							'terms'            => $brands,
-							'include_children' => false
-						),
-					);
+							'include_children' => false,
+						],
+					];
 				}
 			}
 
