@@ -266,6 +266,7 @@ class Edit extends Component {
 			specificPosts,
 			postsToShow,
 			categories,
+			brands,
 			columns,
 			colGap,
 			postType,
@@ -358,6 +359,8 @@ class Edit extends Component {
 						onAuthorsChange={ handleAttributeChange( 'authors' ) }
 						categories={ categories }
 						onCategoriesChange={ handleAttributeChange( 'categories' ) }
+						brands={ brands }
+						onBrandsChange={ handleAttributeChange( 'brands' ) }
 						tags={ tags }
 						onTagsChange={ handleAttributeChange( 'tags' ) }
 						tagExclusions={ tagExclusions }

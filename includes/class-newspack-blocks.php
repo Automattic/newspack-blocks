@@ -587,11 +587,13 @@ class Newspack_Blocks {
 		$authors             = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
 		$categories          = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
 		$tags                = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
+		$brands              = isset( $attributes['brands'] ) ? $attributes['brands'] : array();
 		$tag_exclusions      = isset( $attributes['tagExclusions'] ) ? $attributes['tagExclusions'] : array();
 		$category_exclusions = isset( $attributes['categoryExclusions'] ) ? $attributes['categoryExclusions'] : array();
 		$specific_posts      = isset( $attributes['specificPosts'] ) ? $attributes['specificPosts'] : array();
 		$posts_to_show       = intval( $attributes['postsToShow'] );
 		$specific_mode       = isset( $attributes['specificMode'] ) ? intval( $attributes['specificMode'] ) : false;
+
 		$args                = array(
 			'post_type'           => $post_type,
 			'post_status'         => $included_post_statuses,
@@ -624,14 +626,30 @@ class Newspack_Blocks {
 			if ( $categories && count( $categories ) ) {
 				$args['category__in'] = $categories;
 			}
+
 			if ( $tags && count( $tags ) ) {
 				$args['tag__in'] = $tags;
 			}
+
 			if ( $tag_exclusions && count( $tag_exclusions ) ) {
 				$args['tag__not_in'] = $tag_exclusions;
 			}
+
 			if ( $category_exclusions && count( $category_exclusions ) ) {
 				$args['category__not_in'] = $category_exclusions;
+			}
+
+			if ( class_exists( 'Newspack_Multibranded_Site\Customizations\Theme_Colors' ) ) {
+				if ( $brands && count( $brands ) ) {
+					$args['tax_query'] = array(
+						array(
+							'taxonomy'         => 'brand',
+							'field'            => 'term_id',
+							'terms'            => $brands,
+							'include_children' => false
+						),
+					);
+				}
 			}
 
 			$is_co_authors_plus_active = class_exists( 'CoAuthors_Guest_Authors' );
@@ -786,6 +804,15 @@ class Newspack_Blocks {
 		if ( ! empty( $categories ) ) {
 			foreach ( $categories as $cat ) {
 				$classes[] = 'category-' . $cat->slug;
+			}
+		}
+
+		if ( class_exists( 'Newspack_Multibranded_Site\Customizations\Theme_Colors' ) ) {
+			$brands = get_the_terms( $post_id, 'brand' );
+			if ( ! empty( $brands ) ) {
+				foreach ( $brands as $brand ) {
+					$classes[] = 'brands-' . $brand->slug;
+				}
 			}
 		}
 

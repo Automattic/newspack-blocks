@@ -16,6 +16,9 @@ import AutocompleteTokenField from './autocomplete-tokenfield';
 const getCategoryTitle = category =>
 	decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' );
 
+const getBrandTitle = brand =>
+	decodeEntities( brand.name ) || __( '(no title)', 'newspack-blocks' );
+
 class QueryControls extends Component {
 	state = {
 		showAdvancedFilters: false,
@@ -135,6 +138,51 @@ class QueryControls extends Component {
 		} );
 	};
 
+	fetchBrandSuggestions = search => {
+		return apiFetch( {
+			path: addQueryArgs( '/wp/v2/brand', {
+				search,
+				per_page: 20,
+				_fields: 'id,name,parent',
+				orderby: 'count',
+				order: 'desc',
+			} ),
+		} ).then( brands =>
+			Promise.all(
+				brands.map( brand => {
+					if ( brand.parent > 0 ) {
+						return apiFetch( {
+							path: addQueryArgs( `/wp/v2/brand/${ brand.parent }`, {
+								_fields: 'name',
+							} ),
+						} ).then( parentBrand => ( {
+							value: brand.id,
+							label: `${ getBrandTitle( brand ) } – ${ getBrandTitle( parentBrand ) }`,
+						} ) );
+					}
+					return Promise.resolve( {
+						value: brand.id,
+						label: getBrandTitle( brand ),
+					} );
+				} )
+			)
+		);
+	};
+	fetchSavedBrands = brandIDs => {
+		return apiFetch( {
+			path: addQueryArgs( '/wp/v2/brand', {
+				per_page: 100,
+				_fields: 'id,name',
+				include: brandIDs.join( ',' ),
+			} ),
+		} ).then( function ( brands ) {
+			return brands.map( brand => ( {
+				value: brand.id,
+				label: decodeEntities( brand.name ) || __( '(no title)', 'newspack-blocks' ),
+			} ) );
+		} );
+	};
+
 	fetchTagSuggestions = search => {
 		return apiFetch( {
 			path: addQueryArgs( '/wp/v2/tags', {
@@ -176,6 +224,8 @@ class QueryControls extends Component {
 			onAuthorsChange,
 			categories,
 			onCategoriesChange,
+			brands,
+			onBrandsChange,
 			tags,
 			onTagsChange,
 			tagExclusions,
@@ -226,6 +276,15 @@ class QueryControls extends Component {
 								fetchSuggestions={ this.fetchCategorySuggestions }
 								fetchSavedInfo={ this.fetchSavedCategories }
 								label={ __( 'Categories', 'newspack-blocks' ) }
+							/>
+						) }
+						{ onBrandsChange && (
+							<AutocompleteTokenField
+								tokens={ brands || [] }
+								onChange={ onBrandsChange }
+								fetchSuggestions={ this.fetchBrandSuggestions }
+								fetchSavedInfo={ this.fetchSavedBrands }
+								label={ __( 'Brands', 'newspack-blocks' ) }
 							/>
 						) }
 						{ onTagsChange && (
@@ -284,6 +343,7 @@ QueryControls.defaultProps = {
 	authors: [],
 	categories: [],
 	tags: [],
+	brands: [],
 	tagExclusions: [],
 };
 
