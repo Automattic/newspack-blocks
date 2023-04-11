@@ -410,7 +410,7 @@ function newspack_blocks_register_carousel() {
 							'type' => 'integer',
 						),
 					),
-					'brands'          => array(
+					'brands'        => array(
 						'type'    => 'array',
 						'default' => array(),
 						'items'   => array(

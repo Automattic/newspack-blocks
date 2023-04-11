@@ -242,6 +242,10 @@ class Newspack_Blocks {
 				$localized_data['author_custom_fields'] = \Newspack\Authors_Custom_Fields::get_custom_fields();
 			}
 
+			if ( class_exists( 'Newspack_Multibranded_Site\Customizations\Theme_Colors' ) ) {
+				$localized_data['multibranded_sites_enabled'] = true;
+			}
+
 			wp_localize_script(
 				'newspack-blocks-editor',
 				'newspack_blocks_data',
@@ -593,15 +597,6 @@ class Newspack_Blocks {
 		$specific_posts      = isset( $attributes['specificPosts'] ) ? $attributes['specificPosts'] : array();
 		$posts_to_show       = intval( $attributes['postsToShow'] );
 		$specific_mode       = isset( $attributes['specificMode'] ) ? intval( $attributes['specificMode'] ) : false;
-
-		/*
-		TODO: Work out how to abstract the supported custom taxonomies
-		$supported_custom_taxonomies = apply_filters( 'newspack_block_supported_custom_taxonomies', [] );
-		foreach ( $supported_custom_taxonomies as $custom_tax ) {
-			$custom_tax = isset( $attributes[$custom_tax] ) ? $attributes[$custom_tax] : array();
-		}
-		*/
-
 		$args                = array(
 			'post_type'           => $post_type,
 			'post_status'         => $included_post_statuses,
