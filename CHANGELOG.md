@@ -1,3 +1,10 @@
+## [1.66.1](https://github.com/Automattic/newspack-blocks/compare/v1.66.0...v1.66.1) (2023-04-11)
+
+
+### Bug Fixes
+
+* bugs for Post Carousel ([#1422](https://github.com/Automattic/newspack-blocks/issues/1422)) ([24f3c80](https://github.com/Automattic/newspack-blocks/commit/24f3c8000d251f2272fc09d8ba7837108751506d))
+
 # [1.66.0](https://github.com/Automattic/newspack-blocks/compare/v1.65.0...v1.66.0) (2023-04-10)
 
 
