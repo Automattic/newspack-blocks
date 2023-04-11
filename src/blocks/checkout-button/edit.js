@@ -83,9 +83,11 @@ function ProductControl( props ) {
 	}
 	const debouncedFetchProductSuggestions = debounce( fetchSuggestions, 200 );
 	const handleInputChange = value => {
-		setInFlight( true );
 		if ( value.length > 2 ) {
+			setInFlight( true );
 			debouncedFetchProductSuggestions( value );
+		} else {
+			setInFlight( false );
 		}
 	};
 	if ( props.value && ! selected && inFlight ) {
