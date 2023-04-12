@@ -285,12 +285,12 @@ class Newspack_Blocks {
 	 * Can the tiers-based layout of the Donate block be rendered?
 	 */
 	public static function can_render_tiers_based_layout() {
-		if ( method_exists( '\Newspack\AMP_Enhancements', 'is_amp_plus_configured' ) ) {
+		if ( ! is_plugin_active( 'amp/amp.php' ) ) {
+			return true;
+		} elseif ( method_exists( '\Newspack\AMP_Enhancements', 'is_amp_plus_configured' ) ) {
 			return \Newspack\AMP_Enhancements::is_amp_plus_configured();
-		} else {
-			return ! is_plugin_active( 'amp/amp.php' );
 		}
-		return true;
+		return false;
 	}
 
 	/**
