@@ -116,7 +116,8 @@ function ProductControl( props ) {
 								'This product has "Name Your Price" toggled on. You can set the custom price for this checkout.',
 								'newspack-blocks'
 							) }
-							value={ props.price || selected.price }
+							placeholder={ selected.price }
+							value={ props.price }
 							onChange={ props.onChangePrice }
 						/>
 					) }
