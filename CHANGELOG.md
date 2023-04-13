@@ -1,3 +1,15 @@
+# [1.67.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.66.1...v1.67.0-alpha.1) (2023-04-13)
+
+
+### Bug Fixes
+
+* local git hooks ([#1414](https://github.com/Automattic/newspack-blocks/issues/1414)) ([bb99969](https://github.com/Automattic/newspack-blocks/commit/bb9996926af87eb76e0c5ab6b6a78c621021f701))
+
+
+### Features
+
+* **donate:** add recaptcha panel in the editor ([#1419](https://github.com/Automattic/newspack-blocks/issues/1419)) ([6784bc8](https://github.com/Automattic/newspack-blocks/commit/6784bc89d109e02e72e390e261865829ef2c9044))
+
 ## [1.66.1](https://github.com/Automattic/newspack-blocks/compare/v1.66.0...v1.66.1) (2023-04-11)
 
 
