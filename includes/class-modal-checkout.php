@@ -94,7 +94,7 @@ final class Modal_Checkout {
 		if ( class_exists( 'WC_Name_Your_Price_Helpers' ) ) {
 			$is_product_nyp = \WC_Name_Your_Price_Helpers::is_nyp( $product_id );
 			$price          = filter_input( INPUT_GET, 'price', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-			if ( $is_product_nyp && $price ) {
+			if ( $is_product_nyp && ! empty( $price ) ) {
 				$cart_item_data['nyp'] = (float) \WC_Name_Your_Price_Helpers::standardize_number( $price );
 			}
 		}
