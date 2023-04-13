@@ -100,12 +100,12 @@
 			"default": [],
 			"items": { "type": "integer" }
 		},
-		"brands": {
+		"tags": {
 			"type": "array",
 			"default": [],
 			"items": { "type": "integer" }
 		},
-		"tags": {
+		"brands": {
 			"type": "array",
 			"default": [],
 			"items": { "type": "integer" }

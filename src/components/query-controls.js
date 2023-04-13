@@ -138,6 +138,37 @@ class QueryControls extends Component {
 		} );
 	};
 
+	fetchTagSuggestions = search => {
+		return apiFetch( {
+			path: addQueryArgs( '/wp/v2/tags', {
+				search,
+				per_page: 20,
+				_fields: 'id,name',
+				orderby: 'count',
+				order: 'desc',
+			} ),
+		} ).then( function ( tags ) {
+			return tags.map( tag => ( {
+				value: tag.id,
+				label: decodeEntities( tag.name ) || __( '(no title)', 'newspack-blocks' ),
+			} ) );
+		} );
+	};
+	fetchSavedTags = tagIDs => {
+		return apiFetch( {
+			path: addQueryArgs( '/wp/v2/tags', {
+				per_page: 100,
+				_fields: 'id,name',
+				include: tagIDs.join( ',' ),
+			} ),
+		} ).then( function ( tags ) {
+			return tags.map( tag => ( {
+				value: tag.id,
+				label: decodeEntities( tag.name ) || __( '(no title)', 'newspack-blocks' ),
+			} ) );
+		} );
+	};
+
 	fetchBrandSuggestions = search => {
 		return apiFetch( {
 			path: addQueryArgs( '/wp/v2/brand', {
@@ -183,37 +214,6 @@ class QueryControls extends Component {
 		} );
 	};
 
-	fetchTagSuggestions = search => {
-		return apiFetch( {
-			path: addQueryArgs( '/wp/v2/tags', {
-				search,
-				per_page: 20,
-				_fields: 'id,name',
-				orderby: 'count',
-				order: 'desc',
-			} ),
-		} ).then( function ( tags ) {
-			return tags.map( tag => ( {
-				value: tag.id,
-				label: decodeEntities( tag.name ) || __( '(no title)', 'newspack-blocks' ),
-			} ) );
-		} );
-	};
-	fetchSavedTags = tagIDs => {
-		return apiFetch( {
-			path: addQueryArgs( '/wp/v2/tags', {
-				per_page: 100,
-				_fields: 'id,name',
-				include: tagIDs.join( ',' ),
-			} ),
-		} ).then( function ( tags ) {
-			return tags.map( tag => ( {
-				value: tag.id,
-				label: decodeEntities( tag.name ) || __( '(no title)', 'newspack-blocks' ),
-			} ) );
-		} );
-	};
-
 	render = () => {
 		const {
 			specificMode,
@@ -224,10 +224,10 @@ class QueryControls extends Component {
 			onAuthorsChange,
 			categories,
 			onCategoriesChange,
-			brands,
-			onBrandsChange,
 			tags,
 			onTagsChange,
+			brands,
+			onBrandsChange,
 			tagExclusions,
 			onTagExclusionsChange,
 			categoryExclusions,
@@ -278,15 +278,6 @@ class QueryControls extends Component {
 								label={ __( 'Categories', 'newspack-blocks' ) }
 							/>
 						) }
-						{ onBrandsChange && (
-							<AutocompleteTokenField
-								tokens={ brands || [] }
-								onChange={ onBrandsChange }
-								fetchSuggestions={ this.fetchBrandSuggestions }
-								fetchSavedInfo={ this.fetchSavedBrands }
-								label={ __( 'Brands', 'newspack-blocks' ) }
-							/>
-						) }
 						{ onTagsChange && (
 							<AutocompleteTokenField
 								tokens={ tags || [] }
@@ -294,6 +285,15 @@ class QueryControls extends Component {
 								fetchSuggestions={ this.fetchTagSuggestions }
 								fetchSavedInfo={ this.fetchSavedTags }
 								label={ __( 'Tags', 'newspack-blocks' ) }
+							/>
+						) }
+						{ onBrandsChange && (
+							<AutocompleteTokenField
+								tokens={ brands || [] }
+								onChange={ onBrandsChange }
+								fetchSuggestions={ this.fetchBrandSuggestions }
+								fetchSavedInfo={ this.fetchSavedBrands }
+								label={ __( 'Brands', 'newspack-blocks' ) }
 							/>
 						) }
 						{ onTagExclusionsChange && (
