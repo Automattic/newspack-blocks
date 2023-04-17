@@ -207,6 +207,12 @@ function CheckoutButtonEdit( props ) {
 				{ nyp?.isNYP && (
 					<PanelBody title={ __( 'Name Your Price', 'newspack-blocks' ) }>
 						<p>
+							{ __(
+								'This product has "Name Your Price" toggled on. You can set the custom price for this checkout.',
+								'newspack-blocks'
+							) }
+						</p>
+						<p>
 							<strong>{ __( 'Suggested price:', 'newspack-blocks' ) }</strong>{ ' ' }
 							{ nyp.suggestedPrice }
 							{ nyp.minPrice && (
@@ -222,13 +228,8 @@ function CheckoutButtonEdit( props ) {
 								</>
 							) }
 						</p>
-						<hr />
 						<TextControl
 							label={ __( 'Custom Price', 'newspack-blocks' ) }
-							help={ __(
-								'This product has "Name Your Price" toggled on. You can set the custom price for this checkout.',
-								'newspack-blocks'
-							) }
 							placeholder={ nyp.suggestedPrice }
 							value={ price }
 							onChange={ value => setAttributes( { price: value } ) }
