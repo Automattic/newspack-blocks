@@ -1,4 +1,4 @@
 /**
- * Style dependencies
+ * Internal dependencies
  */
 import './view.scss';
