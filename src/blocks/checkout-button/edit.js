@@ -38,9 +38,6 @@ function ProductControl( props ) {
 	const [ suggestions, setSuggestions ] = useState( {} );
 	const [ selected, setSelected ] = useState( false );
 	const [ isChanging, setIsChanging ] = useState( false );
-	function isNYP() {
-		return selected?.meta_data?.some( meta => meta.key === '_nyp' && meta.value === 'yes' );
-	}
 	function fetchSuggestions( search ) {
 		setInFlight( true );
 		return apiFetch( {
@@ -63,6 +60,7 @@ function ProductControl( props ) {
 			.then( product => {
 				setSuggestions( { [ product.id ]: `${ product.id }: ${ product.name }` } );
 				setSelected( product );
+				props.onProduct( product );
 			} )
 			.finally( () => setInFlight( false ) );
 	}
@@ -79,7 +77,6 @@ function ProductControl( props ) {
 		const productId = invert( suggestions )[ productName ];
 		setIsChanging( false );
 		props.onChange( productId );
-		props.onChangePrice(); // Reset custom price.
 	}
 	const debouncedFetchProductSuggestions = debounce( fetchSuggestions, 200 );
 	const handleInputChange = value => {
@@ -109,18 +106,6 @@ function ProductControl( props ) {
 							{ selected.name }
 						</Button>
 					</BaseControl>
-					{ isNYP() && (
-						<TextControl
-							label={ __( 'Custom Price', 'newspack-blocks' ) }
-							help={ __(
-								'This product has "Name Your Price" toggled on. You can set the custom price for this checkout.',
-								'newspack-blocks'
-							) }
-							placeholder={ selected.price }
-							value={ props.price }
-							onChange={ props.onChangePrice }
-						/>
-					) }
 				</>
 			) : (
 				<>
@@ -152,6 +137,20 @@ function CheckoutButtonEdit( props ) {
 	const { attributes, setAttributes, className } = props;
 	const { placeholder, style, text, product, price } = attributes;
 
+	const [ nyp, setNYP ] = useState( false );
+	function handleProduct( data ) {
+		const _nyp = {
+			isNYP: data?.meta_data?.some( meta => meta.key === '_nyp' && meta.value === 'yes' ),
+			suggestedPrice: data?.meta_data?.find( meta => meta.key === '_suggested_price' )?.value,
+			minPrice: data?.meta_data?.find( meta => meta.key === '_min_price' )?.value,
+			maxPrice: data?.meta_data?.find( meta => meta.key === '_maximum_price' )?.value,
+		};
+		setNYP( _nyp );
+		if ( ! price ) {
+			setAttributes( { price: _nyp?.suggestedPrice } );
+		}
+	}
+
 	function setButtonText( newText ) {
 		// Remove anchor tags from button text content.
 		setAttributes( { text: newText.replace( /<\/?a[^>]*>/g, '' ) } );
@@ -161,7 +160,6 @@ function CheckoutButtonEdit( props ) {
 	const colorProps = useColorProps( attributes );
 	const spacingProps = useSpacingProps( attributes );
 	const blockProps = useBlockProps();
-
 	return (
 		<>
 			<div
@@ -203,9 +201,40 @@ function CheckoutButtonEdit( props ) {
 						value={ product }
 						price={ price }
 						onChange={ value => setAttributes( { product: value } ) }
-						onChangePrice={ value => setAttributes( { price: value } ) }
+						onProduct={ handleProduct }
 					/>
 				</PanelBody>
+				{ nyp?.isNYP && (
+					<PanelBody title={ __( 'Name Your Price', 'newspack-blocks' ) }>
+						<p>
+							<strong>{ __( 'Suggested price:', 'newspack-blocks' ) }</strong>{ ' ' }
+							{ nyp.suggestedPrice }
+							{ nyp.minPrice && (
+								<>
+									<br />
+									<strong>{ __( 'Minimum price:', 'newspack-blocks' ) }</strong> { nyp.minPrice }
+								</>
+							) }
+							{ nyp.maxPrice && (
+								<>
+									<br />
+									<strong>{ __( 'Maximum price:', 'newspack-blocks' ) }</strong> { nyp.maxPrice }
+								</>
+							) }
+						</p>
+						<hr />
+						<TextControl
+							label={ __( 'Custom Price', 'newspack-blocks' ) }
+							help={ __(
+								'This product has "Name Your Price" toggled on. You can set the custom price for this checkout.',
+								'newspack-blocks'
+							) }
+							placeholder={ nyp.suggestedPrice }
+							value={ price }
+							onChange={ value => setAttributes( { price: value } ) }
+						/>
+					</PanelBody>
+				) }
 			</InspectorControls>
 		</>
 	);
