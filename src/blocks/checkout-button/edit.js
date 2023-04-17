@@ -214,7 +214,7 @@ function CheckoutButtonEdit( props ) {
 						</p>
 						<p>
 							<strong>{ __( 'Suggested price:', 'newspack-blocks' ) }</strong>{ ' ' }
-							{ nyp.suggestedPrice }
+							{ nyp.suggestedPrice || 0 }
 							{ nyp.minPrice && (
 								<>
 									<br />
