@@ -97,12 +97,12 @@ final class Modal_Checkout {
 			if ( $is_product_nyp ) {
 				if ( empty( $price ) ) {
 					$price = \WC_Name_Your_Price_Helpers::get_suggested_price( $product_id );
-				} else {
-					$min_price = \WC_Name_Your_Price_Helpers::get_minimum_price( $product_id );
-					$max_price = \WC_Name_Your_Price_Helpers::get_maximum_price( $product_id );
-					$price     = ! empty( $max_price ) ? min( $price, $max_price ) : $price;
-					$price     = ! empty( $min_price ) ? max( $price, $min_price ) : $price;
 				}
+				$min_price = \WC_Name_Your_Price_Helpers::get_minimum_price( $product_id );
+				$max_price = \WC_Name_Your_Price_Helpers::get_maximum_price( $product_id );
+				$price     = ! empty( $max_price ) ? min( $price, $max_price ) : $price;
+				$price     = ! empty( $min_price ) ? max( $price, $min_price ) : $price;
+
 				$cart_item_data['nyp'] = (float) \WC_Name_Your_Price_Helpers::standardize_number( $price );
 			}
 		}
