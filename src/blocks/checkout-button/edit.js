@@ -229,9 +229,12 @@ function CheckoutButtonEdit( props ) {
 							) }
 						</p>
 						<TextControl
+							type="number"
 							label={ __( 'Custom Price', 'newspack-blocks' ) }
 							placeholder={ nyp.suggestedPrice }
 							value={ price }
+							min={ parseFloat( nyp.minPrice ) || null }
+							max={ parseFloat( nyp.maxPrice ) || null }
 							onChange={ value => setAttributes( { price: value } ) }
 						/>
 					</PanelBody>
