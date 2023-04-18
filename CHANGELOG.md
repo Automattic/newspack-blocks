@@ -1,3 +1,10 @@
+# [1.67.0-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v1.67.0-alpha.1...v1.67.0-alpha.2) (2023-04-18)
+
+
+### Bug Fixes
+
+* modal checkout outside of ras ([#1434](https://github.com/Automattic/newspack-blocks/issues/1434)) ([da5e1e2](https://github.com/Automattic/newspack-blocks/commit/da5e1e2af6e9e9be9c2627b857d489eee46b4fbe))
+
 # [1.67.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.66.1...v1.67.0-alpha.1) (2023-04-13)
 
 
