@@ -6,7 +6,7 @@
 		"@rushstack/eslint-patch": "^1.2.0",
 		"@testing-library/dom": "^8.20.0",
 		"@testing-library/user-event": "^14.4.3",
-		"@types/lodash": "^4.14.192",
+		"@types/lodash": "^4.14.194",
 		"@types/lodash.debounce": "^4.0.7",
 		"eslint": "^7.32.0",
 		"fetch-mock-jest": "^1.5.1",
@@ -28,7 +28,7 @@
 		"redux": "^4.2.1",
 		"redux-saga": "^1.2.3",
 		"regenerator-runtime": "^0.13.11",
-		"swiper": "9.2.0"
+		"swiper": "9.2.4"
 	},
 	"scripts": {
 		"cm": "newspack-scripts commit",

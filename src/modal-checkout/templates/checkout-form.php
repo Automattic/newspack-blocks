@@ -15,13 +15,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $order_details_display = get_theme_mod( 'collapse_order_details', 'hide' );
 
-$has_filled_billing = Newspack_Blocks_Donate_Renderer::has_filled_required_fields( 'billing' );
+$has_filled_billing = \Newspack_Blocks\Modal_Checkout::has_filled_required_fields( 'billing' );
 $edit_billing       = ! $has_filled_billing || isset( $_REQUEST['edit_billing'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 $form_action         = $edit_billing ? '#checkout' : wc_get_checkout_url();
 $form_class          = $edit_billing ? 'edit-billing' : 'checkout woocommerce-checkout';
 $form_method         = $edit_billing ? 'get' : 'post';
-$form_billing_fields = Newspack_Blocks_Donate_Renderer::get_prefilled_fields();
+$form_billing_fields = \Newspack_Blocks\Modal_Checkout::get_prefilled_fields();
 
 do_action( 'woocommerce_before_checkout_form', $checkout );
 
@@ -37,7 +37,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 	<input type="hidden" name="modal_checkout" value="1" />
 	<?php
 	if ( $edit_billing ) {
-		wp_nonce_field( 'newspack_donate_edit_billing', 'newspack_donate_edit_billing_nonce' );
+		wp_nonce_field( 'newspack_blocks_edit_billing', 'newspack_blocks_edit_billing_nonce' );
 	}
 	?>
 	<?php if ( 'toggle' === $order_details_display ) : ?>
