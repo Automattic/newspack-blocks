@@ -11,6 +11,9 @@
 		"product": {
 			"type": "string"
 		},
+		"variation": {
+			"type": "string"
+		},
 		"price": {
 			"type": "string"
 		},

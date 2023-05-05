@@ -40,8 +40,12 @@ final class Modal_Checkout {
 	public static function process_checkout_request() {
 		$is_newspack_checkout = filter_input( INPUT_GET, 'newspack_checkout', FILTER_SANITIZE_NUMBER_INT );
 		$product_id           = filter_input( INPUT_GET, 'product_id', FILTER_SANITIZE_NUMBER_INT );
+		$variation_id         = filter_input( INPUT_GET, 'variation_id', FILTER_SANITIZE_NUMBER_INT );
 		if ( ! $is_newspack_checkout || ! $product_id ) {
 			return;
+		}
+		if ( $variation_id ) {
+			$product_id = $variation_id;
 		}
 
 		\WC()->cart->empty_cart();
