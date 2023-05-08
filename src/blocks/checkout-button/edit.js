@@ -124,6 +124,7 @@ function ProductControl( props ) {
 							{ selected.name }
 						</Button>
 					</BaseControl>
+					{ props.children }
 				</>
 			) : (
 				<>
@@ -163,9 +164,6 @@ function CheckoutButtonEdit( props ) {
 		setProductData( data );
 
 		// Handle product variation data.
-		if ( product !== data.id.toString() ) {
-			setAttributes( { variation: '' } );
-		}
 		if ( data?.variations?.length ) {
 			apiFetch( { path: `/wc/v2/products/${ data.id }/variations` } )
 				.then( res => setVariations( res ) )
@@ -245,31 +243,32 @@ function CheckoutButtonEdit( props ) {
 					<ProductControl
 						value={ product }
 						price={ price }
-						onChange={ value => setAttributes( { product: value } ) }
+						onChange={ value => setAttributes( { product: value, variation: '' } ) }
 						onProduct={ handleProduct }
-					/>
-				</PanelBody>
-				{ productData?.variations?.length > 0 && (
-					<PanelBody title={ __( 'Product variations', 'newspack-blocks' ) }>
-						{ variations.length ? (
-							<SelectControl
-								label={ __( 'Variation', 'newspack-blocks' ) }
-								help={ __(
-									'Select a product variation to be added to the cart.',
-									'newspack-blocks'
+					>
+						{ productData?.variations?.length > 0 && (
+							<>
+								{ variations.length ? (
+									<SelectControl
+										label={ __( 'Variation', 'newspack-blocks' ) }
+										help={ __(
+											'Select the product variation to be added to cart.',
+											'newspack-blocks'
+										) }
+										value={ variation }
+										options={ variations.map( item => ( {
+											label: getVariationName( item ),
+											value: item.id,
+										} ) ) }
+										onChange={ value => setAttributes( { variation: value } ) }
+									/>
+								) : (
+									<Spinner />
 								) }
-								value={ variation }
-								options={ variations.map( item => ( {
-									label: getVariationName( item ),
-									value: item.id,
-								} ) ) }
-								onChange={ value => setAttributes( { variation: value } ) }
-							/>
-						) : (
-							<Spinner />
+							</>
 						) }
-					</PanelBody>
-				) }
+					</ProductControl>
+				</PanelBody>
 				{ nyp?.isNYP && (
 					<PanelBody title={ __( 'Name Your Price', 'newspack-blocks' ) }>
 						<p>
