@@ -167,7 +167,9 @@ function CheckoutButtonEdit( props ) {
 		if ( data?.variations?.length ) {
 			apiFetch( { path: `/wc/v2/products/${ data.id }/variations` } )
 				.then( res => {
-					setAttributes( { variation: res[ 0 ].id } );
+					if ( ! variation && res.length ) {
+						setAttributes( { variation: res[ 0 ].id.toString() } );
+					}
 					setVariations( res );
 				} )
 				.catch( () => setVariations( [] ) );
@@ -246,7 +248,7 @@ function CheckoutButtonEdit( props ) {
 					<ProductControl
 						value={ product }
 						price={ price }
-						onChange={ value => setAttributes( { product: value, variation: '' } ) }
+						onChange={ value => setAttributes( { product: value, variation: '', price: '' } ) }
 						onProduct={ handleProduct }
 					>
 						{ productData?.variations?.length > 0 && (
@@ -263,7 +265,7 @@ function CheckoutButtonEdit( props ) {
 											label: getVariationName( item ),
 											value: item.id,
 										} ) ) }
-										onChange={ value => setAttributes( { variation: value } ) }
+										onChange={ value => setAttributes( { variation: value, price: '' } ) }
 									/>
 								) : (
 									<Spinner />
