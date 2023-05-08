@@ -166,7 +166,10 @@ function CheckoutButtonEdit( props ) {
 		// Handle product variation data.
 		if ( data?.variations?.length ) {
 			apiFetch( { path: `/wc/v2/products/${ data.id }/variations` } )
-				.then( res => setVariations( res ) )
+				.then( res => {
+					setAttributes( { variation: res[ 0 ].id } );
+					setVariations( res );
+				} )
 				.catch( () => setVariations( [] ) );
 		} else {
 			setVariations( [] );
