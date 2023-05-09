@@ -1,3 +1,10 @@
+## [1.68.1](https://github.com/Automattic/newspack-blocks/compare/v1.68.0...v1.68.1) (2023-05-09)
+
+
+### Bug Fixes
+
+* **checkout-button:** ensure modal "order received" url ([#1447](https://github.com/Automattic/newspack-blocks/issues/1447)) ([0b9bce5](https://github.com/Automattic/newspack-blocks/commit/0b9bce5e6f4c795fc427b0c3a45fde7db05d5e69))
+
 # [1.68.0](https://github.com/Automattic/newspack-blocks/compare/v1.67.0...v1.68.0) (2023-05-08)
 
 
