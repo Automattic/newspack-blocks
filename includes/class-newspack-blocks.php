@@ -242,9 +242,35 @@ class Newspack_Blocks {
 				$localized_data['author_custom_fields'] = \Newspack\Authors_Custom_Fields::get_custom_fields();
 			}
 
-			if ( class_exists( 'Newspack_Multibranded_Site\Customizations\Theme_Colors' ) ) {
-				$localized_data['multibranded_sites_enabled'] = true;
-			}
+			$custom_taxonomies = array_map(
+				function( $tax_slug ) {
+					$tax = get_taxonomy( $tax_slug );
+					if ( ! empty( array_intersect( [ 'post', 'page' ], $tax->object_type ) ) && ! $tax->_builtin && $tax->show_in_rest ) {
+						return [
+							'slug'  => $tax_slug,
+							'label' => $tax->label,
+						];
+					};
+				},
+				get_taxonomies( [ 'public' => true ] )
+			);
+			$custom_taxonomies = array_values(
+				array_filter(
+					$custom_taxonomies,
+					function( $tax ) {
+						return ! empty( $tax );
+					}
+				)
+			);
+
+			/**
+			 * Filters the custom taxonomies that will be available in the Home Page block.
+			 *
+			 * By default, on the top of category and tags, will display any public taxonomy applied to post or pages
+			 *
+			 * @param $custom_taxonomies array Array of custom taxonomies slugs.
+			 */
+			$localized_data['custom_taxonomies'] = apply_filters( 'newspack_blocks_home_page_block_custom_taxonomies', $custom_taxonomies );
 
 			wp_localize_script(
 				'newspack-blocks-editor',
@@ -591,7 +617,7 @@ class Newspack_Blocks {
 		$authors             = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
 		$categories          = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
 		$tags                = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
-		$brands              = isset( $attributes['brands'] ) ? $attributes['brands'] : array();
+		$custom_taxonomies   = isset( $attributes['customTaxonomies'] ) ? $attributes['customTaxonomies'] : array();
 		$tag_exclusions      = isset( $attributes['tagExclusions'] ) ? $attributes['tagExclusions'] : array();
 		$category_exclusions = isset( $attributes['categoryExclusions'] ) ? $attributes['categoryExclusions'] : array();
 		$specific_posts      = isset( $attributes['specificPosts'] ) ? $attributes['specificPosts'] : array();
@@ -637,18 +663,19 @@ class Newspack_Blocks {
 			if ( $category_exclusions && count( $category_exclusions ) ) {
 				$args['category__not_in'] = $category_exclusions;
 			}
-			if ( class_exists( 'Newspack_Multibranded_Site\Customizations\Theme_Colors' ) ) {
-				if ( $brands && count( $brands ) ) {
-					$args['tax_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
-						[
-							'taxonomy'         => 'brand',
+			if ( ! empty( $custom_taxonomies ) ) {
+				foreach ( $custom_taxonomies as $taxonomy ) {
+					if ( ! empty( $taxonomy['slug'] ) && ! empty( $taxonomy['terms'] ) ) {
+						$args['tax_query'][] = [
+							'taxonomy'         => $taxonomy['slug'],
 							'field'            => 'term_id',
-							'terms'            => $brands,
+							'terms'            => $taxonomy['terms'],
 							'include_children' => false,
-						],
-					];
+						];
+					}
 				}
 			}
+
 			$is_co_authors_plus_active = class_exists( 'CoAuthors_Guest_Authors' );
 
 			if ( $authors && count( $authors ) ) {

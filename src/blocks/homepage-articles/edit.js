@@ -275,7 +275,7 @@ class Edit extends Component {
 			specificPosts,
 			postsToShow,
 			categories,
-			brands,
+			customTaxonomies,
 			columns,
 			colGap,
 			postType,
@@ -352,13 +352,6 @@ class Edit extends Component {
 
 		const handleAttributeChange = key => value => setAttributes( { [ key ]: value } );
 
-		const brandProps = IS_MULTIBRANDED_SITE
-			? {
-					brands,
-					onBrandsChange: handleAttributeChange( 'brands' ),
-			  }
-			: '';
-
 		return (
 			<Fragment>
 				<PanelBody title={ __( 'Display Settings', 'newspack-blocks' ) } initialOpen={ true }>
@@ -377,7 +370,10 @@ class Edit extends Component {
 						onCategoriesChange={ handleAttributeChange( 'categories' ) }
 						tags={ tags }
 						onTagsChange={ handleAttributeChange( 'tags' ) }
-						{ ...brandProps }
+						onCustomTaxonomiesChange={ value => {
+							setAttributes( { customTaxonomies: value } );
+						} }
+						customTaxonomies={ customTaxonomies }
 						tagExclusions={ tagExclusions }
 						onTagExclusionsChange={ handleAttributeChange( 'tagExclusions' ) }
 						categoryExclusions={ categoryExclusions }
