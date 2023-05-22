@@ -203,6 +203,43 @@ class Newspack_Blocks {
 	}
 
 	/**
+	 * Gets the list of custom taxonomies that will be available for filtering in the blocks
+	 *
+	 * @return array Array of custom taxonomies where each taxonomy is an array with slug and label keys.
+	 */
+	public static function get_custom_taxonomies() {
+		$custom_taxonomies = array_map(
+			function( $tax_slug ) {
+				$tax = get_taxonomy( $tax_slug );
+				if ( ! empty( array_intersect( [ 'post', 'page' ], $tax->object_type ) ) && ! $tax->_builtin && $tax->show_in_rest ) {
+					return [
+						'slug'  => $tax_slug,
+						'label' => $tax->label,
+					];
+				};
+			},
+			get_taxonomies( [ 'public' => true ] )
+		);
+		$custom_taxonomies = array_values(
+			array_filter(
+				$custom_taxonomies,
+				function( $tax ) {
+					return ! empty( $tax );
+				}
+			)
+		);
+
+		/**
+		 * Filters the custom taxonomies that will be available in the Home Page block.
+		 *
+		 * By default, on the top of category and tags, will display any public taxonomy applied to post or pages
+		 *
+		 * @param $custom_taxonomies array Array of custom taxonomies where each taxonomy is an array with slug and label keys.
+		 */
+		return apply_filters( 'newspack_blocks_home_page_block_custom_taxonomies', $custom_taxonomies );
+	}
+
+	/**
 	 * Enqueue block scripts and styles for editor.
 	 */
 	public static function enqueue_block_editor_assets() {
@@ -230,6 +267,7 @@ class Newspack_Blocks {
 				'supports_recaptcha'               => class_exists( 'Newspack\Recaptcha' ),
 				'has_recaptcha'                    => class_exists( 'Newspack\Recaptcha' ) && \Newspack\Recaptcha::can_use_captcha(),
 				'recaptcha_url'                    => admin_url( 'admin.php?page=newspack-connections-wizard' ),
+				'custom_taxonomies'                => self::get_custom_taxonomies(),
 			];
 
 			if ( class_exists( 'WP_REST_Newspack_Author_List_Controller' ) ) {
@@ -241,36 +279,6 @@ class Newspack_Blocks {
 			if ( class_exists( '\Newspack\Authors_Custom_Fields' ) ) {
 				$localized_data['author_custom_fields'] = \Newspack\Authors_Custom_Fields::get_custom_fields();
 			}
-
-			$custom_taxonomies = array_map(
-				function( $tax_slug ) {
-					$tax = get_taxonomy( $tax_slug );
-					if ( ! empty( array_intersect( [ 'post', 'page' ], $tax->object_type ) ) && ! $tax->_builtin && $tax->show_in_rest ) {
-						return [
-							'slug'  => $tax_slug,
-							'label' => $tax->label,
-						];
-					};
-				},
-				get_taxonomies( [ 'public' => true ] )
-			);
-			$custom_taxonomies = array_values(
-				array_filter(
-					$custom_taxonomies,
-					function( $tax ) {
-						return ! empty( $tax );
-					}
-				)
-			);
-
-			/**
-			 * Filters the custom taxonomies that will be available in the Home Page block.
-			 *
-			 * By default, on the top of category and tags, will display any public taxonomy applied to post or pages
-			 *
-			 * @param $custom_taxonomies array Array of custom taxonomies slugs.
-			 */
-			$localized_data['custom_taxonomies'] = apply_filters( 'newspack_blocks_home_page_block_custom_taxonomies', $custom_taxonomies );
 
 			wp_localize_script(
 				'newspack-blocks-editor',
@@ -831,11 +839,11 @@ class Newspack_Blocks {
 			}
 		}
 
-		if ( class_exists( 'Newspack_Multibranded_Site\Customizations\Theme_Colors' ) ) {
-			$brands = get_the_terms( $post_id, 'brand' );
-			if ( ! empty( $brands ) ) {
-				foreach ( $brands as $brand ) {
-					$classes[] = 'brands-' . $brand->slug;
+		foreach ( self::get_custom_taxonomies() as $tax ) {
+			$terms = get_the_terms( $post_id, $tax['slug'] );
+			if ( ! empty( $terms ) ) {
+				foreach ( $terms as $term ) {
+					$classes[] = $term->taxonomy . '-' . $term->slug;
 				}
 			}
 		}
