@@ -238,26 +238,13 @@ class QueryControls extends Component {
 		const registeredCustomTaxonomies = window.newspack_blocks_data?.custom_taxonomies;
 
 		const customTaxonomiesPrepareChange = ( taxSlug, value ) => {
-			const existingTers = getTermsOfCustomTaxonomy( taxSlug );
-			let newValue;
-			if ( existingTers.length ) {
-				newValue = customTaxonomies.map( tax => {
-					if ( tax.slug !== taxSlug ) {
-						return value;
-					}
-					return {
-						slug: taxSlug,
-						terms: value,
-					};
-				} );
-			} else {
-				newValue = [ ...customTaxonomies, { slug: taxSlug, terms: value } ];
-			}
+			let newValue = customTaxonomies.filter( tax => tax.slug !== taxSlug );
+			newValue = [ ...newValue, { slug: taxSlug, terms: value } ];
 			onCustomTaxonomiesChange( newValue );
 		};
 
 		const getTermsOfCustomTaxonomy = taxSlug => {
-			const tax = customTaxonomies.find( tax => tax.slug === taxSlug );
+			const tax = customTaxonomies.find( taxObj => taxObj.slug === taxSlug );
 			return tax ? tax.terms : [];
 		};
 
@@ -318,7 +305,6 @@ class QueryControls extends Component {
 									key={ `${ customTaxonomies[ tax.slug ] }-selector` }
 									tokens={ getTermsOfCustomTaxonomy( tax.slug ) }
 									onChange={ value => {
-										console.log( value );
 										customTaxonomiesPrepareChange( tax.slug, value );
 									} }
 									fetchSuggestions={ search =>
