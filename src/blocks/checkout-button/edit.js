@@ -21,6 +21,7 @@ import {
 	PanelBody,
 	BaseControl,
 	TextControl,
+	SelectControl,
 	FormTokenField,
 	Button,
 	Spinner,
@@ -32,6 +33,23 @@ import apiFetch from '@wordpress/api-fetch';
  * Internal dependencies
  */
 import './edit.scss';
+
+function getVariationName( variation ) {
+	const attributes = [];
+	for ( const attribute of variation.attributes ) {
+		attributes.push( attribute.name + ': ' + attribute.option );
+	}
+	return attributes.join( ', ' );
+}
+
+function getNYP( product ) {
+	return {
+		isNYP: product?.meta_data?.some( meta => meta.key === '_nyp' && meta.value === 'yes' ),
+		suggestedPrice: product?.meta_data?.find( meta => meta.key === '_suggested_price' )?.value,
+		minPrice: product?.meta_data?.find( meta => meta.key === '_min_price' )?.value,
+		maxPrice: product?.meta_data?.find( meta => meta.key === '_maximum_price' )?.value,
+	};
+}
 
 function ProductControl( props ) {
 	const [ inFlight, setInFlight ] = useState( false );
@@ -106,6 +124,7 @@ function ProductControl( props ) {
 							{ selected.name }
 						</Button>
 					</BaseControl>
+					{ props.children }
 				</>
 			) : (
 				<>
@@ -135,21 +154,50 @@ function ProductControl( props ) {
 
 function CheckoutButtonEdit( props ) {
 	const { attributes, setAttributes, className } = props;
-	const { placeholder, style, text, product, price } = attributes;
+	const { placeholder, style, text, product, price, variation } = attributes;
 
+	const [ productData, setProductData ] = useState( {} );
+	const [ variations, setVariations ] = useState( [] );
 	const [ nyp, setNYP ] = useState( false );
+
 	function handleProduct( data ) {
-		const _nyp = {
-			isNYP: data?.meta_data?.some( meta => meta.key === '_nyp' && meta.value === 'yes' ),
-			suggestedPrice: data?.meta_data?.find( meta => meta.key === '_suggested_price' )?.value,
-			minPrice: data?.meta_data?.find( meta => meta.key === '_min_price' )?.value,
-			maxPrice: data?.meta_data?.find( meta => meta.key === '_maximum_price' )?.value,
-		};
-		setNYP( _nyp );
-		if ( ! price ) {
-			setAttributes( { price: _nyp?.suggestedPrice } );
+		setProductData( data );
+
+		// Handle product variation data.
+		if ( data?.variations?.length ) {
+			apiFetch( { path: `/wc/v2/products/${ data.id }/variations` } )
+				.then( res => {
+					if ( ! variation && res.length ) {
+						setAttributes( { variation: res[ 0 ].id.toString() } );
+					}
+					setVariations( res );
+				} )
+				.catch( () => setVariations( [] ) );
+		} else {
+			setVariations( [] );
+		}
+
+		// Handle NYP data.
+		if ( ! variation ) {
+			setNYP( getNYP( data ) );
 		}
 	}
+
+	useEffect( () => {
+		if ( variation ) {
+			apiFetch( { path: `/wc/v2/products/${ product }/variations/${ variation }` } )
+				.then( res => setNYP( getNYP( res ) ) )
+				.catch( () => setNYP( {} ) );
+		} else {
+			setNYP( getNYP( productData ) );
+		}
+	}, [ variation ] );
+
+	useEffect( () => {
+		if ( ! price && nyp?.suggestedPrice ) {
+			setAttributes( { price: nyp.suggestedPrice } );
+		}
+	}, [ nyp ] );
 
 	function setButtonText( newText ) {
 		// Remove anchor tags from button text content.
@@ -200,9 +248,31 @@ function CheckoutButtonEdit( props ) {
 					<ProductControl
 						value={ product }
 						price={ price }
-						onChange={ value => setAttributes( { product: value } ) }
+						onChange={ value => setAttributes( { product: value, variation: '', price: '' } ) }
 						onProduct={ handleProduct }
-					/>
+					>
+						{ productData?.variations?.length > 0 && (
+							<>
+								{ variations.length ? (
+									<SelectControl
+										label={ __( 'Variation', 'newspack-blocks' ) }
+										help={ __(
+											'Select the product variation to be added to cart.',
+											'newspack-blocks'
+										) }
+										value={ variation }
+										options={ variations.map( item => ( {
+											label: getVariationName( item ),
+											value: item.id,
+										} ) ) }
+										onChange={ value => setAttributes( { variation: value, price: '' } ) }
+									/>
+								) : (
+									<Spinner />
+								) }
+							</>
+						) }
+					</ProductControl>
 				</PanelBody>
 				{ nyp?.isNYP && (
 					<PanelBody title={ __( 'Name Your Price', 'newspack-blocks' ) }>
