@@ -1,3 +1,11 @@
+# [1.69.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.68.2...v1.69.0-alpha.1) (2023-05-25)
+
+
+### Features
+
+* adding link to the author bio avatar ([#1449](https://github.com/Automattic/newspack-blocks/issues/1449)) ([60d9f1c](https://github.com/Automattic/newspack-blocks/commit/60d9f1c61306b9c76be3f487d56f95a04a4565f0))
+* **checkout-button:** support product variations ([#1442](https://github.com/Automattic/newspack-blocks/issues/1442)) ([aa70495](https://github.com/Automattic/newspack-blocks/commit/aa70495940a6c85e9eb9747eb91a989df97e9921))
+
 ## [1.68.2](https://github.com/Automattic/newspack-blocks/compare/v1.68.1...v1.68.2) (2023-05-24)
 
 
