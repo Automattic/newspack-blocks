@@ -175,7 +175,7 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Render variation selection for each variant product.
+	 * Render variation selection modal for variable products.
 	 */
 	public static function render_variation_selection() {
 		$products = array_keys( self::$products );
