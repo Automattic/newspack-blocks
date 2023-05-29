@@ -20,6 +20,7 @@ import {
 import {
 	PanelBody,
 	BaseControl,
+	CheckboxControl,
 	TextControl,
 	SelectControl,
 	FormTokenField,
@@ -165,15 +166,12 @@ function CheckoutButtonEdit( props ) {
 
 		// Handle product variation data.
 		if ( data?.variations?.length ) {
+			setAttributes( { is_variable: true } );
 			apiFetch( { path: `/wc/v2/products/${ data.id }/variations` } )
-				.then( res => {
-					if ( ! variation && res.length ) {
-						setAttributes( { variation: res[ 0 ].id.toString() } );
-					}
-					setVariations( res );
-				} )
+				.then( res => setVariations( res ) )
 				.catch( () => setVariations( [] ) );
 		} else {
+			setAttributes( { is_variable: false } );
 			setVariations( [] );
 		}
 
@@ -253,6 +251,16 @@ function CheckoutButtonEdit( props ) {
 					>
 						{ productData?.variations?.length > 0 && (
 							<>
+								<CheckboxControl
+									label={ __(
+										'Allow the reader to select the variation before checkout.',
+										'newspack-blocks'
+									) }
+									checked={ ! variation }
+									onChange={ value =>
+										setAttributes( { variation: value ? '' : variations[ 0 ].id, price: '' } )
+									}
+								/>
 								{ variations.length ? (
 									<SelectControl
 										label={ __( 'Variation', 'newspack-blocks' ) }
@@ -261,10 +269,14 @@ function CheckoutButtonEdit( props ) {
 											'newspack-blocks'
 										) }
 										value={ variation }
-										options={ variations.map( item => ( {
-											label: getVariationName( item ),
-											value: item.id,
-										} ) ) }
+										disabled={ ! variation }
+										options={ [
+											{ label: __( '--', 'newspack-blocks' ), value: '' },
+											...variations.map( item => ( {
+												label: getVariationName( item ),
+												value: item.id,
+											} ) ),
+										] }
 										onChange={ value => setAttributes( { variation: value, price: '' } ) }
 									/>
 								) : (
