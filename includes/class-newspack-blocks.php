@@ -209,16 +209,22 @@ class Newspack_Blocks {
 	 */
 	public static function get_custom_taxonomies() {
 		$custom_taxonomies = array_map(
-			function( $tax_slug ) {
-				$tax = get_taxonomy( $tax_slug );
-				if ( ! empty( array_intersect( [ 'post', 'page' ], $tax->object_type ) ) && ! $tax->_builtin && $tax->show_in_rest ) {
+			function( $tax ) {
+				if ( ! empty( array_intersect( [ 'post', 'page' ], $tax->object_type ) ) ) {
 					return [
-						'slug'  => $tax_slug,
+						'slug'  => $tax->name,
 						'label' => $tax->label,
 					];
 				};
 			},
-			get_taxonomies( [ 'public' => true ] )
+			get_taxonomies(
+				[
+					'public'       => true,
+					'_builtin'     => false,
+					'show_in_rest' => true,
+				],
+				'objects'
+			)
 		);
 		$custom_taxonomies = array_values(
 			array_filter(
@@ -234,7 +240,7 @@ class Newspack_Blocks {
 		 *
 		 * By default, on the top of category and tags, will display any public taxonomy applied to post or pages
 		 *
-		 * @param $custom_taxonomies array Array of custom taxonomies where each taxonomy is an array with slug and label keys.
+		 * @param array $custom_taxonomies Array of custom taxonomies where each taxonomy is an array with slug and label keys.
 		 */
 		return apply_filters( 'newspack_blocks_home_page_block_custom_taxonomies', $custom_taxonomies );
 	}
