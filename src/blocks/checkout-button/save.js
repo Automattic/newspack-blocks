@@ -16,7 +16,7 @@ import {
 } from '@wordpress/block-editor';
 
 export default function save( { attributes, className } ) {
-	const { textAlign, fontSize, style, text, product, price, variation } = attributes;
+	const { textAlign, fontSize, style, text, product, price, variation, is_variable } = attributes;
 
 	if ( ! text || ! product ) {
 		return null;
@@ -59,6 +59,7 @@ export default function save( { attributes, className } ) {
 				<input type="hidden" name="newspack_checkout" value="1" />
 				{ price && <input type="hidden" name="price" value={ price } /> }
 				{ variation && <input type="hidden" name="variation_id" value={ variation } /> }
+				{ is_variable && <input type="hidden" name="is_variable" value="1" /> }
 			</form>
 		</div>
 	);
