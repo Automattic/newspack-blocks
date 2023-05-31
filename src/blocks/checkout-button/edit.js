@@ -271,7 +271,7 @@ function CheckoutButtonEdit( props ) {
 										value={ variation }
 										disabled={ ! variation }
 										options={ [
-											{ label: __( '--', 'newspack-blocks' ), value: '' },
+											{ label: '--', value: '' },
 											...variations.map( item => ( {
 												label: getVariationName( item ),
 												value: item.id,
