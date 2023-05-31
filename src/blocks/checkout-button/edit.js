@@ -258,7 +258,10 @@ function CheckoutButtonEdit( props ) {
 									) }
 									checked={ ! variation }
 									onChange={ value =>
-										setAttributes( { variation: value ? '' : variations[ 0 ].id, price: '' } )
+										setAttributes( {
+											variation: value ? '' : variations[ 0 ].id.toString(),
+											price: '',
+										} )
 									}
 								/>
 								{ variations.length ? (
@@ -277,7 +280,9 @@ function CheckoutButtonEdit( props ) {
 												value: item.id,
 											} ) ),
 										] }
-										onChange={ value => setAttributes( { variation: value, price: '' } ) }
+										onChange={ value =>
+											setAttributes( { variation: value.toString(), price: '' } )
+										}
 									/>
 								) : (
 									<Spinner />
