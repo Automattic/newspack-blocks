@@ -106,8 +106,8 @@ domReady( () => {
 				variationModals.forEach( variationModal => ( variationModal.style.display = 'none' ) );
 				// Trigger variation modal if variation is not selected.
 				if ( formData.get( 'is_variable' ) && ! formData.get( 'variation_id' ) ) {
-					const variationModal = [ ...variationModals ].find( modal =>
-						modal.matches( "[data-product-id='" + formData.get( 'product_id' ) + "']" )
+					const variationModal = [ ...variationModals ].find(
+						modal => modal.dataset.productId === formData.get( 'product_id' )
 					);
 					if ( variationModal ) {
 						ev.preventDefault();
