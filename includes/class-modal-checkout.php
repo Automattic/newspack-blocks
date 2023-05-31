@@ -21,11 +21,19 @@ final class Modal_Checkout {
 	private static $has_modal = false;
 
 	/**
+	 * Products that are being rendered a checkout modal for.
+	 *
+	 * @var true[] Product IDs as keys.
+	 */
+	private static $products = [];
+
+	/**
 	 * Initialize hooks.
 	 */
 	public static function init() {
 		add_action( 'template_redirect', [ __CLASS__, 'process_checkout_request' ] );
 		add_action( 'wp_footer', [ __CLASS__, 'render_modal_markup' ], 100 );
+		add_action( 'wp_footer', [ __CLASS__, 'render_variation_selection' ], 100 );
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'enqueue_scripts' ] );
 		add_filter( 'show_admin_bar', [ __CLASS__, 'show_admin_bar' ] );
 		add_action( 'template_include', [ __CLASS__, 'get_checkout_template' ] );
@@ -167,6 +175,58 @@ final class Modal_Checkout {
 	}
 
 	/**
+	 * Render variation selection modal for variable products.
+	 */
+	public static function render_variation_selection() {
+		$products = array_keys( self::$products );
+		foreach ( $products as $product_id ) {
+			$product = wc_get_product( $product_id );
+			if ( ! $product->is_type( 'variable' ) ) {
+				continue;
+			}
+			?>
+			<div class="newspack-blocks-variation-modal" data-product-id="<?php echo esc_attr( $product_id ); ?>" style="display:none;">
+				<div class="newspack-blocks-variation-modal__content">
+					<a href="#" class="newspack-blocks-variation-modal__close">
+						<span class="screen-reader-text"><?php esc_html_e( 'Close', 'newspack-blocks' ); ?></span>
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+							<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
+						</svg>
+					</a>
+					<div class="newspack-blocks-variation-modal__selection" data-product-id="<?php echo esc_attr( $product_id ); ?>">
+						<h3><?php echo esc_html( $product->get_name() ); ?></h3>
+						<p><?php esc_html_e( 'Select an option below:', 'newspack-blocks' ); ?></p>
+						<?php
+						$variations = $product->get_available_variations( 'objects' );
+						foreach ( $variations as $variation ) {
+							$name        = $variation->get_formatted_variation_attributes( true );
+							$price       = $variation->get_price_html();
+							$description = $variation->get_variation_description();
+							?>
+							<form>
+								<input type="hidden" name="newspack_checkout" value="1" />
+								<input type="hidden" name="product_id" value="<?php echo esc_attr( $variation->get_id() ); ?>" />
+								<button>
+									<span class="summary">
+										<span class="price"><?php echo $price; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+										<span class="variation_name"><?php echo esc_html( $name ); ?></span>
+									</span>
+									<?php if ( ! empty( $description ) ) : ?>
+										<span class="description"><?php echo esc_html( $description ); ?></span>
+									<?php endif; ?>
+								</button>
+							</form>
+							<?php
+						}
+						?>
+					</div>
+				</div>
+			</div>
+			<?php
+		}
+	}
+
+	/**
 	 * Enqueue scripts for the checkout page rendered in a modal.
 	 */
 	public static function enqueue_scripts() {
@@ -193,9 +253,14 @@ final class Modal_Checkout {
 
 	/**
 	 * Enqueue script for triggering modal checkout.
+	 *
+	 * @param int $product_id Product ID (optional).
 	 */
-	public static function enqueue_modal() {
+	public static function enqueue_modal( $product_id = null ) {
 		self::$has_modal = true;
+		if ( ! empty( $product_id ) ) {
+			self::$products[ $product_id ] = true;
+		}
 		wp_enqueue_script(
 			'newspack-blocks-modal',
 			plugins_url( 'dist/modal.js', \NEWSPACK_BLOCKS__PLUGIN_FILE ),
