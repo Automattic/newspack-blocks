@@ -1,3 +1,10 @@
+# [1.69.0-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v1.69.0-alpha.1...v1.69.0-alpha.2) (2023-05-31)
+
+
+### Features
+
+* **checkout-button:** front-end product variation selection ([#1459](https://github.com/Automattic/newspack-blocks/issues/1459)) ([d492a9a](https://github.com/Automattic/newspack-blocks/commit/d492a9ade4ef5030fbda6e2b156e3d823813383d))
+
 # [1.69.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.68.2...v1.69.0-alpha.1) (2023-05-25)
 
 
