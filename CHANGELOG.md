@@ -1,3 +1,10 @@
+# [1.69.0-alpha.3](https://github.com/Automattic/newspack-blocks/compare/v1.69.0-alpha.2...v1.69.0-alpha.3) (2023-06-01)
+
+
+### Bug Fixes
+
+* **checkout-button:** overlay class for modal stacking ([#1461](https://github.com/Automattic/newspack-blocks/issues/1461)) ([21b6a44](https://github.com/Automattic/newspack-blocks/commit/21b6a4465d6182ad64f36d065cf7c35241dd5d5e))
+
 # [1.69.0-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v1.69.0-alpha.1...v1.69.0-alpha.2) (2023-05-31)
 
 
