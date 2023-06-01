@@ -36,7 +36,9 @@ function closeCheckout( element ) {
 		iframe.src = 'about:blank';
 	}
 	document.body.classList.remove( 'newspack-modal-checkout-open' );
-	iframeResizeObserver.disconnect();
+	if ( iframeResizeObserver ) {
+		iframeResizeObserver.disconnect();
+	}
 	element.style.display = 'none';
 }
 
@@ -78,7 +80,7 @@ domReady( () => {
 	variationModals.forEach( variationModal => {
 		variationModal.addEventListener( 'click', ev => {
 			if ( ev.target === variationModal ) {
-				variationModal.style.display = 'none';
+				closeCheckout( variationModal );
 			}
 		} );
 		variationModal
@@ -86,7 +88,7 @@ domReady( () => {
 			.forEach( button => {
 				button.addEventListener( 'click', ev => {
 					ev.preventDefault();
-					variationModal.style.display = 'none';
+					closeCheckout( variationModal );
 				} );
 			} );
 	} );
@@ -111,6 +113,7 @@ domReady( () => {
 					);
 					if ( variationModal ) {
 						ev.preventDefault();
+						document.body.classList.add( 'newspack-modal-checkout-open' );
 						variationModal.style.display = 'block';
 						return;
 					}
