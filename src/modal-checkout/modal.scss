@@ -111,10 +111,20 @@
 					width: 100%;
 					display: flex;
 					justify-content: space-between;
-					align-items: baseline;
+					align-items: flex-end;
+					.subscription-details {
+						bdi {
+							font-size: inherit;
+						}
+					}
+				}
+				.price {
+					max-width: 65%;
 				}
 				.variation_name {
 					font-weight: 600;
+					font-size: 0.9em;
+					margin-left: 0.5em;
 				}
 				.description {
 					padding-top: 1em;
