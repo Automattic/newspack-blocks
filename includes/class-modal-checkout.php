@@ -41,6 +41,7 @@ final class Modal_Checkout {
 		add_filter( 'woocommerce_get_checkout_order_received_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
 		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 2 );
 		add_filter( 'woocommerce_checkout_get_value', [ __CLASS__, 'woocommerce_checkout_get_value' ], 10, 2 );
+		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'woocommerce_checkout_fields' ] );
 	}
 
 	/**
@@ -390,6 +391,37 @@ final class Modal_Checkout {
 			$value = sanitize_text_field( wp_unslash( $_REQUEST[ $input ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		}
 		return $value;
+	}
+
+	/**
+	 * Modify fields for modal checkout.
+	 *
+	 * @param array $fields Checkout fields.
+	 *
+	 * @return array
+	 */
+	public static function woocommerce_checkout_fields( $fields ) {
+		if ( ! isset( $_REQUEST['modal_checkout'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return $fields;
+		}
+		/**
+		 * Temporarily use the same fields as the donation checkout.
+		 *
+		 * This should soon be replaced with a logic that allows the customization
+		 * at the Checkout Button Block level.
+		 */
+		$billing_fields = apply_filters( 'newspack_blocks_donate_billing_fields_keys', [] );
+		if ( empty( $billing_fields ) ) {
+			return $fields;
+		}
+		$billing_keys = array_keys( $fields['billing'] );
+		foreach ( $billing_keys as $key ) {
+			if ( in_array( $key, $billing_fields, true ) ) {
+				continue;
+			}
+			unset( $fields['billing'][ $key ] );
+		}
+		return $fields;
 	}
 
 	/**
