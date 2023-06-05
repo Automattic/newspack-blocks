@@ -10,7 +10,7 @@
 		"@types/lodash.debounce": "^4.0.7",
 		"eslint": "^7.32.0",
 		"fetch-mock-jest": "^1.5.1",
-		"html-entities": "^2.3.3",
+		"html-entities": "^2.3.4",
 		"identity-obj-proxy": "^3.0.0",
 		"lint-staged": "^13.2.2",
 		"newspack-scripts": "^5.1.0",
