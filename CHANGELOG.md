@@ -1,3 +1,29 @@
+# [1.70.0](https://github.com/Automattic/newspack-blocks/compare/v1.69.0...v1.70.0) (2023-06-19)
+
+
+### Bug Fixes
+
+* **checkout-button:** overlay class for modal stacking ([#1461](https://github.com/Automattic/newspack-blocks/issues/1461)) ([594095b](https://github.com/Automattic/newspack-blocks/commit/594095b02f957ccb974c0c40ea9e76685ae32844))
+
+
+### Features
+
+* **checkout-button:** front-end product variation selection ([#1459](https://github.com/Automattic/newspack-blocks/issues/1459)) ([a978160](https://github.com/Automattic/newspack-blocks/commit/a978160c3e453b60bf9bcd92ad53c9b6c39fb23b))
+* **modal-checkout:** always use donation billing fields ([#1463](https://github.com/Automattic/newspack-blocks/issues/1463)) ([ab176bf](https://github.com/Automattic/newspack-blocks/commit/ab176bfebf6c5a12c8bf1fde3ba52db4c1f9454d))
+
+# [1.70.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.69.0...v1.70.0-alpha.1) (2023-06-08)
+
+
+### Bug Fixes
+
+* **checkout-button:** overlay class for modal stacking ([#1461](https://github.com/Automattic/newspack-blocks/issues/1461)) ([594095b](https://github.com/Automattic/newspack-blocks/commit/594095b02f957ccb974c0c40ea9e76685ae32844))
+
+
+### Features
+
+* **checkout-button:** front-end product variation selection ([#1459](https://github.com/Automattic/newspack-blocks/issues/1459)) ([a978160](https://github.com/Automattic/newspack-blocks/commit/a978160c3e453b60bf9bcd92ad53c9b6c39fb23b))
+* **modal-checkout:** always use donation billing fields ([#1463](https://github.com/Automattic/newspack-blocks/issues/1463)) ([ab176bf](https://github.com/Automattic/newspack-blocks/commit/ab176bfebf6c5a12c8bf1fde3ba52db4c1f9454d))
+
 # [1.69.0](https://github.com/Automattic/newspack-blocks/compare/v1.68.2...v1.69.0) (2023-06-05)
 
 
