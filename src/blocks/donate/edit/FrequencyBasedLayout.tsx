@@ -186,8 +186,8 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 	);
 
 	const renderButton = () => (
-		<button
-			type="submit"
+		<div
+			className="button wpbnbd__button"
 			onClick={ evt => evt.preventDefault() }
 			style={ {
 				backgroundColor: attributes.buttonColor,
@@ -209,7 +209,7 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 					tagName="span"
 				/>
 			) }
-		</button>
+		</div>
 	);
 
 	const selectedPaymentRequestTypeOption = PAYMENT_REQUEST_BUTTON_TYPE_OPTIONS.find(

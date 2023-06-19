@@ -26,7 +26,8 @@
 				display: flex;
 				justify-content: center;
 				margin-bottom: 14px;
-				button {
+				button,
+				.button {
 					font-size: 13px;
 					white-space: nowrap;
 				}
@@ -109,7 +110,8 @@
 					font-size: 13px;
 				}
 			}
-			button[type='submit'] {
+			button[type='submit'],
+			.button {
 				border-radius: 3px;
 				border: 2px solid;
 				font-size: 14px;
