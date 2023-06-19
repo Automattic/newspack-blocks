@@ -188,7 +188,6 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 	const renderButton = () => (
 		<div
 			className="button wpbnbd__button"
-			onClick={ evt => evt.preventDefault() }
 			style={ {
 				backgroundColor: attributes.buttonColor,
 				color: getColorForContrast( attributes.buttonColor ),
