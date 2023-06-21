@@ -40,17 +40,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 		wp_nonce_field( 'newspack_blocks_edit_billing', 'newspack_blocks_edit_billing_nonce' );
 	}
 	?>
-	<?php if ( 'toggle' === $order_details_display ) : ?>
-	<div class="cart-summary-header">
-		<h3><?php esc_html_e( 'Summary', 'newspack-blocks' ); ?></h3>
-		<button id="toggle-order-details" class="order-details-hidden" on="tap:AMP.setState( { orderVisible: !orderVisible } )" [class]="orderVisible ? '' : 'order-details-hidden'" aria-controls="full-order-details" [aria-expanded]="orderVisible ? 'true' : 'false'" aria-expanded="false">
-		<?php echo wp_kses( newspack_get_icon_svg( 'chevron_left', 24 ), newspack_sanitize_svgs() ); ?>
-		<span [text]="orderVisible ? '<?php esc_html_e( 'Hide details', 'newspack-blocks' ); ?>' : '<?php esc_html_e( 'Show details', 'newspack-blocks' ); ?>'"><?php esc_html_e( 'Show details', 'newspack-blocks' ); ?></span>
-		</button>
-	</div>
-	<?php endif; ?>
 
-	<?php if ( 'display' !== $order_details_display ) : ?>
 	<div class="order-details-summary">
 		<?php
 		// Simplified output of order.
@@ -58,27 +48,67 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 			$_product = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
 
 			if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters( 'woocommerce_checkout_cart_item_visible', true, $cart_item, $cart_item_key ) ) {
-				?>
-		<h4>
-				<?php echo apply_filters( 'woocommerce_checkout_cart_item_quantity', ' ' . sprintf( '%s&nbsp;&times;', $cart_item['quantity'] ), $cart_item, $cart_item_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-			<strong>
-				<?php
-				echo apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key ) . '&nbsp;'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				echo wc_get_formatted_cart_item_data( $cart_item ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				?>
-			</strong>
-			<span>
-				<?php
-				echo apply_filters( 'woocommerce_cart_item_subtotal', WC()->cart->get_product_subtotal( $_product, $cart_item['quantity'] ), $cart_item, $cart_item_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				?>
-			</span>
-		</h4>
-				<?php
+
+				if ( wc_tax_enabled() && ! WC()->cart->display_prices_including_tax() ) : ?>
+
+					<h4>
+						<?php
+
+						printf(
+							/* translators: 1: subtotal prefix, 2: cart subtotal */
+							'<div><strong>%1$s</strong> %2$s</div>',
+							esc_html( 'Subtotal','newspack-blocks' ),
+							apply_filters( 'woocommerce_cart_item_subtotal', WC()->cart->get_product_subtotal( $_product, $cart_item['quantity'] ), $cart_item, $cart_item_key ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							);
+
+						if ( 'itemized' === get_option( 'woocommerce_tax_total_display' ) ) :
+							foreach ( WC()->cart->get_tax_totals() as $code => $tax ) : // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+								/* translators: 1: tax type label, 2: tax amount */
+								printf(
+									'<div class="tax-rate tax-rate-' . esc_attr( sanitize_title( $code ) ) . '"><strong>%1$s</strong> %2$s</div>',
+									esc_html( $tax->label ),
+									wp_kses_post( $tax->formatted_amount )
+								);
+							endforeach;
+						else :
+							/* translators: 1: tax label, 2: tax amount */
+							printf(
+								'<div class="tax-total"><strong>%1$s</strong> %2$s</div>',
+								esc_html( WC()->countries->tax_or_vat() ),
+								wc_cart_totals_taxes_total_html()
+							);
+						endif;
+						?>
+
+						<span>
+							<?php esc_html_e( 'Total:','newspack-blocks' ); ?>
+							<?php wc_cart_totals_order_total_html(); ?>
+						</span>
+					</h4>
+
+
+				<?php else : ?>
+					<h4>
+						<?php echo apply_filters( 'woocommerce_checkout_cart_item_quantity', ' ' . sprintf( '%s&nbsp;&times;', $cart_item['quantity'] ), $cart_item, $cart_item_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<strong>
+							<?php
+							echo apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key ) . '&nbsp;'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							echo wc_get_formatted_cart_item_data( $cart_item ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							?>
+						</strong>
+						<span>
+							<?php
+							echo apply_filters( 'woocommerce_cart_item_subtotal', WC()->cart->get_product_subtotal( $_product, $cart_item['quantity'] ), $cart_item, $cart_item_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							?>
+						</span>
+					</h4>
+
+				<?php endif;
+
 			}
 		}
 		?>
 	</div><!-- .order-details-summary -->
-	<?php endif; ?>
 
 	<?php if ( $checkout->get_checkout_fields() ) : ?>
 
