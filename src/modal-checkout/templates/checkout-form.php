@@ -46,9 +46,11 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 			$_product = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
 
 			if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters( 'woocommerce_checkout_cart_item_visible', true, $cart_item, $cart_item_key ) ) {
-				if ( wc_tax_enabled() && ! WC()->cart->display_prices_including_tax() ) : ?>
+				if ( wc_tax_enabled() && ! WC()->cart->display_prices_including_tax() ) :
+					?>
 					<h4>
-						<?php echo apply_filters( 'woocommerce_checkout_cart_item_quantity', ' ' . sprintf( '%s&nbsp;&times;', $cart_item['quantity'] ), $cart_item, $cart_item_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						<?php
+						echo apply_filters( 'woocommerce_checkout_cart_item_quantity', ' ' . sprintf( '%s&nbsp;&times;', $cart_item['quantity'] ), $cart_item, $cart_item_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 						?>
 						<strong>
 							<?php
@@ -63,7 +65,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 							'<div><strong>%1$s</strong> %2$s</div>',
 							esc_html__( 'Subtotal', 'newspack-blocks' ),
 							apply_filters( 'woocommerce_cart_item_subtotal', WC()->cart->get_product_subtotal( $_product, $cart_item['quantity'] ), $cart_item, $cart_item_key ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-							);
+						);
 
 						// Only display on the 'Billing' screen.
 						if ( ! $edit_billing ) :
@@ -86,8 +88,8 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 							endif;
 							?>
 							<span>
-								<?php esc_html_e( 'Total:','newspack-blocks' ); ?>
-								<?php wc_cart_totals_order_total_html(); ?>
+								<?php esc_html_e( 'Total:', 'newspack-blocks' ); ?>
+								<?php wc_cart_totals_order_total_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 							</span>
 						<?php endif; ?>
 					</h4>
@@ -108,7 +110,8 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 							?>
 						</span>
 					</h4>
-				<?php endif;
+				<?php
+				endif;
 			}
 		}
 		?>
