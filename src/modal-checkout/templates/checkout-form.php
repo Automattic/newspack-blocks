@@ -83,7 +83,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 								printf(
 									'<div class="tax-total"><strong>%1$s</strong> %2$s</div>',
 									esc_html( WC()->countries->tax_or_vat() ),
-									wc_cart_totals_taxes_total_html()
+									wc_cart_totals_taxes_total_html() // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 								);
 							endif;
 							?>
@@ -110,7 +110,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 							?>
 						</span>
 					</h4>
-				<?php
+					<?php
 				endif;
 			}
 		}
