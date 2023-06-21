@@ -30,20 +30,23 @@
 		}
 	}
 
+	.submit-button {
+		display: inline-block;
+	}
+
 	button,
-	.button {
+	.submit-button {
 		font-family: var( --newspack-theme-font-heading );
 		font-size: variables.$font__size-sm;
 		font-weight: bold;
 		outline: none;
 
-		&:not( .wpbnbd__button ),
 		&[type="submit"] {
 			border: none;
 		}
 	}
 	button[type='submit'],
-	.button {
+	.submit-button {
 		border-radius: 5px;
 		box-sizing: border-box;
 		color: colors.$color__background-body;

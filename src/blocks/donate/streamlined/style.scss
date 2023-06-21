@@ -52,7 +52,7 @@
 		input[type='email'],
 		&__checkbox,
 		button,
-		.button {
+		.submit-button {
 			font-size: 0.7em;
 		}
 		input[type='text'],
@@ -200,7 +200,7 @@
 				width: auto;
 			}
 			button,
-			.button {
+			.submit-button {
 				margin-left: 0;
 				margin-right: 0;
 				margin-bottom: 0;
@@ -268,7 +268,7 @@
 			}
 
 			button,
-			.button {
+			.submit-button {
 				border-top-left-radius: 5px;
 				border-top-right-radius: 5px;
 				margin: 0;

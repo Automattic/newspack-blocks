@@ -187,7 +187,7 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 
 	const renderButton = () => (
 		<div
-			className="button wpbnbd__button"
+			className="submit-button"
 			style={ {
 				backgroundColor: attributes.buttonColor,
 				color: getColorForContrast( attributes.buttonColor ),

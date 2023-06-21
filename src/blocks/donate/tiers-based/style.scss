@@ -3,7 +3,8 @@
 
 .wpbnbd--tiers-based {
 	.wpbnbd {
-		&__button {
+		&__button,
+		.submit-button {
 			border-width: 1px;
 			border-color: transparent;
 			border-radius: 0;
@@ -27,7 +28,7 @@
 				justify-content: center;
 				margin-bottom: 14px;
 				button,
-				.button {
+				.submit-button {
 					font-size: 13px;
 					white-space: nowrap;
 				}
@@ -111,7 +112,7 @@
 				}
 			}
 			button[type='submit'],
-			.button {
+			.submit-button {
 				border-radius: 3px;
 				border: 2px solid;
 				font-size: 14px;

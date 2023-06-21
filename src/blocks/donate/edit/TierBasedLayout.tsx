@@ -118,7 +118,7 @@ const TierBasedLayout = ( props: ComponentProps ) => {
 								</span>
 							</div>
 							<div
-								className="button wpbnbd__button"
+								className="submit-button"
 								style={ {
 									appearance: 'button',
 									borderColor: attributes.buttonColor,
