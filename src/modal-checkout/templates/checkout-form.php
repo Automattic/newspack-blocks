@@ -50,10 +50,8 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 			if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters( 'woocommerce_checkout_cart_item_visible', true, $cart_item, $cart_item_key ) ) {
 
 				if ( wc_tax_enabled() && ! WC()->cart->display_prices_including_tax() ) : ?>
-
 					<h4>
 						<?php
-
 						printf(
 							/* translators: 1: subtotal prefix, 2: cart subtotal */
 							'<div><strong>%1$s</strong> %2$s</div>',
@@ -79,14 +77,11 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 							);
 						endif;
 						?>
-
 						<span>
 							<?php esc_html_e( 'Total:','newspack-blocks' ); ?>
 							<?php wc_cart_totals_order_total_html(); ?>
 						</span>
 					</h4>
-
-
 				<?php else : ?>
 					<h4>
 						<?php echo apply_filters( 'woocommerce_checkout_cart_item_quantity', ' ' . sprintf( '%s&nbsp;&times;', $cart_item['quantity'] ), $cart_item, $cart_item_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -102,9 +97,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 							?>
 						</span>
 					</h4>
-
 				<?php endif;
-
 			}
 		}
 		?>
