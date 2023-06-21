@@ -13,8 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce hooks.
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables.
 
-$order_details_display = get_theme_mod( 'collapse_order_details', 'hide' );
-
 $has_filled_billing = \Newspack_Blocks\Modal_Checkout::has_filled_required_fields( 'billing' );
 $edit_billing       = ! $has_filled_billing || isset( $_REQUEST['edit_billing'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
@@ -48,43 +46,56 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 			$_product = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
 
 			if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters( 'woocommerce_checkout_cart_item_visible', true, $cart_item, $cart_item_key ) ) {
-
 				if ( wc_tax_enabled() && ! WC()->cart->display_prices_including_tax() ) : ?>
 					<h4>
+						<?php echo apply_filters( 'woocommerce_checkout_cart_item_quantity', ' ' . sprintf( '%s&nbsp;&times;', $cart_item['quantity'] ), $cart_item, $cart_item_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						?>
+						<strong>
+							<?php
+							echo apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key ) . '&nbsp;'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							echo wc_get_formatted_cart_item_data( $cart_item ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							?>
+						</strong>
+
 						<?php
 						printf(
 							/* translators: 1: subtotal prefix, 2: cart subtotal */
 							'<div><strong>%1$s</strong> %2$s</div>',
-							esc_html( 'Subtotal','newspack-blocks' ),
-							apply_filters( 'woocommerce_cart_item_subtotal', WC()->cart->get_product_subtotal( $_product, $cart_item['quantity'] ), $cart_item, $cart_item_key ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							esc_html__( 'Subtotal', 'newspack-blocks' ),
+							apply_filters( 'woocommerce_cart_item_subtotal', WC()->cart->get_product_subtotal( $_product, $cart_item['quantity'] ), $cart_item, $cart_item_key ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 							);
 
-						if ( 'itemized' === get_option( 'woocommerce_tax_total_display' ) ) :
-							foreach ( WC()->cart->get_tax_totals() as $code => $tax ) : // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-								/* translators: 1: tax type label, 2: tax amount */
+						// Only display on the 'Billing' screen.
+						if ( ! $edit_billing ) :
+							if ( 'itemized' === get_option( 'woocommerce_tax_total_display' ) ) :
+								foreach ( WC()->cart->get_tax_totals() as $code => $tax ) : // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+									/* translators: 1: tax type label, 2: tax amount */
+									printf(
+										'<div class="tax-rate tax-rate-' . esc_attr( sanitize_title( $code ) ) . '"><strong>%1$s</strong> %2$s</div>',
+										esc_html( $tax->label ),
+										wp_kses_post( $tax->formatted_amount )
+									);
+								endforeach;
+							else :
+								/* translators: 1: tax label, 2: tax amount */
 								printf(
-									'<div class="tax-rate tax-rate-' . esc_attr( sanitize_title( $code ) ) . '"><strong>%1$s</strong> %2$s</div>',
-									esc_html( $tax->label ),
-									wp_kses_post( $tax->formatted_amount )
+									'<div class="tax-total"><strong>%1$s</strong> %2$s</div>',
+									esc_html( WC()->countries->tax_or_vat() ),
+									wc_cart_totals_taxes_total_html()
 								);
-							endforeach;
-						else :
-							/* translators: 1: tax label, 2: tax amount */
-							printf(
-								'<div class="tax-total"><strong>%1$s</strong> %2$s</div>',
-								esc_html( WC()->countries->tax_or_vat() ),
-								wc_cart_totals_taxes_total_html()
-							);
-						endif;
-						?>
-						<span>
-							<?php esc_html_e( 'Total:','newspack-blocks' ); ?>
-							<?php wc_cart_totals_order_total_html(); ?>
-						</span>
+							endif;
+							?>
+							<span>
+								<?php esc_html_e( 'Total:','newspack-blocks' ); ?>
+								<?php wc_cart_totals_order_total_html(); ?>
+							</span>
+						<?php endif; ?>
 					</h4>
 				<?php else : ?>
 					<h4>
-						<?php echo apply_filters( 'woocommerce_checkout_cart_item_quantity', ' ' . sprintf( '%s&nbsp;&times;', $cart_item['quantity'] ), $cart_item, $cart_item_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<?php
+						echo apply_filters( 'woocommerce_checkout_cart_item_quantity', ' ' . sprintf( '%s&nbsp;&times;', $cart_item['quantity'] ), $cart_item, $cart_item_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						?>
 						<strong>
 							<?php
 							echo apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key ) . '&nbsp;'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
