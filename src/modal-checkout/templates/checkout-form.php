@@ -13,8 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce hooks.
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables.
 
-$order_details_display = get_theme_mod( 'collapse_order_details', 'hide' );
-
 $has_filled_billing = \Newspack_Blocks\Modal_Checkout::has_filled_required_fields( 'billing' );
 $edit_billing       = ! $has_filled_billing || isset( $_REQUEST['edit_billing'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
@@ -40,17 +38,6 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 		wp_nonce_field( 'newspack_blocks_edit_billing', 'newspack_blocks_edit_billing_nonce' );
 	}
 	?>
-	<?php if ( 'toggle' === $order_details_display ) : ?>
-	<div class="cart-summary-header">
-		<h3><?php esc_html_e( 'Summary', 'newspack-blocks' ); ?></h3>
-		<button id="toggle-order-details" class="order-details-hidden" on="tap:AMP.setState( { orderVisible: !orderVisible } )" [class]="orderVisible ? '' : 'order-details-hidden'" aria-controls="full-order-details" [aria-expanded]="orderVisible ? 'true' : 'false'" aria-expanded="false">
-		<?php echo wp_kses( newspack_get_icon_svg( 'chevron_left', 24 ), newspack_sanitize_svgs() ); ?>
-		<span [text]="orderVisible ? '<?php esc_html_e( 'Hide details', 'newspack-blocks' ); ?>' : '<?php esc_html_e( 'Show details', 'newspack-blocks' ); ?>'"><?php esc_html_e( 'Show details', 'newspack-blocks' ); ?></span>
-		</button>
-	</div>
-	<?php endif; ?>
-
-	<?php if ( 'display' !== $order_details_display ) : ?>
 	<div class="order-details-summary">
 		<?php
 		// Simplified output of order.
@@ -78,6 +65,11 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 		}
 		?>
 	</div><!-- .order-details-summary -->
+
+	<?php if ( wc_tax_enabled() && ! WC()->cart->display_prices_including_tax() && ! $edit_billing ) : ?>
+		<div id="order_review" class="woocommerce-checkout-review-order">
+			<?php do_action( 'woocommerce_checkout_order_review' ); ?>
+		</div>
 	<?php endif; ?>
 
 	<?php if ( $checkout->get_checkout_fields() ) : ?>
