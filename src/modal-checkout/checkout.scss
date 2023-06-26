@@ -3,6 +3,16 @@
 #newspack_modal_checkout { /* stylelint-disable-line */
 	padding: 32px;
 	font-size: 1rem;
+	.cart-summary-header {
+		align-items: center;
+		display: flex;
+		justify-content: space-between;
+		margin: 0 0 0.5rem;
+		h3 {
+			margin: 0;
+			font-size: 1em;
+		}
+	}
 	.order-details-summary {
 		border: 2px solid;
 		border-radius: 3px;
@@ -78,7 +88,7 @@
 		#payment button#place_order { /* stylelint-disable-line */
 			margin-bottom: 0;
 		}
-		button {
+		.checkout-billing button[type='submit'] {
 			display: block;
 			width: 100%;
 		}
