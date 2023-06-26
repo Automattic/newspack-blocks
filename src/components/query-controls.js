@@ -296,9 +296,7 @@ class QueryControls extends Component {
 							<ToggleControl
 								checked={ includeSubcategories }
 								onChange={ onIncludeSubcategoriesChange }
-								fetchSuggestions={ this.fetchCategorySuggestions }
-								fetchSavedInfo={ this.fetchSavedCategories }
-								label={ __( 'Include subcategories ' + includeSubcategories, 'newspack-blocks' ) }
+								label={ __( 'Include subcategories ', 'newspack-blocks' ) }
 							/>
 						) }
 						{ onTagsChange && (
