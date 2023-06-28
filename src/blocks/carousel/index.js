@@ -66,7 +66,7 @@ export const settings = {
 		},
 		includeSubcategories: {
 			type: 'boolean',
-			default: true
+			default: true,
 		},
 		tags: {
 			type: 'array',
