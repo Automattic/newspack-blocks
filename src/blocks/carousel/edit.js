@@ -376,7 +376,9 @@ class Edit extends Component {
 								categories={ categories }
 								onCategoriesChange={ value => setAttributes( { categories: value } ) }
 								includeSubcategories={ includeSubcategories }
-								onIncludeSubcategoriesChange={ _includeSubcategories => setAttributes( { includeSubcategories: _includeSubcategories } ) }
+								onIncludeSubcategoriesChange={ value =>
+									setAttributes( { includeSubcategories: value } )
+								}
 								tags={ tags }
 								onTagsChange={ value => setAttributes( { tags: value } ) }
 								onCustomTaxonomiesChange={ value => setAttributes( { customTaxonomies: value } ) }
