@@ -630,7 +630,7 @@ class Newspack_Blocks {
 		}
 		$authors                = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
 		$categories             = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
-		$include_subcategories  = isset( $attributes['includeSubcategories'] ) ? intval($attributes['includeSubcategories']) : false;
+		$include_subcategories  = isset( $attributes['includeSubcategories'] ) ? intval( $attributes['includeSubcategories'] ) : false;
 		$tags                   = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
 		$custom_taxonomies      = isset( $attributes['customTaxonomies'] ) ? $attributes['customTaxonomies'] : array();
 		$tag_exclusions         = isset( $attributes['tagExclusions'] ) ? $attributes['tagExclusions'] : array();
@@ -667,10 +667,10 @@ class Newspack_Blocks {
 				);
 			}
 			if ( $categories && count( $categories ) ) {
-				if ($include_subcategories === 1){
-					foreach ($categories as $parent) {
+				if ( $include_subcategories === 1 ){
+					foreach  ( $categories as $parent ) {
 						$children[] = get_categories(array('child_of'=> $parent));
-						foreach ($children[0] as $child) {
+						foreach ( $children[0] as $child ) {
 						$categories[] = $child->term_id;
 						}
 					}
