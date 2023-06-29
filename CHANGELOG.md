@@ -1,3 +1,10 @@
+# [1.71.0](https://github.com/Automattic/newspack-blocks/compare/v1.70.0...v1.71.0) (2023-06-29)
+
+
+### Features
+
+* **modal-checkout:** render order details under different conditions ([#1485](https://github.com/Automattic/newspack-blocks/issues/1485)) ([#1488](https://github.com/Automattic/newspack-blocks/issues/1488)) ([aa569ad](https://github.com/Automattic/newspack-blocks/commit/aa569ad470e66a93cbdd145ef80c6f96c9ae5457))
+
 # [1.70.0](https://github.com/Automattic/newspack-blocks/compare/v1.69.0...v1.70.0) (2023-06-19)
 
 
