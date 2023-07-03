@@ -1,3 +1,27 @@
+# [1.72.0](https://github.com/Automattic/newspack-blocks/compare/v1.71.0...v1.72.0) (2023-07-03)
+
+
+### Bug Fixes
+
+* **donate-block:** allow spaces in button label ([#1479](https://github.com/Automattic/newspack-blocks/issues/1479)) ([96adc82](https://github.com/Automattic/newspack-blocks/commit/96adc822cb92201298a53a05df2867d31a6a4efa))
+
+
+### Features
+
+* display purchase details in checkout modal when taxes are enabled ([#1480](https://github.com/Automattic/newspack-blocks/issues/1480)) ([b69f8f3](https://github.com/Automattic/newspack-blocks/commit/b69f8f3dbaabfa4648cab97131e8795c24c07af2))
+
+# [1.72.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.71.0...v1.72.0-alpha.1) (2023-06-29)
+
+
+### Bug Fixes
+
+* **donate-block:** allow spaces in button label ([#1479](https://github.com/Automattic/newspack-blocks/issues/1479)) ([96adc82](https://github.com/Automattic/newspack-blocks/commit/96adc822cb92201298a53a05df2867d31a6a4efa))
+
+
+### Features
+
+* display purchase details in checkout modal when taxes are enabled ([#1480](https://github.com/Automattic/newspack-blocks/issues/1480)) ([b69f8f3](https://github.com/Automattic/newspack-blocks/commit/b69f8f3dbaabfa4648cab97131e8795c24c07af2))
+
 # [1.71.0](https://github.com/Automattic/newspack-blocks/compare/v1.70.0...v1.71.0) (2023-06-29)
 
 
