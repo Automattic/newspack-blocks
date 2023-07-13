@@ -1,3 +1,10 @@
+# [1.73.0-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v1.73.0-alpha.1...v1.73.0-alpha.2) (2023-07-13)
+
+
+### Bug Fixes
+
+* **post-carousel:** set aspect ratio on init ([#1497](https://github.com/Automattic/newspack-blocks/issues/1497)) ([8a48982](https://github.com/Automattic/newspack-blocks/commit/8a489829dbe7882210b211cbde109d930d4e770b))
+
 ## [1.72.1](https://github.com/Automattic/newspack-blocks/compare/v1.72.0...v1.72.1) (2023-07-13)
 
 
