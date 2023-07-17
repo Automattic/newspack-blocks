@@ -1,3 +1,10 @@
+## [1.72.2](https://github.com/Automattic/newspack-blocks/compare/v1.72.1...v1.72.2) (2023-07-17)
+
+
+### Bug Fixes
+
+* only show Additional Fields panel when using Stripe platform ([#1499](https://github.com/Automattic/newspack-blocks/issues/1499)) ([1a08513](https://github.com/Automattic/newspack-blocks/commit/1a085131f881ac62d2ac4879298c3a47d86df684))
+
 ## [1.72.1](https://github.com/Automattic/newspack-blocks/compare/v1.72.0...v1.72.1) (2023-07-13)
 
 
