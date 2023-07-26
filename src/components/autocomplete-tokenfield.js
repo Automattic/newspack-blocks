@@ -2,17 +2,55 @@
  * External dependencies
  */
 import { debounce } from 'lodash';
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 
 /**
  * WordPress dependencies
  */
+import { __ } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
 import { FormTokenField, Spinner } from '@wordpress/components';
+import { Icon, dragHandle, close } from '@wordpress/icons';
 
 /**
  * Internal dependencies
  */
 import './autocomplete-tokenfield.scss';
+
+const DragHandle = SortableHandle( () => (
+	<span className="autocomplete-tokenfield__sortable__item__drag">
+		<Icon icon={ dragHandle } size={ 16 } />
+	</span>
+) );
+
+const SortableItem = SortableElement( ( { value, onRemove } ) => (
+	<li className="autocomplete-tokenfield__sortable__item">
+		<DragHandle />
+		<span className="autocomplete-tokenfield__sortable__item__value">{ value }</span>
+		<button
+			type="button"
+			ariaLabel={ __( 'Remove', 'newspack-blocks' ) }
+			onClick={ onRemove( value ) }
+		>
+			<Icon icon={ close } size={ 16 } />
+		</button>
+	</li>
+) );
+
+const SortableList = SortableContainer( ( { items, onRemove = () => {} } ) => {
+	return (
+		<ul>
+			{ items.map( ( value, index ) => (
+				<SortableItem
+					key={ `item-${ value }` }
+					index={ index }
+					value={ value }
+					onRemove={ onRemove }
+				/>
+			) ) }
+		</ul>
+	);
+} );
 
 /**
  * An multi-selecting, api-driven autocomplete input suitable for use in block attributes.
@@ -99,7 +137,7 @@ class AutocompleteTokenField extends Component {
 	 * @param {string} input Input to fetch suggestions for
 	 */
 	updateSuggestions( input ) {
-		const { fetchSuggestions } = this.props;
+		const { fetchSuggestions, tokens } = this.props;
 		if ( ! fetchSuggestions ) {
 			return;
 		}
@@ -119,6 +157,9 @@ class AutocompleteTokenField extends Component {
 					const currentSuggestions = [];
 
 					suggestions.forEach( suggestion => {
+						if ( tokens.includes( suggestion.value.toString() ) ) {
+							return;
+						}
 						const trimmedSuggestionLabel = suggestion.label.trim();
 						const duplicatedSuggestionIndex = currentSuggestions.indexOf( trimmedSuggestionLabel );
 						if ( duplicatedSuggestionIndex >= 0 ) {
@@ -148,8 +189,12 @@ class AutocompleteTokenField extends Component {
 	 * @param {Array} tokenStrings An array of token label strings.
 	 */
 	handleOnChange( tokenStrings ) {
-		const { onChange } = this.props;
-		onChange( this.getValuesForLabels( tokenStrings ) );
+		const { onChange, tokens, sortable } = this.props;
+		onChange(
+			sortable // If sortable, the input doesn't carry the value.
+				? [ ...tokens, ...this.getValuesForLabels( tokenStrings ) ]
+				: this.getValuesForLabels( tokenStrings )
+		);
 	}
 
 	/**
@@ -162,21 +207,49 @@ class AutocompleteTokenField extends Component {
 		return this.getLabelsForValues( tokens );
 	}
 
+	onSortEnd = ( { oldIndex, newIndex } ) => {
+		const { tokens, onChange } = this.props;
+		const newTokens = [ ...tokens ];
+		newTokens.splice( newIndex, 0, newTokens.splice( oldIndex, 1 )[ 0 ] );
+		onChange( newTokens );
+	};
+
+	handleRemoveItem = label => () => {
+		const value = this.getValuesForLabels( [ label ] )[ 0 ];
+		const { tokens, onChange } = this.props;
+		const newTokens = tokens.filter( token => token !== value );
+		onChange( newTokens );
+	};
+
 	/**
 	 * Render.
 	 */
 	render() {
-		const { help, label = '' } = this.props;
+		const { help, label = '', placeholder = '', sortable = false } = this.props;
 		const { suggestions, loading } = this.state;
-
+		const value = this.getTokens();
 		return (
 			<div className="autocomplete-tokenfield">
+				{ sortable && value?.length ? (
+					<div className="autocomplete-tokenfield__sortable">
+						{ value?.length > 1 && (
+							<p>{ __( 'Click and drag the items for sorting:', 'newspack-blocks' ) }</p>
+						) }
+						<SortableList
+							items={ value }
+							onSortEnd={ this.onSortEnd }
+							onRemove={ this.handleRemoveItem }
+							useDragHandle
+						/>
+					</div>
+				) : null }
 				<FormTokenField
-					value={ this.getTokens() }
+					value={ sortable ? [] : value } // If sortable, we don't want to show the tokens in the input.
 					suggestions={ suggestions }
 					onChange={ tokens => this.handleOnChange( tokens ) }
 					onInputChange={ input => this.debouncedUpdateSuggestions( input ) }
 					label={ label }
+					placeholder={ placeholder }
 				/>
 				{ loading && <Spinner /> }
 				{ help && <p className="autocomplete-tokenfield__help">{ help }</p> }
