@@ -1,3 +1,10 @@
+# [1.74.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.73.0...v1.74.0-alpha.1) (2023-08-17)
+
+
+### Features
+
+* Merge pull request [#1509](https://github.com/Automattic/newspack-blocks/issues/1509) from Automattic/master ([1280d07](https://github.com/Automattic/newspack-blocks/commit/1280d073b7ff12af84c7dc9907a80918e778038a))
+
 # [1.73.0](https://github.com/Automattic/newspack-blocks/compare/v1.72.2...v1.73.0) (2023-07-17)
 
 
