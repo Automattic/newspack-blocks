@@ -3,7 +3,7 @@
 @use '../../shared/sass/colors';
 @use '../../shared/sass/preview';
 
-.wpnbpc {
+.wp-block-newspack-blocks-carousel {
 	position: relative;
 	margin-top: 0;
 
@@ -99,6 +99,9 @@
 	&__placeholder {
 		height: 420px;
 		background: colors.$color__background-screen;
+	}
+	.swiper-initialized .wp-block-newspack-blocks-carousel__placeholder {
+		height: 100%;
 	}
 	p {
 		white-space: normal;
