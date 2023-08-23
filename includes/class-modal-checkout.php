@@ -198,13 +198,13 @@ final class Modal_Checkout {
 					<div class="newspack-blocks-variation-modal__selection" data-product-id="<?php echo esc_attr( $product_id ); ?>">
 						<h3><?php echo esc_html( $product->get_name() ); ?></h3>
 						<p><?php esc_html_e( 'Select an option below:', 'newspack-blocks' ); ?></p>
-						<?php
-						$variations = $product->get_available_variations( 'objects' );
-						foreach ( $variations as $variation ) {
-							$name        = $variation->get_formatted_variation_attributes( true );
-							$price       = $variation->get_price_html();
-							$description = $variation->get_variation_description();
-							?>
+					<?php
+					$variations = $product->get_available_variations( 'objects' );
+					foreach ( $variations as $variation ) {
+						$name        = $variation->get_formatted_variation_attributes( true );
+						$price       = $variation->get_price_html();
+						$description = $variation->get_variation_description();
+						?>
 							<form>
 								<input type="hidden" name="newspack_checkout" value="1" />
 								<input type="hidden" name="product_id" value="<?php echo esc_attr( $variation->get_id() ); ?>" />
@@ -213,18 +213,18 @@ final class Modal_Checkout {
 										<span class="price"><?php echo $price; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 										<span class="variation_name"><?php echo esc_html( $name ); ?></span>
 									</span>
-									<?php if ( ! empty( $description ) ) : ?>
+								<?php if ( ! empty( $description ) ) : ?>
 										<span class="description"><?php echo esc_html( $description ); ?></span>
 									<?php endif; ?>
 								</button>
 							</form>
 							<?php
-						}
-						?>
+					}
+					?>
 					</div>
 				</div>
 			</div>
-			<?php
+				<?php
 		}
 	}
 
@@ -337,9 +337,17 @@ final class Modal_Checkout {
 	 * @return string Template file.
 	 */
 	public static function wc_get_template( $located, $template_name ) {
-		if ( 'checkout/form-checkout.php' === $template_name && isset( $_REQUEST['modal_checkout'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$located = NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/modal-checkout/templates/checkout-form.php';
+		$custom_templates = [
+			'checkout/form-checkout.php' => 'src/modal-checkout/templates/checkout-form.php',
+			'checkout/form-billing.php'  => 'src/modal-checkout/templates/billing-form.php',
+		];
+
+		foreach ( $custom_templates as $original_template => $custom_template ) {
+			if ( $template_name === $original_template && isset( $_REQUEST['modal_checkout'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$located = NEWSPACK_BLOCKS__PLUGIN_DIR . $custom_template;
+			}
 		}
+
 		return $located;
 	}
 
@@ -488,7 +496,7 @@ final class Modal_Checkout {
 	 *
 	 * @return bool
 	 */
-	private static function should_show_order_details() {
+	public static function should_show_order_details() {
 		$cart = \WC()->cart;
 		if ( $cart->is_empty() ) {
 			return false;
