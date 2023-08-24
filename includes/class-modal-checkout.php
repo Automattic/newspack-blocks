@@ -213,7 +213,7 @@ final class Modal_Checkout {
 										<span class="price"><?php echo $price; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 										<span class="variation_name"><?php echo esc_html( $name ); ?></span>
 									</span>
-								<?php if ( ! empty( $description ) ) : ?>
+									<?php if ( ! empty( $description ) ) : ?>
 										<span class="description"><?php echo esc_html( $description ); ?></span>
 									<?php endif; ?>
 								</button>
@@ -224,7 +224,7 @@ final class Modal_Checkout {
 					</div>
 				</div>
 			</div>
-				<?php
+			<?php
 		}
 	}
 
