@@ -198,13 +198,13 @@ final class Modal_Checkout {
 					<div class="newspack-blocks-variation-modal__selection" data-product-id="<?php echo esc_attr( $product_id ); ?>">
 						<h3><?php echo esc_html( $product->get_name() ); ?></h3>
 						<p><?php esc_html_e( 'Select an option below:', 'newspack-blocks' ); ?></p>
-					<?php
-					$variations = $product->get_available_variations( 'objects' );
-					foreach ( $variations as $variation ) {
-						$name        = $variation->get_formatted_variation_attributes( true );
-						$price       = $variation->get_price_html();
-						$description = $variation->get_variation_description();
-						?>
+						<?php
+						$variations = $product->get_available_variations( 'objects' );
+						foreach ( $variations as $variation ) {
+							$name        = $variation->get_formatted_variation_attributes( true );
+							$price       = $variation->get_price_html();
+							$description = $variation->get_variation_description();
+							?>
 							<form>
 								<input type="hidden" name="newspack_checkout" value="1" />
 								<input type="hidden" name="product_id" value="<?php echo esc_attr( $variation->get_id() ); ?>" />
@@ -219,8 +219,8 @@ final class Modal_Checkout {
 								</button>
 							</form>
 							<?php
-					}
-					?>
+						}
+						?>
 					</div>
 				</div>
 			</div>
