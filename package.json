@@ -27,7 +27,7 @@
 		"react": "^17.0.2",
 		"redux": "^4.2.1",
 		"redux-saga": "^1.2.3",
-		"regenerator-runtime": "^0.13.11",
+		"regenerator-runtime": "^0.14.0",
 		"swiper": "9.3.2"
 	},
 	"scripts": {
