@@ -101,7 +101,7 @@ call_user_func(
 					endif;
 
 					if ( $attributes['showCategory'] && ( empty( $sponsors ) || Newspack_Blocks::newspack_display_sponsors_and_categories( $sponsors ) ) ) :
-						newspack_blocks_categories( $post_id );
+						echo wp_kses_post( newspack_blocks_format_categories( $post_id ) );
 					endif;
 					?>
 				</div>

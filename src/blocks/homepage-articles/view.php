@@ -341,10 +341,8 @@ function newspack_blocks_format_byline( $author_info ) {
  * Renders category markup plus filter.
  *
  * @param string $post_id Post ID.
- *
- * @return string Returns filtered category markup.
  */
-function newspack_blocks_categories( $post_id ) {
+function newspack_blocks_format_categories( $post_id ) {
 	$category = false;
 	// Use Yoast primary category if set.
 	if ( class_exists( 'WPSEO_Primary_Term' ) ) {
@@ -369,7 +367,7 @@ function newspack_blocks_categories( $post_id ) {
 	}
 
 	if ( $category ) {
-		echo apply_filters( 'newspack_blocks_categories', $category_formatted );
+		return apply_filters( 'newspack_blocks_categories', $category_formatted );
 	}
 }
 

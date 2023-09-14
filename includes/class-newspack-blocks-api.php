@@ -161,7 +161,7 @@ class Newspack_Blocks_API {
 
 		$linked_category = '<a href="#">' . $category->name . '</a>';
 
-		return wp_kses_post( apply_filters( 'newspack_blocks_categories', $linked_category ) );
+		return apply_filters( 'newspack_blocks_categories', $linked_category );
 	}
 
 	/**
