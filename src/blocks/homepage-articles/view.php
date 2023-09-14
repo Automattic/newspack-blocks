@@ -337,6 +337,13 @@ function newspack_blocks_format_byline( $author_info ) {
 	return implode( '', $elements );
 }
 
+/**
+ * Renders category markup plus filter.
+ *
+ * @param string $post_id Post ID.
+ *
+ * @return string Returns filtered category markup.
+ */
 function newspack_blocks_categories( $post_id ) {
 	$category = false;
 	// Use Yoast primary category if set.
@@ -354,15 +361,15 @@ function newspack_blocks_categories( $post_id ) {
 		}
 	}
 
-	$category_link = get_category_link( $category->term_id );
+	$category_link      = get_category_link( $category->term_id );
 	$category_formatted = esc_html( $category->name );
 
 	if ( ! empty( $category_link ) ) {
-		$category_formatted = "<a href='" . esc_attr( $category_link ) . "'>" . esc_html( $category->name ) . "</a>";
+		$category_formatted = '<a href="' . esc_attr( $category_link ) . '">' . esc_html( $category->name ) . '</a>';
 	}
 
 	if ( $category ) {
-		echo apply_filters( 'newspack_block_categories', $category_formatted );
+		echo apply_filters( 'newspack_blocks_categories', $category_formatted );
 	}
 }
 
