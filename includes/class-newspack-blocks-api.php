@@ -159,7 +159,9 @@ class Newspack_Blocks_API {
 			return '';
 		}
 
-		return $category->name;
+		$linked_category = '<a href="#">' . $category->name . '</a>';
+
+		return apply_filters( 'newspack_block_categories', $linked_category );
 	}
 
 	/**
