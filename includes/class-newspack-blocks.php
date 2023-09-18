@@ -1496,5 +1496,32 @@ class Newspack_Blocks {
 			return 'white';
 		}
 	}
+
+	/**
+	 * Get an array of allowed HTML attributes for sanitizing image markup.
+	 * For use with wp_kses: https://developer.wordpress.org/reference/functions/wp_kses/
+	 *
+	 * @return array
+	 */
+	public static function get_sanitized_image_attributes() {
+		return [
+			'img'      => [
+				'alt'      => true,
+				'class'    => true,
+				'data-*'   => true,
+				'decoding' => true,
+				'height'   => true,
+				'loading'  => true,
+				'sizes'    => true,
+				'src'      => true,
+				'srcset'   => true,
+				'width'    => true,
+			],
+			'noscript' => [],
+			'a'        => [
+				'href' => true,
+			],
+		];
+	}
 }
 Newspack_Blocks::init();

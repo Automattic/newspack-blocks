@@ -231,21 +231,7 @@ call_user_func(
 						if ( $attributes['showAvatar'] ) :
 							echo wp_kses(
 								newspack_blocks_format_avatars( $authors ),
-								array(
-									'img'      => array(
-										'class'  => true,
-										'src'    => true,
-										'alt'    => true,
-										'width'  => true,
-										'height' => true,
-										'data-*' => true,
-										'srcset' => true,
-									),
-									'noscript' => array(),
-									'a'        => array(
-										'href' => true,
-									),
-								)
+								Newspack_Blocks::get_sanitized_image_attributes()
 							);
 						endif;
 						?>

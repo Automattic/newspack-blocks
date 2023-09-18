@@ -208,21 +208,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 								if ( $attributes['showAvatar'] ) :
 									echo wp_kses(
 										newspack_blocks_format_avatars( $authors ),
-										array(
-											'img'      => array(
-												'class'  => true,
-												'src'    => true,
-												'alt'    => true,
-												'width'  => true,
-												'height' => true,
-												'data-*' => true,
-												'srcset' => true,
-											),
-											'noscript' => array(),
-											'a'        => array(
-												'href' => true,
-											),
-										)
+										Newspack_Blocks::get_sanitized_image_attributes()
 									);
 								endif;
 								?>
@@ -285,7 +271,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 			$autoplay ? 'auto-advance="true" auto-advance-interval=' . esc_attr( $delay * 1000 ) : '',
 			absint( $newspack_blocks_carousel_id ),
 			esc_attr( '(min-width: 1168px) ' . $slides_to_show . ', (min-width: 782px) ' . ( $slides_to_show > 1 ? 2 : 1 ) . ', ' . 1 ),
-			wp_kses_post( $slides )
+			$slides
 		);
 		$autoplay_ui = $autoplay ? newspack_blocks_carousel_block_autoplay_ui_amp( $newspack_blocks_carousel_id ) : '';
 	} else {
@@ -302,7 +288,7 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 		);
 		$carousel    = sprintf(
 			'<div class="swiper"><div class="swiper-wrapper">%s</div>%s</div>',
-			wp_kses_post( $slides ),
+			$slides,
 			$navigation
 		);
 		$autoplay_ui = $autoplay ? newspack_blocks_carousel_block_autoplay_ui( $newspack_blocks_carousel_id ) : '';

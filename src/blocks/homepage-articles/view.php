@@ -284,7 +284,14 @@ add_action( 'init', 'newspack_blocks_register_homepage_articles' );
 function newspack_blocks_format_avatars( $author_info ) {
 	$elements = array_map(
 		function ( $author ) {
-			return sprintf( '<a href="%s">%s</a>', esc_url( $author->url ), wp_kses_post( $author->avatar ) );
+			return sprintf(
+				'<a href="%s">%s</a>',
+				esc_url( $author->url ),
+				wp_kses(
+					$author->avatar,
+					Newspack_Blocks::get_sanitized_image_attributes()
+				)
+			);
 		},
 		$author_info
 	);
