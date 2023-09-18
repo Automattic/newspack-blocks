@@ -1,3 +1,10 @@
+# [1.75.0-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v1.75.0-alpha.1...v1.75.0-alpha.2) (2023-09-18)
+
+
+### Bug Fixes
+
+* harden usage and output of attribute values ([#1530](https://github.com/Automattic/newspack-blocks/issues/1530)) ([c157395](https://github.com/Automattic/newspack-blocks/commit/c15739539d73884b36284e9d1c2eb854202269f8))
+
 ## [1.74.1](https://github.com/Automattic/newspack-blocks/compare/v1.74.0...v1.74.1) (2023-09-18)
 
 
