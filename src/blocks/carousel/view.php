@@ -249,9 +249,9 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 		);
 	}
 
-	$slides_per_view = absint( $attributes['slidesPerView'] ) ?? 1;
+	$slides_per_view = absint( $attributes['slidesPerView'] ?? 1 );
 	$slides_to_show  = $slides_per_view <= $counter ? $slides_per_view : $counter;
-	$aspect_ratio    = floatval( $attributes['aspectRatio'] ) ?? 0.75;
+	$aspect_ratio    = floatval( $attributes['aspectRatio'] ?? 0.75 ) ;
 
 	if ( $is_amp ) {
 		$selector = sprintf(
