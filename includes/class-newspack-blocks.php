@@ -543,13 +543,15 @@ class Newspack_Blocks {
 			),
 		);
 
-		foreach ( $sizes[ $orientation ] as $key => $dimensions ) {
-			$attachment = wp_get_attachment_image_src(
-				get_post_thumbnail_id( get_the_ID() ),
-				'newspack-article-block-' . $orientation . '-' . $key
-			);
-			if ( ! empty( $attachment ) && $dimensions[0] === $attachment[1] && $dimensions[1] === $attachment[2] ) {
-				return 'newspack-article-block-' . $orientation . '-' . $key;
+		if ( isset( $sizes[ $orientation ] ) ) {
+			foreach ( $sizes[ $orientation ] as $key => $dimensions ) {
+				$attachment = wp_get_attachment_image_src(
+					get_post_thumbnail_id( get_the_ID() ),
+					'newspack-article-block-' . $orientation . '-' . $key
+				);
+				if ( ! empty( $attachment ) && $dimensions[0] === $attachment[1] && $dimensions[1] === $attachment[2] ) {
+					return 'newspack-article-block-' . $orientation . '-' . $key;
+				}
 			}
 		}
 
@@ -1493,6 +1495,33 @@ class Newspack_Blocks {
 			// if not, return white color.
 			return 'white';
 		}
+	}
+
+	/**
+	 * Get an array of allowed HTML attributes for sanitizing image markup.
+	 * For use with wp_kses: https://developer.wordpress.org/reference/functions/wp_kses/
+	 *
+	 * @return array
+	 */
+	public static function get_sanitized_image_attributes() {
+		return [
+			'img'      => [
+				'alt'      => true,
+				'class'    => true,
+				'data-*'   => true,
+				'decoding' => true,
+				'height'   => true,
+				'loading'  => true,
+				'sizes'    => true,
+				'src'      => true,
+				'srcset'   => true,
+				'width'    => true,
+			],
+			'noscript' => [],
+			'a'        => [
+				'href' => true,
+			],
+		];
 	}
 }
 Newspack_Blocks::init();
