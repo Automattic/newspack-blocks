@@ -29,7 +29,7 @@ call_user_func(
 		$post_link = Newspack_Blocks::get_post_link( $post_id );
 
 		if ( 'behind' === $attributes['mediaPosition'] && $attributes['showImage'] && has_post_thumbnail() ) {
-			$styles = 'min-height: ' . $attributes['minHeight'] . 'vh; padding-top: ' . ( $attributes['minHeight'] / 5 ) . 'vh;';
+			$styles = 'min-height: ' . absint( $attributes['minHeight'] ) . 'vh; padding-top: ' . ( absint( $attributes['minHeight'] ) / 5 ) . 'vh;';
 		}
 		$image_size = 'newspack-article-block-uncropped';
 		if ( has_post_thumbnail() && 'uncropped' !== $attributes['imageShape'] ) {

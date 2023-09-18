@@ -543,13 +543,15 @@ class Newspack_Blocks {
 			),
 		);
 
-		foreach ( $sizes[ $orientation ] as $key => $dimensions ) {
-			$attachment = wp_get_attachment_image_src(
-				get_post_thumbnail_id( get_the_ID() ),
-				'newspack-article-block-' . $orientation . '-' . $key
-			);
-			if ( ! empty( $attachment ) && $dimensions[0] === $attachment[1] && $dimensions[1] === $attachment[2] ) {
-				return 'newspack-article-block-' . $orientation . '-' . $key;
+		if ( isset( $sizes[ $orientation ] ) ) {
+			foreach ( $sizes[ $orientation ] as $key => $dimensions ) {
+				$attachment = wp_get_attachment_image_src(
+					get_post_thumbnail_id( get_the_ID() ),
+					'newspack-article-block-' . $orientation . '-' . $key
+				);
+				if ( ! empty( $attachment ) && $dimensions[0] === $attachment[1] && $dimensions[1] === $attachment[2] ) {
+					return 'newspack-article-block-' . $orientation . '-' . $key;
+				}
 			}
 		}
 
