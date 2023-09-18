@@ -1,9 +1,9 @@
-# [1.75.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.74.0...v1.75.0-alpha.1) (2023-09-15)
+## [1.74.1](https://github.com/Automattic/newspack-blocks/compare/v1.74.0...v1.74.1) (2023-09-18)
 
 
-### Features
+### Bug Fixes
 
-* add category filter for the categories in the blocks ([#1528](https://github.com/Automattic/newspack-blocks/issues/1528)) ([ebbfce9](https://github.com/Automattic/newspack-blocks/commit/ebbfce99dd78521fe5624be81df43c3ba3f8c731))
+* harden usage and output of attribute values ([#1530](https://github.com/Automattic/newspack-blocks/issues/1530)) ([c157395](https://github.com/Automattic/newspack-blocks/commit/c15739539d73884b36284e9d1c2eb854202269f8))
 
 # [1.74.0](https://github.com/Automattic/newspack-blocks/compare/v1.73.0...v1.74.0) (2023-08-24)
 
