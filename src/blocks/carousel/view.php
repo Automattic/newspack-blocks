@@ -73,6 +73,10 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 			$hide_publish_date = apply_filters( 'newspack_listings_hide_publish_date', false ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			$show_author       = $attributes['showAuthor'] && ! $hide_author;
 			$show_date         = $attributes['showDate'] && ! $hide_publish_date;
+
+			// Validate the value of the "image fit" attribute.
+			$image_fits = [ 'cover', 'contain' ];
+			$image_fit  = in_array( $attributes['imageFit'], $image_fits, true ) ? $attributes['imageFit'] : $image_fits[0];
 			?>
 
 			<article data-post-id="<?php echo esc_attr( $post_id ); ?>" class="<?php echo esc_attr( implode( ' ', $article_classes ) . ' ' . $post_type ); ?>">
@@ -86,9 +90,9 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 								the_post_thumbnail(
 									'large',
 									array(
-										'object-fit' => $attributes['imageFit'],
+										'object-fit' => $image_fit,
 										'layout'     => 'fill',
-										'class'      => 'contain' === $attributes['imageFit'] ? 'image-fit-contain' : 'image-fit-cover',
+										'class'      => 'contain' === $image_fit ? 'image-fit-contain' : 'image-fit-cover',
 										'alt'        => trim( wp_strip_all_tags( get_the_title( $post_id ) ) ),
 									)
 								);
