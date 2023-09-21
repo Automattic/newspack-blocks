@@ -69,7 +69,7 @@ export default function save( { attributes, className } ) {
 						value={ attributes.afterSuccessBehavior }
 					/>
 				) }
-				{ attributes.afterSuccessButtonlabel && (
+				{ attributes.afterSuccessButtonLabel && (
 					<input
 						type="hidden"
 						name="after_success_button_label"
