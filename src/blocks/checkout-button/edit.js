@@ -160,7 +160,7 @@ function RedirectAfterSuccess( props ) {
 			<SelectControl
 				label={ __( 'Redirect after success', 'newspack-blocks' ) }
 				help={ __(
-					'Select whether the user should be presented with a button to navigate after a successfull purchase.',
+					'Select whether the user should be presented with a button to navigate after a successful purchase.',
 					'newspack-blocks'
 				) }
 				value={ attributes.afterSuccessBehavior }
