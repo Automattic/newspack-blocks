@@ -562,7 +562,11 @@ final class Modal_Checkout {
 		}
 
 		?>
-			<a class="button" href="<?php echo esc_url( sanitize_text_field( wp_unslash( $_REQUEST['after_success_url'] ) ) ); ?>">
+			<a
+				class="button"
+				href="<?php echo esc_url( sanitize_text_field( wp_unslash( $_REQUEST['after_success_url'] ) ) ); ?>"
+				target="_top"
+			>
 				<?php echo esc_html( sanitize_text_field( wp_unslash( $_REQUEST['after_success_button_label'] ) ) ); ?>
 			</a>
 		<?php
