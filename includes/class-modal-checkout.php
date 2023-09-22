@@ -553,22 +553,24 @@ final class Modal_Checkout {
 	 */
 	public static function woocommerce_thankyou() {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
-		if ( ! isset( $_REQUEST['modal_checkout'] ) ||
+		if (
+			empty( $_REQUEST['modal_checkout'] ) ||
 			empty( $_REQUEST['after_success_behavior'] ) ||
-			empty( $_REQUEST['after_success_button_label'] ) ||
 			empty( $_REQUEST['after_success_url'] )
 		) {
 			return;
 		}
+
+		$button_label = ! empty( $_REQUEST['after_success_button_label'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['after_success_button_label'] ) ) : __( 'Continue browsing', 'newspack-blocks' );
 
 		?>
 			<a
 				class="button"
 				href="<?php echo esc_url( sanitize_text_field( wp_unslash( $_REQUEST['after_success_url'] ) ) ); ?>"
 				target="_top"
-				style="display:block;"
+				style="display:block;margin:16px 0;"
 			>
-				<?php echo esc_html( sanitize_text_field( wp_unslash( $_REQUEST['after_success_button_label'] ) ) ); ?>
+				<?php echo esc_html( $button_label ); ?>
 			</a>
 		<?php
 		// phpcs:enable
