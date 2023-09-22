@@ -116,7 +116,7 @@ domReady( () => {
 				afterSuccessUrlInput &&
 				'referrer' === afterSuccessBehaviorInput.getAttribute( 'value' )
 			) {
-				afterSuccessUrlInput.setAttribute( 'value', document.referrer );
+				afterSuccessUrlInput.setAttribute( 'value', document.referrer || window.location.href );
 			}
 
 			form.addEventListener( 'submit', ev => {
