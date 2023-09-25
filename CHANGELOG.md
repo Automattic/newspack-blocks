@@ -1,3 +1,10 @@
+# [1.75.0-alpha.3](https://github.com/Automattic/newspack-blocks/compare/v1.75.0-alpha.2...v1.75.0-alpha.3) (2023-09-19)
+
+
+### Bug Fixes
+
+* undefined variable error ([#1534](https://github.com/Automattic/newspack-blocks/issues/1534)) ([b0ed7f9](https://github.com/Automattic/newspack-blocks/commit/b0ed7f911982f914678c466c07bc5f0659aaca86))
+
 ## [1.74.2](https://github.com/Automattic/newspack-blocks/compare/v1.74.1...v1.74.2) (2023-09-19)
 
 
