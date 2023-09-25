@@ -1,3 +1,10 @@
+# [1.75.0](https://github.com/Automattic/newspack-blocks/compare/v1.74.2...v1.75.0) (2023-09-25)
+
+
+### Features
+
+* add category filter for the categories in the blocks ([#1528](https://github.com/Automattic/newspack-blocks/issues/1528)) ([ebbfce9](https://github.com/Automattic/newspack-blocks/commit/ebbfce99dd78521fe5624be81df43c3ba3f8c731))
+
 # [1.75.0-alpha.3](https://github.com/Automattic/newspack-blocks/compare/v1.75.0-alpha.2...v1.75.0-alpha.3) (2023-09-19)
 
 
