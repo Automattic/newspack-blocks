@@ -106,8 +106,8 @@ domReady( () => {
 			form.appendChild( modalCheckoutInput.cloneNode() );
 			form.target = iframeName;
 			// Append UTM parameters if any.
-			const utmParams = new URLSearchParams( window.location.search );
-			utmParams.forEach( ( value, key ) => {
+			const urlParams = new URLSearchParams( window.location.search );
+			urlParams.forEach( ( value, key ) => {
 				if ( key.indexOf( 'utm_' ) === 0 ) {
 					const input = document.createElement( 'input' );
 					input.type = 'hidden';
