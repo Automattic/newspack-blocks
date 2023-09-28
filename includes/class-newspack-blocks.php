@@ -596,7 +596,6 @@ class Newspack_Blocks {
 	private static function get_specific_posts_from_blocks( $blocks, $block_name ) {
 		$specific_posts = [];
 		foreach ( $blocks as $block ) {
-			error_log( print_r( array_keys($block ), true));
 			if ( ! empty( $block['innerBlocks'] ) ) {
 				$specific_posts = array_merge(
 					$specific_posts,
