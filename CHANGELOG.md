@@ -1,3 +1,11 @@
+## [1.75.1](https://github.com/Automattic/newspack-blocks/compare/v1.75.0...v1.75.1) (2023-09-28)
+
+
+### Bug Fixes
+
+* **checkout-button:** handle 10+ product variations ([#1536](https://github.com/Automattic/newspack-blocks/issues/1536)) ([5df5065](https://github.com/Automattic/newspack-blocks/commit/5df5065011d6779a689358844212628757b6b5b9))
+* query for CAP terms ([#1535](https://github.com/Automattic/newspack-blocks/issues/1535)) ([49406b9](https://github.com/Automattic/newspack-blocks/commit/49406b9bf1075897939cad2e4c30f34efcf841da))
+
 # [1.75.0](https://github.com/Automattic/newspack-blocks/compare/v1.74.2...v1.75.0) (2023-09-25)
 
 
