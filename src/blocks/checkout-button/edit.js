@@ -167,7 +167,7 @@ function RedirectAfterSuccess( props ) {
 				options={ [
 					{ label: __( 'Do not show a button', 'newspack-blocks' ), value: '' },
 					{ label: __( 'Go to a custom URL', 'newspack-blocks' ), value: 'custom' },
-					{ label: __( 'Go to the referrer page', 'newspack-blocks' ), value: 'referrer' },
+					{ label: __( 'Go to the previous page', 'newspack-blocks' ), value: 'referrer' },
 				] }
 				onChange={ value => {
 					setAttributes( { afterSuccessBehavior: value.toString() } );
