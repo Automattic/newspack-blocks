@@ -105,9 +105,6 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 			if ( $configuration['disabledFrequencies'][ $frequency_slug ] ) {
 				unset( $frequencies[ $frequency_slug ] );
 			}
-			if ( $is_tiers_based && 'once' === $frequency_slug ) {
-				unset( $frequencies[ $frequency_slug ] );
-			}
 		}
 		$configuration['frequencies'] = $frequencies;
 
