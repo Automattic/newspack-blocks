@@ -76,8 +76,12 @@ export default function save( { attributes, className } ) {
 						value={ attributes.afterSuccessButtonLabel }
 					/>
 				) }
-				{ attributes.afterSuccessURL && (
-					<input type="hidden" name="after_success_url" value={ attributes.afterSuccessURL } />
+				{ attributes.afterSuccessBehavior && (
+					<input
+						type="hidden"
+						name="after_success_url"
+						value={ attributes.afterSuccessURL || '' }
+					/>
 				) }
 			</form>
 		</div>
