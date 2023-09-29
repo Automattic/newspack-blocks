@@ -153,9 +153,6 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 		attributes.manual
 			? ! attributes.disabledFrequencies[ slug ]
 			: ! settings.disabledFrequencies[ slug ]
-	).filter( slug => ( isTierBasedLayoutEnabled ? slug !== 'once' : true ) );
-	const displayedFrequencies = FREQUENCY_SLUGS.filter( slug =>
-		isTierBasedLayoutEnabled ? slug !== 'once' : true
 	);
 
 	// Editor bug – initially, the default style is selected, but the class not applied.
@@ -278,13 +275,13 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 							{ attributes.tiered ? (
 								<>
 									<div className="components-frequency-donations">
-										{ displayedFrequencies.map( ( frequency: DonationFrequencySlug ) => {
+										{ FREQUENCY_SLUGS.map( ( frequency: DonationFrequencySlug ) => {
 											const isFrequencyDisabled = attributes.disabledFrequencies[ frequency ];
 											const disabledDisplayedFrequencyCount = Object.values(
-												pick( attributes.disabledFrequencies, displayedFrequencies )
+												pick( attributes.disabledFrequencies, FREQUENCY_SLUGS )
 											).filter( Boolean ).length;
 											const isOnlyOneFrequencyActive =
-												displayedFrequencies.length - disabledDisplayedFrequencyCount === 1;
+												FREQUENCY_SLUGS.length - disabledDisplayedFrequencyCount === 1;
 											return (
 												<Fragment key={ frequency }>
 													<CheckboxControl
