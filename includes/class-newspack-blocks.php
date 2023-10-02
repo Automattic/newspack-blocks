@@ -677,7 +677,7 @@ class Newspack_Blocks {
 			 * @param bool   $deduplicate Whether to deduplicate.
 			 * @param array  $attributes  The block attributes.
 			 */
-			$deduplicate = apply_filters( 'newspack_blocks_should_deduplicate', $attributes['deduplicate'], $attributes );
+			$deduplicate = apply_filters( 'newspack_blocks_should_deduplicate', $attributes['deduplicate'] ?? true, $attributes );
 			if ( ! $deduplicate ) {
 				$args['post__not_in'] = [ get_the_ID() ];
 			} else {

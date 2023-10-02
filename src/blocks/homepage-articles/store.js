@@ -115,7 +115,7 @@ function* getPostsForBlock( block ) {
  *
  * @param {string} clientId
  *
- * @return {Boolean} whether the block uses deduplication
+ * @return {boolean} whether the block uses deduplication
  */
 function shouldDeduplicate( clientId ) {
 	const { getBlock } = select( 'core/block-editor' );
@@ -151,8 +151,8 @@ const createFetchPostsSaga = blockNames => {
 		const blockQueries = getBlockQueries( blocks, blockNames );
 
 		// Use requested specific posts ids as the starting state of exclusion list.
-		const specificPostsId = blockQueries.reduce( ( acc, { postsQuery } ) => {
-			if ( postsQuery.include ) {
+		const specificPostsId = blockQueries.reduce( ( acc, { clientId, postsQuery } ) => {
+			if ( shouldDeduplicate( clientId ) && postsQuery.include ) {
 				acc = [ ...acc, ...postsQuery.include ];
 			}
 			return acc;
