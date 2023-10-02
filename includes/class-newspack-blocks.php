@@ -586,6 +586,38 @@ class Newspack_Blocks {
 	}
 
 	/**
+	 * Get all "specificPosts" ids from given blocks.
+	 *
+	 * @param array  $blocks     An array of blocks.
+	 * @param string $block_name Name of the block requesting the query.
+	 *
+	 * @return array All "specificPosts" ids from all eligible blocks.
+	 */
+	private static function get_specific_posts_from_blocks( $blocks, $block_name ) {
+		$specific_posts = [];
+		foreach ( $blocks as $block ) {
+			if ( ! empty( $block['innerBlocks'] ) ) {
+				$specific_posts = array_merge(
+					$specific_posts,
+					self::get_specific_posts_from_blocks( $block['innerBlocks'], $block_name )
+				);
+				continue;
+			}
+			if (
+				$block_name === $block['blockName'] &&
+				! empty( $block['attrs']['specificMode'] ) &&
+				! empty( $block['attrs']['specificPosts'] )
+			) {
+				$specific_posts = array_merge(
+					$specific_posts,
+					$block['attrs']['specificPosts']
+				);
+			}
+		}
+		return $specific_posts;
+	}
+
+	/**
 	 * Builds and returns query args based on block attributes.
 	 *
 	 * @param array $attributes An array of block attributes.
@@ -606,23 +638,7 @@ class Newspack_Blocks {
 		global $newspack_blocks_all_specific_posts_ids;
 		if ( ! is_array( $newspack_blocks_all_specific_posts_ids ) ) {
 			$blocks                                 = parse_blocks( get_the_content() );
-			$newspack_blocks_all_specific_posts_ids = array_reduce(
-				$blocks,
-				function ( $acc, $block ) use ( $block_name ) {
-					if (
-						$block_name === $block['blockName'] &&
-						isset( $block['attrs']['specificMode'], $block['attrs']['specificPosts'] ) &&
-						count( $block['attrs']['specificPosts'] )
-					) {
-						return array_merge(
-							$block['attrs']['specificPosts'],
-							$acc
-						);
-					}
-					return $acc;
-				},
-				[]
-			);
+			$newspack_blocks_all_specific_posts_ids = self::get_specific_posts_from_blocks( $blocks, $block_name );
 		}
 
 		$post_type              = isset( $attributes['postType'] ) ? $attributes['postType'] : [ 'post' ];
