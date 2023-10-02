@@ -605,6 +605,7 @@ class Newspack_Blocks {
 			}
 			if (
 				$block_name === $block['blockName'] &&
+				! empty( $block['attrs']['deduplicate'] ) &&
 				! empty( $block['attrs']['specificMode'] ) &&
 				! empty( $block['attrs']['specificPosts'] )
 			) {
