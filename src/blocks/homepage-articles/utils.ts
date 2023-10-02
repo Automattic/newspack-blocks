@@ -38,6 +38,7 @@ const POST_QUERY_ATTRIBUTES = [
 	'categoryExclusions',
 	'postType',
 	'includedPostStatuses',
+	'deduplicate',
 ];
 
 type HomepageArticlesAttributes = {

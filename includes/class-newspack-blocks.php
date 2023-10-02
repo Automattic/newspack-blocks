@@ -671,8 +671,14 @@ class Newspack_Blocks {
 		} else {
 			$args['posts_per_page'] = $posts_to_show;
 
-			$show_rendered_posts = apply_filters( 'newspack_blocks_homepage_shown_rendered_posts', false );
-			if ( $show_rendered_posts ) {
+			/**
+			 * Filters whether to use deduplication while rendering this block.
+			 *
+			 * @param bool   $deduplicate Whether to deduplicate.
+			 * @param array  $attributes  The block attributes.
+			 */
+			$deduplicate = apply_filters( 'newspack_blocks_should_deduplicate', $attributes['deduplicate'], $attributes );
+			if ( ! $deduplicate ) {
 				$args['post__not_in'] = [ get_the_ID() ];
 			} else {
 				if ( count( $newspack_blocks_all_specific_posts_ids ) ) {

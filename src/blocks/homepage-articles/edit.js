@@ -435,6 +435,15 @@ class Edit extends Component {
 							/>
 						)
 					) }
+					<ToggleControl
+						label={ __( 'Use deduplication logic', 'newspack-blocks' ) }
+						help={ __(
+							'If checked, the block will not show posts that have already been displayed in the page. Unchecking this option may result in duplicate posts being displayed.',
+							'newspack-blocks'
+						) }
+						checked={ attributes.deduplicate }
+						onChange={ () => setAttributes( { deduplicate: ! attributes.deduplicate } ) }
+					/>
 				</PanelBody>
 				<PanelBody title={ __( 'Featured Image Settings', 'newspack-blocks' ) }>
 					<PanelRow>
