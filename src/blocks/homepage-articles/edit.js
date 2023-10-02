@@ -438,7 +438,7 @@ class Edit extends Component {
 					<ToggleControl
 						label={ __( 'Use deduplication logic', 'newspack-blocks' ) }
 						help={ __(
-							'If checked, the block will not show posts that have already been displayed in the page. Unchecking this option may result in duplicate posts being displayed.',
+							'If unchecked, this block will be excluded from the deduplication logic and may show duplicate posts.',
 							'newspack-blocks'
 						) }
 						checked={ attributes.deduplicate }
