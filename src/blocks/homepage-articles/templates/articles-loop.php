@@ -18,11 +18,9 @@ call_user_func(
 
 		Newspack_Blocks::filter_excerpt( $attributes );
 
-		$deduplicate = apply_filters( 'newspack_blocks_use_deduplication', $attributes['deduplicate'], $attributes );
-
 		while ( $article_query->have_posts() ) {
 			$article_query->the_post();
-			if ( $deduplicate ) {
+			if ( Newspack_Blocks::should_deduplicate_block( $attributes ) ) {
 				$newspack_blocks_post_id[ get_the_ID() ] = true;
 			}
 			echo Newspack_Blocks::template_inc( __DIR__ . '/article.php', array( 'attributes' => $attributes ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
