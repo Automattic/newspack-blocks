@@ -443,6 +443,7 @@ class Edit extends Component {
 						) }
 						checked={ attributes.deduplicate }
 						onChange={ () => setAttributes( { deduplicate: ! attributes.deduplicate } ) }
+						className="newspack-blocks-deduplication-toggle"
 					/>
 				</PanelBody>
 				<PanelBody title={ __( 'Featured Image Settings', 'newspack-blocks' ) }>
