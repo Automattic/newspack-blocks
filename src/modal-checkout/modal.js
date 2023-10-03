@@ -105,6 +105,20 @@ domReady( () => {
 		forms.forEach( form => {
 			form.appendChild( modalCheckoutInput.cloneNode() );
 			form.target = iframeName;
+
+			// Fill in the referrer field.
+			const afterSuccessUrlInput = form.querySelector( 'input[name="after_success_url"]' );
+			const afterSuccessBehaviorInput = form.querySelector(
+				'input[name="after_success_behavior"]'
+			);
+			if (
+				afterSuccessBehaviorInput &&
+				afterSuccessUrlInput &&
+				'referrer' === afterSuccessBehaviorInput.getAttribute( 'value' )
+			) {
+				afterSuccessUrlInput.setAttribute( 'value', document.referrer || window.location.href );
+			}
+
 			form.addEventListener( 'submit', ev => {
 				const formData = new FormData( form );
 				// Clear any open variation modal.

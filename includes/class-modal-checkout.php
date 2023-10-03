@@ -43,15 +43,21 @@ final class Modal_Checkout {
 		add_filter( 'woocommerce_checkout_get_value', [ __CLASS__, 'woocommerce_checkout_get_value' ], 10, 2 );
 		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'woocommerce_checkout_fields' ] );
 		add_filter( 'woocommerce_update_order_review_fragments', [ __CLASS__, 'order_review_fragments' ] );
+		add_action( 'woocommerce_thankyou', [ __CLASS__, 'woocommerce_thankyou' ] ); // Core Woo, not present in Newspack theme custom template.
+		add_action( 'newspack_woocommerce_thankyou', [ __CLASS__, 'woocommerce_thankyou' ] ); // Newspack Theme.
 	}
 
 	/**
 	 * Process checkout request for modal.
 	 */
 	public static function process_checkout_request() {
-		$is_newspack_checkout = filter_input( INPUT_GET, 'newspack_checkout', FILTER_SANITIZE_NUMBER_INT );
-		$product_id           = filter_input( INPUT_GET, 'product_id', FILTER_SANITIZE_NUMBER_INT );
-		$variation_id         = filter_input( INPUT_GET, 'variation_id', FILTER_SANITIZE_NUMBER_INT );
+		$is_newspack_checkout       = filter_input( INPUT_GET, 'newspack_checkout', FILTER_SANITIZE_NUMBER_INT );
+		$product_id                 = filter_input( INPUT_GET, 'product_id', FILTER_SANITIZE_NUMBER_INT );
+		$variation_id               = filter_input( INPUT_GET, 'variation_id', FILTER_SANITIZE_NUMBER_INT );
+		$after_success_behavior     = filter_input( INPUT_GET, 'after_success_behavior', FILTER_SANITIZE_STRING );
+		$after_success_url          = filter_input( INPUT_GET, 'after_success_url', FILTER_SANITIZE_STRING );
+		$after_success_button_label = filter_input( INPUT_GET, 'after_success_button_label', FILTER_SANITIZE_STRING );
+
 		if ( ! $is_newspack_checkout || ! $product_id ) {
 			return;
 		}
@@ -69,6 +75,8 @@ final class Modal_Checkout {
 		if ( ! empty( $parsed_url['query'] ) ) {
 			wp_parse_str( $parsed_url['query'], $params );
 		}
+
+		$params = array_merge( $params, compact( 'after_success_behavior', 'after_success_url', 'after_success_button_label' ) );
 
 		if ( function_exists( 'wpcom_vip_url_to_postid' ) ) {
 			$referer_post_id = wpcom_vip_url_to_postid( $referer );
@@ -134,9 +142,9 @@ final class Modal_Checkout {
 		}
 		$query_args['modal_checkout'] = 1;
 
-		// Pass through UTM params so they can be forwarded to the WooCommerce checkout flow.
+		// Pass through UTM and after_success params so they can be forwarded to the WooCommerce checkout flow.
 		foreach ( $params as $param => $value ) {
-			if ( 'utm' === substr( $param, 0, 3 ) ) {
+			if ( 'utm' === substr( $param, 0, 3 ) || 'after_success' === substr( $param, 0, 13 ) ) {
 				$param                = sanitize_text_field( $param );
 				$query_args[ $param ] = sanitize_text_field( $value );
 			}
@@ -319,10 +327,14 @@ final class Modal_Checkout {
 		if ( ! isset( $_REQUEST['modal_checkout'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return $url;
 		}
+
 		return add_query_arg(
 			[
-				'modal_checkout' => '1',
-				'email'          => isset( $_REQUEST['billing_email'] ) ? rawurlencode( sanitize_email( wp_unslash( $_REQUEST['billing_email'] ) ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				'modal_checkout'             => '1',
+				'email'                      => isset( $_REQUEST['billing_email'] ) ? rawurlencode( sanitize_email( wp_unslash( $_REQUEST['billing_email'] ) ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				'after_success_behavior'     => isset( $_REQUEST['after_success_behavior'] ) ? rawurlencode( sanitize_text_field( wp_unslash( $_REQUEST['after_success_behavior'] ) ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				'after_success_url'          => isset( $_REQUEST['after_success_url'] ) ? rawurlencode( sanitize_text_field( wp_unslash( $_REQUEST['after_success_url'] ) ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				'after_success_button_label' => isset( $_REQUEST['after_success_button_label'] ) ? rawurlencode( sanitize_text_field( wp_unslash( $_REQUEST['after_success_button_label'] ) ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			],
 			$url
 		);
@@ -532,6 +544,36 @@ final class Modal_Checkout {
 			$fragments['.woocommerce-checkout-review-order-table'] = '<table class="shop_table woocommerce-checkout-review-order-table empty"></table>';
 		}
 		return $fragments;
+	}
+
+	/**
+	 * Adds an additional button to the Thank you page
+	 *
+	 * @return void
+	 */
+	public static function woocommerce_thankyou() {
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		if (
+			empty( $_REQUEST['modal_checkout'] ) ||
+			empty( $_REQUEST['after_success_behavior'] ) ||
+			empty( $_REQUEST['after_success_url'] )
+		) {
+			return;
+		}
+
+		$button_label = ! empty( $_REQUEST['after_success_button_label'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['after_success_button_label'] ) ) : __( 'Continue browsing', 'newspack-blocks' );
+
+		?>
+			<a
+				class="button"
+				href="<?php echo esc_url( sanitize_text_field( wp_unslash( $_REQUEST['after_success_url'] ) ) ); ?>"
+				target="_top"
+				style="display:block;margin:16px 0;"
+			>
+				<?php echo esc_html( $button_label ); ?>
+			</a>
+		<?php
+		// phpcs:enable
 	}
 }
 Modal_Checkout::init();
