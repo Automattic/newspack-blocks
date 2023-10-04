@@ -54,7 +54,6 @@ class Newspack_Blocks {
 		add_action( 'after_setup_theme', [ __CLASS__, 'add_image_sizes' ] );
 		add_post_type_support( 'post', 'newspack_blocks' );
 		add_post_type_support( 'page', 'newspack_blocks' );
-		add_filter( 'script_loader_tag', [ __CLASS__, 'mark_view_script_as_amp_plus_allowed' ], 10, 2 );
 		add_action( 'jetpack_register_gutenberg_extensions', [ __CLASS__, 'disable_jetpack_donate' ], 99 );
 		add_filter( 'the_content', [ __CLASS__, 'hide_post_content_when_iframe_block_is_fullscreen' ] );
 		add_filter( 'posts_clauses', [ __CLASS__, 'filter_posts_clauses_when_co_authors' ], 999, 2 );
@@ -72,19 +71,6 @@ class Newspack_Blocks {
 		if ( ! defined( 'NGG_DISABLE_SHORTCODE_MANAGER' ) ) {
 			define( 'NGG_DISABLE_SHORTCODE_MANAGER', true ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
 		}
-	}
-
-	/**
-	 * Modify the Donate block scripts to allow it as an "AMP Plus" script.
-	 *
-	 * @param string $tag HTML of the script tag.
-	 * @param string $handle The script handle.
-	 */
-	public static function mark_view_script_as_amp_plus_allowed( $tag, $handle ) {
-		if ( in_array( $handle, array_values( self::SCRIPT_HANDLES ), true ) ) {
-			return str_replace( '<script', '<script data-amp-plus-allowed', $tag );
-		}
-		return $tag;
 	}
 
 	/**
@@ -268,7 +254,6 @@ class Newspack_Blocks {
 				'assets_path'                      => plugins_url( '/src/assets', NEWSPACK_BLOCKS__PLUGIN_FILE ),
 				'post_subtitle'                    => get_theme_support( 'post-subtitle' ),
 				'is_rendering_stripe_payment_form' => self::is_rendering_stripe_payment_form(),
-				'can_render_tiers_based_layout'    => self::can_render_tiers_based_layout(),
 				'iframe_accepted_file_mimes'       => self::iframe_accepted_file_mimes(),
 				'supports_recaptcha'               => class_exists( 'Newspack\Recaptcha' ),
 				'has_recaptcha'                    => class_exists( 'Newspack\Recaptcha' ) && \Newspack\Recaptcha::can_use_captcha(),
@@ -321,18 +306,6 @@ class Newspack_Blocks {
 			&& method_exists( 'Newspack\Donations', 'is_platform_stripe' )
 		) {
 			return \Newspack\Donations::can_use_streamlined_donate_block() && \Newspack\Donations::is_platform_stripe();
-		}
-		return false;
-	}
-
-	/**
-	 * Can the tiers-based layout of the Donate block be rendered?
-	 */
-	public static function can_render_tiers_based_layout() {
-		if ( ! is_plugin_active( 'amp/amp.php' ) ) {
-			return true;
-		} elseif ( method_exists( '\Newspack\AMP_Enhancements', 'is_amp_plus_configured' ) ) {
-			return \Newspack\AMP_Enhancements::is_amp_plus_configured();
 		}
 		return false;
 	}
@@ -452,18 +425,6 @@ class Newspack_Blocks {
 		}
 
 		return implode( ' ', $classes );
-	}
-
-	/**
-	 * Checks whether the current view is served in AMP context.
-	 *
-	 * @return bool True if AMP, false otherwise.
-	 */
-	public static function is_amp() {
-		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
-			return true;
-		}
-		return false;
 	}
 
 	/**
