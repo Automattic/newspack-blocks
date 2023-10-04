@@ -586,6 +586,23 @@ class Newspack_Blocks {
 	}
 
 	/**
+	 * Whether the block should be included in the deduplication logic.
+	 *
+	 * @param array $attributes Block attributes.
+	 *
+	 * @return bool
+	 */
+	public static function should_deduplicate_block( $attributes ) {
+		/**
+		 * Filters whether to use deduplication while rendering the given block.
+		 *
+		 * @param bool   $deduplicate Whether to deduplicate.
+		 * @param array  $attributes  The block attributes.
+		 */
+		return apply_filters( 'newspack_blocks_should_deduplicate', $attributes['deduplicate'] ?? true, $attributes );
+	}
+
+	/**
 	 * Get all "specificPosts" ids from given blocks.
 	 *
 	 * @param array  $blocks     An array of blocks.
@@ -605,6 +622,7 @@ class Newspack_Blocks {
 			}
 			if (
 				$block_name === $block['blockName'] &&
+				self::should_deduplicate_block( $block['attrs'] ) &&
 				! empty( $block['attrs']['specificMode'] ) &&
 				! empty( $block['attrs']['specificPosts'] )
 			) {
@@ -670,9 +688,7 @@ class Newspack_Blocks {
 			$args['orderby']  = 'post__in';
 		} else {
 			$args['posts_per_page'] = $posts_to_show;
-
-			$show_rendered_posts = apply_filters( 'newspack_blocks_homepage_shown_rendered_posts', false );
-			if ( $show_rendered_posts ) {
+			if ( ! self::should_deduplicate_block( $attributes ) ) {
 				$args['post__not_in'] = [ get_the_ID() ];
 			} else {
 				if ( count( $newspack_blocks_all_specific_posts_ids ) ) {
