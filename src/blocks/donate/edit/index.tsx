@@ -142,11 +142,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 	}
 
 	const isTiered = attributes.manual ? attributes.tiered : settings.tiered;
-	const canRenderTiersBasedLayout = Boolean(
-		window.newspack_blocks_data?.can_render_tiers_based_layout
-	);
-	const isTierBasedLayoutEnabled =
-		canRenderTiersBasedLayout && isTiered && attributes.layoutOption === 'tiers';
+	const isTierBasedLayoutEnabled = isTiered && attributes.layoutOption === 'tiers';
 
 	const amounts = attributes.manual ? attributes.amounts : settings.amounts;
 	const availableFrequencies = FREQUENCY_SLUGS.filter( slug =>
@@ -230,7 +226,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 									isPressed={ isSelected }
 									onClick={ () => setAttributes( { layoutOption: key } ) }
 									aria-current={ isSelected }
-									disabled={ key === 'tiers' && ( ! canRenderTiersBasedLayout || ! isTiered ) }
+									disabled={ key === 'tiers' && ! isTiered }
 								>
 									{ label }
 								</Button>
