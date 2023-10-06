@@ -137,6 +137,19 @@ function newspack_blocks_get_homepage_articles_css_string( $attrs ) {
 		.wpnbha .entry-title {
 			font-size: 1.2em;
 		}
+		.wpnbha .entry-meta {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			margin-top: 0.5em;
+		}
+		.wpnbha article .entry-meta {
+			font-size: 0.8em;
+		}
+		.wpnbha article .avatar {
+			height: 25px;
+			width: 25px;
+		}
 		.wpnbha .post-thumbnail{
 			margin: 0;
 			margin-bottom: 0.25em;
