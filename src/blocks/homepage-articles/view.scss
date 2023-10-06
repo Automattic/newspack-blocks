@@ -518,23 +518,11 @@
 	&.ts-10,
 	&.ts-9,
 	&.ts-8 {
-		.entry-title {
-			line-height: 1.1;
-		}
 		@include mixins.media( tablet ) {
 			article .avatar {
 				height: 2.4em;
 				width: 2.4em;
 			}
-		}
-	}
-
-	&.ts-10,
-	&.ts-9,
-	&.ts-8,
-	&.ts-7 {
-		.newspack-post-subtitle {
-			font-size: 1.4em;
 		}
 	}
 
@@ -595,9 +583,6 @@
 	}
 
 	&.ts-6 article {
-		.newspack-post-subtitle {
-			font-size: 1.4em;
-		}
 		@include mixins.media( tablet ) {
 			.entry-title {
 				font-size: 2em;
@@ -615,9 +600,6 @@
 	}
 
 	&.ts-5 article {
-		.newspack-post-subtitle {
-			font-size: 1.2em;
-		}
 		@include mixins.media( tablet ) {
 			.entry-title {
 				font-size: 1.8em;
@@ -637,12 +619,6 @@
 	/* Type Scale 4: default */
 
 	&.ts-3 article {
-		.newspack-post-subtitle,
-		.entry-wrapper p,
-		.entry-wrapper .more-link,
-		.entry-meta {
-			font-size: 0.8em;
-		}
 		@include mixins.media( tablet ) {
 			.entry-title {
 				font-size: 1.2em;
@@ -661,13 +637,6 @@
 
 	&.ts-2 article,
 	&.ts-1 article {
-		.newspack-post-subtitle,
-		.entry-wrapper p,
-		.entry-wrapper .more-link,
-		.entry-meta {
-			font-size: 0.8em;
-		}
-
 		@include mixins.media( tablet ) {
 			.newspack-post-subtitle,
 			.entry-wrapper p,

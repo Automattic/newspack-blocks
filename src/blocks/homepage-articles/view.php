@@ -155,7 +155,34 @@ function newspack_blocks_get_homepage_articles_css_string( $attrs ) {
 		<?php
 		if ( isset( $attrs['typeScale'] ) ) {
 			foreach ( $attrs['typeScale'] as $scale ) {
-				echo esc_html( ".wpnbha.ts-$scale .entry-title{font-size: {$entry_title_type_scale[$scale - 1]}}" );
+				echo esc_html(
+					".wpnbha.ts-$scale .entry-title{font-size: {$entry_title_type_scale[$scale - 1]}}"
+				);
+				if ( in_array( $scale, [ 8, 9, 10 ], true ) ) {
+					echo esc_html(
+						".wpnbha.ts-$scale .entry-title {line-height: 1.1;}"
+					);
+				}
+				if ( in_array( $scale, [ 7, 8, 9, 10 ], true ) ) {
+					echo esc_html(
+						".wpnbha.ts-$scale .newspack-post-subtitle {font-size: 1.4em;}"
+					);
+				}
+				if ( in_array( $scale, [ 6 ], true ) ) {
+					echo esc_html(
+						".wpnbha.ts-$scale article .newspack-post-subtitle {font-size: 1.4em;}"
+					);
+				}
+				if ( in_array( $scale, [ 5 ], true ) ) {
+					echo esc_html(
+						".wpnbha.ts-$scale article .newspack-post-subtitle {font-size: 1.2em;}"
+					);
+				}
+				if ( in_array( $scale, [ 1, 2, 3 ], true ) ) {
+					echo esc_html(
+						".wpnbha.ts-$scale article .newspack-post-subtitle,.entry-wrapper p,.entry-wrapper .more-link,.entry-meta {font-size: 0.8em;}"
+					);
+				}
 			}
 		}
 		?>
