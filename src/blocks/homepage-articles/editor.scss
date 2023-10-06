@@ -10,6 +10,10 @@
 		}
 	}
 
+	p {
+		margin: 0.5em 0;
+	}
+
 	&.ts-10 article {
 		.entry-title {
 			font-size: 2.6em;
@@ -49,6 +53,18 @@
 	&.ts-2 article {
 		.entry-title {
 			font-size: 0.9em;
+		}
+	}
+
+	.post-thumbnail {
+		margin: 0;
+		margin-bottom: 0.25em;
+		img {
+			height: auto;
+			width: 100%;
+		}
+		figcaption {
+			margin-bottom: 0.5em;
 		}
 	}
 

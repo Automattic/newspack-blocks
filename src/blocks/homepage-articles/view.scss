@@ -136,19 +136,6 @@
 	}
 
 	/* Image styles */
-	.post-thumbnail {
-		margin: 0;
-		margin-bottom: 0.25em;
-
-		img {
-			height: auto;
-			width: 100%;
-		}
-
-		figcaption {
-			margin-bottom: 0.5em;
-		}
-	}
 
 	figcaption {
 		font-size: variables.$font__size-xxs;
@@ -274,10 +261,6 @@
 		border-radius: 100%;
 		display: block;
 		margin-right: 0.5em;
-	}
-
-	p {
-		margin: 0.5em 0;
 	}
 
 	&.has-text-color {

@@ -113,6 +113,8 @@ function newspack_blocks_collect_all_attribute_values( $blocks ) {
 
 /**
  * Output a CSS string based on attributes used in a set of blocks.
+ * This is to mitigate CLS. Any CSS that might cause CLS should be output here,
+ * inline and before the blocks are printed.
  *
  * @param array $attrs The attributes used in the blocks.
  */
@@ -135,6 +137,21 @@ function newspack_blocks_get_homepage_articles_css_string( $attrs ) {
 		.wpnbha .entry-title {
 			font-size: 1.2em;
 		}
+		.wpnbha .post-thumbnail{
+			margin: 0;
+			margin-bottom: 0.25em;
+		}
+		.wpnbha .post-thumbnail img {
+			height: auto;
+			width: 100%;
+		}
+		.wpnbha .post-thumbnail figcaption {
+			margin-bottom: 0.5em;
+		}
+		.wpnbha p {
+			margin: 0.5em 0;
+		}
+
 		<?php
 		if ( isset( $attrs['typeScale'] ) ) {
 			foreach ( $attrs['typeScale'] as $scale ) {
