@@ -6,6 +6,49 @@
 	article {
 		.entry-title {
 			margin: 0 0 0.25em;
+			font-size: 1.2em;
+		}
+	}
+
+	&.ts-10 article {
+		.entry-title {
+			font-size: 2.6em;
+		}
+	}
+	&.ts-9 article {
+		.entry-title {
+			font-size: 2.4em;
+		}
+	}
+	&.ts-8 article {
+		.entry-title {
+			font-size: 2.2em;
+		}
+	}
+	&.ts-7 article {
+		.entry-title {
+			font-size: 2em;
+		}
+	}
+	&.ts-6 article {
+		.entry-title {
+			font-size: 1.7em;
+		}
+	}
+	&.ts-5 article {
+		.entry-title {
+			font-size: 1.4em;
+		}
+	}
+	&.ts-3 article {
+		.entry-title {
+			font-size: 1em;
+		}
+	}
+	&.ts-1 article,
+	&.ts-2 article {
+		.entry-title {
+			font-size: 0.9em;
 		}
 	}
 

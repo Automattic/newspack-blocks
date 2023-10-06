@@ -511,9 +511,6 @@
 .wpnbha {
 	/* 'Normal' size */
 	article {
-		.entry-title {
-			font-size: 1.2em;
-		}
 		.entry-meta {
 			font-size: 0.8em;
 		}
@@ -559,9 +556,6 @@
 	}
 
 	&.ts-10 article {
-		.entry-title {
-			font-size: 2.6em;
-		}
 		@include mixins.media( tablet ) {
 			.entry-title {
 				font-size: 3.6em;
@@ -575,9 +569,6 @@
 	}
 
 	&.ts-9 article {
-		.entry-title {
-			font-size: 2.4em;
-		}
 		@include mixins.media( tablet ) {
 			.entry-title {
 				font-size: 3.4em;
@@ -591,9 +582,6 @@
 	}
 
 	&.ts-8 article {
-		.entry-title {
-			font-size: 2.2em;
-		}
 		@include mixins.media( tablet ) {
 			.entry-title {
 				font-size: 3em;
@@ -607,9 +595,6 @@
 	}
 
 	&.ts-7 article {
-		.entry-title {
-			font-size: 2em;
-		}
 		@include mixins.media( tablet ) {
 			.entry-title {
 				font-size: 2.4em;
@@ -627,9 +612,6 @@
 	}
 
 	&.ts-6 article {
-		.entry-title {
-			font-size: 1.7em;
-		}
 		.newspack-post-subtitle {
 			font-size: 1.4em;
 		}
@@ -650,9 +632,6 @@
 	}
 
 	&.ts-5 article {
-		.entry-title {
-			font-size: 1.4em;
-		}
 		.newspack-post-subtitle {
 			font-size: 1.2em;
 		}
@@ -675,9 +654,6 @@
 	/* Type Scale 4: default */
 
 	&.ts-3 article {
-		.entry-title {
-			font-size: 1em;
-		}
 		.newspack-post-subtitle,
 		.entry-wrapper p,
 		.entry-wrapper .more-link,
@@ -702,9 +678,6 @@
 
 	&.ts-2 article,
 	&.ts-1 article {
-		.entry-title {
-			font-size: 0.9em;
-		}
 		.newspack-post-subtitle,
 		.entry-wrapper p,
 		.entry-wrapper .more-link,

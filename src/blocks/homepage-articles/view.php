@@ -71,6 +71,82 @@ function newspack_blocks_filter_hpb_sizes( $sizes ) {
 }
 
 /**
+ * Retrieve Homepage Articles blocks from blocks, recursively.
+ *
+ * @param array  $blocks The blocks to search.
+ * @param string $block_name The block name to search for.
+ */
+function newspack_blocks_retrieve_homepage_articles_blocks( $blocks, $block_name ) {
+	$ha_blocks = [];
+	foreach ( $blocks as $block ) {
+		if ( $block_name === $block['blockName'] ) {
+			$ha_blocks = array_merge( $ha_blocks, [ $block ] );
+		}
+		if ( is_array( $block['innerBlocks'] ) ) {
+			$ha_blocks = array_merge( $ha_blocks, newspack_blocks_retrieve_homepage_articles_blocks( $block['innerBlocks'], $block_name ) );
+		}
+	}
+	return $ha_blocks;
+}
+
+/**
+ * Collect all attributes' values used in a set of blocks.
+ *
+ * @param array $blocks The blocks to search.
+ */
+function newspack_blocks_collect_all_attribute_values( $blocks ) {
+	$result = [];
+
+	foreach ( $blocks as $block ) {
+		foreach ( $block as $key => $value ) {
+			if ( ! isset( $result[ $key ] ) ) {
+				$result[ $key ] = [];
+			}
+			if ( ! in_array( $value, $result[ $key ], true ) ) {
+				$result[ $key ][] = $value;
+			}
+		}
+	}
+
+	return $result;
+}
+
+/**
+ * Output a CSS string based on attributes used in a set of blocks.
+ *
+ * @param array $attrs The attributes used in the blocks.
+ */
+function newspack_blocks_get_homepage_articles_css_string( $attrs ) {
+	$entry_title_type_scale = [
+		'0.7em',
+		'0.9em',
+		'1em',
+		'1.2em',
+		'1.4em',
+		'1.7em',
+		'2em',
+		'2.2em',
+		'2.4em',
+		'2.6em',
+	];
+
+	ob_start();
+	?>
+		.wpnbha .entry-title {
+			font-size: 1.2em;
+		}
+		<?php
+		if ( isset( $attrs['typeScale'] ) ) {
+			foreach ( $attrs['typeScale'] as $scale ) {
+				echo esc_html( ".wpnbha.ts-$scale .entry-title{font-size: {$entry_title_type_scale[$scale - 1]}}" );
+			}
+		}
+		?>
+	<?php
+	return ob_get_clean();
+}
+
+/**
  * Renders the `newspack-blocks/homepage-posts` block on server.
  *
  * @param array $attributes The block attributes.
@@ -83,10 +159,27 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		return;
 	}
 
+	$block_name = apply_filters( 'newspack_blocks_block_name', 'newspack-blocks/homepage-articles' );
+
+	// Gather all Homepage Articles blocks on the page and output only the needed CSS.
+	// This CSS will be printed right after .entry-content.
+	global $newspack_blocks_hpb_all_blocks;
+	if ( ! is_array( $newspack_blocks_hpb_all_blocks ) ) {
+		$newspack_blocks_hpb_all_blocks = newspack_blocks_retrieve_homepage_articles_blocks(
+			parse_blocks( get_the_content() ),
+			$block_name
+		);
+		$all_used_attrs                 = newspack_blocks_collect_all_attribute_values( array_column( $newspack_blocks_hpb_all_blocks, 'attrs' ) );
+		$css_string                     = newspack_blocks_get_homepage_articles_css_string( $all_used_attrs );
+		?>
+			<style id="newspack-blocks-inline-css" type="text/css"><?php echo esc_html( $css_string ); ?></style>
+		<?php
+	}
+
 	// This will let the FSE plugin know we need CSS/JS now.
 	do_action( 'newspack_blocks_render_homepage_articles' );
 
-	$article_query = new WP_Query( Newspack_Blocks::build_articles_query( $attributes, apply_filters( 'newspack_blocks_block_name', 'newspack-blocks/homepage-articles' ) ) );
+	$article_query = new WP_Query( Newspack_Blocks::build_articles_query( $attributes, $block_name ) );
 
 	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes, [ 'wpnbha' ] );
 
@@ -189,7 +282,8 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 	ob_start();
 
-	if ( $article_query->have_posts() ) : ?>
+	if ( $article_query->have_posts() ) :
+		?>
 		<div
 			class="<?php echo esc_attr( $classes ); ?>"
 			style="<?php echo esc_attr( $styles ); ?>"
