@@ -185,6 +185,16 @@ function newspack_blocks_get_homepage_articles_css_string( $attrs ) {
 				}
 			}
 		}
+		if ( isset( $attrs['showSubtitle'] ) && in_array( 1, $attrs['showSubtitle'], false ) ) {
+			echo esc_html(
+				'.newspack-post-subtitle {
+					margin-top: 0.3em;
+					margin-bottom: 0;
+					line-height: 1.4;
+					font-style: italic;
+				}'
+			);
+		}
 		?>
 	<?php
 	return ob_get_clean();

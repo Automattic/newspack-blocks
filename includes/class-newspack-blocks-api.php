@@ -404,7 +404,12 @@ class Newspack_Blocks_API {
 	 * @return WP_REST_Response.
 	 */
 	public static function css_endpoint() {
-		return newspack_blocks_get_homepage_articles_css_string( [ 'typeScale' => range( 1, 10 ) ] );
+		return newspack_blocks_get_homepage_articles_css_string(
+			[
+				'typeScale'    => range( 1, 10 ),
+				'showSubtitle' => [ 1 ],
+			]
+		);
 	}
 }
 

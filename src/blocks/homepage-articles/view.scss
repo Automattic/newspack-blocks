@@ -485,13 +485,6 @@
 		gap: 0.5em;
 		line-height: 1;
 	}
-
-	.newspack-post-subtitle {
-		margin-top: 0.3em;
-		margin-bottom: 0;
-		line-height: 1.4;
-		font-style: italic;
-	}
 }
 
 /*
@@ -645,7 +638,6 @@
 	&.ts-2 article,
 	&.ts-1 article {
 		@include mixins.media( tablet ) {
-			.newspack-post-subtitle,
 			.entry-wrapper p,
 			.entry-wrapper .more-link,
 			.entry-meta,
