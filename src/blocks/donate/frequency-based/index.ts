@@ -30,6 +30,7 @@ const resetOtherValue = ( container: HTMLElement ) => {
 	if ( ! frequencies?.length ) {
 		return;
 	}
+	const frequencyInputs = container.querySelectorAll( 'input[name="donation_frequency"]' );
 	frequencies.forEach( frequency => {
 		const tiers = frequency.querySelectorAll( 'input[type="radio"]' );
 		const input = <HTMLInputElement>frequency.querySelector( '.money-input input' );
@@ -42,6 +43,9 @@ const resetOtherValue = ( container: HTMLElement ) => {
 		};
 		tiers.forEach( tierInput => {
 			tierInput.addEventListener( 'change', reset );
+		} );
+		frequencyInputs.forEach( frequencyInput => {
+			frequencyInput.addEventListener( 'change', reset );
 		} );
 	} );
 };
