@@ -311,19 +311,28 @@ final class Modal_Checkout {
 	/**
 	 * Return URL for modal checkout "thank you" page.
 	 *
-	 * @param string $url The URL to redirect to.
+	 * @param string   $url The URL to redirect to.
+	 * @param WC_Order $order The order related to the transaction.
 	 *
 	 * @return string
 	 */
-	public static function woocommerce_get_return_url( $url ) {
+	public static function woocommerce_get_return_url( $url, $order ) {
 		if ( ! isset( $_REQUEST['modal_checkout'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return $url;
 		}
+		$args = [
+			'modal_checkout' => '1',
+			'email'          => isset( $_REQUEST['billing_email'] ) ? rawurlencode( \sanitize_email( \wp_unslash( $_REQUEST['billing_email'] ) ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		];
+
+		// Pass order ID for modal checkout templates.
+		if ( $order && is_a( $order, 'WC_Order' ) ) {
+			$args['order_id'] = $order->get_id();
+			$args['key']      = $order->get_order_key();
+		}
+
 		return add_query_arg(
-			[
-				'modal_checkout' => '1',
-				'email'          => isset( $_REQUEST['billing_email'] ) ? rawurlencode( sanitize_email( wp_unslash( $_REQUEST['billing_email'] ) ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			],
+			$args,
 			$url
 		);
 	}
@@ -337,13 +346,18 @@ final class Modal_Checkout {
 	 * @return string Template file.
 	 */
 	public static function wc_get_template( $located, $template_name ) {
+		if ( ! isset( $_REQUEST['modal_checkout'] ) || ! boolval( $_REQUEST['modal_checkout'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return $located;
+		}
+
 		$custom_templates = [
 			'checkout/form-checkout.php' => 'src/modal-checkout/templates/checkout-form.php',
 			'checkout/form-billing.php'  => 'src/modal-checkout/templates/billing-form.php',
+			'global/form-login.php'      => 'src/modal-checkout/templates/form-login.php',
 		];
 
 		foreach ( $custom_templates as $original_template => $custom_template ) {
-			if ( $template_name === $original_template && isset( $_REQUEST['modal_checkout'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( $template_name === $original_template ) {
 				$located = NEWSPACK_BLOCKS__PLUGIN_DIR . $custom_template;
 			}
 		}
