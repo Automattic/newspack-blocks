@@ -180,6 +180,9 @@
 			transform: scale( 0 );
 			width: 40px;
 		}
+		+ .woocommerce-info {
+			display: none; // Hide the "Please log in to view this order" message on the thank you page.
+		}
 	}
 	.woocommerce-order-overview {
 		color: colors.$color__text-light;
