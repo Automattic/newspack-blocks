@@ -1,3 +1,10 @@
+## [1.75.3](https://github.com/Automattic/newspack-blocks/compare/v1.75.2...v1.75.3) (2023-10-10)
+
+
+### Bug Fixes
+
+* **donate:** reset "other" value when switching tiers ([#1549](https://github.com/Automattic/newspack-blocks/issues/1549)) ([844505f](https://github.com/Automattic/newspack-blocks/commit/844505fdefb445e4d68b5a1df5b980d4eae21e0e))
+
 ## [1.75.2](https://github.com/Automattic/newspack-blocks/compare/v1.75.1...v1.75.2) (2023-10-04)
 
 
