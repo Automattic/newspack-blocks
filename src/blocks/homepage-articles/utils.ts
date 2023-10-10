@@ -210,7 +210,7 @@ type Select = ( namespace: string ) => {
 	// core/blocks-editor
 	getBlocks: () => Block[];
 	// core/editor
-	getEditorBlocks: () => Block[];
+	getEditedPostAttribute: ( attribute: string ) => Block[];
 	// core
 	getPostTypes: ( query: object ) => null | PostType[];
 	// STORE_NAMESPACE - TODO: move these to src/blocks/homepage-articles/store.js once it's TS
@@ -229,19 +229,22 @@ export const postsBlockSelector = (
 		attributes,
 	}: { clientId: Block[ 'clientId' ]; attributes: HomepageArticlesAttributes }
 ): Omit< HomepageArticlesProps, 'attributes' > => {
-	const { getEditorBlocks } = select( 'core/editor' );
+	const { getEditedPostAttribute } = select( 'core/editor' );
+	const editorBlocks = getEditedPostAttribute( 'blocks' ) || [];
 	const { getBlocks } = select( 'core/block-editor' );
-	const editorBlocksIds = getEditorBlocksIds( getEditorBlocks() );
+	const editorBlocksIds = getEditorBlocksIds( editorBlocks );
+	const blocks = getBlocks();
+	const isWidgetEditor = blocks.some( block => block.name === 'core/widget-area' );
 	// The block might be rendered in the block styles preview, not in the editor.
-	const isWidgetEditor = getBlocks().some( block => block.name === 'core/widget-area' );
-	const isEditorBlock = editorBlocksIds.indexOf( clientId ) >= 0 || isWidgetEditor;
+	const isEditorBlock =
+		editorBlocksIds.length === 0 || editorBlocksIds.indexOf( clientId ) >= 0 || isWidgetEditor;
 
 	const { getPosts, getError, isUIDisabled } = select( STORE_NAMESPACE );
 	const props = {
 		isEditorBlock,
 		isUIDisabled: isUIDisabled(),
 		error: getError( { clientId } ),
-		topBlocksClientIdsInOrder: getBlocks().map( block => block.clientId ),
+		topBlocksClientIdsInOrder: blocks.map( block => block.clientId ),
 		latestPosts: isEditorBlock
 			? getPosts( { clientId } )
 			: // For block preview, display static content.
