@@ -322,12 +322,13 @@ final class Modal_Checkout {
 		}
 		$args = [
 			'modal_checkout' => '1',
-			'email'          => isset( $_REQUEST['billing_email'] ) ? rawurlencode( sanitize_email( wp_unslash( $_REQUEST['billing_email'] ) ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			'email'          => isset( $_REQUEST['billing_email'] ) ? rawurlencode( \sanitize_email( \wp_unslash( $_REQUEST['billing_email'] ) ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		];
 
 		// Pass order ID for modal checkout templates.
 		if ( $order && is_a( $order, 'WC_Order' ) ) {
 			$args['order_id'] = $order->get_id();
+			$args['key']      = isset( $_GET['key'] ) ? \wc_clean( \sanitize_text_field( \wp_unslash( $_GET['key'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		}
 
 		return add_query_arg(
