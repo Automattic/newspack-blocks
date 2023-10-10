@@ -328,7 +328,7 @@ final class Modal_Checkout {
 		// Pass order ID for modal checkout templates.
 		if ( $order && is_a( $order, 'WC_Order' ) ) {
 			$args['order_id'] = $order->get_id();
-			$args['key']      = isset( $_GET['key'] ) ? \wc_clean( \sanitize_text_field( \wp_unslash( $_GET['key'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$args['key']      = $order->get_order_key();
 		}
 
 		return add_query_arg(
