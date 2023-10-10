@@ -396,7 +396,6 @@ class Edit extends Component {
 											const isCurrent = colGap === option.value;
 											return (
 												<Button
-													isLarge
 													isPrimary={ isCurrent }
 													aria-pressed={ isCurrent }
 													aria-label={ option.label }
@@ -477,7 +476,6 @@ class Edit extends Component {
 											const isCurrent = imageScale === option.value;
 											return (
 												<Button
-													isLarge
 													isPrimary={ isCurrent }
 													aria-pressed={ isCurrent }
 													aria-label={ option.label }
