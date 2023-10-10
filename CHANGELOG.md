@@ -1,3 +1,10 @@
+## [1.75.4](https://github.com/Automattic/newspack-blocks/compare/v1.75.3...v1.75.4) (2023-10-10)
+
+
+### Bug Fixes
+
+* match thankyou template when using existing customer email ([#1550](https://github.com/Automattic/newspack-blocks/issues/1550)) ([4b0dbf2](https://github.com/Automattic/newspack-blocks/commit/4b0dbf29a98aa7b95b0cda30e4bd03c3ea31285b))
+
 ## [1.75.3](https://github.com/Automattic/newspack-blocks/compare/v1.75.2...v1.75.3) (2023-10-10)
 
 
