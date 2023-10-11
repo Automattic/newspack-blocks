@@ -44,7 +44,7 @@ function newspack_blocks_replace_login_with_order_summary() {
 				<strong><?php echo wc_format_datetime( $order->get_date_created() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></strong>
 			</li>
 
-			<?php if ( is_user_logged_in() && $order->get_user_id() === get_current_user_id() && $order->get_billing_email() ) : ?>
+			<?php if ( $order->get_billing_email() ) : ?>
 				<li class="woocommerce-order-overview__email email">
 					<?php esc_html_e( 'Email:', 'newspack-blocks' ); ?>
 					<strong><?php echo $order->get_billing_email(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></strong>
