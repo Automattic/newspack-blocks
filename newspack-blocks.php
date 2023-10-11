@@ -1,10 +1,10 @@
 <?php
 /**
  * Plugin Name:     Newspack Blocks
- * Plugin URI:      https://newspack.blog/
+ * Plugin URI:      https://newspack.com/
  * Description:     A collection of blocks for news publishers.
  * Author:          Automattic
- * Author URI:      https://newspack.blog/
+ * Author URI:      https://newspack.com/
  * Text Domain:     newspack-blocks
  * Domain Path:     /languages
  * Version:         1.75.4
