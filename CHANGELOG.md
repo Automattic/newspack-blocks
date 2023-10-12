@@ -1,3 +1,10 @@
+## [1.75.5](https://github.com/Automattic/newspack-blocks/compare/v1.75.4...v1.75.5) (2023-10-12)
+
+
+### Bug Fixes
+
+* always show email address for order summaries ([#1554](https://github.com/Automattic/newspack-blocks/issues/1554)) ([33952d1](https://github.com/Automattic/newspack-blocks/commit/33952d1dd8a879d26566b09c4cc3b8f132d54014))
+
 ## [1.75.4](https://github.com/Automattic/newspack-blocks/compare/v1.75.3...v1.75.4) (2023-10-10)
 
 
