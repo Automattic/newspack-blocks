@@ -69,6 +69,7 @@ function newspack_blocks_replace_login_with_order_summary() {
 			</li>
 
 		</ul>
+			<?php do_action( 'newspack_woocommerce_thankyou', $order->get_id() ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound ?>
 		<?php else : ?>
 		<h4><?php esc_html_e( 'Summary', 'newspack-blocks' ); ?></h4>
 		<p>
@@ -83,6 +84,7 @@ function newspack_blocks_replace_login_with_order_summary() {
 			);
 			?>
 		</p>
+
 		<?php endif; ?>
 	</div>
 	<?php
