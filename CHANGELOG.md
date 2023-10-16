@@ -1,3 +1,24 @@
+# [2.0.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v1.75.5...v2.0.0-alpha.1) (2023-10-16)
+
+
+### Bug Fixes
+
+* **donate:** allow "once" in tiers-based layout ([ad7268a](https://github.com/Automattic/newspack-blocks/commit/ad7268a320b70a85189cc36055744c3b6aca712f))
+* **homepage-posts:** check existing "specific posts" recursively for deduplication ([#1541](https://github.com/Automattic/newspack-blocks/issues/1541)) ([9755e40](https://github.com/Automattic/newspack-blocks/commit/9755e4090ce645c56ff26183684a07503c92fc65))
+* newspack.pub > newspack.com ([#1552](https://github.com/Automattic/newspack-blocks/issues/1552)) ([343b80b](https://github.com/Automattic/newspack-blocks/commit/343b80b49ac5516cb8ca877b1ca4a6ce6bcaaedf))
+
+
+### Features
+
+* add option for a button after checkout ([#1521](https://github.com/Automattic/newspack-blocks/issues/1521)) ([bdfb3c2](https://github.com/Automattic/newspack-blocks/commit/bdfb3c2cceeb52097494884935546655a4a1650e))
+* **homepage-posts:** support deduplication toggling ([#1543](https://github.com/Automattic/newspack-blocks/issues/1543)) ([6acc719](https://github.com/Automattic/newspack-blocks/commit/6acc71959a28d213e1f9064a28a84ebeda44f636))
+* remove AMP compatibility ([27ecf88](https://github.com/Automattic/newspack-blocks/commit/27ecf88abecaa935ec931df397c340cba19de978))
+
+
+### BREAKING CHANGES
+
+* AMP will not be supported anymore by this plugin.
+
 ## [1.75.5](https://github.com/Automattic/newspack-blocks/compare/v1.75.4...v1.75.5) (2023-10-12)
 
 
