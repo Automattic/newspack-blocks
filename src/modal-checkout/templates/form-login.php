@@ -25,6 +25,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * order-received.php template with an order details summary so the experience
  * matches whether or not the email address used is already associated with an
  * existing customer account.
+ *
+ * This template will be rendered when an existing user completes a transaction
+ * through the modal checkout. Instead of showing the login form, we'll show the
+ * order details summary.
  */
 function newspack_blocks_replace_login_with_order_summary() {
 	$order    = isset( $_GET['order_id'] ) ? \wc_get_order( \absint( \wp_unslash( $_GET['order_id'] ) ) ) : false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -33,12 +37,9 @@ function newspack_blocks_replace_login_with_order_summary() {
 	?>
 
 	<div class="woocommerce-order">
-		<?php if ( $is_valid ) : ?>
-
 		<h4><?php esc_html_e( 'Summary', 'newspack-blocks' ); ?></h4>
-
+		<?php if ( $is_valid ) : ?>
 		<ul class="woocommerce-order-overview woocommerce-thankyou-order-details order_details">
-
 			<li class="woocommerce-order-overview__date date">
 				<?php esc_html_e( 'Date:', 'newspack-blocks' ); ?>
 				<strong><?php echo wc_format_datetime( $order->get_date_created() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></strong>
@@ -67,10 +68,8 @@ function newspack_blocks_replace_login_with_order_summary() {
 				<?php esc_html_e( 'Transaction:', 'newspack-blocks' ); ?>
 				<strong><?php echo $order->get_order_number(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></strong>
 			</li>
-
 		</ul>
 		<?php else : ?>
-		<h4><?php esc_html_e( 'Summary', 'newspack-blocks' ); ?></h4>
 		<p>
 			<?php
 			echo wp_kses_post(
