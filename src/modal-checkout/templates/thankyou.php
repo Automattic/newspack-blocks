@@ -25,15 +25,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * order-received.php template with an order details summary so the experience
  * matches whether or not the email address used is already associated with an
  * existing customer account.
- *
- * This template will be rendered when an existing user completes a transaction
- * through the modal checkout. Instead of showing the login form, we'll show the
- * order details summary.
  */
 function newspack_blocks_replace_login_with_order_summary() {
 	$order    = isset( $_GET['order_id'] ) ? \wc_get_order( \absint( \wp_unslash( $_GET['order_id'] ) ) ) : false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$key      = isset( $_GET['key'] ) ? \wc_clean( \sanitize_text_field( \wp_unslash( $_GET['key'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$is_valid = $order && is_a( $order, 'WC_Order' ) && hash_equals( $order->get_order_key(), $key ); // Validate order key to prevent CSRF.
+
 	?>
 
 	<div class="woocommerce-order">
@@ -84,6 +81,9 @@ function newspack_blocks_replace_login_with_order_summary() {
 		</p>
 		<?php endif; ?>
 	</div>
+
+	<?php do_action( 'newspack_woocommerce_thankyou', $order->get_id() ); ?>
+
 	<?php
 }
 
