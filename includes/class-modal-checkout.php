@@ -43,8 +43,6 @@ final class Modal_Checkout {
 		add_filter( 'woocommerce_checkout_get_value', [ __CLASS__, 'woocommerce_checkout_get_value' ], 10, 2 );
 		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'woocommerce_checkout_fields' ] );
 		add_filter( 'woocommerce_update_order_review_fragments', [ __CLASS__, 'order_review_fragments' ] );
-		add_action( 'woocommerce_thankyou', [ __CLASS__, 'woocommerce_thankyou' ] ); // Core Woo, not present in Newspack theme custom template.
-		add_action( 'newspack_woocommerce_thankyou', [ __CLASS__, 'woocommerce_thankyou' ] ); // Newspack Theme.
 	}
 
 	/**
@@ -568,7 +566,7 @@ final class Modal_Checkout {
 	 *
 	 * @return void
 	 */
-	public static function woocommerce_thankyou() {
+	public static function render_checkout_after_success_markup() {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		if (
 			empty( $_REQUEST['modal_checkout'] ) ||

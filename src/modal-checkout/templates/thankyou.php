@@ -86,7 +86,7 @@ function newspack_blocks_replace_login_with_order_summary() {
 		<?php endif; ?>
 	</div>
 
-	<?php do_action( 'newspack_woocommerce_thankyou', $order->get_id() ); ?>
+	<?php echo \Newspack_Blocks\Modal_Checkout::render_checkout_after_success_markup(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 
 	<?php
 }
