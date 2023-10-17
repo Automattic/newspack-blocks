@@ -34,6 +34,10 @@ function newspack_blocks_replace_login_with_order_summary() {
 	?>
 
 	<div class="woocommerce-order">
+		<p class="woocommerce-notice woocommerce-notice--success woocommerce-thankyou-order-received">
+			<?php echo esc_html_e( 'Thank you for your donation!', 'newspack-blocks' ); ?>
+		</p>
+
 		<h4><?php esc_html_e( 'Summary', 'newspack-blocks' ); ?></h4>
 		<?php if ( $is_valid ) : ?>
 		<ul class="woocommerce-order-overview woocommerce-thankyou-order-details order_details">
