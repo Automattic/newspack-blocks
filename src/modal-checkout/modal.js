@@ -40,6 +40,9 @@ function closeCheckout( element ) {
 		iframeResizeObserver.disconnect();
 	}
 	element.style.display = 'none';
+	if ( element.overlayId && window.newspackReaderActivation?.overlays ) {
+		window.newspackReaderActivation?.overlays.remove( element.overlayId );
+	}
 }
 
 domReady( () => {
@@ -139,6 +142,10 @@ domReady( () => {
 				spinner.style.display = 'flex';
 				modalCheckout.style.display = 'block';
 				document.body.classList.add( 'newspack-modal-checkout-open' );
+				if ( window.newspackReaderActivation?.overlays ) {
+					modalCheckout.overlayId = window.newspackReaderActivation?.overlays.add();
+				}
+
 				iframeResizeObserver = new ResizeObserver( entries => {
 					if ( ! entries || ! entries.length ) {
 						return;
