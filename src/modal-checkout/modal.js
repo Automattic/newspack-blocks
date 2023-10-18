@@ -30,8 +30,8 @@ const triggers =
 
 let iframeResizeObserver;
 
-function closeCheckout( element ) {
-	const iframe = element.querySelector( 'iframe' );
+function closeCheckout() {
+	const iframe = document.querySelector( 'iframe[name="newspack_modal_checkout"]' );
 	if ( iframe ) {
 		iframe.src = 'about:blank';
 	}
@@ -39,8 +39,14 @@ function closeCheckout( element ) {
 	if ( iframeResizeObserver ) {
 		iframeResizeObserver.disconnect();
 	}
-	element.style.display = 'none';
+	Array.from( document.querySelectorAll( '.newspack-blocks-modal' ) ).forEach(
+		el => ( el.style.display = 'none' )
+	);
 }
+
+window.newspackCloseModalCheckout = closeCheckout;
+
+const MODAL_CLASSNAME_BASE = '.newspack-blocks-modal';
 
 domReady( () => {
 	/**
@@ -50,29 +56,29 @@ domReady( () => {
 	if ( ! modalCheckout ) {
 		return;
 	}
-	const spinner = document.querySelector( '.newspack-blocks-checkout-modal__spinner' );
+	const spinner = document.querySelector( `${ MODAL_CLASSNAME_BASE }__spinner` );
 	const iframeName = 'newspack_modal_checkout';
 	const modalCheckoutInput = document.createElement( 'input' );
 	modalCheckoutInput.type = 'hidden';
 	modalCheckoutInput.name = 'modal_checkout';
 	modalCheckoutInput.value = '1';
-	const modalContent = modalCheckout.querySelector( '.newspack-blocks-checkout-modal__content' );
+	const modalContent = modalCheckout.querySelector( `${ MODAL_CLASSNAME_BASE }__content` );
 	const initialHeight = modalContent.clientHeight + 'px';
 	const iframe = document.createElement( 'iframe' );
 	iframe.name = iframeName;
 	modalContent.appendChild( iframe );
 	modalCheckout.addEventListener( 'click', ev => {
 		if ( ev.target === modalCheckout ) {
-			closeCheckout( modalCheckout );
+			closeCheckout();
 		}
 	} );
-	const closeButtons = modalCheckout.querySelectorAll( '.newspack-blocks-checkout-modal__close' );
+	const closeButtons = modalCheckout.querySelectorAll( `${ MODAL_CLASSNAME_BASE }__close` );
 	closeButtons.forEach( button => {
 		button.addEventListener( 'click', ev => {
 			ev.preventDefault();
 			modalContent.style.height = initialHeight;
 			spinner.style.display = 'flex';
-			closeCheckout( modalCheckout );
+			closeCheckout();
 		} );
 	} );
 
@@ -83,17 +89,15 @@ domReady( () => {
 	variationModals.forEach( variationModal => {
 		variationModal.addEventListener( 'click', ev => {
 			if ( ev.target === variationModal ) {
-				closeCheckout( variationModal );
+				closeCheckout();
 			}
 		} );
-		variationModal
-			.querySelectorAll( '.newspack-blocks-variation-modal__close' )
-			.forEach( button => {
-				button.addEventListener( 'click', ev => {
-					ev.preventDefault();
-					closeCheckout( variationModal );
-				} );
+		variationModal.querySelectorAll( '.newspack-blocks-modal__close' ).forEach( button => {
+			button.addEventListener( 'click', ev => {
+				ev.preventDefault();
+				closeCheckout();
 			} );
+		} );
 	} );
 
 	/**
