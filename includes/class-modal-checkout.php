@@ -590,5 +590,166 @@ final class Modal_Checkout {
 		<?php
 		// phpcs:enable
 	}
+
+	/**
+	 * Renders newsletter signup form.
+	 *
+	 * @param WC_Order $order The order related to the transaction.
+	 */
+	public static function render_newsletter_signup_form( $order ) {
+		if ( ! self::is_newsletter_signup_available() ) {
+			return false;
+		}
+		$email_address = $order->get_billing_email();
+		if ( ! $email_address ) {
+			return;
+		}
+		if ( ! method_exists( '\Newspack_Newsletters_Subscription', 'get_lists' ) ) {
+			return;
+		}
+		$newsletters_lists = array_filter(
+			\Newspack_Newsletters_Subscription::get_lists(),
+			function( $item ) {
+				return $item['active'];
+			}
+		);
+		if ( empty( $newsletters_lists ) ) {
+			return;
+		}
+		?>
+			<div class="newspack-modal-newsletters">
+				<h4><?php esc_html_e( 'Sign up for newsletters', 'newspack-blocks' ); ?></h4>
+				<div class="newspack-modal-newsletters__info">
+					<?php
+					echo esc_html(
+						sprintf(
+							// Translators: %s is the site name.
+							__( 'Get the best of %s directly in your email inbox.', 'newspack-blocks' ),
+							get_bloginfo( 'name' )
+						)
+					);
+					?>
+					<br>
+					<span>
+					<?php
+						echo esc_html(
+							sprintf(
+								// Translators: %s is the user's email address.
+								__( 'Sending to: %s', 'newspack-blocks' ),
+								$email_address
+							)
+						);
+					?>
+					</span>
+				</div>
+				<form>
+					<input type="hidden" name="modal_checkout" value="1" />
+					<input type="hidden" name="newsletter_signup_email" value="<?php echo esc_html( $email_address ); ?>" />
+					<?php
+					foreach ( $newsletters_lists as $list ) {
+						$checkbox_id = sprintf( 'newspack-blocks-list-%s', $list['id'] );
+						?>
+							<div class="newspack-modal-newsletters__list-item">
+							<input
+								type="checkbox"
+								name="lists[]"
+								value="<?php echo \esc_attr( $list['id'] ); ?>"
+								id="<?php echo \esc_attr( $checkbox_id ); ?>"
+							>
+							<label for="<?php echo \esc_attr( $checkbox_id ); ?>">
+								<b><?php echo \esc_html( $list['title'] ); ?></b>
+								<?php if ( ! empty( $list['description'] ) ) : ?>
+									<span><?php echo \esc_html( $list['description'] ); ?></span>
+								<?php endif; ?>
+							</label>
+							</div>
+						<?php
+					}
+					?>
+					<input type="submit" value="<?php esc_html_e( 'Continue', 'newspack-blocks' ); ?>">
+				</form>
+			</div>
+		<?php
+	}
+
+	/**
+	 * Should post-chcekout newsletter signup be available?
+	 */
+	private static function is_newsletter_signup_available() {
+		return ! ( defined( 'NEWSPACK_DISABLE_POST_CHECKOUT_NEWSLETTER_SIGNUP' ) && NEWSPACK_DISABLE_POST_CHECKOUT_NEWSLETTER_SIGNUP );
+	}
+
+	/**
+	 * Should newsletter confirmation be rendered?
+	 */
+	public static function confirm_newsletter_signup() {
+		if ( ! self::is_newsletter_signup_available() ) {
+			return false;
+		}
+		$signup_data = self::get_newsletter_signup_data();
+		if ( false !== $signup_data ) {
+			$result = \Newspack_Newsletters_Subscription::add_contact(
+				[
+					'email'    => $signup_data['email'],
+					'metadata' => [
+						'current_page_url'                => home_url( add_query_arg( array(), \wp_get_referer() ) ),
+						'newsletters_subscription_method' => 'post-checkout',
+					],
+				],
+				$signup_data['lists']
+			);
+			if ( \is_wp_error( $result ) ) {
+				return $result;
+			}
+			if ( 'subscribed' === $result['status'] ) {
+				return true;
+			}
+			if ( isset( $result['detail'] ) ) {
+				return new \WP_Error( 'newspack_blocks_newsletter_confirmation', $result['detail'] );
+			}
+			return new \WP_Error( 'newspack_blocks_newsletter_confirmation', __( 'Something went wrong while processing the newsletter signup request. Please try again later.', 'newspack-blocks' ) );
+		}
+		return false;
+	}
+
+	/**
+	 * Should newsletter confirmation be rendered?
+	 */
+	public static function get_newsletter_signup_data() {
+		$newsletter_signup_email = isset( $_GET['newsletter_signup_email'] ) ? \sanitize_text_field( \wp_unslash( $_GET['newsletter_signup_email'] ) ) : false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( $newsletter_signup_email && isset( $_SERVER['REQUEST_URI'] ) ) {
+			parse_str( \wp_parse_url( \wp_unslash( $_SERVER['REQUEST_URI'] ) )['query'], $query ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			if ( isset( $query['lists'] ) && count( $query['lists'] ) ) {
+				return [
+					'email' => $newsletter_signup_email,
+					'lists' => $query['lists'],
+				];
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Renders newsletter signup confirmation.
+	 */
+	public static function render_newsletter_confirmation() {
+		?>
+			<h4><?php esc_html_e( 'Signup successful!', 'newspack-blocks' ); ?></h4>
+			<p>
+				<?php
+				echo esc_html(
+					sprintf(
+						// Translators: %s is the site name.
+						__( 'Thanks for supporting %s.', 'newspack-blocks' ),
+						get_option( 'blogname' )
+					)
+				);
+				?>
+			</p>
+			<button onclick="parent.newspackCloseModalCheckout(this);" class="newspack-modal-newsletters__button">
+				<?php esc_html_e( 'Close', 'newspack-blocks' ); ?>
+			</button>
+		<?php
+	}
 }
 Modal_Checkout::init();

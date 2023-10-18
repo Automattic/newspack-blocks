@@ -31,14 +31,20 @@ function newspack_blocks_replace_login_with_order_summary() {
 	$key      = isset( $_GET['key'] ) ? \wc_clean( \sanitize_text_field( \wp_unslash( $_GET['key'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$is_valid = $order && is_a( $order, 'WC_Order' ) && hash_equals( $order->get_order_key(), $key ); // Validate order key to prevent CSRF.
 
+	// Handle the newsletter signup form.
+	$newsletter_confirmation = \Newspack_Blocks\Modal_Checkout::confirm_newsletter_signup();
+	if ( true === $newsletter_confirmation ) {
+		echo \Newspack_Blocks\Modal_Checkout::render_newsletter_confirmation(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		return;
+	} elseif ( \is_wp_error( $newsletter_confirmation ) ) {
+		echo esc_html( $newsletter_confirmation->get_error_message() );
+		return;
+	}
+
 	?>
 
 	<div class="woocommerce-order">
-		<p class="woocommerce-notice woocommerce-notice--success woocommerce-thankyou-order-received">
-			<?php echo esc_html_e( 'Thank you for your donation!', 'newspack-blocks' ); ?>
-		</p>
-
-		<h4><?php esc_html_e( 'Summary', 'newspack-blocks' ); ?></h4>
+		<h4><?php esc_html_e( 'Transaction Successful', 'newspack-blocks' ); ?></h4>
 		<?php if ( $is_valid ) : ?>
 		<ul class="woocommerce-order-overview woocommerce-thankyou-order-details order_details">
 			<li class="woocommerce-order-overview__date date">
@@ -87,6 +93,12 @@ function newspack_blocks_replace_login_with_order_summary() {
 	</div>
 
 	<?php echo \Newspack_Blocks\Modal_Checkout::render_checkout_after_success_markup(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+
+	<?php
+	if ( $order ) {
+		echo \Newspack_Blocks\Modal_Checkout::render_newsletter_signup_form( $order ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+	?>
 
 	<?php
 }
