@@ -39,12 +39,12 @@ function closeCheckout() {
 	if ( iframeResizeObserver ) {
 		iframeResizeObserver.disconnect();
 	}
-	Array.from( document.querySelectorAll( '.newspack-blocks-modal' ) ).forEach(
-		el => ( el.style.display = 'none' )
-	);
-	if ( element.overlayId && window.newspackReaderActivation?.overlays ) {
-		window.newspackReaderActivation?.overlays.remove( element.overlayId );
-	}
+	Array.from( document.querySelectorAll( '.newspack-blocks-modal' ) ).forEach( el => {
+		el.style.display = 'none';
+		if ( el.overlayId && window.newspackReaderActivation?.overlays ) {
+			window.newspackReaderActivation?.overlays.remove( el.overlayId );
+		}
+	} );
 }
 
 window.newspackCloseModalCheckout = closeCheckout;
