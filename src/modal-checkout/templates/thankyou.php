@@ -31,6 +31,10 @@ function newspack_blocks_replace_login_with_order_summary() {
 	$key      = isset( $_GET['key'] ) ? \wc_clean( \sanitize_text_field( \wp_unslash( $_GET['key'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$is_valid = $order && is_a( $order, 'WC_Order' ) && hash_equals( $order->get_order_key(), $key ); // Validate order key to prevent CSRF.
 
+	if ( ! $is_valid ) {
+		return;
+	}
+
 	// Handle the newsletter signup form.
 	$newsletter_confirmation = \Newspack_Blocks\Modal_Checkout::confirm_newsletter_signup();
 	if ( true === $newsletter_confirmation ) {
@@ -45,7 +49,6 @@ function newspack_blocks_replace_login_with_order_summary() {
 
 	<div class="woocommerce-order">
 		<h4><?php esc_html_e( 'Transaction Successful', 'newspack-blocks' ); ?></h4>
-		<?php if ( $is_valid ) : ?>
 		<ul class="woocommerce-order-overview woocommerce-thankyou-order-details order_details">
 			<li class="woocommerce-order-overview__date date">
 				<?php esc_html_e( 'Date:', 'newspack-blocks' ); ?>
@@ -76,20 +79,6 @@ function newspack_blocks_replace_login_with_order_summary() {
 				<strong><?php echo $order->get_order_number(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></strong>
 			</li>
 		</ul>
-		<?php else : ?>
-		<p>
-			<?php
-			echo wp_kses_post(
-				sprintf(
-					// Translators: URL to My Account.
-					__( 'Please log in to <a href="%s">My Account</a> to see order details.', 'newspack-blocks' ),
-					\wc_get_account_endpoint_url( 'dashboard' )
-				),
-				'newspack-blocks'
-			);
-			?>
-		</p>
-		<?php endif; ?>
 	</div>
 
 	<?php echo \Newspack_Blocks\Modal_Checkout::render_checkout_after_success_markup(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
