@@ -74,11 +74,11 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 	/**
 	 * Sanitize an array of text or number values.
 	 *
-	 * @param array $array Array of text or float values to be sanitized.
+	 * @param array $array_to_sanitize Array of text or float values to be sanitized.
 	 * @return array Sanitized array.
 	 */
-	public static function sanitize_array( $array ) {
-		foreach ( $array as $value ) {
+	public static function sanitize_array( $array_to_sanitize ) {
+		foreach ( $array_to_sanitize as $value ) {
 			if ( is_array( $value ) ) {
 				$value = self::sanitize_array( $value );
 			} elseif ( is_string( $value ) ) {
@@ -88,7 +88,7 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 			}
 		}
 
-		return $array;
+		return $array_to_sanitize;
 	}
 
 	/**
