@@ -308,7 +308,7 @@ function newspack_blocks_format_byline( $author_info ) {
 		array_reduce(
 			$author_info,
 			function ( $accumulator, $author ) use ( $author_info, &$index ) {
-				$index ++;
+				$index++;
 				$penultimate = count( $author_info ) - 2;
 
 				$get_author_posts_url = get_author_posts_url( $author->ID );

@@ -201,7 +201,7 @@ class Newspack_Blocks {
 						'slug'  => $tax->name,
 						'label' => $tax->label,
 					];
-				};
+				}
 			},
 			get_taxonomies(
 				[

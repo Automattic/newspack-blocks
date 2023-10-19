@@ -81,12 +81,10 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 		foreach ( $array as $value ) {
 			if ( is_array( $value ) ) {
 				$value = self::sanitize_array( $value );
-			} else {
-				if ( is_string( $value ) ) {
+			} elseif ( is_string( $value ) ) {
 					$value = sanitize_text_field( $value );
-				} else {
-					$value = floatval( $value );
-				}
+			} else {
+				$value = floatval( $value );
 			}
 		}
 
