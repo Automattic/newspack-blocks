@@ -207,9 +207,9 @@ final class Modal_Checkout {
 						<?php
 						$variations = $product->get_available_variations( 'objects' );
 						foreach ( $variations as $variation ) {
-							$name        = $variation->get_formatted_variation_attributes( true );
+							$name        = wc_get_formatted_variation( $variation, true );
 							$price       = $variation->get_price_html();
-							$description = $variation->get_variation_description();
+							$description = $variation->get_description();
 							?>
 							<form>
 								<input type="hidden" name="newspack_checkout" value="1" />

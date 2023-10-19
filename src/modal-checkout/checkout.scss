@@ -184,6 +184,9 @@
 			display: none; // Hide the "Please log in to view this order" message on the thank you page.
 		}
 	}
+	.woocommerce-form-login-toggle {
+		display: none; // Hide the "Returning customer?	Click here to login" message.
+	}
 	.woocommerce-order-overview {
 		color: colors.$color__text-light;
 		list-style: none;
