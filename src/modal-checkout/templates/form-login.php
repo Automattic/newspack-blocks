@@ -30,15 +30,16 @@ function newspack_blocks_replace_login_with_order_summary() {
 	$order    = isset( $_GET['order_id'] ) ? \wc_get_order( \absint( \wp_unslash( $_GET['order_id'] ) ) ) : false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$key      = isset( $_GET['key'] ) ? \wc_clean( \sanitize_text_field( \wp_unslash( $_GET['key'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$is_valid = $order && is_a( $order, 'WC_Order' ) && hash_equals( $order->get_order_key(), $key ); // Validate order key to prevent CSRF.
+
+	if ( ! $is_valid ) {
+		return;
+	}
 	?>
 
 	<div class="woocommerce-order">
-		<?php if ( $is_valid ) : ?>
-
 		<h4><?php esc_html_e( 'Summary', 'newspack-blocks' ); ?></h4>
 
 		<ul class="woocommerce-order-overview woocommerce-thankyou-order-details order_details">
-
 			<li class="woocommerce-order-overview__date date">
 				<?php esc_html_e( 'Date:', 'newspack-blocks' ); ?>
 				<strong><?php echo wc_format_datetime( $order->get_date_created() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></strong>
@@ -67,23 +68,7 @@ function newspack_blocks_replace_login_with_order_summary() {
 				<?php esc_html_e( 'Transaction:', 'newspack-blocks' ); ?>
 				<strong><?php echo $order->get_order_number(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></strong>
 			</li>
-
 		</ul>
-		<?php else : ?>
-		<h4><?php esc_html_e( 'Summary', 'newspack-blocks' ); ?></h4>
-		<p>
-			<?php
-			echo wp_kses_post(
-				sprintf(
-					// Translators: URL to My Account.
-					__( 'Please log in to <a href="%s">My Account</a> to see order details.', 'newspack-blocks' ),
-					\wc_get_account_endpoint_url( 'dashboard' )
-				),
-				'newspack-blocks'
-			);
-			?>
-		</p>
-		<?php endif; ?>
 	</div>
 	<?php
 }
