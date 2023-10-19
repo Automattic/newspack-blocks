@@ -1,3 +1,11 @@
+# [2.0.0-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v2.0.0-alpha.1...v2.0.0-alpha.2) (2023-10-19)
+
+
+### Bug Fixes
+
+* hide WC's login prompt ([124fee7](https://github.com/Automattic/newspack-blocks/commit/124fee794e1e81490d95b822e132841e720bedf9))
+* **modal-checkout:** remove login prompt from initial flow ([4a8d48f](https://github.com/Automattic/newspack-blocks/commit/4a8d48f05b5d15760c8cf7365ed50d90ae22c639)), closes [/github.com/Automattic/newspack-blocks/pull/1550#issuecomment-1755996086](https://github.com//github.com/Automattic/newspack-blocks/pull/1550/issues/issuecomment-1755996086)
+
 ## [1.75.6](https://github.com/Automattic/newspack-blocks/compare/v1.75.5...v1.75.6) (2023-10-19)
 
 
