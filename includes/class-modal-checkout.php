@@ -676,7 +676,7 @@ final class Modal_Checkout {
 	 * Should post-chcekout newsletter signup be available?
 	 */
 	private static function is_newsletter_signup_available() {
-		return ! ( defined( 'NEWSPACK_DISABLE_POST_CHECKOUT_NEWSLETTER_SIGNUP' ) && NEWSPACK_DISABLE_POST_CHECKOUT_NEWSLETTER_SIGNUP );
+		return defined( 'NEWSPACK_ENABLE_POST_CHECKOUT_NEWSLETTER_SIGNUP' ) && NEWSPACK_ENABLE_POST_CHECKOUT_NEWSLETTER_SIGNUP;
 	}
 
 	/**
