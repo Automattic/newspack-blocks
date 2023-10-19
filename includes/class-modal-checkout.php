@@ -604,11 +604,11 @@ final class Modal_Checkout {
 		if ( ! $email_address ) {
 			return;
 		}
-		if ( ! method_exists( '\Newspack_Newsletters_Subscription', 'get_lists' ) ) {
+		if ( ! method_exists( '\Newspack\Reader_Activation', 'get_registration_newsletter_lists' ) ) {
 			return;
 		}
 		$newsletters_lists = array_filter(
-			\Newspack_Newsletters_Subscription::get_lists(),
+			\Newspack\Reader_Activation::get_registration_newsletter_lists(),
 			function( $item ) {
 				return $item['active'];
 			}
@@ -655,6 +655,11 @@ final class Modal_Checkout {
 								name="lists[]"
 								value="<?php echo \esc_attr( $list['id'] ); ?>"
 								id="<?php echo \esc_attr( $checkbox_id ); ?>"
+								<?php
+								if ( $list['checked'] ) {
+									echo 'checked';
+								}
+								?>
 							>
 							<label for="<?php echo \esc_attr( $checkbox_id ); ?>">
 								<b><?php echo \esc_html( $list['title'] ); ?></b>
