@@ -706,13 +706,7 @@ final class Modal_Checkout {
 			if ( \is_wp_error( $result ) ) {
 				return $result;
 			}
-			if ( 'subscribed' === $result['status'] ) {
-				return true;
-			}
-			if ( isset( $result['detail'] ) ) {
-				return new \WP_Error( 'newspack_blocks_newsletter_confirmation', $result['detail'] );
-			}
-			return new \WP_Error( 'newspack_blocks_newsletter_confirmation', __( 'Something went wrong while processing the newsletter signup request. Please try again later.', 'newspack-blocks' ) );
+			return true;
 		}
 		return false;
 	}

@@ -31,10 +31,6 @@ function newspack_blocks_replace_login_with_order_summary() {
 	$key      = isset( $_GET['key'] ) ? \wc_clean( \sanitize_text_field( \wp_unslash( $_GET['key'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$is_valid = $order && is_a( $order, 'WC_Order' ) && hash_equals( $order->get_order_key(), $key ); // Validate order key to prevent CSRF.
 
-	if ( ! $is_valid ) {
-		return;
-	}
-
 	// Handle the newsletter signup form.
 	$newsletter_confirmation = \Newspack_Blocks\Modal_Checkout::confirm_newsletter_signup();
 	if ( true === $newsletter_confirmation ) {
@@ -42,6 +38,10 @@ function newspack_blocks_replace_login_with_order_summary() {
 		return;
 	} elseif ( \is_wp_error( $newsletter_confirmation ) ) {
 		echo esc_html( $newsletter_confirmation->get_error_message() );
+		return;
+	}
+
+	if ( ! $is_valid ) {
 		return;
 	}
 
