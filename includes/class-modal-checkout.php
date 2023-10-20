@@ -656,7 +656,7 @@ final class Modal_Checkout {
 								value="<?php echo \esc_attr( $list['id'] ); ?>"
 								id="<?php echo \esc_attr( $checkbox_id ); ?>"
 								<?php
-								if ( $list['checked'] ) {
+								if ( isset( $list['checked'] ) && $list['checked'] ) {
 									echo 'checked';
 								}
 								?>
