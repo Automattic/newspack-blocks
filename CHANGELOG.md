@@ -1,3 +1,16 @@
+# [2.0.0-alpha.3](https://github.com/Automattic/newspack-blocks/compare/v2.0.0-alpha.2...v2.0.0-alpha.3) (2023-10-20)
+
+
+### Bug Fixes
+
+* update WC's variation methods ([860f9fa](https://github.com/Automattic/newspack-blocks/commit/860f9fa2c8b5cda48c9310c958abcf8a3567d5ad))
+
+
+### Features
+
+* **modal checkout:** post-checkout newsletter signup ([#1561](https://github.com/Automattic/newspack-blocks/issues/1561)) ([092007a](https://github.com/Automattic/newspack-blocks/commit/092007a59ed89ce8ea3ef309851c26fde88b7e9f))
+* **modal-checkout:** implement ras overlay ([#1562](https://github.com/Automattic/newspack-blocks/issues/1562)) ([8270c9b](https://github.com/Automattic/newspack-blocks/commit/8270c9be4dc513ec317c0c256063cf12c936a0a7))
+
 # [2.0.0-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v2.0.0-alpha.1...v2.0.0-alpha.2) (2023-10-19)
 
 
