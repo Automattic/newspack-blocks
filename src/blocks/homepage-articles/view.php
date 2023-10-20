@@ -345,7 +345,7 @@ function newspack_blocks_format_byline( $author_info ) {
 function newspack_blocks_format_categories( $post_id ) {
 	$category = false;
 	// Use Yoast primary category if set.
-	if ( class_exists( 'WPSEO_Primary_Term' ) ) {
+	if ( class_exists( 'WPSEO_Primary_Term' ) && get_theme_mod( 'post_primary_category', true ) ) {
 		$primary_term = new WPSEO_Primary_Term( 'category', $post_id );
 		$category_id  = $primary_term->get_primary_term();
 		if ( $category_id ) {
