@@ -34,6 +34,7 @@ import apiFetch from '@wordpress/api-fetch';
  * Internal dependencies
  */
 import './edit.scss';
+import RedirectAfterSuccess from '../../components/redirect-after-success';
 
 function getVariationName( variation ) {
 	const attributes = [];

@@ -90,6 +90,15 @@
 		"additionalFields": {
 			"type": "array",
 			"default": []
+		},
+		"afterSuccessBehavior": {
+			"type": "string"
+		},
+		"afterSuccessButtonLabel": {
+			"type": "string"
+		},
+		"afterSuccessURL": {
+			"type": "string"
 		}
 	},
 	"supports": {
