@@ -97,8 +97,7 @@ function newspack_blocks_replace_login_with_order_summary() {
 	</div>
 
 	<?php if ( $is_success ) : ?>
-		<?php echo \Newspack_Blocks\Modal_Checkout::render_checkout_after_success_markup(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-		<?php echo \Newspack_Blocks\Modal_Checkout::render_newsletter_signup_form( $order ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		<?php echo \Newspack_Blocks\Modal_Checkout::render_checkout_after_success_markup( $order ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	<?php endif; ?>
 
 	<?php

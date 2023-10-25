@@ -313,6 +313,29 @@ final class Modal_Checkout {
 		ob_end_flush();
 	}
 
+	/**
+	 * Get after success button params.
+	 */
+	private static function get_after_success_params() {
+		return array_filter(
+			[
+				'after_success_behavior'     => isset( $_REQUEST['after_success_behavior'] ) ? rawurlencode( sanitize_text_field( wp_unslash( $_REQUEST['after_success_behavior'] ) ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				'after_success_url'          => isset( $_REQUEST['after_success_url'] ) ? rawurlencode( sanitize_text_field( wp_unslash( $_REQUEST['after_success_url'] ) ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				'after_success_button_label' => isset( $_REQUEST['after_success_button_label'] ) ? rawurlencode( sanitize_text_field( wp_unslash( $_REQUEST['after_success_button_label'] ) ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			]
+		);
+	}
+
+	/**
+	 * Render hidden inputs to pass some params along.
+	 */
+	private static function render_hidden_inputs() {
+		foreach ( self::get_after_success_params() as $key => $value ) {
+			?>
+				<input type="hidden" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $value ); ?>" />
+			<?php
+		}
+	}
 
 	/**
 	 * Return URL for modal checkout "thank you" page.
@@ -327,13 +350,13 @@ final class Modal_Checkout {
 			return $url;
 		}
 
-		$args = [
-			'modal_checkout'             => '1',
-			'email'                      => isset( $_REQUEST['billing_email'] ) ? rawurlencode( \sanitize_email( \wp_unslash( $_REQUEST['billing_email'] ) ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			'after_success_behavior'     => isset( $_REQUEST['after_success_behavior'] ) ? rawurlencode( sanitize_text_field( wp_unslash( $_REQUEST['after_success_behavior'] ) ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			'after_success_url'          => isset( $_REQUEST['after_success_url'] ) ? rawurlencode( sanitize_text_field( wp_unslash( $_REQUEST['after_success_url'] ) ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			'after_success_button_label' => isset( $_REQUEST['after_success_button_label'] ) ? rawurlencode( sanitize_text_field( wp_unslash( $_REQUEST['after_success_button_label'] ) ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		];
+		$args = array_merge(
+			[
+				'modal_checkout' => '1',
+				'email'          => isset( $_REQUEST['billing_email'] ) ? rawurlencode( \sanitize_email( \wp_unslash( $_REQUEST['billing_email'] ) ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			],
+			self::get_after_success_params()
+		);
 
 		// Pass order ID for modal checkout templates.
 		if ( $order && is_a( $order, 'WC_Order' ) ) {
@@ -562,28 +585,43 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Adds an additional button to the Thank you page
+	 * Render markup at the end of the "thank you" view.
+	 *
+	 * @param WC_Order $order The order related to the transaction.
 	 *
 	 * @return void
 	 */
-	public static function render_checkout_after_success_markup() {
+	public static function render_checkout_after_success_markup( $order ) {
+		if ( self::is_newsletter_signup_available() ) {
+			self::render_newsletter_signup_form( $order );
+		} else {
+			self::render_after_success_button();
+		}
+	}
+
+	/**
+	 * Render markup at the end of the "thank you" view.
+	 *
+	 * @return void
+	 */
+	private static function render_after_success_button() {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
-		if (
-			empty( $_REQUEST['modal_checkout'] ) ||
-			empty( $_REQUEST['after_success_behavior'] ) ||
-			empty( $_REQUEST['after_success_url'] )
-		) {
+		if ( empty( $_REQUEST['modal_checkout'] ) ) {
 			return;
 		}
 
-		$button_label = ! empty( $_REQUEST['after_success_button_label'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['after_success_button_label'] ) ) : __( 'Continue browsing', 'newspack-blocks' );
+		$button_label = ! empty( $_REQUEST['after_success_button_label'] ) ? sanitize_text_field( urldecode( wp_unslash( $_REQUEST['after_success_button_label'] ) ) ) : __( 'Continue browsing', 'newspack-blocks' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$url          = ! empty( $_REQUEST['after_success_url'] ) ? sanitize_text_field( urldecode( wp_unslash( $_REQUEST['after_success_url'] ) ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 		?>
 			<a
-				class="button"
-				href="<?php echo esc_url( sanitize_text_field( wp_unslash( $_REQUEST['after_success_url'] ) ) ); ?>"
-				target="_top"
-				style="display:block;margin:16px 0;"
+				<?php if ( empty( $url ) ) : ?>
+					onclick="parent.newspackCloseModalCheckout(this);"
+				<?php else : ?>
+					href="<?php echo esc_url( $url ); ?>"
+					target="_top"
+				<?php endif; ?>
+				class="button newspack-modal-newsletters__button"
 			>
 				<?php echo esc_html( $button_label ); ?>
 			</a>
@@ -596,10 +634,7 @@ final class Modal_Checkout {
 	 *
 	 * @param WC_Order $order The order related to the transaction.
 	 */
-	public static function render_newsletter_signup_form( $order ) {
-		if ( ! self::is_newsletter_signup_available() ) {
-			return false;
-		}
+	private static function render_newsletter_signup_form( $order ) {
 		$email_address = $order->get_billing_email();
 		if ( ! $email_address ) {
 			return;
@@ -646,6 +681,7 @@ final class Modal_Checkout {
 					<input type="hidden" name="modal_checkout" value="1" />
 					<input type="hidden" name="newsletter_signup_email" value="<?php echo esc_html( $email_address ); ?>" />
 					<?php
+					self::render_hidden_inputs();
 					foreach ( $newsletters_lists as $list ) {
 						$checkbox_id = sprintf( 'newspack-blocks-list-%s', $list['id'] );
 						?>
@@ -745,10 +781,8 @@ final class Modal_Checkout {
 				);
 				?>
 			</p>
-			<button onclick="parent.newspackCloseModalCheckout(this);" class="newspack-modal-newsletters__button">
-				<?php esc_html_e( 'Close', 'newspack-blocks' ); ?>
-			</button>
 		<?php
+		self::render_after_success_button();
 	}
 }
 Modal_Checkout::init();

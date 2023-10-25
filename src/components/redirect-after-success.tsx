@@ -18,12 +18,12 @@ const RedirectAfterSuccess = ( { attributes, setAttributes }: Props ) => (
 		<SelectControl
 			label={ __( 'Post-Checkout Button', 'newspack-blocks' ) }
 			help={ __(
-				'Select whether the user should be presented with a button to navigate after a successful purchase.',
+				'After a successful purchase, a button will be presented to finish the process.',
 				'newspack-blocks'
 			) }
 			value={ attributes.afterSuccessBehavior }
 			options={ [
-				{ label: __( 'Do not show a button', 'newspack-blocks' ), value: '' },
+				{ label: __( 'Close the modal', 'newspack-blocks' ), value: '' },
 				{ label: __( 'Go to a custom URL', 'newspack-blocks' ), value: 'custom' },
 				{ label: __( 'Go to the previous page', 'newspack-blocks' ), value: 'referrer' },
 			] }
@@ -31,23 +31,18 @@ const RedirectAfterSuccess = ( { attributes, setAttributes }: Props ) => (
 				setAttributes( { afterSuccessBehavior: value.toString() } );
 			} }
 		/>
-		{ attributes.afterSuccessBehavior !== '' && (
-			<>
-				<TextControl
-					label={ __( 'Button Label', 'newspack-blocks' ) }
-					placeholder={ __( 'Continue browsing', 'newspack-blocks' ) }
-					value={ attributes.afterSuccessButtonLabel || '' }
-					onChange={ ( value: string ) => setAttributes( { afterSuccessButtonLabel: value } ) }
-				/>
-				{ attributes.afterSuccessBehavior === 'custom' && (
-					<TextControl
-						label={ __( 'Custom URL', 'newspack-blocks' ) }
-						placeholder={ __( 'https://example.com', 'newspack-blocks' ) }
-						value={ attributes.afterSuccessURL || '' }
-						onChange={ ( value: string ) => setAttributes( { afterSuccessURL: value } ) }
-					/>
-				) }
-			</>
+		<TextControl
+			label={ __( 'Button Label', 'newspack-blocks' ) }
+			value={ attributes.afterSuccessButtonLabel || '' }
+			onChange={ ( value: string ) => setAttributes( { afterSuccessButtonLabel: value } ) }
+		/>
+		{ attributes.afterSuccessBehavior === 'custom' && (
+			<TextControl
+				label={ __( 'Custom URL', 'newspack-blocks' ) }
+				placeholder={ __( 'https://example.com', 'newspack-blocks' ) }
+				value={ attributes.afterSuccessURL || '' }
+				onChange={ ( value: string ) => setAttributes( { afterSuccessURL: value } ) }
+			/>
 		) }
 	</>
 );
