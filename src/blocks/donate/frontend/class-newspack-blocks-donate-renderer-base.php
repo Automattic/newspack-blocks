@@ -308,11 +308,10 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 		foreach ( [ [ 'afterSuccessBehavior', 'after_success_behavior' ], [ 'afterSuccessButtonLabel', 'after_success_button_label' ], [ 'afterSuccessURL', 'after_success_url' ] ] as $attribute ) {
 			$attribute_name = $attribute[0];
 			$param_name     = $attribute[1];
-			if ( isset( $attributes[ $attribute_name ] ) ) {
-				?>
-					<input type='hidden' name='<?php echo esc_attr( $param_name ); ?>' value='<?php echo esc_attr( $attributes[ $attribute_name ] ); ?>' />
-				<?php
-			}
+			$value          = isset( $attributes[ $attribute_name ] ) ? $attributes[ $attribute_name ] : '';
+			?>
+				<input type='hidden' name='<?php echo esc_attr( $param_name ); ?>' value='<?php echo esc_attr( $value ); ?>' />
+			<?php
 		}
 
 		return ob_get_clean();
