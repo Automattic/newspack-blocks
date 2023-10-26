@@ -729,18 +729,22 @@ final class Modal_Checkout {
 		}
 		$signup_data = self::get_newsletter_signup_data();
 		if ( false !== $signup_data ) {
-			$result = \Newspack_Newsletters_Subscription::add_contact(
-				[
-					'email'    => $signup_data['email'],
-					'metadata' => [
-						'current_page_url'                => home_url( add_query_arg( array(), \wp_get_referer() ) ),
-						'newsletters_subscription_method' => 'post-checkout',
+			if ( empty( $signup_data['lists'] ) ) {
+				return new \WP_Error( 'no-lists', __( 'No lists selected.', 'newspack-blocks' ) );
+			} else {
+				$result = \Newspack_Newsletters_Subscription::add_contact(
+					[
+						'email'    => $signup_data['email'],
+						'metadata' => [
+							'current_page_url' => home_url( add_query_arg( array(), \wp_get_referer() ) ),
+							'newsletters_subscription_method' => 'post-checkout',
+						],
 					],
-				],
-				$signup_data['lists']
-			);
-			if ( \is_wp_error( $result ) ) {
-				return $result;
+					$signup_data['lists']
+				);
+				if ( \is_wp_error( $result ) ) {
+					return $result;
+				}
 			}
 			return true;
 		}
@@ -754,12 +758,14 @@ final class Modal_Checkout {
 		$newsletter_signup_email = isset( $_GET['newsletter_signup_email'] ) ? \sanitize_text_field( \wp_unslash( $_GET['newsletter_signup_email'] ) ) : false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( $newsletter_signup_email && isset( $_SERVER['REQUEST_URI'] ) ) {
 			parse_str( \wp_parse_url( \wp_unslash( $_SERVER['REQUEST_URI'] ) )['query'], $query ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$signup_data = [
+				'email' => $newsletter_signup_email,
+				'lists' => [],
+			];
 			if ( isset( $query['lists'] ) && count( $query['lists'] ) ) {
-				return [
-					'email' => $newsletter_signup_email,
-					'lists' => $query['lists'],
-				];
+				$signup_data['lists'] = $query['lists'];
 			}
+			return $signup_data;
 		}
 		return false;
 	}
