@@ -610,9 +610,8 @@ final class Modal_Checkout {
 			return;
 		}
 
-		$button_label = ! empty( $_REQUEST['after_success_button_label'] ) ? sanitize_text_field( urldecode( wp_unslash( $_REQUEST['after_success_button_label'] ) ) ) : __( 'Continue browsing', 'newspack-blocks' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$url          = ! empty( $_REQUEST['after_success_url'] ) ? sanitize_text_field( urldecode( wp_unslash( $_REQUEST['after_success_url'] ) ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-
+		$button_label = ! empty( $_REQUEST['after_success_button_label'] ) ? urldecode( wp_unslash( $_REQUEST['after_success_button_label'] ) ) : __( 'Continue browsing', 'newspack-blocks' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$url          = ! empty( $_REQUEST['after_success_url'] ) ? urldecode( wp_unslash( $_REQUEST['after_success_url'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		?>
 			<a
 				<?php if ( empty( $url ) ) : ?>
