@@ -46,6 +46,7 @@ final class Modal_Checkout {
 		add_filter( 'woocommerce_payment_successful_result', [ __CLASS__, 'woocommerce_payment_successful_result' ] );
 		add_action( 'woocommerce_checkout_create_order_line_item', [ __CLASS__, 'woocommerce_checkout_create_order_line_item' ], 10, 4 );
 		add_filter( 'newspack_donations_cart_item_data', [ __CLASS__, 'amend_cart_item_data' ] );
+		add_filter( 'newspack_recaptcha_verify_captcha', [ __CLASS__, 'recaptcha_verify_captcha' ], 10, 2 );
 	}
 
 	/**
@@ -814,6 +815,25 @@ final class Modal_Checkout {
 				<?php esc_html_e( 'Close', 'newspack-blocks' ); ?>
 			</button>
 		<?php
+	}
+
+	/**
+	 * Prevent reCaptcha from being verified for AJAX checkout (e.g. Apple Pay).
+	 *
+	 * @param bool   $should_verify Whether to verify the captcha.
+	 * @param string $url The URL from which the checkout originated.
+	 */
+	public static function recaptcha_verify_captcha( $should_verify, $url ) {
+		parse_str( \wp_parse_url( $url, PHP_URL_QUERY ), $query );
+		if (
+			// Only in the context of a checkout request.
+			defined( 'WOOCOMMERCE_CHECKOUT' )
+			&& isset( $query['wc-ajax'] )
+			&& 'wc_stripe_create_order' === $query['wc-ajax']
+		) {
+			return false;
+		}
+		return $should_verify;
 	}
 
 	/**
