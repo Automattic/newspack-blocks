@@ -219,7 +219,7 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 			// Keep querying until we have all guest authors.
 			if ( $current_page < $number_of_pages ) {
 				while ( $current_page < $number_of_pages ) {
-					$current_page               ++;
+					$current_page++;
 					$guest_author_args['paged'] = $current_page;
 					$results                    = new \WP_Query( $guest_author_args );
 					$all_guest_authors          = array_merge( $all_guest_authors, $results->posts );
@@ -276,7 +276,7 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 			// Keep querying until we have all users.
 			if ( $current_page < $number_of_pages ) {
 				while ( $current_page < $number_of_pages ) {
-					$current_page       ++;
+					$current_page++;
 					$user_args['paged'] = $current_page;
 					$results            = new \WP_User_Query( $user_args );
 					$all_users          = array_merge( $all_users, $results->get_results() );
