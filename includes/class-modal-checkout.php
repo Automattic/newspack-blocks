@@ -729,7 +729,7 @@ final class Modal_Checkout {
 		$signup_data = self::get_newsletter_signup_data();
 		if ( false !== $signup_data ) {
 			if ( empty( $signup_data['lists'] ) ) {
-				return new \WP_Error( 'no-lists', __( 'No lists selected.', 'newspack-blocks' ) );
+				return new \WP_Error( 'newspack_no_lists_selected', __( 'No lists selected.', 'newspack-blocks' ) );
 			} else {
 				$result = \Newspack_Newsletters_Subscription::add_contact(
 					[
@@ -771,10 +771,14 @@ final class Modal_Checkout {
 
 	/**
 	 * Renders newsletter signup confirmation.
+	 *
+	 * @param bool $no_lists_selected Whether no lists were selected.
 	 */
-	public static function render_newsletter_confirmation() {
+	public static function render_newsletter_confirmation( $no_lists_selected = false ) {
 		?>
-			<h4><?php esc_html_e( 'Signup successful!', 'newspack-blocks' ); ?></h4>
+			<?php if ( ! $no_lists_selected ) : ?>
+				<h4><?php esc_html_e( 'Signup successful!', 'newspack-blocks' ); ?></h4>
+			<?php endif; ?>
 			<p>
 				<?php
 				echo esc_html(

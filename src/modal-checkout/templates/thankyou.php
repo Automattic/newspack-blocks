@@ -33,10 +33,12 @@ function newspack_blocks_replace_login_with_order_summary() {
 
 	// Handle the newsletter signup form.
 	$newsletter_confirmation = \Newspack_Blocks\Modal_Checkout::confirm_newsletter_signup();
-	if ( true === $newsletter_confirmation ) {
-		echo \Newspack_Blocks\Modal_Checkout::render_newsletter_confirmation(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	$is_error                = \is_wp_error( $newsletter_confirmation );
+	$no_selected_lists       = $is_error && 'newspack_no_lists_selected' === $newsletter_confirmation->get_error_code();
+	if ( true === $newsletter_confirmation || $no_selected_lists ) {
+		echo \Newspack_Blocks\Modal_Checkout::render_newsletter_confirmation( $no_selected_lists ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		return;
-	} elseif ( \is_wp_error( $newsletter_confirmation ) ) {
+	} elseif ( $is_error ) {
 		echo esc_html( $newsletter_confirmation->get_error_message() );
 		return;
 	}
