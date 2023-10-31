@@ -1,3 +1,27 @@
+# [2.0.0](https://github.com/Automattic/newspack-blocks/compare/v1.75.6...v2.0.0) (2023-10-31)
+
+
+### Bug Fixes
+
+* **donate:** allow "once" in tiers-based layout ([ad7268a](https://github.com/Automattic/newspack-blocks/commit/ad7268a320b70a85189cc36055744c3b6aca712f))
+* **homepage-posts:** check existing "specific posts" recursively for deduplication ([#1541](https://github.com/Automattic/newspack-blocks/issues/1541)) ([9755e40](https://github.com/Automattic/newspack-blocks/commit/9755e4090ce645c56ff26183684a07503c92fc65))
+* newspack.pub > newspack.com ([#1552](https://github.com/Automattic/newspack-blocks/issues/1552)) ([343b80b](https://github.com/Automattic/newspack-blocks/commit/343b80b49ac5516cb8ca877b1ca4a6ce6bcaaedf))
+* update WC's variation methods ([860f9fa](https://github.com/Automattic/newspack-blocks/commit/860f9fa2c8b5cda48c9310c958abcf8a3567d5ad))
+
+
+### Features
+
+* add option for a button after checkout ([#1521](https://github.com/Automattic/newspack-blocks/issues/1521)) ([bdfb3c2](https://github.com/Automattic/newspack-blocks/commit/bdfb3c2cceeb52097494884935546655a4a1650e))
+* **homepage-posts:** support deduplication toggling ([#1543](https://github.com/Automattic/newspack-blocks/issues/1543)) ([6acc719](https://github.com/Automattic/newspack-blocks/commit/6acc71959a28d213e1f9064a28a84ebeda44f636))
+* **modal checkout:** post-checkout newsletter signup ([#1561](https://github.com/Automattic/newspack-blocks/issues/1561)) ([092007a](https://github.com/Automattic/newspack-blocks/commit/092007a59ed89ce8ea3ef309851c26fde88b7e9f))
+* **modal-checkout:** implement ras overlay ([#1562](https://github.com/Automattic/newspack-blocks/issues/1562)) ([8270c9b](https://github.com/Automattic/newspack-blocks/commit/8270c9be4dc513ec317c0c256063cf12c936a0a7))
+* remove AMP compatibility ([27ecf88](https://github.com/Automattic/newspack-blocks/commit/27ecf88abecaa935ec931df397c340cba19de978))
+
+
+### BREAKING CHANGES
+
+* AMP will not be supported anymore by this plugin.
+
 # [2.0.0-alpha.3](https://github.com/Automattic/newspack-blocks/compare/v2.0.0-alpha.2...v2.0.0-alpha.3) (2023-10-20)
 
 
