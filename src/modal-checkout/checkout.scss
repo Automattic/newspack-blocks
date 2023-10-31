@@ -213,6 +213,47 @@
 	}
 }
 
+.newspack-modal-newsletters {
+	margin-top: 20px;
+	padding-top: 22px;
+	border-top: 1px solid colors.$color__border;
+	&__info {
+		margin-bottom: 35px;
+		span {
+			color: colors.$color__text-light;
+		}
+	}
+	&__list-item {
+		display: flex;
+		margin-bottom: 18px;
+		border: 1px solid colors.$color__border;
+		border-radius: 6px;
+		b {
+			display: block;
+			margin-bottom: 2px;
+		}
+	}
+	label {
+		flex: 1;
+		padding: 12px;
+		cursor: pointer;
+	}
+	input[type='checkbox'] {
+		padding: 10px;
+		margin-top: 18px;
+		margin-right: 19px;
+		margin-left: 20px;
+		border-radius: 5px;
+	}
+	input[type='submit'],
+	&__button {
+		margin-top: 25px;
+		width: 100%;
+		padding: 22px;
+		font-size: 1em;
+	}
+}
+
 @keyframes bounce {
 	0% {
 		transform: scale( 0 );
