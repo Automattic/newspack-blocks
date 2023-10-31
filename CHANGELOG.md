@@ -1,3 +1,10 @@
+# [2.1.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v2.0.0...v2.1.0-alpha.1) (2023-10-31)
+
+
+### Features
+
+* **donate-block:** changes to button-after-success  ([#1571](https://github.com/Automattic/newspack-blocks/issues/1571)) ([ac1c6a6](https://github.com/Automattic/newspack-blocks/commit/ac1c6a63f028f6cafa1e5cd852520ebf6ce75845))
+
 # [2.0.0](https://github.com/Automattic/newspack-blocks/compare/v1.75.6...v2.0.0) (2023-10-31)
 
 
