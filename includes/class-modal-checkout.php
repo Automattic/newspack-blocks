@@ -897,7 +897,7 @@ final class Modal_Checkout {
 	/**
 	 * Is this request using the modal checkout?
 	 */
-	private static function is_modal_checkout() {
+	public static function is_modal_checkout() {
 		return isset( $_REQUEST['modal_checkout'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	}
 }
