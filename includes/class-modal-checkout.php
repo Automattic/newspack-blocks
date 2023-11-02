@@ -43,6 +43,21 @@ final class Modal_Checkout {
 		add_filter( 'woocommerce_checkout_get_value', [ __CLASS__, 'woocommerce_checkout_get_value' ], 10, 2 );
 		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'woocommerce_checkout_fields' ] );
 		add_filter( 'woocommerce_update_order_review_fragments', [ __CLASS__, 'order_review_fragments' ] );
+		add_filter( 'woocommerce_enqueue_styles', [ __CLASS__, 'dequeue_woocommerce_styles' ] );
+	}
+
+	/**
+	 * Dequeue WC styles if on modal checkout.
+	 *
+	 * @param array $enqueue_styles Array of styles to enqueue.
+	 */
+	public static function dequeue_woocommerce_styles( $enqueue_styles ) {
+		if ( ! isset( $_REQUEST['modal_checkout'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return $enqueue_styles;
+		}
+		unset( $enqueue_styles['woocommerce-general'] );
+		unset( $enqueue_styles['woocommerce-smallscreen'] );
+		return $enqueue_styles;
 	}
 
 	/**
