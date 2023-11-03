@@ -19,14 +19,26 @@ $cart = WC()->cart;
 $has_filled_billing = \Newspack_Blocks\Modal_Checkout::has_filled_required_fields( 'billing' );
 $edit_billing       = ! $has_filled_billing || isset( $_REQUEST['edit_billing'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
-$form_action         = $edit_billing ? '#checkout' : wc_get_checkout_url();
-$form_class          = 'checkout woocommerce-checkout';
-$form_method         = $edit_billing ? 'get' : 'post';
-$form_billing_fields = \Newspack_Blocks\Modal_Checkout::get_prefilled_fields();
+$form_action                = $edit_billing ? '#checkout' : wc_get_checkout_url();
+$form_class                 = 'checkout woocommerce-checkout';
+$form_method                = $edit_billing ? 'get' : 'post';
+$form_fields                = \Newspack_Blocks\Modal_Checkout::get_prefilled_fields();
+$form_billing_fields        = [];
+$form_shipping_fields       = [];
+$different_shipping_address = isset( $_REQUEST['ship_to_different_address'] ) ? boolval( $_REQUEST['ship_to_different_address'] ) : false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+foreach ( $form_fields['billing'] as $key => $value ) {
+	$form_billing_fields[ str_replace( 'billing_', '', $key ) ] = $value;
+}
+if ( $different_shipping_address && ! empty( $form_fields['shipping'] ) ) {
+	foreach ( $form_fields['shipping'] as $key => $value ) {
+		$form_shipping_fields[ str_replace( 'shipping_', '', $key ) ] = $value;
+	}
+}
 
-$after_success_behavior     = filter_input( INPUT_GET, 'after_success_behavior', FILTER_SANITIZE_STRING );
-$after_success_url          = filter_input( INPUT_GET, 'after_success_url', FILTER_SANITIZE_STRING );
-$after_success_button_label = filter_input( INPUT_GET, 'after_success_button_label', FILTER_SANITIZE_STRING );
+$after_success_behavior     = filter_input( INPUT_GET, 'after_success_behavior', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+$after_success_url          = filter_input( INPUT_GET, 'after_success_url', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+$after_success_button_label = filter_input( INPUT_GET, 'after_success_button_label', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+$order_comments             = filter_input( INPUT_GET, 'order_comments', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
 if ( $edit_billing ) {
 	$form_class .= ' edit-billing';
@@ -94,31 +106,39 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 		<?php do_action( 'woocommerce_checkout_after_order_review' ); ?>
 	</div><!-- .full-order-details -->
 
-	<?php if ( $checkout->get_checkout_fields() ) : ?>
+	<?php
+	if ( $checkout->get_checkout_fields() ) :
+		;
+		?>
 
 		<?php do_action( 'woocommerce_checkout_before_customer_details' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound ?>
 
 		<?php if ( $edit_billing ) : ?>
 			<div class="checkout-billing">
 				<?php do_action( 'woocommerce_checkout_billing' ); ?>
+				<?php
+				if ( $cart->needs_shipping_address() ) {
+					do_action( 'woocommerce_checkout_shipping' );
+				}
+				?>
 				<button type="button" class="button alt wp-element-button modal-continue"><?php esc_html_e( 'Continue', 'newspack-blocks' ); ?></button>
 			</div>
-		<?php else : ?>
+					<?php else : ?>
 			<div class="checkout-billing checkout-billing-summary">
 				<div class="checkout-billing-summary__grid">
 					<h3><?php esc_html_e( 'Billing details', 'newspack-blocks' ); ?></h3>
 					<a href="<?php echo esc_url( add_query_arg( 'edit_billing', 1 ) ); ?>" class="edit-billing-link"><?php esc_html_e( 'Edit', 'newspack-blocks' ); ?></a>
 				</div>
 				<p>
-					<?php echo esc_html( $form_billing_fields['email'] ); ?><br/>
-					<?php echo WC()->countries->get_formatted_address( $form_billing_fields ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<?php echo esc_html( $form_billing_fields['email'] ); ?><br/>
+						<?php echo WC()->countries->get_formatted_address( $form_billing_fields ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</p>
 			</div>
-			<?php foreach ( $form_billing_fields as $key => $value ) : ?>
-				<?php if ( 'state' === $key ) : ?>
-					<?php $wc_states = WC()->countries->get_states( $form_billing_fields['country'] ); ?>
+						<?php foreach ( $form_billing_fields as $key => $value ) : ?>
+							<?php if ( 'state' === $key ) : ?>
+								<?php $wc_states = WC()->countries->get_states( $form_billing_fields['country'] ); ?>
 					<select style="display:none;" id="<?php echo esc_attr( 'billing_' . $key ); ?>" name="<?php echo esc_attr( 'billing_' . $key ); ?>" value="<?php echo esc_attr( $value ); ?>" >
-						<?php foreach ( $wc_states as $key => $value ) { ?>
+								<?php foreach ( $wc_states as $key => $value ) { ?>
 							<option <?php echo $key === $form_billing_fields['state'] ? 'selected' : ''; ?> value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $value ); ?></option>
 						<?php } ?>
 					</select>
@@ -127,10 +147,36 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 					<input type="hidden" id="<?php echo esc_attr( 'billing_' . $key ); ?>" name="<?php echo esc_attr( 'billing_' . $key ); ?>" value="<?php echo esc_attr( $value ); ?>" />
 				<?php endif; ?>
 			<?php endforeach; ?>
+						<?php if ( $different_shipping_address && ! empty( $form_shipping_fields ) ) : ?>
+				<div class="checkout-billing checkout-billing-summary">
+					<h5><?php esc_html_e( 'Shipping address', 'newspack-blocks' ); ?></h5>
+					<p>
+							<?php echo WC()->countries->get_formatted_address( $form_shipping_fields ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					</p>
+				</div>
+							<?php foreach ( $form_shipping_fields as $key => $value ) : ?>
+								<?php if ( 'state' === $key ) : ?>
+									<?php $wc_states = WC()->countries->get_states( $form_shipping_fields['country'] ); ?>
+						<select style="display:none;" id="<?php echo esc_attr( 'shipping_' . $key ); ?>" name="<?php echo esc_attr( 'shipping_' . $key ); ?>" value="<?php echo esc_attr( $value ); ?>" >
+									<?php foreach ( $wc_states as $key => $value ) { ?>
+					<option <?php echo $key === $form_shipping_fields['state'] ? 'selected' : ''; ?> value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $value ); ?></option>
+				<?php } ?>
+						</select>
+						<span id="select2-shipping_state-container" style="display:none;"></span>
+					<?php else : ?>
+						<input type="hidden" id="<?php echo esc_attr( 'shipping_' . $key ); ?>" name="<?php echo esc_attr( 'shipping_' . $key ); ?>" value="<?php echo esc_attr( $value ); ?>" />
+					<?php endif; ?>
+				<?php endforeach; ?>
+				<input type="hidden" id="ship_to_different_address" name="ship_to_different_address" value="1" />
+							<?php if ( ! empty( $order_comments ) ) : ?>
+					<input type="hidden" id="order_comments" name="order_comments" value="<?php echo esc_attr( $order_comments ); ?>" />
+				<?php endif; ?>
 
-			<?php if ( ! is_user_logged_in() && $checkout->is_registration_enabled() ) : ?>
+			<?php endif; ?>
+
+						<?php if ( ! is_user_logged_in() && $checkout->is_registration_enabled() ) : ?>
 				<div class="woocommerce-account-fields">
-					<?php if ( ! $checkout->is_registration_required() ) : ?>
+							<?php if ( ! $checkout->is_registration_required() ) : ?>
 
 						<p class="form-row form-row-wide create-account">
 							<label class="woocommerce-form__label woocommerce-form__label-for-checkbox checkbox">
@@ -140,29 +186,29 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 
 					<?php endif; ?>
 
-					<?php do_action( 'woocommerce_before_checkout_registration_form', $checkout ); ?>
+							<?php do_action( 'woocommerce_before_checkout_registration_form', $checkout ); ?>
 
-					<?php if ( $checkout->get_checkout_fields( 'account' ) ) : ?>
+							<?php if ( $checkout->get_checkout_fields( 'account' ) ) : ?>
 
 						<div class="create-account">
-							<?php foreach ( $checkout->get_checkout_fields( 'account' ) as $key => $field ) : ?>
-								<?php woocommerce_form_field( $key, $field, $checkout->get_value( $key ) ); ?>
+								<?php foreach ( $checkout->get_checkout_fields( 'account' ) as $key => $field ) : ?>
+									<?php woocommerce_form_field( $key, $field, $checkout->get_value( $key ) ); ?>
 							<?php endforeach; ?>
 							<div class="clear"></div>
 						</div>
 
 					<?php endif; ?>
 
-					<?php do_action( 'woocommerce_after_checkout_registration_form', $checkout ); ?>
+							<?php do_action( 'woocommerce_after_checkout_registration_form', $checkout ); ?>
 				</div>
 			<?php endif; ?>
 
 			<div class="after-customer-details">
-				<?php do_action( 'woocommerce_checkout_after_customer_details' ); ?>
+						<?php do_action( 'woocommerce_checkout_after_customer_details' ); ?>
 			</div>
 		<?php endif; ?>
 
-	<?php endif; ?>
+			<?php endif; ?>
 
 </form>
 

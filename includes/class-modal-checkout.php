@@ -136,9 +136,9 @@ final class Modal_Checkout {
 		$is_newspack_checkout       = filter_input( INPUT_GET, 'newspack_checkout', FILTER_SANITIZE_NUMBER_INT );
 		$product_id                 = filter_input( INPUT_GET, 'product_id', FILTER_SANITIZE_NUMBER_INT );
 		$variation_id               = filter_input( INPUT_GET, 'variation_id', FILTER_SANITIZE_NUMBER_INT );
-		$after_success_behavior     = filter_input( INPUT_GET, 'after_success_behavior', FILTER_SANITIZE_STRING );
-		$after_success_url          = filter_input( INPUT_GET, 'after_success_url', FILTER_SANITIZE_STRING );
-		$after_success_button_label = filter_input( INPUT_GET, 'after_success_button_label', FILTER_SANITIZE_STRING );
+		$after_success_behavior     = filter_input( INPUT_GET, 'after_success_behavior', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		$after_success_url          = filter_input( INPUT_GET, 'after_success_url', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		$after_success_button_label = filter_input( INPUT_GET, 'after_success_button_label', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
 		if ( ! $is_newspack_checkout || ! $product_id ) {
 			return;
@@ -581,23 +581,32 @@ final class Modal_Checkout {
 	 */
 	public static function get_prefilled_fields() {
 		$checkout        = \WC()->checkout();
-		$fields          = $checkout->get_checkout_fields( 'billing' );
+		$cart            = \WC()->cart;
+		$checkout_fields = [ 'billing' => $checkout->get_checkout_fields( 'billing' ) ];
 		$customer        = new \WC_Customer( get_current_user_id() );
-		$customer_fields = $customer->get_billing();
+		$customer_fields = $customer->get_data();
+
+		if ( $cart->needs_shipping_address() ) {
+			$checkout_fields['shipping'] = $checkout->get_checkout_fields( 'shipping' );
+		}
+
 		// If the user is logged in and there's no billing email, use the user's email.
 		if ( is_user_logged_in() && empty( $customer_fields['email'] ) ) {
 			$customer_fields['email'] = $customer->get_email();
 		}
 		$valid_request    = self::validate_edit_billing_request();
 		$prefilled_fields = [];
-		foreach ( $fields as $key => $field ) {
-			$key = str_replace( 'billing_', '', $key );
-			if ( $valid_request && isset( $_REQUEST[ 'billing_' . $key ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$value = sanitize_text_field( wp_unslash( $_REQUEST[ 'billing_' . $key ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			} elseif ( isset( $customer_fields[ $key ] ) ) {
-				$value = $customer_fields[ $key ];
+		foreach ( $checkout_fields as $type => $fields ) {
+			$prefilled_fields[ $type ] = [];
+			foreach ( $fields as $key => $field ) {
+				$value = '';
+				if ( $valid_request && isset( $_REQUEST[ $key ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+					$value = sanitize_text_field( wp_unslash( $_REQUEST[ $key ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				} elseif ( isset( $customer_fields[ $type ][ $key ] ) ) {
+					$value = $customer_fields[ $type ][ $key ];
+				}
+				$prefilled_fields[ $type ][ $key ] = $value;
 			}
-			$prefilled_fields[ $key ] = $value;
 		}
 		return $prefilled_fields;
 	}
@@ -609,26 +618,44 @@ final class Modal_Checkout {
 	 */
 	public static function has_filled_required_fields() {
 		$checkout        = \WC()->checkout();
-		$fields          = $checkout->get_checkout_fields( 'billing' );
-		$required        = array_filter(
-			$fields,
-			function( $field ) {
-				return isset( $field['required'] ) && $field['required'];
-			}
-		);
-		$required_keys   = array_keys( $required );
-		$customer_fields = self::get_prefilled_fields();
-		$is_request      = self::validate_edit_billing_request();
-		foreach ( $required_keys as $key ) {
-			$key = str_replace( 'billing_', '', $key );
-			if ( empty( $customer_fields[ $key ] ) ) {
-				if ( $is_request ) {
-					/* translators: %s: field name */
-					wc_add_notice( sprintf( __( '%s is a required field.', 'newspack-blocks' ), $fields[ 'billing_' . $key ]['label'] ), 'error' );
+		$cart            = \WC()->cart;
+		$checkout_fields = [ 'billing' => $checkout->get_checkout_fields( 'billing' ) ];
+		$required        = [];
+
+		if ( $cart->needs_shipping_address() ) {
+			$checkout_fields['shipping'] = $checkout->get_checkout_fields( 'shipping' );
+		}
+
+		foreach ( $checkout_fields as $type => $fields ) {
+			foreach ( $fields as $key => $field ) {
+				if ( isset( $field['required'] ) && $field['required'] ) {
+					if ( ! isset( $required[ $type ] ) ) {
+						$required[ $type ] = [];
+					}
+					$required[ $type ][ $key ] = $field;
 				}
-				return false;
 			}
 		}
+
+		$customer_fields = self::get_prefilled_fields();
+		$is_request      = self::validate_edit_billing_request();
+
+		foreach ( $checkout_fields as $type => $fields ) {
+			if ( ! isset( $required[ $type ] ) ) {
+				continue;
+			}
+			$required_keys = array_keys( $required[ $type ] );
+			foreach ( $required_keys as $key ) {
+				if ( empty( $customer_fields[ $type ][ $key ] ) ) {
+					if ( $is_request ) {
+						/* translators: %s: field name */
+						wc_add_notice( sprintf( __( '%s is a required field.', 'newspack-blocks' ), $fields[ $key ]['label'] ), 'error' );
+					}
+					return false;
+				}
+			}
+		}
+
 		return true;
 	}
 
@@ -649,6 +676,9 @@ final class Modal_Checkout {
 			return true;
 		}
 		if ( 1 < $cart->get_cart_contents_count() ) {
+			return true;
+		}
+		if ( $cart->needs_shipping_address() ) {
 			return true;
 		}
 		return false;
