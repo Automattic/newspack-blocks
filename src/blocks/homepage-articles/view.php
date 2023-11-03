@@ -231,6 +231,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	// Gather all Homepage Articles blocks on the page and output only the needed CSS.
 	// This CSS will be printed right after .entry-content.
 	global $newspack_blocks_hpb_all_blocks;
+	$inline_style_html = '';
 	if ( ! is_array( $newspack_blocks_hpb_all_blocks ) ) {
 		$newspack_blocks_hpb_all_blocks = newspack_blocks_retrieve_homepage_articles_blocks(
 			parse_blocks( get_the_content() ),
@@ -238,9 +239,11 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		);
 		$all_used_attrs                 = newspack_blocks_collect_all_attribute_values( array_column( $newspack_blocks_hpb_all_blocks, 'attrs' ) );
 		$css_string                     = newspack_blocks_get_homepage_articles_css_string( $all_used_attrs );
+		ob_start();
 		?>
 			<style id="newspack-blocks-inline-css" type="text/css"><?php echo esc_html( $css_string ); ?></style>
 		<?php
+		$inline_style_html = ob_get_clean();
 	}
 
 	// This will let the FSE plugin know we need CSS/JS now.
@@ -401,7 +404,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	$content = ob_get_clean();
 	Newspack_Blocks::enqueue_view_assets( 'homepage-articles' );
 
-	return $content;
+	return $inline_style_html . $content;
 }
 
 /**
