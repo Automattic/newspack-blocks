@@ -23,14 +23,14 @@ call_user_func(
 		if ( $attributes['showEmail'] && ! empty( $author['email'] ) ) {
 			$social_links['email'] = $author['email'];
 		}
-		if ( is_plugin_active( 'newspack-plugin' ) ) {
+		if ( class_exists( '\Newspack\Authors_Custom_Fields' ) ) {
 			if ( $attributes['shownewspack_phone_number'] && ! empty( $author['newspack_phone_number'] ) ) {
 				$social_links['newspack_phone_number'] = $author['newspack_phone_number'];
 			}
 		}
 
 		$employment_values = [];
-		if ( is_plugin_active( 'newspack-plugin' ) ) {
+		if ( class_exists( '\Newspack\Authors_Custom_Fields' ) ) {
 			if ( $attributes['shownewspack_role'] && ! empty( $author['newspack_role'] ) ) {
 				$employment_values[] = $author['newspack_role'];
 			}
@@ -86,7 +86,7 @@ call_user_func(
 				</h3>
 
 				<?php
-				if ( is_plugin_active( 'newspack-plugin' ) ) :
+				if ( class_exists( '\Newspack\Authors_Custom_Fields' ) ) :
 					if ( $attributes['shownewspack_job_title'] && ! empty( $author['newspack_job_title'] ) ) :
 						?>
 						<p class="wp-block-newspack-blocks-author-profile__job-title">
