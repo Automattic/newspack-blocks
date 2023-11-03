@@ -1,3 +1,18 @@
+# [2.1.0-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v2.1.0-alpha.1...v2.1.0-alpha.2) (2023-11-03)
+
+
+### Bug Fixes
+
+* **homepage-posts:** change copy for deduplication block option ([#1578](https://github.com/Automattic/newspack-blocks/issues/1578)) ([dff89a0](https://github.com/Automattic/newspack-blocks/commit/dff89a040e45109eaa0ae04248cb41f2d6543aca))
+* **modal-checkout:** add id attributes to hidden inputs ([90f077c](https://github.com/Automattic/newspack-blocks/commit/90f077ce49c164014e7779140e207a1278afda3e))
+
+
+### Features
+
+* expose is_modal_checkout method ([4315730](https://github.com/Automattic/newspack-blocks/commit/43157303d800e1447088c40f283d670c9fc6682e))
+* **modal-checkout:** dequeue WC styles ([#1572](https://github.com/Automattic/newspack-blocks/issues/1572)) ([9aa0039](https://github.com/Automattic/newspack-blocks/commit/9aa003954bb5676d009f0ef60765a82c9ec811d9))
+* **modal-checkout:** handle non-redirect-based flow (e.g. Apple Pay) ([#1573](https://github.com/Automattic/newspack-blocks/issues/1573)) ([671b551](https://github.com/Automattic/newspack-blocks/commit/671b551bfedd4724fc85005e21387b1ef462c97c))
+
 # [2.1.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v2.0.0...v2.1.0-alpha.1) (2023-10-31)
 
 
