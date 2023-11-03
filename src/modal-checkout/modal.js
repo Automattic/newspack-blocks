@@ -30,8 +30,8 @@ const triggers =
 
 let iframeResizeObserver;
 
-function closeCheckout( element ) {
-	const iframe = element.querySelector( 'iframe' );
+function closeCheckout() {
+	const iframe = document.querySelector( 'iframe[name="newspack_modal_checkout"]' );
 	if ( iframe ) {
 		iframe.src = 'about:blank';
 	}
@@ -39,8 +39,17 @@ function closeCheckout( element ) {
 	if ( iframeResizeObserver ) {
 		iframeResizeObserver.disconnect();
 	}
-	element.style.display = 'none';
+	Array.from( document.querySelectorAll( '.newspack-blocks-modal' ) ).forEach( el => {
+		el.style.display = 'none';
+		if ( el.overlayId && window.newspackReaderActivation?.overlays ) {
+			window.newspackReaderActivation?.overlays.remove( el.overlayId );
+		}
+	} );
 }
+
+window.newspackCloseModalCheckout = closeCheckout;
+
+const MODAL_CLASSNAME_BASE = '.newspack-blocks-modal';
 
 domReady( () => {
 	/**
@@ -50,29 +59,29 @@ domReady( () => {
 	if ( ! modalCheckout ) {
 		return;
 	}
-	const spinner = document.querySelector( '.newspack-blocks-checkout-modal__spinner' );
+	const spinner = document.querySelector( `${ MODAL_CLASSNAME_BASE }__spinner` );
 	const iframeName = 'newspack_modal_checkout';
 	const modalCheckoutInput = document.createElement( 'input' );
 	modalCheckoutInput.type = 'hidden';
 	modalCheckoutInput.name = 'modal_checkout';
 	modalCheckoutInput.value = '1';
-	const modalContent = modalCheckout.querySelector( '.newspack-blocks-checkout-modal__content' );
+	const modalContent = modalCheckout.querySelector( `${ MODAL_CLASSNAME_BASE }__content` );
 	const initialHeight = modalContent.clientHeight + 'px';
 	const iframe = document.createElement( 'iframe' );
 	iframe.name = iframeName;
 	modalContent.appendChild( iframe );
 	modalCheckout.addEventListener( 'click', ev => {
 		if ( ev.target === modalCheckout ) {
-			closeCheckout( modalCheckout );
+			closeCheckout();
 		}
 	} );
-	const closeButtons = modalCheckout.querySelectorAll( '.newspack-blocks-checkout-modal__close' );
+	const closeButtons = modalCheckout.querySelectorAll( `${ MODAL_CLASSNAME_BASE }__close` );
 	closeButtons.forEach( button => {
 		button.addEventListener( 'click', ev => {
 			ev.preventDefault();
 			modalContent.style.height = initialHeight;
 			spinner.style.display = 'flex';
-			closeCheckout( modalCheckout );
+			closeCheckout();
 		} );
 	} );
 
@@ -83,17 +92,15 @@ domReady( () => {
 	variationModals.forEach( variationModal => {
 		variationModal.addEventListener( 'click', ev => {
 			if ( ev.target === variationModal ) {
-				closeCheckout( variationModal );
+				closeCheckout();
 			}
 		} );
-		variationModal
-			.querySelectorAll( '.newspack-blocks-variation-modal__close' )
-			.forEach( button => {
-				button.addEventListener( 'click', ev => {
-					ev.preventDefault();
-					closeCheckout( variationModal );
-				} );
+		variationModal.querySelectorAll( '.newspack-blocks-modal__close' ).forEach( button => {
+			button.addEventListener( 'click', ev => {
+				ev.preventDefault();
+				closeCheckout();
 			} );
+		} );
 	} );
 
 	/**
@@ -129,6 +136,23 @@ domReady( () => {
 						modal => modal.dataset.productId === formData.get( 'product_id' )
 					);
 					if ( variationModal ) {
+						// Fill in the after success variables in the variation modal.
+						variationModal
+							.querySelectorAll( 'form[target="newspack_modal_checkout"]' )
+							.forEach( singleVariationForm => {
+								[
+									'after_success_behavior',
+									'after_success_url',
+									'after_success_button_label',
+								].forEach( afterSuccessParam => {
+									const input = document.createElement( 'input' );
+									input.type = 'hidden';
+									input.name = afterSuccessParam;
+									input.value = formData.get( afterSuccessParam );
+									singleVariationForm.appendChild( input );
+								} );
+							} );
+						// Open the variations modal.
 						ev.preventDefault();
 						document.body.classList.add( 'newspack-modal-checkout-open' );
 						variationModal.style.display = 'block';
@@ -139,6 +163,10 @@ domReady( () => {
 				spinner.style.display = 'flex';
 				modalCheckout.style.display = 'block';
 				document.body.classList.add( 'newspack-modal-checkout-open' );
+				if ( window.newspackReaderActivation?.overlays ) {
+					modalCheckout.overlayId = window.newspackReaderActivation?.overlays.add();
+				}
+
 				iframeResizeObserver = new ResizeObserver( entries => {
 					if ( ! entries || ! entries.length ) {
 						return;
