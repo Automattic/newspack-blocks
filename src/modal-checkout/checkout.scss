@@ -101,6 +101,7 @@
 			margin-bottom: 0;
 		}
 		.checkout-billing button[type='submit'],
+		button[name='woocommerce_checkout_place_order'],
 		button.modal-continue {
 			display: block;
 			width: 100%;
