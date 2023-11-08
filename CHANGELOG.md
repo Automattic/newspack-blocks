@@ -1,3 +1,10 @@
+# [2.1.0-alpha.3](https://github.com/Automattic/newspack-blocks/compare/v2.1.0-alpha.2...v2.1.0-alpha.3) (2023-11-08)
+
+
+### Bug Fixes
+
+* **modal-checkout:** place order button width ([9b1b04e](https://github.com/Automattic/newspack-blocks/commit/9b1b04e6c5b5ec7931c69eef859b93397735291f)), closes [#1572](https://github.com/Automattic/newspack-blocks/issues/1572) [#1586](https://github.com/Automattic/newspack-blocks/issues/1586)
+
 # [2.1.0-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v2.1.0-alpha.1...v2.1.0-alpha.2) (2023-11-03)
 
 
