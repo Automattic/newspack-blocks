@@ -464,6 +464,14 @@ final class Modal_Checkout {
 			return $located;
 		}
 
+		// Flush WC template cache when the templates version changes.
+		// Increase this number after making changes to the templates.
+		$current_templates_version = 1;
+		if ( get_option( 'newspack_modal_checkout_templates_version', 0 ) !== $current_templates_version ) {
+			wc_clear_template_cache();
+			update_option( 'newspack_modal_checkout_templates_version', $current_templates_version );
+		}
+
 		$custom_templates = [
 			'checkout/form-checkout.php' => 'src/modal-checkout/templates/checkout-form.php',
 			'checkout/form-billing.php'  => 'src/modal-checkout/templates/billing-form.php',
