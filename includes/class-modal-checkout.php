@@ -914,10 +914,10 @@ final class Modal_Checkout {
 	 * @param string $text The button text.
 	 */
 	public static function order_button_text( $text ) {
-		if ( ! self::is_modal_checkout() ) {
-			return $text;
+		if ( self::is_modal_checkout() && method_exists( 'Newspack\Donations', 'is_donation_cart' ) && \Newspack\Donations::is_donation_cart() ) {
+			return __( 'Donate now', 'newspack-blocks' );
 		}
-		return __( 'Donate now', 'newspack-blocks' );
+		return $text;
 	}
 }
 Modal_Checkout::init();
