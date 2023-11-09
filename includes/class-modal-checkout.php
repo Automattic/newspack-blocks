@@ -209,6 +209,13 @@ final class Modal_Checkout {
 			}
 		}
 
+		/**
+		 * Filters the cart item data for the modal checkout.
+		 *
+		 * @param array $cart_item_data Cart item data.
+		 */
+		$cart_item_data = apply_filters( 'newspack_blocks_modal_checkout_cart_item_data', $cart_item_data );
+
 		\WC()->cart->add_to_cart( $product_id, 1, 0, [], $cart_item_data );
 
 		$query_args = [];
