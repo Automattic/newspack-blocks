@@ -1,3 +1,10 @@
+# [2.1.0-alpha.4](https://github.com/Automattic/newspack-blocks/compare/v2.1.0-alpha.3...v2.1.0-alpha.4) (2023-11-10)
+
+
+### Features
+
+* **modal-checkout:** update "place order" text to "donate now" ([#1591](https://github.com/Automattic/newspack-blocks/issues/1591)) ([63fc202](https://github.com/Automattic/newspack-blocks/commit/63fc20204b95d9213e99481edd1b4549f011c448))
+
 # [2.1.0-alpha.3](https://github.com/Automattic/newspack-blocks/compare/v2.1.0-alpha.2...v2.1.0-alpha.3) (2023-11-08)
 
 
