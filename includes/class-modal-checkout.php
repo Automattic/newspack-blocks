@@ -48,6 +48,9 @@ final class Modal_Checkout {
 		add_filter( 'newspack_donations_cart_item_data', [ __CLASS__, 'amend_cart_item_data' ] );
 		add_filter( 'newspack_recaptcha_verify_captcha', [ __CLASS__, 'recaptcha_verify_captcha' ], 10, 2 );
 		add_filter( 'woocommerce_enqueue_styles', [ __CLASS__, 'dequeue_woocommerce_styles' ] );
+		add_filter( 'wcs_place_subscription_order_text', [ __CLASS__, 'order_button_text' ], 1 );
+		add_filter( 'woocommerce_order_button_text', [ __CLASS__, 'order_button_text' ] );
+		add_filter( 'option_woocommerce_subscriptions_order_button_text', [ __CLASS__, 'order_button_text' ] );
 	}
 
 	/**
@@ -898,7 +901,23 @@ final class Modal_Checkout {
 	 * Is this request using the modal checkout?
 	 */
 	public static function is_modal_checkout() {
-		return isset( $_REQUEST['modal_checkout'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$is_modal_checkout = isset( $_REQUEST['modal_checkout'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! $is_modal_checkout && isset( $_REQUEST['post_data'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$is_modal_checkout = strpos( $_REQUEST['post_data'], 'modal_checkout=1' ) !== false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		}
+		return $is_modal_checkout;
+	}
+
+	/**
+	 * Set the "Place order" button text.
+	 *
+	 * @param string $text The button text.
+	 */
+	public static function order_button_text( $text ) {
+		if ( self::is_modal_checkout() && method_exists( 'Newspack\Donations', 'is_donation_cart' ) && \Newspack\Donations::is_donation_cart() ) {
+			return __( 'Donate now', 'newspack-blocks' );
+		}
+		return $text;
 	}
 }
 Modal_Checkout::init();
