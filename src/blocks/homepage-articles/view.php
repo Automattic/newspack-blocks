@@ -368,9 +368,9 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 				echo Newspack_Blocks::template_inc( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					__DIR__ . '/templates/articles-list.php',
 					[
-						'articles_rest_url' => $articles_rest_url,
-						'article_query'     => $article_query,
-						'attributes'        => $attributes,
+						'articles_rest_url' => $articles_rest_url, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						'article_query'     => $article_query, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						'attributes'        => $attributes, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					]
 				);
 				?>
@@ -472,7 +472,7 @@ function newspack_blocks_format_byline( $author_info ) {
 		array_reduce(
 			$author_info,
 			function ( $accumulator, $author ) use ( $author_info, &$index ) {
-				$index ++;
+				$index++;
 				$penultimate = count( $author_info ) - 2;
 
 				$get_author_posts_url = get_author_posts_url( $author->ID );
