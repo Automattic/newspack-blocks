@@ -523,14 +523,18 @@ function newspack_blocks_format_categories( $post_id ) {
 		}
 	}
 
-	$category_link      = get_category_link( $category->term_id );
-	$category_formatted = esc_html( $category->name );
+	// Check if $category is a valid object and has the required properties.
+	if ( is_a( $category, 'WP_Term' ) && isset( $category->term_id ) && isset( $category->name ) ) {
+		$category_link      = get_category_link( $category->term_id );
+		$category_formatted = esc_html( $category->name );
 
-	if ( ! empty( $category_link ) ) {
-		$category_formatted = '<a href="' . esc_attr( $category_link ) . '">' . esc_html( $category->name ) . '</a>';
-	}
+		if ( ! empty( $category_link ) ) {
+			$category_formatted = '<a href="' . esc_url( $category_link ) . '">' . $category_formatted . '</a>';
+		}
 
-	if ( $category ) {
 		return apply_filters( 'newspack_blocks_categories', $category_formatted );
 	}
+
+	return '';
 }
+
