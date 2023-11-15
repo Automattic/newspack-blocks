@@ -523,7 +523,7 @@ function newspack_blocks_format_categories( $post_id ) {
 		}
 	}
 
-	if( ! is_a( $category, 'WP_Term' ) ) {
+	if ( ! is_a( $category, 'WP_Term' ) ) {
 		return '';
 	}
 
