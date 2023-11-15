@@ -536,4 +536,3 @@ function newspack_blocks_format_categories( $post_id ) {
 
 	return apply_filters( 'newspack_blocks_categories', $category_formatted );
 }
-
