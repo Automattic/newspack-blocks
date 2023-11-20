@@ -51,6 +51,9 @@ final class Modal_Checkout {
 		add_filter( 'wcs_place_subscription_order_text', [ __CLASS__, 'order_button_text' ], 1 );
 		add_filter( 'woocommerce_order_button_text', [ __CLASS__, 'order_button_text' ] );
 		add_filter( 'option_woocommerce_subscriptions_order_button_text', [ __CLASS__, 'order_button_text' ] );
+
+		// Support for common extensions.
+		add_filter( 'default_option_woocommerce_subscriptions_gifting_gifting_checkbox_text', [ __CLASS__, 'subscriptions_gifting_default_label' ], 10, 2 );
 	}
 
 	/**
@@ -925,6 +928,30 @@ final class Modal_Checkout {
 			return __( 'Donate now', 'newspack-blocks' );
 		}
 		return $text;
+	}
+
+	/**
+	 * The default value for the WooCommerce Subscriptions Gifting Extension's field label.
+	 * This filter allows us to distinguish between donation and non-donation transactions,
+	 * but still retains support for sites to customize the label site-wide if they prefer.
+	 *
+	 * @param string $default_value The default label.
+	 * @param string $option Option name.
+	 *
+	 * @return string Filtered default value.
+	 */
+	public static function subscriptions_gifting_default_label( $default_value, $option ) {
+		if ( ! self::is_modal_checkout() || 'woocommerce_subscriptions_gifting_gifting_checkbox_text' !== $option ) {
+			return $default_value;
+		}
+
+		$is_donation = method_exists( 'Newspack\Donations', 'is_donation_cart' ) && \Newspack\Donations::is_donation_cart();
+
+		return sprintf(
+			// Translators: Whether the transaction is a donation or a non-donation purchase.
+			__( 'This %s is a gift', 'newspack-blocks' ),
+			$is_donation ? __( 'donation', 'newspack-blocks' ) : __( 'purchase', 'newspack-blocks' )
+		);
 	}
 }
 Modal_Checkout::init();
