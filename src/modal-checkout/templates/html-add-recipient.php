@@ -8,8 +8,6 @@
  * @version 2.1
  */
 
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce hooks.
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }

@@ -689,8 +689,7 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * If WooCommerce Subscriptions Gifting extension is available, show its fields below
-	 * the billing fields in our custom modal checkout form.
+	 * If WooCommerce Subscriptions Gifting extension is available, render its fields.
 	 *
 	 * @return string HTML for the WooCommerce Subscriptions Gifting fields.
 	 */
