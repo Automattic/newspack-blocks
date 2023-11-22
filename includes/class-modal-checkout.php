@@ -475,7 +475,19 @@ final class Modal_Checkout {
 	 */
 	public static function wc_get_template( $located, $template_name, $args ) {
 		// WooCommerce Subscriptions Gifting extension.
-		if ( 'html-add-recipient.php' === $template_name && empty( $args['newspack_display_gifting_information'] ) ) {
+		if (
+			'html-add-recipient.php' === $template_name &&
+			(
+				// Don't show on cart.
+				\is_cart() ||
+				(
+					// Only show on checkout if not modal, or if newspack_display_gifting_information template arg is passed.
+					\is_checkout() &&
+					self::is_modal_checkout() &&
+					empty( $args['newspack_display_gifting_information'] )
+				)
+			)
+		) {
 			$located = NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/modal-checkout/templates/html-add-recipient.php';
 		}
 
