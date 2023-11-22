@@ -51,6 +51,9 @@ final class Modal_Checkout {
 		add_filter( 'wcs_place_subscription_order_text', [ __CLASS__, 'order_button_text' ], 1 );
 		add_filter( 'woocommerce_order_button_text', [ __CLASS__, 'order_button_text' ] );
 		add_filter( 'option_woocommerce_subscriptions_order_button_text', [ __CLASS__, 'order_button_text' ] );
+		add_action( 'woocommerce_checkout_before_terms_and_conditions', [ __CLASS__, 'render_before_terms_and_conditions' ] );
+		add_action( 'woocommerce_checkout_before_customer_details', [ __CLASS__,  'render_before_customer_details' ] );
+		add_filter( 'woocommerce_enable_order_notes_field', [ __CLASS__, 'enable_order_notes_field' ] );
 	}
 
 	/**
@@ -256,18 +259,29 @@ final class Modal_Checkout {
 		if ( ! self::$has_modal ) {
 			return;
 		}
+		/**
+		* Filters the header title for the modal checkout.
+		*
+		* @param string $title The title.
+		*/
+		$title = apply_filters( 'newspack_blocks_modal_checkout_title', __( 'Complete your transaction', 'newspack-blocks' ) );
 		?>
 		<div class="newspack-blocks-checkout-modal newspack-blocks-modal" style="display: none;">
-			<div class="newspack-blocks-modal__content">
-				<a href="#" class="newspack-blocks-modal__close">
-					<span class="screen-reader-text"><?php esc_html_e( 'Close', 'newspack-blocks' ); ?></span>
-					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
-						<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
-					</svg>
-				</a>
-				<div class="newspack-blocks-modal__spinner">
-					<span></span>
-				</div>
+			<div class="newspack-blocks-modal__container">
+				<header class="newspack-blocks-modal__header">
+					<h2><?php echo esc_html( $title ); ?></h2>
+					<a href="#" class="newspack-blocks-modal__close">
+						<span class="screen-reader-text"><?php esc_html_e( 'Close', 'newspack-blocks' ); ?></span>
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+							<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
+						</svg>
+					</a>
+				</header>
+				<section class="newspack-blocks-modal__content">
+					<div class="newspack-blocks-modal__spinner">
+						<span></span>
+					</div>
+				</section>
 			</div>
 		</div>
 		<?php
@@ -393,14 +407,26 @@ final class Modal_Checkout {
 			return $template;
 		}
 		ob_start();
-		wp_head();
-		while ( have_posts() ) {
-			the_post();
-			echo '<div id="newspack_modal_checkout">';
-			the_content();
-			echo '</div>';
-		}
-		wp_footer();
+		?>
+		<!doctype html>
+		<html <?php language_attributes(); ?>>
+		<head>
+			<meta charset="<?php bloginfo( 'charset' ); ?>" />
+			<meta name="viewport" content="width=device-width, initial-scale=1" />
+			<link rel="profile" href="https://gmpg.org/xfn/11" />
+			<?php wp_head(); ?>
+		</head>
+		<body id="newspack_modal_checkout">
+			<?php
+			while ( have_posts() ) {
+				the_post();
+				the_content();
+			}
+			wp_footer();
+			?>
+		</body>
+		</html>
+		<?php
 		ob_end_flush();
 	}
 
@@ -476,7 +502,6 @@ final class Modal_Checkout {
 
 		$custom_templates = [
 			'checkout/form-checkout.php' => 'src/modal-checkout/templates/checkout-form.php',
-			'checkout/form-billing.php'  => 'src/modal-checkout/templates/billing-form.php',
 			'checkout/thankyou.php'      => 'src/modal-checkout/templates/thankyou.php',
 			// Replace the login form with the order summary if using the modal checkout. This is
 			// for the case where the reader used an existing email address.
@@ -925,6 +950,63 @@ final class Modal_Checkout {
 			return __( 'Donate now', 'newspack-blocks' );
 		}
 		return $text;
+	}
+
+	/**
+	 * Render before checkout terms and conditions.
+	 *
+	 * This will render the order review table between the gateway selection and
+	 * the submit button.
+	 */
+	public static function render_before_terms_and_conditions() {
+		if ( ! self::is_modal_checkout() ) {
+			return;
+		}
+		// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce hooks.
+		?>
+		<?php do_action( 'woocommerce_checkout_before_order_review_heading' ); ?>
+		<h3 id="order_review_heading"><?php esc_html_e( 'Transaction details', 'newspack-blocks' ); ?></h3>
+		<?php do_action( 'woocommerce_checkout_before_order_review' ); ?>
+		<div id="order_review" class="woocommerce-checkout-review-order">
+			<?php do_action( 'woocommerce_checkout_order_review' ); ?>
+		</div>
+		<?php do_action( 'woocommerce_checkout_after_order_review' ); ?>
+		<?php
+		// phpcs:enable
+	}
+
+	/**
+	 * Render before customer details.
+	 *
+	 * This will render the hidden inputs necessary for the modal checkout.
+	 */
+	public static function render_before_customer_details() {
+		if ( ! self::is_modal_checkout() ) {
+			return;
+		}
+		$after_success_behavior     = filter_input( INPUT_GET, 'after_success_behavior', FILTER_SANITIZE_STRING );
+		$after_success_url          = filter_input( INPUT_GET, 'after_success_url', FILTER_SANITIZE_STRING );
+		$after_success_button_label = filter_input( INPUT_GET, 'after_success_button_label', FILTER_SANITIZE_STRING );
+		?>
+		<input type="hidden" name="modal_checkout" value="1" />
+		<input type="hidden" name="after_success_behavior" value="<?php echo esc_attr( $after_success_behavior ); ?>" />
+		<input type="hidden" name="after_success_url" value="<?php echo esc_attr( $after_success_url ); ?>" />
+		<input type="hidden" name="after_success_button_label" value="<?php echo esc_attr( $after_success_button_label ); ?>" />
+		<?php
+	}
+
+	/**
+	 * Disable order notes in the modal checkout.
+	 *
+	 * @param bool $enable Whether to enable the order notes field.
+	 *
+	 * @return bool
+	 */
+	public static function enable_order_notes_field( $enable ) {
+		if ( ! self::is_modal_checkout() ) {
+			return $enable;
+		}
+		return false;
 	}
 }
 Modal_Checkout::init();
