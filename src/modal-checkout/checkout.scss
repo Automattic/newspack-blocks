@@ -3,6 +3,11 @@
 #newspack_modal_checkout { /* stylelint-disable-line */
 	padding: 32px;
 	font-size: 1rem;
+	fieldset {
+		border: none;
+		padding-left: 0;
+		padding-right: 0;
+	}
 	.order-details-summary {
 		border: 2px solid;
 		border-radius: 3px;

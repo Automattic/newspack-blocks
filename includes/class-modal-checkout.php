@@ -39,7 +39,7 @@ final class Modal_Checkout {
 		add_action( 'template_include', [ __CLASS__, 'get_checkout_template' ] );
 		add_filter( 'woocommerce_get_return_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
 		add_filter( 'woocommerce_get_checkout_order_received_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
-		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 2 );
+		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 3 );
 		add_filter( 'woocommerce_checkout_get_value', [ __CLASS__, 'woocommerce_checkout_get_value' ], 10, 2 );
 		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'woocommerce_checkout_fields' ] );
 		add_filter( 'woocommerce_update_order_review_fragments', [ __CLASS__, 'order_review_fragments' ] );
@@ -469,10 +469,16 @@ final class Modal_Checkout {
 	 *
 	 * @param string $located       Template file.
 	 * @param string $template_name Template name.
+	 * @param array  $args          Template args.
 	 *
 	 * @return string Template file.
 	 */
-	public static function wc_get_template( $located, $template_name ) {
+	public static function wc_get_template( $located, $template_name, $args ) {
+		// WooCommerce Subscriptions Gifting extension.
+		if ( 'html-add-recipient.php' === $template_name && empty( $args['newspack_display_gifting_information'] ) ) {
+			$located = NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/modal-checkout/templates/html-add-recipient.php';
+		}
+
 		if ( ! self::is_modal_checkout() ) {
 			return $located;
 		}
@@ -633,6 +639,81 @@ final class Modal_Checkout {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Get an array of allowed form elements and attributes for wp_kses.
+	 *
+	 * @return array Array of allowed HTML elements and attributes.
+	 */
+	public static function get_allowed_form_html() {
+		return [
+			'div'      => [
+				'class' => [],
+				'style' => [],
+			],
+			'fieldset' => [],
+			'input'    => [
+				'checked'        => [],
+				'class'          => [],
+				'data-recipient' => [],
+				'disabled'       => [],
+				'id'             => [],
+				'name'           => [],
+				'placeholder'    => [],
+				'style'          => [],
+				'type'           => [],
+				'value'          => [],
+			],
+			'label'    => [
+				'class' => [],
+				'for'   => [],
+			],
+			'p'        => [
+				'class' => [],
+				'style' => [],
+			],
+		];
+	}
+
+	/**
+	 * If WooCommerce Subscriptions Gifting extension is available, show its fields below
+	 * the billing fields in our custom modal checkout form.
+	 *
+	 * @return string HTML for the WooCommerce Subscriptions Gifting fields.
+	 */
+	public static function maybe_show_wcs_gifting_fields() {
+		if ( ! self::is_modal_checkout() ) {
+			return;
+		}
+
+		$cart       = \WC()->cart;
+		$cart_items = $cart->get_cart();
+		if (
+			1 === count( $cart_items ) &&
+			method_exists( 'WCSG_Cart', 'is_giftable_item' ) &&
+			method_exists( 'WCS_Gifting', 'render_add_recipient_fields' ) &&
+			function_exists( 'wc_get_template_html' )
+		) {
+			$cart_key  = array_keys( $cart_items )[0];
+			$cart_item = array_values( $cart_items )[0];
+			if ( ! \WCSG_Cart::is_giftable_item( $cart_item ) ) {
+				return;
+			}
+
+			$email  = empty( $cart_item['wcsg_gift_recipients_email'] ) ? '' : $cart_item['wcsg_gift_recipients_email'];
+			$output = \wc_get_template_html(
+				'html-add-recipient.php',
+				\wp_parse_args(
+					[ 'newspack_display_gifting_information' => true ],
+					\WCS_Gifting::get_add_recipient_template_args( $email, $cart_key )
+				),
+				'',
+				plugin_dir_path( \WCS_Gifting::$plugin_file ) . 'templates/'
+			);
+
+			echo wp_kses( $output, self::get_allowed_form_html() );
+		}
 	}
 
 	/**

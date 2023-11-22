@@ -113,6 +113,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 					<?php echo esc_html( $form_billing_fields['email'] ); ?><br/>
 					<?php echo WC()->countries->get_formatted_address( $form_billing_fields ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</p>
+				<?php \Newspack_Blocks\Modal_Checkout::maybe_show_wcs_gifting_fields(); ?>
 			</div>
 			<?php foreach ( $form_billing_fields as $key => $value ) : ?>
 				<?php if ( 'state' === $key ) : ?>
