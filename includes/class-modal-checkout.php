@@ -51,6 +51,7 @@ final class Modal_Checkout {
 		add_filter( 'wcs_place_subscription_order_text', [ __CLASS__, 'order_button_text' ], 1 );
 		add_filter( 'woocommerce_order_button_text', [ __CLASS__, 'order_button_text' ] );
 		add_filter( 'option_woocommerce_subscriptions_order_button_text', [ __CLASS__, 'order_button_text' ] );
+		add_action( 'woocommerce_before_checkout_form', [ __CLASS__, 'render_before_checkout_form' ] );
 		add_action( 'woocommerce_checkout_before_terms_and_conditions', [ __CLASS__, 'render_before_terms_and_conditions' ] );
 		add_action( 'woocommerce_checkout_before_customer_details', [ __CLASS__,  'render_before_customer_details' ] );
 		add_filter( 'woocommerce_enable_order_notes_field', [ __CLASS__, 'enable_order_notes_field' ] );
@@ -951,6 +952,43 @@ final class Modal_Checkout {
 			return __( 'Donate now', 'newspack-blocks' );
 		}
 		return $text;
+	}
+
+	/**
+	 * Render before the checkout form.
+	 *
+	 * This will render the order summary card.
+	 */
+	public static function render_before_checkout_form() {
+		if ( ! self::is_modal_checkout() ) {
+			return;
+		}
+		$cart = \WC()->cart;
+		if ( 1 !== $cart->get_cart_contents_count() ) {
+			return;
+		}
+		?>
+		<div class="order-details-summary">
+			<?php
+			// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce hooks.
+			foreach ( $cart->get_cart() as $cart_item_key => $cart_item ) :
+				$_product = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
+				if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters( 'woocommerce_checkout_cart_item_visible', true, $cart_item, $cart_item_key ) ) :
+					?>
+					<h2>
+						<?php
+						echo apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key ) . ': '; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						echo wc_get_formatted_cart_item_data( $cart_item ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						?>
+						<?php echo apply_filters( 'woocommerce_cart_item_subtotal', $cart->get_product_subtotal( $_product, $cart_item['quantity'] ), $cart_item, $cart_item_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					</h2>
+					<?php
+				endif;
+			endforeach;
+			// phpcs:enable
+			?>
+		</div>
+		<?php
 	}
 
 	/**
