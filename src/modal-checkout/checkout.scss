@@ -2,7 +2,10 @@
 	padding: 24px;
 	h3 {
 		font-size: 16px;
-		margin: 24px 0 16px;
+		margin: 0 0 16px;
+	}
+	p {
+		margin: 0 0 16px;
 	}
 	.woocommerce-message,
 	.woocommerce-error,
@@ -65,7 +68,13 @@
 			}
 		}
 	}
+	#order_review {
+		margin: 0 0 24px;
+	}
 	#payment {
+		.wc_payment_methods {
+			margin: 0 0 24px;
+		}
 		.wc_payment_method {
 			border: 1px solid #ddd;
 			border-radius: 6px;
@@ -105,10 +114,10 @@
 				margin-right: 8px;
 			}
 		}
+		.newspack-cover-fees,
 		.woocommerce-SavedPaymentMethods-saveNew {
 			display: flex;
-			align-items: center;
-			margin-top: 16px;
+			margin: 16px 0 0;
 			input {
 				margin-right: 8px;
 			}
@@ -159,10 +168,13 @@
 			}
 		}
 	}
-	.woocommerce-privacy-policy-text {
-		font-size: 14px;
-		line-height: 20px;
-		color: #757575;
+	.woocommerce-terms-and-conditions-wrapper {
+		margin: 0;
+		.woocommerce-privacy-policy-text {
+			font-size: 14px;
+			line-height: 20px;
+			color: #757575;
+		}
 	}
 	.woocommerce-form-coupon {
 		p {

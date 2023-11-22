@@ -948,10 +948,17 @@ final class Modal_Checkout {
 	 * @param string $text The button text.
 	 */
 	public static function order_button_text( $text ) {
-		if ( self::is_modal_checkout() && method_exists( 'Newspack\Donations', 'is_donation_cart' ) && \Newspack\Donations::is_donation_cart() ) {
+		if ( ! self::is_modal_checkout() ) {
+			return $text;
+		}
+		if ( method_exists( 'Newspack\Donations', 'is_donation_cart' ) && \Newspack\Donations::is_donation_cart() ) {
 			return __( 'Donate now', 'newspack-blocks' );
 		}
-		return $text;
+		return sprintf(
+			// Translators: %s is the price.
+			__( 'Complete transaction: %s', 'newspack-blocks' ),
+			esc_html( wp_strip_all_tags( \WC()->cart->get_total() ) )
+		);
 	}
 
 	/**
