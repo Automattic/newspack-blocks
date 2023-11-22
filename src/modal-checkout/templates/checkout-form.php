@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $cart = WC()->cart;
 
-$has_filled_billing = \Newspack_Blocks\Modal_Checkout::has_filled_required_fields( 'billing' );
+$has_filled_billing = \Newspack_Blocks\Modal_Checkout::has_filled_required_fields();
 $edit_billing       = ! $has_filled_billing || isset( $_REQUEST['edit_billing'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 $form_action                = $edit_billing ? '#checkout' : wc_get_checkout_url();
@@ -25,7 +25,7 @@ $form_method                = $edit_billing ? 'get' : 'post';
 $form_fields                = \Newspack_Blocks\Modal_Checkout::get_prefilled_fields();
 $form_billing_fields        = [];
 $form_shipping_fields       = [];
-$different_shipping_address = isset( $_REQUEST['ship_to_different_address'] ) ? boolval( $_REQUEST['ship_to_different_address'] ) : false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+$different_shipping_address = boolval( filter_input( INPUT_GET, 'ship_to_different_address', FILTER_SANITIZE_NUMBER_INT ) );
 foreach ( $form_fields['billing'] as $key => $value ) {
 	$form_billing_fields[ str_replace( 'billing_', '', $key ) ] = $value;
 }

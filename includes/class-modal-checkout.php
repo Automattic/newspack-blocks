@@ -42,6 +42,7 @@ final class Modal_Checkout {
 		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 2 );
 		add_filter( 'woocommerce_checkout_get_value', [ __CLASS__, 'woocommerce_checkout_get_value' ], 10, 2 );
 		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'woocommerce_checkout_fields' ] );
+		add_filter( 'woocommerce_ship_to_different_address_checked', [ __CLASS__, 'maybe_check_ship_to_different_address_box' ] );
 		add_filter( 'woocommerce_update_order_review_fragments', [ __CLASS__, 'order_review_fragments' ] );
 		add_filter( 'woocommerce_payment_successful_result', [ __CLASS__, 'woocommerce_payment_successful_result' ] );
 		add_action( 'woocommerce_checkout_create_order_line_item', [ __CLASS__, 'woocommerce_checkout_create_order_line_item' ], 10, 4 );
@@ -575,6 +576,20 @@ final class Modal_Checkout {
 	}
 
 	/**
+	 * Pre-check the "ship to different address" option if it was previously selected before reloading the modal.
+	 * This preserves the checked state if we need to reload the modal due to submission errors.
+	 *
+	 * @param bool $checked Whether the box is checked.
+	 * @return bool Whether the box is checked.
+	 */
+	public static function maybe_check_ship_to_different_address_box( $checked ) {
+		if ( self::is_modal_checkout() && boolval( filter_input( INPUT_GET, 'ship_to_different_address', FILTER_SANITIZE_NUMBER_INT ) ) ) {
+			return true;
+		}
+		return $checked;
+	}
+
+	/**
 	 * Get the prefilled values for billing fields.
 	 *
 	 * @return array
@@ -619,10 +634,12 @@ final class Modal_Checkout {
 	public static function has_filled_required_fields() {
 		$checkout        = \WC()->checkout();
 		$cart            = \WC()->cart;
-		$checkout_fields = [ 'billing' => $checkout->get_checkout_fields( 'billing' ) ];
+		$checkout_fields = [ 'billing' => $checkout->get_checkout_fields( $type ) ];
 		$required        = [];
 
-		if ( $cart->needs_shipping_address() ) {
+		// If the customer has selected the option to use a different shipping address, add those as required fields.
+		$different_shipping_address = boolval( filter_input( INPUT_GET, 'ship_to_different_address', FILTER_SANITIZE_NUMBER_INT ) );
+		if ( $cart->needs_shipping_address() && $different_shipping_address ) {
 			$checkout_fields['shipping'] = $checkout->get_checkout_fields( 'shipping' );
 		}
 
@@ -649,7 +666,15 @@ final class Modal_Checkout {
 				if ( empty( $customer_fields[ $type ][ $key ] ) ) {
 					if ( $is_request ) {
 						/* translators: %s: field name */
-						wc_add_notice( sprintf( __( '%s is a required field.', 'newspack-blocks' ), $fields[ $key ]['label'] ), 'error' );
+						wc_add_notice(
+							sprintf(
+								// Translators: %1$s is the field type, %2$s is the field label.
+								__( '%1$s %2$s is a required field.', 'newspack-blocks' ),
+								ucfirst( $type ),
+								$fields[ $key ]['label']
+							),
+							'error'
+						);
 					}
 					return false;
 				}
