@@ -43,7 +43,6 @@ import './checkout.scss';
 	$( document ).ready( function () {
 		$( document ).on( 'payment_method_selected', handleMethodSelected );
 		$( document ).on( 'updated_checkout', handleMethodSelected );
-
 		$( 'input[name="payment_method"]' ).change( handleMethodSelected );
 		handleMethodSelected();
 
