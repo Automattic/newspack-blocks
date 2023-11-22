@@ -21,6 +21,13 @@
 		padding: 12px 16px;
 		font-size: 14px;
 		line-height: 24px;
+		border-color: #ddd;
+	}
+	.button {
+		font-size: 14px;
+		background-color: transparent;
+		color: inherit;
+		border: 1px solid #dddddd;
 	}
 	#customer_details {
 		.woocommerce-billing-fields {
@@ -85,6 +92,7 @@
 		}
 		#place_order {
 			background-color: var( --newspack-theme-color-primary );
+			color: #fff; /* TODO: Fix dynamic contrast */
 			font-size: 14px;
 			font-weight: 600;
 			display: block;
@@ -105,7 +113,9 @@
 				font-size: 14px; // Prevent relative font size
 				padding: 4px 0;
 				border-color: #dddddd;
-				white-space: nowrap;
+				> * {
+					white-space: nowrap;
+				}
 				vertical-align: top;
 			}
 			th {
@@ -113,8 +123,8 @@
 				font-weight: 600;
 				text-align: left;
 			}
-			th:first-child {
-				width: 100%;
+			td:last-child {
+				width: 1%;
 			}
 			tr.cart-subtotal {
 				th {
@@ -138,6 +148,16 @@
 		font-size: 14px;
 		line-height: 20px;
 		color: #757575;
+	}
+	.woocommerce-form-coupon {
+		p {
+			display: flex;
+			align-items: center;
+			input[type='text'] {
+				margin-right: 8px;
+				flex-grow: 1;
+			}
+		}
 	}
 	/* Hide reCAPTCHA badge */
 	.grecaptcha-badge {
