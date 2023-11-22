@@ -267,7 +267,7 @@ final class Modal_Checkout {
 		*/
 		$title = apply_filters( 'newspack_blocks_modal_checkout_title', __( 'Complete your transaction', 'newspack-blocks' ) );
 		?>
-		<div class="newspack-blocks-checkout-modal newspack-blocks-modal" style="display: none;">
+		<div class="newspack-blocks-checkout-modal newspack-blocks-modal">
 			<div class="newspack-blocks-modal__container">
 				<header class="newspack-blocks-modal__header">
 					<h2><?php echo esc_html( $title ); ?></h2>

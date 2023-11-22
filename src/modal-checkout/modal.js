@@ -40,7 +40,7 @@ function closeCheckout() {
 		iframeResizeObserver.disconnect();
 	}
 	Array.from( document.querySelectorAll( '.newspack-blocks-modal' ) ).forEach( el => {
-		el.style.display = 'none';
+		el.classList.remove( 'open' );
 		if ( el.overlayId && window.newspackReaderActivation?.overlays ) {
 			window.newspackReaderActivation?.overlays.remove( el.overlayId );
 		}
@@ -161,7 +161,7 @@ domReady( () => {
 				}
 				// Continue with checkout modal.
 				spinner.style.display = 'flex';
-				modalCheckout.style.display = 'block';
+				modalCheckout.classList.add( 'open' );
 				document.body.classList.add( 'newspack-modal-checkout-open' );
 				if ( window.newspackReaderActivation?.overlays ) {
 					modalCheckout.overlayId = window.newspackReaderActivation?.overlays.add();
