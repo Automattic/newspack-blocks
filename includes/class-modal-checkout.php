@@ -292,6 +292,12 @@ final class Modal_Checkout {
 	 * Render variation selection modal for variable products.
 	 */
 	public static function render_variation_selection() {
+		/**
+		* Filters the header title for the modal checkout.
+		*
+		* @param string $title The title.
+		*/
+		$title    = apply_filters( 'newspack_blocks_modal_checkout_title', __( 'Complete your transaction', 'newspack-blocks' ) );
 		$products = array_keys( self::$products );
 		foreach ( $products as $product_id ) {
 			$product = wc_get_product( $product_id );
@@ -299,41 +305,46 @@ final class Modal_Checkout {
 				continue;
 			}
 			?>
-			<div class="newspack-blocks-variation-modal newspack-blocks-modal" data-product-id="<?php echo esc_attr( $product_id ); ?>" style="display:none;">
-				<div class="newspack-blocks-modal__content">
-					<a href="#" class="newspack-blocks-modal__close">
-						<span class="screen-reader-text"><?php esc_html_e( 'Close', 'newspack-blocks' ); ?></span>
-						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
-							<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
-						</svg>
-					</a>
-					<div class="newspack-blocks-variation-modal__selection" data-product-id="<?php echo esc_attr( $product_id ); ?>">
-						<h3><?php echo esc_html( $product->get_name() ); ?></h3>
-						<p><?php esc_html_e( 'Select an option below:', 'newspack-blocks' ); ?></p>
-						<?php
-						$variations = $product->get_available_variations( 'objects' );
-						foreach ( $variations as $variation ) {
-							$name        = wc_get_formatted_variation( $variation, true );
-							$price       = $variation->get_price_html();
-							$description = $variation->get_description();
-							?>
-							<form>
-								<input type="hidden" name="newspack_checkout" value="1" />
-								<input type="hidden" name="product_id" value="<?php echo esc_attr( $variation->get_id() ); ?>" />
-								<button>
-									<span class="summary">
-										<span class="price"><?php echo $price; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
-										<span class="variation_name"><?php echo esc_html( $name ); ?></span>
-									</span>
-									<?php if ( ! empty( $description ) ) : ?>
-										<span class="description"><?php echo esc_html( $description ); ?></span>
-									<?php endif; ?>
-								</button>
-							</form>
+			<div class="newspack-blocks-variation-modal newspack-blocks-modal" data-product-id="<?php echo esc_attr( $product_id ); ?>">
+				<div class="newspack-blocks-modal__container">
+					<header class="newspack-blocks-modal__header">
+						<h2><?php echo esc_html( $title ); ?></h2>
+						<a href="#" class="newspack-blocks-modal__close">
+							<span class="screen-reader-text"><?php esc_html_e( 'Close', 'newspack-blocks' ); ?></span>
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+								<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
+							</svg>
+						</a>
+					</header>
+					<section class="newspack-blocks-modal__content">
+						<div class="newspack-blocks-variation-modal__selection" data-product-id="<?php echo esc_attr( $product_id ); ?>">
+							<h3><?php echo esc_html( $product->get_name() ); ?></h3>
+							<p><?php esc_html_e( 'Select an option below:', 'newspack-blocks' ); ?></p>
 							<?php
-						}
-						?>
-					</div>
+							$variations = $product->get_available_variations( 'objects' );
+							foreach ( $variations as $variation ) {
+								$name        = wc_get_formatted_variation( $variation, true );
+								$price       = $variation->get_price_html();
+								$description = $variation->get_description();
+								?>
+								<form>
+									<input type="hidden" name="newspack_checkout" value="1" />
+									<input type="hidden" name="product_id" value="<?php echo esc_attr( $variation->get_id() ); ?>" />
+									<button>
+										<span class="summary">
+											<span class="price"><?php echo $price; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+											<span class="variation_name"><?php echo esc_html( $name ); ?></span>
+										</span>
+										<?php if ( ! empty( $description ) ) : ?>
+											<span class="description"><?php echo esc_html( $description ); ?></span>
+										<?php endif; ?>
+									</button>
+								</form>
+								<?php
+							}
+							?>
+						</div>
+					</section>
 				</div>
 			</div>
 			<?php

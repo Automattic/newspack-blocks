@@ -176,17 +176,14 @@
 
 @media ( max-width: 600px ) {
 	.newspack-blocks-modal {
-		&__content {
+		&__container {
 			max-width: 100%;
 			width: 100%;
 			border-radius: 0;
 			top: auto;
 			bottom: 0;
 			left: 0;
-			transform: none;
-			> *:not( .newspack-blocks-modal__close ) {
-				border-radius: 0;
-			}
+			transform: none !important;
 		}
 	}
 }

@@ -129,7 +129,7 @@ domReady( () => {
 			form.addEventListener( 'submit', ev => {
 				const formData = new FormData( form );
 				// Clear any open variation modal.
-				variationModals.forEach( variationModal => ( variationModal.style.display = 'none' ) );
+				variationModals.forEach( variationModal => variationModal.classList.remove( 'open' ) );
 				// Trigger variation modal if variation is not selected.
 				if ( formData.get( 'is_variable' ) && ! formData.get( 'variation_id' ) ) {
 					const variationModal = [ ...variationModals ].find(
@@ -155,7 +155,7 @@ domReady( () => {
 						// Open the variations modal.
 						ev.preventDefault();
 						document.body.classList.add( 'newspack-modal-checkout-open' );
-						variationModal.style.display = 'block';
+						variationModal.classList.add( 'open' );
 						return;
 					}
 				}
