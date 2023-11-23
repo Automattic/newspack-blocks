@@ -1048,9 +1048,9 @@ final class Modal_Checkout {
 	 * @return bool
 	 */
 	public static function enable_order_notes_field( $enable ) {
-		// if ( ! self::is_modal_checkout() ) {
-		// 	return $enable;
-		// }
+		if ( ! self::is_modal_checkout() ) {
+			return $enable;
+		}
 		return false;
 	}
 }
