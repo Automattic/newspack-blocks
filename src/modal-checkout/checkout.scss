@@ -42,7 +42,7 @@
 		font-size: 14px;
 		background-color: transparent;
 		color: inherit;
-		border: 1px solid #dddddd;
+		border: 1px solid #ddd;
 	}
 	.order-details-summary {
 		background: #f6f7f7;
@@ -84,9 +84,6 @@
 			}
 		}
 	}
-	#order_review {
-		margin: 0 0 24px;
-	}
 	#payment {
 		.wc_payment_methods {
 			margin: 0 0 24px;
@@ -103,14 +100,14 @@
 			}
 			&.selected {
 				background-color: #f5fdff;
-				border-color: #3366ff;
+				border-color: #36f;
 			}
 			input.input-radio[name='payment_method'] + label::before {
-				box-shadow: 0 0 0 1px #dddddd;
+				box-shadow: 0 0 0 1px #ddd;
 			}
 			input.input-radio[name='payment_method']:checked + label::before {
-				background: #3366ff;
-				box-shadow: 0 0 0 1px #3366ff;
+				background: #36f;
+				box-shadow: 0 0 0 1px #36f;
 			}
 			.payment_box {
 				font-size: 14px;
@@ -149,6 +146,7 @@
 		}
 	}
 	#order_review {
+		margin: 0 0 24px;
 		padding: 16px 24px;
 		border-radius: 6px;
 		background: #f6f7f7;
@@ -161,7 +159,7 @@
 			td {
 				font-size: 14px; // Prevent relative font size
 				padding: 4px 0;
-				border-color: #dddddd;
+				border-color: #ddd;
 				> * {
 					white-space: nowrap;
 				}
