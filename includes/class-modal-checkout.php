@@ -63,6 +63,7 @@ final class Modal_Checkout {
 		add_filter( 'googlesitekit_analytics-4_tag_blocked', [ __CLASS__, 'is_modal_checkout' ] );
 		add_filter( 'googlesitekit_adsense_tag_blocked', [ __CLASS__, 'is_modal_checkout' ] );
 		add_filter( 'googlesitekit_tagmanager_tag_blocked', [ __CLASS__, 'is_modal_checkout' ] );
+		add_filter( 'jetpack_active_modules', [ __CLASS__, 'jetpack_active_modules' ] );
 	}
 
 	/**
@@ -965,6 +966,18 @@ final class Modal_Checkout {
 			return false;
 		}
 		return $value;
+	}
+
+	/**
+	 * Deactivate all Jetpack modules on the modal checkout.
+	 *
+	 * @param bool $modules JP modules.
+	 */
+	public static function jetpack_active_modules( $modules ) {
+		if ( self::is_modal_checkout() ) {
+			return [];
+		}
+		return $modules;
 	}
 }
 Modal_Checkout::init();
