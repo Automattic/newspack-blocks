@@ -56,6 +56,21 @@
 			margin: 0;
 		}
 	}
+	#ship-to-different-address {
+		label {
+			display: flex;
+			align-items: center;
+			margin: 0 0 24px;
+			span::before,
+			span::after {
+				display: none;
+			}
+			input[type='checkbox'] {
+				display: inline-grid;
+				margin-right: 8px;
+			}
+		}
+	}
 	#customer_details {
 		.woocommerce-billing-fields {
 			p {

@@ -13,21 +13,12 @@ import './checkout.scss';
 		$( '.wc_payment_method' ).removeClass( 'selected' );
 		$( '.wc_payment_method.payment_method_' + selected ).addClass( 'selected' );
 	};
-	const scrollTop = () => {
-		$( 'html, body' ).animate(
-			{
-				scrollTop: 0,
-			},
-			300
-		);
-	};
 	$( document ).ready( function () {
 		handleMethodSelected();
 		$( 'input[name="payment_method"]' ).change( handleMethodSelected );
 		$( document ).on( 'payment_method_selected', handleMethodSelected );
 		$( document ).on( 'updated_checkout', handleMethodSelected );
 		$( document ).on( 'updated_checkout', function () {
-			scrollTop();
 			// Always show coupon form.
 			if ( $( '.checkout_coupon' ).length ) {
 				$( '.checkout_coupon' ).show();
