@@ -12,6 +12,7 @@
 	.woocommerce-info {
 		border-radius: 6px;
 	}
+	.woocommerce-info,
 	.woocommerce-message {
 		background-color: #f6f7f7;
 		color: #757575;
@@ -186,6 +187,7 @@
 		}
 	}
 	.woocommerce-form-coupon {
+		margin: 0 0 24px;
 		p {
 			display: flex;
 			align-items: center;
@@ -203,10 +205,15 @@
 		font-weight: 600;
 		display: block;
 		width: 100%;
+		border: 0;
 	}
 	#edit_details {
 		border: 0;
 		width: 100%;
+	}
+	/* Remove support for "Allow customers to log into an existing account during checkout" */
+	.woocommerce-form-login-toggle {
+		display: none;
 	}
 	/* Hide reCAPTCHA badge */
 	.grecaptcha-badge {

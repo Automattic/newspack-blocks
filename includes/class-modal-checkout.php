@@ -53,7 +53,7 @@ final class Modal_Checkout {
 		add_filter( 'option_woocommerce_subscriptions_order_button_text', [ __CLASS__, 'order_button_text' ] );
 		add_action( 'woocommerce_before_checkout_form', [ __CLASS__, 'render_before_checkout_form' ] );
 		add_action( 'woocommerce_checkout_before_terms_and_conditions', [ __CLASS__, 'render_before_terms_and_conditions' ] );
-		add_action( 'woocommerce_checkout_before_customer_details', [ __CLASS__,  'render_before_customer_details' ] );
+		add_action( 'woocommerce_checkout_before_customer_details', [ __CLASS__, 'render_before_customer_details' ] );
 		add_filter( 'woocommerce_enable_order_notes_field', [ __CLASS__, 'enable_order_notes_field' ] );
 	}
 
@@ -1019,15 +1019,20 @@ final class Modal_Checkout {
 		if ( ! self::is_modal_checkout() ) {
 			return;
 		}
+		if ( ! self::should_show_order_details() ) {
+			return;
+		}
 		// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce hooks.
 		?>
-		<?php do_action( 'woocommerce_checkout_before_order_review_heading' ); ?>
-		<h3 id="order_review_heading"><?php esc_html_e( 'Transaction details', 'newspack-blocks' ); ?></h3>
-		<?php do_action( 'woocommerce_checkout_before_order_review' ); ?>
-		<div id="order_review" class="woocommerce-checkout-review-order">
-			<?php do_action( 'woocommerce_checkout_order_review' ); ?>
+		<div class="order-review">
+			<?php do_action( 'woocommerce_checkout_before_order_review_heading' ); ?>
+			<h3 id="order_review_heading"><?php esc_html_e( 'Transaction details', 'newspack-blocks' ); ?></h3>
+			<?php do_action( 'woocommerce_checkout_before_order_review' ); ?>
+			<div id="order_review" class="woocommerce-checkout-review-order">
+				<?php do_action( 'woocommerce_checkout_order_review' ); ?>
+			</div>
+			<?php do_action( 'woocommerce_checkout_after_order_review' ); ?>
 		</div>
-		<?php do_action( 'woocommerce_checkout_after_order_review' ); ?>
 		<?php
 		// phpcs:enable
 	}
