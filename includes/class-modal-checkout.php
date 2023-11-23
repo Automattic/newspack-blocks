@@ -492,9 +492,7 @@ final class Modal_Checkout {
 		// This is for the initial display – the markup will be refetched on cart updates (e.g. applying a coupon).
 		// Then it'd be handled by the `woocommerce_update_order_review_fragments` filter.
 		if ( 'checkout/review-order.php' === $template_name && ! self::should_show_order_details() ) {
-			ob_start();
-			echo '<table class="shop_table woocommerce-checkout-review-order-table empty"></table>';
-			return ob_end_flush();
+			$located = NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/modal-checkout/templates/empty-order-details.php';
 		}
 
 		return $located;
