@@ -75,6 +75,9 @@
 		.woocommerce-billing-fields {
 			p {
 				margin: 8px 0 24px;
+				&#billing_address_1_field { /* stylelint-disable-line */
+					margin-bottom: 8px;
+				}
 			}
 			label {
 				font-size: 14px;
