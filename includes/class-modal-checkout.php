@@ -47,9 +47,9 @@ final class Modal_Checkout {
 		add_filter( 'newspack_donations_cart_item_data', [ __CLASS__, 'amend_cart_item_data' ] );
 		add_filter( 'newspack_recaptcha_verify_captcha', [ __CLASS__, 'recaptcha_verify_captcha' ], 10, 2 );
 		add_filter( 'woocommerce_enqueue_styles', [ __CLASS__, 'dequeue_woocommerce_styles' ] );
-		add_filter( 'wcs_place_subscription_order_text', [ __CLASS__, 'order_button_text' ], 1 );
-		add_filter( 'woocommerce_order_button_text', [ __CLASS__, 'order_button_text' ] );
-		add_filter( 'option_woocommerce_subscriptions_order_button_text', [ __CLASS__, 'order_button_text' ] );
+		add_filter( 'wcs_place_subscription_order_text', [ __CLASS__, 'order_button_text' ], 5 );
+		add_filter( 'woocommerce_order_button_text', [ __CLASS__, 'order_button_text' ], 5 );
+		add_filter( 'option_woocommerce_subscriptions_order_button_text', [ __CLASS__, 'order_button_text' ], 5);
 		add_action( 'woocommerce_before_checkout_form', [ __CLASS__, 'render_before_checkout_form' ] );
 		add_action( 'woocommerce_checkout_before_customer_details', [ __CLASS__, 'render_before_customer_details' ] );
 		add_action( 'woocommerce_checkout_before_terms_and_conditions', [ __CLASS__, 'render_before_terms_and_conditions' ] );
@@ -944,8 +944,9 @@ final class Modal_Checkout {
 		if ( ! self::is_modal_checkout() ) {
 			return $text;
 		}
-		if ( method_exists( 'Newspack\Donations', 'is_donation_cart' ) && \Newspack\Donations::is_donation_cart() ) {
-			return __( 'Donate now', 'newspack-blocks' );
+		$cart = \WC()->cart;
+		if ( ! $cart || $cart->is_empty() ) {
+			return $text;
 		}
 		return sprintf(
 			// Translators: %s is the price.
