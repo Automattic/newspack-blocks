@@ -51,6 +51,9 @@ final class Modal_Checkout {
 		add_filter( 'wcs_place_subscription_order_text', [ __CLASS__, 'order_button_text' ], 1 );
 		add_filter( 'woocommerce_order_button_text', [ __CLASS__, 'order_button_text' ] );
 		add_filter( 'option_woocommerce_subscriptions_order_button_text', [ __CLASS__, 'order_button_text' ] );
+
+		add_filter( 'cmplz_site_needs_cookiewarning', [ __CLASS__, 'is_not_modal_checkout_filter' ] );
+		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'dequeue_scripts' ], 11 );
 	}
 
 	/**
@@ -348,6 +351,16 @@ final class Modal_Checkout {
 			[],
 			\NEWSPACK_BLOCKS__VERSION
 		);
+	}
+
+	/**
+	 * Dequeue scripts not needed in the modal checkout.
+	 */
+	public static function dequeue_scripts() {
+		if ( ! self::is_modal_checkout() ) {
+			return;
+		}
+		wp_dequeue_style( 'cmplz-general' );
 	}
 
 	/**
@@ -931,6 +944,18 @@ final class Modal_Checkout {
 			return __( 'Donate now', 'newspack-blocks' );
 		}
 		return $text;
+	}
+
+	/**
+	 * Filter the a value dependent on the page not being modal checkout.
+	 *
+	 * @param bool $value The value.
+	 */
+	public static function is_not_modal_checkout_filter( $value ) {
+		if ( self::is_modal_checkout() ) {
+			return false;
+		}
+		return $value;
 	}
 }
 Modal_Checkout::init();
