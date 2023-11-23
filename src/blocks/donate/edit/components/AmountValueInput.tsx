@@ -44,7 +44,7 @@ const AmountValueInput = ( {
 	};
 	const amount = amounts[ frequencySlug ][ tierIndex ];
 	const value =
-		settings.minimumDonation && ! ignoreMinimumAmount
+		settings.minimumDonation && ! ignoreMinimumAmount && amount
 			? Math.max( amount, settings.minimumDonation )
 			: amount;
 

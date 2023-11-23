@@ -160,7 +160,7 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 		if ( isset( $configuration['minimumDonation'] ) ) {
 			foreach ( $configuration['amounts'] as $frequency => $amounts ) {
 				foreach ( $amounts as $index => $amount ) {
-					$configuration['amounts'][ $frequency ][ $index ] = max( $configuration['minimumDonation'], $amount );
+					$configuration['amounts'][ $frequency ][ $index ] = $amount ? max( $configuration['minimumDonation'], $amount ) : '';
 				}
 			}
 		}

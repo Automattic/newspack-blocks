@@ -170,7 +170,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 	const displayedAmounts = { ...amounts };
 	Object.keys( amounts ).forEach( frequency => {
 		const amountsWithMinimum = amounts[ frequency ].map( amount =>
-			Math.max( amount, minimumDonation )
+			amount ? Math.max( amount, minimumDonation ) : amount
 		) as DonationAmountsArray;
 		displayedAmounts[ frequency ] = amountsWithMinimum;
 	} );
@@ -298,7 +298,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 														<div className="wp-block-newspack-blocks-donate__panel-inputs">
 															{ amounts[ frequency ].reduce(
 																( acc: boolean, suggestedAmount: number ) =>
-																	suggestedAmount < minimumDonation ? true : acc,
+																	suggestedAmount && suggestedAmount < minimumDonation ? true : acc,
 																false
 															) && renderMinAmountWarning() }
 
