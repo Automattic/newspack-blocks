@@ -42,7 +42,6 @@ final class Modal_Checkout {
 		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 2 );
 		add_filter( 'woocommerce_checkout_get_value', [ __CLASS__, 'woocommerce_checkout_get_value' ], 10, 2 );
 		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'woocommerce_checkout_fields' ] );
-		add_filter( 'woocommerce_update_order_review_fragments', [ __CLASS__, 'order_review_fragments' ] );
 		add_filter( 'woocommerce_payment_successful_result', [ __CLASS__, 'woocommerce_payment_successful_result' ] );
 		add_action( 'woocommerce_checkout_create_order_line_item', [ __CLASS__, 'woocommerce_checkout_create_order_line_item' ], 10, 4 );
 		add_filter( 'newspack_donations_cart_item_data', [ __CLASS__, 'amend_cart_item_data' ] );
@@ -52,8 +51,8 @@ final class Modal_Checkout {
 		add_filter( 'woocommerce_order_button_text', [ __CLASS__, 'order_button_text' ] );
 		add_filter( 'option_woocommerce_subscriptions_order_button_text', [ __CLASS__, 'order_button_text' ] );
 		add_action( 'woocommerce_before_checkout_form', [ __CLASS__, 'render_before_checkout_form' ] );
-		add_action( 'woocommerce_checkout_before_terms_and_conditions', [ __CLASS__, 'render_before_terms_and_conditions' ] );
 		add_action( 'woocommerce_checkout_before_customer_details', [ __CLASS__, 'render_before_customer_details' ] );
+		add_action( 'woocommerce_checkout_before_terms_and_conditions', [ __CLASS__, 'render_before_terms_and_conditions' ] );
 		add_filter( 'woocommerce_enable_order_notes_field', [ __CLASS__, 'enable_order_notes_field' ] );
 	}
 
@@ -513,7 +512,7 @@ final class Modal_Checkout {
 		}
 
 		$custom_templates = [
-			'checkout/form-checkout.php' => 'src/modal-checkout/templates/checkout-form.php',
+			'checkout/form-checkout.php' => 'src/modal-checkout/templates/form-checkout.php',
 			'checkout/thankyou.php'      => 'src/modal-checkout/templates/thankyou.php',
 			'checkout/form-coupon.php'   => 'src/modal-checkout/templates/form-coupon.php',
 			// Replace the login form with the order summary if using the modal checkout. This is
@@ -694,27 +693,6 @@ final class Modal_Checkout {
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * Customize order review fragments on cart updates.
-	 *
-	 * @param array $fragments Fragments.
-	 *
-	 * @return array
-	 */
-	public static function order_review_fragments( $fragments ) {
-		if ( isset( $_POST['post_data'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			parse_str( \sanitize_text_field( \wp_unslash( $_POST['post_data'] ) ), $post_data ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
-		}
-		if ( ! isset( $post_data['modal_checkout'] ) ) {
-			return $fragments;
-		}
-		if ( ! self::should_show_order_details() ) {
-			// Render an empty table so WC knows how to replace it on updates.
-			$fragments['.woocommerce-checkout-review-order-table'] = '<table class="shop_table woocommerce-checkout-review-order-table empty"></table>';
-		}
-		return $fragments;
 	}
 
 	/**
@@ -1014,10 +992,31 @@ final class Modal_Checkout {
 	}
 
 	/**
+	 * Render before customer details.
+	 *
+	 * This will render the hidden inputs necessary for the modal checkout.
+	 */
+	public static function render_before_customer_details() {
+		if ( ! self::is_modal_checkout() ) {
+			return;
+		}
+		$after_success_behavior     = filter_input( INPUT_GET, 'after_success_behavior', FILTER_SANITIZE_STRING );
+		$after_success_url          = filter_input( INPUT_GET, 'after_success_url', FILTER_SANITIZE_STRING );
+		$after_success_button_label = filter_input( INPUT_GET, 'after_success_button_label', FILTER_SANITIZE_STRING );
+		?>
+		<input type="hidden" name="modal_checkout" value="1" />
+		<input type="hidden" name="after_success_behavior" value="<?php echo esc_attr( $after_success_behavior ); ?>" />
+		<input type="hidden" name="after_success_url" value="<?php echo esc_attr( $after_success_url ); ?>" />
+		<input type="hidden" name="after_success_button_label" value="<?php echo esc_attr( $after_success_button_label ); ?>" />
+		<?php
+	}
+
+	/**
 	 * Render before checkout terms and conditions.
 	 *
-	 * This will render the order review table between the gateway selection and
-	 * the submit button.
+	 * Renders the order review table between the gateway selection and
+	 * the submit button. It will be dynamically loaded as part the "#payment"
+	 * fragment on checkout updates.
 	 */
 	public static function render_before_terms_and_conditions() {
 		if ( ! self::is_modal_checkout() ) {
@@ -1042,26 +1041,6 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Render before customer details.
-	 *
-	 * This will render the hidden inputs necessary for the modal checkout.
-	 */
-	public static function render_before_customer_details() {
-		if ( ! self::is_modal_checkout() ) {
-			return;
-		}
-		$after_success_behavior     = filter_input( INPUT_GET, 'after_success_behavior', FILTER_SANITIZE_STRING );
-		$after_success_url          = filter_input( INPUT_GET, 'after_success_url', FILTER_SANITIZE_STRING );
-		$after_success_button_label = filter_input( INPUT_GET, 'after_success_button_label', FILTER_SANITIZE_STRING );
-		?>
-		<input type="hidden" name="modal_checkout" value="1" />
-		<input type="hidden" name="after_success_behavior" value="<?php echo esc_attr( $after_success_behavior ); ?>" />
-		<input type="hidden" name="after_success_url" value="<?php echo esc_attr( $after_success_url ); ?>" />
-		<input type="hidden" name="after_success_button_label" value="<?php echo esc_attr( $after_success_button_label ); ?>" />
-		<?php
-	}
-
-	/**
 	 * Disable order notes in the modal checkout.
 	 *
 	 * @param bool $enable Whether to enable the order notes field.
@@ -1069,9 +1048,9 @@ final class Modal_Checkout {
 	 * @return bool
 	 */
 	public static function enable_order_notes_field( $enable ) {
-		if ( ! self::is_modal_checkout() ) {
-			return $enable;
-		}
+		// if ( ! self::is_modal_checkout() ) {
+		// 	return $enable;
+		// }
 		return false;
 	}
 }

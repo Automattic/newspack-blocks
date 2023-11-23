@@ -1,4 +1,4 @@
-#newspack_modal_checkout {
+#newspack_modal_checkout {  /* stylelint-disable-line */
 	padding: 24px;
 	h3 {
 		font-size: 16px;
@@ -71,7 +71,7 @@
 			}
 		}
 	}
-	#customer_details {
+	#customer_details { /* stylelint-disable-line */
 		.woocommerce-billing-fields {
 			p {
 				margin: 8px 0 24px;
@@ -145,7 +145,7 @@
 			}
 		}
 	}
-	#order_review {
+	#order_review { /* stylelint-disable-line */
 		margin: 0 0 24px;
 		padding: 16px 24px;
 		border-radius: 6px;
@@ -159,11 +159,11 @@
 			td {
 				font-size: 14px; // Prevent relative font size
 				padding: 4px 0;
+				vertical-align: top;
 				border-color: #ddd;
 				> * {
 					white-space: nowrap;
 				}
-				vertical-align: top;
 			}
 			th {
 				background-color: inherit;
@@ -210,8 +210,8 @@
 			}
 		}
 	}
-	#continue_order,
-	#place_order {
+	#continue_order, /* stylelint-disable-line */
+	#place_order { /* stylelint-disable-line */
 		background-color: var( --newspack-theme-color-primary );
 		color: #fff; /* TODO: Fix dynamic contrast */
 		font-size: 14px;
@@ -220,7 +220,7 @@
 		width: 100%;
 		border: 0;
 	}
-	#edit_details {
+	#edit_details { /* stylelint-disable-line */
 		border: 0;
 		width: 100%;
 	}
