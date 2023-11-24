@@ -57,6 +57,18 @@ export const processFrequencyBasedElements = ( parentEl = document ) => {
 	elements.forEach( container => {
 		resetOtherValue( container );
 	} );
+
+
+	// Change selected elements based on "tab"
+	const tierButtonsEls = parentEl.querySelectorAll( '.tab-container a[role="tab"' );
+	// Frequency choosing interaction.
+	tierButtonsEls.forEach( buttonEl => {
+		const tiers = frequency.querySelectorAll( 'input[type="radio"]' );
+
+		buttonEl.addEventListener( 'click', () => {
+			document.getElementById( 'newspack-donate-' + buttonEl.getAttribute( 'data-tab-id' ) ).checked = true;
+		} );
+	} );
 };
 
 if ( typeof window !== 'undefined' ) {

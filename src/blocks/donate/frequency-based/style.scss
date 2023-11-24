@@ -9,6 +9,7 @@
 	position: relative;
 	width: 100%;
 
+	/* Hide all absolutely */
 	input[type='radio'] {
 		left: -99999em;
 		position: absolute;
@@ -47,6 +48,12 @@
 		&__button {
 			text-transform: uppercase;
 		}
+	}
+
+	// Added:
+	[role='tabset'] .freq-label {
+		text-decoration: none;
+		text-transform: uppercase;
 	}
 
 	.thanks {
@@ -198,7 +205,9 @@
 	padding-top: 2.65em;
 }
 
+// Doesn't need any of this:
 .wpbnbd .frequency {
+
 	.freq-label {
 		position: absolute;
 		top: 0;
@@ -260,4 +269,8 @@
 			}
 		}
 	}
+}
+
+.tab-container {
+	display: flex;
 }
