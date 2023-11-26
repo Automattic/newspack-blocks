@@ -136,9 +136,9 @@ final class Modal_Checkout {
 		$is_newspack_checkout       = filter_input( INPUT_GET, 'newspack_checkout', FILTER_SANITIZE_NUMBER_INT );
 		$product_id                 = filter_input( INPUT_GET, 'product_id', FILTER_SANITIZE_NUMBER_INT );
 		$variation_id               = filter_input( INPUT_GET, 'variation_id', FILTER_SANITIZE_NUMBER_INT );
-		$after_success_behavior     = filter_input( INPUT_GET, 'after_success_behavior', FILTER_SANITIZE_STRING );
-		$after_success_url          = filter_input( INPUT_GET, 'after_success_url', FILTER_SANITIZE_STRING );
-		$after_success_button_label = filter_input( INPUT_GET, 'after_success_button_label', FILTER_SANITIZE_STRING );
+		$after_success_behavior     = filter_input( INPUT_GET, 'after_success_behavior', FILTER_UNSAFE_RAW );
+		$after_success_url          = filter_input( INPUT_GET, 'after_success_url', FILTER_UNSAFE_RAW );
+		$after_success_button_label = filter_input( INPUT_GET, 'after_success_button_label', FILTER_UNSAFE_RAW );
 
 		if ( ! $is_newspack_checkout || ! $product_id ) {
 			return;
