@@ -28,8 +28,13 @@
 	<config name="minimum_supported_wp_version" value="4.6"/>
 	<rule ref="WordPress">
 	</rule>
-		<rule ref="WordPress">
+	<rule ref="WordPress">
 		<exclude name="Generic.Arrays.DisallowShortArraySyntax.Found" />
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax.Found" />
+		<exclude name="Universal.Operators.DisallowStandalonePostIncrementDecrement.PostIncrementFound" />
+		<exclude name="Squiz.Functions.MultiLineFunctionDeclaration.SpaceAfterFunction" />
+		<exclude name="WordPress.PHP.YodaConditions.NotYoda" />
+		<exclude name="Generic.Formatting.MultipleStatementAlignment.NotSameWarning" />
 	</rule>
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
