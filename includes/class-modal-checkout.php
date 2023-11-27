@@ -429,10 +429,7 @@ final class Modal_Checkout {
 		</head>
 		<body id="newspack_modal_checkout">
 			<?php
-			while ( have_posts() ) {
-				the_post();
-				the_content();
-			}
+			echo do_shortcode( '[woocommerce_checkout]' );
 			wp_footer();
 			?>
 		</body>
