@@ -31,6 +31,15 @@
 		line-height: 24px;
 		border-color: #ddd;
 	}
+	// Custom styles for Select2.
+	.select2-container .select2-selection--single .select2-selection__rendered {
+		padding-left: 16px;
+		padding-right: 16px;
+		font-size: 14px;
+	}
+	.select2-results {
+		font-size: 14px;
+	}
 	input[type='checkbox'] {
 		border-radius: 6px;
 	}
