@@ -229,7 +229,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	$block_name = apply_filters( 'newspack_blocks_block_name', 'newspack-blocks/homepage-articles' );
 
 	// Gather all Homepage Articles blocks on the page and output only the needed CSS.
-	// This CSS will be printed right after .entry-content.
+	// This CSS will be printed along with the first found block markup.
 	global $newspack_blocks_hpb_all_blocks;
 	$inline_style_html = '';
 	if ( ! is_array( $newspack_blocks_hpb_all_blocks ) ) {
@@ -358,6 +358,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 			class="<?php echo esc_attr( $classes ); ?>"
 			style="<?php echo esc_attr( $styles ); ?>"
 			>
+			<?php echo $inline_style_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			<div data-posts data-current-post-id="<?php the_ID(); ?>">
 				<?php if ( '' !== $attributes['sectionHeader'] ) : ?>
 					<h2 class="article-section-title">
@@ -404,7 +405,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	$content = ob_get_clean();
 	Newspack_Blocks::enqueue_view_assets( 'homepage-articles' );
 
-	return $inline_style_html . $content;
+	return $content;
 }
 
 /**
