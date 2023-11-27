@@ -40,6 +40,11 @@
 	.select2-results {
 		font-size: 14px;
 	}
+	.select2-dropdown,
+	.woocommerce-checkout .select2-container--focus .select2-selection,
+	.select2-container--default .select2-selection--single {
+		border-color: #ddd;
+	}
 	input[type='checkbox'] {
 		border-radius: 6px;
 	}
