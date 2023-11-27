@@ -373,6 +373,8 @@ final class Modal_Checkout {
 			return;
 		}
 		wp_dequeue_style( 'cmplz-general' );
+		wp_deregister_script( 'wp-mediaelement' );
+		wp_deregister_style( 'wp-mediaelement' );
 	}
 
 	/**
