@@ -31,7 +31,7 @@ final class Modal_Checkout {
 	 * Initialize hooks.
 	 */
 	public static function init() {
-		add_action( 'wp_loaded', [ __CLASS__, 'process_checkout_request' ], 5 );
+		add_action( 'init', [ __CLASS__, 'process_checkout_request' ], 5 );
 		add_action( 'wp_footer', [ __CLASS__, 'render_modal_markup' ], 100 );
 		add_action( 'wp_footer', [ __CLASS__, 'render_variation_selection' ], 100 );
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'enqueue_scripts' ] );
