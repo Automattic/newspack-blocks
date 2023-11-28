@@ -393,14 +393,23 @@ final class Modal_Checkout {
 			return $template;
 		}
 		ob_start();
-		wp_head();
-		while ( have_posts() ) {
-			the_post();
-			echo '<div id="newspack_modal_checkout">';
-			the_content();
-			echo '</div>';
-		}
-		wp_footer();
+		?>
+		<!doctype html>
+		<html <?php language_attributes(); ?>>
+		<head>
+			<meta charset="<?php bloginfo( 'charset' ); ?>" />
+			<meta name="viewport" content="width=device-width, initial-scale=1" />
+			<link rel="profile" href="https://gmpg.org/xfn/11" />
+			<?php wp_head(); ?>
+		</head>
+		<body id="newspack_modal_checkout">
+			<?php
+			echo do_shortcode( '[woocommerce_checkout]' );
+			wp_footer();
+			?>
+		</body>
+		</html>
+		<?php
 		ob_end_flush();
 	}
 
