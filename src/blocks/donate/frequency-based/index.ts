@@ -26,10 +26,12 @@ function domReady( callback: () => void ): void {
 }
 
 const resetOtherValue = ( container: HTMLElement ) => {
-	const frequencies = container.querySelectorAll( '.tiers' );
-	if ( ! frequencies?.length ) {
+	const frequencies = container.querySelectorAll( '.frequency' );
+	const form = container.querySelector( 'form' );
+	if ( ! frequencies?.length || ! form ) {
 		return;
 	}
+	const isUntiered = container.classList.contains( 'untiered' );
 	const frequencyInputs = container.querySelectorAll( 'input[name="donation_frequency"]' );
 	frequencies.forEach( frequency => {
 		const tiers = frequency.querySelectorAll( 'input[type="radio"]' );
@@ -37,9 +39,24 @@ const resetOtherValue = ( container: HTMLElement ) => {
 		if ( ! tiers?.length || ! input ) {
 			return;
 		}
+		input.addEventListener( 'focus', () => input.setAttribute( 'required', '' ) );
 		const originalValue = input.getAttribute( 'value' );
 		const reset = () => {
 			input.value = originalValue || '';
+			const inputIsActive =
+				form.donation_frequency.value ===
+					( input
+						.closest( '.frequency' )
+						?.querySelector( 'input[name="donation_frequency"]' )
+						?.getAttribute( 'value' ) || null ) &&
+				( isUntiered ||
+					input.closest( '.wp-block-newspack-blocks-donate__tier' )?.querySelector( '.other-input' )
+						?.checked );
+			if ( inputIsActive ) {
+				input.setAttribute( 'required', '' );
+			} else {
+				input.removeAttribute( 'required' );
+			}
 		};
 		tiers.forEach( tierInput => {
 			tierInput.addEventListener( 'change', reset );

@@ -109,10 +109,6 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 				<div class='wp-block-newspack-blocks-donate__options'>
 					<div class='wp-block-newspack-blocks-donate__frequencies frequencies'>
 						<?php foreach ( $configuration['frequencies'] as $frequency_slug => $frequency_name ) : ?>
-							<?php
-								$formatted_amount = $configuration['amounts'][ $frequency_slug ][3];
-							?>
-
 							<div class='wp-block-newspack-blocks-donate__frequency frequency'>
 								<?php echo self::render_frequency_selection( $frequency_slug, $frequency_name, $uid, $configuration ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 								<div class='input-container'>
@@ -130,7 +126,6 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 											type='number'
 											min='<?php echo esc_attr( $configuration['minimumDonation'] ); ?>'
 											name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>_untiered'
-											value='<?php echo esc_attr( $formatted_amount ); ?>'
 											id='newspack-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-untiered-input'
 										/>
 									</div>
@@ -194,7 +189,6 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 														type='number'
 														min='<?php echo esc_attr( $configuration['minimumDonation'] ); ?>'
 														name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>_other'
-														value='<?php echo esc_attr( $amount ); ?>'
 														id='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-other-input'
 													/>
 												</div>
