@@ -31,7 +31,7 @@ final class Modal_Checkout {
 	 * Initialize hooks.
 	 */
 	public static function init() {
-		add_action( 'template_redirect', [ __CLASS__, 'process_checkout_request' ] );
+		add_action( 'wp_loaded', [ __CLASS__, 'process_checkout_request' ], 5 );
 		add_action( 'wp_footer', [ __CLASS__, 'render_modal_markup' ], 100 );
 		add_action( 'wp_footer', [ __CLASS__, 'render_variation_selection' ], 100 );
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'enqueue_scripts' ] );
@@ -133,6 +133,10 @@ final class Modal_Checkout {
 	 * Process checkout request for modal.
 	 */
 	public static function process_checkout_request() {
+		if ( is_admin() ) {
+			return;
+		}
+
 		$is_newspack_checkout       = filter_input( INPUT_GET, 'newspack_checkout', FILTER_SANITIZE_NUMBER_INT );
 		$product_id                 = filter_input( INPUT_GET, 'product_id', FILTER_SANITIZE_NUMBER_INT );
 		$variation_id               = filter_input( INPUT_GET, 'variation_id', FILTER_SANITIZE_NUMBER_INT );
