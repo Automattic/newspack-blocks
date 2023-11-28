@@ -200,7 +200,7 @@ function newspack_blocks_get_homepage_articles_css_string( $attrs ) {
 		}
 		if ( isset( $attrs['showSubtitle'] ) && in_array( 1, $attrs['showSubtitle'], false ) ) { // phpcs:ignore WordPress.PHP.StrictInArray.FoundNonStrictFalse
 			echo esc_html(
-				'.newspack-post-subtitle {
+				'.newspack-post-subtitle--in-homepage-block {
 					margin-top: 0.3em;
 					margin-bottom: 0;
 					line-height: 1.4;
