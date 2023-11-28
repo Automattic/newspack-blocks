@@ -1,3 +1,10 @@
+## [2.2.1](https://github.com/Automattic/newspack-blocks/compare/v2.2.0...v2.2.1) (2023-11-27)
+
+
+### Bug Fixes
+
+* **homepage-posts:** placement for inline styles ([#1611](https://github.com/Automattic/newspack-blocks/issues/1611)) ([1831ba0](https://github.com/Automattic/newspack-blocks/commit/1831ba0a2d0eb44a00e65a891c9fdf11bdd99f0a))
+
 # [2.2.0](https://github.com/Automattic/newspack-blocks/compare/v2.1.0...v2.2.0) (2023-11-27)
 
 
