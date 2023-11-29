@@ -51,6 +51,10 @@ final class Modal_Checkout {
 		add_filter( 'wcs_place_subscription_order_text', [ __CLASS__, 'order_button_text' ], 1 );
 		add_filter( 'woocommerce_order_button_text', [ __CLASS__, 'order_button_text' ] );
 		add_filter( 'option_woocommerce_subscriptions_order_button_text', [ __CLASS__, 'order_button_text' ] );
+
+		/** Custom handling for registered users. */
+		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
+		add_filter( 'woocommerce_checkout_posted_data', [ __CLASS__, 'skip_account_creation' ], 11 );
 	}
 
 	/**
@@ -946,6 +950,50 @@ final class Modal_Checkout {
 			return __( 'Donate now', 'newspack-blocks' );
 		}
 		return $text;
+	}
+
+	/**
+	 * If a reader tries to make a recurring donation with an email address that
+	 * has been previously registered, automatically associate the transaction
+	 * with the user.
+	 *
+	 * @param int $customer_id Current customer ID.
+	 *
+	 * @return int Modified $customer_id
+	 */
+	public static function associate_existing_user( $customer_id ) {
+		if ( ! self::is_modal_checkout() ) {
+			return $customer_id;
+		}
+		$billing_email = filter_input( INPUT_POST, 'billing_email', FILTER_SANITIZE_EMAIL );
+		if ( $billing_email ) {
+			$customer = \get_user_by( 'email', $billing_email );
+			if ( $customer ) {
+				$customer_id = $customer->ID;
+			}
+		}
+		return $customer_id;
+	}
+
+	/**
+	 * Don't force account registration/login on Woo purchases for existing users.
+	 *
+	 * @param array $data Array of Woo checkout data.
+	 *
+	 * @return array Modified $data.
+	 */
+	public static function skip_account_creation( $data ) {
+		if ( ! self::is_modal_checkout() ) {
+			return $data;
+		}
+		$email    = $data['billing_email'];
+		$customer = \get_user_by( 'email', $email );
+		if ( $customer ) {
+			$data['createaccount'] = 0;
+			\add_filter( 'woocommerce_checkout_registration_required', '__return_false', 9999 );
+		}
+
+		return $data;
 	}
 }
 Modal_Checkout::init();
