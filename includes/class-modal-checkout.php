@@ -363,7 +363,7 @@ final class Modal_Checkout {
 		wp_enqueue_script(
 			'newspack-blocks-modal-checkout',
 			plugins_url( 'dist/modalCheckout.js', \NEWSPACK_BLOCKS__PLUGIN_FILE ),
-			[],
+			[ 'jquery' ],
 			\NEWSPACK_BLOCKS__VERSION,
 			true
 		);

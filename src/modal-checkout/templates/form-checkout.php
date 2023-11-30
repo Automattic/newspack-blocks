@@ -28,6 +28,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 		<div id="customer_details">
 			<?php do_action( 'woocommerce_checkout_billing' ); ?>
 			<?php do_action( 'woocommerce_checkout_shipping' ); ?>
+			<button id="checkout_continue" type="submit"><?php esc_html_e( 'Continue', 'newspack-blocks' ); ?></button>
 		</div>
 		<div id="after_customer_details">
 			<?php do_action( 'woocommerce_checkout_after_customer_details' ); ?>
