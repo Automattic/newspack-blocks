@@ -52,9 +52,11 @@ export default ( parentEl: HTMLElement ) => {
 
 			// Toggle the frequency buttons' active states.
 			frequencyButtonsEls.forEach( el => {
-				selectedFrequency === el.getAttribute( 'data-frequency-slug')
-					? el.classList.add( BUTTON_ACTIVE_CLASSNAME )
-					: el.classList.remove( BUTTON_ACTIVE_CLASSNAME );
+				if ( selectedFrequency === el.getAttribute( 'data-frequency-slug' ) ) {
+					el.classList.add( BUTTON_ACTIVE_CLASSNAME );
+				} else {
+					el.classList.remove( BUTTON_ACTIVE_CLASSNAME );
+				}
 			} );
 
 			// Update the value attributes in the form's submit buttons.
