@@ -518,17 +518,17 @@ final class Modal_Checkout {
 		if (
 			'html-add-recipient.php' === $template_name &&
 			(
-				// Don't show on cart.
+				// Don't show Gifting fields in cart.
 				\is_cart() ||
 				(
-					// Only show on checkout if not modal, or if newspack_display_gifting_information template arg is passed.
+					// Show gifting fields on checkout if not modal, or if newspack_display_gifting_information template arg is passed.
 					\is_checkout() &&
 					self::is_modal_checkout() &&
 					empty( $args['newspack_display_gifting_information'] )
 				)
 			)
 		) {
-			$located = NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/modal-checkout/templates/html-add-recipient.php';
+			$located = NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/modal-checkout/templates/empty-html-add-recipient.php';
 		}
 
 		if ( ! self::is_modal_checkout() ) {
