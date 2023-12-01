@@ -634,7 +634,7 @@ final class Modal_Checkout {
 	public static function has_filled_required_fields() {
 		$checkout        = \WC()->checkout();
 		$cart            = \WC()->cart;
-		$checkout_fields = [ 'billing' => $checkout->get_checkout_fields( $type ) ];
+		$checkout_fields = [ 'billing' => $checkout->get_checkout_fields( 'billing' ) ];
 		$required        = [];
 
 		// If the customer has selected the option to use a different shipping address, add those as required fields.
