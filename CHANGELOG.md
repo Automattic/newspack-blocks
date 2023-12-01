@@ -1,3 +1,10 @@
+# [2.3.0-alpha.2](https://github.com/Automattic/newspack-blocks/compare/v2.3.0-alpha.1...v2.3.0-alpha.2) (2023-12-01)
+
+
+### Bug Fixes
+
+* replace FILTER_SANITIZE_STRING ([6f805b0](https://github.com/Automattic/newspack-blocks/commit/6f805b0806d24f9e44d293a13ca486fdf23c73ab))
+
 # [2.3.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v2.2.2...v2.3.0-alpha.1) (2023-11-30)
 
 
