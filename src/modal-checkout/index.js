@@ -8,6 +8,15 @@ import './checkout.scss';
 	if ( ! $ ) {
 		return;
 	}
+
+	function getEventHandlers( element, event ) {
+		const events = $._data( element, 'events' );
+		if ( ! events ) {
+			return [];
+		}
+		return $._data( element, 'events' )[ event ];
+	}
+
 	const handleMethodSelected = () => {
 		const selected = $( 'input[name="payment_method"]:checked' ).val();
 		$( '.wc_payment_method' ).removeClass( 'selected' );
@@ -15,14 +24,14 @@ import './checkout.scss';
 	};
 	$( document.body ).on( 'init_checkout', function () {
 		handleMethodSelected();
+		const $coupon = $( '.checkout_coupon' );
 		$( 'input[name="payment_method"]' ).change( handleMethodSelected );
 		$( document ).on( 'payment_method_selected', handleMethodSelected );
 		$( document ).on( 'updated_checkout', handleMethodSelected );
+		$( document.body ).on( 'removed_coupon_in_checkout', function () {
+			$coupon.show();
+		} );
 		$( document ).on( 'updated_checkout', function () {
-			// Always show coupon form.
-			if ( $( '.checkout_coupon' ).length ) {
-				$( '.checkout_coupon' ).show();
-			}
 			/**
 			 * Toggle "Payment info" title if there's no money transaction.
 			 */
@@ -50,10 +59,14 @@ import './checkout.scss';
 		const $checkout_continue = $( '#checkout_continue' );
 		const $customer_details = $( '#customer_details' );
 		const $after_customer_details = $( '#after_customer_details' );
+		const $place_order_button = $( '#place_order' );
 		const $form = $( 'form.checkout' );
 
 		const submit = ev => {
 			ev.preventDefault();
+			if ( $form.is( '.processing' ) ) {
+				return false;
+			}
 			$form.addClass( 'processing' ).block( {
 				message: null,
 				overlayCSS: {
@@ -86,8 +99,17 @@ import './checkout.scss';
 					// response to see if it was successful.
 					const success = ! result.messages;
 					if ( success ) {
+						if ( $coupon.length ) {
+							$coupon.show();
+						}
 						$customer_details.hide();
 						$after_customer_details.show();
+						$place_order_button.removeAttr( 'disabled' );
+						// Re-add event handlers.
+						$form.off( 'submit', submit );
+						originalHandlers.forEach( handler => {
+							$form.on( 'submit', handler.handler );
+						} );
 						return;
 					}
 
@@ -116,11 +138,16 @@ import './checkout.scss';
 			editing = true;
 			$customer_details.show();
 			$after_customer_details.hide();
+			$place_order_button.attr( 'disabled', 'disabled' );
 		}
 
+		let originalHandlers;
 		// Replace form submit handler.
 		if ( editing ) {
-			$form.off( 'submit' );
+			originalHandlers = getEventHandlers( $form[ 0 ], 'submit' ).slice( 0 );
+			originalHandlers.forEach( handler => {
+				$form.off( 'submit', handler.handler );
+			} );
 			$form.on( 'submit', submit );
 		}
 	} );
