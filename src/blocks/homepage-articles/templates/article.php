@@ -123,7 +123,7 @@ call_user_func(
 				$subtitle = get_post_meta( $post_id, 'newspack_post_subtitle', true );
 
 				?>
-				<div class="newspack-post-subtitle">
+				<div class="newspack-post-subtitle newspack-post-subtitle--in-homepage-block">
 					<?php
 					$allowed_tags = array(
 						'b'      => true,
