@@ -40,7 +40,7 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 		/>
 		<label
 			for='newspack-donate-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>'
-			class='wpbnbd__button freq-label'
+			class=''
 		>
 			<?php echo esc_html( $frequency_name ); ?>
 		</label>
@@ -50,20 +50,28 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 
 	/**
 	 * Renders the frequency selection of the donation form in accessible tabs.
-	 * TODO: add $configuration for selected state.
 	 *
 	 * @param string $frequency_slug Frequency slug.
 	 * @param string $frequency_name Frequency name.
 	 * @param number $uid Unique ID.
+	 * @param array  $configuration The donations settings.
 	 *
 	 * @return string
 	 */
-	private static function render_frequency_tab( $frequency_slug, $frequency_name, $uid ) {
+	private static function render_frequency_tab( $frequency_slug, $frequency_name, $uid, $configuration ) {
 		ob_start();
 		?>
-		<a href='#' role='tab' class='wpbnbd__button freq-label' data-tab-id="<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>" id="tab-newspack-donate-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>" >
+		<button
+			role='tab'
+			type='button'
+			aria-controls='tab-panel-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>'
+			class='wpbnbd__button freq-label'
+			data-tab-id="<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>"
+			id="tab-newspack-donate-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>"
+			<?php echo "aria-selected='" . ( $frequency_slug === $configuration['defaultFrequency'] ? 'true' : 'false' ) . "'"; ?>
+			>
 				<?php echo esc_html( $frequency_name ); ?>
-		</a>
+		</button>
 		<?php
 		return ob_get_clean();
 	}
@@ -128,6 +136,7 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 				<?php echo self::render_hidden_form_inputs( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				<div class='wp-block-newspack-blocks-donate__options'>
 					<div class='wp-block-newspack-blocks-donate__frequencies frequencies'>
+
 						<div role='tabset' class='tab-container'>
 							<?php foreach ( $configuration['frequencies'] as $frequency_slug => $frequency_name ) : ?>
 								<?php echo self::render_frequency_tab( $frequency_slug, $frequency_name, $uid, $configuration ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -139,7 +148,13 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 								$formatted_amount = $configuration['amounts'][ $frequency_slug ][3];
 							?>
 
-							<div class='wp-block-newspack-blocks-donate__frequency frequency'>
+							<div
+								class='wp-block-newspack-blocks-donate__frequency frequency'
+								id='tab-panel-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>'
+								role='tabpanel'
+								aria-labelledby='tab-newspack-donate-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>'
+								<?php ( $frequency_slug === $configuration['defaultFrequency'] ? 'tabindex="0"' : '' ); ?>
+								>
 								<?php echo self::render_frequency_selection( $frequency_slug, $frequency_name, $uid, $configuration ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 								<div class='input-container'>
 									<label
@@ -183,9 +198,21 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 				<?php echo self::render_hidden_form_inputs( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				<div class='wp-block-newspack-blocks-donate__options'>
 					<div class='wp-block-newspack-blocks-donate__frequencies frequencies'>
+						<div role='tabset' class='tab-container'>
+							<?php foreach ( $configuration['frequencies'] as $frequency_slug => $frequency_name ) : ?>
+								<?php echo self::render_frequency_tab( $frequency_slug, $frequency_name, $uid, $configuration ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+							<?php endforeach; ?>
+						</div>
+
 						<?php foreach ( $configuration['frequencies'] as $frequency_slug => $frequency_name ) : ?>
 
-							<div class='wp-block-newspack-blocks-donate__frequency frequency'>
+							<div
+								class='wp-block-newspack-blocks-donate__frequency frequency'
+								id='tab-panel-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>'
+								role='tabpanel'
+								aria-labelledby='tab-newspack-donate-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>'
+								<?php ( $frequency_slug === $configuration['defaultFrequency'] ? 'tabindex="0"' : '' ); ?>
+								>
 								<?php echo self::render_frequency_selection( $frequency_slug, $frequency_name, $uid, $configuration ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 								<div class='wp-block-newspack-blocks-donate__tiers tiers'>
 									<?php foreach ( $suggested_amounts[ $frequency_slug ] as $index => $amount ) : ?>

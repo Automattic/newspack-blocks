@@ -50,24 +50,62 @@ const resetOtherValue = ( container: HTMLElement ) => {
 	} );
 };
 
+const addAccessibleTabs = ( container: HTMLElement ) => {
+	// Get the block's tabs, panels, and radio buttons associated with donation frequency.
+	const tabs = container.querySelectorAll( 'div[role="tabset"] [role="tab"]' );
+	const panels = container.querySelectorAll( 'div[role="tabpanel"]' );
+	const radioButtons = container.querySelectorAll(
+		'input[type="radio"][name="donation_frequency"]'
+	);
+	// Figure out which radio button is currently selected.
+	const checkedRadioId =
+		Array.from( radioButtons ).find( ( radio: HTMLInputElement ) => radio.checked )?.id || null;
+
+	// Set the tab associated to the radio button to selected.
+	if ( checkedRadioId ) {
+		const selectedTabId = `tab-${ checkedRadioId }`;
+		document.getElementById( selectedTabId )?.setAttribute( 'aria-selected', 'true' );
+	}
+
+	// Add a click event listener to each tab.
+	tabs.forEach( tab => {
+		tab.addEventListener( 'click', function () {
+			selectTab( tab, tabs, radioButtons, panels );
+		} );
+	} );
+};
+
+const selectTab = ( tab, tabs, radioButtons, panels ) => {
+	// Deselect all tabs & panels.
+	tabs.forEach( t => t.setAttribute( 'aria-selected', 'false' ) );
+
+	// Select the clicked tab.
+	tab.setAttribute( 'aria-selected', 'true' );
+
+	// Update the underlying radio button.
+	const tabId = tab.id || '';
+	const frequencyId = tabId.replace( 'tab-', '' );
+	radioButtons.forEach( radio => {
+		radio.checked = frequencyId === radio.id;
+	} );
+
+	// Loop through the panels and set tabindex 0 on the selected panel; remove it from others.
+	panels.forEach( panel => {
+		if ( tab.getAttribute( 'aria-controls' ) === panel.id ) {
+			panel.setAttribute( 'tabindex', 0 );
+		} else {
+			panel.removeAttribute( 'tabindex' );
+		}
+	} );
+};
+
 export const processFrequencyBasedElements = ( parentEl = document ) => {
 	const elements = parentEl.querySelectorAll(
 		'.wpbnbd--frequency-based'
 	) as NodeListOf< HTMLElement >;
 	elements.forEach( container => {
 		resetOtherValue( container );
-	} );
-
-
-	// Change selected elements based on "tab"
-	const tierButtonsEls = parentEl.querySelectorAll( '.tab-container a[role="tab"' );
-	// Frequency choosing interaction.
-	tierButtonsEls.forEach( buttonEl => {
-		const tiers = frequency.querySelectorAll( 'input[type="radio"]' );
-
-		buttonEl.addEventListener( 'click', () => {
-			document.getElementById( 'newspack-donate-' + buttonEl.getAttribute( 'data-tab-id' ) ).checked = true;
-		} );
+		addAccessibleTabs( container );
 	} );
 };
 

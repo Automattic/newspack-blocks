@@ -7,7 +7,7 @@ import classNames from 'classnames';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useMemo, useEffect, useRef } from '@wordpress/element';
+import { useMemo, useEffect, useRef, useState } from '@wordpress/element';
 import { SelectControl } from '@wordpress/components';
 import { RichText } from '@wordpress/block-editor';
 
@@ -68,6 +68,8 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 	const isRenderingStripePaymentForm =
 		window.newspack_blocks_data?.is_rendering_stripe_payment_form;
 
+	const [ selectedFrequency, setSelectedFrequency ] = useState( attributes.defaultFrequency );
+
 	const renderFrequencySelect = ( frequencySlug: DonationFrequencySlug ) => (
 		<>
 			<input
@@ -75,22 +77,42 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 				value={ frequencySlug }
 				id={ `newspack-donate-${ frequencySlug }-${ uid }` }
 				name="donation_frequency"
-				defaultChecked={ frequencySlug === attributes.defaultFrequency }
+				checked={ frequencySlug === selectedFrequency } // needs to update with default
+				onChange={ e => setSelectedFrequency( e.target.value ) }
 			/>
-			<label
-				htmlFor={ 'newspack-donate-' + frequencySlug + '-' + uid }
-				className="wpbnbd__button freq-label"
-			>
+			<label htmlFor={ 'newspack-donate-' + frequencySlug + '-' + uid }>
 				{ FREQUENCIES[ frequencySlug ] }
 			</label>
 		</>
 	);
 
+	const renderTabs = ( frequencySlug: DonationFrequencySlug ) => (
+		<>
+			<button
+				role="tab"
+				className={ `wpbnbd__button freq-label${
+					frequencySlug === selectedFrequency ? ' selected' : ''
+				} ` }
+				id={ `tab-newspack-donate-${ frequencySlug }-${ uid }` }
+				onClick={ e => {
+					e.preventDefault();
+					setSelectedFrequency( frequencySlug );
+				} }
+			>
+				{ FREQUENCIES[ frequencySlug ] }
+			</button>
+		</>
+	);
+
+	// This code is fired on tab select and updates aria elements, tabindex states, and radio buttons
 	const displayAmount = ( amount: number ) => amount.toFixed( 2 ).replace( /\.?0*$/, '' );
 
 	const renderUntieredForm = () => (
 		<div className="wp-block-newspack-blocks-donate__options">
 			<div className="wp-block-newspack-blocks-donate__frequencies frequencies">
+				<div className="tab-container">
+					{ availableFrequencies.map( frequencySlug => renderTabs( frequencySlug ) ) }
+				</div>
 				{ availableFrequencies.map( frequencySlug => (
 					<div
 						className="wp-block-newspack-blocks-donate__frequency frequency"
@@ -123,6 +145,9 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 	const renderTieredForm = () => (
 		<div className="wp-block-newspack-blocks-donate__options">
 			<div className="wp-block-newspack-blocks-donate__frequencies frequencies">
+				<div className="tab-container">
+					{ availableFrequencies.map( frequencySlug => renderTabs( frequencySlug ) ) }
+				</div>
 				{ availableFrequencies.map( frequencySlug => (
 					<div
 						className="wp-block-newspack-blocks-donate__frequency frequency"
