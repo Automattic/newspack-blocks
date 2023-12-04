@@ -19,27 +19,41 @@ import './checkout.scss';
 
 	function handleError( error_message ) {
 		const $form = $( 'form.checkout' );
+		$form.removeClass( 'processing' ).unblock();
+		$form.find( '.input-text, select, input:checkbox' ).trigger( 'validate' ).trigger( 'blur' );
+
+		const $errors = $( error_message );
+		$errors.find( 'li' ).each( function () {
+			const $error = $( this );
+			const $field = $( '#' + $error.data( 'id' ) + '_field' );
+			if ( $field ) {
+				$field.addClass( 'woocommerce-invalid' ).removeClass( 'woocommerce-valid' );
+				$field.append( '<span class="woocommerce-error">' + $error.html() + '</span>' );
+				$error.remove();
+			}
+		} );
+
 		$form.prepend(
 			'<div class="woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout">' +
 				error_message +
 				'</div>'
 		); // eslint-disable-line max-len
-		$form.removeClass( 'processing' ).unblock();
-		$form.find( '.input-text, select, input:checkbox' ).trigger( 'validate' ).trigger( 'blur' );
 		$( document.body ).trigger( 'checkout_error', [ error_message ] );
 	}
 
-	const handleMethodSelected = () => {
+	function handleMethodSelected() {
 		const selected = $( 'input[name="payment_method"]:checked' ).val();
 		$( '.wc_payment_method' ).removeClass( 'selected' );
 		$( '.wc_payment_method.payment_method_' + selected ).addClass( 'selected' );
-	};
+	}
+
 	$( document.body ).on( 'init_checkout', function () {
 		handleMethodSelected();
-		const $coupon = $( '.checkout_coupon' );
 		$( 'input[name="payment_method"]' ).change( handleMethodSelected );
 		$( document ).on( 'payment_method_selected', handleMethodSelected );
 		$( document ).on( 'updated_checkout', handleMethodSelected );
+
+		const $coupon = $( '.checkout_coupon' );
 		$( document.body ).on( 'removed_coupon_in_checkout', function () {
 			$coupon.show();
 		} );

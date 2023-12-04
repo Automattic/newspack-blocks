@@ -1,4 +1,5 @@
-#newspack_modal_checkout {  /* stylelint-disable-line */
+#newspack_modal_checkout {
+	/* stylelint-disable-line */
 	padding: 24px;
 	h3 {
 		font-size: 16px;
@@ -30,6 +31,20 @@
 		font-size: 14px;
 		line-height: 24px;
 		border-color: #ddd;
+		&:focus {
+			box-shadow: 0 0 0 1px #36f inset;
+		}
+	}
+	.woocommerce-invalid {
+		input[type='text'],
+		input[type='email'],
+		input[type='tel'],
+		input[type='number'],
+		input[type='password'],
+		select,
+		textarea {
+			box-shadow: 0 0 0 1px #cc1818 inset;
+		}
 	}
 	// Custom styles for Select2.
 	.select2-container .select2-selection--single .select2-selection__rendered {
@@ -51,6 +66,17 @@
 	input[type='checkbox']:checked {
 		background-color: var( --newspack-theme-color-primary );
 		border-color: var( --newspack-theme-color-primary );
+	}
+	// Inline input validation
+	.form-row .woocommerce-error {
+		padding: 0;
+		margin: 0.5rem 0 0;
+		color: #cc1818;
+		background: transparent;
+		font-size: 14px;
+		strong {
+			margin-right: 5px;
+		}
 	}
 	.button {
 		font-size: 14px;
@@ -85,11 +111,13 @@
 			}
 		}
 	}
-	#customer_details { /* stylelint-disable-line */
+	#customer_details {
+		/* stylelint-disable-line */
 		.woocommerce-billing-fields {
 			p {
 				margin: 8px 0 24px;
-				&#billing_address_1_field { /* stylelint-disable-line */
+				&#billing_address_1_field {
+					/* stylelint-disable-line */
 					margin-bottom: 8px;
 				}
 			}
@@ -162,7 +190,8 @@
 			}
 		}
 	}
-	#order_review { /* stylelint-disable-line */
+	#order_review {
+		/* stylelint-disable-line */
 		margin: 0 0 24px;
 		padding: 16px 24px;
 		border-radius: 6px;
@@ -228,7 +257,8 @@
 		}
 	}
 	#checkout_continue, /* stylelint-disable-line */
-	#place_order { /* stylelint-disable-line */
+	#place_order {
+		/* stylelint-disable-line */
 		background-color: var( --newspack-theme-color-primary );
 		color: #fff; /* TODO: Fix dynamic contrast */
 		font-size: 14px;
@@ -237,7 +267,8 @@
 		width: 100%;
 		border: 0;
 	}
-	#edit_details { /* stylelint-disable-line */
+	#edit_details {
+		/* stylelint-disable-line */
 		border: 0;
 		width: 100%;
 	}
