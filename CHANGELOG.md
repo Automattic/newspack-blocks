@@ -1,3 +1,10 @@
+## [2.2.3](https://github.com/Automattic/newspack-blocks/compare/v2.2.2...v2.2.3) (2023-12-04)
+
+
+### Bug Fixes
+
+* update selected tier behavior for donate block ([#1617](https://github.com/Automattic/newspack-blocks/issues/1617)) ([8a9a76f](https://github.com/Automattic/newspack-blocks/commit/8a9a76fb970ffac6f00f67f83a17a931a169c103))
+
 ## [2.2.2](https://github.com/Automattic/newspack-blocks/compare/v2.2.1...v2.2.2) (2023-11-29)
 
 
