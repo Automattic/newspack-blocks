@@ -35,17 +35,6 @@
 			box-shadow: 0 0 0 1px #36f inset;
 		}
 	}
-	.woocommerce-invalid {
-		input[type='text'],
-		input[type='email'],
-		input[type='tel'],
-		input[type='number'],
-		input[type='password'],
-		select,
-		textarea {
-			box-shadow: 0 0 0 1px #cc1818 inset;
-		}
-	}
 	// Custom styles for Select2.
 	.select2-container .select2-selection--single .select2-selection__rendered {
 		padding-left: 16px;
@@ -70,7 +59,7 @@
 	// Inline input validation
 	.form-row .woocommerce-error {
 		padding: 0;
-		margin: 0.5rem 0 0;
+		margin: 0.25rem 0 0;
 		color: #cc1818;
 		background: transparent;
 		font-size: 14px;
