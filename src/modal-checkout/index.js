@@ -17,6 +17,18 @@ import './checkout.scss';
 		return $._data( element, 'events' )[ event ];
 	}
 
+	function handleError( error_message ) {
+		const $form = $( 'form.checkout' );
+		$form.prepend(
+			'<div class="woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout">' +
+				error_message +
+				'</div>'
+		); // eslint-disable-line max-len
+		$form.removeClass( 'processing' ).unblock();
+		$form.find( '.input-text, select, input:checkbox' ).trigger( 'validate' ).trigger( 'blur' );
+		$( document.body ).trigger( 'checkout_error', [ error_message ] );
+	}
+
 	const handleMethodSelected = () => {
 		const selected = $( 'input[name="payment_method"]:checked' ).val();
 		$( '.wc_payment_method' ).removeClass( 'selected' );
@@ -41,20 +53,6 @@ import './checkout.scss';
 				$( '#after_customer_details > h3' ).hide();
 			}
 		} );
-
-		function handleError( error_message ) {
-			const $form = $( 'form.checkout' );
-			$( '.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message' ).remove();
-			$form.prepend(
-				'<div class="woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout">' +
-					error_message +
-					'</div>'
-			); // eslint-disable-line max-len
-			$form.removeClass( 'processing' ).unblock();
-			$form.find( '.input-text, select, input:checkbox' ).trigger( 'validate' ).trigger( 'blur' );
-			// wc_checkout_form.scroll_to_notices();
-			$( document.body ).trigger( 'checkout_error', [ error_message ] );
-		}
 
 		const $checkout_continue = $( '#checkout_continue' );
 		const $customer_details = $( '#customer_details' );
@@ -92,6 +90,16 @@ import './checkout.scss';
 						return;
 					}
 
+					$(
+						'.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message'
+					).remove();
+					$( 'html, body' ).animate(
+						{
+							scrollTop: 0,
+						},
+						1000
+					);
+
 					$form.removeClass( 'processing' ).unblock();
 					$( document.body ).trigger( 'update_checkout' );
 
@@ -123,6 +131,15 @@ import './checkout.scss';
 					}
 				},
 				error: ( jqXHR, textStatus, errorThrown ) => {
+					$(
+						'.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message'
+					).remove();
+					$( 'html, body' ).animate(
+						{
+							scrollTop: 0,
+						},
+						1000
+					);
 					handleError(
 						'<div class="woocommerce-error">' +
 							( errorThrown || wc_checkout_params.i18n_checkout_error ) +
