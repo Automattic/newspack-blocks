@@ -166,7 +166,6 @@ domReady( () => {
 				if ( window.newspackReaderActivation?.overlays ) {
 					modalCheckout.overlayId = window.newspackReaderActivation?.overlays.add();
 				}
-
 				iframeResizeObserver = new ResizeObserver( entries => {
 					if ( ! entries || ! entries.length ) {
 						return;
@@ -174,28 +173,34 @@ domReady( () => {
 					const contentRect = entries[ 0 ].contentRect;
 					if ( contentRect ) {
 						modalContent.style.height = contentRect.top + contentRect.bottom + 'px';
-						spinner.style.display = 'none';
-					}
-				} );
-				iframe.addEventListener( 'load', () => {
-					const location = iframe.contentWindow.location;
-					// If RAS is available, set the front-end authentication.
-					if ( window.newspackReaderActivation && location.href.indexOf( 'order-received' ) > -1 ) {
-						const ras = window.newspackReaderActivation;
-						const params = new Proxy( new URLSearchParams( location.search ), {
-							get: ( searchParams, prop ) => searchParams.get( prop ),
-						} );
-						if ( params.email ) {
-							ras.setReaderEmail( params.email );
-							ras.setAuthenticated( true );
-						}
-					}
-					const container = iframe.contentDocument.querySelector( '#newspack_modal_checkout' );
-					if ( container ) {
-						iframeResizeObserver.observe( container );
 					}
 				} );
 			} );
 		} );
+	} );
+	iframe.addEventListener( 'load', () => {
+		const location = iframe.contentWindow.location;
+		// If RAS is available, set the front-end authentication.
+		if ( window.newspackReaderActivation && location.href.indexOf( 'order-received' ) > -1 ) {
+			const ras = window.newspackReaderActivation;
+			const params = new Proxy( new URLSearchParams( location.search ), {
+				get: ( searchParams, prop ) => searchParams.get( prop ),
+			} );
+			if ( params.email ) {
+				ras.setReaderEmail( params.email );
+				ras.setAuthenticated( true );
+			}
+		}
+		const container = iframe.contentDocument.querySelector( '#newspack_modal_checkout' );
+		if ( container ) {
+			iframeResizeObserver.observe( container );
+			if ( container.checkoutReady ) {
+				spinner.style.display = 'none';
+			} else {
+				container.addEventListener( 'checkout-ready', () => {
+					spinner.style.display = 'none';
+				} );
+			}
+		}
 	} );
 } );

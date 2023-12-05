@@ -9,6 +9,8 @@ import './checkout.scss';
 		return;
 	}
 
+	const readyEvent = new CustomEvent( 'checkout-ready' );
+
 	function getEventHandlers( element, event ) {
 		const events = $._data( element, 'events' );
 		if ( ! events ) {
@@ -20,49 +22,10 @@ import './checkout.scss';
 		return $._data( element, 'events' )[ event ];
 	}
 
-	function handleError( $form, error_message ) {
-		// Clear previous errors.
-		$( '.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message' ).remove();
-
-		$form.removeClass( 'processing' ).unblock();
-		$form.find( '.input-text, select, input:checkbox' ).trigger( 'validate' ).trigger( 'blur' );
-
-		const $errors = $( error_message );
-		let $erroredField = false;
-		$errors.find( 'li' ).each( function () {
-			const $error = $( this );
-			const $field = $( '#' + $error.data( 'id' ) + '_field' );
-			if ( $field?.length ) {
-				if ( ! $erroredField ) {
-					$erroredField = $field;
-				}
-				$field.addClass( 'woocommerce-invalid' ).removeClass( 'woocommerce-valid' );
-				$field.append( '<span class="woocommerce-error">' + $error.html() + '</span>' );
-				$error.remove();
-			}
-		} );
-		if ( $errors.find( 'li' ).length ) {
-			$form.prepend(
-				$( '<div class="woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout"/>' ).append(
-					$errors
-				)
-			);
-			window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
-		} else if ( $erroredField?.length ) {
-			window.scroll( { top: $erroredField.offset().top - 100, left: 0, behavior: 'smooth' } );
-			$erroredField.find( 'input.input-text, select, input:checkbox' ).trigger( 'focus' );
-		}
-		$( document.body ).trigger( 'update_checkout' );
-		$( document.body ).trigger( 'checkout_error', [ error_message ] );
-	}
-
-	function handleMethodSelected() {
-		const selected = $( 'input[name="payment_method"]:checked' ).val();
-		$( '.wc_payment_method' ).removeClass( 'selected' );
-		$( '.wc_payment_method.payment_method_' + selected ).addClass( 'selected' );
-	}
-
 	$( document.body ).on( 'init_checkout', function () {
+		let editing = false;
+		let originalFormHandlers = [];
+
 		const $form = $( 'form.checkout' );
 
 		const $coupon = $( '.checkout_coupon' );
@@ -71,18 +34,25 @@ import './checkout.scss';
 		const $after_customer_details = $( '#after_customer_details' );
 		const $place_order_button = $( '#place_order' );
 
-		handleMethodSelected();
-		$( 'input[name="payment_method"]' ).change( handleMethodSelected );
-		$( document ).on( 'payment_method_selected', handleMethodSelected );
-		$( document ).on( 'updated_checkout', handleMethodSelected );
+		/**
+		 * Handle styling update for selected payment method.
+		 */
+		handlePaymentMethodSelect();
+		$( 'input[name="payment_method"]' ).change( handlePaymentMethodSelect );
+		$( document ).on( 'payment_method_selected', handlePaymentMethodSelect );
+		$( document ).on( 'updated_checkout', handlePaymentMethodSelect );
 
+		/**
+		 * Ensure coupon form is shown after removing a coupon.
+		 */
 		$( document.body ).on( 'removed_coupon_in_checkout', function () {
 			$coupon.show();
 		} );
+
+		/**
+		 * Toggle "Payment info" title if there's no money transaction.
+		 */
 		$( document ).on( 'updated_checkout', function () {
-			/**
-			 * Toggle "Payment info" title if there's no money transaction.
-			 */
 			if ( $( '#payment .wc_payment_methods' ).length ) {
 				$( '#after_customer_details > h3' ).show();
 			} else {
@@ -91,21 +61,75 @@ import './checkout.scss';
 		} );
 
 		if ( $checkout_continue.length ) {
-			validateForm( true, res => {
-				// If the validation returns messages, then we're editing.
-				if ( res.messages ) {
-					setEditing( true );
-				}
+			setEditing( true );
+			validateForm( true, () => {
 				// Attach handler to "Back" button.
 				$form.on( 'click', '#checkout_back', function ( ev ) {
 					ev.preventDefault();
 					setEditing( true );
 				} );
+				setReady();
 			} );
+		} else {
+			setReady();
 		}
 
-		let editing = false;
-		let originalFormHandlers = [];
+		function handleFormError( error_message ) {
+			// Clear previous errors.
+			$( '.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message' ).remove();
+
+			$form.removeClass( 'processing' ).unblock();
+			$form.find( '.input-text, select, input:checkbox' ).trigger( 'validate' ).trigger( 'blur' );
+
+			const $errors = $( error_message );
+			let $erroredField = false;
+			$errors.find( 'li' ).each( function () {
+				const $error = $( this );
+				const $field = $( '#' + $error.data( 'id' ) + '_field' );
+				if ( $field?.length ) {
+					if ( ! $erroredField ) {
+						$erroredField = $field;
+					}
+					$field.addClass( 'woocommerce-invalid' ).removeClass( 'woocommerce-valid' );
+					$field.append( '<span class="woocommerce-error">' + $error.html() + '</span>' );
+					$error.remove();
+				}
+			} );
+			if ( $errors.find( 'li' ).length ) {
+				$form.prepend(
+					$( '<div class="woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout"/>' ).append(
+						$errors
+					)
+				);
+				window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
+			} else if ( $erroredField?.length ) {
+				window.scroll( { top: $erroredField.offset().top - 100, left: 0, behavior: 'smooth' } );
+				$erroredField.find( 'input.input-text, select, input:checkbox' ).trigger( 'focus' );
+			}
+			$( document.body ).trigger( 'update_checkout' );
+			$( document.body ).trigger( 'checkout_error', [ error_message ] );
+		}
+
+		/**
+		 * Set the checkout as ready so the modal can resolve the loading state.
+		 */
+		function setReady() {
+			const container = document.querySelector( '#newspack_modal_checkout' );
+			container.checkoutReady = true;
+			container.dispatchEvent( readyEvent );
+		}
+
+		function handlePaymentMethodSelect() {
+			const selected = $( 'input[name="payment_method"]:checked' ).val();
+			$( '.wc_payment_method' ).removeClass( 'selected' );
+			$( '.wc_payment_method.payment_method_' + selected ).addClass( 'selected' );
+		}
+
+		function handleFormSubmit( ev ) {
+			ev.preventDefault();
+			validateForm();
+		}
+
 		function setEditing( isEditing ) {
 			editing = isEditing;
 			// Scroll to top.
@@ -127,7 +151,7 @@ import './checkout.scss';
 				originalFormHandlers.forEach( handler => {
 					$form.off( 'submit', handler.handler );
 				} );
-				$form.on( 'submit', handleSubmit );
+				$form.on( 'submit', handleFormSubmit );
 			} else {
 				if ( $coupon.length ) {
 					$coupon.show();
@@ -137,16 +161,11 @@ import './checkout.scss';
 				$place_order_button.removeAttr( 'disabled' );
 				buildCheckoutDetails();
 				// Re-add event handlers.
-				$form.off( 'submit', handleSubmit );
+				$form.off( 'submit', handleFormSubmit );
 				originalFormHandlers.forEach( handler => {
 					$form.on( 'submit', handler.handler );
 				} );
 			}
-		}
-
-		function handleSubmit( ev ) {
-			ev.preventDefault();
-			validateForm();
 		}
 
 		function buildCheckoutDetails() {
@@ -251,10 +270,9 @@ import './checkout.scss';
 						setEditing( false );
 					} else if ( ! silent ) {
 						if ( result.messages ) {
-							handleError( $form, result.messages );
+							handleFormError( result.messages );
 						} else {
-							handleError(
-								$form,
+							handleFormError(
 								'<div class="woocommerce-error">' +
 									wc_checkout_params.i18n_checkout_error +
 									'</div>'
@@ -270,7 +288,7 @@ import './checkout.scss';
 							'<div class="woocommerce-error">' +
 							( errorThrown || wc_checkout_params.i18n_checkout_error ) +
 							'</div>';
-						handleError( $form, messages );
+						handleFormError( messages );
 					}
 					cb( { messages } );
 				},
