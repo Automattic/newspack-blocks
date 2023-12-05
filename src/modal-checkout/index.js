@@ -1,4 +1,4 @@
-/* globals jQuery, wc_checkout_params */
+/* globals newspackBlocksModalCheckout, jQuery, wc_checkout_params */
 /**
  * Style dependencies
  */
@@ -133,6 +133,7 @@ import './checkout.scss';
 				$customer_details.hide();
 				$after_customer_details.show();
 				$place_order_button.removeAttr( 'disabled' );
+				buildCheckoutDetails();
 				// Re-add event handlers.
 				$form.off( 'submit', handleSubmit );
 				originalFormHandlers.forEach( handler => {
@@ -144,6 +145,69 @@ import './checkout.scss';
 		function handleSubmit( ev ) {
 			ev.preventDefault();
 			validateForm();
+		}
+
+		function buildCheckoutDetails() {
+			$( '#checkout_details' ).remove();
+			const data = {};
+			$form.serializeArray().forEach( item => {
+				data[ item.name ] = item.value;
+			} );
+
+			const html = [];
+			html.push( '<div class="billing-details">' );
+			html.push( '<h3>' + newspackBlocksModalCheckout.labels.billing_details + '</h3>' );
+			if ( data.billing_first_name || data.billing_last_name ) {
+				html.push( '<p>' + data.billing_first_name + ' ' + data.billing_last_name + '</p>' );
+			}
+			if ( data.billing_company ) {
+				html.push( '<p>' + data.billing_company + '</p>' );
+			}
+			if ( data.billing_address_1 || data.billing_address_2 ) {
+				html.push(
+					'<p>' +
+						data.billing_address_1 +
+						' ' +
+						data.billing_address_2 +
+						'<br>' +
+						data.billing_city +
+						', ' +
+						data.billing_state +
+						' ' +
+						data.billing_postcode +
+						'<br>' +
+						data.billing_country +
+						'</p>'
+				);
+			}
+			if ( data.billing_email ) {
+				html.push( '<p>' + data.billing_email + '</p>' );
+			}
+			html.push( '</div>' ); // Close billing-details.
+
+			if ( data.shipping_address_1 || data.shipping_address_2 ) {
+				html.push( '<div class="shipping-details">' );
+				html.push( '<h3>' + newspackBlocksModalCheckout.labels.shipping_details + '</h3>' );
+				html.push(
+					'<p>' +
+						data.shipping_address_1 +
+						' ' +
+						data.shipping_address_2 +
+						'<br>' +
+						data.shipping_city +
+						', ' +
+						data.shipping_state +
+						' ' +
+						data.shipping_postcode +
+						'<br>' +
+						data.shipping_country +
+						'</p>'
+				);
+				html.push( '</div>' ); // Close shipping-details.
+			}
+			$( '.order-details-summary' ).after(
+				'<div id="checkout_details">' + html.join( '' ) + '</div>'
+			);
 		}
 
 		function validateForm( silent = false, cb = () => {} ) {

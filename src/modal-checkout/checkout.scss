@@ -2,7 +2,7 @@
 	padding: 24px;
 	h3 {
 		font-size: 16px;
-		margin: 0 0 16px;
+		margin: 0 0 8px;
 	}
 	p {
 		margin: 0 0 16px;
@@ -239,6 +239,18 @@
 				margin-right: 8px;
 				flex-grow: 1;
 			}
+		}
+	}
+	#checkout_details { /* stylelint-disable-line */
+		display: flex;
+		margin: 0 0 24px;
+		> * {
+			flex: 1 1 100%;
+			gap: 16px;
+		}
+		p {
+			font-size: 14px;
+			margin: 0;
 		}
 	}
 	#checkout_continue, /* stylelint-disable-line */

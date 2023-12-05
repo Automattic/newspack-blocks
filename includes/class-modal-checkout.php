@@ -49,7 +49,7 @@ final class Modal_Checkout {
 		add_filter( 'woocommerce_enqueue_styles', [ __CLASS__, 'dequeue_woocommerce_styles' ] );
 		add_filter( 'wcs_place_subscription_order_text', [ __CLASS__, 'order_button_text' ], 5 );
 		add_filter( 'woocommerce_order_button_text', [ __CLASS__, 'order_button_text' ], 5 );
-		add_filter( 'option_woocommerce_subscriptions_order_button_text', [ __CLASS__, 'order_button_text' ], 5);
+		add_filter( 'option_woocommerce_subscriptions_order_button_text', [ __CLASS__, 'order_button_text' ], 5 );
 		add_action( 'woocommerce_before_checkout_form', [ __CLASS__, 'render_before_checkout_form' ] );
 		add_action( 'woocommerce_checkout_before_customer_details', [ __CLASS__, 'render_before_customer_details' ] );
 		add_action( 'woocommerce_checkout_before_terms_and_conditions', [ __CLASS__, 'render_before_terms_and_conditions' ] );
@@ -366,6 +366,16 @@ final class Modal_Checkout {
 			[ 'jquery' ],
 			\NEWSPACK_BLOCKS__VERSION,
 			true
+		);
+		wp_localize_script(
+			'newspack-blocks-modal-checkout',
+			'newspackBlocksModalCheckout',
+			[
+				'labels' => [
+					'billing_details'  => __( 'Billing details', 'newspack-blocks' ),
+					'shipping_details' => __( 'Shipping details', 'newspack-blocks' ),
+				],
+			]
 		);
 		wp_enqueue_style(
 			'newspack-blocks-modal-checkout',
