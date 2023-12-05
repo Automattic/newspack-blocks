@@ -76,7 +76,9 @@ import './checkout.scss';
 
 		function handleFormError( error_message ) {
 			// Clear previous errors.
-			$( '.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message' ).remove();
+			$(
+				'.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message, .wc-block-components-notice-banner'
+			).remove();
 
 			$form.removeClass( 'processing' ).unblock();
 			$form.find( '.input-text, select, input:checkbox' ).trigger( 'validate' ).trigger( 'blur' );
@@ -137,7 +139,9 @@ import './checkout.scss';
 			// Update checkout.
 			$( document.body ).trigger( 'update_checkout' );
 			// Clear errors.
-			$( '.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message' ).remove();
+			$(
+				'.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message, .wc-block-components-notice-banner'
+			).remove();
 			// Clear checkout details.
 			$( '#checkout_details' ).remove();
 			if ( editing ) {
