@@ -91,15 +91,21 @@ import './checkout.scss';
 		} );
 
 		if ( $checkout_continue.length ) {
-			setEditing( true );
-			$form.on( 'click', '#checkout_back', function ( ev ) {
-				ev.preventDefault();
-				setEditing( true );
+			validateForm( true, res => {
+				// If the validation returns messages, then we're editing.
+				if ( res.messages ) {
+					setEditing( true );
+				}
+				// Attach handler to "Back" button.
+				$form.on( 'click', '#checkout_back', function ( ev ) {
+					ev.preventDefault();
+					setEditing( true );
+				} );
 			} );
 		}
 
 		let editing = false;
-		let originalFormHandlers;
+		let originalFormHandlers = [];
 		function setEditing( isEditing ) {
 			editing = isEditing;
 			// Scroll to top.
@@ -119,7 +125,7 @@ import './checkout.scss';
 				originalFormHandlers.forEach( handler => {
 					$form.off( 'submit', handler.handler );
 				} );
-				$form.on( 'submit', submit );
+				$form.on( 'submit', handleSubmit );
 			} else {
 				if ( $coupon.length ) {
 					$coupon.show();
@@ -128,15 +134,19 @@ import './checkout.scss';
 				$after_customer_details.show();
 				$place_order_button.removeAttr( 'disabled' );
 				// Re-add event handlers.
-				$form.off( 'submit', submit );
+				$form.off( 'submit', handleSubmit );
 				originalFormHandlers.forEach( handler => {
 					$form.on( 'submit', handler.handler );
 				} );
 			}
 		}
 
-		function submit( ev ) {
+		function handleSubmit( ev ) {
 			ev.preventDefault();
+			validateForm();
+		}
+
+		function validateForm( silent = false, cb = () => {} ) {
 			if ( $form.is( '.processing' ) ) {
 				return false;
 			}
@@ -160,11 +170,12 @@ import './checkout.scss';
 					const result = JSON.parse( response );
 
 					// Reload page
-					if ( true === result.reload ) {
+					if ( ! silent && true === result.reload ) {
 						window.location.reload();
 						return;
 					}
 
+					// Unblock form.
 					$form.removeClass( 'processing' ).unblock();
 
 					// Result will always be 'failure' from the server. We'll check for
@@ -172,26 +183,30 @@ import './checkout.scss';
 					const success = ! result.messages;
 					if ( success ) {
 						setEditing( false );
-						return;
+					} else if ( ! silent ) {
+						if ( result.messages ) {
+							handleError( $form, result.messages );
+						} else {
+							handleError(
+								$form,
+								'<div class="woocommerce-error">' +
+									wc_checkout_params.i18n_checkout_error +
+									'</div>'
+							);
+						}
 					}
-
-					// Add new errors
-					if ( result.messages ) {
-						handleError( $form, result.messages );
-					} else {
-						handleError(
-							$form,
-							'<div class="woocommerce-error">' + wc_checkout_params.i18n_checkout_error + '</div>'
-						);
-					}
+					cb( result );
 				},
 				error: ( jqXHR, textStatus, errorThrown ) => {
-					handleError(
-						$form,
-						'<div class="woocommerce-error">' +
+					let messages = '';
+					if ( ! silent ) {
+						messages =
+							'<div class="woocommerce-error">' +
 							( errorThrown || wc_checkout_params.i18n_checkout_error ) +
-							'</div>'
-					);
+							'</div>';
+						handleError( $form, messages );
+					}
+					cb( { messages } );
 				},
 			} );
 		}
