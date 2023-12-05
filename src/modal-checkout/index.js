@@ -114,6 +114,8 @@ import './checkout.scss';
 			$( document.body ).trigger( 'update_checkout' );
 			// Clear errors.
 			$( '.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message' ).remove();
+			// Clear checkout details.
+			$( '#checkout_details' ).remove();
 			if ( editing ) {
 				if ( $coupon.length ) {
 					$coupon.hide();
