@@ -352,13 +352,14 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 	ob_start();
 
+	echo $inline_style_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+
 	if ( $article_query->have_posts() ) :
 		?>
 		<div
 			class="<?php echo esc_attr( $classes ); ?>"
 			style="<?php echo esc_attr( $styles ); ?>"
 			>
-			<?php echo $inline_style_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			<div data-posts data-current-post-id="<?php the_ID(); ?>">
 				<?php if ( '' !== $attributes['sectionHeader'] ) : ?>
 					<h2 class="article-section-title">
