@@ -194,26 +194,6 @@ domReady( () => {
 					if ( container ) {
 						iframeResizeObserver.observe( container );
 					}
-					const innerButtons = [
-						...iframe.contentDocument.querySelectorAll( '.modal-continue, .edit-billing-link' ),
-					];
-					innerButtons.forEach( innerButton => {
-						innerButton.addEventListener( 'click', () => ( spinner.style.display = 'flex' ) );
-					} );
-					const innerForm = iframe.contentDocument.querySelector( '.checkout' );
-					if ( innerForm ) {
-						const innerBillingFields = [
-							...innerForm.querySelectorAll( '.woocommerce-billing-fields input' ),
-						];
-						innerBillingFields.forEach( innerField => {
-							innerField.addEventListener( 'keyup', e => {
-								if ( 'Enter' === e.key ) {
-									spinner.style.display = 'flex';
-									innerForm.submit();
-								}
-							} );
-						} );
-					}
 				} );
 			} );
 		} );

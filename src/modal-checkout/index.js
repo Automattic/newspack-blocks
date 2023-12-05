@@ -14,14 +14,16 @@ import './checkout.scss';
 		if ( ! events ) {
 			return [];
 		}
+		if ( ! event ) {
+			return events;
+		}
 		return $._data( element, 'events' )[ event ];
 	}
 
-	function handleError( error_message ) {
+	function handleError( $form, error_message ) {
 		// Clear previous errors.
 		$( '.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message' ).remove();
 
-		const $form = $( 'form.checkout' );
 		$form.removeClass( 'processing' ).unblock();
 		$form.find( '.input-text, select, input:checkbox' ).trigger( 'validate' ).trigger( 'blur' );
 
@@ -50,6 +52,7 @@ import './checkout.scss';
 			window.scroll( { top: $erroredField.offset().top - 100, left: 0, behavior: 'smooth' } );
 			$erroredField.find( 'input.input-text, select, input:checkbox' ).trigger( 'focus' );
 		}
+		$( document.body ).trigger( 'update_checkout' );
 		$( document.body ).trigger( 'checkout_error', [ error_message ] );
 	}
 
@@ -99,7 +102,10 @@ import './checkout.scss';
 		let originalFormHandlers;
 		function setEditing( isEditing ) {
 			editing = isEditing;
+			// Scroll to top.
 			window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
+			// Update checkout.
+			$( document.body ).trigger( 'update_checkout' );
 			// Clear errors.
 			$( '.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message' ).remove();
 			if ( editing ) {
@@ -160,10 +166,9 @@ import './checkout.scss';
 					}
 
 					$form.removeClass( 'processing' ).unblock();
-					$( document.body ).trigger( 'update_checkout' );
 
-					// Result will always be 'failure'. We'll check for 'messages' in the
-					// response to see if it was successful.
+					// Result will always be 'failure' from the server. We'll check for
+					// 'messages' in the response to see if it was successful.
 					const success = ! result.messages;
 					if ( success ) {
 						setEditing( false );
@@ -172,15 +177,17 @@ import './checkout.scss';
 
 					// Add new errors
 					if ( result.messages ) {
-						handleError( result.messages );
+						handleError( $form, result.messages );
 					} else {
 						handleError(
+							$form,
 							'<div class="woocommerce-error">' + wc_checkout_params.i18n_checkout_error + '</div>'
 						);
 					}
 				},
 				error: ( jqXHR, textStatus, errorThrown ) => {
 					handleError(
+						$form,
 						'<div class="woocommerce-error">' +
 							( errorThrown || wc_checkout_params.i18n_checkout_error ) +
 							'</div>'
