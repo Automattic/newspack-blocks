@@ -201,6 +201,8 @@ domReady( () => {
 					spinner.style.display = 'none';
 				} );
 			}
+		} else {
+			spinner.style.display = 'none';
 		}
 	} );
 } );
