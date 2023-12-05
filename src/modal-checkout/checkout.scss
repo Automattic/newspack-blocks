@@ -1,5 +1,4 @@
-#newspack_modal_checkout {
-	/* stylelint-disable-line */
+#newspack_modal_checkout { /* stylelint-disable-line */
 	padding: 24px;
 	h3 {
 		font-size: 16px;
@@ -100,13 +99,11 @@
 			}
 		}
 	}
-	#customer_details {
-		/* stylelint-disable-line */
+	#customer_details { /* stylelint-disable-line */
 		.woocommerce-billing-fields {
 			p {
 				margin: 8px 0 24px;
-				&#billing_address_1_field {
-					/* stylelint-disable-line */
+				&#billing_address_1_field { /* stylelint-disable-line */
 					margin-bottom: 8px;
 				}
 			}
@@ -179,8 +176,7 @@
 			}
 		}
 	}
-	#order_review {
-		/* stylelint-disable-line */
+	#order_review { /* stylelint-disable-line */
 		margin: 0 0 24px;
 		padding: 16px 24px;
 		border-radius: 6px;
