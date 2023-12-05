@@ -32,6 +32,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 		</div>
 		<div id="after_customer_details">
 			<?php do_action( 'woocommerce_checkout_after_customer_details' ); ?>
+			<button id="checkout_back" type="button"><?php esc_html_e( 'Back', 'newspack-blocks' ); ?></button>
 		</div>
 	<?php endif; ?>
 </form>

@@ -246,8 +246,7 @@
 		}
 	}
 	#checkout_continue, /* stylelint-disable-line */
-	#place_order {
-		/* stylelint-disable-line */
+	#place_order { /* stylelint-disable-line */
 		background-color: var( --newspack-theme-color-primary );
 		color: #fff; /* TODO: Fix dynamic contrast */
 		font-size: 14px;
@@ -256,10 +255,11 @@
 		width: 100%;
 		border: 0;
 	}
-	#edit_details {
-		/* stylelint-disable-line */
+	#checkout_back { /* stylelint-disable-line */
 		border: 0;
 		width: 100%;
+		background: transparent;
+		color: inherit;
 	}
 	/* Remove support for "Allow customers to log into an existing account during checkout" */
 	.woocommerce-form-login-toggle {

@@ -23,21 +23,40 @@ import './checkout.scss';
 		$form.find( '.input-text, select, input:checkbox' ).trigger( 'validate' ).trigger( 'blur' );
 
 		const $errors = $( error_message );
+		let $erroredField = false;
 		$errors.find( 'li' ).each( function () {
 			const $error = $( this );
 			const $field = $( '#' + $error.data( 'id' ) + '_field' );
-			if ( $field ) {
+			if ( $field?.length ) {
+				if ( ! $erroredField ) {
+					$erroredField = $field;
+				}
 				$field.addClass( 'woocommerce-invalid' ).removeClass( 'woocommerce-valid' );
 				$field.append( '<span class="woocommerce-error">' + $error.html() + '</span>' );
 				$error.remove();
 			}
 		} );
-
-		$form.prepend(
-			'<div class="woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout">' +
-				error_message +
-				'</div>'
-		); // eslint-disable-line max-len
+		if ( $errors.find( 'li' ).length ) {
+			$form.prepend(
+				$( '<div class="woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout"/>' ).append(
+					$errors
+				)
+			);
+			$( 'html, body' ).animate(
+				{
+					scrollTop: 0,
+				},
+				1000
+			);
+		} else if ( $erroredField?.length ) {
+			$( 'html,body' ).animate(
+				{
+					scrollTop: $erroredField.offset().top - 100,
+				},
+				1000
+			);
+			$erroredField.find( 'input.input-text, select, input:checkbox' ).trigger( 'focus' );
+		}
 		$( document.body ).trigger( 'checkout_error', [ error_message ] );
 	}
 
@@ -68,13 +87,53 @@ import './checkout.scss';
 			}
 		} );
 
+		const $form = $( 'form.checkout' );
+
 		const $checkout_continue = $( '#checkout_continue' );
 		const $customer_details = $( '#customer_details' );
 		const $after_customer_details = $( '#after_customer_details' );
 		const $place_order_button = $( '#place_order' );
-		const $form = $( 'form.checkout' );
 
-		const submit = ev => {
+		if ( $checkout_continue.length ) {
+			setEditing( true );
+			$form.on( 'click', '#checkout_back', function ( ev ) {
+				ev.preventDefault();
+				setEditing( true );
+			} );
+		}
+
+		let editing = false;
+		let originalHandlers;
+		function setEditing( isEditing ) {
+			editing = isEditing;
+			if ( editing ) {
+				if ( $coupon.length ) {
+					$coupon.hide();
+				}
+				$customer_details.show();
+				$after_customer_details.hide();
+				$place_order_button.attr( 'disabled', 'disabled' );
+				originalHandlers = getEventHandlers( $form[ 0 ], 'submit' ).slice( 0 );
+				originalHandlers.forEach( handler => {
+					$form.off( 'submit', handler.handler );
+				} );
+				$form.on( 'submit', submit );
+			} else {
+				if ( $coupon.length ) {
+					$coupon.show();
+				}
+				$customer_details.hide();
+				$after_customer_details.show();
+				$place_order_button.removeAttr( 'disabled' );
+				// Re-add event handlers.
+				$form.off( 'submit', submit );
+				originalHandlers.forEach( handler => {
+					$form.on( 'submit', handler.handler );
+				} );
+			}
+		}
+
+		function submit( ev ) {
 			ev.preventDefault();
 			if ( $form.is( '.processing' ) ) {
 				return false;
@@ -107,12 +166,6 @@ import './checkout.scss';
 					$(
 						'.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message'
 					).remove();
-					$( 'html, body' ).animate(
-						{
-							scrollTop: 0,
-						},
-						1000
-					);
 
 					$form.removeClass( 'processing' ).unblock();
 					$( document.body ).trigger( 'update_checkout' );
@@ -121,17 +174,13 @@ import './checkout.scss';
 					// response to see if it was successful.
 					const success = ! result.messages;
 					if ( success ) {
-						if ( $coupon.length ) {
-							$coupon.show();
-						}
-						$customer_details.hide();
-						$after_customer_details.show();
-						$place_order_button.removeAttr( 'disabled' );
-						// Re-add event handlers.
-						$form.off( 'submit', submit );
-						originalHandlers.forEach( handler => {
-							$form.on( 'submit', handler.handler );
-						} );
+						$( 'html, body' ).animate(
+							{
+								scrollTop: 0,
+							},
+							1000
+						);
+						setEditing( false );
 						return;
 					}
 
@@ -148,12 +197,6 @@ import './checkout.scss';
 					$(
 						'.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message'
 					).remove();
-					$( 'html, body' ).animate(
-						{
-							scrollTop: 0,
-						},
-						1000
-					);
 					handleError(
 						'<div class="woocommerce-error">' +
 							( errorThrown || wc_checkout_params.i18n_checkout_error ) +
@@ -161,25 +204,6 @@ import './checkout.scss';
 					);
 				},
 			} );
-		};
-
-		let editing = false;
-
-		if ( $checkout_continue.length ) {
-			editing = true;
-			$customer_details.show();
-			$after_customer_details.hide();
-			$place_order_button.attr( 'disabled', 'disabled' );
-		}
-
-		let originalHandlers;
-		// Replace form submit handler.
-		if ( editing ) {
-			originalHandlers = getEventHandlers( $form[ 0 ], 'submit' ).slice( 0 );
-			originalHandlers.forEach( handler => {
-				$form.off( 'submit', handler.handler );
-			} );
-			$form.on( 'submit', submit );
 		}
 	} );
 } )( jQuery );
