@@ -52,7 +52,9 @@ const resetOtherValue = ( container: HTMLElement ) => {
 
 const addAccessibleTabs = ( container: HTMLElement ) => {
 	// Get the block's tabs, panels, and radio buttons associated with donation frequency.
-	const tabList = container.querySelectorAll( 'div[role="tablist"] [role="tab"]' ) as NodeListOf< HTMLElement >;
+	const tabList = container.querySelectorAll(
+		'div[role="tablist"] [role="tab"]'
+	) as NodeListOf< HTMLElement >;
 	const panels = container.querySelectorAll( 'div[role="tabpanel"]' ) as NodeListOf< HTMLElement >;
 	const radioButtons = container.querySelectorAll(
 		'input[type="radio"][name="donation_frequency"]'
@@ -76,9 +78,7 @@ const addAccessibleTabs = ( container: HTMLElement ) => {
 };
 
 const selectTab = ( tab: HTMLElement, tabList: NodeListOf< HTMLElement >, radioButtons: NodeListOf< HTMLInputElement >, panels: NodeListOf< HTMLElement > ) => {
-	// Deselect all tabs & panels.
-	console.log( tab );
-
+	// Loop through tabs and set them as selected or not selected:
 	tabList.forEach( ( thisTab: HTMLElement ) => {
 		if ( tab === thisTab ) {
 			thisTab.setAttribute( 'aria-selected', 'true' );
@@ -88,9 +88,6 @@ const selectTab = ( tab: HTMLElement, tabList: NodeListOf< HTMLElement >, radioB
 			thisTab.classList.remove( 'wpbnbd__button--active' );
 		}
 	} );
-
-	// Select the clicked tab.
-	//tab.setAttribute( 'aria-selected', 'true' );
 
 	// Update the underlying radio button.
 	const tabId = tab.id || '';
