@@ -68,6 +68,7 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 	const isRenderingStripePaymentForm =
 		window.newspack_blocks_data?.is_rendering_stripe_payment_form;
 
+	// Need to do something better with this!
 	const [ selectedFrequency, setSelectedFrequency ] = useState( attributes.defaultFrequency );
 
 	const renderFrequencySelect = ( frequencySlug: DonationFrequencySlug ) => (
@@ -77,8 +78,10 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 				value={ frequencySlug }
 				id={ `newspack-donate-${ frequencySlug }-${ uid }` }
 				name="donation_frequency"
-				checked={ frequencySlug === selectedFrequency } // needs to update with default
-				onChange={ e => setSelectedFrequency( e.target.value ) }
+				checked={ frequencySlug === selectedFrequency }
+				onChange={ evt =>
+					setSelectedFrequency( evt.target.value as "once" | "month" | "year" )
+				}
 			/>
 			<label htmlFor={ 'newspack-donate-' + frequencySlug + '-' + uid }>
 				{ FREQUENCIES[ frequencySlug ] }
@@ -90,12 +93,12 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 		<>
 			<button
 				role="tab"
-				className={ `wpbnbd__button freq-label${
-					frequencySlug === selectedFrequency ? ' selected' : ''
-				} ` }
+				className={ classNames( 'wpbnbd__button freq-label', {
+					'wpbnbd__button--active': frequencySlug === selectedFrequency,
+				} ) }
 				id={ `tab-newspack-donate-${ frequencySlug }-${ uid }` }
-				onClick={ e => {
-					e.preventDefault();
+				onClick={ evt => {
+					evt.preventDefault();
 					setSelectedFrequency( frequencySlug );
 				} }
 			>

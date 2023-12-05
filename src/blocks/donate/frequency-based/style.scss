@@ -214,8 +214,8 @@
 		.freq-label {
 			border-radius: 0;
 			margin: 0;
-			&[aria-selected='true'],
-			&.selected {
+
+			&.wpbnbd__button--active {
 				color: colors.$color__text-main;
 			}
 

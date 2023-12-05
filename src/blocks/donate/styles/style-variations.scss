@@ -9,14 +9,12 @@
 		&__button {
 			padding: 0.38rem 0.76rem;
 
-			&[aria-selected='true'],
-			&.selected {
+			&.wpbnbd__button--active {
 				background: #fff;
 				border-bottom-color: transparent;
 			}
 
-			&[aria-selected='false'],
-			&:not(.selected) {
+			&:not(.wpbnbd__button--active) {
 				background: colors.$color__background-screen;
 				border-width: 0 0 1px;
 				&:focus,
@@ -108,8 +106,7 @@
 	// Tiers-based version.
 	.wpbnbd__button--active,
 	// Frequency-based version.
-	.tab-container .freq-label[aria-selected='true']::after,
-	.tab-container .freq-label.selected::after  {
+	.tab-container .freq-label.wpbnbd__button--active::after  {
 		background: white;
 		border-radius: 5px;
 		border: 0.19rem solid white;
@@ -125,8 +122,7 @@
 				padding: calc( 0.57rem + 1px ) 0.76rem;
 			}
 
-			&[aria-selected='true'],
-			&.selected {
+			&.wpbnbd__button--active {
 				color: colors.$color__text-main;
 				&::after {
 					box-sizing: content-box;
@@ -304,8 +300,7 @@
 				border-color: variables.$color__border;
 			}
 
-			&[aria-selected='true'],
-			&.selected {
+			&.wpbnbd__button--active {
 				box-shadow: 0 4px 0 currentcolor;
 			}
 

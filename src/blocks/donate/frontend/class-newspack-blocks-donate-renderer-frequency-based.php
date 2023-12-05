@@ -65,7 +65,7 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 			role='tab'
 			type='button'
 			aria-controls='tab-panel-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>'
-			class='wpbnbd__button freq-label'
+			class="wpbnbd__button freq-label<?php echo esc_attr( $frequency_slug === $configuration['defaultFrequency'] ? ' wpbnbd__button--active' : '' ); ?>"
 			data-tab-id="<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>"
 			id="tab-newspack-donate-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>"
 			<?php echo "aria-selected='" . ( $frequency_slug === $configuration['defaultFrequency'] ? 'true' : 'false' ) . "'"; ?>
@@ -137,7 +137,7 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 				<div class='wp-block-newspack-blocks-donate__options'>
 					<div class='wp-block-newspack-blocks-donate__frequencies frequencies'>
 
-						<div role='tabset' class='tab-container'>
+						<div role='tablist' class='tab-container'>
 							<?php foreach ( $configuration['frequencies'] as $frequency_slug => $frequency_name ) : ?>
 								<?php echo self::render_frequency_tab( $frequency_slug, $frequency_name, $uid, $configuration ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 							<?php endforeach; ?>
@@ -198,7 +198,7 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 				<?php echo self::render_hidden_form_inputs( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				<div class='wp-block-newspack-blocks-donate__options'>
 					<div class='wp-block-newspack-blocks-donate__frequencies frequencies'>
-						<div role='tabset' class='tab-container'>
+						<div role='tablist' class='tab-container'>
 							<?php foreach ( $configuration['frequencies'] as $frequency_slug => $frequency_name ) : ?>
 								<?php echo self::render_frequency_tab( $frequency_slug, $frequency_name, $uid, $configuration ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 							<?php endforeach; ?>

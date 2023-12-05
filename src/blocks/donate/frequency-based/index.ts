@@ -52,11 +52,11 @@ const resetOtherValue = ( container: HTMLElement ) => {
 
 const addAccessibleTabs = ( container: HTMLElement ) => {
 	// Get the block's tabs, panels, and radio buttons associated with donation frequency.
-	const tabs = container.querySelectorAll( 'div[role="tabset"] [role="tab"]' );
-	const panels = container.querySelectorAll( 'div[role="tabpanel"]' );
+	const tabList = container.querySelectorAll( 'div[role="tablist"] [role="tab"]' ) as NodeListOf< HTMLElement >;
+	const panels = container.querySelectorAll( 'div[role="tabpanel"]' ) as NodeListOf< HTMLElement >;
 	const radioButtons = container.querySelectorAll(
 		'input[type="radio"][name="donation_frequency"]'
-	);
+	) as NodeListOf< HTMLInputElement >;
 	// Figure out which radio button is currently selected.
 	const checkedRadioId =
 		Array.from( radioButtons ).find( ( radio: HTMLInputElement ) => radio.checked )?.id || null;
@@ -68,31 +68,41 @@ const addAccessibleTabs = ( container: HTMLElement ) => {
 	}
 
 	// Add a click event listener to each tab.
-	tabs.forEach( tab => {
+	tabList.forEach( ( tab: HTMLElement ) => {
 		tab.addEventListener( 'click', function () {
-			selectTab( tab, tabs, radioButtons, panels );
+			selectTab( tab, tabList, radioButtons, panels );
 		} );
 	} );
 };
 
-const selectTab = ( tab, tabs, radioButtons, panels ) => {
+const selectTab = ( tab: HTMLElement, tabList: NodeListOf< HTMLElement >, radioButtons: NodeListOf< HTMLInputElement >, panels: NodeListOf< HTMLElement > ) => {
 	// Deselect all tabs & panels.
-	tabs.forEach( t => t.setAttribute( 'aria-selected', 'false' ) );
+	console.log( tab );
+
+	tabList.forEach( ( thisTab: HTMLElement ) => {
+		if ( tab === thisTab ) {
+			thisTab.setAttribute( 'aria-selected', 'true' );
+			thisTab.classList.add( 'wpbnbd__button--active' );
+		} else {
+			thisTab.setAttribute( 'aria-selected', 'false' );
+			thisTab.classList.remove( 'wpbnbd__button--active' );
+		}
+	} );
 
 	// Select the clicked tab.
-	tab.setAttribute( 'aria-selected', 'true' );
+	//tab.setAttribute( 'aria-selected', 'true' );
 
 	// Update the underlying radio button.
 	const tabId = tab.id || '';
 	const frequencyId = tabId.replace( 'tab-', '' );
-	radioButtons.forEach( radio => {
+	radioButtons.forEach( ( radio: HTMLInputElement ) => {
 		radio.checked = frequencyId === radio.id;
 	} );
 
 	// Loop through the panels and set tabindex 0 on the selected panel; remove it from others.
-	panels.forEach( panel => {
+	panels.forEach( ( panel: HTMLElement ) => {
 		if ( tab.getAttribute( 'aria-controls' ) === panel.id ) {
-			panel.setAttribute( 'tabindex', 0 );
+			panel.setAttribute( 'tabindex', '0' );
 		} else {
 			panel.removeAttribute( 'tabindex' );
 		}
