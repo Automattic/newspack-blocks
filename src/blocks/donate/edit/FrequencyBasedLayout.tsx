@@ -79,9 +79,7 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 				id={ `newspack-donate-${ frequencySlug }-${ uid }` }
 				name="donation_frequency"
 				checked={ frequencySlug === selectedFrequency }
-				onChange={ evt =>
-					setSelectedFrequency( evt.target.value as "once" | "month" | "year" )
-				}
+				onChange={ evt => setSelectedFrequency( evt.target.value as 'once' | 'month' | 'year' ) }
 			/>
 			<label htmlFor={ 'newspack-donate-' + frequencySlug + '-' + uid }>
 				{ FREQUENCIES[ frequencySlug ] }

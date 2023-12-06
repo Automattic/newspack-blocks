@@ -77,7 +77,12 @@ const addAccessibleTabs = ( container: HTMLElement ) => {
 	} );
 };
 
-const selectTab = ( tab: HTMLElement, tabList: NodeListOf< HTMLElement >, radioButtons: NodeListOf< HTMLInputElement >, panels: NodeListOf< HTMLElement > ) => {
+const selectTab = (
+	tab: HTMLElement,
+	tabList: NodeListOf< HTMLElement >,
+	radioButtons: NodeListOf< HTMLInputElement >,
+	panels: NodeListOf< HTMLElement >
+) => {
 	// Loop through tabs and set them as selected or not selected:
 	tabList.forEach( ( thisTab: HTMLElement ) => {
 		if ( tab === thisTab ) {
