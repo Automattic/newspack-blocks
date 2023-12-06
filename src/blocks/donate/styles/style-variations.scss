@@ -8,19 +8,9 @@
 	.wpbnbd {
 		&__button {
 			padding: 0.38rem 0.76rem;
-
-			&.wpbnbd__button--active {
-				background: #fff;
-				border-bottom-color: transparent;
-			}
-
-			&:not(.wpbnbd__button--active) {
+			&:focus,
+			&:hover {
 				background: colors.$color__background-screen;
-				border-width: 0 0 1px;
-				&:focus,
-				&:hover {
-					background: colors.$color__background-screen;
-				}
 			}
 		}
 		&__tiers {
@@ -28,6 +18,16 @@
 				> button {
 					flex: 1;
 				}
+			}
+		}
+	}
+
+	&.wpbnbd--frequency-based {
+		.wpbnbd__button {
+			border-width: 0 0 1px;
+			&--active {
+				background: #fff;
+				border-bottom: 0;
 			}
 		}
 	}
