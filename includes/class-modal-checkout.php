@@ -631,64 +631,6 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Get the prefilled values for billing fields.
-	 *
-	 * @return array
-	 */
-	public static function get_prefilled_fields() {
-		$checkout        = \WC()->checkout();
-		$fields          = $checkout->get_checkout_fields( 'billing' );
-		$customer        = new \WC_Customer( get_current_user_id() );
-		$customer_fields = $customer->get_billing();
-		// If the user is logged in and there's no billing email, use the user's email.
-		if ( is_user_logged_in() && empty( $customer_fields['email'] ) ) {
-			$customer_fields['email'] = $customer->get_email();
-		}
-		$valid_request    = self::validate_edit_billing_request();
-		$prefilled_fields = [];
-		foreach ( $fields as $key => $field ) {
-			$key = str_replace( 'billing_', '', $key );
-			if ( $valid_request && isset( $_REQUEST[ 'billing_' . $key ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$value = sanitize_text_field( wp_unslash( $_REQUEST[ 'billing_' . $key ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			} elseif ( isset( $customer_fields[ $key ] ) ) {
-				$value = $customer_fields[ $key ];
-			}
-			$prefilled_fields[ $key ] = $value;
-		}
-		return $prefilled_fields;
-	}
-
-	/**
-	 * Whether the current checkout session has all required billing fields filled.
-	 *
-	 * @return bool
-	 */
-	public static function has_filled_required_fields() {
-		$checkout        = \WC()->checkout();
-		$fields          = $checkout->get_checkout_fields( 'billing' );
-		$required        = array_filter(
-			$fields,
-			function( $field ) {
-				return isset( $field['required'] ) && $field['required'];
-			}
-		);
-		$required_keys   = array_keys( $required );
-		$customer_fields = self::get_prefilled_fields();
-		$is_request      = self::validate_edit_billing_request();
-		foreach ( $required_keys as $key ) {
-			$key = str_replace( 'billing_', '', $key );
-			if ( empty( $customer_fields[ $key ] ) ) {
-				if ( $is_request ) {
-					/* translators: %s: field name */
-					wc_add_notice( sprintf( __( '%s is a required field.', 'newspack-blocks' ), $fields[ 'billing_' . $key ]['label'] ), 'error' );
-				}
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
 	 * Whether to show order details table.
 	 *
 	 * @return bool
@@ -1016,14 +958,9 @@ final class Modal_Checkout {
 		if ( ! self::is_modal_checkout() ) {
 			return;
 		}
-		$after_success_behavior     = filter_input( INPUT_GET, 'after_success_behavior', FILTER_SANITIZE_STRING );
-		$after_success_url          = filter_input( INPUT_GET, 'after_success_url', FILTER_SANITIZE_STRING );
-		$after_success_button_label = filter_input( INPUT_GET, 'after_success_button_label', FILTER_SANITIZE_STRING );
 		?>
 		<input type="hidden" name="modal_checkout" value="1" />
-		<input type="hidden" name="after_success_behavior" value="<?php echo esc_attr( $after_success_behavior ); ?>" />
-		<input type="hidden" name="after_success_url" value="<?php echo esc_attr( $after_success_url ); ?>" />
-		<input type="hidden" name="after_success_button_label" value="<?php echo esc_attr( $after_success_button_label ); ?>" />
+		<?php self::render_hidden_inputs(); ?>
 		<?php
 	}
 
