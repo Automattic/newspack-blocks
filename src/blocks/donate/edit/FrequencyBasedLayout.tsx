@@ -68,7 +68,6 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 	const isRenderingStripePaymentForm =
 		window.newspack_blocks_data?.is_rendering_stripe_payment_form;
 
-	// Need to do something better with this!
 	const [ selectedFrequency, setSelectedFrequency ] = useState( attributes.defaultFrequency );
 
 	const renderFrequencySelect = ( frequencySlug: DonationFrequencySlug ) => (
@@ -87,22 +86,21 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 		</>
 	);
 
-	const renderTabs = ( frequencySlug: DonationFrequencySlug ) => (
-		<>
-			<button
-				role="tab"
-				className={ classNames( 'wpbnbd__button freq-label', {
-					'wpbnbd__button--active': frequencySlug === selectedFrequency,
-				} ) }
-				id={ `tab-newspack-donate-${ frequencySlug }-${ uid }` }
-				onClick={ evt => {
-					evt.preventDefault();
-					setSelectedFrequency( frequencySlug );
-				} }
-			>
-				{ FREQUENCIES[ frequencySlug ] }
-			</button>
-		</>
+	const renderTab = ( frequencySlug: DonationFrequencySlug ) => (
+		<button
+			key={ frequencySlug }
+			role="tab"
+			className={ classNames( 'wpbnbd__button freq-label', {
+				'wpbnbd__button--active': frequencySlug === selectedFrequency,
+			} ) }
+			id={ `tab-newspack-donate-${ frequencySlug }-${ uid }` }
+			onClick={ evt => {
+				evt.preventDefault();
+				setSelectedFrequency( frequencySlug );
+			} }
+		>
+			{ FREQUENCIES[ frequencySlug ] }
+		</button>
 	);
 
 	// This code is fired on tab select and updates aria elements, tabindex states, and radio buttons
@@ -112,7 +110,7 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 		<div className="wp-block-newspack-blocks-donate__options">
 			<div className="wp-block-newspack-blocks-donate__frequencies frequencies">
 				<div className="tab-container">
-					{ availableFrequencies.map( frequencySlug => renderTabs( frequencySlug ) ) }
+					{ availableFrequencies.map( renderTab ) }
 				</div>
 				{ availableFrequencies.map( frequencySlug => (
 					<div
@@ -147,7 +145,7 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 		<div className="wp-block-newspack-blocks-donate__options">
 			<div className="wp-block-newspack-blocks-donate__frequencies frequencies">
 				<div className="tab-container">
-					{ availableFrequencies.map( frequencySlug => renderTabs( frequencySlug ) ) }
+					{ availableFrequencies.map( frequencySlug => renderTab( frequencySlug ) ) }
 				</div>
 				{ availableFrequencies.map( frequencySlug => (
 					<div
