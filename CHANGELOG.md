@@ -1,3 +1,10 @@
+## [2.2.4](https://github.com/Automattic/newspack-blocks/compare/v2.2.3...v2.2.4) (2023-12-06)
+
+
+### Bug Fixes
+
+* **homepage-posts:** handle empty block when printing inline styles ([#1621](https://github.com/Automattic/newspack-blocks/issues/1621)) ([c3aa957](https://github.com/Automattic/newspack-blocks/commit/c3aa9577c2284f2139c8fa1170785db9fe4edfe9))
+
 ## [2.2.3](https://github.com/Automattic/newspack-blocks/compare/v2.2.2...v2.2.3) (2023-12-04)
 
 
