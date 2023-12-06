@@ -123,7 +123,7 @@ final class Modal_Checkout {
 	 * @param array $enqueue_styles Array of styles to enqueue.
 	 */
 	public static function dequeue_woocommerce_styles( $enqueue_styles ) {
-		if ( ! isset( $_REQUEST['modal_checkout'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! self::is_modal_checkout() ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return $enqueue_styles;
 		}
 		unset( $enqueue_styles['woocommerce-general'] );
