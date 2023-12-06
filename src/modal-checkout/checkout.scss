@@ -11,6 +11,9 @@
 	.woocommerce-error,
 	.woocommerce-info {
 		border-radius: 6px;
+		svg {
+			display: none;
+		}
 	}
 	.woocommerce-info,
 	.woocommerce-message {

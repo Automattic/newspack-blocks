@@ -75,11 +75,6 @@ import './checkout.scss';
 		}
 
 		function handleFormError( error_message ) {
-			/**
-			 * TODO: Handle "wc-block-components-notice-banner" errors.
-			 * Example markup:
-			 * <div class=\"wc-block-components-notice-banner is-error\" role=\"alert\" data-id=\"billing_postcode\">\n\t<svg xmlns=\"http:\/\/www.w3.org\/2000\/svg\" viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\">\n\t\t<path d=\"M12 3.2c-4.8 0-8.8 3.9-8.8 8.8 0 4.8 3.9 8.8 8.8 8.8 4.8 0 8.8-3.9 8.8-8.8 0-4.8-4-8.8-8.8-8.8zm0 16c-4 0-7.2-3.3-7.2-7.2C4.8 8 8 4.8 12 4.8s7.2 3.3 7.2 7.2c0 4-3.2 7.2-7.2 7.2zM11 17h2v-6h-2v6zm0-8h2V7h-2v2z\"><\/path>\n\t<\/svg>\n\t<div class=\"wc-block-components-notice-banner__content\">\n\t\t<strong>Billing ZIP Code<\/strong> is a required field.\t<\/div>\n<\/div>\n
-			 */
 			// Clear previous errors.
 			$(
 				'.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message, .wc-block-components-notice-banner'
@@ -88,31 +83,48 @@ import './checkout.scss';
 			$form.removeClass( 'processing' ).unblock();
 			$form.find( '.input-text, select, input:checkbox' ).trigger( 'validate' ).trigger( 'blur' );
 
-			const $errors = $( error_message );
-			let $erroredField = false;
-			$errors.find( 'li' ).each( function () {
-				const $error = $( this );
+			let $fieldToFocus = false;
+
+			const handleErrorItem = $error => {
 				const $field = $( '#' + $error.data( 'id' ) + '_field' );
 				if ( $field?.length ) {
-					if ( ! $erroredField ) {
-						$erroredField = $field;
+					if ( ! $fieldToFocus ) {
+						$fieldToFocus = $field;
 					}
 					$field.addClass( 'woocommerce-invalid' ).removeClass( 'woocommerce-valid' );
 					$field.append( '<span class="woocommerce-error">' + $error.html() + '</span>' );
 					$error.remove();
 				}
-			} );
-			if ( $errors.find( 'li' ).length ) {
-				$form.prepend(
-					$( '<div class="woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout"/>' ).append(
-						$errors
-					)
-				);
-				window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
-			} else if ( $erroredField?.length ) {
-				window.scroll( { top: $erroredField.offset().top - 100, left: 0, behavior: 'smooth' } );
-				$erroredField.find( 'input.input-text, select, input:checkbox' ).trigger( 'focus' );
+			};
+
+			/**
+			 * The new "wc-block-components-notice-banner" does not provide a <li />
+			 * of errors when only one field failed validation.
+			 */
+			if ( ! error_message.includes( '<li' ) ) {
+				handleErrorItem( $( error_message ) );
+			} else {
+				const $errors = $( error_message );
+				$errors.find( 'li' ).each( function () {
+					handleErrorItem( $( this ) );
+				} );
+				// Handle generic errors that remained in the <ul />.
+				if ( $errors.find( 'li' ).length ) {
+					$fieldToFocus = false; // Don't focus a field if validation returned generic errors.
+					$form.prepend(
+						$( '<div class="woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout"/>' ).append(
+							$errors
+						)
+					);
+					window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
+				}
 			}
+
+			if ( $fieldToFocus?.length ) {
+				window.scroll( { top: $fieldToFocus.offset().top - 100, left: 0, behavior: 'smooth' } );
+				$fieldToFocus.find( 'input.input-text, select, input:checkbox' ).trigger( 'focus' );
+			}
+
 			$( document.body ).trigger( 'update_checkout' );
 			$( document.body ).trigger( 'checkout_error', [ error_message ] );
 		}
