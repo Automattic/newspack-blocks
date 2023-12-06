@@ -40,7 +40,6 @@ final class Modal_Checkout {
 		add_filter( 'woocommerce_get_return_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
 		add_filter( 'woocommerce_get_checkout_order_received_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
 		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 2 );
-		add_filter( 'woocommerce_checkout_get_value', [ __CLASS__, 'woocommerce_checkout_get_value' ], 10, 2 );
 		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'woocommerce_checkout_fields' ] );
 		add_filter( 'woocommerce_payment_successful_result', [ __CLASS__, 'woocommerce_payment_successful_result' ] );
 		add_action( 'woocommerce_checkout_create_order_line_item', [ __CLASS__, 'woocommerce_checkout_create_order_line_item' ], 10, 4 );
@@ -556,43 +555,6 @@ final class Modal_Checkout {
 			return $show;
 		}
 		return false;
-	}
-
-	/**
-	 * Check the nonce for the edit billing request.
-	 *
-	 * @return bool
-	 */
-	private static function validate_edit_billing_request() {
-		if ( ! isset( $_REQUEST['newspack_blocks_edit_billing_nonce'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			return false;
-		}
-		if ( ! wp_verify_nonce( sanitize_key( $_REQUEST['newspack_blocks_edit_billing_nonce'] ), 'newspack_blocks_edit_billing' ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * Modify WC checkout field value.
-	 *
-	 * @param null   $value Value.
-	 * @param string $input Input name.
-	 *
-	 * @return string|null Value or null if unaltered.
-	 */
-	public static function woocommerce_checkout_get_value( $value, $input ) {
-		if ( ! self::is_modal_checkout() ) {
-			return null;
-		}
-		$valid_request = self::validate_edit_billing_request(); // This performs nonce verification.
-		if ( ! $valid_request ) {
-			return null;
-		}
-		if ( isset( $_REQUEST[ $input ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$value = sanitize_text_field( wp_unslash( $_REQUEST[ $input ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		}
-		return $value;
 	}
 
 	/**
