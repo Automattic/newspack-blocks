@@ -134,7 +134,7 @@ function newspack_blocks_get_homepage_articles_css_string( $attrs ) {
 
 	ob_start();
 	?>
-		.wpnbha .entry-title {
+		.wpnbha article .entry-title {
 			font-size: 1.2em;
 		}
 		.wpnbha .entry-meta {
@@ -193,14 +193,14 @@ function newspack_blocks_get_homepage_articles_css_string( $attrs ) {
 				}
 				if ( in_array( $scale, [ 1, 2, 3 ], true ) ) {
 					echo esc_html(
-						".wpnbha.ts-$scale article .newspack-post-subtitle,.entry-wrapper p,.entry-wrapper .more-link,.entry-meta {font-size: 0.8em;}"
+						".wpnbha.ts-$scale article .newspack-post-subtitle, .wpnbha.ts-$scale article .entry-wrapper p, .wpnbha.ts-$scale article .entry-wrapper .more-link, .wpnbha.ts-$scale article .entry-meta {font-size: 0.8em;}"
 					);
 				}
 			}
 		}
 		if ( isset( $attrs['showSubtitle'] ) && in_array( 1, $attrs['showSubtitle'], false ) ) { // phpcs:ignore WordPress.PHP.StrictInArray.FoundNonStrictFalse
 			echo esc_html(
-				'.newspack-post-subtitle {
+				'.newspack-post-subtitle--in-homepage-block {
 					margin-top: 0.3em;
 					margin-bottom: 0;
 					line-height: 1.4;
