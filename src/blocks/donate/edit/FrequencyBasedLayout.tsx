@@ -109,9 +109,7 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 	const renderUntieredForm = () => (
 		<div className="wp-block-newspack-blocks-donate__options">
 			<div className="wp-block-newspack-blocks-donate__frequencies frequencies">
-				<div className="tab-container">
-					{ availableFrequencies.map( renderTab ) }
-				</div>
+				<div className="tab-container">{ availableFrequencies.map( renderTab ) }</div>
 				{ availableFrequencies.map( frequencySlug => (
 					<div
 						className="wp-block-newspack-blocks-donate__frequency frequency"
@@ -144,9 +142,7 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 	const renderTieredForm = () => (
 		<div className="wp-block-newspack-blocks-donate__options">
 			<div className="wp-block-newspack-blocks-donate__frequencies frequencies">
-				<div className="tab-container">
-					{ availableFrequencies.map( frequencySlug => renderTab( frequencySlug ) ) }
-				</div>
+				<div className="tab-container">{ availableFrequencies.map( renderTab ) }</div>
 				{ availableFrequencies.map( frequencySlug => (
 					<div
 						className="wp-block-newspack-blocks-donate__frequency frequency"
