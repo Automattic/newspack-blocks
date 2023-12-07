@@ -601,12 +601,17 @@ final class Modal_Checkout {
 		if ( ! self::is_modal_checkout() ) {
 			return $fields;
 		}
+
 		/**
 		 * Temporarily use the same fields as the donation checkout.
 		 *
 		 * This should soon be replaced with a logic that allows the customization
 		 * at the Checkout Button Block level.
 		 */
+		$cart = \WC()->cart;
+		if ( $cart->needs_shipping_address() ) { // Don't modify fields if shipping is required.
+			return $fields;
+		}
 		$billing_fields = apply_filters( 'newspack_blocks_donate_billing_fields_keys', [] );
 		if ( empty( $billing_fields ) ) {
 			return $fields;
@@ -642,19 +647,15 @@ final class Modal_Checkout {
 	 */
 	public static function get_prefilled_fields() {
 		$checkout        = \WC()->checkout();
-		$cart            = \WC()->cart;
-		$checkout_fields = [ 'billing' => $checkout->get_checkout_fields( 'billing' ) ];
+		$checkout_fields = $checkout->get_checkout_fields();
 		$customer        = new \WC_Customer( get_current_user_id() );
 		$customer_fields = $customer->get_data();
-
-		if ( $cart->needs_shipping_address() ) {
-			$checkout_fields['shipping'] = $checkout->get_checkout_fields( 'shipping' );
-		}
 
 		// If the user is logged in and there's no billing email, use the user's email.
 		if ( is_user_logged_in() && empty( $customer_fields['email'] ) ) {
 			$customer_fields['email'] = $customer->get_email();
 		}
+
 		$valid_request    = self::validate_edit_billing_request();
 		$prefilled_fields = [];
 		foreach ( $checkout_fields as $type => $fields ) {
@@ -750,7 +751,10 @@ final class Modal_Checkout {
 			return true;
 		}
 		if ( $cart->needs_shipping_address() ) {
-			return true;
+			$totals = $cart->get_totals();
+			if ( (float) $totals['total'] !== (float) $totals['subtotal'] ) {
+				return true;
+			}
 		}
 		return false;
 	}
