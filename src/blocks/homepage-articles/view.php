@@ -134,7 +134,7 @@ function newspack_blocks_get_homepage_articles_css_string( $attrs ) {
 
 	ob_start();
 	?>
-		.wpnbha .entry-title {
+		.wpnbha article .entry-title {
 			font-size: 1.2em;
 		}
 		.wpnbha .entry-meta {
@@ -193,14 +193,14 @@ function newspack_blocks_get_homepage_articles_css_string( $attrs ) {
 				}
 				if ( in_array( $scale, [ 1, 2, 3 ], true ) ) {
 					echo esc_html(
-						".wpnbha.ts-$scale article .newspack-post-subtitle,.entry-wrapper p,.entry-wrapper .more-link,.entry-meta {font-size: 0.8em;}"
+						".wpnbha.ts-$scale article .newspack-post-subtitle, .wpnbha.ts-$scale article .entry-wrapper p, .wpnbha.ts-$scale article .entry-wrapper .more-link, .wpnbha.ts-$scale article .entry-meta {font-size: 0.8em;}"
 					);
 				}
 			}
 		}
 		if ( isset( $attrs['showSubtitle'] ) && in_array( 1, $attrs['showSubtitle'], false ) ) { // phpcs:ignore WordPress.PHP.StrictInArray.FoundNonStrictFalse
 			echo esc_html(
-				'.newspack-post-subtitle {
+				'.newspack-post-subtitle--in-homepage-block {
 					margin-top: 0.3em;
 					margin-bottom: 0;
 					line-height: 1.4;
@@ -227,9 +227,13 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 	}
 
 	$block_name = apply_filters( 'newspack_blocks_block_name', 'newspack-blocks/homepage-articles' );
+	$article_query = new WP_Query( Newspack_Blocks::build_articles_query( $attributes, $block_name ) );
+	if ( ! $article_query->have_posts() ) {
+		return;
+	}
 
 	// Gather all Homepage Articles blocks on the page and output only the needed CSS.
-	// This CSS will be printed right after .entry-content.
+	// This CSS will be printed along with the first found block markup.
 	global $newspack_blocks_hpb_all_blocks;
 	$inline_style_html = '';
 	if ( ! is_array( $newspack_blocks_hpb_all_blocks ) ) {
@@ -248,8 +252,6 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 	// This will let the FSE plugin know we need CSS/JS now.
 	do_action( 'newspack_blocks_render_homepage_articles' );
-
-	$article_query = new WP_Query( Newspack_Blocks::build_articles_query( $attributes, $block_name ) );
 
 	$classes = Newspack_Blocks::block_classes( 'homepage-articles', $attributes, [ 'wpnbha' ] );
 
@@ -352,59 +354,58 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 
 	ob_start();
 
-	if ( $article_query->have_posts() ) :
-		?>
-		<div
-			class="<?php echo esc_attr( $classes ); ?>"
-			style="<?php echo esc_attr( $styles ); ?>"
-			>
-			<div data-posts data-current-post-id="<?php the_ID(); ?>">
-				<?php if ( '' !== $attributes['sectionHeader'] ) : ?>
-					<h2 class="article-section-title">
-						<span><?php echo wp_kses_post( $attributes['sectionHeader'] ); ?></span>
-					</h2>
-				<?php endif; ?>
-				<?php
-				echo Newspack_Blocks::template_inc( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					__DIR__ . '/templates/articles-list.php',
-					[
-						'articles_rest_url' => $articles_rest_url, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-						'article_query'     => $article_query, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-						'attributes'        => $attributes, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					]
-				);
-				?>
-			</div>
-			<?php
-
-			if ( $has_more_button ) :
-				?>
-				<button type="button" class="wp-block-button__link" data-next="<?php echo esc_url( $articles_rest_url ); ?>">
-				<?php
-				if ( ! empty( $attributes['moreButtonText'] ) ) {
-					echo esc_html( $attributes['moreButtonText'] );
-				} else {
-					esc_html_e( 'Load more posts', 'newspack-blocks' );
-				}
-				?>
-				</button>
-				<p class="loading">
-					<?php esc_html_e( 'Loading...', 'newspack-blocks' ); ?>
-				</p>
-				<p class="error">
-					<?php esc_html_e( 'Something went wrong. Please refresh the page and/or try again.', 'newspack-blocks' ); ?>
-				</p>
-
+	?>
+	<div
+		class="<?php echo esc_attr( $classes ); ?>"
+		style="<?php echo esc_attr( $styles ); ?>"
+		>
+		<?php echo $inline_style_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		<div data-posts data-current-post-id="<?php the_ID(); ?>">
+			<?php if ( '' !== $attributes['sectionHeader'] ) : ?>
+				<h2 class="article-section-title">
+					<span><?php echo wp_kses_post( $attributes['sectionHeader'] ); ?></span>
+				</h2>
 			<?php endif; ?>
-
+			<?php
+			echo Newspack_Blocks::template_inc( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				__DIR__ . '/templates/articles-list.php',
+				[
+					'articles_rest_url' => $articles_rest_url, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					'article_query'     => $article_query, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					'attributes'        => $attributes, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				]
+			);
+			?>
 		</div>
 		<?php
-	endif;
+
+		if ( $has_more_button ) :
+			?>
+			<button type="button" class="wp-block-button__link" data-next="<?php echo esc_url( $articles_rest_url ); ?>">
+			<?php
+			if ( ! empty( $attributes['moreButtonText'] ) ) {
+				echo esc_html( $attributes['moreButtonText'] );
+			} else {
+				esc_html_e( 'Load more posts', 'newspack-blocks' );
+			}
+			?>
+			</button>
+			<p class="loading">
+				<?php esc_html_e( 'Loading...', 'newspack-blocks' ); ?>
+			</p>
+			<p class="error">
+				<?php esc_html_e( 'Something went wrong. Please refresh the page and/or try again.', 'newspack-blocks' ); ?>
+			</p>
+
+		<?php endif; ?>
+
+	</div>
+	<?php
 
 	$content = ob_get_clean();
 	Newspack_Blocks::enqueue_view_assets( 'homepage-articles' );
 
-	return $inline_style_html . $content;
+	return $content;
 }
 
 /**
