@@ -1,3 +1,10 @@
+# [2.3.0-alpha.5](https://github.com/Automattic/newspack-blocks/compare/v2.3.0-alpha.4...v2.3.0-alpha.5) (2023-12-07)
+
+
+### Bug Fixes
+
+* **modal-checkout:** align Stripe's "save payment" checkbox ([#1623](https://github.com/Automattic/newspack-blocks/issues/1623)) ([69e0e42](https://github.com/Automattic/newspack-blocks/commit/69e0e42b3d6f6ab8b1a918346e0d2f8e90eeabcb))
+
 # [2.3.0-alpha.4](https://github.com/Automattic/newspack-blocks/compare/v2.3.0-alpha.3...v2.3.0-alpha.4) (2023-12-06)
 
 
