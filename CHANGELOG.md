@@ -1,16 +1,9 @@
-# [2.3.0-alpha.5](https://github.com/Automattic/newspack-blocks/compare/v2.3.0-alpha.4...v2.3.0-alpha.5) (2023-12-07)
+# [2.3.0](https://github.com/Automattic/newspack-blocks/compare/v2.2.4...v2.3.0) (2023-12-07)
 
 
-### Bug Fixes
+### Features
 
-* **modal-checkout:** align Stripe's "save payment" checkbox ([#1623](https://github.com/Automattic/newspack-blocks/issues/1623)) ([69e0e42](https://github.com/Automattic/newspack-blocks/commit/69e0e42b3d6f6ab8b1a918346e0d2f8e90eeabcb))
-
-# [2.3.0-alpha.4](https://github.com/Automattic/newspack-blocks/compare/v2.3.0-alpha.3...v2.3.0-alpha.4) (2023-12-06)
-
-
-### Bug Fixes
-
-* **homepage-posts:** handle empty block when printing inline styles ([#1621](https://github.com/Automattic/newspack-blocks/issues/1621)) ([c3aa957](https://github.com/Automattic/newspack-blocks/commit/c3aa9577c2284f2139c8fa1170785db9fe4edfe9))
+* update thank you translation strings in modal checkout ([#1625](https://github.com/Automattic/newspack-blocks/issues/1625)) ([b571c29](https://github.com/Automattic/newspack-blocks/commit/b571c29a00f2d05f88cee75916984372f8fa9b8e))
 
 ## [2.2.4](https://github.com/Automattic/newspack-blocks/compare/v2.2.3...v2.2.4) (2023-12-06)
 
