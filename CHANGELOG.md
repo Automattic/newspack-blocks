@@ -1,3 +1,10 @@
+# [2.3.0](https://github.com/Automattic/newspack-blocks/compare/v2.2.4...v2.3.0) (2023-12-07)
+
+
+### Features
+
+* update thank you translation strings in modal checkout ([#1625](https://github.com/Automattic/newspack-blocks/issues/1625)) ([b571c29](https://github.com/Automattic/newspack-blocks/commit/b571c29a00f2d05f88cee75916984372f8fa9b8e))
+
 ## [2.2.4](https://github.com/Automattic/newspack-blocks/compare/v2.2.3...v2.2.4) (2023-12-06)
 
 
