@@ -42,6 +42,9 @@
 		@include mixins.media( tablet ) {
 			margin: 0 1.5rem 1.5rem;
 		}
+		&:disabled {
+			opacity: 0.5;
+		}
 	}
 	label.wpbnbd {
 		&__button {

@@ -53,6 +53,21 @@ final class Modal_Checkout {
 		add_action( 'woocommerce_checkout_before_customer_details', [ __CLASS__, 'render_before_customer_details' ] );
 		add_action( 'woocommerce_checkout_before_terms_and_conditions', [ __CLASS__, 'render_before_terms_and_conditions' ] );
 		add_filter( 'woocommerce_enable_order_notes_field', [ __CLASS__, 'enable_order_notes_field' ] );
+
+		// Remove some stuff from the modal checkout page. It's displayed in an iframe, so it should not be treated as a separate page.
+		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'dequeue_scripts' ], 11 );
+		add_filter( 'newspack_reader_activation_should_render_auth', [ __CLASS__, 'is_not_modal_checkout_filter' ] );
+		add_filter( 'newspack_enqueue_reader_activation_block', [ __CLASS__, 'is_not_modal_checkout_filter' ] );
+		add_filter( 'newspack_enqueue_memberships_block_patterns', [ __CLASS__, 'is_not_modal_checkout_filter' ] );
+		add_filter( 'newspack_ads_should_show_ads', [ __CLASS__, 'is_not_modal_checkout_filter' ] );
+		add_filter( 'newspack_theme_enqueue_js', [ __CLASS__, 'is_not_modal_checkout_filter' ] );
+		add_filter( 'newspack_theme_enqueue_print_styles', [ __CLASS__, 'is_not_modal_checkout_filter' ] );
+		add_filter( 'cmplz_site_needs_cookiewarning', [ __CLASS__, 'is_not_modal_checkout_filter' ] );
+		add_filter( 'googlesitekit_analytics_tag_blocked', [ __CLASS__, 'is_modal_checkout' ] );
+		add_filter( 'googlesitekit_analytics-4_tag_blocked', [ __CLASS__, 'is_modal_checkout' ] );
+		add_filter( 'googlesitekit_adsense_tag_blocked', [ __CLASS__, 'is_modal_checkout' ] );
+		add_filter( 'googlesitekit_tagmanager_tag_blocked', [ __CLASS__, 'is_modal_checkout' ] );
+		add_filter( 'jetpack_active_modules', [ __CLASS__, 'jetpack_active_modules' ] );
 	}
 
 	/**
@@ -135,12 +150,16 @@ final class Modal_Checkout {
 	 * Process checkout request for modal.
 	 */
 	public static function process_checkout_request() {
+		if ( is_admin() ) {
+			return;
+		}
+
 		$is_newspack_checkout       = filter_input( INPUT_GET, 'newspack_checkout', FILTER_SANITIZE_NUMBER_INT );
 		$product_id                 = filter_input( INPUT_GET, 'product_id', FILTER_SANITIZE_NUMBER_INT );
 		$variation_id               = filter_input( INPUT_GET, 'variation_id', FILTER_SANITIZE_NUMBER_INT );
-		$after_success_behavior     = filter_input( INPUT_GET, 'after_success_behavior', FILTER_SANITIZE_STRING );
-		$after_success_url          = filter_input( INPUT_GET, 'after_success_url', FILTER_SANITIZE_STRING );
-		$after_success_button_label = filter_input( INPUT_GET, 'after_success_button_label', FILTER_SANITIZE_STRING );
+		$after_success_behavior     = filter_input( INPUT_GET, 'after_success_behavior', FILTER_SANITIZE_SPECIAL_CHARS );
+		$after_success_url          = filter_input( INPUT_GET, 'after_success_url', FILTER_SANITIZE_SPECIAL_CHARS );
+		$after_success_button_label = filter_input( INPUT_GET, 'after_success_button_label', FILTER_SANITIZE_SPECIAL_CHARS );
 
 		if ( ! $is_newspack_checkout || ! $product_id ) {
 			return;
@@ -382,6 +401,18 @@ final class Modal_Checkout {
 			[],
 			\NEWSPACK_BLOCKS__VERSION
 		);
+	}
+
+	/**
+	 * Dequeue scripts not needed in the modal checkout.
+	 */
+	public static function dequeue_scripts() {
+		if ( ! self::is_modal_checkout() ) {
+			return;
+		}
+		wp_dequeue_style( 'cmplz-general' );
+		wp_deregister_script( 'wp-mediaelement' );
+		wp_deregister_style( 'wp-mediaelement' );
 	}
 
 	/**
@@ -958,6 +989,30 @@ final class Modal_Checkout {
 			return false;
 		}
 		return $enable;
+	}
+
+	/**
+	 * Filter the a value dependent on the page not being modal checkout.
+	 *
+	 * @param bool $value The value.
+	 */
+	public static function is_not_modal_checkout_filter( $value ) {
+		if ( self::is_modal_checkout() ) {
+			return false;
+		}
+		return $value;
+	}
+
+	/**
+	 * Deactivate all Jetpack modules on the modal checkout.
+	 *
+	 * @param bool $modules JP modules.
+	 */
+	public static function jetpack_active_modules( $modules ) {
+		if ( self::is_modal_checkout() ) {
+			return [];
+		}
+		return $modules;
 	}
 }
 Modal_Checkout::init();

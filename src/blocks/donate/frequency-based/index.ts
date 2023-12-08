@@ -25,12 +25,13 @@ function domReady( callback: () => void ): void {
 	document.addEventListener( 'DOMContentLoaded', callback );
 }
 
-const resetOtherValue = ( container: HTMLElement ) => {
+const handleOtherValue = ( container: HTMLElement ) => {
 	const frequencies = container.querySelectorAll( '.tiers' );
 	if ( ! frequencies?.length ) {
 		return;
 	}
 	const frequencyInputs = container.querySelectorAll( 'input[name="donation_frequency"]' );
+	const submitButton = container.querySelector( 'button[type="submit"]' );
 	frequencies.forEach( frequency => {
 		const tiers = frequency.querySelectorAll( 'input[type="radio"]' );
 		const input = <HTMLInputElement>frequency.querySelector( '.money-input input' );
@@ -41,11 +42,28 @@ const resetOtherValue = ( container: HTMLElement ) => {
 		const reset = () => {
 			input.value = originalValue || '';
 		};
+		const toggleSubmit = () => {
+			const checkedTier = <HTMLInputElement>(
+				frequency.querySelector( 'input[type="radio"]:checked' )
+			);
+			if ( ! checkedTier ) {
+				return;
+			}
+			if ( checkedTier.value === 'other' && ! input.value ) {
+				submitButton?.setAttribute( 'disabled', 'disabled' );
+			} else {
+				submitButton?.removeAttribute( 'disabled' );
+			}
+		};
+		input.addEventListener( 'keyup', toggleSubmit );
+		toggleSubmit();
 		tiers.forEach( tierInput => {
 			tierInput.addEventListener( 'change', reset );
+			tierInput.addEventListener( 'change', toggleSubmit );
 		} );
 		frequencyInputs.forEach( frequencyInput => {
 			frequencyInput.addEventListener( 'change', reset );
+			frequencyInput.addEventListener( 'change', toggleSubmit );
 		} );
 	} );
 };
@@ -55,7 +73,7 @@ export const processFrequencyBasedElements = ( parentEl = document ) => {
 		'.wpbnbd--frequency-based'
 	) as NodeListOf< HTMLElement >;
 	elements.forEach( container => {
-		resetOtherValue( container );
+		handleOtherValue( container );
 	} );
 };
 
