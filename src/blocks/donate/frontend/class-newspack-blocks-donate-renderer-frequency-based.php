@@ -194,7 +194,6 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 														type='number'
 														min='<?php echo esc_attr( $configuration['minimumDonation'] ); ?>'
 														name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>_other'
-														value='<?php echo esc_attr( $amount ); ?>'
 														id='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-other-input'
 													/>
 												</div>
