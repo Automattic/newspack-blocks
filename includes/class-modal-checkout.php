@@ -569,7 +569,13 @@ final class Modal_Checkout {
 		if ( $cart->needs_shipping_address() ) { // Don't modify fields if shipping is required.
 			return $fields;
 		}
-		$billing_fields = apply_filters( 'newspack_blocks_donate_billing_fields_keys', [] );
+
+		/**
+		 * Filters the billing fields to show in the modal checkout.
+		 *
+		 * @param WC_Cart $cart The current checkout cart.
+		 */
+		$billing_fields = apply_filters( 'newspack_blocks_donate_billing_fields_keys', [], $cart );
 		if ( empty( $billing_fields ) ) {
 			return $fields;
 		}
@@ -961,7 +967,8 @@ final class Modal_Checkout {
 	 */
 	public static function enable_order_notes_field( $enable ) {
 		if ( self::is_modal_checkout() ) {
-			$billing_fields = apply_filters( 'newspack_blocks_donate_billing_fields_keys', [] );
+			$cart = \WC()->cart;
+			$billing_fields = apply_filters( 'newspack_blocks_donate_billing_fields_keys', [], $cart );
 			return in_array( 'order_comments', $billing_fields, true );
 		}
 		return $enable;
