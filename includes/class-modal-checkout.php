@@ -609,8 +609,11 @@ final class Modal_Checkout {
 			return true;
 		}
 		if ( $cart->needs_shipping_address() ) {
-			$totals = $cart->get_totals();
-			if ( (float) $totals['total'] !== (float) $totals['subtotal'] ) {
+			$shipping = \WC()->shipping;
+			$totals   = $cart->get_totals();
+
+			// Show details if shipping requires a fee or if there are multiple shipping methods to choose from.
+			if ( (float) $totals['total'] !== (float) $totals['subtotal'] || 1 < count( $shipping->get_shipping_methods() ) ) {
 				return true;
 			}
 		}
