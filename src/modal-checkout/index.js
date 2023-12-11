@@ -22,13 +22,19 @@ import './checkout.scss';
 		return $._data( element, 'events' )[ event ];
 	}
 
+	function clearNotices() {
+		$(
+			'.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message, .wc-block-components-notice-banner'
+		).remove();
+	}
+
 	$( document.body ).on( 'init_checkout', function () {
 		let editing = false;
 		let originalFormHandlers = [];
 
 		const $form = $( 'form.checkout' );
 
-		const $coupon = $( '.checkout_coupon' );
+		const $coupon = $( 'form.checkout_coupon' );
 		const $checkout_continue = $( '#checkout_continue' );
 		const $customer_details = $( '#customer_details' );
 		const $after_customer_details = $( '#after_customer_details' );
@@ -47,6 +53,7 @@ import './checkout.scss';
 		 */
 		$( document.body ).on( 'removed_coupon_in_checkout', function () {
 			$coupon.show();
+			clearNotices();
 		} );
 
 		/**
@@ -75,15 +82,14 @@ import './checkout.scss';
 		}
 
 		function handleFormError( error_message ) {
-			// Clear previous errors.
-			$(
-				'.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message, .wc-block-components-notice-banner'
-			).remove();
+			clearNotices();
 
 			$form.removeClass( 'processing' ).unblock();
 			$form.find( '.input-text, select, input:checkbox' ).trigger( 'validate' ).trigger( 'blur' );
 
 			let $fieldToFocus = false;
+
+			const genericErrors = [];
 
 			const handleErrorItem = $error => {
 				const $field = $( '#' + $error.data( 'id' ) + '_field' );
@@ -92,8 +98,13 @@ import './checkout.scss';
 						$fieldToFocus = $field;
 					}
 					$field.addClass( 'woocommerce-invalid' ).removeClass( 'woocommerce-valid' );
-					$field.append( '<span class="woocommerce-error">' + $error.html() + '</span>' );
+					$field.append( '<span class="woocommerce-error">' + $error.text() + '</span>' );
 					$error.remove();
+				} else {
+					if ( ! $error.is( 'li' ) ) {
+						$error = $( '<li />' ).append( $error );
+					}
+					genericErrors.push( $error );
 				}
 			};
 
@@ -108,16 +119,17 @@ import './checkout.scss';
 				$errors.find( 'li' ).each( function () {
 					handleErrorItem( $( this ) );
 				} );
-				// Handle generic errors that remained in the <ul />.
-				if ( $errors.find( 'li' ).length ) {
-					$fieldToFocus = false; // Don't focus a field if validation returned generic errors.
-					$form.prepend(
-						$( '<div class="woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout"/>' ).append(
-							$errors
-						)
-					);
-					window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
-				}
+			}
+
+			// Handle generic errors.
+			if ( genericErrors.length ) {
+				$fieldToFocus = false; // Don't focus a field if validation returned generic errors.
+				$form.prepend(
+					$( '<div class="woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout"/>' ).append(
+						$( '<ul class="woocommerce-error" role="alert" />' ).append( genericErrors )
+					)
+				);
+				window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
 			}
 
 			if ( $fieldToFocus?.length ) {
@@ -155,10 +167,7 @@ import './checkout.scss';
 			window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
 			// Update checkout.
 			$( document.body ).trigger( 'update_checkout' );
-			// Clear errors.
-			$(
-				'.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message, .wc-block-components-notice-banner'
-			).remove();
+			clearNotices();
 			// Clear checkout details.
 			$( '#checkout_details' ).remove();
 			if ( editing ) {
@@ -205,46 +214,67 @@ import './checkout.scss';
 			if ( data.billing_company ) {
 				html.push( '<p>' + data.billing_company + '</p>' );
 			}
+			let billingAddress = '';
 			if ( data.billing_address_1 || data.billing_address_2 ) {
-				html.push(
-					'<p>' +
-						data.billing_address_1 +
-						' ' +
-						data.billing_address_2 +
-						'<br>' +
-						data.billing_city +
-						', ' +
-						data.billing_state +
-						' ' +
-						data.billing_postcode +
-						'<br>' +
-						data.billing_country +
-						'</p>'
-				);
+				billingAddress = '<p>';
+				if ( data.billing_address_1 ) {
+					billingAddress += data.billing_address_1;
+				}
+				if ( data.billing_address_2 ) {
+					billingAddress += ' ' + data.billing_address_2;
+				}
+				billingAddress += '<br>';
+				if ( data.billing_city ) {
+					billingAddress += data.billing_city;
+				}
+				if ( data.billing_state ) {
+					billingAddress += ', ' + data.billing_state;
+				}
+				if ( data.billing_postcode ) {
+					billingAddress += ' ' + data.billing_postcode;
+				}
+				billingAddress += '<br>';
+				if ( data.billing_country ) {
+					billingAddress += data.billing_country;
+				}
 			}
+			html.push( billingAddress );
 			if ( data.billing_email ) {
 				html.push( '<p>' + data.billing_email + '</p>' );
 			}
 			html.push( '</div>' ); // Close billing-details.
 
-			if ( data.shipping_address_1 || data.shipping_address_2 ) {
+			// Shipping details.
+			if ( data.hasOwnProperty( 'shipping_address_1' ) ) {
 				html.push( '<div class="shipping-details">' );
 				html.push( '<h3>' + newspackBlocksModalCheckout.labels.shipping_details + '</h3>' );
-				html.push(
-					'<p>' +
-						data.shipping_address_1 +
-						' ' +
-						data.shipping_address_2 +
-						'<br>' +
-						data.shipping_city +
-						', ' +
-						data.shipping_state +
-						' ' +
-						data.shipping_postcode +
-						'<br>' +
-						data.shipping_country +
-						'</p>'
-				);
+				let shippingAddress = '';
+				if ( ! data.ship_to_different_address ) {
+					shippingAddress = billingAddress;
+				} else {
+					shippingAddress = '<p>';
+					if ( data.shipping_address_1 ) {
+						shippingAddress += data.shipping_address_1;
+					}
+					if ( data.shipping_address_2 ) {
+						shippingAddress += ' ' + data.shipping_address_2;
+					}
+					shippingAddress += '<br>';
+					if ( data.shipping_city ) {
+						shippingAddress += data.shipping_city;
+					}
+					if ( data.shipping_state ) {
+						shippingAddress += ', ' + data.shipping_state;
+					}
+					if ( data.shipping_postcode ) {
+						shippingAddress += ' ' + data.shipping_postcode;
+					}
+					shippingAddress += '<br>';
+					if ( data.shipping_country ) {
+						shippingAddress += data.shipping_country;
+					}
+				}
+				html.push( shippingAddress );
 				html.push( '</div>' ); // Close shipping-details.
 			}
 			$( '.order-details-summary' ).after(
@@ -264,7 +294,7 @@ import './checkout.scss';
 				},
 			} );
 			const serializedForm = $form.serializeArray();
-			// Add parameter so it just performs validation.
+			// Add 'update totals' parameter so it just performs validation.
 			serializedForm.push( { name: 'woocommerce_checkout_update_totals', value: '1' } );
 			// Ajax request.
 			$.ajax( {
@@ -273,7 +303,17 @@ import './checkout.scss';
 				data: serializedForm,
 				dataType: 'html',
 				success: response => {
-					const result = JSON.parse( response );
+					let result;
+					try {
+						result = JSON.parse( response );
+					} catch ( e ) {
+						result = {
+							messages:
+								'<div class="woocommerce-error">' +
+								wc_checkout_params.i18n_checkout_error +
+								'</div>',
+						};
+					}
 
 					// Reload page
 					if ( ! silent && true === result.reload ) {
