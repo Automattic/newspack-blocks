@@ -177,6 +177,7 @@ import './checkout.scss';
 				$customer_details.show();
 				$after_customer_details.hide();
 				$place_order_button.attr( 'disabled', 'disabled' );
+				// Remove default form event handlers.
 				originalFormHandlers = getEventHandlers( $form[ 0 ], 'submit' ).slice( 0 );
 				originalFormHandlers.forEach( handler => {
 					$form.off( 'submit', handler.handler );
@@ -190,7 +191,7 @@ import './checkout.scss';
 				$after_customer_details.show();
 				$place_order_button.removeAttr( 'disabled' );
 				buildCheckoutDetails();
-				// Re-add event handlers.
+				// Store event handlers.
 				$form.off( 'submit', handleFormSubmit );
 				originalFormHandlers.forEach( handler => {
 					$form.on( 'submit', handler.handler );
