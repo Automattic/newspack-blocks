@@ -81,6 +81,11 @@ import './checkout.scss';
 			setReady();
 		}
 
+		/**
+		 * Handle form errors while editing billing/shiping fields.
+		 *
+		 * @param {string} error_message
+		 */
 		function handleFormError( error_message ) {
 			clearNotices();
 
@@ -91,6 +96,12 @@ import './checkout.scss';
 
 			const genericErrors = [];
 
+			/**
+			 * If a field is found, append the error to it. Otherwise, add it to the
+			 * generic errors array.
+			 *
+			 * @param {jQuery} $error
+			 */
 			const handleErrorItem = $error => {
 				const $field = $( '#' + $error.data( 'id' ) + '_field' );
 				if ( $field?.length ) {
