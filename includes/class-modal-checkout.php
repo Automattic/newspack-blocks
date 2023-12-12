@@ -590,16 +590,17 @@ final class Modal_Checkout {
 		if ( ! self::is_modal_checkout() ) {
 			return $fields;
 		}
+		$cart = \WC()->cart;
+		// Don't modify fields if shipping is required.
+		if ( $cart->needs_shipping_address() ) {
+			return $fields;
+		}
 		/**
 		 * Temporarily use the same fields as the donation checkout.
 		 *
 		 * This should soon be replaced with a logic that allows the customization
 		 * at the Checkout Button Block level.
 		 */
-		$cart = \WC()->cart;
-		if ( $cart->needs_shipping_address() ) { // Don't modify fields if shipping is required.
-			return $fields;
-		}
 		$billing_fields = apply_filters( 'newspack_blocks_donate_billing_fields_keys', [] );
 		if ( empty( $billing_fields ) ) {
 			return $fields;
