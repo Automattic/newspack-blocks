@@ -43,10 +43,15 @@ import './checkout.scss';
 		/**
 		 * Handle styling update for selected payment method.
 		 */
-		handlePaymentMethodSelect();
+		function handlePaymentMethodSelect() {
+			const selected = $( 'input[name="payment_method"]:checked' ).val();
+			$( '.wc_payment_method' ).removeClass( 'selected' );
+			$( '.wc_payment_method.payment_method_' + selected ).addClass( 'selected' );
+		}
 		$( 'input[name="payment_method"]' ).change( handlePaymentMethodSelect );
 		$( document ).on( 'payment_method_selected', handlePaymentMethodSelect );
 		$( document ).on( 'updated_checkout', handlePaymentMethodSelect );
+		handlePaymentMethodSelect();
 
 		/**
 		 * Ensure coupon form is shown after removing a coupon.
@@ -67,8 +72,12 @@ import './checkout.scss';
 			}
 		} );
 
+		/**
+		 * Initialize the 2-step checkout form.
+		 */
 		if ( $checkout_continue.length ) {
 			setEditing( true );
+			// Perform initial validation so it can skip 1st step if possible.
 			validateForm( true, () => {
 				// Attach handler to "Back" button.
 				$form.on( 'click', '#checkout_back', function ( ev ) {
@@ -161,17 +170,21 @@ import './checkout.scss';
 			container.dispatchEvent( readyEvent );
 		}
 
-		function handlePaymentMethodSelect() {
-			const selected = $( 'input[name="payment_method"]:checked' ).val();
-			$( '.wc_payment_method' ).removeClass( 'selected' );
-			$( '.wc_payment_method.payment_method_' + selected ).addClass( 'selected' );
-		}
-
+		/**
+		 * Handle form 1st step submission.
+		 *
+		 * @param {Event} ev
+		 */
 		function handleFormSubmit( ev ) {
 			ev.preventDefault();
 			validateForm();
 		}
 
+		/**
+		 * Set the checkout state as editing billing/shipping fields or not.
+		 *
+		 * @param {boolean} isEditing
+		 */
 		function setEditing( isEditing ) {
 			editing = isEditing;
 			// Scroll to top.
@@ -201,7 +214,7 @@ import './checkout.scss';
 				$customer_details.hide();
 				$after_customer_details.show();
 				$place_order_button.removeAttr( 'disabled' );
-				buildCheckoutDetails();
+				renderCheckoutDetails();
 				// Store event handlers.
 				$form.off( 'submit', handleFormSubmit );
 				originalFormHandlers.forEach( handler => {
@@ -210,7 +223,10 @@ import './checkout.scss';
 			}
 		}
 
-		function buildCheckoutDetails() {
+		/**
+		 * Render the checkout billing/shipping details summary HTML.
+		 */
+		function renderCheckoutDetails() {
 			$( '#checkout_details' ).remove();
 			const data = {};
 			$form.serializeArray().forEach( item => {
@@ -294,6 +310,12 @@ import './checkout.scss';
 			);
 		}
 
+		/**
+		 * Validate the checkout form using Woo's "update_totals" ajax request.
+		 *
+		 * @param {boolean}  silent Whether to show errors or not.
+		 * @param {Function} cb     Callback function.
+		 */
 		function validateForm( silent = false, cb = () => {} ) {
 			if ( $form.is( '.processing' ) ) {
 				return false;
