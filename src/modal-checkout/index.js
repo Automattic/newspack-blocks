@@ -201,6 +201,7 @@ import './checkout.scss';
 				$customer_details.show();
 				$after_customer_details.hide();
 				$place_order_button.attr( 'disabled', 'disabled' );
+				$customer_details.find( 'input' ).first().focus();
 				// Remove default form event handlers.
 				originalFormHandlers = getEventHandlers( $form[ 0 ], 'submit' ).slice( 0 );
 				originalFormHandlers.forEach( handler => {
