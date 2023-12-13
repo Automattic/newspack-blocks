@@ -29,16 +29,27 @@ import './checkout.scss';
 	}
 
 	$( document.body ).on( 'init_checkout', function () {
-		let editing = false;
 		let originalFormHandlers = [];
 
 		const $form = $( 'form.checkout' );
+
+		if ( ! $form.length ) {
+			return;
+		}
 
 		const $coupon = $( 'form.checkout_coupon' );
 		const $checkout_continue = $( '#checkout_continue' );
 		const $customer_details = $( '#customer_details' );
 		const $after_customer_details = $( '#after_customer_details' );
 		const $place_order_button = $( '#place_order' );
+
+		/**
+		 * Ensure coupon form is shown after removing a coupon.
+		 */
+		$( document.body ).on( 'removed_coupon_in_checkout', function () {
+			$coupon.show();
+			clearNotices();
+		} );
 
 		/**
 		 * Handle styling update for selected payment method.
@@ -52,14 +63,6 @@ import './checkout.scss';
 		$( document ).on( 'payment_method_selected', handlePaymentMethodSelect );
 		$( document ).on( 'updated_checkout', handlePaymentMethodSelect );
 		handlePaymentMethodSelect();
-
-		/**
-		 * Ensure coupon form is shown after removing a coupon.
-		 */
-		$( document.body ).on( 'removed_coupon_in_checkout', function () {
-			$coupon.show();
-			clearNotices();
-		} );
 
 		/**
 		 * Toggle "Payment info" title if there's no money transaction.
@@ -76,13 +79,13 @@ import './checkout.scss';
 		 * Initialize the 2-step checkout form.
 		 */
 		if ( $checkout_continue.length ) {
-			setEditing( true );
+			setEditingDetails( true );
 			// Perform initial validation so it can skip 1st step if possible.
 			validateForm( true, () => {
 				// Attach handler to "Back" button.
 				$form.on( 'click', '#checkout_back', function ( ev ) {
 					ev.preventDefault();
-					setEditing( true );
+					setEditingDetails( true );
 				} );
 				setReady();
 			} );
@@ -183,10 +186,9 @@ import './checkout.scss';
 		/**
 		 * Set the checkout state as editing billing/shipping fields or not.
 		 *
-		 * @param {boolean} isEditing
+		 * @param {boolean} isEditingDetails
 		 */
-		function setEditing( isEditing ) {
-			editing = isEditing;
+		function setEditingDetails( isEditingDetails ) {
 			// Scroll to top.
 			window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
 			// Update checkout.
@@ -194,10 +196,8 @@ import './checkout.scss';
 			clearNotices();
 			// Clear checkout details.
 			$( '#checkout_details' ).remove();
-			if ( editing ) {
-				if ( $coupon.length ) {
-					$coupon.hide();
-				}
+			if ( isEditingDetails ) {
+				$coupon.hide();
 				$customer_details.show();
 				$after_customer_details.hide();
 				$place_order_button.attr( 'disabled', 'disabled' );
@@ -209,9 +209,7 @@ import './checkout.scss';
 				} );
 				$form.on( 'submit', handleFormSubmit );
 			} else {
-				if ( $coupon.length ) {
-					$coupon.show();
-				}
+				$coupon.show();
 				$customer_details.hide();
 				$after_customer_details.show();
 				$place_order_button.removeAttr( 'disabled' );
@@ -222,6 +220,7 @@ import './checkout.scss';
 					$form.on( 'submit', handler.handler );
 				} );
 			}
+			$form.triggerHandler( 'editing_details', [ isEditingDetails ] );
 		}
 
 		/**
@@ -363,7 +362,7 @@ import './checkout.scss';
 					// 'messages' in the response to see if it was successful.
 					const success = ! result.messages;
 					if ( success ) {
-						setEditing( false );
+						setEditingDetails( false );
 					} else if ( ! silent ) {
 						if ( result.messages ) {
 							handleFormError( result.messages );
