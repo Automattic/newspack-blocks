@@ -197,7 +197,9 @@ import './checkout.scss';
 			// Clear checkout details.
 			$( '#checkout_details' ).remove();
 			if ( isEditingDetails ) {
-				$coupon.hide();
+				if ( $coupon.length ) {
+					$coupon.hide();
+				}
 				$customer_details.show();
 				$after_customer_details.hide();
 				$place_order_button.attr( 'disabled', 'disabled' );
@@ -209,7 +211,9 @@ import './checkout.scss';
 				} );
 				$form.on( 'submit', handleFormSubmit );
 			} else {
-				$coupon.show();
+				if ( $coupon.length ) {
+					$coupon.show();
+				}
 				$customer_details.hide();
 				$after_customer_details.show();
 				$place_order_button.removeAttr( 'disabled' );
