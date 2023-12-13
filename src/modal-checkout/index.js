@@ -37,19 +37,11 @@ import './checkout.scss';
 			return;
 		}
 
-		const $coupon = $( 'form.checkout_coupon' );
+		const $coupon = $( 'form.modal_checkout_coupon' );
 		const $checkout_continue = $( '#checkout_continue' );
 		const $customer_details = $( '#customer_details' );
 		const $after_customer_details = $( '#after_customer_details' );
 		const $place_order_button = $( '#place_order' );
-
-		/**
-		 * Ensure coupon form is shown after removing a coupon.
-		 */
-		$( document.body ).on( 'removed_coupon_in_checkout', function () {
-			$coupon.show();
-			clearNotices();
-		} );
 
 		/**
 		 * Handle styling update for selected payment method.
@@ -171,6 +163,63 @@ import './checkout.scss';
 			const container = document.querySelector( '#newspack_modal_checkout' );
 			container.checkoutReady = true;
 			container.dispatchEvent( readyEvent );
+		}
+
+		/**
+		 * Handle coupon form submit.
+		 *
+		 * @param {Event} ev
+		 */
+		function handleCouponSubmit( ev ) {
+			ev.preventDefault();
+			if ( $coupon.is( '.processing' ) ) {
+				return false;
+			}
+			$coupon.addClass( 'processing' ).block( {
+				message: null,
+				overlayCSS: {
+					background: '#fff',
+					opacity: 0.6,
+				},
+			} );
+			const data = {
+				security: wc_checkout_params.apply_coupon_nonce,
+				coupon_code: $coupon.find( 'input[name="coupon_code"]' ).val(),
+			};
+			// Ajax request.
+			$.ajax( {
+				type: 'POST',
+				url: wc_checkout_params.wc_ajax_url.toString().replace( '%%endpoint%%', 'apply_coupon' ),
+				data,
+				dataType: 'html',
+				success: code => {
+					clearNotices();
+					$coupon.find( '.result' ).remove();
+					if ( code ) {
+						const isError = code.includes( 'error' );
+						$coupon.append(
+							'<p class="result ' + ( isError ? 'error' : '' ) + '">' + $( code ).text() + '</p>'
+						);
+						if ( isError ) {
+							$coupon.find( 'input[name="coupon_code"]' ).focus();
+						}
+						$( document.body ).trigger( 'applied_coupon_in_checkout', [ data.coupon_code ] );
+						$( document.body ).trigger( 'update_checkout', { update_shipping_method: false } );
+					}
+				},
+				complete: () => {
+					// Unblock form.
+					$coupon.removeClass( 'processing' ).unblock();
+				},
+			} );
+		}
+		if ( $coupon.length ) {
+			$coupon.on( 'submit', handleCouponSubmit );
+			$( document.body ).on( 'removed_coupon_in_checkout', () => {
+				clearNotices();
+				$coupon.find( '.result' ).remove();
+				$coupon.find( 'input[name="coupon_code"]' ).val( '' ).focus();
+			} );
 		}
 
 		/**

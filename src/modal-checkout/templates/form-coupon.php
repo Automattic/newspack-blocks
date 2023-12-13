@@ -13,7 +13,7 @@ if ( ! wc_coupons_enabled() ) { // @codingStandardsIgnoreLine.
 }
 
 ?>
-<form class="checkout_coupon woocommerce-form-coupon" method="post">
+<form class="modal_checkout_coupon woocommerce-form-coupon" method="post">
 	<h3><?php esc_html_e( 'Apply a coupon code', 'newspack-blocks' ); ?></h3>
 	<p>
 		<input type="text" name="coupon_code" class="input-text" placeholder="<?php esc_attr_e( 'Coupon code', 'newspack-blocks' ); ?>" id="coupon_code" value="" />
