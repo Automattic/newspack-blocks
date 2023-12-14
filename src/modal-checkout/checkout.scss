@@ -14,11 +14,26 @@
 		svg {
 			display: none;
 		}
+		li {
+			font-size: 14px;
+		}
 	}
 	.woocommerce-info,
 	.woocommerce-message {
 		background-color: #f6f7f7;
 		color: #757575;
+	}
+	.wc-block-components-notice-banner__content {
+		font-size: 14px;
+	}
+	// Avoid duplicate styling when block components notice is inside the legacy
+	// notice-group.
+	.woocommerce-NoticeGroup .wc-block-components-notice-banner {
+		background: transparent;
+		border: 0;
+		padding: 0 !important;
+		margin: 0;
+		color: inherit;
 	}
 	input[type='text'],
 	input[type='email'],
@@ -65,9 +80,6 @@
 		color: #cc1818;
 		background: transparent;
 		font-size: 14px;
-		strong {
-			margin-right: 5px;
-		}
 	}
 	.button {
 		font-size: 14px;
@@ -256,8 +268,7 @@
 			margin: 0;
 		}
 	}
-	#checkout_continue, /* stylelint-disable-line */
-	#place_order { /* stylelint-disable-line */
+	#checkout_continue, #place_order { /* stylelint-disable-line */
 		background-color: var( --newspack-theme-color-primary );
 		color: #fff; /* TODO: Fix dynamic contrast */
 		font-size: 14px;

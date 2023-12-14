@@ -22,32 +22,47 @@ import './checkout.scss';
 		return $._data( element, 'events' )[ event ];
 	}
 
+	function clearNotices() {
+		$(
+			'.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message, .wc-block-components-notice-banner'
+		).remove();
+	}
+
 	$( document.body ).on( 'init_checkout', function () {
-		let editing = false;
 		let originalFormHandlers = [];
 
 		const $form = $( 'form.checkout' );
 
-		const $coupon = $( '.checkout_coupon' );
+		if ( ! $form.length ) {
+			return;
+		}
+
+		const $coupon = $( 'form.checkout_coupon' );
 		const $checkout_continue = $( '#checkout_continue' );
 		const $customer_details = $( '#customer_details' );
 		const $after_customer_details = $( '#after_customer_details' );
 		const $place_order_button = $( '#place_order' );
 
 		/**
-		 * Handle styling update for selected payment method.
-		 */
-		handlePaymentMethodSelect();
-		$( 'input[name="payment_method"]' ).change( handlePaymentMethodSelect );
-		$( document ).on( 'payment_method_selected', handlePaymentMethodSelect );
-		$( document ).on( 'updated_checkout', handlePaymentMethodSelect );
-
-		/**
 		 * Ensure coupon form is shown after removing a coupon.
 		 */
 		$( document.body ).on( 'removed_coupon_in_checkout', function () {
 			$coupon.show();
+			clearNotices();
 		} );
+
+		/**
+		 * Handle styling update for selected payment method.
+		 */
+		function handlePaymentMethodSelect() {
+			const selected = $( 'input[name="payment_method"]:checked' ).val();
+			$( '.wc_payment_method' ).removeClass( 'selected' );
+			$( '.wc_payment_method.payment_method_' + selected ).addClass( 'selected' );
+		}
+		$( 'input[name="payment_method"]' ).change( handlePaymentMethodSelect );
+		$( document ).on( 'payment_method_selected', handlePaymentMethodSelect );
+		$( document ).on( 'updated_checkout', handlePaymentMethodSelect );
+		handlePaymentMethodSelect();
 
 		/**
 		 * Toggle "Payment info" title if there's no money transaction.
@@ -60,13 +75,17 @@ import './checkout.scss';
 			}
 		} );
 
+		/**
+		 * Initialize the 2-step checkout form.
+		 */
 		if ( $checkout_continue.length ) {
-			setEditing( true );
+			setEditingDetails( true );
+			// Perform initial validation so it can skip 1st step if possible.
 			validateForm( true, () => {
 				// Attach handler to "Back" button.
 				$form.on( 'click', '#checkout_back', function ( ev ) {
 					ev.preventDefault();
-					setEditing( true );
+					setEditingDetails( true );
 				} );
 				setReady();
 			} );
@@ -74,17 +93,27 @@ import './checkout.scss';
 			setReady();
 		}
 
+		/**
+		 * Handle form errors while editing billing/shiping fields.
+		 *
+		 * @param {string} error_message
+		 */
 		function handleFormError( error_message ) {
-			// Clear previous errors.
-			$(
-				'.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message, .wc-block-components-notice-banner'
-			).remove();
+			clearNotices();
 
 			$form.removeClass( 'processing' ).unblock();
 			$form.find( '.input-text, select, input:checkbox' ).trigger( 'validate' ).trigger( 'blur' );
 
 			let $fieldToFocus = false;
 
+			const genericErrors = [];
+
+			/**
+			 * If a field is found, append the error to it. Otherwise, add it to the
+			 * generic errors array.
+			 *
+			 * @param {jQuery} $error
+			 */
 			const handleErrorItem = $error => {
 				const $field = $( '#' + $error.data( 'id' ) + '_field' );
 				if ( $field?.length ) {
@@ -92,8 +121,13 @@ import './checkout.scss';
 						$fieldToFocus = $field;
 					}
 					$field.addClass( 'woocommerce-invalid' ).removeClass( 'woocommerce-valid' );
-					$field.append( '<span class="woocommerce-error">' + $error.html() + '</span>' );
+					$field.append( '<span class="woocommerce-error">' + $error.text() + '</span>' );
 					$error.remove();
+				} else {
+					if ( ! $error.is( 'li' ) ) {
+						$error = $( '<li />' ).append( $error );
+					}
+					genericErrors.push( $error );
 				}
 			};
 
@@ -108,16 +142,17 @@ import './checkout.scss';
 				$errors.find( 'li' ).each( function () {
 					handleErrorItem( $( this ) );
 				} );
-				// Handle generic errors that remained in the <ul />.
-				if ( $errors.find( 'li' ).length ) {
-					$fieldToFocus = false; // Don't focus a field if validation returned generic errors.
-					$form.prepend(
-						$( '<div class="woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout"/>' ).append(
-							$errors
-						)
-					);
-					window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
-				}
+			}
+
+			// Handle generic errors.
+			if ( genericErrors.length ) {
+				$fieldToFocus = false; // Don't focus a field if validation returned generic errors.
+				$form.prepend(
+					$( '<div class="woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout"/>' ).append(
+						$( '<ul class="woocommerce-error" role="alert" />' ).append( genericErrors )
+					)
+				);
+				window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
 			}
 
 			if ( $fieldToFocus?.length ) {
@@ -138,36 +173,38 @@ import './checkout.scss';
 			container.dispatchEvent( readyEvent );
 		}
 
-		function handlePaymentMethodSelect() {
-			const selected = $( 'input[name="payment_method"]:checked' ).val();
-			$( '.wc_payment_method' ).removeClass( 'selected' );
-			$( '.wc_payment_method.payment_method_' + selected ).addClass( 'selected' );
-		}
-
+		/**
+		 * Handle form 1st step submission.
+		 *
+		 * @param {Event} ev
+		 */
 		function handleFormSubmit( ev ) {
 			ev.preventDefault();
 			validateForm();
 		}
 
-		function setEditing( isEditing ) {
-			editing = isEditing;
+		/**
+		 * Set the checkout state as editing billing/shipping fields or not.
+		 *
+		 * @param {boolean} isEditingDetails
+		 */
+		function setEditingDetails( isEditingDetails ) {
 			// Scroll to top.
 			window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
 			// Update checkout.
 			$( document.body ).trigger( 'update_checkout' );
-			// Clear errors.
-			$(
-				'.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message, .wc-block-components-notice-banner'
-			).remove();
+			clearNotices();
 			// Clear checkout details.
 			$( '#checkout_details' ).remove();
-			if ( editing ) {
+			if ( isEditingDetails ) {
 				if ( $coupon.length ) {
 					$coupon.hide();
 				}
 				$customer_details.show();
 				$after_customer_details.hide();
 				$place_order_button.attr( 'disabled', 'disabled' );
+				$customer_details.find( 'input' ).first().focus();
+				// Remove default form event handlers.
 				originalFormHandlers = getEventHandlers( $form[ 0 ], 'submit' ).slice( 0 );
 				originalFormHandlers.forEach( handler => {
 					$form.off( 'submit', handler.handler );
@@ -180,16 +217,20 @@ import './checkout.scss';
 				$customer_details.hide();
 				$after_customer_details.show();
 				$place_order_button.removeAttr( 'disabled' );
-				buildCheckoutDetails();
-				// Re-add event handlers.
+				renderCheckoutDetails();
+				// Store event handlers.
 				$form.off( 'submit', handleFormSubmit );
 				originalFormHandlers.forEach( handler => {
 					$form.on( 'submit', handler.handler );
 				} );
 			}
+			$form.triggerHandler( 'editing_details', [ isEditingDetails ] );
 		}
 
-		function buildCheckoutDetails() {
+		/**
+		 * Render the checkout billing/shipping details summary HTML.
+		 */
+		function renderCheckoutDetails() {
 			$( '#checkout_details' ).remove();
 			const data = {};
 			$form.serializeArray().forEach( item => {
@@ -205,46 +246,67 @@ import './checkout.scss';
 			if ( data.billing_company ) {
 				html.push( '<p>' + data.billing_company + '</p>' );
 			}
+			let billingAddress = '';
 			if ( data.billing_address_1 || data.billing_address_2 ) {
-				html.push(
-					'<p>' +
-						data.billing_address_1 +
-						' ' +
-						data.billing_address_2 +
-						'<br>' +
-						data.billing_city +
-						', ' +
-						data.billing_state +
-						' ' +
-						data.billing_postcode +
-						'<br>' +
-						data.billing_country +
-						'</p>'
-				);
+				billingAddress = '<p>';
+				if ( data.billing_address_1 ) {
+					billingAddress += data.billing_address_1;
+				}
+				if ( data.billing_address_2 ) {
+					billingAddress += ' ' + data.billing_address_2;
+				}
+				billingAddress += '<br>';
+				if ( data.billing_city ) {
+					billingAddress += data.billing_city;
+				}
+				if ( data.billing_state ) {
+					billingAddress += ', ' + data.billing_state;
+				}
+				if ( data.billing_postcode ) {
+					billingAddress += ' ' + data.billing_postcode;
+				}
+				billingAddress += '<br>';
+				if ( data.billing_country ) {
+					billingAddress += data.billing_country;
+				}
 			}
+			html.push( billingAddress );
 			if ( data.billing_email ) {
 				html.push( '<p>' + data.billing_email + '</p>' );
 			}
 			html.push( '</div>' ); // Close billing-details.
 
-			if ( data.shipping_address_1 || data.shipping_address_2 ) {
+			// Shipping details.
+			if ( data.hasOwnProperty( 'shipping_address_1' ) ) {
 				html.push( '<div class="shipping-details">' );
 				html.push( '<h3>' + newspackBlocksModalCheckout.labels.shipping_details + '</h3>' );
-				html.push(
-					'<p>' +
-						data.shipping_address_1 +
-						' ' +
-						data.shipping_address_2 +
-						'<br>' +
-						data.shipping_city +
-						', ' +
-						data.shipping_state +
-						' ' +
-						data.shipping_postcode +
-						'<br>' +
-						data.shipping_country +
-						'</p>'
-				);
+				let shippingAddress = '';
+				if ( ! data.ship_to_different_address ) {
+					shippingAddress = billingAddress;
+				} else {
+					shippingAddress = '<p>';
+					if ( data.shipping_address_1 ) {
+						shippingAddress += data.shipping_address_1;
+					}
+					if ( data.shipping_address_2 ) {
+						shippingAddress += ' ' + data.shipping_address_2;
+					}
+					shippingAddress += '<br>';
+					if ( data.shipping_city ) {
+						shippingAddress += data.shipping_city;
+					}
+					if ( data.shipping_state ) {
+						shippingAddress += ', ' + data.shipping_state;
+					}
+					if ( data.shipping_postcode ) {
+						shippingAddress += ' ' + data.shipping_postcode;
+					}
+					shippingAddress += '<br>';
+					if ( data.shipping_country ) {
+						shippingAddress += data.shipping_country;
+					}
+				}
+				html.push( shippingAddress );
 				html.push( '</div>' ); // Close shipping-details.
 			}
 			$( '.order-details-summary' ).after(
@@ -252,6 +314,12 @@ import './checkout.scss';
 			);
 		}
 
+		/**
+		 * Validate the checkout form using Woo's "update_totals" ajax request.
+		 *
+		 * @param {boolean}  silent Whether to show errors or not.
+		 * @param {Function} cb     Callback function.
+		 */
 		function validateForm( silent = false, cb = () => {} ) {
 			if ( $form.is( '.processing' ) ) {
 				return false;
@@ -264,7 +332,7 @@ import './checkout.scss';
 				},
 			} );
 			const serializedForm = $form.serializeArray();
-			// Add parameter so it just performs validation.
+			// Add 'update totals' parameter so it just performs validation.
 			serializedForm.push( { name: 'woocommerce_checkout_update_totals', value: '1' } );
 			// Ajax request.
 			$.ajax( {
@@ -273,7 +341,17 @@ import './checkout.scss';
 				data: serializedForm,
 				dataType: 'html',
 				success: response => {
-					const result = JSON.parse( response );
+					let result;
+					try {
+						result = JSON.parse( response );
+					} catch ( e ) {
+						result = {
+							messages:
+								'<div class="woocommerce-error">' +
+								wc_checkout_params.i18n_checkout_error +
+								'</div>',
+						};
+					}
 
 					// Reload page
 					if ( ! silent && true === result.reload ) {
@@ -288,7 +366,7 @@ import './checkout.scss';
 					// 'messages' in the response to see if it was successful.
 					const success = ! result.messages;
 					if ( success ) {
-						setEditing( false );
+						setEditingDetails( false );
 					} else if ( ! silent ) {
 						if ( result.messages ) {
 							handleFormError( result.messages );

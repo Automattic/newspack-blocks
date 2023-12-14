@@ -1,3 +1,31 @@
+# [2.3.0](https://github.com/Automattic/newspack-blocks/compare/v2.2.4...v2.3.0) (2023-12-07)
+
+
+### Features
+
+* update thank you translation strings in modal checkout ([#1625](https://github.com/Automattic/newspack-blocks/issues/1625)) ([b571c29](https://github.com/Automattic/newspack-blocks/commit/b571c29a00f2d05f88cee75916984372f8fa9b8e))
+
+## [2.2.4](https://github.com/Automattic/newspack-blocks/compare/v2.2.3...v2.2.4) (2023-12-06)
+
+
+### Bug Fixes
+
+* **homepage-posts:** handle empty block when printing inline styles ([#1621](https://github.com/Automattic/newspack-blocks/issues/1621)) ([c3aa957](https://github.com/Automattic/newspack-blocks/commit/c3aa9577c2284f2139c8fa1170785db9fe4edfe9))
+
+## [2.2.3](https://github.com/Automattic/newspack-blocks/compare/v2.2.2...v2.2.3) (2023-12-04)
+
+
+### Bug Fixes
+
+* update selected tier behavior for donate block ([#1617](https://github.com/Automattic/newspack-blocks/issues/1617)) ([8a9a76f](https://github.com/Automattic/newspack-blocks/commit/8a9a76fb970ffac6f00f67f83a17a931a169c103))
+
+## [2.2.2](https://github.com/Automattic/newspack-blocks/compare/v2.2.1...v2.2.2) (2023-11-29)
+
+
+### Bug Fixes
+
+* update title, subtitle CSS selectors in homepage posts block ([#1614](https://github.com/Automattic/newspack-blocks/issues/1614)) ([0ccb973](https://github.com/Automattic/newspack-blocks/commit/0ccb9730c96a598b873fca6ff15147e2fe053930))
+
 ## [2.2.1](https://github.com/Automattic/newspack-blocks/compare/v2.2.0...v2.2.1) (2023-11-27)
 
 

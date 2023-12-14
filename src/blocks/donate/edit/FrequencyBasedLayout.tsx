@@ -166,12 +166,7 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 												</label>
 												<div className="wp-block-newspack-blocks-donate__money-input money-input">
 													<span className="currency">{ settings.currencySymbol }</span>
-													<AmountValueInput
-														{ ...props }
-														frequencySlug={ frequencySlug }
-														tierIndex={ index }
-														id={ `${ id }-other-input` }
-													/>
+													<input type="number" readOnly />
 												</div>
 											</>
 										) : null }
