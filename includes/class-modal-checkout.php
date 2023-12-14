@@ -609,11 +609,22 @@ final class Modal_Checkout {
 			return true;
 		}
 		if ( $cart->needs_shipping_address() ) {
-			$shipping = \WC()->shipping;
-			$totals   = $cart->get_totals();
+			$shipping       = \WC()->shipping;
+			$packages       = $shipping->get_packages();
+			$totals         = $cart->get_totals();
+			$shipping_rates = [];
 
-			// Show details if shipping requires a fee or if there are multiple shipping methods to choose from.
-			if ( (float) $totals['total'] !== (float) $totals['subtotal'] || 1 < count( $shipping->get_shipping_methods() ) ) {
+			// Find all the shipping rates that apply to the current transaction.
+			foreach ( $packages as $package ) {
+				if ( ! empty( $package['rates'] ) ) {
+					foreach ( $package['rates'] as $rate_key => $rate ) {
+						$shipping_rates[ $rate_key ] = $rate;
+					}
+				}
+			}
+
+			// Show details if shipping requires a fee or if there are multiple shipping rates to choose from.
+			if ( (float) $totals['total'] !== (float) $totals['subtotal'] || 1 < count( array_values( $shipping_rates ) ) ) {
 				return true;
 			}
 		}
