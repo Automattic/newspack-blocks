@@ -1,133 +1,90 @@
-#newspack_modal_checkout { /* stylelint-disable-line */
-	padding: 24px;
-	h3 {
-		font-size: 16px;
-		margin: 0 0 8px;
-	}
-	p {
-		margin: 0 0 16px;
-	}
+.newspack-ui {
 	.woocommerce-message,
 	.woocommerce-error,
 	.woocommerce-info {
-		border-radius: 6px;
+		border-radius: var( --newspack-ui-border-radius );
+		font-size: var( --newspack-ui-font-size-small );
+
 		svg {
 			display: none;
 		}
 	}
+
 	.woocommerce-info,
 	.woocommerce-message {
-		background-color: #f6f7f7;
-		color: #757575;
+		background-color: var( --newspack-ui-color-gray-100 );
+		color: var( --newspack-ui-color-text-med-contrast );
 	}
-	input[type='text'],
-	input[type='email'],
-	input[type='tel'],
-	input[type='number'],
-	input[type='password'],
-	input[type='submit'],
-	select,
-	textarea {
-		border-radius: 6px;
-		padding: 12px 16px;
-		font-size: 14px;
-		line-height: 24px;
-		border-color: #ddd;
-		&:focus {
-			box-shadow: 0 0 0 1px #36f inset;
+
+	// Select 2 styles
+	.select2-container {
+		font-family: var( --newspack-ui-font-family);
+		font-size: var( --newspack-ui-font-size-small );
+		line-height: var( --newspack-ui-line-height-large );
+	}
+
+	.select2-container--default {
+		.select2-selection--single .select2-selection__arrow {
+			right: var( --newspack-ui-spacer-1 );
+			b {
+				border-top-color: var( --newspack-ui-color-border );
+				border-width: 8px 5px 0;
+			}
+		}
+
+		&.select2-container--open .select2-selection--single .select2-selection__arrow b {
+			border-bottom-color: var( --newspack-ui-color-border );
+			border-width: 0 5px 8px;
 		}
 	}
-	// Custom styles for Select2.
-	.select2-container .select2-selection--single .select2-selection__rendered {
-		padding-left: 16px;
-		padding-right: 16px;
-		font-size: 14px;
-	}
-	.select2-results {
-		font-size: 14px;
-	}
+
 	.select2-dropdown,
 	.woocommerce-checkout .select2-container--focus .select2-selection,
 	.select2-container--default .select2-selection--single {
-		border-color: #ddd;
+		border-color: var( --newspack-ui-color-border );
+		border-radius: var( --newspack-ui-border-radius );
 	}
-	input[type='checkbox'] {
-		border-radius: 6px;
-	}
-	input[type='checkbox']:checked {
-		background-color: var( --newspack-theme-color-primary );
-		border-color: var( --newspack-theme-color-primary );
-	}
+
 	// Inline input validation
 	.form-row .woocommerce-error {
-		padding: 0;
-		margin: 0.25rem 0 0;
-		color: #cc1818;
+		color: var( --newspack-ui-color-alert-red );
 		background: transparent;
-		font-size: 14px;
+		font-size: var( --newspack-ui-font-size-small );
+		padding: 0;
+		margin: var( --newspack-ui-spacer-1 ) 0 0;
 		strong {
-			margin-right: 5px;
+			font-weight: 400;
+			margin-right: 0.35em;
 		}
 	}
-	.button {
-		font-size: 14px;
-		background-color: transparent;
-		color: inherit;
-		border: 1px solid #ddd;
-	}
-	.order-details-summary {
-		background: #f6f7f7;
-		text-align: center;
-		padding: 24px;
-		border-radius: 6px;
-		margin: 0 0 24px;
-		h2 {
-			font-size: 16px;
-			line-height: 24px;
-			margin: 0;
-		}
-	}
+
 	#ship-to-different-address {
+		margin: 0 0 var( --newspack-ui-spacer-5 );
 		label {
-			display: flex;
 			align-items: center;
-			margin: 0 0 24px;
+			display: flex;
+			margin: 0;
 			span::before,
 			span::after {
 				display: none;
 			}
 			input[type='checkbox'] {
 				display: inline-grid;
-				margin-right: 8px;
+				margin-right: var( --newspack-ui-spacer-1 );
 			}
 		}
 	}
-	#customer_details { /* stylelint-disable-line */
-		.woocommerce-billing-fields {
-			p {
-				margin: 8px 0 24px;
-				&#billing_address_1_field { /* stylelint-disable-line */
-					margin-bottom: 8px;
-				}
-			}
-			label {
-				font-size: 14px;
-				line-height: 20px;
-				font-weight: 600;
-				margin-bottom: 8px;
-			}
-		}
-	}
+
 	#payment {
 		.wc_payment_methods {
-			margin: 0 0 24px;
+			margin: 0 0 var( --newspack-ui-spacer-5 );
 		}
 		.wc_payment_method {
-			border: 1px solid #ddd;
+			border: 1px solid var( --newspack-ui-color-border );
 			border-radius: 6px;
 			padding: 16px;
 			margin: 0 0 16px;
-			font-size: 14px;
+			font-size: var( --newspack-ui-font-size-small );
 			line-height: 20px;
 			> label {
 				font-weight: 600;
@@ -136,15 +93,9 @@
 				background-color: #f5fdff;
 				border-color: #36f;
 			}
-			input.input-radio[name='payment_method'] + label::before {
-				box-shadow: 0 0 0 1px #ddd;
-			}
-			input.input-radio[name='payment_method']:checked + label::before {
-				background: #36f;
-				box-shadow: 0 0 0 1px #36f;
-			}
+
 			.payment_box {
-				font-size: 14px;
+				font-size: var( --newspack-ui-font-size-small );
 				line-height: 20px;
 				padding: 0;
 				background: transparent;
@@ -179,99 +130,84 @@
 			}
 		}
 	}
+
 	#order_review { /* stylelint-disable-line */
-		margin: 0 0 24px;
-		padding: 16px 24px;
-		border-radius: 6px;
-		background: #f6f7f7;
-		table {
-			font-size: 14px; // Prevent relative font size
-			line-height: 24px;
-			border: 0;
-			margin: 0;
-			th,
-			td {
-				font-size: 14px; // Prevent relative font size
-				padding: 4px 0;
-				vertical-align: top;
-				border-color: #ddd;
-				> * {
-					white-space: nowrap;
-				}
-			}
-			th {
-				background-color: inherit;
-				font-weight: 600;
-				text-align: left;
-			}
-			td:last-child {
-				width: 1%;
-			}
-			tr.cart-subtotal {
-				th {
-					font-weight: normal;
-				}
-			}
-			tr.recurring-totals {
-				th {
-					padding-top: 24px;
-				}
-			}
-			tfoot tr:last-child {
-				th,
-				td {
-					border-bottom: 0;
-				}
-			}
+		table small {
+			font-size: 1em;
 		}
 	}
+
 	.woocommerce-terms-and-conditions-wrapper {
 		margin: 0;
 		.woocommerce-privacy-policy-text {
-			font-size: 14px;
+			font-size: var( --newspack-ui-font-size-small );
 			line-height: 20px;
 			color: #757575;
 		}
 	}
+
 	.woocommerce-form-coupon {
-		margin: 0 0 24px;
+		margin: 0 0 var( --newspack-ui-spacer-5 );
 		p {
-			display: flex;
 			align-items: center;
+			display: flex;
+			gap: var( --newspack-ui-spacer-small );
 			input[type='text'] {
-				margin-right: 8px;
 				flex-grow: 1;
 			}
 		}
+		button {
+			// Reiterate secondary button styles.
+			background: transparent;
+			border: 1px solid var( --newspack-ui-color-border );
+			color: var( --newspack-ui-color-text-high-contrast );
+			margin: 0;
+			padding: calc( var( --newspack-ui-spacer-2 ) - 1px ) calc( var( --newspack-ui-spacer-3 ) - 1px );
+
+			&:hover {
+				background: var( --newspack-ui-color-gray-100 );
+			}
+
+		}
 	}
+
 	#checkout_details { /* stylelint-disable-line */
 		display: flex;
-		margin: 0 0 24px;
+		margin: 0 0 var( --newspack-ui-spacer-5 );
 		> * {
 			flex: 1 1 100%;
 			gap: 16px;
 		}
 		p {
-			font-size: 14px;
+			font-size: var( --newspack-ui-font-size-small );
 			margin: 0;
 		}
 	}
-	#checkout_continue, /* stylelint-disable-line */
-	#place_order { /* stylelint-disable-line */
-		background-color: var( --newspack-theme-color-primary );
-		color: #fff; /* TODO: Fix dynamic contrast */
-		font-size: 14px;
-		font-weight: 600;
-		display: block;
-		width: 100%;
-		border: 0;
+
+	/* stylelint-disable  selector-id-pattern  */
+	#customer_details,
+	#after_customer_details {
+		> *:last-child {
+			margin-bottom: 0;
+		}
 	}
-	#checkout_back { /* stylelint-disable-line */
-		border: 0;
+	/* stylelint-enable */
+
+	// TODO: Ideally these could be applied as CSS classes; the code is not currently editable though.
+	// Perhaps a button mixin for each (general, primary, secondary, tertiary) styles to make them easier to apply?
+	/* stylelint-disable  selector-id-pattern  */
+	#checkout_continue,
+	#place_order {
+		background: var( --newspack-ui-color-button-bg );
+		color: var( --newspack-ui-color-button-text );
 		width: 100%;
-		background: transparent;
-		color: inherit;
+
+		&:hover {
+			background: var( --newspack-ui-color-button-bg-hover );
+		}
 	}
+	/* stylelint-enable */
+
 	/* Remove support for "Allow customers to log into an existing account during checkout" */
 	.woocommerce-form-login-toggle {
 		display: none;
@@ -279,5 +215,30 @@
 	/* Hide reCAPTCHA badge */
 	.grecaptcha-badge {
 		visibility: hidden !important;
+	}
+
+	// TODO: Billings screen - this is just getting bonkers specific - can it be improved?
+	.woocommerce-checkout .woocommerce-billing-fields h3 {
+		margin: 0 0 var( --newspack-ui-spacer-5 );
+	}
+
+	// TODO: Override stuff for WC layout; maybe move?
+	.form-row-wide#billing_address_2_field { /* stylelint-disable-line */
+		margin-top: calc( var( --newspack-ui-spacer-5) / -2 );
+	}
+
+	.woocommerce {
+		// TODO: Override WC styles coming from Newspack Theme.
+		h3 {
+			font-size: var( --newspack-ui-font-size-medium );
+		}
+
+		// TODO: Left/right aligned fields - make space between 24px.
+		form {
+			.form-row-first,
+			.form-row-last {
+				width: calc( 50% - var( --newspack-ui-spacer-2 ) );
+			}
+		}
 	}
 }

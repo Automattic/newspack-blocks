@@ -266,15 +266,15 @@ final class Modal_Checkout {
 		$title = apply_filters( 'newspack_blocks_modal_checkout_title', __( 'Complete your transaction', 'newspack-blocks' ) );
 		?>
 		<div class="newspack-blocks-checkout-modal newspack-blocks-modal">
-			<div class="newspack-blocks-modal__container">
-				<header class="newspack-blocks-modal__header">
+			<div class="newspack-blocks-modal__container newspack-ui newspack-ui__modal">
+				<header class="newspack-ui__modal__header">
 					<h2><?php echo esc_html( $title ); ?></h2>
-					<a href="#" class="newspack-blocks-modal__close">
+					<button class="newspack-blocks-modal__close newspack-ui__modal__close">
 						<span class="screen-reader-text"><?php esc_html_e( 'Close', 'newspack-blocks' ); ?></span>
 						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
 							<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
 						</svg>
-					</a>
+					</button>
 				</header>
 				<section class="newspack-blocks-modal__content">
 					<div class="newspack-blocks-modal__spinner">
@@ -304,17 +304,17 @@ final class Modal_Checkout {
 			}
 			?>
 			<div class="newspack-blocks-variation-modal newspack-blocks-modal" data-product-id="<?php echo esc_attr( $product_id ); ?>">
-				<div class="newspack-blocks-modal__container">
-					<header class="newspack-blocks-modal__header">
+				<div class="newspack-blocks-modal__container newspack-ui newspack-ui__modal">
+					<header class="newspack-ui__modal__header">
 						<h2><?php echo esc_html( $title ); ?></h2>
-						<a href="#" class="newspack-blocks-modal__close">
+						<button class="newspack-blocks-modal__close newspack-ui__modal__close">
 							<span class="screen-reader-text"><?php esc_html_e( 'Close', 'newspack-blocks' ); ?></span>
 							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
 								<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
 							</svg>
-						</a>
+						</button>
 					</header>
-					<section class="newspack-blocks-modal__content">
+					<section class="newspack-ui__modal__content newspack-blocks-modal__content">
 						<div class="newspack-blocks-variation-modal__selection" data-product-id="<?php echo esc_attr( $product_id ); ?>">
 							<h3><?php echo esc_html( $product->get_name() ); ?></h3>
 							<p><?php esc_html_e( 'Select an option below:', 'newspack-blocks' ); ?></p>
@@ -436,7 +436,7 @@ final class Modal_Checkout {
 			<link rel="profile" href="https://gmpg.org/xfn/11" />
 			<?php wp_head(); ?>
 		</head>
-		<body id="newspack_modal_checkout">
+		<body id="newspack_modal_checkout" class="newspack-ui newspack-ui__modal__content">
 			<?php
 			echo do_shortcode( '[woocommerce_checkout]' );
 			wp_footer();
@@ -641,7 +641,7 @@ final class Modal_Checkout {
 					href="<?php echo esc_url( $url ); ?>"
 					target="_top"
 				<?php endif; ?>
-				class="button newspack-modal-newsletters__button"
+				class="button newspack-modal-newsletters__button newspack-ui__button__wide"
 			>
 				<?php echo esc_html( $button_label ); ?>
 			</a>
@@ -879,7 +879,7 @@ final class Modal_Checkout {
 			return;
 		}
 		?>
-		<div class="order-details-summary">
+		<div class="order-details-summary newspack-ui__box newspack-ui__box__text-center">
 			<?php
 			// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce hooks.
 			foreach ( $cart->get_cart() as $cart_item_key => $cart_item ) :
@@ -937,7 +937,7 @@ final class Modal_Checkout {
 			<?php do_action( 'woocommerce_checkout_before_order_review_heading' ); ?>
 			<h3 id="order_review_heading"><?php esc_html_e( 'Transaction details', 'newspack-blocks' ); ?></h3>
 			<?php do_action( 'woocommerce_checkout_before_order_review' ); ?>
-			<div id="order_review" class="woocommerce-checkout-review-order">
+			<div id="order_review" class="woocommerce-checkout-review-order newspack-ui__box">
 				<?php do_action( 'woocommerce_checkout_order_review' ); ?>
 			</div>
 			<?php do_action( 'woocommerce_checkout_after_order_review' ); ?>
