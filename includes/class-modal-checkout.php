@@ -978,7 +978,7 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * If a reader tries to make a recurring donation with an email address that
+	 * If a reader tries to make a purchase with an email address that
 	 * has been previously registered, automatically associate the transaction
 	 * with the user.
 	 *
