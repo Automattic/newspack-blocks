@@ -634,9 +634,6 @@ final class Modal_Checkout {
 		if ( 1 < $cart->get_cart_contents_count() ) {
 			return true;
 		}
-		if ( $cart->needs_shipping() ) {
-			return true;
-		}
 		return false;
 	}
 
