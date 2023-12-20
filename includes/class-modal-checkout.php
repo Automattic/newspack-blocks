@@ -54,6 +54,10 @@ final class Modal_Checkout {
 		add_action( 'woocommerce_checkout_before_terms_and_conditions', [ __CLASS__, 'render_before_terms_and_conditions' ] );
 		add_filter( 'woocommerce_enable_order_notes_field', [ __CLASS__, 'enable_order_notes_field' ] );
 
+		/** Custom handling for registered users. */
+		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
+		add_filter( 'woocommerce_checkout_posted_data', [ __CLASS__, 'skip_account_creation' ], 11 );
+
 		// Remove some stuff from the modal checkout page. It's displayed in an iframe, so it should not be treated as a separate page.
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'dequeue_scripts' ], 11 );
 		add_filter( 'newspack_reader_activation_should_render_auth', [ __CLASS__, 'is_not_modal_checkout_filter' ] );
@@ -990,6 +994,50 @@ final class Modal_Checkout {
 			return false;
 		}
 		return $enable;
+	}
+
+	/**
+	 * If a reader tries to make a purchase with an email address that
+	 * has been previously registered, automatically associate the transaction
+	 * with the user.
+	 *
+	 * @param int $customer_id Current customer ID.
+	 *
+	 * @return int Modified $customer_id
+	 */
+	public static function associate_existing_user( $customer_id ) {
+		if ( ! self::is_modal_checkout() ) {
+			return $customer_id;
+		}
+		$billing_email = filter_input( INPUT_POST, 'billing_email', FILTER_SANITIZE_EMAIL );
+		if ( $billing_email ) {
+			$customer = \get_user_by( 'email', $billing_email );
+			if ( $customer ) {
+				$customer_id = $customer->ID;
+			}
+		}
+		return $customer_id;
+	}
+
+	/**
+	 * Don't force account registration/login on Woo purchases for existing users.
+	 *
+	 * @param array $data Array of Woo checkout data.
+	 *
+	 * @return array Modified $data.
+	 */
+	public static function skip_account_creation( $data ) {
+		if ( ! self::is_modal_checkout() ) {
+			return $data;
+		}
+		$email    = $data['billing_email'];
+		$customer = \get_user_by( 'email', $email );
+		if ( $customer ) {
+			$data['createaccount'] = 0;
+			\add_filter( 'woocommerce_checkout_registration_required', '__return_false', 9999 );
+		}
+
+		return $data;
 	}
 
 	/**
