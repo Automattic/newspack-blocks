@@ -20,23 +20,56 @@
 	width: 100%;
 	height: 100%;
 	background: rgba( 0, 0, 0, 0.75 );
-	z-index: 99999;
-	&__content {
+	visibility: hidden;
+	pointer-events: none;
+	z-index: -1;
+	opacity: 0;
+	transition: opacity 0.2s ease-in-out;
+	&__container {
+		border-radius: 6px;
+		background: colors.$color__background-body;
 		position: absolute;
 		top: 50%;
 		left: 50%;
-		transform: translate( -50%, -50% );
 		width: calc( 100vw - 32px );
-		max-width: 580px;
-		min-height: 200px;
-		max-height: calc( 100vh - 32px );
-		background: colors.$color__background-body;
-		border-radius: 5px;
-		> *:not( .newspack-blocks-modal__close ) {
+		max-width: 600px;
+		min-height: 300px;
+		max-height: 90vh;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		transform: translate( -50%, -50% ) translateY( 50px );
+		transition: transform 0.2s ease-in-out;
+	}
+	&.open {
+		z-index: 99999;
+		visibility: visible;
+		pointer-events: auto;
+		opacity: 1;
+		.newspack-blocks-modal__container {
+			transform: translate( -50%, -50% );
+		}
+	}
+	&__header {
+		padding: 24px;
+		box-sizing: border-box;
+		height: 64px;
+		border-bottom: 1px solid #ddd;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		h2 {
+			font-size: 16px;
+		}
+	}
+	&__content {
+		position: relative;
+		flex-grow: 1;
+		> * {
 			width: 100%;
 			height: 100%;
 			border: 0;
-			border-radius: 5px;
+			border-radius: 6px;
 		}
 	}
 	&__spinner {
@@ -44,13 +77,10 @@
 		background: #fff;
 		border-radius: 5px;
 		display: flex;
-		height: 100%;
 		justify-content: center;
-		left: 50%;
-		opacity: 0.5;
 		position: absolute;
-		top: 50%;
-		transform: translate( -50%, -50% );
+		top: 0;
+		bottom: 0;
 		width: 100%;
 		> span {
 			animation: spin 1s infinite linear;
@@ -59,12 +89,11 @@
 			border-radius: 50%;
 			height: 25px;
 			width: 25px;
+			margin-top: -12.5px;
+			margin-left: -12.5px;
 		}
 	}
 	&__close {
-		position: absolute;
-		top: 0;
-		right: 0;
 		padding: 8px;
 		border: 0;
 		background: transparent;
@@ -147,17 +176,14 @@
 
 @media ( max-width: 600px ) {
 	.newspack-blocks-modal {
-		&__content {
+		&__container {
 			max-width: 100%;
 			width: 100%;
 			border-radius: 0;
 			top: auto;
 			bottom: 0;
 			left: 0;
-			transform: none;
-			> *:not( .newspack-blocks-modal__close ) {
-				border-radius: 0;
-			}
+			transform: none !important;
 		}
 	}
 }

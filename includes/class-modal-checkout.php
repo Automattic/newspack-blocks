@@ -39,18 +39,24 @@ final class Modal_Checkout {
 		add_action( 'template_include', [ __CLASS__, 'get_checkout_template' ] );
 		add_filter( 'woocommerce_get_return_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
 		add_filter( 'woocommerce_get_checkout_order_received_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
-		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 3 );
-		add_filter( 'woocommerce_checkout_get_value', [ __CLASS__, 'woocommerce_checkout_get_value' ], 10, 2 );
+		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 2 );
 		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'woocommerce_checkout_fields' ] );
-		add_filter( 'woocommerce_update_order_review_fragments', [ __CLASS__, 'order_review_fragments' ] );
 		add_filter( 'woocommerce_payment_successful_result', [ __CLASS__, 'woocommerce_payment_successful_result' ] );
 		add_action( 'woocommerce_checkout_create_order_line_item', [ __CLASS__, 'woocommerce_checkout_create_order_line_item' ], 10, 4 );
 		add_filter( 'newspack_donations_cart_item_data', [ __CLASS__, 'amend_cart_item_data' ] );
 		add_filter( 'newspack_recaptcha_verify_captcha', [ __CLASS__, 'recaptcha_verify_captcha' ], 10, 2 );
 		add_filter( 'woocommerce_enqueue_styles', [ __CLASS__, 'dequeue_woocommerce_styles' ] );
-		add_filter( 'wcs_place_subscription_order_text', [ __CLASS__, 'order_button_text' ], 1 );
-		add_filter( 'woocommerce_order_button_text', [ __CLASS__, 'order_button_text' ] );
-		add_filter( 'option_woocommerce_subscriptions_order_button_text', [ __CLASS__, 'order_button_text' ] );
+		add_filter( 'wcs_place_subscription_order_text', [ __CLASS__, 'order_button_text' ], 5 );
+		add_filter( 'woocommerce_order_button_text', [ __CLASS__, 'order_button_text' ], 5 );
+		add_filter( 'option_woocommerce_subscriptions_order_button_text', [ __CLASS__, 'order_button_text' ], 5 );
+		add_action( 'woocommerce_before_checkout_form', [ __CLASS__, 'render_before_checkout_form' ] );
+		add_action( 'woocommerce_checkout_before_customer_details', [ __CLASS__, 'render_before_customer_details' ] );
+		add_action( 'woocommerce_checkout_before_terms_and_conditions', [ __CLASS__, 'render_before_terms_and_conditions' ] );
+		add_filter( 'woocommerce_enable_order_notes_field', [ __CLASS__, 'enable_order_notes_field' ] );
+
+		/** Custom handling for registered users. */
+		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
+		add_filter( 'woocommerce_checkout_posted_data', [ __CLASS__, 'skip_account_creation' ], 11 );
 
 		// Support for common extensions.
 		add_filter( 'default_option_woocommerce_subscriptions_gifting_gifting_checkbox_text', [ __CLASS__, 'subscriptions_gifting_default_label' ], 10, 2 );
@@ -139,7 +145,7 @@ final class Modal_Checkout {
 	 * @param array $enqueue_styles Array of styles to enqueue.
 	 */
 	public static function dequeue_woocommerce_styles( $enqueue_styles ) {
-		if ( ! isset( $_REQUEST['modal_checkout'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! self::is_modal_checkout() ) {
 			return $enqueue_styles;
 		}
 		unset( $enqueue_styles['woocommerce-general'] );
@@ -158,9 +164,9 @@ final class Modal_Checkout {
 		$is_newspack_checkout       = filter_input( INPUT_GET, 'newspack_checkout', FILTER_SANITIZE_NUMBER_INT );
 		$product_id                 = filter_input( INPUT_GET, 'product_id', FILTER_SANITIZE_NUMBER_INT );
 		$variation_id               = filter_input( INPUT_GET, 'variation_id', FILTER_SANITIZE_NUMBER_INT );
-		$after_success_behavior     = filter_input( INPUT_GET, 'after_success_behavior', FILTER_SANITIZE_STRING );
-		$after_success_url          = filter_input( INPUT_GET, 'after_success_url', FILTER_SANITIZE_STRING );
-		$after_success_button_label = filter_input( INPUT_GET, 'after_success_button_label', FILTER_SANITIZE_STRING );
+		$after_success_behavior     = filter_input( INPUT_GET, 'after_success_behavior', FILTER_SANITIZE_SPECIAL_CHARS );
+		$after_success_url          = filter_input( INPUT_GET, 'after_success_url', FILTER_SANITIZE_SPECIAL_CHARS );
+		$after_success_button_label = filter_input( INPUT_GET, 'after_success_button_label', FILTER_SANITIZE_SPECIAL_CHARS );
 
 		if ( ! $is_newspack_checkout || ! $product_id ) {
 			return;
@@ -278,18 +284,29 @@ final class Modal_Checkout {
 		if ( ! self::$has_modal ) {
 			return;
 		}
+		/**
+		* Filters the header title for the modal checkout.
+		*
+		* @param string $title The title.
+		*/
+		$title = apply_filters( 'newspack_blocks_modal_checkout_title', __( 'Complete your transaction', 'newspack-blocks' ) );
 		?>
-		<div class="newspack-blocks-checkout-modal newspack-blocks-modal" style="display: none;">
-			<div class="newspack-blocks-modal__content">
-				<a href="#" class="newspack-blocks-modal__close">
-					<span class="screen-reader-text"><?php esc_html_e( 'Close', 'newspack-blocks' ); ?></span>
-					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
-						<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
-					</svg>
-				</a>
-				<div class="newspack-blocks-modal__spinner">
-					<span></span>
-				</div>
+		<div class="newspack-blocks-checkout-modal newspack-blocks-modal">
+			<div class="newspack-blocks-modal__container">
+				<header class="newspack-blocks-modal__header">
+					<h2><?php echo esc_html( $title ); ?></h2>
+					<a href="#" class="newspack-blocks-modal__close">
+						<span class="screen-reader-text"><?php esc_html_e( 'Close', 'newspack-blocks' ); ?></span>
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+							<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
+						</svg>
+					</a>
+				</header>
+				<section class="newspack-blocks-modal__content">
+					<div class="newspack-blocks-modal__spinner">
+						<span></span>
+					</div>
+				</section>
 			</div>
 		</div>
 		<?php
@@ -299,6 +316,12 @@ final class Modal_Checkout {
 	 * Render variation selection modal for variable products.
 	 */
 	public static function render_variation_selection() {
+		/**
+		* Filters the header title for the modal checkout.
+		*
+		* @param string $title The title.
+		*/
+		$title    = apply_filters( 'newspack_blocks_modal_checkout_title', __( 'Complete your transaction', 'newspack-blocks' ) );
 		$products = array_keys( self::$products );
 		foreach ( $products as $product_id ) {
 			$product = wc_get_product( $product_id );
@@ -306,41 +329,46 @@ final class Modal_Checkout {
 				continue;
 			}
 			?>
-			<div class="newspack-blocks-variation-modal newspack-blocks-modal" data-product-id="<?php echo esc_attr( $product_id ); ?>" style="display:none;">
-				<div class="newspack-blocks-modal__content">
-					<a href="#" class="newspack-blocks-modal__close">
-						<span class="screen-reader-text"><?php esc_html_e( 'Close', 'newspack-blocks' ); ?></span>
-						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
-							<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
-						</svg>
-					</a>
-					<div class="newspack-blocks-variation-modal__selection" data-product-id="<?php echo esc_attr( $product_id ); ?>">
-						<h3><?php echo esc_html( $product->get_name() ); ?></h3>
-						<p><?php esc_html_e( 'Select an option below:', 'newspack-blocks' ); ?></p>
-						<?php
-						$variations = $product->get_available_variations( 'objects' );
-						foreach ( $variations as $variation ) {
-							$name        = wc_get_formatted_variation( $variation, true );
-							$price       = $variation->get_price_html();
-							$description = $variation->get_description();
-							?>
-							<form>
-								<input type="hidden" name="newspack_checkout" value="1" />
-								<input type="hidden" name="product_id" value="<?php echo esc_attr( $variation->get_id() ); ?>" />
-								<button>
-									<span class="summary">
-										<span class="price"><?php echo $price; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
-										<span class="variation_name"><?php echo esc_html( $name ); ?></span>
-									</span>
-									<?php if ( ! empty( $description ) ) : ?>
-										<span class="description"><?php echo esc_html( $description ); ?></span>
-									<?php endif; ?>
-								</button>
-							</form>
+			<div class="newspack-blocks-variation-modal newspack-blocks-modal" data-product-id="<?php echo esc_attr( $product_id ); ?>">
+				<div class="newspack-blocks-modal__container">
+					<header class="newspack-blocks-modal__header">
+						<h2><?php echo esc_html( $title ); ?></h2>
+						<a href="#" class="newspack-blocks-modal__close">
+							<span class="screen-reader-text"><?php esc_html_e( 'Close', 'newspack-blocks' ); ?></span>
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+								<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
+							</svg>
+						</a>
+					</header>
+					<section class="newspack-blocks-modal__content">
+						<div class="newspack-blocks-variation-modal__selection" data-product-id="<?php echo esc_attr( $product_id ); ?>">
+							<h3><?php echo esc_html( $product->get_name() ); ?></h3>
+							<p><?php esc_html_e( 'Select an option below:', 'newspack-blocks' ); ?></p>
 							<?php
-						}
-						?>
-					</div>
+							$variations = $product->get_available_variations( 'objects' );
+							foreach ( $variations as $variation ) {
+								$name        = wc_get_formatted_variation( $variation, true );
+								$price       = $variation->get_price_html();
+								$description = $variation->get_description();
+								?>
+								<form>
+									<input type="hidden" name="newspack_checkout" value="1" />
+									<input type="hidden" name="product_id" value="<?php echo esc_attr( $variation->get_id() ); ?>" />
+									<button>
+										<span class="summary">
+											<span class="price"><?php echo $price; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+											<span class="variation_name"><?php echo esc_html( $name ); ?></span>
+										</span>
+										<?php if ( ! empty( $description ) ) : ?>
+											<span class="description"><?php echo esc_html( $description ); ?></span>
+										<?php endif; ?>
+									</button>
+								</form>
+								<?php
+							}
+							?>
+						</div>
+					</section>
 				</div>
 			</div>
 			<?php
@@ -360,9 +388,19 @@ final class Modal_Checkout {
 		wp_enqueue_script(
 			'newspack-blocks-modal-checkout',
 			plugins_url( 'dist/modalCheckout.js', \NEWSPACK_BLOCKS__PLUGIN_FILE ),
-			[],
+			[ 'jquery' ],
 			\NEWSPACK_BLOCKS__VERSION,
 			true
+		);
+		wp_localize_script(
+			'newspack-blocks-modal-checkout',
+			'newspackBlocksModalCheckout',
+			[
+				'labels' => [
+					'billing_details'  => __( 'Billing details', 'newspack-blocks' ),
+					'shipping_details' => __( 'Shipping details', 'newspack-blocks' ),
+				],
+			]
 		);
 		wp_enqueue_style(
 			'newspack-blocks-modal-checkout',
@@ -536,9 +574,9 @@ final class Modal_Checkout {
 		}
 
 		$custom_templates = [
-			'checkout/form-checkout.php' => 'src/modal-checkout/templates/checkout-form.php',
-			'checkout/form-billing.php'  => 'src/modal-checkout/templates/billing-form.php',
+			'checkout/form-checkout.php' => 'src/modal-checkout/templates/form-checkout.php',
 			'checkout/thankyou.php'      => 'src/modal-checkout/templates/thankyou.php',
+			'checkout/form-coupon.php'   => 'src/modal-checkout/templates/form-coupon.php',
 			// Replace the login form with the order summary if using the modal checkout. This is
 			// for the case where the reader used an existing email address.
 			'global/form-login.php'      => 'src/modal-checkout/templates/thankyou.php',
@@ -549,13 +587,6 @@ final class Modal_Checkout {
 				$located = NEWSPACK_BLOCKS__PLUGIN_DIR . $custom_template;
 			}
 		}
-
-		// This is for the initial display – the markup will be refetched on cart updates (e.g. applying a coupon).
-		// Then it'd be handled by the `woocommerce_update_order_review_fragments` filter.
-		if ( 'checkout/review-order.php' === $template_name && ! self::should_show_order_details() ) {
-			$located = NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/modal-checkout/templates/empty-order-details.php';
-		}
-
 		return $located;
 	}
 
@@ -574,43 +605,6 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Check the nonce for the edit billing request.
-	 *
-	 * @return bool
-	 */
-	private static function validate_edit_billing_request() {
-		if ( ! isset( $_REQUEST['newspack_blocks_edit_billing_nonce'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			return false;
-		}
-		if ( ! wp_verify_nonce( sanitize_key( $_REQUEST['newspack_blocks_edit_billing_nonce'] ), 'newspack_blocks_edit_billing' ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * Modify WC checkout field value.
-	 *
-	 * @param null   $value Value.
-	 * @param string $input Input name.
-	 *
-	 * @return string|null Value or null if unaltered.
-	 */
-	public static function woocommerce_checkout_get_value( $value, $input ) {
-		if ( ! self::is_modal_checkout() ) {
-			return null;
-		}
-		$valid_request = self::validate_edit_billing_request(); // This performs nonce verification.
-		if ( ! $valid_request ) {
-			return null;
-		}
-		if ( isset( $_REQUEST[ $input ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$value = sanitize_text_field( wp_unslash( $_REQUEST[ $input ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		}
-		return $value;
-	}
-
-	/**
 	 * Modify fields for modal checkout.
 	 *
 	 * @param array $fields Checkout fields.
@@ -621,11 +615,24 @@ final class Modal_Checkout {
 		if ( ! self::is_modal_checkout() ) {
 			return $fields;
 		}
+		$cart = \WC()->cart;
+		// Don't modify fields if shipping is required.
+		if ( $cart->needs_shipping_address() ) {
+			return $fields;
+		}
 		/**
 		 * Temporarily use the same fields as the donation checkout.
 		 *
 		 * This should soon be replaced with a logic that allows the customization
 		 * at the Checkout Button Block level.
+		 */
+		$cart = \WC()->cart;
+		if ( $cart->needs_shipping_address() ) { // Don't modify fields if shipping is required.
+			return $fields;
+		}
+
+		/**
+		 * Filters the billing fields to show in the modal checkout.
 		 */
 		$billing_fields = apply_filters( 'newspack_blocks_donate_billing_fields_keys', [] );
 		if ( empty( $billing_fields ) ) {
@@ -639,64 +646,6 @@ final class Modal_Checkout {
 			unset( $fields['billing'][ $key ] );
 		}
 		return $fields;
-	}
-
-	/**
-	 * Get the prefilled values for billing fields.
-	 *
-	 * @return array
-	 */
-	public static function get_prefilled_fields() {
-		$checkout        = \WC()->checkout();
-		$fields          = $checkout->get_checkout_fields( 'billing' );
-		$customer        = new \WC_Customer( get_current_user_id() );
-		$customer_fields = $customer->get_billing();
-		// If the user is logged in and there's no billing email, use the user's email.
-		if ( is_user_logged_in() && empty( $customer_fields['email'] ) ) {
-			$customer_fields['email'] = $customer->get_email();
-		}
-		$valid_request    = self::validate_edit_billing_request();
-		$prefilled_fields = [];
-		foreach ( $fields as $key => $field ) {
-			$key = str_replace( 'billing_', '', $key );
-			if ( $valid_request && isset( $_REQUEST[ 'billing_' . $key ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$value = sanitize_text_field( wp_unslash( $_REQUEST[ 'billing_' . $key ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			} elseif ( isset( $customer_fields[ $key ] ) ) {
-				$value = $customer_fields[ $key ];
-			}
-			$prefilled_fields[ $key ] = $value;
-		}
-		return $prefilled_fields;
-	}
-
-	/**
-	 * Whether the current checkout session has all required billing fields filled.
-	 *
-	 * @return bool
-	 */
-	public static function has_filled_required_fields() {
-		$checkout        = \WC()->checkout();
-		$fields          = $checkout->get_checkout_fields( 'billing' );
-		$required        = array_filter(
-			$fields,
-			function( $field ) {
-				return isset( $field['required'] ) && $field['required'];
-			}
-		);
-		$required_keys   = array_keys( $required );
-		$customer_fields = self::get_prefilled_fields();
-		$is_request      = self::validate_edit_billing_request();
-		foreach ( $required_keys as $key ) {
-			$key = str_replace( 'billing_', '', $key );
-			if ( empty( $customer_fields[ $key ] ) ) {
-				if ( $is_request ) {
-					/* translators: %s: field name */
-					wc_add_notice( sprintf( __( '%s is a required field.', 'newspack-blocks' ), $fields[ 'billing_' . $key ]['label'] ), 'error' );
-				}
-				return false;
-			}
-		}
-		return true;
 	}
 
 	/**
@@ -792,28 +741,27 @@ final class Modal_Checkout {
 		if ( 1 < $cart->get_cart_contents_count() ) {
 			return true;
 		}
-		return false;
-	}
+		if ( $cart->needs_shipping_address() ) {
+			$shipping       = \WC()->shipping;
+			$packages       = $shipping->get_packages();
+			$totals         = $cart->get_totals();
+			$shipping_rates = [];
 
-	/**
-	 * Customize order review fragments on cart updates.
-	 *
-	 * @param array $fragments Fragments.
-	 *
-	 * @return array
-	 */
-	public static function order_review_fragments( $fragments ) {
-		if ( isset( $_POST['post_data'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			parse_str( \sanitize_text_field( \wp_unslash( $_POST['post_data'] ) ), $post_data ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			// Find all the shipping rates that apply to the current transaction.
+			foreach ( $packages as $package ) {
+				if ( ! empty( $package['rates'] ) ) {
+					foreach ( $package['rates'] as $rate_key => $rate ) {
+						$shipping_rates[ $rate_key ] = $rate;
+					}
+				}
+			}
+
+			// Show details if shipping requires a fee or if there are multiple shipping rates to choose from.
+			if ( (float) $totals['total'] !== (float) $totals['subtotal'] || 1 < count( array_values( $shipping_rates ) ) ) {
+				return true;
+			}
 		}
-		if ( ! isset( $post_data['modal_checkout'] ) ) {
-			return $fragments;
-		}
-		if ( ! self::should_show_order_details() ) {
-			// Render an empty table so WC knows how to replace it on updates.
-			$fragments['.woocommerce-checkout-review-order-table'] = '<table class="shop_table woocommerce-checkout-review-order-table empty"></table>';
-		}
-		return $fragments;
+		return false;
 	}
 
 	/**
@@ -1062,10 +1010,159 @@ final class Modal_Checkout {
 	 * @param string $text The button text.
 	 */
 	public static function order_button_text( $text ) {
-		if ( self::is_modal_checkout() && method_exists( 'Newspack\Donations', 'is_donation_cart' ) && \Newspack\Donations::is_donation_cart() ) {
-			return __( 'Donate now', 'newspack-blocks' );
+		if ( ! self::is_modal_checkout() ) {
+			return $text;
 		}
-		return $text;
+		$cart = \WC()->cart;
+		if ( ! $cart || $cart->is_empty() ) {
+			return $text;
+		}
+		return sprintf(
+			// Translators: %s is the price.
+			__( 'Complete transaction: %s', 'newspack-blocks' ),
+			esc_html( wp_strip_all_tags( \WC()->cart->get_total() ) )
+		);
+	}
+
+	/**
+	 * Render before the checkout form.
+	 *
+	 * This will render the order summary card.
+	 */
+	public static function render_before_checkout_form() {
+		if ( ! self::is_modal_checkout() ) {
+			return;
+		}
+		$cart = \WC()->cart;
+		if ( 1 !== $cart->get_cart_contents_count() ) {
+			return;
+		}
+		?>
+		<div class="order-details-summary">
+			<?php
+			// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce hooks.
+			foreach ( $cart->get_cart() as $cart_item_key => $cart_item ) :
+				$_product = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
+				if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters( 'woocommerce_checkout_cart_item_visible', true, $cart_item, $cart_item_key ) ) :
+					?>
+					<h2>
+						<?php
+						echo apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key ) . ': '; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						echo wc_get_formatted_cart_item_data( $cart_item ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						?>
+						<?php echo apply_filters( 'woocommerce_cart_item_subtotal', $cart->get_product_subtotal( $_product, $cart_item['quantity'] ), $cart_item, $cart_item_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					</h2>
+					<?php
+				endif;
+			endforeach;
+			// phpcs:enable
+			?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render before customer details.
+	 *
+	 * This will render the hidden inputs necessary for the modal checkout.
+	 */
+	public static function render_before_customer_details() {
+		if ( ! self::is_modal_checkout() ) {
+			return;
+		}
+		?>
+		<input type="hidden" name="modal_checkout" value="1" />
+		<?php self::render_hidden_inputs(); ?>
+		<?php
+	}
+
+	/**
+	 * Render before checkout terms and conditions.
+	 *
+	 * Renders the order review table between the gateway selection and
+	 * the submit button. It will be dynamically loaded as part the "#payment"
+	 * fragment on checkout updates.
+	 */
+	public static function render_before_terms_and_conditions() {
+		if ( ! self::is_modal_checkout() ) {
+			return;
+		}
+		if ( ! self::should_show_order_details() ) {
+			return;
+		}
+		// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce hooks.
+		?>
+		<div class="order-review">
+			<?php do_action( 'woocommerce_checkout_before_order_review_heading' ); ?>
+			<h3 id="order_review_heading"><?php esc_html_e( 'Transaction details', 'newspack-blocks' ); ?></h3>
+			<?php do_action( 'woocommerce_checkout_before_order_review' ); ?>
+			<div id="order_review" class="woocommerce-checkout-review-order">
+				<?php do_action( 'woocommerce_checkout_order_review' ); ?>
+			</div>
+			<?php do_action( 'woocommerce_checkout_after_order_review' ); ?>
+		</div>
+		<?php
+		// phpcs:enable
+	}
+
+	/**
+	 * Maybe disable order notes in the modal checkout.
+	 *
+	 * @param bool $enable Whether to enable the order notes field.
+	 *
+	 * @return bool
+	 */
+	public static function enable_order_notes_field( $enable ) {
+		if ( self::is_modal_checkout() ) {
+			$cart = \WC()->cart;
+			$billing_fields = apply_filters( 'newspack_blocks_donate_billing_fields_keys', [], $cart );
+			return in_array( 'order_comments', $billing_fields, true );
+		}
+		return $enable;
+	}
+
+	/**
+	 * If a reader tries to make a purchase with an email address that
+	 * has been previously registered, automatically associate the transaction
+	 * with the user.
+	 *
+	 * @param int $customer_id Current customer ID.
+	 *
+	 * @return int Modified $customer_id
+	 */
+	public static function associate_existing_user( $customer_id ) {
+		if ( ! self::is_modal_checkout() ) {
+			return $customer_id;
+		}
+		$billing_email = filter_input( INPUT_POST, 'billing_email', FILTER_SANITIZE_EMAIL );
+		if ( $billing_email ) {
+			$customer = \get_user_by( 'email', $billing_email );
+			if ( $customer ) {
+				$customer_id = $customer->ID;
+			}
+		}
+		return $customer_id;
+	}
+
+	/**
+	 * Don't force account registration/login on Woo purchases for existing users.
+	 *
+	 * @param array $data Array of Woo checkout data.
+	 *
+	 * @return array Modified $data.
+	 */
+	public static function skip_account_creation( $data ) {
+		if ( ! self::is_modal_checkout() ) {
+			return $data;
+		}
+		$email    = $data['billing_email'];
+		$customer = \get_user_by( 'email', $email );
+		if ( $customer ) {
+			$data['createaccount'] = 0;
+			\add_filter( 'woocommerce_checkout_registration_required', '__return_false', 9999 );
+		}
+
+		return $data;
 	}
 
 	/**
