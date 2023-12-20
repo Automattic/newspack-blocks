@@ -40,7 +40,7 @@ function closeCheckout() {
 		iframeResizeObserver.disconnect();
 	}
 	Array.from( document.querySelectorAll( '.newspack-blocks-modal' ) ).forEach( el => {
-		el.style.display = 'none';
+		el.classList.remove( 'open' );
 		if ( el.overlayId && window.newspackReaderActivation?.overlays ) {
 			window.newspackReaderActivation?.overlays.remove( el.overlayId );
 		}
@@ -129,7 +129,7 @@ domReady( () => {
 			form.addEventListener( 'submit', ev => {
 				const formData = new FormData( form );
 				// Clear any open variation modal.
-				variationModals.forEach( variationModal => ( variationModal.style.display = 'none' ) );
+				variationModals.forEach( variationModal => variationModal.classList.remove( 'open' ) );
 				// Trigger variation modal if variation is not selected.
 				if ( formData.get( 'is_variable' ) && ! formData.get( 'variation_id' ) ) {
 					const variationModal = [ ...variationModals ].find(
@@ -155,18 +155,17 @@ domReady( () => {
 						// Open the variations modal.
 						ev.preventDefault();
 						document.body.classList.add( 'newspack-modal-checkout-open' );
-						variationModal.style.display = 'block';
+						variationModal.classList.add( 'open' );
 						return;
 					}
 				}
 				// Continue with checkout modal.
 				spinner.style.display = 'flex';
-				modalCheckout.style.display = 'block';
+				modalCheckout.classList.add( 'open' );
 				document.body.classList.add( 'newspack-modal-checkout-open' );
 				if ( window.newspackReaderActivation?.overlays ) {
 					modalCheckout.overlayId = window.newspackReaderActivation?.overlays.add();
 				}
-
 				iframeResizeObserver = new ResizeObserver( entries => {
 					if ( ! entries || ! entries.length ) {
 						return;
@@ -174,48 +173,36 @@ domReady( () => {
 					const contentRect = entries[ 0 ].contentRect;
 					if ( contentRect ) {
 						modalContent.style.height = contentRect.top + contentRect.bottom + 'px';
-						spinner.style.display = 'none';
-					}
-				} );
-				iframe.addEventListener( 'load', () => {
-					const location = iframe.contentWindow.location;
-					// If RAS is available, set the front-end authentication.
-					if ( window.newspackReaderActivation && location.href.indexOf( 'order-received' ) > -1 ) {
-						const ras = window.newspackReaderActivation;
-						const params = new Proxy( new URLSearchParams( location.search ), {
-							get: ( searchParams, prop ) => searchParams.get( prop ),
-						} );
-						if ( params.email ) {
-							ras.setReaderEmail( params.email );
-							ras.setAuthenticated( true );
-						}
-					}
-					const container = iframe.contentDocument.querySelector( '#newspack_modal_checkout' );
-					if ( container ) {
-						iframeResizeObserver.observe( container );
-					}
-					const innerButtons = [
-						...iframe.contentDocument.querySelectorAll( '.modal-continue, .edit-billing-link' ),
-					];
-					innerButtons.forEach( innerButton => {
-						innerButton.addEventListener( 'click', () => ( spinner.style.display = 'flex' ) );
-					} );
-					const innerForm = iframe.contentDocument.querySelector( '.checkout' );
-					if ( innerForm ) {
-						const innerBillingFields = [
-							...innerForm.querySelectorAll( '.woocommerce-billing-fields input' ),
-						];
-						innerBillingFields.forEach( innerField => {
-							innerField.addEventListener( 'keyup', e => {
-								if ( 'Enter' === e.key ) {
-									spinner.style.display = 'flex';
-									innerForm.submit();
-								}
-							} );
-						} );
 					}
 				} );
 			} );
 		} );
+	} );
+	iframe.addEventListener( 'load', () => {
+		const location = iframe.contentWindow.location;
+		// If RAS is available, set the front-end authentication.
+		if ( window.newspackReaderActivation && location.href.indexOf( 'order-received' ) > -1 ) {
+			const ras = window.newspackReaderActivation;
+			const params = new Proxy( new URLSearchParams( location.search ), {
+				get: ( searchParams, prop ) => searchParams.get( prop ),
+			} );
+			if ( params.email ) {
+				ras.setReaderEmail( params.email );
+				ras.setAuthenticated( true );
+			}
+		}
+		const container = iframe.contentDocument.querySelector( '#newspack_modal_checkout' );
+		if ( container ) {
+			iframeResizeObserver.observe( container );
+			if ( container.checkoutReady ) {
+				spinner.style.display = 'none';
+			} else {
+				container.addEventListener( 'checkout-ready', () => {
+					spinner.style.display = 'none';
+				} );
+			}
+		} else {
+			spinner.style.display = 'none';
+		}
 	} );
 } );
