@@ -255,6 +255,13 @@
 				flex-grow: 1;
 			}
 		}
+		p.result {
+			margin: 0;
+			font-size: 14px;
+			&.error {
+				color: #cc1818;
+			}
+		}
 	}
 	#checkout_details { /* stylelint-disable-line */
 		display: flex;
