@@ -39,7 +39,7 @@ final class Modal_Checkout {
 		add_action( 'template_include', [ __CLASS__, 'get_checkout_template' ] );
 		add_filter( 'woocommerce_get_return_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
 		add_filter( 'woocommerce_get_checkout_order_received_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
-		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 2 );
+		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 3 );
 		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'woocommerce_checkout_fields' ] );
 		add_filter( 'woocommerce_payment_successful_result', [ __CLASS__, 'woocommerce_payment_successful_result' ] );
 		add_action( 'woocommerce_checkout_create_order_line_item', [ __CLASS__, 'woocommerce_checkout_create_order_line_item' ], 10, 4 );
@@ -552,23 +552,6 @@ final class Modal_Checkout {
 	 * @return string Template file.
 	 */
 	public static function wc_get_template( $located, $template_name, $args ) {
-		// WooCommerce Subscriptions Gifting extension.
-		if (
-			'html-add-recipient.php' === $template_name &&
-			(
-				// Don't show Gifting fields in cart.
-				\is_cart() ||
-				(
-					// Show gifting fields on checkout if not modal, or if newspack_display_gifting_information template arg is passed.
-					\is_checkout() &&
-					self::is_modal_checkout() &&
-					empty( $args['newspack_display_gifting_information'] )
-				)
-			)
-		) {
-			$located = NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/modal-checkout/templates/empty-html-add-recipient.php';
-		}
-
 		if ( ! self::is_modal_checkout() ) {
 			return $located;
 		}
@@ -581,6 +564,10 @@ final class Modal_Checkout {
 			// for the case where the reader used an existing email address.
 			'global/form-login.php'      => 'src/modal-checkout/templates/thankyou.php',
 		];
+
+		if ( empty( $args['newspack_display_gifting_information'] ) ) {
+			$custom_templates['html-add-recipient.php'] = 'src/modal-checkout/templates/empty-html-add-recipient.php';
+		}
 
 		foreach ( $custom_templates as $original_template => $custom_template ) {
 			if ( $template_name === $original_template ) {
@@ -1176,12 +1163,11 @@ final class Modal_Checkout {
 	 * @return string Filtered default value.
 	 */
 	public static function subscriptions_gifting_default_label( $default_value, $option ) {
-		if ( ! self::is_modal_checkout() || 'woocommerce_subscriptions_gifting_gifting_checkbox_text' !== $option ) {
+		if ( 'woocommerce_subscriptions_gifting_gifting_checkbox_text' !== $option ) {
 			return $default_value;
 		}
 
 		$is_donation = method_exists( 'Newspack\Donations', 'is_donation_cart' ) && \Newspack\Donations::is_donation_cart();
-
 		return sprintf(
 			// Translators: Whether the transaction is a donation or a non-donation purchase.
 			__( 'This %s is a gift', 'newspack-blocks' ),
