@@ -605,6 +605,14 @@ final class Modal_Checkout {
 		 * This should soon be replaced with a logic that allows the customization
 		 * at the Checkout Button Block level.
 		 */
+		$cart = \WC()->cart;
+		if ( $cart->needs_shipping_address() ) { // Don't modify fields if shipping is required.
+			return $fields;
+		}
+
+		/**
+		 * Filters the billing fields to show in the modal checkout.
+		 */
 		$billing_fields = apply_filters( 'newspack_blocks_donate_billing_fields_keys', [] );
 		if ( empty( $billing_fields ) ) {
 			return $fields;
@@ -637,6 +645,26 @@ final class Modal_Checkout {
 		}
 		if ( 1 < $cart->get_cart_contents_count() ) {
 			return true;
+		}
+		if ( $cart->needs_shipping_address() ) {
+			$shipping       = \WC()->shipping;
+			$packages       = $shipping->get_packages();
+			$totals         = $cart->get_totals();
+			$shipping_rates = [];
+
+			// Find all the shipping rates that apply to the current transaction.
+			foreach ( $packages as $package ) {
+				if ( ! empty( $package['rates'] ) ) {
+					foreach ( $package['rates'] as $rate_key => $rate ) {
+						$shipping_rates[ $rate_key ] = $rate;
+					}
+				}
+			}
+
+			// Show details if shipping requires a fee or if there are multiple shipping rates to choose from.
+			if ( (float) $totals['total'] !== (float) $totals['subtotal'] || 1 < count( array_values( $shipping_rates ) ) ) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -983,7 +1011,7 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Disable order notes in the modal checkout.
+	 * Maybe disable order notes in the modal checkout.
 	 *
 	 * @param bool $enable Whether to enable the order notes field.
 	 *
@@ -991,7 +1019,9 @@ final class Modal_Checkout {
 	 */
 	public static function enable_order_notes_field( $enable ) {
 		if ( self::is_modal_checkout() ) {
-			return false;
+			$cart = \WC()->cart;
+			$billing_fields = apply_filters( 'newspack_blocks_donate_billing_fields_keys', [], $cart );
+			return in_array( 'order_comments', $billing_fields, true );
 		}
 		return $enable;
 	}
