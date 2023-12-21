@@ -605,14 +605,6 @@ final class Modal_Checkout {
 		 * This should soon be replaced with a logic that allows the customization
 		 * at the Checkout Button Block level.
 		 */
-		$cart = \WC()->cart;
-		if ( $cart->needs_shipping_address() ) { // Don't modify fields if shipping is required.
-			return $fields;
-		}
-
-		/**
-		 * Filters the billing fields to show in the modal checkout.
-		 */
 		$billing_fields = apply_filters( 'newspack_blocks_donate_billing_fields_keys', [] );
 		if ( empty( $billing_fields ) ) {
 			return $fields;
