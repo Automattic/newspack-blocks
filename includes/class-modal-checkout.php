@@ -701,6 +701,9 @@ final class Modal_Checkout {
 		if ( 1 < $cart->get_cart_contents_count() ) {
 			return true;
 		}
+		if ( ! empty( $cart->get_fees() ) ) {
+			return true;
+		}
 		return false;
 	}
 
