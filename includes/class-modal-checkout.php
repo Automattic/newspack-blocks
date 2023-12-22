@@ -75,6 +75,9 @@ final class Modal_Checkout {
 		add_filter( 'googlesitekit_adsense_tag_blocked', [ __CLASS__, 'is_modal_checkout' ] );
 		add_filter( 'googlesitekit_tagmanager_tag_blocked', [ __CLASS__, 'is_modal_checkout' ] );
 		add_filter( 'jetpack_active_modules', [ __CLASS__, 'jetpack_active_modules' ] );
+
+		// Unhook Gift Subscriptions from the checkout page.
+		add_filter( 'woocommerce_checkout_cart_item_quantity', [ __CLASS__, 'maybe_remove_gifting_option_checkout' ], 10, 3 );
 	}
 
 	/**
@@ -565,9 +568,10 @@ final class Modal_Checkout {
 			'global/form-login.php'      => 'src/modal-checkout/templates/thankyou.php',
 		];
 
-		if ( empty( $args['newspack_display_gifting_information'] ) ) {
-			$custom_templates['html-add-recipient.php'] = 'src/modal-checkout/templates/empty-html-add-recipient.php';
-		}
+		// Only show the woocommerce-subscriptions-gifting fields when we want to.
+		// if ( empty( $args['newspack_display_gifting_information'] ) ) {
+		// $custom_templates['html-add-recipient.php'] = 'src/modal-checkout/templates/empty-html-add-recipient.php';
+		// }
 
 		foreach ( $custom_templates as $original_template => $custom_template ) {
 			if ( $template_name === $original_template ) {
@@ -680,33 +684,39 @@ final class Modal_Checkout {
 			return;
 		}
 
-		$cart       = \WC()->cart;
-		$cart_items = $cart->get_cart();
+		$cart_items = \WC()->cart->get_cart();
 		if (
-			1 === count( $cart_items ) &&
-			method_exists( 'WCSG_Cart', 'is_giftable_item' ) &&
-			method_exists( 'WCS_Gifting', 'render_add_recipient_fields' ) &&
-			function_exists( 'wc_get_template_html' )
+			1 === count( array_values( $cart_items ) ) &&
+			method_exists( 'WCSG_Cart', 'maybe_display_gifting_information' )
 		) {
-			$cart_key  = array_keys( $cart_items )[0];
-			$cart_item = array_values( $cart_items )[0];
-			if ( ! \WCSG_Cart::is_giftable_item( $cart_item ) ) {
-				return;
-			}
-
-			$email  = empty( $cart_item['wcsg_gift_recipients_email'] ) ? '' : $cart_item['wcsg_gift_recipients_email'];
-			$output = \wc_get_template_html(
-				'html-add-recipient.php',
-				\wp_parse_args(
-					[ 'newspack_display_gifting_information' => true ],
-					\WCS_Gifting::get_add_recipient_template_args( $email, $cart_key )
-				),
-				'',
-				plugin_dir_path( \WCS_Gifting::$plugin_file ) . 'templates/'
-			);
-
-			echo wp_kses( $output, self::get_allowed_form_html() );
+			// TODO: We're going to need to print our own form and capture the recipient email and call WCS_Gifting::update_cart_item_key ourselves upon validaiton.
+			$cart_item_key = array_keys( $cart_items )[0];
+			$cart_item     = array_values( $cart_items )[0];
+			\WCSG_Cart::maybe_display_gifting_information( $cart_item, $cart_item_key, 'print' );
 		}
+	}
+
+	/**
+	 * Adds gifting ui elements to the checkout page. Also updates recipient information
+	 * stored on the cart item from session data if it exists.
+	 *
+	 * @param int    $quantity      Quantity.
+	 * @param object $cart_item     The Cart_Item for which we are adding ui elements.
+	 * @param string $cart_item_key Cart item key.
+	 * @return int The quantity of the cart item with ui elements appended on.
+	 */
+	public static function maybe_remove_gifting_option_checkout( $quantity, $cart_item, $cart_item_key ) {
+		if ( ! self::is_modal_checkout() ) {
+			return;
+		}
+
+		if ( 1 < count( array_values( \WC()->cart->get_cart() ) ) ) {
+			return $quantity;
+		}
+
+		$quantity = preg_replace( '/\<fieldset\>(.*?)woocommerce_subscription_gifting_checkbox(.*?)\<\/fieldset\>/s', '', $quantity );
+
+		return $quantity;
 	}
 
 	/**
@@ -715,6 +725,7 @@ final class Modal_Checkout {
 	 * @return bool
 	 */
 	public static function should_show_order_details() {
+		return true;
 		$cart = \WC()->cart;
 		if ( $cart->is_empty() ) {
 			return false;

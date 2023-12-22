@@ -23,6 +23,7 @@ import './checkout.scss';
 	}
 
 	function clearNotices() {
+		return;
 		$(
 			'.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message, .wc-block-components-notice-banner'
 		).remove();
@@ -249,8 +250,8 @@ import './checkout.scss';
 				if ( $coupon.length ) {
 					$coupon.hide();
 				}
-				$customer_details.show();
-				$after_customer_details.hide();
+				// $customer_details.show();
+				// $after_customer_details.hide();
 				$place_order_button.attr( 'disabled', 'disabled' );
 				$customer_details.find( 'input' ).first().focus();
 				// Remove default form event handlers.
@@ -263,8 +264,8 @@ import './checkout.scss';
 				if ( $coupon.length ) {
 					$coupon.show();
 				}
-				$customer_details.hide();
-				$after_customer_details.show();
+				// $customer_details.hide();
+				// $after_customer_details.show();
 				$place_order_button.removeAttr( 'disabled' );
 				renderCheckoutDetails();
 				// Store event handlers.
