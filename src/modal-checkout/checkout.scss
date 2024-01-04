@@ -298,4 +298,30 @@
 	.grecaptcha-badge {
 		visibility: hidden !important;
 	}
+
+	/* Custom Gift Subscriptions form elements */
+	.newspack-wcsg {
+		&--gift-toggle {
+			align-items: center;
+			display: flex;
+			font-weight: 700;
+
+			.woocommerce-input-wrapper {
+				line-height: 0.5;
+				margin-right: 0.25rem;
+			}
+		}
+
+		&--gift-email {
+			max-height: 0;
+			overflow: hidden;
+			transition: max-height 0.25s ease-in-out;
+			visibility: hidden;
+
+			&.visible {
+				max-height: 100px;
+				visibility: visible;
+			}
+		}
+	}
 }
