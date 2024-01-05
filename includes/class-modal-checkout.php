@@ -39,7 +39,7 @@ final class Modal_Checkout {
 		add_action( 'template_include', [ __CLASS__, 'get_checkout_template' ] );
 		add_filter( 'woocommerce_get_return_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
 		add_filter( 'woocommerce_get_checkout_order_received_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
-		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 3 );
+		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 2 );
 		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'woocommerce_checkout_fields' ] );
 		add_filter( 'woocommerce_payment_successful_result', [ __CLASS__, 'woocommerce_payment_successful_result' ] );
 		add_action( 'woocommerce_checkout_create_order_line_item', [ __CLASS__, 'woocommerce_checkout_create_order_line_item' ], 10, 4 );
@@ -641,41 +641,6 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Get an array of allowed form elements and attributes for wp_kses.
-	 *
-	 * @return array Array of allowed HTML elements and attributes.
-	 */
-	public static function get_allowed_form_html() {
-		return [
-			'div'      => [
-				'class' => [],
-				'style' => [],
-			],
-			'fieldset' => [],
-			'input'    => [
-				'checked'        => [],
-				'class'          => [],
-				'data-recipient' => [],
-				'disabled'       => [],
-				'id'             => [],
-				'name'           => [],
-				'placeholder'    => [],
-				'style'          => [],
-				'type'           => [],
-				'value'          => [],
-			],
-			'label'    => [
-				'class' => [],
-				'for'   => [],
-			],
-			'p'        => [
-				'class' => [],
-				'style' => [],
-			],
-		];
-	}
-
-	/**
 	 * If WooCommerce Subscriptions Gifting extension is available, render its fields.
 	 *
 	 * @return string HTML for the WooCommerce Subscriptions Gifting fields.
@@ -703,8 +668,8 @@ final class Modal_Checkout {
 				];
 
 				if ( \WCSG_Cart::contains_gifted_renewal() ) {
-					$recipient_user_id = self::get_recipient_from_cart_item( wcs_cart_contains_renewal() );
-					$recipient_user    = get_userdata( $recipient_user_id );
+					$recipient_user_id = \WCSG_Cart::get_recipient_from_cart_item( \wcs_cart_contains_renewal() );
+					$recipient_user    = \get_userdata( $recipient_user_id );
 					if ( $recipient_user && isset( $recipient_user->email ) ) {
 						$args['email']      = $recipient_user->user_email;
 						$args['is_renewal'] = true;
@@ -735,8 +700,11 @@ final class Modal_Checkout {
 				$self_gifting    = \WCS_Gifting::email_belongs_to_current_user( $recipient_email );
 				$is_valid_email  = ! $self_gifting && \is_email( $recipient_email );
 
-				// Handle email validation errors.
-				if ( ! $is_valid_email ) {
+				// If no errors, attach the recipient's email address to the subscription item.
+				if ( $is_valid_email ) {
+					\WCS_Gifting::update_cart_item_key( $cart_item, $cart_item_key, $recipient_email );
+				} else {
+					// Handle email validation errors.
 					\wc_add_notice(
 						sprintf(
 							// Translators: WCSG email validation error message.
@@ -746,11 +714,6 @@ final class Modal_Checkout {
 						'error',
 						[ 'id' => 'wcsg_gift_recipients_email' ]
 					);
-				}
-
-				// If no errors, attach the recipient's email address to the subscription item.
-				if ( $is_valid_email ) {
-					\WCS_Gifting::update_cart_item_key( $cart_item, $cart_item_key, $recipient_email );
 				}
 			}
 		}
