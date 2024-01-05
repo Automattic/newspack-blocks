@@ -42,6 +42,7 @@ import './checkout.scss';
 		const $customer_details = $( '#customer_details' );
 		const $after_customer_details = $( '#after_customer_details' );
 		const $place_order_button = $( '#place_order' );
+		const $gift_options = $( '.newspack-wcsg--wrapper' );
 
 		/**
 		 * Handle styling update for selected payment method.
@@ -68,6 +69,21 @@ import './checkout.scss';
 		} );
 
 		/**
+		 * Handle gift options.
+		 */
+		if ( $gift_options.length ) {
+			const $gift_toggle = $gift_options.find( '.newspack-wcsg--gift-toggle input' );
+			const $gift_email = $gift_options.find( '.newspack-wcsg--gift-email' );
+			$gift_toggle.on( 'change', function () {
+				if ( $gift_toggle.is( ':checked' ) ) {
+					$gift_email.addClass( 'visible' );
+				} else {
+					$gift_email.removeClass( 'visible' );
+				}
+			} );
+		}
+
+		/**
 		 * Initialize the 2-step checkout form.
 		 */
 		if ( $checkout_continue.length ) {
@@ -86,13 +102,11 @@ import './checkout.scss';
 		}
 
 		/**
-		 * Handle form errors while editing billing/shiping fields.
+		 * Handle form errors while editing billing/shipping fields.
 		 *
 		 * @param {string} error_message
 		 */
 		function handleFormError( error_message ) {
-			clearNotices();
-
 			$form.removeClass( 'processing' ).unblock();
 			$form.find( '.input-text, select, input:checkbox' ).trigger( 'validate' ).trigger( 'blur' );
 
@@ -107,10 +121,15 @@ import './checkout.scss';
 			 * @param {jQuery} $error
 			 */
 			const handleErrorItem = $error => {
+				// Add errors to known fields.
 				const $field = $( '#' + $error.data( 'id' ) + '_field' );
 				if ( $field?.length ) {
 					if ( ! $fieldToFocus ) {
 						$fieldToFocus = $field;
+					}
+					const $existingError = $field.find( '.woocommerce-error' );
+					if ( $existingError.length ) {
+						$existingError.remove();
 					}
 					$field.addClass( 'woocommerce-invalid' ).removeClass( 'woocommerce-valid' );
 					$field.append( '<span class="woocommerce-error">' + $error.text() + '</span>' );
@@ -358,6 +377,19 @@ import './checkout.scss';
 				html.push( shippingAddress );
 				html.push( '</div>' ); // Close shipping-details.
 			}
+
+			// WCSG Gift details.
+			if (
+				data.hasOwnProperty( 'newspack_wcsg_is_gift' ) &&
+				data.hasOwnProperty( 'wcsg_gift_recipients_email' )
+			) {
+				if ( !! data.newspack_wcsg_is_gift && !! data.wcsg_gift_recipients_email ) {
+					html.push( '<div class="gift-details">' );
+					html.push( '<h3>' + newspackBlocksModalCheckout.labels.gift_recipient + '</h3>' );
+					html.push( '<p>' + data.wcsg_gift_recipients_email + '</p>' );
+				}
+			}
+
 			$( '.order-details-summary' ).after(
 				'<div id="checkout_details">' + html.join( '' ) + '</div>'
 			);
@@ -373,6 +405,7 @@ import './checkout.scss';
 			if ( $form.is( '.processing' ) ) {
 				return false;
 			}
+			clearNotices();
 			$form.addClass( 'processing' ).block( {
 				message: null,
 				overlayCSS: {
@@ -380,6 +413,15 @@ import './checkout.scss';
 					opacity: 0.6,
 				},
 			} );
+
+			// Remove generic errors.
+			const $genericErrors = $form.find(
+				'.woocommerce-NoticeGroup.woocommerce-NoticeGroup-checkout'
+			);
+			if ( $genericErrors.length ) {
+				$genericErrors.remove();
+			}
+
 			const serializedForm = $form.serializeArray();
 			// Add 'update totals' parameter so it just performs validation.
 			serializedForm.push( { name: 'woocommerce_checkout_update_totals', value: '1' } );

@@ -28,6 +28,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 		<div id="customer_details">
 			<?php do_action( 'woocommerce_checkout_billing' ); ?>
 			<?php do_action( 'woocommerce_checkout_shipping' ); ?>
+			<?php \Newspack_Blocks\Modal_Checkout::maybe_show_wcs_gifting_fields(); ?>
 			<button id="checkout_continue" type="submit"><?php esc_html_e( 'Continue', 'newspack-blocks' ); ?></button>
 		</div>
 		<div id="after_customer_details">

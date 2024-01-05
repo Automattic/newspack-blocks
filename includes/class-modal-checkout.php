@@ -53,6 +53,7 @@ final class Modal_Checkout {
 		add_action( 'woocommerce_checkout_before_customer_details', [ __CLASS__, 'render_before_customer_details' ] );
 		add_action( 'woocommerce_checkout_before_terms_and_conditions', [ __CLASS__, 'render_before_terms_and_conditions' ] );
 		add_filter( 'woocommerce_enable_order_notes_field', [ __CLASS__, 'enable_order_notes_field' ] );
+		add_action( 'woocommerce_checkout_process', [ __CLASS__, 'wcsg_apply_gift_subscription' ] );
 
 		/** Custom handling for registered users. */
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
@@ -396,6 +397,7 @@ final class Modal_Checkout {
 				'labels' => [
 					'billing_details'  => __( 'Billing details', 'newspack-blocks' ),
 					'shipping_details' => __( 'Shipping details', 'newspack-blocks' ),
+					'gift_recipient'   => __( 'Gift recipient', 'newspack-blocks' ),
 				],
 			]
 		);
@@ -553,13 +555,24 @@ final class Modal_Checkout {
 		}
 
 		$custom_templates = [
-			'checkout/form-checkout.php' => 'src/modal-checkout/templates/form-checkout.php',
-			'checkout/thankyou.php'      => 'src/modal-checkout/templates/thankyou.php',
-			'checkout/form-coupon.php'   => 'src/modal-checkout/templates/form-coupon.php',
+			'checkout/form-checkout.php'          => 'src/modal-checkout/templates/form-checkout.php',
+			'checkout/thankyou.php'               => 'src/modal-checkout/templates/thankyou.php',
+			'checkout/form-coupon.php'            => 'src/modal-checkout/templates/form-coupon.php',
+			'checkout/form-gift-subscription.php' => 'src/modal-checkout/templates/form-gift-subscription.php',
 			// Replace the login form with the order summary if using the modal checkout. This is
 			// for the case where the reader used an existing email address.
-			'global/form-login.php'      => 'src/modal-checkout/templates/thankyou.php',
+			'global/form-login.php'               => 'src/modal-checkout/templates/thankyou.php',
 		];
+
+		// Only show the woocommerce-subscriptions-gifting fields when we want to.
+		if ( 'html-add-recipient.php' === $template_name ) {
+			$cart_items = \WC()->cart->get_cart();
+
+			// If there's only one cart item, prefer our custom gift UI. Otherwise, use the default.
+			if ( 1 === count( array_values( $cart_items ) ) && class_exists( 'WCS_Gifting' ) ) {
+				$custom_templates['html-add-recipient.php'] = 'src/modal-checkout/templates/empty-html-add-recipient.php';
+			}
+		}
 
 		foreach ( $custom_templates as $original_template => $custom_template ) {
 			if ( $template_name === $original_template ) {
@@ -617,6 +630,84 @@ final class Modal_Checkout {
 			unset( $fields['billing'][ $key ] );
 		}
 		return $fields;
+	}
+
+	/**
+	 * If WooCommerce Subscriptions Gifting extension is available, render its fields.
+	 *
+	 * @return string HTML for the WooCommerce Subscriptions Gifting fields.
+	 */
+	public static function maybe_show_wcs_gifting_fields() {
+		if ( ! self::is_modal_checkout() ) {
+			return;
+		}
+
+		// Add custom Gift Subscriptions fields if needed.
+		$cart_items = array_values( \WC()->cart->get_cart() );
+		if (
+			1 === count( $cart_items ) &&
+			method_exists( 'WCSG_Cart', 'is_giftable_item' ) &&
+			method_exists( 'WCSG_Cart', 'contains_gifted_renewal' ) &&
+			function_exists( 'wcs_cart_contains_renewal' )
+		) {
+			$cart_item = reset( $cart_items );
+			if ( \WCSG_Cart::is_giftable_item( $cart_item ) ) {
+				$email = ( empty( $cart_item['wcsg_gift_recipients_email'] ) ) ? '' : $cart_item['wcsg_gift_recipients_email'];
+				$args  = [
+					'email'      => $email,
+					'is_renewal' => false,
+				];
+
+				if ( \WCSG_Cart::contains_gifted_renewal() ) {
+					$recipient_user_id = \WCSG_Cart::get_recipient_from_cart_item( \wcs_cart_contains_renewal() );
+					$recipient_user    = \get_userdata( $recipient_user_id );
+					if ( $recipient_user && isset( $recipient_user->email ) ) {
+						$args['email']      = $recipient_user->user_email;
+						$args['is_renewal'] = true;
+					}
+				}
+
+				\wc_get_template( 'checkout/form-gift-subscription.php', $args );
+			}
+		}
+	}
+
+	/**
+	 * If the WooCommerce Subscriptions Gifting extension is available, handle custom form inputs.
+	 */
+	public static function wcsg_apply_gift_subscription() {
+		$cart_items = \WC()->cart->get_cart();
+		if (
+			1 === count( array_values( $cart_items ) ) &&
+			method_exists( 'WCS_Gifting', 'email_belongs_to_current_user' ) &&
+			method_exists( 'WCS_Gifting', 'update_cart_item_key' ) &&
+			method_exists( 'WCSG_Cart', 'is_giftable_item' )
+		) {
+			$is_gift   = ! empty( filter_input( INPUT_POST, 'newspack_wcsg_is_gift', FILTER_SANITIZE_SPECIAL_CHARS ) );
+			$cart_item_key = array_keys( $cart_items )[0];
+			$cart_item     = array_values( $cart_items )[0];
+			if ( $is_gift && \WCSG_Cart::is_giftable_item( $cart_item ) ) {
+				$recipient_email = \sanitize_email( filter_input( INPUT_POST, 'wcsg_gift_recipients_email', FILTER_SANITIZE_EMAIL ) );
+				$self_gifting    = \WCS_Gifting::email_belongs_to_current_user( $recipient_email );
+				$is_valid_email  = ! $self_gifting && \is_email( $recipient_email );
+
+				// If no errors, attach the recipient's email address to the subscription item.
+				if ( $is_valid_email ) {
+					\WCS_Gifting::update_cart_item_key( $cart_item, $cart_item_key, $recipient_email );
+				} else {
+					// Handle email validation errors.
+					\wc_add_notice(
+						sprintf(
+							// Translators: WCSG email validation error message.
+							__( 'Please enter %s email address to receive this gift.', 'newspack-blocks' ),
+							$self_gifting ? __( 'someone else’s', 'newspack-blocks' ) : __( 'a valid', 'newspack-blocks' )
+						),
+						'error',
+						[ 'id' => 'wcsg_gift_recipients_email' ]
+					);
+				}
+			}
+		}
 	}
 
 	/**
@@ -1060,6 +1151,22 @@ final class Modal_Checkout {
 		}
 
 		return $data;
+	}
+
+	/**
+	 * The value for the custom WooCommerce Subscriptions Gifting Extension checkbox label.
+	 *
+	 * @return string Gift checkbox label.
+	 */
+	public static function subscriptions_gifting_label() {
+		$is_donation = method_exists( 'Newspack\Donations', 'is_donation_cart' ) && \Newspack\Donations::is_donation_cart();
+		$label       = sprintf(
+			// Translators: Whether the transaction is a donation or a non-donation purchase.
+			__( 'This %s is a gift', 'newspack-blocks' ),
+			$is_donation ? __( 'donation', 'newspack-blocks' ) : __( 'purchase', 'newspack-blocks' )
+		);
+
+		return \apply_filters( 'wcsg_enable_gifting_checkbox_label', $label ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce hooks.
 	}
 
 	/**
