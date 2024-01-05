@@ -719,8 +719,6 @@ class Newspack_Blocks {
 		 * The filter is called after the build_articles_query() function is called by a newspack block to 
 		 * build the WP_Query arguments based on the given attributes and block requesting the query.
 		 *
-		 * @since 1.66.0
-		 *
 		 * @param array 	$args 		WP_Query arguments as created by build_articles_query()
 		 * @param array 	$attributes The attributes initial passed to build_articles_query()
 		 * @param string 	$block_name The name of the requesting block to create the query args for
