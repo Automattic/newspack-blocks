@@ -654,7 +654,6 @@ final class Modal_Checkout {
 		$cart_items = array_values( \WC()->cart->get_cart() );
 		if (
 			1 === count( $cart_items ) &&
-			class_exists( 'WCSG_Admin' ) &&
 			method_exists( 'WCSG_Cart', 'is_giftable_item' ) &&
 			method_exists( 'WCSG_Cart', 'contains_gifted_renewal' ) &&
 			function_exists( 'wcs_cart_contains_renewal' )
