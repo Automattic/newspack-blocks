@@ -787,14 +787,14 @@ class Newspack_Blocks {
 		/**
 		 * Customize the WP_Query arguments to fetch post articles before the actual query is executed.
 		 *
-		 * The filter is called after the build_articles_query() function is called by a Newspack block to 
+		 * The filter is called after the build_articles_query() function is called by a Newspack block to
 		 * build the WP_Query arguments based on the given attributes and block requesting the query.
 		 *
-		 * @param array 	$args 		WP_Query arguments as created by build_articles_query()
-		 * @param array 	$attributes The attributes initial passed to build_articles_query()
-		 * @param string 	$block_name The name of the requesting block to create the query args for
+		 * @param array  $args       WP_Query arguments as created by build_articles_query()
+		 * @param array  $attributes The attributes initial passed to build_articles_query()
+		 * @param string $block_name The name of the requesting block to create the query args for
 		 */
-		return apply_filters( 'newspack_blocks_build_articles_query', $args, $attributes, $block_name ); 
+		return apply_filters( 'newspack_blocks_build_articles_query', $args, $attributes, $block_name );
 	}
 
 	/**
