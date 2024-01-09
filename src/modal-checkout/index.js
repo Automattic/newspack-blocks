@@ -72,11 +72,13 @@ import './checkout.scss';
 		 * Handle order review table appearance.
 		 */
 		$( document ).on( 'updated_checkout', function () {
-			const $wrapper = $( '#order_review_wrapper' );
+			const $wrapper = $( '#order_review_wrapper' ).clone();
 			if ( ! $wrapper.length ) {
 				return;
 			}
-			// Move order review table to the right place.
+			// Remove existing table from inside the payment methods.
+			$( '#payment #order_review_wrapper' ).remove();
+			// Move new order review table to the payment methods.
 			$( '.payment_methods' ).after( $wrapper );
 			// Toggle visibility according to table content.
 			const $table = $wrapper.find( 'table' );
