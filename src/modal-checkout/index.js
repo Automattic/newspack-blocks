@@ -72,20 +72,21 @@ import './checkout.scss';
 		 * Handle order review table appearance.
 		 */
 		$( document ).on( 'updated_checkout', function () {
-			const $wrapper = $( '#order_review_wrapper' ).clone();
+			const $wrapper = $( '#after_customer_details > .order-review-wrapper' );
 			if ( ! $wrapper.length ) {
 				return;
 			}
+			const $el = $wrapper.clone();
 			// Remove existing table from inside the payment methods.
-			$( '#payment #order_review_wrapper' ).remove();
+			$( '#payment .order-review-wrapper' ).remove();
 			// Move new order review table to the payment methods.
-			$( '.payment_methods' ).after( $wrapper );
+			$( '.payment_methods' ).after( $el );
 			// Toggle visibility according to table content.
-			const $table = $wrapper.find( 'table' );
+			const $table = $el.find( 'table' );
 			if ( $table.is( '.empty' ) ) {
-				$wrapper.addClass( 'hidden' );
+				$el.addClass( 'hidden' );
 			} else {
-				$wrapper.removeClass( 'hidden' );
+				$el.removeClass( 'hidden' );
 			}
 		} );
 

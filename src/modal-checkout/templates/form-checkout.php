@@ -32,7 +32,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 			<button id="checkout_continue" type="submit"><?php esc_html_e( 'Continue', 'newspack-blocks' ); ?></button>
 		</div>
 		<div id="after_customer_details">
-			<div id="order_review_wrapper" class="hidden">
+			<div class="order-review-wrapper hidden">
 				<?php do_action( 'woocommerce_checkout_before_order_review_heading' ); ?>
 				<h3 id="order_review_heading"><?php esc_html_e( 'Transaction details', 'newspack-blocks' ); ?></h3>
 				<?php do_action( 'woocommerce_checkout_before_order_review' ); ?>
