@@ -191,6 +191,9 @@
 			}
 		}
 	}
+	#order_review_wrapper.hidden { /* stylelint-disable-line */
+		display: none;
+	}
 	#order_review { /* stylelint-disable-line */
 		margin: 0 0 24px;
 		padding: 16px 24px;
@@ -201,6 +204,11 @@
 			line-height: 24px;
 			border: 0;
 			margin: 0;
+			&.empty {
+				display: none;
+				margin: 0;
+				padding: 0;
+			}
 			th,
 			td {
 				font-size: 14px; // Prevent relative font size

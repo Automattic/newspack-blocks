@@ -69,6 +69,25 @@ import './checkout.scss';
 		} );
 
 		/**
+		 * Handle order review table appearance.
+		 */
+		$( document ).on( 'updated_checkout', function () {
+			const $wrapper = $( '#order_review_wrapper' );
+			if ( ! $wrapper.length ) {
+				return;
+			}
+			// Move order review table to the right place.
+			$( '.payment_methods' ).after( $wrapper );
+			// Toggle visibility according to table content.
+			const $table = $wrapper.find( 'table' );
+			if ( $table.is( '.empty' ) ) {
+				$wrapper.addClass( 'hidden' );
+			} else {
+				$wrapper.removeClass( 'hidden' );
+			}
+		} );
+
+		/**
 		 * Handle gift options.
 		 */
 		if ( $gift_options.length ) {
