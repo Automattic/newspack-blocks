@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
 import { Button, QueryControls as BasicQueryControls, ToggleControl } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
@@ -233,6 +233,8 @@ class QueryControls extends Component {
 			onTagExclusionsChange,
 			categoryExclusions,
 			onCategoryExclusionsChange,
+			customTaxonomyExclusions,
+			onCustomTaxonomyExclusionsChange,
 			enableSpecific,
 		} = this.props;
 		const { showAdvancedFilters } = this.state;
@@ -248,6 +250,12 @@ class QueryControls extends Component {
 		const getTermsOfCustomTaxonomy = taxSlug => {
 			const tax = customTaxonomies.find( taxObj => taxObj.slug === taxSlug );
 			return tax ? tax.terms : [];
+		};
+
+		const handleCustomTaxonomyExclusionsChange = ( slug, value ) => {
+			let newValue = customTaxonomyExclusions.filter( tax => tax.slug !== slug );
+			newValue = [ ...newValue, { slug, terms: [ ...( newValue?.terms || [] ), value ] } ];
+			onCustomTaxonomyExclusionsChange( newValue );
 		};
 
 		return (
@@ -355,6 +363,24 @@ class QueryControls extends Component {
 										label={ __( 'Excluded Categories', 'newspack-blocks' ) }
 									/>
 								) }
+								{ registeredCustomTaxonomies &&
+									onCustomTaxonomyExclusionsChange &&
+									registeredCustomTaxonomies.map( ( { slug } ) => (
+										<AutocompleteTokenField
+											fetchSavedInfo={ termIds => this.fetchSavedCustomTaxonomies( slug, termIds ) }
+											fetchSuggestions={ search =>
+												this.fetchCustomTaxonomiesSuggestions( slug, search )
+											}
+											key={ `${ slug }-exclusions-selector` }
+											label={ sprintf(
+												// translators: %s is the custom taxonomy name.
+												__( 'Excluded %s', 'newspack-blocks' ),
+												slug
+											) }
+											onChange={ value => handleCustomTaxonomyExclusionsChange( slug, value ) }
+											tokens={ customTaxonomyExclusions || [] }
+										/>
+									) ) }
 							</>
 						) }
 					</>
@@ -372,6 +398,7 @@ QueryControls.defaultProps = {
 	tags: [],
 	customTaxonomies: [],
 	tagExclusions: [],
+	customTaxonomyExclusions: [],
 };
 
 export default QueryControls;

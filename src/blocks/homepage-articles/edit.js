@@ -293,6 +293,7 @@ class Edit extends Component {
 			tags,
 			tagExclusions,
 			categoryExclusions,
+			customTaxonomyExclusions,
 		} = attributes;
 
 		const imageSizeOptions = [
@@ -370,6 +371,8 @@ class Edit extends Component {
 						onTagExclusionsChange={ handleAttributeChange( 'tagExclusions' ) }
 						categoryExclusions={ categoryExclusions }
 						onCategoryExclusionsChange={ handleAttributeChange( 'categoryExclusions' ) }
+						customTaxonomyExclusions={ customTaxonomyExclusions }
+						onCustomTaxonomyExclusionsChange={ handleAttributeChange( 'customTaxonomyExclusions' ) }
 						postType={ postType }
 					/>
 					{ postLayout === 'grid' && (
@@ -632,8 +635,15 @@ class Edit extends Component {
 		 * Constants
 		 */
 
-		const { attributes, className, setAttributes, isSelected, latestPosts, textColor, error } =
-			this.props;
+		const {
+			attributes,
+			className,
+			setAttributes,
+			isSelected,
+			latestPosts,
+			textColor,
+			error,
+		} = this.props;
 
 		const {
 			showImage,

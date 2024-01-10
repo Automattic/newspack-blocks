@@ -36,6 +36,7 @@ const POST_QUERY_ATTRIBUTES = [
 	'specificMode',
 	'tagExclusions',
 	'categoryExclusions',
+	'customTaxonomyExclusions',
 	'postType',
 	'includedPostStatuses',
 	'deduplicate',
@@ -55,6 +56,7 @@ type HomepageArticlesAttributes = {
 	specificMode: boolean;
 	tagExclusions: TagId[];
 	categoryExclusions: CategoryId[];
+	customTaxonomyExclusions: Taxonomy[];
 };
 
 type HomepageArticlesProps = {
@@ -100,6 +102,7 @@ export const queryCriteriaFromAttributes = ( attributes: Block[ 'attributes' ] )
 		specificMode,
 		tagExclusions,
 		categoryExclusions,
+		customTaxonomyExclusions,
 		includedPostStatuses,
 	} = pick( attributes, POST_QUERY_ATTRIBUTES );
 
@@ -120,6 +123,7 @@ export const queryCriteriaFromAttributes = ( attributes: Block[ 'attributes' ] )
 					tags,
 					tagExclusions,
 					categoryExclusions,
+					customTaxonomyExclusions,
 					customTaxonomies,
 					postType,
 					includedPostStatuses,
@@ -207,7 +211,9 @@ const generatePreviewPost = ( id: PostId ) => {
 const getPreviewPosts = ( attributes: HomepageArticlesAttributes ) =>
 	times( attributes.postsToShow, generatePreviewPost );
 
-type Select = ( namespace: string ) => {
+type Select = (
+	namespace: string
+) => {
 	// core/blocks-editor
 	getBlocks: () => Block[];
 	// core/editor
