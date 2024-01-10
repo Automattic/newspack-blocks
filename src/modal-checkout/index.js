@@ -69,6 +69,28 @@ import './checkout.scss';
 		} );
 
 		/**
+		 * Handle order review table appearance.
+		 */
+		$( document ).on( 'updated_checkout', function () {
+			const $wrapper = $( '#after_customer_details > .order-review-wrapper' );
+			if ( ! $wrapper.length ) {
+				return;
+			}
+			const $el = $wrapper.clone();
+			// Remove existing table from inside the payment methods.
+			$( '#payment .order-review-wrapper' ).remove();
+			// Move new order review table to the payment methods.
+			$( '.payment_methods' ).after( $el );
+			// Toggle visibility according to table content.
+			const $table = $el.find( 'table' );
+			if ( $table.is( '.empty' ) ) {
+				$el.addClass( 'hidden' );
+			} else {
+				$el.removeClass( 'hidden' );
+			}
+		} );
+
+		/**
 		 * Handle gift options.
 		 */
 		if ( $gift_options.length ) {

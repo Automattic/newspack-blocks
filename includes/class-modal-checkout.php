@@ -41,6 +41,7 @@ final class Modal_Checkout {
 		add_filter( 'woocommerce_get_checkout_order_received_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
 		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 2 );
 		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'woocommerce_checkout_fields' ] );
+		add_filter( 'woocommerce_update_order_review_fragments', [ __CLASS__, 'order_review_fragments' ] );
 		add_filter( 'woocommerce_payment_successful_result', [ __CLASS__, 'woocommerce_payment_successful_result' ] );
 		add_action( 'woocommerce_checkout_create_order_line_item', [ __CLASS__, 'woocommerce_checkout_create_order_line_item' ], 10, 4 );
 		add_filter( 'newspack_donations_cart_item_data', [ __CLASS__, 'amend_cart_item_data' ] );
@@ -51,7 +52,6 @@ final class Modal_Checkout {
 		add_filter( 'option_woocommerce_subscriptions_order_button_text', [ __CLASS__, 'order_button_text' ], 5 );
 		add_action( 'woocommerce_before_checkout_form', [ __CLASS__, 'render_before_checkout_form' ] );
 		add_action( 'woocommerce_checkout_before_customer_details', [ __CLASS__, 'render_before_customer_details' ] );
-		add_action( 'woocommerce_checkout_before_terms_and_conditions', [ __CLASS__, 'render_before_terms_and_conditions' ] );
 		add_filter( 'woocommerce_enable_order_notes_field', [ __CLASS__, 'enable_order_notes_field' ] );
 		add_action( 'woocommerce_checkout_process', [ __CLASS__, 'wcsg_apply_gift_subscription' ] );
 
@@ -579,6 +579,13 @@ final class Modal_Checkout {
 				$located = NEWSPACK_BLOCKS__PLUGIN_DIR . $custom_template;
 			}
 		}
+
+		// This is for the initial display – the markup will be refetched on cart updates (e.g. applying a coupon).
+		// Then it'd be handled by the `woocommerce_update_order_review_fragments` filter.
+		if ( 'checkout/review-order.php' === $template_name && ! self::should_show_order_details() ) {
+			$located = NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/modal-checkout/templates/empty-order-details.php';
+		}
+
 		return $located;
 	}
 
@@ -753,6 +760,24 @@ final class Modal_Checkout {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Customize order review fragments on cart updates.
+	 *
+	 * @param array $fragments Fragments.
+	 *
+	 * @return array
+	 */
+	public static function order_review_fragments( $fragments ) {
+		if ( ! self::is_modal_checkout() ) {
+			return $fragments;
+		}
+		if ( ! self::should_show_order_details() ) {
+			// Render an empty table so WC knows how to replace it on updates.
+			$fragments['.woocommerce-checkout-review-order-table'] = '<table class="shop_table woocommerce-checkout-review-order-table empty"></table>';
+		}
+		return $fragments;
 	}
 
 	/**
@@ -1065,35 +1090,6 @@ final class Modal_Checkout {
 		<input type="hidden" name="modal_checkout" value="1" />
 		<?php self::render_hidden_inputs(); ?>
 		<?php
-	}
-
-	/**
-	 * Render before checkout terms and conditions.
-	 *
-	 * Renders the order review table between the gateway selection and
-	 * the submit button. It will be dynamically loaded as part the "#payment"
-	 * fragment on checkout updates.
-	 */
-	public static function render_before_terms_and_conditions() {
-		if ( ! self::is_modal_checkout() ) {
-			return;
-		}
-		if ( ! self::should_show_order_details() ) {
-			return;
-		}
-		// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce hooks.
-		?>
-		<div class="order-review">
-			<?php do_action( 'woocommerce_checkout_before_order_review_heading' ); ?>
-			<h3 id="order_review_heading"><?php esc_html_e( 'Transaction details', 'newspack-blocks' ); ?></h3>
-			<?php do_action( 'woocommerce_checkout_before_order_review' ); ?>
-			<div id="order_review" class="woocommerce-checkout-review-order">
-				<?php do_action( 'woocommerce_checkout_order_review' ); ?>
-			</div>
-			<?php do_action( 'woocommerce_checkout_after_order_review' ); ?>
-		</div>
-		<?php
-		// phpcs:enable
 	}
 
 	/**
