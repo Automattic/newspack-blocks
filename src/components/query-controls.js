@@ -364,7 +364,7 @@ class QueryControls extends Component {
 								) }
 								{ registeredCustomTaxonomies &&
 									onCustomTaxonomyExclusionsChange &&
-									registeredCustomTaxonomies.map( ( { slug } ) => (
+									registeredCustomTaxonomies.map( ( { label, slug } ) => (
 										<AutocompleteTokenField
 											fetchSavedInfo={ termIds => this.fetchSavedCustomTaxonomies( slug, termIds ) }
 											fetchSuggestions={ search =>
@@ -372,9 +372,9 @@ class QueryControls extends Component {
 											}
 											key={ `${ slug }-exclusions-selector` }
 											label={ sprintf(
-												// translators: %s is the custom taxonomy name.
+												// translators: %s is the custom taxonomy label.
 												__( 'Excluded %s', 'newspack-blocks' ),
-												slug
+												label
 											) }
 											onChange={ value =>
 												customTaxonomiesPrepareChange(
