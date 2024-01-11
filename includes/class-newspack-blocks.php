@@ -696,13 +696,13 @@ class Newspack_Blocks {
 				}
 			}
 			if ( $custom_taxonomy_exclusions && count( $custom_taxonomy_exclusions ) ) {
-				foreach ( $custom_taxonomy_exclusions as $taxonomy => $terms ) {
+				foreach ( $custom_taxonomy_exclusions as $exclusion ) {
 					$args['tax_query'][] = [
 						'field'            => 'term_id',
 						'include_children' => false,
 						'operator'         => 'NOT IN',
-						'taxonomy'         => $taxonomy,
-						'terms'            => $terms,
+						'taxonomy'         => $exclusion['slug'],
+						'terms'            => $exclusion['terms'],
 					];
 				}
 			}

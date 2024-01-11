@@ -318,11 +318,6 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		}
 	}
 
-	// TODO: Handle custom tax exclusions.
-	if ( isset( $attributes['customTaxonomyExclusions'] ) ) {
-		unset( $attributes['customTaxonomyExclusions'] );
-	}
-
 	$articles_rest_url = add_query_arg(
 		array_merge(
 			array_map(
