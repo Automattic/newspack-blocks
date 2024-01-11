@@ -241,21 +241,15 @@ class QueryControls extends Component {
 
 		const registeredCustomTaxonomies = window.newspack_blocks_data?.custom_taxonomies;
 
-		const customTaxonomiesPrepareChange = ( taxSlug, value ) => {
-			let newValue = customTaxonomies.filter( tax => tax.slug !== taxSlug );
+		const customTaxonomiesPrepareChange = ( taxArr, taxHandler, taxSlug, value ) => {
+			let newValue = taxArr.filter( tax => tax.slug !== taxSlug );
 			newValue = [ ...newValue, { slug: taxSlug, terms: value } ];
-			onCustomTaxonomiesChange( newValue );
+			taxHandler( newValue );
 		};
 
-		const getTermsOfCustomTaxonomy = taxSlug => {
-			const tax = customTaxonomies.find( taxObj => taxObj.slug === taxSlug );
+		const getTermsOfCustomTaxonomy = ( taxArr, taxSlug ) => {
+			const tax = taxArr.find( taxObj => taxObj.slug === taxSlug );
 			return tax ? tax.terms : [];
-		};
-
-		const handleCustomTaxonomyExclusionsChange = ( slug, value ) => {
-			let newValue = customTaxonomyExclusions.filter( tax => tax.slug !== slug );
-			newValue = [ ...newValue, { slug, terms: [ ...( newValue?.terms || [] ), value ] } ];
-			onCustomTaxonomyExclusionsChange( newValue );
 		};
 
 		return (
@@ -320,9 +314,14 @@ class QueryControls extends Component {
 							registeredCustomTaxonomies.map( tax => (
 								<AutocompleteTokenField
 									key={ `${ customTaxonomies[ tax.slug ] }-selector` }
-									tokens={ getTermsOfCustomTaxonomy( tax.slug ) }
+									tokens={ getTermsOfCustomTaxonomy( customTaxonomies, tax.slug ) }
 									onChange={ value => {
-										customTaxonomiesPrepareChange( tax.slug, value );
+										customTaxonomiesPrepareChange(
+											customTaxonomies,
+											onCustomTaxonomiesChange,
+											tax.slug,
+											value
+										);
 									} }
 									fetchSuggestions={ search =>
 										this.fetchCustomTaxonomiesSuggestions( tax.slug, search )
@@ -377,8 +376,15 @@ class QueryControls extends Component {
 												__( 'Excluded %s', 'newspack-blocks' ),
 												slug
 											) }
-											onChange={ value => handleCustomTaxonomyExclusionsChange( slug, value ) }
-											tokens={ customTaxonomyExclusions || [] }
+											onChange={ value =>
+												customTaxonomiesPrepareChange(
+													customTaxonomyExclusions,
+													onCustomTaxonomyExclusionsChange,
+													slug,
+													value
+												)
+											}
+											tokens={ getTermsOfCustomTaxonomy( customTaxonomyExclusions, slug ) }
 										/>
 									) ) }
 							</>
