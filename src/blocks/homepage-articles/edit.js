@@ -635,15 +635,8 @@ class Edit extends Component {
 		 * Constants
 		 */
 
-		const {
-			attributes,
-			className,
-			setAttributes,
-			isSelected,
-			latestPosts,
-			textColor,
-			error,
-		} = this.props;
+		const { attributes, className, setAttributes, isSelected, latestPosts, textColor, error } =
+			this.props;
 
 		const {
 			showImage,
