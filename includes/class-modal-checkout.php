@@ -332,7 +332,6 @@ final class Modal_Checkout {
 		*/
 		$title    = apply_filters( 'newspack_blocks_modal_checkout_title', __( 'Complete your transaction', 'newspack-blocks' ) );
 		$products = array_keys( self::$products );
-		error_log( print_r( $products, true ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
 		foreach ( $products as $product_id ) {
 			$product = wc_get_product( $product_id );
 			if ( ! $product->is_type( 'variable' ) ) {
