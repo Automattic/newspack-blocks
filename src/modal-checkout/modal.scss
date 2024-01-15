@@ -132,15 +132,18 @@
 		margin: 0;
 		padding: 0;
 		&__item {
-			flex: 1 1 30%;
-			max-width: calc( 33.3333% - 10px );
 			border: 1px solid #ddd;
 			border-radius: 6px;
 			text-align: center;
-			&:first-child:nth-last-child( 2 ),
-			&:first-child:nth-last-child( 2 ) ~ li {
-				flex: 1 1 40%;
-				max-width: calc( 50% - 10px );
+			flex: 1 1 100%;
+			@media ( min-width: 600px ) {
+				flex: 1 1 30%;
+				max-width: calc( 33.3333% - 10px );
+				&:first-child:nth-last-child( 2 ),
+				&:first-child:nth-last-child( 2 ) ~ li {
+					flex: 1 1 40%;
+					max-width: calc( 50% - 10px );
+				}
 			}
 			.summary {
 				font-size: 14px;
