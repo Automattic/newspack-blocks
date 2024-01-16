@@ -311,12 +311,19 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Update product price string for subscriptions to use "per" instead of "/".
+	 * Update product price string for subscriptions to use "per" instead of "/"
+	 * and remove the cents when the price is over 3 digits.
 	 *
 	 * @param string $price_string The price string.
 	 */
 	public static function update_subscriptions_product_price_string( $price_string ) {
 		$price_string = str_replace( ' / ', ' ' . __( 'per', 'newspack-blocks' ) . ' ', $price_string );
+		// For prices over 3 digits and 00 cents, remove the cents.
+		$pattern = '/\b\d{3,}\.\d{2}\b/';
+		preg_match( $pattern, $price_string, $matches );
+		if ( ! empty( $matches ) ) {
+			$price_string = preg_replace( $pattern, preg_replace( '/\.00$/', '', $matches[0] ), $price_string );
+		}
 		return $price_string;
 	}
 
