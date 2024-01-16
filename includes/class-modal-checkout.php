@@ -319,10 +319,12 @@ final class Modal_Checkout {
 	public static function update_subscriptions_product_price_string( $price_string ) {
 		$price_string = str_replace( ' / ', ' ' . __( 'per', 'newspack-blocks' ) . ' ', $price_string );
 		// For prices over 3 digits and 00 cents, remove the cents.
-		$pattern = '/\b\d{3,}\.\d{2}\b/';
+		$decimal_separator = wc_get_price_decimal_separator();
+		$pattern           = '/\b\d{3,}' . preg_quote( $decimal_separator, '/' ) . '00\b/';
 		preg_match( $pattern, $price_string, $matches );
 		if ( ! empty( $matches ) ) {
-			$price_string = preg_replace( $pattern, preg_replace( '/\.00$/', '', $matches[0] ), $price_string );
+			$replace_pattern = '/\\' . preg_quote( $decimal_separator, '/' ) . '00$/';
+			$price_string    = preg_replace( $pattern, preg_replace( $replace_pattern, '', $matches[0] ), $price_string );
 		}
 		return $price_string;
 	}
