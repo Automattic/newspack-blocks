@@ -112,20 +112,21 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 			$classname = 'is-style-default';
 		}
 
-		$layout_version                        = ( $is_tiers_based ? 'tiers' : 'frequency' );
-		$container_classnames                  = implode(
-			' ',
-			[
-				'wp-block-newspack-blocks-donate',
-				'wpbnbd',
-				'wpbnbd--' . $layout_version . '-based',
-				'wpbnbd--platform-' . $configuration['platform'],
-				$classname,
-				'wpbnbd-frequencies--' . count( $configuration['frequencies'] ),
-			]
-		);
-		$configuration['container_classnames'] = $container_classnames;
+		$layout_version = ( $is_tiers_based ? 'tiers' : 'frequency' );
+		$class_names    = [
+			'wp-block-newspack-blocks-donate',
+			'wpbnbd',
+			'wpbnbd--' . $layout_version . '-based',
+			'wpbnbd--platform-' . $configuration['platform'],
+			$classname,
+			'wpbnbd-frequencies--' . count( $configuration['frequencies'] ),
+		];
 
+		if ( ! Newspack_Blocks::is_nyp_available() ) {
+			$class_names[] = 'wpbnbd--nyp-disabled';
+		}
+
+		$configuration['container_classnames']             = implode( ' ', $class_names );
 		$configuration['is_rendering_stripe_payment_form'] = false;
 
 		if ( Newspack_Blocks::is_rendering_stripe_payment_form() ) {

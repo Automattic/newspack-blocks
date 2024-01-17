@@ -232,6 +232,15 @@ class Newspack_Blocks {
 	}
 
 	/**
+	 * Check if the Name Your Price extension is available.
+	 *
+	 * @return bool
+	 */
+	public static function is_nyp_available() {
+		return class_exists( 'WC_Name_Your_Price_Helpers' );
+	}
+
+	/**
 	 * Enqueue block scripts and styles for editor.
 	 */
 	public static function enqueue_block_editor_assets() {
@@ -259,6 +268,7 @@ class Newspack_Blocks {
 				'has_recaptcha'                    => class_exists( 'Newspack\Recaptcha' ) && \Newspack\Recaptcha::can_use_captcha(),
 				'recaptcha_url'                    => admin_url( 'admin.php?page=newspack-connections-wizard' ),
 				'custom_taxonomies'                => self::get_custom_taxonomies(),
+				'nyp_is_available'                 => self::is_nyp_available(),
 			];
 
 			if ( class_exists( 'WP_REST_Newspack_Author_List_Controller' ) ) {

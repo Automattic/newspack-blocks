@@ -1,3 +1,5 @@
+/* globals newspack_blocks_data */
+
 /**
  * External dependencies
  */
@@ -153,7 +155,10 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 
 	// Editor bug – initially, the default style is selected, but the class not applied.
 	if ( className.indexOf( 'is-style' ) === -1 ) {
-		className = className + ' is-style-default';
+		className += ' is-style-default';
+	}
+	if ( ! newspack_blocks_data?.nyp_is_available ) {
+		className += ' wpbnbd--nyp-disabled';
 	}
 	const getWrapperClassNames = ( classes: string[] = [] ) =>
 		classNames(
@@ -401,18 +406,18 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 						}
 					/>
 				</PanelBody>
-				{ window.newspack_blocks_data.supports_recaptcha && (
+				{ newspack_blocks_data.supports_recaptcha && (
 					<PanelBody title={ __( 'Spam protection', 'newspack' ) }>
 						<p>
 							{ sprintf(
 								// translators: %s is either 'enabled' or 'disabled'.
 								__( 'reCAPTCHA v3 is currently %s.', 'newspack' ),
-								window.newspack_blocks_data.has_recaptcha
+								newspack_blocks_data.has_recaptcha
 									? __( 'enabled', 'newspack' )
 									: __( 'disabled', 'newspack' )
 							) }
 						</p>
-						{ ! window.newspack_blocks_data.has_recaptcha && (
+						{ ! newspack_blocks_data.has_recaptcha && (
 							<p>
 								{ __(
 									"It's highly recommended that you enable reCAPTCHA v3 protection to prevent spambots from using this form!",
@@ -421,7 +426,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 							</p>
 						) }
 						<p>
-							<a href={ window.newspack_blocks_data.recaptcha_url }>
+							<a href={ newspack_blocks_data.recaptcha_url }>
 								{ __( 'Configure your reCAPTCHA settings.', 'newspack' ) }
 							</a>
 						</p>
