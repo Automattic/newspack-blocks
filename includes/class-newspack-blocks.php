@@ -616,7 +616,10 @@ class Newspack_Blocks {
 		// Get all blocks and gather specificPosts ids of all eligible blocks.
 		global $newspack_blocks_all_specific_posts_ids;
 		if ( ! is_array( $newspack_blocks_all_specific_posts_ids ) ) {
-			$blocks                                 = parse_blocks( get_the_content() );
+			$blocks = [];
+			if ( ! is_404() ) {
+				$blocks = parse_blocks( get_the_content() );
+			}
 			$newspack_blocks_all_specific_posts_ids = self::get_specific_posts_from_blocks( $blocks, $block_name );
 		}
 
