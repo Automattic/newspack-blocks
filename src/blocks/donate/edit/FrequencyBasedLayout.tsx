@@ -1,5 +1,3 @@
-/* globals newspack_blocks_data */
-
 /**
  * External dependencies
  */
@@ -67,8 +65,9 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 		}
 	}, [ attributes.defaultFrequency ] );
 
-	const isRenderingStripePaymentForm = newspack_blocks_data?.is_rendering_stripe_payment_form;
-	const canUseNameYourPrice = newspack_blocks_data?.can_use_name_your_price;
+	const isRenderingStripePaymentForm =
+		window.newspack_blocks_data?.is_rendering_stripe_payment_form;
+	const canUseNameYourPrice = window.newspack_blocks_data?.can_use_name_your_price;
 
 	const [ selectedFrequency, setSelectedFrequency ] = useState( attributes.defaultFrequency );
 

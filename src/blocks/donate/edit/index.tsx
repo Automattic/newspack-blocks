@@ -1,5 +1,3 @@
-/* globals newspack_blocks_data */
-
 /**
  * External dependencies
  */
@@ -143,7 +141,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 		return <Placeholder icon={ <Spinner /> } className="component-placeholder__align-center" />;
 	}
 
-	const canUseNameYourPrice = newspack_blocks_data?.can_use_name_your_price;
+	const canUseNameYourPrice = window.newspack_blocks_data?.can_use_name_your_price;
 	const isManual = attributes.manual && canUseNameYourPrice;
 	const isTiered = isManual ? attributes.tiered : settings.tiered;
 	const isTierBasedLayoutEnabled = isTiered && attributes.layoutOption === 'tiers';
@@ -409,18 +407,18 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 						}
 					/>
 				</PanelBody>
-				{ newspack_blocks_data.supports_recaptcha && (
+				{ window.newspack_blocks_data.supports_recaptcha && (
 					<PanelBody title={ __( 'Spam protection', 'newspack' ) }>
 						<p>
 							{ sprintf(
 								// translators: %s is either 'enabled' or 'disabled'.
 								__( 'reCAPTCHA v3 is currently %s.', 'newspack' ),
-								newspack_blocks_data.has_recaptcha
+								window.newspack_blocks_data.has_recaptcha
 									? __( 'enabled', 'newspack' )
 									: __( 'disabled', 'newspack' )
 							) }
 						</p>
-						{ ! newspack_blocks_data.has_recaptcha && (
+						{ ! window.newspack_blocks_data.has_recaptcha && (
 							<p>
 								{ __(
 									"It's highly recommended that you enable reCAPTCHA v3 protection to prevent spambots from using this form!",
@@ -429,7 +427,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 							</p>
 						) }
 						<p>
-							<a href={ newspack_blocks_data.recaptcha_url }>
+							<a href={ window.newspack_blocks_data.recaptcha_url }>
 								{ __( 'Configure your reCAPTCHA settings.', 'newspack' ) }
 							</a>
 						</p>

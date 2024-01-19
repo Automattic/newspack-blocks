@@ -9,6 +9,7 @@ declare global {
 			supports_recaptcha: boolean;
 			has_recaptcha: boolean;
 			recaptcha_url: string;
+			can_use_name_your_price: boolean;
 		};
 		grecaptcha: any;
 		newspackReaderActivation: {
@@ -44,7 +45,7 @@ declare global {
 		clientId: string;
 		attributes: {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			[ key: string ]: any;
+			[key: string]: any;
 		};
 		innerBlocks: Block[];
 	};
@@ -54,4 +55,4 @@ declare global {
 	};
 }
 
-export {};
+export { };
