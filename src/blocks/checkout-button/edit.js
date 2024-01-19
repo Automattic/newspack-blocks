@@ -50,7 +50,7 @@ function getVariationName( variation ) {
 function getNYP( product ) {
 	return {
 		isNYP:
-			newspack_blocks_data?.nyp_is_available &&
+			newspack_blocks_data?.can_use_name_your_price &&
 			product?.meta_data?.some( meta => meta.key === '_nyp' && meta.value === 'yes' ),
 		suggestedPrice: product?.meta_data?.find( meta => meta.key === '_suggested_price' )?.value,
 		minPrice: product?.meta_data?.find( meta => meta.key === '_min_price' )?.value,

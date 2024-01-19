@@ -219,20 +219,18 @@ final class Modal_Checkout {
 		}
 
 		/** Apply NYP custom price */
-		if ( class_exists( 'WC_Name_Your_Price_Helpers' ) ) {
-			$is_product_nyp = \WC_Name_Your_Price_Helpers::is_nyp( $product_id );
-			$price          = filter_input( INPUT_GET, 'price', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-			if ( $is_product_nyp ) {
-				if ( empty( $price ) ) {
-					$price = \WC_Name_Your_Price_Helpers::get_suggested_price( $product_id );
-				}
-				$min_price = \WC_Name_Your_Price_Helpers::get_minimum_price( $product_id );
-				$max_price = \WC_Name_Your_Price_Helpers::get_maximum_price( $product_id );
-				$price     = ! empty( $max_price ) ? min( $price, $max_price ) : $price;
-				$price     = ! empty( $min_price ) ? max( $price, $min_price ) : $price;
-
-				$cart_item_data['nyp'] = (float) \WC_Name_Your_Price_Helpers::standardize_number( $price );
+		$is_product_nyp = \Newspack_Blocks::can_use_name_your_price() ? \WC_Name_Your_Price_Helpers::is_nyp( $product_id ) : false;
+		$price          = filter_input( INPUT_GET, 'price', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		if ( $is_product_nyp ) {
+			if ( empty( $price ) ) {
+				$price = \WC_Name_Your_Price_Helpers::get_suggested_price( $product_id );
 			}
+			$min_price = \WC_Name_Your_Price_Helpers::get_minimum_price( $product_id );
+			$max_price = \WC_Name_Your_Price_Helpers::get_maximum_price( $product_id );
+			$price     = ! empty( $max_price ) ? min( $price, $max_price ) : $price;
+			$price     = ! empty( $min_price ) ? max( $price, $min_price ) : $price;
+
+			$cart_item_data['nyp'] = (float) \WC_Name_Your_Price_Helpers::standardize_number( $price );
 		}
 
 		/**

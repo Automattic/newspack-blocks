@@ -17,6 +17,23 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 	private static $configurations_cache = []; // phpcs:ignore Squiz.Commenting.VariableComment.Missing
 
 	/**
+	 * Get frequency label.
+	 *
+	 * @param string $frequency_slug Frequency slug.
+	 * @param bool   $hide_once_label Whether to hide the "once" label.
+	 */
+	public static function get_frequency_label( $frequency_slug, $hide_once_label = false ) {
+		switch ( $frequency_slug ) {
+			case 'once':
+				return $hide_once_label ? '' : ' ' . __( 'once', 'newspack-blocks' );
+			case 'month':
+				return ' ' . __( 'per month', 'newspack-blocks' );
+			case 'year':
+				return ' ' . __( 'per year', 'newspack-blocks' );
+		}
+	}
+
+	/**
 	 * Get configuration, based on block attributes and global settings.
 	 *
 	 * @param array $attributes Block attributes.
@@ -33,8 +50,10 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 
 		$configuration['defaultFrequency'] = $attributes['defaultFrequency'];
 
+		$is_manual = Newspack_Blocks::can_use_name_your_price() && $attributes['manual'];
+
 		/* If block is in "manual" mode, override certain state properties with values stored in attributes */
-		if ( $attributes['manual'] ?? false ) {
+		if ( $is_manual ?? false ) {
 			// Migrate old attributes.
 			if ( empty( $attributes['amounts'] ) && isset( $attributes['suggestedAmounts'] ) ) {
 				$other_amount = $configuration['amounts']['month'][3];
@@ -59,9 +78,7 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 					'year'  => $multiplied_amounts,
 				];
 			}
-			if ( isset( $attributes['tiered'] ) ) {
-				$configuration['tiered'] = $attributes['tiered'];
-			}
+			$configuration['tiered'] = $attributes['tiered'] && Newspack_Blocks::can_use_name_your_price();
 			if ( isset( $attributes['amounts'] ) && ! empty( $attributes['amounts'] ) ) {
 				$configuration['amounts'] = $attributes['amounts'];
 			}
@@ -122,7 +139,7 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 			'wpbnbd-frequencies--' . count( $configuration['frequencies'] ),
 		];
 
-		if ( ! Newspack_Blocks::is_nyp_available() ) {
+		if ( ! Newspack_Blocks::can_use_name_your_price() ) {
 			$class_names[] = 'wpbnbd--nyp-disabled';
 		}
 

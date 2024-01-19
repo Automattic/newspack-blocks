@@ -154,6 +154,7 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 								>
 								<?php echo self::render_frequency_selection( $frequency_slug, $frequency_name, $uid, $configuration ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 								<div class='input-container'>
+									<?php if ( Newspack_Blocks::can_use_name_your_price() ) : ?>
 									<label
 										class='donate-label'
 										for='newspack-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-untiered-input'
@@ -172,6 +173,21 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 											id='newspack-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-untiered-input'
 										/>
 									</div>
+									<?php else : ?>
+									<input
+										type='radio'
+										name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>'
+										value='<?php echo esc_attr( $formatted_amount ); ?>'
+										id='newspack-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-untiered-input'
+										checked
+									/>
+									<label
+										class='tier-select-label tier-label'
+										for='newspack-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-untiered-input'
+									>
+										<?php echo esc_html( $configuration['currencySymbol'] . $formatted_amount . self::get_frequency_label( $frequency_slug, true ) ); ?>
+									</label>
+									<?php endif; ?>
 								</div>
 							</div>
 

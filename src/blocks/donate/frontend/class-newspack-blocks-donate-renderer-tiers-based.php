@@ -14,22 +14,6 @@ require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/donate/frontend/class-new
  */
 class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate_Renderer_Base {
 	/**
-	 * Get frequency label.
-	 *
-	 * @param string $frequency_slug Frequency slug.
-	 */
-	private static function get_frequency_label( $frequency_slug ) {
-		switch ( $frequency_slug ) {
-			case 'once':
-				return ' ' . __( 'once', 'newspack-blocks' );
-			case 'month':
-				return ' ' . __( 'per month', 'newspack-blocks' );
-			case 'year':
-				return ' ' . __( 'per year', 'newspack-blocks' );
-		}
-	}
-
-	/**
 	 * Get displayed amounts.
 	 *
 	 * @param array $amounts Amounts.

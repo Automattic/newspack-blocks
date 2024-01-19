@@ -1,3 +1,5 @@
+/* globals newspack_blocks_data */
+
 /**
  * External dependencies
  */
@@ -65,8 +67,8 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 		}
 	}, [ attributes.defaultFrequency ] );
 
-	const isRenderingStripePaymentForm =
-		window.newspack_blocks_data?.is_rendering_stripe_payment_form;
+	const isRenderingStripePaymentForm = newspack_blocks_data?.is_rendering_stripe_payment_form;
+	const canUseNameYourPrice = newspack_blocks_data?.can_use_name_your_price;
 
 	const [ selectedFrequency, setSelectedFrequency ] = useState( attributes.defaultFrequency );
 
@@ -103,6 +105,17 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 		</button>
 	);
 
+	const getFrequencyLabel = ( frequencySlug: DonationFrequencySlug ) => {
+		switch ( frequencySlug ) {
+			case 'once':
+				return '';
+			case 'month':
+				return __( ' per month', 'newspack-blocks' );
+			case 'year':
+				return __( ' per year', 'newspack-blocks' );
+		}
+	};
+
 	// This code is fired on tab select and updates aria elements, tabindex states, and radio buttons
 	const displayAmount = ( amount: number ) => amount.toFixed( 2 ).replace( /\.?0*$/, '' );
 
@@ -110,31 +123,57 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 		<div className="wp-block-newspack-blocks-donate__options">
 			<div className="wp-block-newspack-blocks-donate__frequencies frequencies">
 				<div className="tab-container">{ availableFrequencies.map( renderTab ) }</div>
-				{ availableFrequencies.map( frequencySlug => (
-					<div
-						className="wp-block-newspack-blocks-donate__frequency frequency"
-						key={ frequencySlug }
-					>
-						{ renderFrequencySelect( frequencySlug ) }
-						<div className="input-container">
-							<label
-								className="donate-label"
-								htmlFor={ 'newspack-' + frequencySlug + '-' + uid + '-untiered-input' }
-							>
-								{ __( 'Donation amount', 'newspack-blocks' ) }
-							</label>
-							<div className="wp-block-newspack-blocks-donate__money-input money-input">
-								<span className="currency">{ settings.currencySymbol }</span>
-								<AmountValueInput
-									{ ...props }
-									frequencySlug={ frequencySlug }
-									tierIndex={ 3 }
-									id={ `newspack-${ frequencySlug }-${ uid }-untiered-input` }
-								/>
+				{ availableFrequencies.map( frequencySlug => {
+					const untieredAmount = amounts[ frequencySlug ][ 3 ];
+					return (
+						<div
+							className="wp-block-newspack-blocks-donate__frequency frequency"
+							key={ frequencySlug }
+						>
+							{ renderFrequencySelect( frequencySlug ) }
+							<div className="input-container">
+								{ canUseNameYourPrice ? (
+									<>
+										<label
+											className="donate-label"
+											htmlFor={ 'newspack-' + frequencySlug + '-' + uid + '-untiered-input' }
+										>
+											{ __( 'Donation amount', 'newspack-blocks' ) }
+										</label>
+										<div className="wp-block-newspack-blocks-donate__money-input money-input">
+											<span className="currency">{ settings.currencySymbol }</span>
+											<AmountValueInput
+												{ ...props }
+												frequencySlug={ frequencySlug }
+												tierIndex={ 3 }
+												id={ `newspack-${ frequencySlug }-${ uid }-untiered-input` }
+											/>
+										</div>
+									</>
+								) : (
+									<>
+										<input
+											type="radio"
+											value={ untieredAmount }
+											className={ 'frequency-input' }
+											id={ `newspack-${ frequencySlug }-${ uid }-untiered-input` }
+											name={ `donation_value_${ frequencySlug }` }
+											defaultChecked={ true }
+										/>
+										<label
+											className="tier-select-label tier-label"
+											htmlFor={ `newspack-${ frequencySlug }-${ uid }-untiered-input` }
+										>
+											{ settings.currencySymbol +
+												untieredAmount.toFixed( 2 ).replace( /\.?0*$/, '' ) +
+												getFrequencyLabel( frequencySlug ) }
+										</label>
+									</>
+								) }
 							</div>
 						</div>
-					</div>
-				) ) }
+					);
+				} ) }
 			</div>
 		</div>
 	);
