@@ -311,9 +311,29 @@ final class Modal_Checkout {
 	}
 
 	/**
+	 * Update product price string for subscriptions to use "per" instead of "/"
+	 * and remove the cents when the price is over 3 digits.
+	 *
+	 * @param string $price_string The price string.
+	 */
+	public static function update_subscriptions_product_price_string( $price_string ) {
+		$price_string = str_replace( ' / ', ' ' . __( 'per', 'newspack-blocks' ) . ' ', $price_string );
+		// For prices over 3 digits and 00 cents, remove the cents.
+		$decimal_separator = wc_get_price_decimal_separator();
+		$pattern           = '/\b\d{3,}' . preg_quote( $decimal_separator, '/' ) . '00\b/';
+		preg_match( $pattern, $price_string, $matches );
+		if ( ! empty( $matches ) ) {
+			$replace_pattern = '/\\' . preg_quote( $decimal_separator, '/' ) . '00$/';
+			$price_string    = preg_replace( $pattern, preg_replace( $replace_pattern, '', $matches[0] ), $price_string );
+		}
+		return $price_string;
+	}
+
+	/**
 	 * Render variation selection modal for variable products.
 	 */
 	public static function render_variation_selection() {
+		add_filter( 'woocommerce_subscriptions_product_price_string', [ __CLASS__, 'update_subscriptions_product_price_string' ], 10, 1 );
 		/**
 		* Filters the header title for the modal checkout.
 		*
@@ -341,36 +361,34 @@ final class Modal_Checkout {
 					<section class="newspack-blocks-modal__content">
 						<div class="newspack-blocks-variation-modal__selection" data-product-id="<?php echo esc_attr( $product_id ); ?>">
 							<h3><?php echo esc_html( $product->get_name() ); ?></h3>
-							<p><?php esc_html_e( 'Select an option below:', 'newspack-blocks' ); ?></p>
-							<?php
-							$variations = $product->get_available_variations( 'objects' );
-							foreach ( $variations as $variation ) {
-								$name        = wc_get_formatted_variation( $variation, true );
-								$price       = $variation->get_price_html();
-								$description = $variation->get_description();
-								?>
-								<form>
-									<input type="hidden" name="newspack_checkout" value="1" />
-									<input type="hidden" name="product_id" value="<?php echo esc_attr( $variation->get_id() ); ?>" />
-									<button>
-										<span class="summary">
-											<span class="price"><?php echo $price; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
-											<span class="variation_name"><?php echo esc_html( $name ); ?></span>
-										</span>
-										<?php if ( ! empty( $description ) ) : ?>
-											<span class="description"><?php echo esc_html( $description ); ?></span>
-										<?php endif; ?>
-									</button>
-								</form>
+							<p><?php esc_html_e( 'Select an option to continue:', 'newspack-blocks' ); ?></p>
+							<ul class="newspack-blocks-variation-modal__options">
 								<?php
-							}
-							?>
+								$variations = $product->get_available_variations( 'objects' );
+								foreach ( $variations as $variation ) :
+									$name  = wc_get_formatted_variation( $variation, true );
+									$price = $variation->get_price_html();
+									?>
+									<li class="newspack-blocks-variation-modal__options__item">
+										<div class="summary">
+											<span class="price"><?php echo $price; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+										</div>
+										<div class="variation"><?php echo esc_html( $name ); ?></div>
+										<form>
+											<input type="hidden" name="newspack_checkout" value="1" />
+											<input type="hidden" name="product_id" value="<?php echo esc_attr( $variation->get_id() ); ?>" />
+											<button><?php esc_html_e( 'Purchase', 'newspack-blocks' ); ?></button>
+										</form>
+									</li>
+								<?php endforeach; ?>
+							</ul>
 						</div>
 					</section>
 				</div>
 			</div>
 			<?php
 		}
+		remove_filter( 'woocommerce_subscriptions_product_price_string', [ __CLASS__, 'update_subscriptions_product_price_string' ], 10, 1 );
 	}
 
 	/**
