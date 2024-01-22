@@ -38,7 +38,7 @@ import type {
 } from '../types';
 import TierBasedLayout from './TierBasedLayout';
 import FrequencyBasedLayout from './FrequencyBasedLayout';
-import { AmountValueInput, AdditionalFields } from './components';
+import { AmountValueInput } from './components';
 import {
 	FREQUENCIES,
 	FREQUENCY_SLUGS,
@@ -382,14 +382,6 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 						label={ __( 'Button Color', 'newspack-blocks' ) }
 					/>
 				</PanelBody>
-				{ 'stripe' === settings.platform && (
-					<PanelBody
-						title={ __( 'Additional data fields', 'newspack-blocks' ) }
-						initialOpen={ false }
-					>
-						<AdditionalFields attributes={ attributes } setAttributes={ setAttributes } />
-					</PanelBody>
-				) }
 				<PanelBody title={ __( 'Campaign', 'newspack-blocks' ) } initialOpen={ false }>
 					<TextControl
 						label={ __( 'Campaign ID', 'newspack-blocks' ) }

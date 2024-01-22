@@ -5,7 +5,6 @@ declare global {
 		};
 		newspack_blocks_data: {
 			assets_path: string;
-			is_rendering_stripe_payment_form?: boolean;
 			supports_recaptcha: boolean;
 			has_recaptcha: boolean;
 			recaptcha_url: string;

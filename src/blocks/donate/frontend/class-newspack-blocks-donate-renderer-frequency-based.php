@@ -81,7 +81,6 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 	 * @return string
 	 */
 	private static function render_footer( $attributes ) {
-		$configuration     = self::get_configuration( $attributes );
 		$campaign          = $attributes['campaign'] ?? false;
 		$button_style_attr = 'style="' . self::get_button_style( $attributes ) . '"';
 
@@ -91,13 +90,9 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 			<?php echo wp_kses_post( $attributes['thanksText'] ); ?>
 		</p>
 
-		<?php if ( $configuration['is_rendering_stripe_payment_form'] ) : ?>
-			<?php echo self::render_streamlined_payment_ui( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-		<?php else : ?>
-			<button type='submit' <?php echo $button_style_attr; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-				<?php echo wp_kses_post( $attributes['buttonText'] ); ?>
-			</button>
-		<?php endif; ?>
+		<button type='submit' <?php echo $button_style_attr; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+			<?php echo wp_kses_post( $attributes['buttonText'] ); ?>
+		</button>
 		<?php if ( $campaign ) : ?>
 			<input type='hidden' name='campaign' value='<?php echo esc_attr( $campaign ); ?>' />
 		<?php endif; ?>
@@ -129,7 +124,7 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 			class="untiered <?php echo esc_html( $configuration['container_classnames'] ); ?>"
 			id="<?php echo esc_html( $configuration['uid'] ); ?>"
 		>
-			<form data-streamlined-config="<?php echo esc_html( htmlspecialchars( wp_json_encode( $configuration['configuration_for_streamlined'] ), ENT_QUOTES, 'UTF-8' ) ); ?>">
+			<form>
 				<?php echo self::render_hidden_form_inputs( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				<div class='wp-block-newspack-blocks-donate__options'>
 					<div class='wp-block-newspack-blocks-donate__frequencies frequencies'>
@@ -191,7 +186,7 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 			class="tiered <?php echo esc_html( $configuration['container_classnames'] ); ?>"
 			id="<?php echo esc_html( $configuration['uid'] ); ?>"
 		>
-			<form data-streamlined-config="<?php echo esc_html( htmlspecialchars( wp_json_encode( $configuration['configuration_for_streamlined'] ), ENT_QUOTES, 'UTF-8' ) ); ?>">
+			<form>
 				<?php echo self::render_hidden_form_inputs( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				<div class='wp-block-newspack-blocks-donate__options'>
 					<div class='wp-block-newspack-blocks-donate__frequencies frequencies'>
