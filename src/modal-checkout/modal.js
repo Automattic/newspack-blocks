@@ -159,13 +159,6 @@ domReady( () => {
 						return;
 					}
 				}
-				// Continue with checkout modal.
-				spinner.style.display = 'flex';
-				modalCheckout.classList.add( 'open' );
-				document.body.classList.add( 'newspack-modal-checkout-open' );
-				if ( window.newspackReaderActivation?.overlays ) {
-					modalCheckout.overlayId = window.newspackReaderActivation?.overlays.add();
-				}
 				iframeResizeObserver = new ResizeObserver( entries => {
 					if ( ! entries || ! entries.length ) {
 						return;
@@ -175,6 +168,36 @@ domReady( () => {
 						modalContent.style.height = contentRect.top + contentRect.bottom + 'px';
 					}
 				} );
+				const doCheckout = reload => {
+					spinner.style.display = 'flex';
+					modalCheckout.classList.add( 'open' );
+					document.body.classList.add( 'newspack-modal-checkout-open' );
+					if ( window.newspackReaderActivation?.overlays ) {
+						modalCheckout.overlayId = window.newspackReaderActivation?.overlays.add();
+					}
+					if ( reload ) {
+						form.submit();
+					}
+				};
+				if ( window.newspackReaderActivation?.doAuthModal ) {
+					window.newspackReaderActivation.doAuthModal( {
+						title: 'Complete your transaction',
+						callback: () => doCheckout( true ),
+						initialState: 'register',
+						skipSuccess: true,
+						labels: {
+							signin: {
+								title: 'Sign in to complete transaction',
+							},
+							register: {
+								title: 'Complete your transaction',
+							},
+						},
+						content: '',
+					} );
+				} else {
+					doCheckout( false );
+				}
 			} );
 		} );
 	} );
