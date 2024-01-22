@@ -183,7 +183,6 @@ domReady( () => {
 					window.newspackReaderActivation.doAuthModal( {
 						title: 'Complete your transaction',
 						callback: () => doCheckout( true ),
-						initialState: 'register',
 						skipSuccess: true,
 						labels: {
 							signin: {
