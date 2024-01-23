@@ -168,21 +168,22 @@ domReady( () => {
 						modalContent.style.height = contentRect.top + contentRect.bottom + 'px';
 					}
 				} );
-				const doCheckout = reload => {
+				const openCheckout = ( submit = false ) => {
 					spinner.style.display = 'flex';
 					modalCheckout.classList.add( 'open' );
 					document.body.classList.add( 'newspack-modal-checkout-open' );
 					if ( window.newspackReaderActivation?.overlays ) {
 						modalCheckout.overlayId = window.newspackReaderActivation?.overlays.add();
 					}
-					if ( reload ) {
+					if ( submit ) {
 						form.submit();
 					}
 				};
 				if ( window.newspackReaderActivation?.doAuthModal ) {
+					ev.preventDefault();
 					window.newspackReaderActivation.doAuthModal( {
 						title: 'Complete your transaction',
-						callback: () => doCheckout( true ),
+						callback: () => openCheckout( true ),
 						skipSuccess: true,
 						labels: {
 							signin: {
@@ -195,7 +196,7 @@ domReady( () => {
 						content: '<p>Product Information Here</p>',
 					} );
 				} else {
-					doCheckout( false );
+					openCheckout( false );
 				}
 			} );
 		} );
