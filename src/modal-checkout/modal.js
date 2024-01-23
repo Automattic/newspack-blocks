@@ -192,7 +192,7 @@ domReady( () => {
 								title: 'Complete your transaction',
 							},
 						},
-						content: '',
+						content: '<p>Product Information Here</p>',
 					} );
 				} else {
 					doCheckout( false );
