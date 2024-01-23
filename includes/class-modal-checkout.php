@@ -856,7 +856,7 @@ final class Modal_Checkout {
 					href="<?php echo esc_url( $url ); ?>"
 					target="_top"
 				<?php endif; ?>
-				class="newspack-ui__button newspack-ui__button--primary newspack-ui__button--wide"
+				class="newspack-blocks-ui__button newspack-ui__button--primary newspack-ui__button--wide"
 			>
 				<?php echo esc_html( $button_label ); ?>
 			</button>
