@@ -1,11 +1,6 @@
 /* globals newspackBlocksModal */
 
 /**
- * Internal dependencies
- */
-import './modal.scss';
-
-/**
  * Specify a function to execute when the DOM is fully loaded.
  *
  * @see https://github.com/WordPress/gutenberg/blob/trunk/packages/dom-ready/
