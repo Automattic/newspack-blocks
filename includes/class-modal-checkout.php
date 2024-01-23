@@ -54,6 +54,7 @@ final class Modal_Checkout {
 		add_action( 'woocommerce_checkout_before_customer_details', [ __CLASS__, 'render_before_customer_details' ] );
 		add_filter( 'woocommerce_enable_order_notes_field', [ __CLASS__, 'enable_order_notes_field' ] );
 		add_action( 'woocommerce_checkout_process', [ __CLASS__, 'wcsg_apply_gift_subscription' ] );
+		add_filter( 'woocommerce_order_received_verify_known_shoppers', '__return_false' );
 
 		/** Custom handling for registered users. */
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
@@ -572,14 +573,15 @@ final class Modal_Checkout {
 			return $located;
 		}
 
-		$custom_templates = [
+		$is_newspack_plugin_active = class_exists( '\Newspack\Newspack_UI' );
+		$custom_templates          = [
 			'checkout/form-checkout.php'          => 'src/modal-checkout/templates/form-checkout.php',
-			'checkout/thankyou.php'               => 'src/modal-checkout/templates/thankyou.php',
 			'checkout/form-coupon.php'            => 'src/modal-checkout/templates/form-coupon.php',
 			'checkout/form-gift-subscription.php' => 'src/modal-checkout/templates/form-gift-subscription.php',
+			'checkout/thankyou.php'               => 'src/modal-checkout/templates/' . ( $is_newspack_plugin_active ? 'thankyou-v2' : 'thankyou' ) . '.php',
 			// Replace the login form with the order summary if using the modal checkout. This is
 			// for the case where the reader used an existing email address.
-			'global/form-login.php'               => 'src/modal-checkout/templates/thankyou.php',
+			'global/form-login.php'               => 'src/modal-checkout/templates/' . ( $is_newspack_plugin_active ? 'thankyou-v2' : 'thankyou' ) . '.php',
 		];
 
 		// Only show the woocommerce-subscriptions-gifting fields when we want to.
