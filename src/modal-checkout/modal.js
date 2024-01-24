@@ -179,9 +179,9 @@ domReady( () => {
 						form.submit();
 					}
 				};
-				if ( window.newspackReaderActivation?.doAuthModal ) {
+				if ( window.newspackReaderActivation?.openAuthModal ) {
 					ev.preventDefault();
-					window.newspackReaderActivation.doAuthModal( {
+					window.newspackReaderActivation.openAuthModal( {
 						title: 'Complete your transaction',
 						callback: () => openCheckout( true ),
 						skipSuccess: true,
