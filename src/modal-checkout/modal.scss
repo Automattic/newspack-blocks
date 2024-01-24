@@ -1,78 +1,22 @@
-@use '../shared/sass/colors';
-@use '../shared/sass/variables';
+@use '../shared/colors';
 
-@keyframes spin {
-	0% {
-		transform: rotate( 0deg );
-	}
-	50% {
-		transform: rotate( 180deg );
-	}
-	100% {
-		transform: rotate( 360deg );
-	}
-}
-
-.newspack-blocks-modal {
-	position: fixed;
-	top: 0;
-	left: 0;
+// Modal visibility and animation.
+#newspack-blocks-checkout-modal {
 	width: 100%;
 	height: 100%;
-	background: rgba( 0, 0, 0, 0.75 );
 	visibility: hidden;
 	pointer-events: none;
 	z-index: -1;
 	opacity: 0;
 	transition: opacity 0.2s ease-in-out;
-	&__container {
-		border-radius: 6px;
-		background: colors.$color__background-body;
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		width: calc( 100vw - 32px );
-		max-width: 600px;
-		min-height: 300px;
-		max-height: 90vh;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		transform: translate( -50%, -50% ) translateY( 50px );
-		transition: transform 0.2s ease-in-out;
-	}
 	&.open {
 		z-index: 99999;
 		visibility: visible;
 		pointer-events: auto;
 		opacity: 1;
-		.newspack-blocks-modal__container {
-			transform: translate( -50%, -50% );
-		}
 	}
-	&__header {
-		padding: 24px;
-		box-sizing: border-box;
-		height: 64px;
-		border-bottom: 1px solid #ddd;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		h2 {
-			font-size: 16px;
-		}
-	}
-	&__content {
-		position: relative;
-		flex-grow: 1;
-		> * {
-			width: 100%;
-			height: 100%;
-			border: 0;
-			border-radius: 6px;
-		}
-	}
-	&__spinner {
+
+	&.spinner {
 		align-items: center;
 		background: #fff;
 		border-radius: 5px;
@@ -91,20 +35,6 @@
 			width: 25px;
 			margin-top: -12.5px;
 			margin-left: -12.5px;
-		}
-	}
-	&__close {
-		padding: 8px;
-		border: 0;
-		background: transparent;
-		color: colors.$color__text-main;
-		cursor: pointer;
-		&:focus,
-		&:hover {
-			color: colors.$color__text-light;
-		}
-		svg {
-			display: block;
 		}
 	}
 }
@@ -174,16 +104,14 @@
 	}
 }
 
-@media ( max-width: 600px ) {
-	.newspack-blocks-modal {
-		&__container {
-			max-width: 100%;
-			width: 100%;
-			border-radius: 0;
-			top: auto;
-			bottom: 0;
-			left: 0;
-			transform: none !important;
-		}
+@keyframes spin {
+	0% {
+		transform: rotate( 0deg );
+	}
+	50% {
+		transform: rotate( 180deg );
+	}
+	100% {
+		transform: rotate( 360deg );
 	}
 }

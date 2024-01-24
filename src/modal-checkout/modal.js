@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import './modal.scss';
+
+/**
  * Specify a function to execute when the DOM is fully loaded.
  *
  * @see https://github.com/WordPress/gutenberg/blob/trunk/packages/dom-ready/
@@ -34,7 +39,7 @@ function closeCheckout() {
 	if ( iframeResizeObserver ) {
 		iframeResizeObserver.disconnect();
 	}
-	Array.from( document.querySelectorAll( '.newspack-blocks-modal' ) ).forEach( el => {
+	Array.from( document.querySelectorAll( '.newspack-ui__modal' ) ).forEach( el => {
 		el.classList.remove( 'open' );
 		if ( el.overlayId && window.newspackReaderActivation?.overlays ) {
 			window.newspackReaderActivation?.overlays.remove( el.overlayId );
@@ -54,7 +59,7 @@ domReady( () => {
 	if ( ! modalCheckout ) {
 		return;
 	}
-	const spinner = document.querySelector( `${ MODAL_CLASSNAME_BASE }__spinner` );
+	const spinner = document.querySelector( `${ MODAL_CLASSNAME_BASE } .spinner` );
 	const iframeName = 'newspack_modal_checkout';
 	const modalCheckoutInput = document.createElement( 'input' );
 	modalCheckoutInput.type = 'hidden';
