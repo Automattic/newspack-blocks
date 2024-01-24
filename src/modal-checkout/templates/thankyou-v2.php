@@ -50,35 +50,32 @@ function newspack_blocks_replace_login_with_order_summary() {
 	$is_success = ! $order->has_status( 'failed' );
 	?>
 
-	<div class="woocommerce-order">
-		<?php if ( $is_success ) : ?>
-			<div class="newspack-ui__box newspack-ui__box--success newspack-ui__box__text-center">
-				<p>
-					<strong>
-						<?php
-							esc_html_e(
-								'Thank you for supporting The News Paper! Your transaction was successful.',
-								'newspack-blocks'
-							);
-						?>
-					</strong>
-				</p>
-				<?php echo \Newspack_Blocks\Modal_Checkout::render_checkout_after_success_markup( $order ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-			</div>
-		<?php else : ?>
-			<div class="newspack-ui__box newspack-ui__box__error newspack-ui__box__text-center">
-				<p>
-					<?php esc_html_e( 'Unfortunately your order cannot be processed. Please attempt your purchase again.', 'newspack-blocks' ); ?>
-				</p>
-
-				<a href="<?php echo esc_url( $order->get_checkout_payment_url() ); ?>" class="newspack-blocks-ui__button newspack-ui__button--primary newspack-ui__button--wide"><?php esc_html_e( 'Pay', 'newspack-blocks' ); ?></a>
-				<?php if ( is_user_logged_in() ) : ?>
-					<a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>" class="newspack-blocks-ui__button newspack-ui__button--tertiary newspack-ui__button--wide"><?php esc_html_e( 'My account', 'newspack-blocks' ); ?></a>
-				<?php endif; ?>
-			</div>
+	<?php if ( $is_success ) : ?>
+		<div class="newspack-ui__box newspack-ui__box--success newspack-ui__box__text-center">
+			<p>
+				<strong>
+					<?php
+						esc_html_e(
+							'Thank you for supporting The News Paper! Your transaction was successful.',
+							'newspack-blocks'
+						);
+					?>
+				</strong>
+			</p>
+		</div>
+		<?php echo \Newspack_Blocks\Modal_Checkout::render_checkout_after_success_markup( $order ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+	<?php else : ?>
+		<div class="newspack-ui__box newspack-ui__box__error newspack-ui__box__text-center">
+			<p>
+				<?php esc_html_e( 'Unfortunately your order cannot be processed. Please attempt your purchase again.', 'newspack-blocks' ); ?>
+			</p>
+		</div>
+		<a href="<?php echo esc_url( $order->get_checkout_payment_url() ); ?>" class="newspack-blocks-ui__button newspack-ui__button--primary newspack-ui__button--wide"><?php esc_html_e( 'Pay', 'newspack-blocks' ); ?></a>
+		<?php if ( is_user_logged_in() ) : ?>
+			<a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>" class="newspack-blocks-ui__button newspack-ui__button--tertiary newspack-ui__button--wide"><?php esc_html_e( 'My account', 'newspack-blocks' ); ?></a>
 		<?php endif; ?>
-	</div>
-	<?php
+		<?php
+	endif;
 }
 
 newspack_blocks_replace_login_with_order_summary();

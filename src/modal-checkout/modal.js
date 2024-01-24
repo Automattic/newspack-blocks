@@ -44,13 +44,13 @@ function closeCheckout() {
 
 window.newspackCloseModalCheckout = closeCheckout;
 
-const MODAL_CLASSNAME_BASE = '.newspack-blocks-modal';
+const MODAL_CLASSNAME_BASE = '.newspack-ui__modal';
 
 domReady( () => {
 	/**
 	 * Initialize modal checkout.
 	 */
-	const modalCheckout = document.querySelector( '.newspack-blocks-checkout-modal' );
+	const modalCheckout = document.querySelector( '#newspack-blocks-checkout-modal' );
 	if ( ! modalCheckout ) {
 		return;
 	}

@@ -290,23 +290,21 @@ final class Modal_Checkout {
 		*/
 		$title = apply_filters( 'newspack_blocks_modal_checkout_title', __( 'Complete your transaction', 'newspack-blocks' ) );
 		?>
-		<div class="newspack-blocks-checkout-modal newspack-blocks-modal">
-			<div class="newspack-blocks-modal__container">
-				<header class="newspack-blocks-modal__header">
-					<h2><?php echo esc_html( $title ); ?></h2>
-					<a href="#" class="newspack-blocks-modal__close">
-						<span class="screen-reader-text"><?php esc_html_e( 'Close', 'newspack-blocks' ); ?></span>
-						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
-							<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
-						</svg>
-					</a>
-				</header>
-				<section class="newspack-blocks-modal__content">
-					<div class="newspack-blocks-modal__spinner">
-						<span></span>
-					</div>
-				</section>
-			</div>
+		<div id="newspack-blocks-checkout-modal" class="newspack-ui__modal">
+			<header class="newspack-ui__modal__header">
+				<h2><?php echo esc_html( $title ); ?></h2>
+				<a href="#" class="newspack-blocks-modal__close">
+					<span class="screen-reader-text"><?php esc_html_e( 'Close', 'newspack-blocks' ); ?></span>
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+						<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
+					</svg>
+				</a>
+			</header>
+			<section class="newspack-ui__modal__content">
+				<div class="newspack-ui__modal__spinner">
+					<span></span>
+				</div>
+			</section>
 		</div>
 		<?php
 	}
@@ -494,8 +492,8 @@ final class Modal_Checkout {
 		</head>
 		<body id="newspack_modal_checkout">
 			<?php
-			echo do_shortcode( '[woocommerce_checkout]' );
-			wp_footer();
+				echo do_shortcode( '[woocommerce_checkout]' );
+				wp_footer();
 			?>
 		</body>
 		</html>
