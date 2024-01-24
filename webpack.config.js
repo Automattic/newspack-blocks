@@ -59,7 +59,6 @@ const webpackConfig = getBaseWebpackConfig(
 			block_styles: blockStylesScript,
 			modal: path.join( __dirname, 'src/modal-checkout/modal.js' ),
 			modalCheckout: path.join( __dirname, 'src/modal-checkout' ),
-			donateStreamlined: path.join( __dirname, 'src/blocks/donate/streamlined' ),
 			frequencyBased: path.join( __dirname, 'src/blocks/donate/frequency-based' ),
 			tiersBased: path.join( __dirname, 'src/blocks/donate/tiers-based' ),
 			...viewBlocksScripts,

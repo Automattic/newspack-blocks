@@ -16,7 +16,6 @@ class Newspack_Blocks {
 	const SCRIPT_HANDLES = [
 		'modal-checkout'       => 'newspack-blocks-donate-modal-checkout',
 		'modal-checkout-block' => 'newspack-blocks-donate-modal-checkout-block',
-		'streamlined'          => 'newspack-blocks-donate-streamlined',
 		'frequency-based'      => 'newspack-blocks-donate-frequency-based',
 		'tiers-based'          => 'newspack-blocks-donate-tiers-based',
 	];
@@ -256,19 +255,18 @@ class Newspack_Blocks {
 			);
 
 			$localized_data = [
-				'patterns'                         => self::get_patterns_for_post_type( get_post_type() ),
-				'posts_rest_url'                   => rest_url( 'newspack-blocks/v1/newspack-blocks-posts' ),
-				'specific_posts_rest_url'          => rest_url( 'newspack-blocks/v1/newspack-blocks-specific-posts' ),
-				'authors_rest_url'                 => rest_url( 'newspack-blocks/v1/authors' ),
-				'assets_path'                      => plugins_url( '/src/assets', NEWSPACK_BLOCKS__PLUGIN_FILE ),
-				'post_subtitle'                    => get_theme_support( 'post-subtitle' ),
-				'is_rendering_stripe_payment_form' => self::is_rendering_stripe_payment_form(),
-				'iframe_accepted_file_mimes'       => self::iframe_accepted_file_mimes(),
-				'supports_recaptcha'               => class_exists( 'Newspack\Recaptcha' ),
-				'has_recaptcha'                    => class_exists( 'Newspack\Recaptcha' ) && \Newspack\Recaptcha::can_use_captcha(),
-				'recaptcha_url'                    => admin_url( 'admin.php?page=newspack-connections-wizard' ),
-				'custom_taxonomies'                => self::get_custom_taxonomies(),
-				'can_use_name_your_price'          => self::can_use_name_your_price(),
+				'patterns'                   => self::get_patterns_for_post_type( get_post_type() ),
+				'posts_rest_url'             => rest_url( 'newspack-blocks/v1/newspack-blocks-posts' ),
+				'specific_posts_rest_url'    => rest_url( 'newspack-blocks/v1/newspack-blocks-specific-posts' ),
+				'authors_rest_url'           => rest_url( 'newspack-blocks/v1/authors' ),
+				'assets_path'                => plugins_url( '/src/assets', NEWSPACK_BLOCKS__PLUGIN_FILE ),
+				'post_subtitle'              => get_theme_support( 'post-subtitle' ),
+				'iframe_accepted_file_mimes' => self::iframe_accepted_file_mimes(),
+				'supports_recaptcha'         => class_exists( 'Newspack\Recaptcha' ),
+				'has_recaptcha'              => class_exists( 'Newspack\Recaptcha' ) && \Newspack\Recaptcha::can_use_captcha(),
+				'recaptcha_url'              => admin_url( 'admin.php?page=newspack-connections-wizard' ),
+				'custom_taxonomies'          => self::get_custom_taxonomies(),
+				'can_use_name_your_price'    => self::can_use_name_your_price(),
 			];
 
 			if ( class_exists( 'WP_REST_Newspack_Author_List_Controller' ) ) {
@@ -302,22 +300,6 @@ class Newspack_Blocks {
 			array(),
 			NEWSPACK_BLOCKS__VERSION
 		);
-	}
-
-	/**
-	 * Should the Donate block be a "streamlined" block?
-	 *
-	 * @return bool True if it can.
-	 */
-	public static function is_rendering_stripe_payment_form() {
-		if (
-			class_exists( 'Newspack\Donations' )
-			&& method_exists( 'Newspack\Donations', 'can_use_streamlined_donate_block' )
-			&& method_exists( 'Newspack\Donations', 'is_platform_stripe' )
-		) {
-			return \Newspack\Donations::can_use_streamlined_donate_block() && \Newspack\Donations::is_platform_stripe();
-		}
-		return false;
 	}
 
 	/**
@@ -812,9 +794,9 @@ class Newspack_Blocks {
 		 * The filter is called after the build_articles_query() function is called by a Newspack block to
 		 * build the WP_Query arguments based on the given attributes and block requesting the query.
 		 *
-		 * @param array  $args       WP_Query arguments as created by build_articles_query()
-		 * @param array  $attributes The attributes initial passed to build_articles_query()
-		 * @param string $block_name The name of the requesting block to create the query args for
+		 * @param array     $args       WP_Query arguments as created by build_articles_query()
+		 * @param array     $attributes The attributes initial passed to build_articles_query()
+		 * @param string    $block_name The name of the requesting block to create the query args for
 		 */
 		return apply_filters( 'newspack_blocks_build_articles_query', $args, $attributes, $block_name );
 	}
