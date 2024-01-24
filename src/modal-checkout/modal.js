@@ -45,12 +45,12 @@ function closeCheckout() {
 	} );
 }
 
-function closeModal( el ) {
-	el.setAttribute( 'data-state', 'closed' );
-}
-
 function openModal( el ) {
 	el.setAttribute( 'data-state', 'open' );
+}
+
+function closeModal( el ) {
+	el.setAttribute( 'data-state', 'closed' );
 }
 
 window.newspackCloseModalCheckout = closeCheckout;
@@ -176,10 +176,8 @@ domReady( () => {
 					}
 					const contentRect = entries[ 0 ].contentRect;
 					if ( contentRect ) {
-						const iframeHeight = contentRect.top + contentRect.bottom + 'px';
-						// Match iframe and modal content heights to avoid inner iframe scollbar.
-						modalContent.style.height = iframeHeight;
-						iframe.style.height = iframeHeight;
+						modalContent.style.height = contentRect.top + contentRect.bottom + 'px';
+						iframe.style.height = contentRect.top + contentRect.bottom + 'px';
 					}
 				} );
 			} );

@@ -47,67 +47,41 @@ function newspack_blocks_replace_login_with_order_summary() {
 		return;
 	}
 
-	$is_success      = ! $order->has_status( 'failed' );
-	$order_item_name = array_values( $order->get_items() )[0]->get_name();
-
+	$is_success = ! $order->has_status( 'failed' );
 	?>
 	<div class="woocommerce-order">
-		<?php if ( $is_success ) : ?>
-			<h4><?php esc_html_e( 'Transaction Successful', 'newspack-blocks' ); ?></h4>
-			<ul class="woocommerce-order-overview woocommerce-thankyou-order-details order_details">
-				<li class="woocommerce-order-overview__date date">
-					<?php esc_html_e( 'Date:', 'newspack-blocks' ); ?>
-					<strong><?php echo wc_format_datetime( $order->get_date_created() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></strong>
-				</li>
-
-				<?php if ( $order->get_billing_email() ) : ?>
-					<li class="woocommerce-order-overview__email email">
-						<?php esc_html_e( 'Email:', 'newspack-blocks' ); ?>
-						<strong><?php echo $order->get_billing_email(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></strong>
-					</li>
-				<?php endif; ?>
-
-				<li class="woocommerce-order-overview__total total">
-					<?php esc_html_e( 'Total:', 'newspack-blocks' ); ?>
-					<strong><?php echo $order->get_formatted_order_total(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></strong>
-				</li>
-
-				<?php if ( $order->get_payment_method_title() ) : ?>
-					<li class="woocommerce-order-overview__payment-method method">
-						<?php esc_html_e( 'Payment method:', 'newspack-blocks' ); ?>
-						<strong><?php echo wp_kses_post( $order->get_payment_method_title() ); ?></strong>
-					</li>
-				<?php endif; ?>
-
-				<li>
-					<?php esc_html_e( 'Item:', 'newspack-blocks' ); ?>
-					<strong><?php echo esc_html( $order_item_name ); ?></strong>
-				</li>
-
-				<li class="woocommerce-order-overview__order order">
-					<?php esc_html_e( 'Transaction:', 'newspack-blocks' ); ?>
-					<strong><?php echo $order->get_order_number(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></strong>
-				</li>
-			</ul>
-		<?php else : ?>
-			<p class="woocommerce-notice woocommerce-notice--error woocommerce-thankyou-order-failed">
+	<?php if ( $is_success ) : ?>
+		<div class="newspack-ui__box newspack-ui__box--success newspack-ui__box__text-center">
+			<span class="newspack-ui__icon newspack-ui__icon--success">
+				<?php // TODO: How should we handle sharing icons across plugins? ?>
+				<svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M16.7 7.1l-6.3 8.5-3.3-2.5-.9 1.2 4.5 3.4L17.9 8z"></path>
+				</svg>
+			</span>
+			<p>
+				<strong>
+					<?php
+						esc_html_e(
+							'Thank you for supporting The News Paper! Your transaction was successful.',
+							'newspack-blocks'
+						);
+					?>
+				</strong>
+			</p>
+		</div>
+		<?php echo \Newspack_Blocks\Modal_Checkout::render_checkout_after_success_markup( $order ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+	<?php else : ?>
+		<div class="newspack-ui__box newspack-ui__box__error newspack-ui__box__text-center">
+			<p>
 				<?php esc_html_e( 'Unfortunately your order cannot be processed. Please attempt your purchase again.', 'newspack-blocks' ); ?>
 			</p>
-
-			<p class="woocommerce-notice woocommerce-notice--error woocommerce-thankyou-order-failed-actions">
-				<a href="<?php echo esc_url( $order->get_checkout_payment_url() ); ?>" class="button pay"><?php esc_html_e( 'Pay', 'newspack-blocks' ); ?></a>
-				<?php if ( is_user_logged_in() ) : ?>
-					<a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>" class="button pay"><?php esc_html_e( 'My account', 'newspack-blocks' ); ?></a>
-				<?php endif; ?>
-			</p>
+		</div>
+		<a href="<?php echo esc_url( $order->get_checkout_payment_url() ); ?>" class="newspack-blocks-ui__button newspack-ui__button--primary newspack-ui__button--wide"><?php esc_html_e( 'Pay', 'newspack-blocks' ); ?></a>
+		<?php if ( is_user_logged_in() ) : ?>
+			<a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>" class="newspack-blocks-ui__button newspack-ui__button--tertiary newspack-ui__button--wide"><?php esc_html_e( 'My account', 'newspack-blocks' ); ?></a>
 		<?php endif; ?>
-	</div>
-
-	<?php if ( $is_success ) : ?>
-		<?php echo \Newspack_Blocks\Modal_Checkout::render_checkout_after_success_markup( $order ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-	<?php endif; ?>
-
-	<?php
+		<?php
+	endif;
 }
 
 newspack_blocks_replace_login_with_order_summary();

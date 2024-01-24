@@ -55,11 +55,8 @@ final class Modal_Checkout {
 		add_filter( 'woocommerce_enable_order_notes_field', [ __CLASS__, 'enable_order_notes_field' ] );
 		add_action( 'woocommerce_checkout_process', [ __CLASS__, 'wcsg_apply_gift_subscription' ] );
 		add_filter( 'woocommerce_order_received_verify_known_shoppers', '__return_false' );
-<<<<<<< HEAD
 		// TODO: Remove once we apply auth flow to checkout modal.
 		add_filter( 'newspack_reader_activation_should_render_auth', '__return_false' );
-=======
->>>>>>> 29e3656 (feat(modal-checkout): remove redundant styles)
 
 		/** Custom handling for registered users. */
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
@@ -593,8 +590,7 @@ final class Modal_Checkout {
 			return $located;
 		}
 
-		$is_newspack_plugin_active = class_exists( '\Newspack\Newspack_UI' );
-		$custom_templates          = [
+		$custom_templates = [
 			'checkout/form-checkout.php'          => 'src/modal-checkout/templates/form-checkout.php',
 			'checkout/form-coupon.php'            => 'src/modal-checkout/templates/form-coupon.php',
 			'checkout/form-gift-subscription.php' => 'src/modal-checkout/templates/form-gift-subscription.php',
@@ -860,7 +856,7 @@ final class Modal_Checkout {
 					href="<?php echo esc_url( $url ); ?>"
 					target="_top"
 				<?php endif; ?>
-				class="newspack-blocks-ui__button newspack-ui__button--primary newspack-ui__button--wide"
+				class="newspack-ui__button newspack-ui__button--primary newspack-ui__button--wide"
 			>
 				<?php echo esc_html( $button_label ); ?>
 			</button>
