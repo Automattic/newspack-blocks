@@ -31,20 +31,27 @@ const triggers =
 let iframeResizeObserver;
 
 function closeCheckout() {
-	const iframe = document.querySelector( 'iframe[name="newspack_modal_checkout"]' );
+	const iframe = document.querySelector( 'iframe[name="newspack_modal_checkout_iframe"]' );
 	if ( iframe ) {
 		iframe.src = 'about:blank';
 	}
-	document.body.classList.remove( 'newspack-modal-checkout-open' );
 	if ( iframeResizeObserver ) {
 		iframeResizeObserver.disconnect();
 	}
-	Array.from( document.querySelectorAll( '.newspack-ui__modal' ) ).forEach( el => {
-		el.classList.remove( 'open' );
+	Array.from( document.querySelectorAll( '.newspack-ui__modal-container' ) ).forEach( el => {
+		closeModal( el );
 		if ( el.overlayId && window.newspackReaderActivation?.overlays ) {
 			window.newspackReaderActivation?.overlays.remove( el.overlayId );
 		}
 	} );
+}
+
+function openModal( el ) {
+	el.setAttribute( 'data-state', 'open' );
+}
+
+function closeModal( el ) {
+	el.setAttribute( 'data-state', 'closed' );
 }
 
 window.newspackCloseModalCheckout = closeCheckout;
@@ -55,12 +62,12 @@ domReady( () => {
 	/**
 	 * Initialize modal checkout.
 	 */
-	const modalCheckout = document.querySelector( '#newspack-blocks-checkout-modal' );
+	const modalCheckout = document.querySelector( '.newspack-ui__modal-container' );
 	if ( ! modalCheckout ) {
 		return;
 	}
-	const spinner = document.querySelector( `${ MODAL_CLASSNAME_BASE } .spinner` );
-	const iframeName = 'newspack_modal_checkout';
+	const spinner = document.querySelector( '.newspack-ui__spinner' );
+	const iframeName = 'newspack_modal_checkout_iframe';
 	const modalCheckoutInput = document.createElement( 'input' );
 	modalCheckoutInput.type = 'hidden';
 	modalCheckoutInput.name = 'modal_checkout';
@@ -129,7 +136,9 @@ domReady( () => {
 			form.addEventListener( 'submit', ev => {
 				const formData = new FormData( form );
 				// Clear any open variation modal.
-				variationModals.forEach( variationModal => variationModal.classList.remove( 'open' ) );
+				variationModals.forEach( variationModal => {
+					closeModal( variationModal );
+				} );
 				// Trigger variation modal if variation is not selected.
 				if ( formData.get( 'is_variable' ) && ! formData.get( 'variation_id' ) ) {
 					const variationModal = [ ...variationModals ].find(
@@ -154,15 +163,13 @@ domReady( () => {
 							} );
 						// Open the variations modal.
 						ev.preventDefault();
-						document.body.classList.add( 'newspack-modal-checkout-open' );
-						variationModal.classList.add( 'open' );
+						openModal( variationModal );
 						return;
 					}
 				}
 				// Continue with checkout modal.
 				spinner.style.display = 'flex';
-				modalCheckout.classList.add( 'open' );
-				document.body.classList.add( 'newspack-modal-checkout-open' );
+				openModal( modalCheckout );
 				if ( window.newspackReaderActivation?.overlays ) {
 					modalCheckout.overlayId = window.newspackReaderActivation?.overlays.add();
 				}
@@ -173,11 +180,13 @@ domReady( () => {
 					const contentRect = entries[ 0 ].contentRect;
 					if ( contentRect ) {
 						modalContent.style.height = contentRect.top + contentRect.bottom + 'px';
+						iframe.style.height = contentRect.top + contentRect.bottom + 'px';
 					}
 				} );
 			} );
 		} );
 	} );
+
 	iframe.addEventListener( 'load', () => {
 		const location = iframe.contentWindow.location;
 		// If RAS is available, set the front-end authentication.

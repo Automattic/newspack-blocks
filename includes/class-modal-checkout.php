@@ -290,21 +290,24 @@ final class Modal_Checkout {
 		*/
 		$title = apply_filters( 'newspack_blocks_modal_checkout_title', __( 'Complete your transaction', 'newspack-blocks' ) );
 		?>
-		<div id="newspack-blocks-checkout-modal" class="newspack-ui__modal">
-			<header class="newspack-ui__modal__header">
-				<h2><?php echo esc_html( $title ); ?></h2>
-				<button class="newspack-ui__modal__close">
-					<span class="screen-reader-text"><?php esc_html_e( 'Close', 'newspack-blocks' ); ?></span>
-					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
-						<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
-					</svg>
-				</button>
-			</header>
-			<section class="newspack-ui__modal__content">
-				<div class="newspack-ui__modal__spinner">
-					<span></span>
-				</div>
-			</section>
+		<div class="newspack-ui newspack-ui__modal-container">
+			<div class="newspack-ui__modal-container__overlay"></div>
+			<div class="newspack-ui__modal">
+				<header class="newspack-ui__modal__header">
+					<h2><?php echo esc_html( $title ); ?></h2>
+					<button class="newspack-ui__modal__close">
+						<span class="screen-reader-text"><?php esc_html_e( 'Close', 'newspack-blocks' ); ?></span>
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+							<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
+						</svg>
+					</button>
+				</header>
+				<section class="newspack-ui__modal__content">
+					<div class="newspack-ui__spinner">
+						<span></span>
+					</div>
+				</section>
+			</div>
 		</div>
 		<?php
 	}
@@ -490,7 +493,7 @@ final class Modal_Checkout {
 			<link rel="profile" href="https://gmpg.org/xfn/11" />
 			<?php wp_head(); ?>
 		</head>
-		<body id="newspack_modal_checkout">
+		<body class="newspack-ui" id="newspack_modal_checkout">
 			<?php
 				echo do_shortcode( '[woocommerce_checkout]' );
 				wp_footer();
@@ -571,16 +574,19 @@ final class Modal_Checkout {
 			return $located;
 		}
 
-		$is_newspack_plugin_active = class_exists( '\Newspack\Newspack_UI' );
-		$custom_templates          = [
+		$custom_templates = [
 			'checkout/form-checkout.php'          => 'src/modal-checkout/templates/form-checkout.php',
 			'checkout/form-coupon.php'            => 'src/modal-checkout/templates/form-coupon.php',
 			'checkout/form-gift-subscription.php' => 'src/modal-checkout/templates/form-gift-subscription.php',
-			'checkout/thankyou.php'               => 'src/modal-checkout/templates/' . ( $is_newspack_plugin_active ? 'thankyou-v2' : 'thankyou' ) . '.php',
+		];
+
+		// If Newspack UI is present, use our templates.
+		if ( class_exists( '\Newspack\Newspack_UI' ) ) {
+			$custom_templates['checkout/thankyou.php'] = 'src/modal-checkout/templates/thankyou.php';
 			// Replace the login form with the order summary if using the modal checkout. This is
 			// for the case where the reader used an existing email address.
-			'global/form-login.php'               => 'src/modal-checkout/templates/' . ( $is_newspack_plugin_active ? 'thankyou-v2' : 'thankyou' ) . '.php',
-		];
+			$custom_templates['global/form-login.php'] = 'src/modal-checkout/templates/thankyou.php';
+		}
 
 		// Only show the woocommerce-subscriptions-gifting fields when we want to.
 		if ( 'html-add-recipient.php' === $template_name ) {
@@ -827,17 +833,17 @@ final class Modal_Checkout {
 		$button_label = ! empty( $_REQUEST['after_success_button_label'] ) ? urldecode( wp_unslash( $_REQUEST['after_success_button_label'] ) ) : __( 'Continue browsing', 'newspack-blocks' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$url          = ! empty( $_REQUEST['after_success_url'] ) ? urldecode( wp_unslash( $_REQUEST['after_success_url'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		?>
-			<a
+			<button
 				<?php if ( empty( $url ) ) : ?>
 					onclick="parent.newspackCloseModalCheckout(this);"
 				<?php else : ?>
 					href="<?php echo esc_url( $url ); ?>"
 					target="_top"
 				<?php endif; ?>
-				class="newspack-blocks-ui__button newspack-ui__button--primary newspack-ui__button--wide"
+				class="newspack-ui__button newspack-ui__button--primary newspack-ui__button--wide"
 			>
 				<?php echo esc_html( $button_label ); ?>
-			</a>
+			</button>
 		<?php
 		// phpcs:enable
 	}

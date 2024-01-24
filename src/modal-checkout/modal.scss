@@ -1,44 +1,3 @@
-@use '../shared/colors';
-
-// Modal visibility and animation.
-#newspack-blocks-checkout-modal {
-	width: 100%;
-	height: 100%;
-	visibility: hidden;
-	pointer-events: none;
-	z-index: -1;
-	opacity: 0;
-	transition: opacity 0.2s ease-in-out;
-	&.open {
-		z-index: 99999;
-		visibility: visible;
-		pointer-events: auto;
-		opacity: 1;
-	}
-
-	&.spinner {
-		align-items: center;
-		background: #fff;
-		border-radius: 5px;
-		display: flex;
-		justify-content: center;
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		width: 100%;
-		> span {
-			animation: spin 1s infinite linear;
-			border: 2px solid colors.$color__background-body;
-			border-top-color: colors.$color__text-light;
-			border-radius: 50%;
-			height: 25px;
-			width: 25px;
-			margin-top: -12.5px;
-			margin-left: -12.5px;
-		}
-	}
-}
-
 .newspack-blocks-variation-modal {
 	.newspack-blocks-modal {
 		&__content {
@@ -104,14 +63,11 @@
 	}
 }
 
-@keyframes spin {
-	0% {
-		transform: rotate( 0deg );
-	}
-	50% {
-		transform: rotate( 180deg );
-	}
-	100% {
-		transform: rotate( 360deg );
+// Checkout modal specific styles.
+.newspack-ui__modal-container {
+	iframe[name="newspack_modal_checkout_iframe"] {
+		width: 100%;
+		height: 100%;
+		border: none;
 	}
 }
