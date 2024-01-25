@@ -1,4 +1,8 @@
 /* globals newspackBlocksModalCheckout, jQuery, wc_checkout_params */
+/**
+ * Style dependencies
+ */
+import './checkout.scss';
 
 ( function ( $ ) {
 	if ( ! $ ) {

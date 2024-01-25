@@ -73,6 +73,7 @@ domReady( () => {
 	const initialHeight = modalContent.clientHeight + 'px';
 	const iframe = document.createElement( 'iframe' );
 	iframe.name = iframeName;
+	iframe.scrolling = 'no';
 	modalContent.appendChild( iframe );
 	modalCheckout.addEventListener( 'click', ev => {
 		if ( ev.target === modalCheckout ) {
@@ -174,10 +175,12 @@ domReady( () => {
 					if ( ! entries || ! entries.length ) {
 						return;
 					}
-					const contentRect = entries[ 0 ].contentRect;
-					if ( contentRect ) {
-						modalContent.style.height = contentRect.top + contentRect.bottom + 'px';
-						iframe.style.height = contentRect.top + contentRect.bottom + 'px';
+
+					const iframeHeight = iframe.contentDocument.documentElement.offsetHeight;
+					if ( iframeHeight ) {
+						// Account for newspack ui modal content padding.
+						modalContent.style.height = iframeHeight + 48 + 'px';
+						iframe.style.height = iframeHeight + 'px';
 					}
 				} );
 			} );
