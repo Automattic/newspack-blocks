@@ -64,10 +64,8 @@
 }
 
 // Checkout modal specific styles.
-.newspack-ui__modal-container {
-	iframe[name="newspack_modal_checkout_iframe"] {
-		width: 100%;
-		height: 100%;
-		border: none;
-	}
+iframe[name="newspack_modal_checkout_iframe"] {
+	width: 100%;
+	height: 100%;
+	border: none;
 }
