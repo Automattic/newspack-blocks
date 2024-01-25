@@ -288,22 +288,27 @@ final class Modal_Checkout {
 		*
 		* @param string $title The title.
 		*/
-		$title = apply_filters( 'newspack_blocks_modal_checkout_title', __( 'Complete your transaction', 'newspack-blocks' ) );
+		$title        = apply_filters( 'newspack_blocks_modal_checkout_title', __( 'Complete your transaction', 'newspack-blocks' ) );
+		$class_prefix = 'newspack-blocks';
+
+		if ( class_exists( '\Newspack\Newspack_UI' ) ) {
+			$class_prefix = 'newspack-ui';
+		}
 		?>
-		<div class="newspack-ui newspack-ui__modal-container">
-			<div class="newspack-ui__modal-container__overlay"></div>
-			<div class="newspack-ui__modal">
-				<header class="newspack-ui__modal__header">
+		<div class="<?php echo esc_attr( $class_prefix ) . ' ' . esc_attr( $class_prefix ) . '__modal-container'; ?>">
+			<div class="<?php echo esc_attr( $class_prefix ) . '__modal-container__overlay'; ?>"></div>
+			<div class="<?php echo esc_attr( $class_prefix ) . '__modal'; ?>">
+			<header class="<?php echo esc_attr( $class_prefix ) . '__modal__header'; ?>">
 					<h2><?php echo esc_html( $title ); ?></h2>
-					<button class="newspack-ui__modal__close">
+					<button class="<?php echo esc_attr( $class_prefix ) . '__modal__close'; ?>">
 						<span class="screen-reader-text"><?php esc_html_e( 'Close', 'newspack-blocks' ); ?></span>
 						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
 							<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
 						</svg>
 					</button>
 				</header>
-				<section class="newspack-ui__modal__content">
-					<div class="newspack-ui__spinner">
+				<section class="<?php echo esc_attr( $class_prefix ) . '__modal__content'; ?>">
+					<div class="<?php echo esc_attr( $class_prefix ) . '__spinner'; ?>">
 						<span></span>
 					</div>
 				</section>
@@ -457,6 +462,13 @@ final class Modal_Checkout {
 			[],
 			\NEWSPACK_BLOCKS__VERSION,
 			true
+		);
+		wp_localize_script(
+			'newspack-blocks-modal',
+			'newspackBlocksModal',
+			[
+				'has_newspack_ui' => class_exists( '\Newspack\Newspack_UI' ),
+			]
 		);
 		wp_enqueue_style(
 			'newspack-blocks-modal',

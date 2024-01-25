@@ -1,3 +1,5 @@
+/* globals newspackBlocksModal */
+
 /**
  * Internal dependencies
  */
@@ -25,6 +27,9 @@ function domReady( callback ) {
 	document.addEventListener( 'DOMContentLoaded', callback );
 }
 
+const CLASSNAME_BASE = newspackBlocksModal.has_newspack_ui ? 'newspack-ui' : 'newspack-blocks';
+const MODAL_CLASSNAME_BASE = `${ CLASSNAME_BASE }__modal`;
+
 const triggers =
 	'.wpbnbd.wpbnbd--platform-wc,.wp-block-newspack-blocks-checkout-button,.newspack-blocks-variation-modal';
 
@@ -38,7 +43,7 @@ function closeCheckout() {
 	if ( iframeResizeObserver ) {
 		iframeResizeObserver.disconnect();
 	}
-	Array.from( document.querySelectorAll( '.newspack-ui__modal-container' ) ).forEach( el => {
+	Array.from( document.querySelectorAll( `.${ MODAL_CLASSNAME_BASE }-container` ) ).forEach( el => {
 		closeModal( el );
 		if ( el.overlayId && window.newspackReaderActivation?.overlays ) {
 			window.newspackReaderActivation?.overlays.remove( el.overlayId );
@@ -46,44 +51,41 @@ function closeCheckout() {
 	} );
 }
 
-function openModal( el ) {
-	el.setAttribute( 'data-state', 'open' );
-}
-
 function closeModal( el ) {
 	el.setAttribute( 'data-state', 'closed' );
 }
 
-window.newspackCloseModalCheckout = closeCheckout;
+function openModal( el ) {
+	el.setAttribute( 'data-state', 'open' );
+}
 
-const MODAL_CLASSNAME_BASE = '.newspack-ui__modal';
+window.newspackCloseModalCheckout = closeCheckout;
 
 domReady( () => {
 	/**
 	 * Initialize modal checkout.
 	 */
-	const modalCheckout = document.querySelector( '.newspack-ui__modal-container' );
+	const modalCheckout = document.querySelector( `.${ MODAL_CLASSNAME_BASE }-container` );
 	if ( ! modalCheckout ) {
 		return;
 	}
-	const spinner = document.querySelector( '.newspack-ui__spinner' );
+	const spinner = document.querySelector( `.${ CLASSNAME_BASE }__spinner` );
 	const iframeName = 'newspack_modal_checkout_iframe';
 	const modalCheckoutInput = document.createElement( 'input' );
 	modalCheckoutInput.type = 'hidden';
 	modalCheckoutInput.name = 'modal_checkout';
 	modalCheckoutInput.value = '1';
-	const modalContent = modalCheckout.querySelector( `${ MODAL_CLASSNAME_BASE }__content` );
+	const modalContent = modalCheckout.querySelector( `.${ MODAL_CLASSNAME_BASE }__content` );
 	const initialHeight = modalContent.clientHeight + 'px';
 	const iframe = document.createElement( 'iframe' );
 	iframe.name = iframeName;
-	iframe.scrolling = 'no';
 	modalContent.appendChild( iframe );
 	modalCheckout.addEventListener( 'click', ev => {
 		if ( ev.target === modalCheckout ) {
 			closeCheckout();
 		}
 	} );
-	const closeButtons = modalCheckout.querySelectorAll( `${ MODAL_CLASSNAME_BASE }__close` );
+	const closeButtons = modalCheckout.querySelectorAll( `.${ MODAL_CLASSNAME_BASE }__close` );
 	closeButtons.forEach( button => {
 		button.addEventListener( 'click', ev => {
 			ev.preventDefault();
