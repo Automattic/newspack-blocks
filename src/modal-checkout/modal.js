@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import './modal.scss';
+import * as a11yTweaks from './accessibilityTweaks.js';
 
 /**
  * Specify a function to execute when the DOM is fully loaded.
@@ -29,6 +30,8 @@ const triggers =
 	'.wpbnbd.wpbnbd--platform-wc,.wp-block-newspack-blocks-checkout-button,.newspack-blocks-variation-modal';
 
 let iframeResizeObserver;
+// TODO: Use to return focus to this button when modal closed.
+// let lastModalTrigger; // Button clicked to open modal.
 
 function closeCheckout() {
 	const iframe = document.querySelector( 'iframe[name="newspack_modal_checkout"]' );
@@ -83,6 +86,17 @@ domReady( () => {
 			spinner.style.display = 'flex';
 			closeCheckout();
 		} );
+	} );
+
+	// TODO: Only works for variations window so far; update, and move to acessibilityTweaks.js
+	// For checkout, focus can be trapped in iframe so this doesn't work.
+	document.addEventListener( 'keydown', function ( ev ) {
+		if ( ev.key === 'Escape' || ev.keyCode === 27 ) {
+			ev.preventDefault();
+			modalContent.style.height = initialHeight;
+			spinner.style.display = 'flex';
+			closeCheckout();
+		}
 	} );
 
 	/**
@@ -156,12 +170,15 @@ domReady( () => {
 						ev.preventDefault();
 						document.body.classList.add( 'newspack-modal-checkout-open' );
 						variationModal.classList.add( 'open' );
+						a11yTweaks.trapFocus( variationModal );
 						return;
 					}
 				}
 				// Continue with checkout modal.
 				spinner.style.display = 'flex';
 				modalCheckout.classList.add( 'open' );
+				a11yTweaks.trapFocus( modalCheckout );
+
 				document.body.classList.add( 'newspack-modal-checkout-open' );
 				if ( window.newspackReaderActivation?.overlays ) {
 					modalCheckout.overlayId = window.newspackReaderActivation?.overlays.add();
