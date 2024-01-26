@@ -3,9 +3,11 @@
 
 // Checkout modal specific styles.
 iframe[name="newspack_modal_checkout_iframe"] {
-	width: 100%;
-	height: 100%;
 	border: none;
+	height: calc( 100% + var( --newspack-ui-spacer-8, 48px ) );
+	margin: calc( -1 * var( --newspack-ui-spacer-5, 24px ) );
+	max-width: unset;
+	width: calc( 100% + var( --newspack-ui-spacer-8, 48px ) );
 }
 
 // Default modal styles when newspack ui is not present.

@@ -495,6 +495,11 @@ final class Modal_Checkout {
 		if ( ! self::is_modal_checkout() ) {
 			return $template;
 		}
+		$class_prefix = 'newspack-blocks';
+		if ( class_exists( '\Newspack\Newspack_UI' ) ) {
+			$class_prefix = 'newspack-ui';
+		}
+		$classnames = "$class_prefix {$class_prefix}__iframe {$class_prefix}__modal__content";
 		ob_start();
 		?>
 		<!doctype html>
@@ -505,7 +510,7 @@ final class Modal_Checkout {
 			<link rel="profile" href="https://gmpg.org/xfn/11" />
 			<?php wp_head(); ?>
 		</head>
-		<body class="newspack-ui" id="newspack_modal_checkout">
+			<body class="<?php echo esc_attr( $classnames ); ?>" id="newspack_modal_checkout">
 			<?php
 				echo do_shortcode( '[woocommerce_checkout]' );
 				wp_footer();
