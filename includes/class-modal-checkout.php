@@ -965,6 +965,11 @@ final class Modal_Checkout {
 		if ( ! $is_modal_checkout && isset( $_REQUEST['post_data'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$is_modal_checkout = strpos( $_REQUEST['post_data'], 'modal_checkout=1' ) !== false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		}
+
+		// Express checkout payments won't have the modal checkout flag even if triggered from the modal, so let's treat those as modal checkouts.
+		if ( ! $is_modal_checkout && ! empty( filter_input( INPUT_POST, 'payment_request_type', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ) ) {
+			$is_modal_checkout = true;
+		}
 		return $is_modal_checkout;
 	}
 
