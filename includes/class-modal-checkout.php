@@ -592,17 +592,19 @@ final class Modal_Checkout {
 		}
 
 		$custom_templates = [
-			'checkout/form-checkout.php'          => 'src/modal-checkout/templates/form-checkout.php',
 			'checkout/form-coupon.php'            => 'src/modal-checkout/templates/form-coupon.php',
 			'checkout/form-gift-subscription.php' => 'src/modal-checkout/templates/form-gift-subscription.php',
 		];
 
 		// If Newspack UI is present, use our templates.
 		if ( self::get_class_prefix() === 'newspack-ui' ) {
-			$custom_templates['checkout/thankyou.php'] = 'src/modal-checkout/templates/thankyou.php';
 			// Replace the login form with the order summary if using the modal checkout. This is
 			// for the case where the reader used an existing email address.
-			$custom_templates['global/form-login.php'] = 'src/modal-checkout/templates/thankyou.php';
+			$custom_templates['global/form-login.php']      = 'src/modal-checkout/templates/thankyou.php';
+			$custom_templates['checkout/form-billing.php']  = 'src/modal-checkout/templates/form-billing.php';
+			$custom_templates['checkout/form-checkout.php'] = 'src/modal-checkout/templates/form-checkout.php';
+			$custom_templates['checkout/form-shipping.php'] = 'src/modal-checkout/templates/form-shipping.php';
+			$custom_templates['checkout/thankyou.php']      = 'src/modal-checkout/templates/thankyou.php';
 		}
 
 		// Only show the woocommerce-subscriptions-gifting fields when we want to.
@@ -1094,8 +1096,9 @@ final class Modal_Checkout {
 		if ( 1 !== $cart->get_cart_contents_count() ) {
 			return;
 		}
+		$class_prefix = self::get_class_prefix();
 		?>
-		<div class="order-details-summary">
+			<div class="<?php echo esc_attr( "order-details-summary {$class_prefix}__box {$class_prefix}__box__text-center" ); ?>">
 			<?php
 			// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce hooks.
 			foreach ( $cart->get_cart() as $cart_item_key => $cart_item ) :

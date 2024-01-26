@@ -48,4 +48,9 @@
 			margin-top: 0;
 		}
 	}
+
+	.woocommerce-billing-fields h2,
+	.woocommerce-additional-fields h2 {
+		margin-top: 0 !important;
+	}
 }

@@ -154,7 +154,7 @@ import './checkout.scss';
 						$existingError.remove();
 					}
 					$field.addClass( 'woocommerce-invalid' ).removeClass( 'woocommerce-valid' );
-					$field.append( '<span class="woocommerce-error">' + $error.text() + '</span>' );
+					$field.append( '<span class="error">' + $error.text() + '</span>' );
 					$error.remove();
 				} else {
 					if ( ! $error.is( 'li' ) ) {
