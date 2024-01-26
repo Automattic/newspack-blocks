@@ -50,7 +50,7 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 
 		$configuration['defaultFrequency'] = $attributes['defaultFrequency'];
 
-		$is_manual = Newspack_Blocks::can_use_name_your_price() && $attributes['manual'];
+		$is_manual = Newspack_Blocks::can_use_name_your_price() && ! empty( $attributes['manual'] );
 
 		/* If block is in "manual" mode, override certain state properties with values stored in attributes */
 		if ( $is_manual ) {
