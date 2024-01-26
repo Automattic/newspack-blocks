@@ -497,7 +497,6 @@ final class Modal_Checkout {
 			return $template;
 		}
 		$class_prefix = self::get_class_prefix();
-		$classnames   = "$class_prefix {$class_prefix}__iframe {$class_prefix}__modal__content";
 		ob_start();
 		?>
 		<!doctype html>
@@ -508,7 +507,7 @@ final class Modal_Checkout {
 			<link rel="profile" href="https://gmpg.org/xfn/11" />
 			<?php wp_head(); ?>
 		</head>
-			<body class="<?php echo esc_attr( $classnames ); ?>" id="newspack_modal_checkout">
+			<body class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal__content" ); ?>" id="newspack_modal_checkout">
 			<?php
 				echo do_shortcode( '[woocommerce_checkout]' );
 				wp_footer();
