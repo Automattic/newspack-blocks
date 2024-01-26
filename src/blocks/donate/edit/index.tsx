@@ -219,25 +219,27 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 
 			<InspectorControls>
 				<PanelBody title={ __( 'Layout', 'newspack-blocks' ) }>
-					<div className="newspack-blocks-donate__layout-selector">
-						{ LAYOUT_OPTIONS.map( ( { label, key } ) => {
-							const isSelected =
-								key === 'tiers' ? isTierBasedLayoutEnabled : ! isTierBasedLayoutEnabled;
-							return (
-								<Button
-									key={ key }
-									variant={ isSelected ? 'primary' : 'secondary' }
-									isPressed={ isSelected }
-									onClick={ () => setAttributes( { layoutOption: key } ) }
-									aria-current={ isSelected }
-									disabled={ key === 'tiers' && ! isTiered }
-								>
-									{ label }
-								</Button>
-							);
-						} ) }
-					</div>
-					{ ! isTiered && (
+					{ canUseNameYourPrice && (
+						<div className="newspack-blocks-donate__layout-selector">
+							{ LAYOUT_OPTIONS.map( ( { label, key } ) => {
+								const isSelected =
+									key === 'tiers' ? isTierBasedLayoutEnabled : ! isTierBasedLayoutEnabled;
+								return (
+									<Button
+										key={ key }
+										variant={ isSelected ? 'primary' : 'secondary' }
+										isPressed={ isSelected }
+										onClick={ () => setAttributes( { layoutOption: key } ) }
+										aria-current={ isSelected }
+										disabled={ key === 'tiers' && ! isTiered }
+									>
+										{ label }
+									</Button>
+								);
+							} ) }
+						</div>
+					) }
+					{ canUseNameYourPrice && ! isTiered && (
 						<Notice isDismissible={ false } className="newspack-blocks-donate__notice">
 							{ __(
 								'Tiers layout is disabled if the block is set to render untiered.',
