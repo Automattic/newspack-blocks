@@ -57,6 +57,7 @@ final class Modal_Checkout {
 		add_filter( 'woocommerce_order_received_verify_known_shoppers', '__return_false' );
 		// TODO: Remove once we apply auth flow to checkout modal.
 		add_filter( 'newspack_reader_activation_should_render_auth', '__return_false' );
+		add_filter( 'woocommerce_order_button_html', [ __CLASS__, 'order_button_html' ], 10, 2 );
 
 		/** Custom handling for registered users. */
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
@@ -422,7 +423,8 @@ final class Modal_Checkout {
 			'newspack-blocks-modal-checkout',
 			'newspackBlocksModalCheckout',
 			[
-				'labels' => [
+				'has_newspack_ui' => self::get_class_prefix() === 'newspack-ui',
+				'labels'          => [
 					'billing_details'  => __( 'Billing details', 'newspack-blocks' ),
 					'shipping_details' => __( 'Shipping details', 'newspack-blocks' ),
 					'gift_recipient'   => __( 'Gift recipient', 'newspack-blocks' ),
@@ -1241,6 +1243,21 @@ final class Modal_Checkout {
 	 */
 	private static function get_class_prefix() {
 		return class_exists( '\Newspack\Newspack_UI' ) ? 'newspack-ui' : 'newspack-blocks';
+	}
+
+	/**
+	 * Replace the "Place order" button html.
+	 *
+	 * @param string $text The button text.
+	 */
+	public static function order_button_html( $text ) {
+		if ( ! self::is_modal_checkout() ) {
+			return $text;
+		}
+
+		$order_button_text = self::order_button_text( $text );
+
+		return '<button type="submit" class="newspack-ui__button newspack-ui__button--primary newspack-ui__button--wide" name="woocommerce_checkout_place_order" id="place_order" value="' . esc_attr( $order_button_text ) . '" data-value="' . esc_attr( $order_button_text ) . '">' . esc_html( $order_button_text ) . '</button>';
 	}
 }
 Modal_Checkout::init();
