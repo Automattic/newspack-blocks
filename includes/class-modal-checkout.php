@@ -289,26 +289,22 @@ final class Modal_Checkout {
 		* @param string $title The title.
 		*/
 		$title        = apply_filters( 'newspack_blocks_modal_checkout_title', __( 'Complete your transaction', 'newspack-blocks' ) );
-		$class_prefix = 'newspack-blocks';
-
-		if ( class_exists( '\Newspack\Newspack_UI' ) ) {
-			$class_prefix = 'newspack-ui';
-		}
+		$class_prefix = self::get_class_prefix();
 		?>
-		<div class="<?php echo esc_attr( $class_prefix ) . ' ' . esc_attr( $class_prefix ) . '__modal-container'; ?>">
-			<div class="<?php echo esc_attr( $class_prefix ) . '__modal-container__overlay'; ?>"></div>
-			<div class="<?php echo esc_attr( $class_prefix ) . '__modal'; ?>">
-			<header class="<?php echo esc_attr( $class_prefix ) . '__modal__header'; ?>">
+		<div class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal-container" ); ?>">
+			<div class="<?php echo esc_attr( "{$class_prefix}__modal-container__overlay" ); ?>"></div>
+			<div class="<?php echo esc_attr( "{$class_prefix}__modal" ); ?>">
+				<header class="<?php echo esc_attr( "{$class_prefix}__modal__header" ); ?>">
 					<h2><?php echo esc_html( $title ); ?></h2>
-					<button class="<?php echo esc_attr( $class_prefix ) . '__modal__close'; ?>">
+					<button class="<?php echo esc_attr( "{$class_prefix}__modal__close" ); ?>">
 						<span class="screen-reader-text"><?php esc_html_e( 'Close', 'newspack-blocks' ); ?></span>
 						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
 							<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
 						</svg>
 					</button>
 				</header>
-				<section class="<?php echo esc_attr( $class_prefix ) . '__modal__content'; ?>">
-					<div class="<?php echo esc_attr( $class_prefix ) . '__spinner'; ?>">
+				<section class="<?php echo esc_attr( "{$class_prefix}__modal__content" ); ?>">
+					<div class="<?php echo esc_attr( "{$class_prefix}__spinner" ); ?>">
 						<span></span>
 					</div>
 				</section>
@@ -346,37 +342,42 @@ final class Modal_Checkout {
 		*
 		* @param string $title The title.
 		*/
-		$title    = apply_filters( 'newspack_blocks_modal_checkout_title', __( 'Complete your transaction', 'newspack-blocks' ) );
-		$products = array_keys( self::$products );
+		$title        = apply_filters( 'newspack_blocks_modal_checkout_title', __( 'Complete your transaction', 'newspack-blocks' ) );
+		$products     = array_keys( self::$products );
+		$class_prefix = self::get_class_prefix();
 		foreach ( $products as $product_id ) {
 			$product = wc_get_product( $product_id );
 			if ( ! $product->is_type( 'variable' ) ) {
 				continue;
 			}
 			?>
-			<div class="newspack-blocks-variation-modal newspack-blocks-modal" data-product-id="<?php echo esc_attr( $product_id ); ?>">
-				<div class="newspack-blocks-modal__container">
-					<header class="newspack-blocks-modal__header">
+			<div
+				class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal-container {$class_prefix}__modal-variation" ); ?>"
+				data-product-id="<?php echo esc_attr( $product_id ); ?>"
+			>
+				<div class="<?php echo esc_attr( "{$class_prefix}__modal-container__overlay" ); ?>"></div>
+				<div class="<?php echo esc_attr( "{$class_prefix}__modal" ); ?>">
+					<header class="<?php echo esc_attr( "{$class_prefix}__modal__header" ); ?>">
 						<h2><?php echo esc_html( $title ); ?></h2>
-						<a href="#" class="newspack-blocks-modal__close">
+						<button class="<?php echo esc_attr( "{$class_prefix}__modal__close" ); ?>">
 							<span class="screen-reader-text"><?php esc_html_e( 'Close', 'newspack-blocks' ); ?></span>
 							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
 								<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
 							</svg>
-						</a>
+						</button>
 					</header>
-					<section class="newspack-blocks-modal__content">
-						<div class="newspack-blocks-variation-modal__selection" data-product-id="<?php echo esc_attr( $product_id ); ?>">
+					<section class="<?php echo esc_attr( "{$class_prefix}__modal__content" ); ?>">
+						<div class="<?php echo esc_attr( "{$class_prefix}__selection" ); ?>" data-product-id="<?php echo esc_attr( $product_id ); ?>">
 							<h3><?php echo esc_html( $product->get_name() ); ?></h3>
 							<p><?php esc_html_e( 'Select an option to continue:', 'newspack-blocks' ); ?></p>
-							<ul class="newspack-blocks-variation-modal__options">
+							<ul class="<?php echo esc_attr( "{$class_prefix}__options" ); ?>">
 								<?php
 								$variations = $product->get_available_variations( 'objects' );
 								foreach ( $variations as $variation ) :
 									$name  = wc_get_formatted_variation( $variation, true );
 									$price = $variation->get_price_html();
 									?>
-									<li class="newspack-blocks-variation-modal__options__item">
+									<li class="<?php echo esc_attr( "{$class_prefix}__options__item" ); ?>">
 										<div class="summary">
 											<span class="price"><?php echo $price; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 										</div>
@@ -467,7 +468,7 @@ final class Modal_Checkout {
 			'newspack-blocks-modal',
 			'newspackBlocksModal',
 			[
-				'has_newspack_ui' => class_exists( '\Newspack\Newspack_UI' ),
+				'has_newspack_ui' => self::get_class_prefix() === 'newspack-ui',
 			]
 		);
 		wp_enqueue_style(
@@ -495,11 +496,8 @@ final class Modal_Checkout {
 		if ( ! self::is_modal_checkout() ) {
 			return $template;
 		}
-		$class_prefix = 'newspack-blocks';
-		if ( class_exists( '\Newspack\Newspack_UI' ) ) {
-			$class_prefix = 'newspack-ui';
-		}
-		$classnames = "$class_prefix {$class_prefix}__iframe {$class_prefix}__modal__content";
+		$class_prefix = self::get_class_prefix();
+		$classnames   = "$class_prefix {$class_prefix}__iframe {$class_prefix}__modal__content";
 		ob_start();
 		?>
 		<!doctype html>
@@ -598,7 +596,7 @@ final class Modal_Checkout {
 		];
 
 		// If Newspack UI is present, use our templates.
-		if ( class_exists( '\Newspack\Newspack_UI' ) ) {
+		if ( self::get_class_prefix() === 'newspack-ui' ) {
 			$custom_templates['checkout/thankyou.php'] = 'src/modal-checkout/templates/thankyou.php';
 			// Replace the login form with the order summary if using the modal checkout. This is
 			// for the case where the reader used an existing email address.
@@ -1231,6 +1229,13 @@ final class Modal_Checkout {
 			return [];
 		}
 		return $modules;
+	}
+
+	/**
+	 * Get the relevant class prefix (newspack-blocks or newspack-ui)depending on whether Newpack plugin is active.
+	 */
+	private static function get_class_prefix() {
+		return class_exists( '\Newspack\Newspack_UI' ) ? 'newspack-ui' : 'newspack-blocks';
 	}
 }
 Modal_Checkout::init();

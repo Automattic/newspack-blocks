@@ -30,8 +30,7 @@ function domReady( callback ) {
 const CLASSNAME_BASE = newspackBlocksModal.has_newspack_ui ? 'newspack-ui' : 'newspack-blocks';
 const MODAL_CLASSNAME_BASE = `${ CLASSNAME_BASE }__modal`;
 
-const triggers =
-	'.wpbnbd.wpbnbd--platform-wc,.wp-block-newspack-blocks-checkout-button,.newspack-blocks-variation-modal';
+const triggers = `.wpbnbd.wpbnbd--platform-wc,.wp-block-newspack-blocks-checkout-button,.${ CLASSNAME_BASE }__modal-variation`;
 
 let iframeResizeObserver;
 
@@ -98,14 +97,14 @@ domReady( () => {
 	/**
 	 * Variation modals.
 	 */
-	const variationModals = document.querySelectorAll( '.newspack-blocks-variation-modal' );
+	const variationModals = document.querySelectorAll( `.${ MODAL_CLASSNAME_BASE }-variation` );
 	variationModals.forEach( variationModal => {
 		variationModal.addEventListener( 'click', ev => {
 			if ( ev.target === variationModal ) {
 				closeCheckout();
 			}
 		} );
-		variationModal.querySelectorAll( '.newspack-blocks-modal__close' ).forEach( button => {
+		variationModal.querySelectorAll( `.${ MODAL_CLASSNAME_BASE }__close` ).forEach( button => {
 			button.addEventListener( 'click', ev => {
 				ev.preventDefault();
 				closeCheckout();
