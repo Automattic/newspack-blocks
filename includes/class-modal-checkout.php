@@ -499,6 +499,7 @@ final class Modal_Checkout {
 			return $template;
 		}
 		$class_prefix = self::get_class_prefix();
+		$classnames   = "$class_prefix {$class_prefix}__iframe {$class_prefix}__modal__content";
 		ob_start();
 		?>
 		<!doctype html>
