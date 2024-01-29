@@ -48,8 +48,16 @@
 		}
 	}
 
-	.woocommerce-billing-fields h2,
-	.woocommerce-additional-fields h2 {
+	.woocommerce-billing-fields h3,
+	.woocommerce-additional-fields h3 {
 		margin-top: 0 !important;
+	}
+
+	.wc_payment_method .payment_box {
+		padding: 1rem 0;
+
+		fieldset {
+			margin-bottom: 16px;
+		}
 	}
 }

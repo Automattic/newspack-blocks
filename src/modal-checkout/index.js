@@ -136,6 +136,10 @@ import './checkout.scss';
 
 			const genericErrors = [];
 
+			const classname = newspackBlocksModalCheckout.has_newspack_ui
+				? 'newspack-ui__inline-error'
+				: 'newspack-blocks__inline-error';
+
 			/**
 			 * If a field is found, append the error to it. Otherwise, add it to the
 			 * generic errors array.
@@ -154,7 +158,7 @@ import './checkout.scss';
 						$existingError.remove();
 					}
 					$field.addClass( 'woocommerce-invalid' ).removeClass( 'woocommerce-valid' );
-					$field.append( '<span class="error">' + $error.text() + '</span>' );
+					$field.append( `<span class="${ classname }">` + $error.text() + '</span>' );
 					$error.remove();
 				} else {
 					if ( ! $error.is( 'li' ) ) {
@@ -328,11 +332,11 @@ import './checkout.scss';
 			} );
 
 			const classname = newspackBlocksModalCheckout.has_newspack_ui
-				? 'newspack-ui__text-info'
-				: 'newspack-blocks__text-info';
+				? 'newspack-ui__info'
+				: 'newspack-blocks__info';
 			const html = [];
 			html.push( '<div class="billing-details">' );
-			html.push( '<h2>' + newspackBlocksModalCheckout.labels.billing_details + '</h2>' );
+			html.push( '<h3>' + newspackBlocksModalCheckout.labels.billing_details + '</h3>' );
 			if ( data.billing_first_name || data.billing_last_name ) {
 				html.push(
 					`<p class="${ classname }">` +

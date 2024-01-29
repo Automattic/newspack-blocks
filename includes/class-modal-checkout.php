@@ -58,6 +58,8 @@ final class Modal_Checkout {
 		// TODO: Remove once we apply auth flow to checkout modal.
 		add_filter( 'newspack_reader_activation_should_render_auth', '__return_false' );
 		add_filter( 'woocommerce_order_button_html', [ __CLASS__, 'order_button_html' ], 10, 2 );
+		// TODO: Remove once we apply auth flow to checkout modal.
+		add_filter( 'newspack_reader_activation_should_render_auth', '__return_false' );
 
 		/** Custom handling for registered users. */
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
@@ -602,11 +604,12 @@ final class Modal_Checkout {
 		if ( self::get_class_prefix() === 'newspack-ui' ) {
 			// Replace the login form with the order summary if using the modal checkout. This is
 			// for the case where the reader used an existing email address.
-			$custom_templates['global/form-login.php']      = 'src/modal-checkout/templates/thankyou.php';
-			$custom_templates['checkout/form-billing.php']  = 'src/modal-checkout/templates/form-billing.php';
-			$custom_templates['checkout/form-checkout.php'] = 'src/modal-checkout/templates/form-checkout.php';
-			$custom_templates['checkout/form-shipping.php'] = 'src/modal-checkout/templates/form-shipping.php';
-			$custom_templates['checkout/thankyou.php']      = 'src/modal-checkout/templates/thankyou.php';
+			$custom_templates['global/form-login.php']       = 'src/modal-checkout/templates/thankyou.php';
+			$custom_templates['checkout/form-billing.php']   = 'src/modal-checkout/templates/form-billing.php';
+			$custom_templates['checkout/form-checkout.php']  = 'src/modal-checkout/templates/form-checkout.php';
+			$custom_templates['checkout/form-shipping.php']  = 'src/modal-checkout/templates/form-shipping.php';
+			$custom_templates['checkout/payment-method.php'] = 'src/modal-checkout/templates/payment-method.php';
+			$custom_templates['checkout/thankyou.php']       = 'src/modal-checkout/templates/thankyou.php';
 		}
 
 		// Only show the woocommerce-subscriptions-gifting fields when we want to.

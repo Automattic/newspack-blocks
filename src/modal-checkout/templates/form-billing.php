@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
 
 ?>
 <div class="woocommerce-billing-fields">
-	<h2><?php esc_html_e( 'Billing details', 'newspack-blocks' ); ?></h2>
+	<h3><?php esc_html_e( 'Billing details', 'newspack-blocks' ); ?></h3>
 
 	<?php do_action( 'woocommerce_before_checkout_billing_form', $checkout ); ?>
 
