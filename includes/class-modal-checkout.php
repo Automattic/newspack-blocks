@@ -1233,7 +1233,7 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Get the relevant class prefix (newspack-blocks or newspack-ui)depending on whether Newpack plugin is active.
+	 * Get the relevant class prefix (newspack-blocks or newspack-ui) depending on whether Newpack plugin is active.
 	 */
 	private static function get_class_prefix() {
 		return class_exists( '\Newspack\Newspack_UI' ) ? 'newspack-ui' : 'newspack-blocks';
