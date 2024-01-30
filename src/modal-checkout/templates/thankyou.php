@@ -51,7 +51,7 @@ function newspack_blocks_replace_login_with_order_summary() {
 	?>
 
 	<?php if ( $is_success ) : ?>
-		<div class="newspack-ui__box newspack-ui__box--success newspack-ui__box__text-center">
+		<div class="newspack-ui__box newspack-ui__box--success newspack-ui__box--text-center">
 			<span class="newspack-ui__icon newspack-ui__icon--success">
 				<?php // TODO: Replace with newspack-ui icons when available. ?>
 				<svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -71,7 +71,7 @@ function newspack_blocks_replace_login_with_order_summary() {
 		</div>
 		<?php echo \Newspack_Blocks\Modal_Checkout::render_checkout_after_success_markup( $order ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	<?php else : ?>
-		<div class="newspack-ui__box newspack-ui__box__error newspack-ui__box__text-center">
+		<div class="newspack-ui__box newspack-ui__box__error newspack-ui__box--text-center">
 			<p>
 				<?php esc_html_e( 'Unfortunately your order cannot be processed. Please attempt your purchase again.', 'newspack-blocks' ); ?>
 			</p>

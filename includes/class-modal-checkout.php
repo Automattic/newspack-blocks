@@ -55,6 +55,8 @@ final class Modal_Checkout {
 		add_filter( 'woocommerce_enable_order_notes_field', [ __CLASS__, 'enable_order_notes_field' ] );
 		add_action( 'woocommerce_checkout_process', [ __CLASS__, 'wcsg_apply_gift_subscription' ] );
 		add_filter( 'woocommerce_order_received_verify_known_shoppers', '__return_false' );
+		// TODO: Remove once we apply auth flow to checkout modal.
+		add_filter( 'newspack_reader_activation_should_render_auth', '__return_false' );
 
 		/** Custom handling for registered users. */
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
