@@ -27,7 +27,7 @@ function domReady( callback ) {
 	document.addEventListener( 'DOMContentLoaded', callback );
 }
 
-const CLASSNAME_BASE = newspackBlocksModal.has_newspack_ui ? 'newspack-ui' : 'newspack-blocks';
+const CLASSNAME_BASE = newspackBlocksModal.newspack_class_prefix;
 const MODAL_CLASSNAME_BASE = `${ CLASSNAME_BASE }__modal`;
 
 const triggers = `.wpbnbd.wpbnbd--platform-wc,.wp-block-newspack-blocks-checkout-button,.${ CLASSNAME_BASE }__modal-variation`;

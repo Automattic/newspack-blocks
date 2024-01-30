@@ -468,7 +468,7 @@ final class Modal_Checkout {
 			'newspack-blocks-modal',
 			'newspackBlocksModal',
 			[
-				'has_newspack_ui' => self::get_class_prefix() === 'newspack-ui',
+				'newspack_class_prefix' => self::get_class_prefix(),
 			]
 		);
 		wp_enqueue_style(
