@@ -966,10 +966,19 @@ final class Modal_Checkout {
 			$is_modal_checkout = strpos( $_REQUEST['post_data'], 'modal_checkout=1' ) !== false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		}
 
-		// Express checkout payments won't have the modal checkout flag even if triggered from the modal, so let's treat those as modal checkouts.
-		if ( ! $is_modal_checkout && ! empty( filter_input( INPUT_POST, 'payment_request_type', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ) ) {
-			$is_modal_checkout = true;
+		// Express checkout payment requests are separate requests, so they won't have the modal checkout flag. We'll have to check the HTTP_REFERER insteaad.
+		$is_express_checkout = ! empty( filter_input( INPUT_POST, 'payment_request_type', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) );
+		if ( $is_express_checkout ) {
+			$referrer = isset( $_SERVER['HTTP_REFERER'] ) ? \esc_url_raw( \wp_unslash( $_SERVER['HTTP_REFERER'] ) ) : false; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			if ( $referrer ) {
+				$referrer_query = \wp_parse_url( $referrer, PHP_URL_QUERY );
+				\wp_parse_str( $referrer_query, $referrer_query_params );
+				if ( isset( $referrer_query_params['modal_checkout'] ) && $referrer_query_params['modal_checkout'] ) {
+					$is_modal_checkout = true;
+				}
+			}
 		}
+
 		return $is_modal_checkout;
 	}
 
