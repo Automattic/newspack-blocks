@@ -290,9 +290,9 @@ final class Modal_Checkout {
 		$title = apply_filters( 'newspack_blocks_modal_checkout_title', __( 'Complete your transaction', 'newspack-blocks' ) );
 		?>
 		<div class="newspack-blocks-checkout-modal newspack-blocks-modal">
-			<div class="newspack-blocks-modal__container">
+			<div class="newspack-blocks-modal__container" role="dialog" aria-modal="true" aria-labelledby="newspack-checkout-modal-label">
 				<header class="newspack-blocks-modal__header">
-					<h2><?php echo esc_html( $title ); ?></h2>
+					<h2 id="newspack-checkout-modal-label"><?php echo esc_html( $title ); ?></h2>
 					<a href="#" class="newspack-blocks-modal__close">
 						<span class="screen-reader-text"><?php esc_html_e( 'Close', 'newspack-blocks' ); ?></span>
 						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
@@ -348,9 +348,9 @@ final class Modal_Checkout {
 			}
 			?>
 			<div class="newspack-blocks-variation-modal newspack-blocks-modal" data-product-id="<?php echo esc_attr( $product_id ); ?>">
-				<div class="newspack-blocks-modal__container">
+				<div class="newspack-blocks-modal__container" role="dialog" aria-modal="true" aria-labelledby="newspack-variation-modal-label">
 					<header class="newspack-blocks-modal__header">
-						<h2><?php echo esc_html( $title ); ?></h2>
+						<h2 id="newspack-variation-modal-label"><?php echo esc_html( $title ); ?></h2>
 						<a href="#" class="newspack-blocks-modal__close">
 							<span class="screen-reader-text"><?php esc_html_e( 'Close', 'newspack-blocks' ); ?></span>
 							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">

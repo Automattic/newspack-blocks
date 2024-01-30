@@ -3,6 +3,7 @@
  * Style dependencies
  */
 import './checkout.scss';
+import * as a11yTweaks from './accessibilityTweaks.js';
 
 ( function ( $ ) {
 	if ( ! $ ) {
@@ -43,6 +44,9 @@ import './checkout.scss';
 		const $after_customer_details = $( '#after_customer_details' );
 		const $place_order_button = $( '#place_order' );
 		const $gift_options = $( '.newspack-wcsg--wrapper' );
+
+		// Trap focus inside of the iframe in the modal.
+		a11yTweaks.trapFocus( $customer_details[ 0 ] );
 
 		/**
 		 * Handle styling update for selected payment method.
