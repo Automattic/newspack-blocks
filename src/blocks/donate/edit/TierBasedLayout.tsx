@@ -9,12 +9,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import type {
-	ComponentProps,
-	DonationFrequencySlug,
-	DonateBlockAttributes,
-	TierBasedOptionValue,
-} from '../types';
+import type { ComponentProps, DonateBlockAttributes, TierBasedOptionValue } from '../types';
 import { getColorForContrast, getFrequencyLabel } from '../utils';
 import { FREQUENCIES, DISABLED_IN_TIERS_BASED_LAYOUT_TIER_INDEX } from '../consts';
 

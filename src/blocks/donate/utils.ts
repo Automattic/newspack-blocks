@@ -74,6 +74,7 @@ export const getFrequencyLabel = (
 	 *                 <span class="wpbnbd__tiers__amount__frequency">per month</span>
 	 */
 	return sprintf(
+		// eslint-disable-next-line @wordpress/i18n-translator-comments
 		_x(
 			'%1$s %2$s',
 			'%1$s is the amount (with currency symbol). %2$s is the frequency of the donation. Inludes embedded HTML tags for styling.',
