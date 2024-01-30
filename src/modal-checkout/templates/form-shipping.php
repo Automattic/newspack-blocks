@@ -48,7 +48,7 @@ defined( 'ABSPATH' ) || exit;
 
 		<?php if ( ! WC()->cart->needs_shipping() || wc_ship_to_billing_address_only() ) : ?>
 
-			<h2><?php esc_html_e( 'Additional information', 'newspack-blocks' ); ?></h2>
+			<h3><?php esc_html_e( 'Additional information', 'newspack-blocks' ); ?></h3>
 
 		<?php endif; ?>
 

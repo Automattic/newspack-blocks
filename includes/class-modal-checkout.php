@@ -1103,7 +1103,7 @@ final class Modal_Checkout {
 		}
 		$class_prefix = self::get_class_prefix();
 		?>
-			<div class="<?php echo esc_attr( "order-details-summary {$class_prefix}__box {$class_prefix}__box__text-center" ); ?>">
+			<div class="<?php echo esc_attr( "order-details-summary {$class_prefix}__box {$class_prefix}__box--text-center" ); ?>">
 			<?php
 			// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce hooks.
 			foreach ( $cart->get_cart() as $cart_item_key => $cart_item ) :
