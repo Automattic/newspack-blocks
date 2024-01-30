@@ -15,19 +15,8 @@ import type {
 	DonateBlockAttributes,
 	TierBasedOptionValue,
 } from '../types';
-import { getColorForContrast } from '../utils';
+import { getColorForContrast, getFrequencyLabel } from '../utils';
 import { FREQUENCIES, DISABLED_IN_TIERS_BASED_LAYOUT_TIER_INDEX } from '../consts';
-
-const getFrequencyLabel = ( frequencySlug: DonationFrequencySlug ) => {
-	switch ( frequencySlug ) {
-		case 'once':
-			return __( 'once', 'newspack-blocks' );
-		case 'month':
-			return __( 'per month', 'newspack-blocks' );
-		case 'year':
-			return __( 'per year', 'newspack-blocks' );
-	}
-};
 
 const TierBasedLayout = ( props: ComponentProps ) => {
 	const { amounts, availableFrequencies, attributes } = props;
@@ -108,14 +97,15 @@ const TierBasedLayout = ( props: ComponentProps ) => {
 								</h3>
 							</div>
 							<div className="wpbnbd__tiers__amount">
-								<h3 className="wpbnbd__tiers__amount__number">
-									{ props.settings.currencySymbol }
-									<span>{ amount }</span>
-								</h3>
-								<span className="wpbnbd__tiers__amount__frequency">
-									{ ' ' }
-									{ getFrequencyLabel( currentFrequency ) }
-								</span>
+								<div
+									dangerouslySetInnerHTML={ {
+										__html: getFrequencyLabel(
+											props.settings.currencySymbol,
+											amount.toFixed( 2 ).replace( /\.?0*$/, '' ),
+											currentFrequency
+										),
+									} }
+								/>
 							</div>
 							<div
 								className="submit-button"

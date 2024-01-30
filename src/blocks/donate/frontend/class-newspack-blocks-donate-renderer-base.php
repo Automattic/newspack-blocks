@@ -17,10 +17,12 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 	private static $configurations_cache = []; // phpcs:ignore Squiz.Commenting.VariableComment.Missing
 
 	/**
-	 * Get frequency label.
+	 * Get translatable frequency label.
 	 *
 	 * @param string $frequency_slug Frequency slug.
 	 * @param bool   $hide_once_label Whether to hide the "once" label.
+	 *
+	 * @return string
 	 */
 	public static function get_frequency_label( $frequency_slug, $hide_once_label = false ) {
 		switch ( $frequency_slug ) {
@@ -31,6 +33,35 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 			case 'year':
 				return ' ' . __( 'per year', 'newspack-blocks' );
 		}
+	}
+
+	/**
+	 * Get a formatted HTML string containing amount and frequency of a donation.
+	 *
+	 * @param string $currency_symbol Currency symbol.
+	 * @param float  $amount Amount.
+	 * @param string $frequency Frequency.
+	 * @param bool   $hide_once_label Whether to hide the "once" label.
+	 *
+	 * @return string
+	 */
+	public static function get_formatted_amount( $currency_symbol, $amount, $frequency, $hide_once_label = false ) {
+		/*
+		* Translators: This formatted HTML string displays the amount and frequency of a donation. The relative order may depend on the language being translated to.
+		* Example string: <h3 class="wpbnbd__tiers__amount__number">$100</h3>
+		*                 <span class="wpbnbd__tiers__amount__frequency">per month</span>
+		*/
+		$formatted_amount = sprintf(
+			_x( // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
+				'%1$s %2$s',
+				'%1$s is the amount (with currency symbol). %2$s is the frequency of the donation. Inludes embedded HTML tags for styling.',
+				'newspack-blocks'
+			),
+			'<h3 class="wpbnbd__tiers__amount__number">' . $currency_symbol . $amount . '</h3>',
+			'<span class="wpbnbd__tiers__amount__frequency">' . self::get_frequency_label( $frequency, $hide_once_label ) . '</span>'
+		);
+
+		return $formatted_amount;
 	}
 
 	/**

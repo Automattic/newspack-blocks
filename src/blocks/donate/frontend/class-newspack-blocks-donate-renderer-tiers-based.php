@@ -61,8 +61,7 @@ class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate
 							data-amount="<?php echo esc_attr( $configuration['amounts'][ $frequency_slug ][ $index ] ); ?>"
 							data-tier-index="<?php echo esc_attr( $index ); ?>"
 						>
-							<h3 class="wpbnbd__tiers__amount__number"><?php echo esc_html( $configuration['currencySymbol'] ); ?><?php echo esc_html( $configuration['amounts'][ $frequency_slug ][ $index ] ); ?></h3>
-							<span class="wpbnbd__tiers__amount__frequency"><?php echo esc_html( self::get_frequency_label( $frequency_slug ) ); ?></span>
+							<?php echo wp_kses_post( self::get_formatted_amount( $configuration['currencySymbol'], $amount, $frequency_slug ) ); ?>
 						</span>
 					<?php endforeach; ?>
 				</span>

@@ -14,7 +14,7 @@ import { RichText } from '@wordpress/block-editor';
  * Internal dependencies
  */
 import { AmountValueInput } from './components';
-import { getColorForContrast } from '../utils';
+import { getColorForContrast, getFrequencyLabel } from '../utils';
 import { FREQUENCIES } from '../consts';
 import type { ComponentProps, DonationFrequencySlug } from '../types';
 
@@ -89,17 +89,6 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 		</button>
 	);
 
-	const getFrequencyLabel = ( frequencySlug: DonationFrequencySlug ) => {
-		switch ( frequencySlug ) {
-			case 'once':
-				return '';
-			case 'month':
-				return __( ' per month', 'newspack-blocks' );
-			case 'year':
-				return __( ' per year', 'newspack-blocks' );
-		}
-	};
-
 	// This code is fired on tab select and updates aria elements, tabindex states, and radio buttons
 	const displayAmount = ( amount: number ) => amount.toFixed( 2 ).replace( /\.?0*$/, '' );
 
@@ -148,9 +137,15 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 											className="tier-select-label tier-label"
 											htmlFor={ `newspack-${ frequencySlug }-${ uid }-untiered-input` }
 										>
-											{ settings.currencySymbol +
-												untieredAmount.toFixed( 2 ).replace( /\.?0*$/, '' ) +
-												getFrequencyLabel( frequencySlug ) }
+											<div
+												dangerouslySetInnerHTML={ {
+													__html: getFrequencyLabel(
+														settings.currencySymbol,
+														untieredAmount.toFixed( 2 ).replace( /\.?0*$/, '' ),
+														frequencySlug
+													),
+												} }
+											/>
 										</label>
 									</>
 								) }
