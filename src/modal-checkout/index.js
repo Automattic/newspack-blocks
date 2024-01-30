@@ -136,8 +136,6 @@ import './checkout.scss';
 
 			const genericErrors = [];
 
-			const classname = `${ newspackBlocksModalCheckout.newspack_class_prefix }__inline-error`;
-
 			/**
 			 * If a field is found, append the error to it. Otherwise, add it to the
 			 * generic errors array.
@@ -156,7 +154,11 @@ import './checkout.scss';
 						$existingError.remove();
 					}
 					$field.addClass( 'woocommerce-invalid' ).removeClass( 'woocommerce-valid' );
-					$field.append( `<span class="${ classname }">` + $error.text() + '</span>' );
+					$field.append(
+						`<span class="${ newspackBlocksModalCheckout.newspack_class_prefix }__inline-error">` +
+							$error.text() +
+							'</span>'
+					);
 					$error.remove();
 				} else {
 					if ( ! $error.is( 'li' ) ) {
@@ -241,7 +243,9 @@ import './checkout.scss';
 					if ( code ) {
 						const isError = code.includes( 'error' );
 						$coupon.append(
-							'<p class="result ' + ( isError ? 'error' : '' ) + '">' + $( code ).text() + '</p>'
+							`<p class="result ${ newspackBlocksModalCheckout.newspack_class_prefix }__inline-info">` +
+								$( code ).text() +
+								'</p>'
 						);
 						if ( isError ) {
 							$coupon.find( 'input[name="coupon_code"]' ).focus();
@@ -329,7 +333,7 @@ import './checkout.scss';
 				data[ item.name ] = item.value;
 			} );
 
-			const classname = `${ newspackBlocksModalCheckout.newspack_class_prefix }__info`;
+			const classname = `${ newspackBlocksModalCheckout.newspack_class_prefix }__inline-info`;
 			const html = [];
 			html.push( '<div class="billing-details">' );
 			html.push( '<h3>' + newspackBlocksModalCheckout.labels.billing_details + '</h3>' );
@@ -494,7 +498,7 @@ import './checkout.scss';
 							handleFormError( result.messages );
 						} else {
 							handleFormError(
-								'<div class="woocommerce-error">' +
+								`<div class="${ newspackBlocksModalCheckout.newspack_class_prefix }__inline-error">` +
 									wc_checkout_params.i18n_checkout_error +
 									'</div>'
 							);
