@@ -322,7 +322,7 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		array_merge(
 			array_map(
 				function( $attribute ) {
-					return false === $attribute ? '0' : str_replace( '#', '%23', $attribute );
+					return false === $attribute ? '0' : $attribute;
 				},
 				$attributes
 			),
