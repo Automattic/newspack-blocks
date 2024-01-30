@@ -175,12 +175,11 @@ domReady( () => {
 					if ( ! entries || ! entries.length ) {
 						return;
 					}
-
-					const iframeHeight = iframe.contentDocument.documentElement.offsetHeight;
-					if ( iframeHeight ) {
-						// Account for newspack ui modal content padding.
-						modalContent.style.height = iframeHeight + 48 + 'px';
-						iframe.style.height = iframeHeight + 'px';
+					const contentRect = entries[ 0 ].contentRect;
+					if ( contentRect ) {
+						// Match iframe and modal content heights to avoid inner iframe scollbar.
+						modalContent.style.height = contentRect.top + contentRect.bottom + 'px';
+						iframe.style.height = contentRect.top + contentRect.bottom + 'px';
 					}
 				} );
 			} );

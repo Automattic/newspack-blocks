@@ -24,7 +24,7 @@ import './checkout.scss';
 
 	function clearNotices() {
 		$(
-			'.woocommerce-NoticeGroup-checkout, .error, .woocommerce-error, .woocommerce-message, .wc-block-components-notice-banner'
+			`.woocommerce-NoticeGroup-checkout, .${ newspackBlocksModalCheckout.newspack_class_prefix }__inline-error, .woocommerce-error, .woocommerce-message, .wc-block-components-notice-banner`
 		).remove();
 	}
 
@@ -136,9 +136,7 @@ import './checkout.scss';
 
 			const genericErrors = [];
 
-			const classname = newspackBlocksModalCheckout.has_newspack_ui
-				? 'newspack-ui__inline-error'
-				: 'newspack-blocks__inline-error';
+			const classname = `${ newspackBlocksModalCheckout.newspack_class_prefix }__inline-error`;
 
 			/**
 			 * If a field is found, append the error to it. Otherwise, add it to the
@@ -331,9 +329,7 @@ import './checkout.scss';
 				data[ item.name ] = item.value;
 			} );
 
-			const classname = newspackBlocksModalCheckout.has_newspack_ui
-				? 'newspack-ui__info'
-				: 'newspack-blocks__info';
+			const classname = `${ newspackBlocksModalCheckout.newspack_class_prefix }__info`;
 			const html = [];
 			html.push( '<div class="billing-details">' );
 			html.push( '<h3>' + newspackBlocksModalCheckout.labels.billing_details + '</h3>' );
