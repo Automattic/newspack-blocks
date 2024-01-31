@@ -9,6 +9,7 @@ declare global {
 			has_recaptcha: boolean;
 			recaptcha_url: string;
 			can_use_name_your_price: boolean;
+			tier_amounts_template: string;
 		};
 		grecaptcha: any;
 		newspackReaderActivation: {

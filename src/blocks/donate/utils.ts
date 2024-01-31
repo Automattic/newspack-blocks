@@ -57,7 +57,7 @@ export const getFrequencyLabel = (
 	frequencySlug: DonationFrequencySlug,
 	hideOnceLabel = false
 ) => {
-	const template = newspack_blocks_data?.tier_amounts_template;
+	const template = window.newspack_blocks_data?.tier_amounts_template;
 
 	if ( ! template ) {
 		return '';
