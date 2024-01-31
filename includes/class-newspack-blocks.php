@@ -267,6 +267,7 @@ class Newspack_Blocks {
 				'recaptcha_url'              => admin_url( 'admin.php?page=newspack-connections-wizard' ),
 				'custom_taxonomies'          => self::get_custom_taxonomies(),
 				'can_use_name_your_price'    => self::can_use_name_your_price(),
+				'tier_amounts_template'      => self::get_formatted_amount(),
 			];
 
 			if ( class_exists( 'WP_REST_Newspack_Author_List_Controller' ) ) {
@@ -1537,6 +1538,45 @@ class Newspack_Blocks {
 				'href' => true,
 			],
 		];
+	}
+
+	/**
+	 * Get a formatted HTML string containing amount and frequency of a donation.
+	 *
+	 * @param float  $amount Amount.
+	 * @param string $frequency Frequency.
+	 * @param bool   $hide_once_label Whether to hide the "once" label.
+	 *
+	 * @return string
+	 */
+	public static function get_formatted_amount( $amount = 0, $frequency = 'day', $hide_once_label = false ) {
+		if ( ! function_exists( 'wcs_price_string' ) ) {
+			return \wc_price( $amount );
+		}
+		$price_args          = [
+			'recurring_amount'    => $amount,
+			'subscription_period' => 'once' === $frequency ? 'day' : $frequency,
+		];
+		$wc_formatted_amount = \wcs_price_string( $price_args );
+
+		// A '0' value means we want a placeholder string to replace in the editor.
+		if ( 0 === $amount ) {
+			preg_match( '/<\/span>(.*)<\/bdi>/', $wc_formatted_amount, $matches );
+			if ( ! empty( $matches[1] ) ) {
+				$wc_formatted_amount = str_replace( $matches[1], 'AMOUNT_PLACEHOLDER', $wc_formatted_amount );
+			}
+		}
+
+		// A 'day' frequency means we want a placeholder string to replace in the editor.
+		if ( 'day' === $frequency ) {
+			$wc_formatted_amount = preg_replace( '/ \/ ?.*/', 'FREQUENCY_PLACEHOLDER', $wc_formatted_amount );
+		} elseif ( 'once' === $frequency ) {
+			$once_label          = $hide_once_label ? '' : __( ' once', 'newspack-blocks' );
+			$wc_formatted_amount = preg_replace( '/ \/ ?.*/', $once_label, $wc_formatted_amount );
+		}
+		$wc_formatted_amount = str_replace( ' / ', __( ' per ', 'newspack-blocks' ), $wc_formatted_amount );
+
+		return '<span class="wpbnbd__tiers__amount__value">' . $wc_formatted_amount . '</span>';
 	}
 }
 Newspack_Blocks::init();

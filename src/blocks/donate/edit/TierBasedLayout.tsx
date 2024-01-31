@@ -95,7 +95,6 @@ const TierBasedLayout = ( props: ComponentProps ) => {
 								<div
 									dangerouslySetInnerHTML={ {
 										__html: getFrequencyLabel(
-											props.settings.currencySymbol,
 											amount.toFixed( 2 ).replace( /\.?0*$/, '' ),
 											currentFrequency
 										),

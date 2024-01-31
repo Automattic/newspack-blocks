@@ -180,7 +180,7 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 										class='tier-select-label tier-label'
 										for='newspack-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-untiered-input'
 									>
-										<?php echo wp_kses_post( self::get_formatted_amount( $configuration['currencySymbol'], $formatted_amount, $frequency_slug ) ); ?>
+										<?php echo wp_kses_post( Newspack_Blocks::get_formatted_amount( $formatted_amount, $frequency_slug ) ); ?>
 									</label>
 									<?php endif; ?>
 								</div>

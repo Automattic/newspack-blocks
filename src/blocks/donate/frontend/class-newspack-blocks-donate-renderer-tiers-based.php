@@ -61,7 +61,7 @@ class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate
 							data-amount="<?php echo esc_attr( $configuration['amounts'][ $frequency_slug ][ $index ] ); ?>"
 							data-tier-index="<?php echo esc_attr( $index ); ?>"
 						>
-							<?php echo wp_kses_post( self::get_formatted_amount( $configuration['currencySymbol'], $amount, $frequency_slug ) ); ?>
+							<?php echo wp_kses_post( Newspack_Blocks::get_formatted_amount( $configuration['amounts'][ $frequency_slug ][ $index ], $frequency_slug ) ); ?>
 						</span>
 					<?php endforeach; ?>
 				</span>
@@ -146,7 +146,7 @@ class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate
 						<div class="wpbnbd__tiers__options">
 							<?php foreach ( $displayed_amounts as $index => $amount ) : ?>
 								<?php
-									echo self::render_single_tier( $attributes, $index, $amount, $intial_selected_frequency, $is_any_recommended ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+									echo self::render_single_tier( $attributes, $index, $configuration['amounts'][ $frequency_slug ][ $index ], $intial_selected_frequency, $is_any_recommended ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 								?>
 							<?php endforeach; ?>
 						</div>

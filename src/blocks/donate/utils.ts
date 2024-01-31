@@ -1,3 +1,5 @@
+/* globals newspack_blocks_data */
+
 import { __, _x, sprintf } from '@wordpress/i18n';
 import type { DonationFrequencySlug } from './types';
 
@@ -51,36 +53,29 @@ export const getMigratedAmount = (
 };
 
 export const getFrequencyLabel = (
-	currencySymbol: string,
 	amount: string,
-	frequencySlug: DonationFrequencySlug
+	frequencySlug: DonationFrequencySlug,
+	hideOnceLabel = false
 ) => {
-	let frequencyLabel = '';
-	switch ( frequencySlug ) {
-		case 'once':
-			frequencyLabel = __( 'once', 'newspack-blocks' );
-			break;
-		case 'month':
-			frequencyLabel = __( 'per month', 'newspack-blocks' );
-			break;
-		case 'year':
-			frequencyLabel = __( 'per year', 'newspack-blocks' );
-			break;
+	const template = newspack_blocks_data?.tier_amounts_template;
+
+	if ( ! template ) {
+		return '';
 	}
 
-	/*
-	 * Translators: This formatted HTML string displays the amount and frequency of a donation. The relative order may depend on the language being translated to.
-	 * Example string: <h3 class="wpbnbd__tiers__amount__number">$100</h3>
-	 *                 <span class="wpbnbd__tiers__amount__frequency">per month</span>
-	 */
-	return sprintf(
-		// eslint-disable-next-line @wordpress/i18n-translator-comments
-		_x(
-			'%1$s %2$s',
-			'%1$s is the amount (with currency symbol). %2$s is the frequency of the donation. Inludes embedded HTML tags for styling.',
-			'newspack-blocks'
-		),
-		`<h3 class="wpbnbd__tiers__amount__number">${ currencySymbol }${ amount }</h3>`,
-		`<span class="wpbnbd__tiers__amount__frequency">${ frequencyLabel }</span>`
-	);
+	const frequency =
+		// eslint-disable-next-line no-nested-ternary
+		frequencySlug === 'once'
+			? hideOnceLabel
+				? ''
+				: __( ' once', 'newspack-blocks' )
+			: sprintf(
+					// Translators: %s is the frequency (e.g. per month, per year).
+					_x( ' per %s', 'per `Frequency`', 'newspack-blocks' ),
+					frequencySlug
+			  );
+
+	return template
+		.replace( 'AMOUNT_PLACEHOLDER', amount )
+		.replace( 'FREQUENCY_PLACEHOLDER', frequency );
 };

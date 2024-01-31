@@ -140,7 +140,6 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 											<div
 												dangerouslySetInnerHTML={ {
 													__html: getFrequencyLabel(
-														settings.currencySymbol,
 														untieredAmount.toFixed( 2 ).replace( /\.?0*$/, '' ),
 														frequencySlug
 													),
