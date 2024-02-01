@@ -1,5 +1,3 @@
-/* globals newspack_blocks_data */
-
 import { __, _x, sprintf } from '@wordpress/i18n';
 import type { DonationFrequencySlug } from './types';
 
