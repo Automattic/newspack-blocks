@@ -1255,9 +1255,9 @@ final class Modal_Checkout {
 			return $html;
 		}
 
-		$classname = self::get_class_prefix();
+		$class_prefix = self::get_class_prefix();
 
-		$newspack_ui_html = preg_replace( '/class=".*?"/', "class='{$classname}__button {$classname}__button--primary {$classname}__button--wide'", $html );
+		$newspack_ui_html = preg_replace( '/class=".*?"/', "class='{$class_prefix}__button {$class_prefix}__button--primary {$class_prefix}__button--wide'", $html );
 
 		return $newspack_ui_html;
 	}
