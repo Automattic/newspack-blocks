@@ -54,6 +54,9 @@ final class Modal_Checkout {
 		add_action( 'woocommerce_checkout_before_customer_details', [ __CLASS__, 'render_before_customer_details' ] );
 		add_filter( 'woocommerce_enable_order_notes_field', [ __CLASS__, 'enable_order_notes_field' ] );
 		add_action( 'woocommerce_checkout_process', [ __CLASS__, 'wcsg_apply_gift_subscription' ] );
+		add_filter( 'woocommerce_order_received_verify_known_shoppers', '__return_false' );
+		// TODO: Remove once we apply auth flow to checkout modal.
+		add_filter( 'newspack_reader_activation_should_render_auth', '__return_false' );
 
 		/** Custom handling for registered users. */
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
@@ -287,21 +290,23 @@ final class Modal_Checkout {
 		*
 		* @param string $title The title.
 		*/
-		$title = apply_filters( 'newspack_blocks_modal_checkout_title', __( 'Complete your transaction', 'newspack-blocks' ) );
+		$title        = apply_filters( 'newspack_blocks_modal_checkout_title', __( 'Complete your transaction', 'newspack-blocks' ) );
+		$class_prefix = self::get_class_prefix();
 		?>
-		<div class="newspack-blocks-checkout-modal newspack-blocks-modal">
-			<div class="newspack-blocks-modal__container">
-				<header class="newspack-blocks-modal__header">
+		<div class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal-container" ); ?>">
+			<div class="<?php echo esc_attr( "{$class_prefix}__modal-container__overlay" ); ?>"></div>
+			<div class="<?php echo esc_attr( "{$class_prefix}__modal" ); ?>">
+				<header class="<?php echo esc_attr( "{$class_prefix}__modal__header" ); ?>">
 					<h2><?php echo esc_html( $title ); ?></h2>
-					<a href="#" class="newspack-blocks-modal__close">
+					<button class="<?php echo esc_attr( "{$class_prefix}__modal__close" ); ?>">
 						<span class="screen-reader-text"><?php esc_html_e( 'Close', 'newspack-blocks' ); ?></span>
 						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
 							<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
 						</svg>
-					</a>
+					</button>
 				</header>
-				<section class="newspack-blocks-modal__content">
-					<div class="newspack-blocks-modal__spinner">
+				<section class="<?php echo esc_attr( "{$class_prefix}__modal__content" ); ?>">
+					<div class="<?php echo esc_attr( "{$class_prefix}__spinner" ); ?>">
 						<span></span>
 					</div>
 				</section>
@@ -339,37 +344,42 @@ final class Modal_Checkout {
 		*
 		* @param string $title The title.
 		*/
-		$title    = apply_filters( 'newspack_blocks_modal_checkout_title', __( 'Complete your transaction', 'newspack-blocks' ) );
-		$products = array_keys( self::$products );
+		$title        = apply_filters( 'newspack_blocks_modal_checkout_title', __( 'Complete your transaction', 'newspack-blocks' ) );
+		$products     = array_keys( self::$products );
+		$class_prefix = self::get_class_prefix();
 		foreach ( $products as $product_id ) {
 			$product = wc_get_product( $product_id );
 			if ( ! $product->is_type( 'variable' ) ) {
 				continue;
 			}
 			?>
-			<div class="newspack-blocks-variation-modal newspack-blocks-modal" data-product-id="<?php echo esc_attr( $product_id ); ?>">
-				<div class="newspack-blocks-modal__container">
-					<header class="newspack-blocks-modal__header">
+			<div
+				class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal-container {$class_prefix}__modal-variation" ); ?>"
+				data-product-id="<?php echo esc_attr( $product_id ); ?>"
+			>
+				<div class="<?php echo esc_attr( "{$class_prefix}__modal-container__overlay" ); ?>"></div>
+				<div class="<?php echo esc_attr( "{$class_prefix}__modal" ); ?>">
+					<header class="<?php echo esc_attr( "{$class_prefix}__modal__header" ); ?>">
 						<h2><?php echo esc_html( $title ); ?></h2>
-						<a href="#" class="newspack-blocks-modal__close">
+						<button class="<?php echo esc_attr( "{$class_prefix}__modal__close" ); ?>">
 							<span class="screen-reader-text"><?php esc_html_e( 'Close', 'newspack-blocks' ); ?></span>
 							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
 								<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
 							</svg>
-						</a>
+						</button>
 					</header>
-					<section class="newspack-blocks-modal__content">
-						<div class="newspack-blocks-variation-modal__selection" data-product-id="<?php echo esc_attr( $product_id ); ?>">
+					<section class="<?php echo esc_attr( "{$class_prefix}__modal__content" ); ?>">
+						<div class="<?php echo esc_attr( "{$class_prefix}__selection" ); ?>" data-product-id="<?php echo esc_attr( $product_id ); ?>">
 							<h3><?php echo esc_html( $product->get_name() ); ?></h3>
 							<p><?php esc_html_e( 'Select an option to continue:', 'newspack-blocks' ); ?></p>
-							<ul class="newspack-blocks-variation-modal__options">
+							<ul class="<?php echo esc_attr( "{$class_prefix}__options" ); ?>">
 								<?php
 								$variations = $product->get_available_variations( 'objects' );
 								foreach ( $variations as $variation ) :
 									$name  = wc_get_formatted_variation( $variation, true );
 									$price = $variation->get_price_html();
 									?>
-									<li class="newspack-blocks-variation-modal__options__item">
+									<li class="<?php echo esc_attr( "{$class_prefix}__options__item" ); ?>">
 										<div class="summary">
 											<span class="price"><?php echo $price; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 										</div>
@@ -456,6 +466,13 @@ final class Modal_Checkout {
 			\NEWSPACK_BLOCKS__VERSION,
 			true
 		);
+		wp_localize_script(
+			'newspack-blocks-modal',
+			'newspackBlocksModal',
+			[
+				'newspack_class_prefix' => self::get_class_prefix(),
+			]
+		);
 		wp_enqueue_style(
 			'newspack-blocks-modal',
 			plugins_url( 'dist/modal.css', \NEWSPACK_BLOCKS__PLUGIN_FILE ),
@@ -481,6 +498,7 @@ final class Modal_Checkout {
 		if ( ! self::is_modal_checkout() ) {
 			return $template;
 		}
+		$class_prefix = self::get_class_prefix();
 		ob_start();
 		?>
 		<!doctype html>
@@ -491,10 +509,10 @@ final class Modal_Checkout {
 			<link rel="profile" href="https://gmpg.org/xfn/11" />
 			<?php wp_head(); ?>
 		</head>
-		<body id="newspack_modal_checkout">
+			<body class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal__content" ); ?>" id="newspack_modal_checkout">
 			<?php
-			echo do_shortcode( '[woocommerce_checkout]' );
-			wp_footer();
+				echo do_shortcode( '[woocommerce_checkout]' );
+				wp_footer();
 			?>
 		</body>
 		</html>
@@ -574,13 +592,17 @@ final class Modal_Checkout {
 
 		$custom_templates = [
 			'checkout/form-checkout.php'          => 'src/modal-checkout/templates/form-checkout.php',
-			'checkout/thankyou.php'               => 'src/modal-checkout/templates/thankyou.php',
 			'checkout/form-coupon.php'            => 'src/modal-checkout/templates/form-coupon.php',
 			'checkout/form-gift-subscription.php' => 'src/modal-checkout/templates/form-gift-subscription.php',
+		];
+
+		// If Newspack UI is present, use our templates.
+		if ( self::get_class_prefix() === 'newspack-ui' ) {
+			$custom_templates['checkout/thankyou.php'] = 'src/modal-checkout/templates/thankyou.php';
 			// Replace the login form with the order summary if using the modal checkout. This is
 			// for the case where the reader used an existing email address.
-			'global/form-login.php'               => 'src/modal-checkout/templates/thankyou.php',
-		];
+			$custom_templates['global/form-login.php'] = 'src/modal-checkout/templates/thankyou.php';
+		}
 
 		// Only show the woocommerce-subscriptions-gifting fields when we want to.
 		if ( 'html-add-recipient.php' === $template_name ) {
@@ -827,17 +849,17 @@ final class Modal_Checkout {
 		$button_label = ! empty( $_REQUEST['after_success_button_label'] ) ? urldecode( wp_unslash( $_REQUEST['after_success_button_label'] ) ) : __( 'Continue browsing', 'newspack-blocks' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$url          = ! empty( $_REQUEST['after_success_url'] ) ? urldecode( wp_unslash( $_REQUEST['after_success_url'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		?>
-			<a
+			<button
 				<?php if ( empty( $url ) ) : ?>
 					onclick="parent.newspackCloseModalCheckout(this);"
 				<?php else : ?>
 					href="<?php echo esc_url( $url ); ?>"
 					target="_top"
 				<?php endif; ?>
-				class="button newspack-modal-newsletters__button"
+				class="newspack-ui__button newspack-ui__button--primary newspack-ui__button--wide"
 			>
 				<?php echo esc_html( $button_label ); ?>
-			</a>
+			</button>
 		<?php
 		// phpcs:enable
 	}
@@ -1208,6 +1230,13 @@ final class Modal_Checkout {
 			return [];
 		}
 		return $modules;
+	}
+
+	/**
+	 * Get the relevant class prefix (newspack-blocks or newspack-ui) depending on whether Newpack plugin is active.
+	 */
+	private static function get_class_prefix() {
+		return class_exists( '\Newspack\Newspack_UI' ) ? 'newspack-ui' : 'newspack-blocks';
 	}
 }
 Modal_Checkout::init();

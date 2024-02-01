@@ -84,7 +84,7 @@
 		},
 		"afterSuccessButtonLabel": {
 			"type": "string",
-			"default": "Continue browsing"
+			"default": "Continue"
 		},
 		"afterSuccessURL": {
 			"type": "string"

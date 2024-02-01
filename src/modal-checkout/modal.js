@@ -1,3 +1,5 @@
+/* globals newspackBlocksModal */
+
 /**
  * Internal dependencies
  */
@@ -25,47 +27,54 @@ function domReady( callback ) {
 	document.addEventListener( 'DOMContentLoaded', callback );
 }
 
-const triggers =
-	'.wpbnbd.wpbnbd--platform-wc,.wp-block-newspack-blocks-checkout-button,.newspack-blocks-variation-modal';
+const CLASSNAME_BASE = newspackBlocksModal.newspack_class_prefix;
+const MODAL_CLASSNAME_BASE = `${ CLASSNAME_BASE }__modal`;
+
+const triggers = `.wpbnbd.wpbnbd--platform-wc,.wp-block-newspack-blocks-checkout-button,.${ CLASSNAME_BASE }__modal-variation`;
 
 let iframeResizeObserver;
 
 function closeCheckout() {
-	const iframe = document.querySelector( 'iframe[name="newspack_modal_checkout"]' );
+	const iframe = document.querySelector( 'iframe[name="newspack_modal_checkout_iframe"]' );
 	if ( iframe ) {
 		iframe.src = 'about:blank';
 	}
-	document.body.classList.remove( 'newspack-modal-checkout-open' );
 	if ( iframeResizeObserver ) {
 		iframeResizeObserver.disconnect();
 	}
-	Array.from( document.querySelectorAll( '.newspack-blocks-modal' ) ).forEach( el => {
-		el.classList.remove( 'open' );
+	Array.from( document.querySelectorAll( `.${ MODAL_CLASSNAME_BASE }-container` ) ).forEach( el => {
+		closeModal( el );
 		if ( el.overlayId && window.newspackReaderActivation?.overlays ) {
 			window.newspackReaderActivation?.overlays.remove( el.overlayId );
 		}
 	} );
 }
 
-window.newspackCloseModalCheckout = closeCheckout;
+function closeModal( el ) {
+	el.setAttribute( 'data-state', 'closed' );
+}
 
-const MODAL_CLASSNAME_BASE = '.newspack-blocks-modal';
+function openModal( el ) {
+	el.setAttribute( 'data-state', 'open' );
+}
+
+window.newspackCloseModalCheckout = closeCheckout;
 
 domReady( () => {
 	/**
 	 * Initialize modal checkout.
 	 */
-	const modalCheckout = document.querySelector( '.newspack-blocks-checkout-modal' );
+	const modalCheckout = document.querySelector( `.${ MODAL_CLASSNAME_BASE }-container` );
 	if ( ! modalCheckout ) {
 		return;
 	}
-	const spinner = document.querySelector( `${ MODAL_CLASSNAME_BASE }__spinner` );
-	const iframeName = 'newspack_modal_checkout';
+	const spinner = document.querySelector( `.${ CLASSNAME_BASE }__spinner` );
+	const iframeName = 'newspack_modal_checkout_iframe';
 	const modalCheckoutInput = document.createElement( 'input' );
 	modalCheckoutInput.type = 'hidden';
 	modalCheckoutInput.name = 'modal_checkout';
 	modalCheckoutInput.value = '1';
-	const modalContent = modalCheckout.querySelector( `${ MODAL_CLASSNAME_BASE }__content` );
+	const modalContent = modalCheckout.querySelector( `.${ MODAL_CLASSNAME_BASE }__content` );
 	const initialHeight = modalContent.clientHeight + 'px';
 	const iframe = document.createElement( 'iframe' );
 	iframe.name = iframeName;
@@ -75,7 +84,7 @@ domReady( () => {
 			closeCheckout();
 		}
 	} );
-	const closeButtons = modalCheckout.querySelectorAll( `${ MODAL_CLASSNAME_BASE }__close` );
+	const closeButtons = modalCheckout.querySelectorAll( `.${ MODAL_CLASSNAME_BASE }__close` );
 	closeButtons.forEach( button => {
 		button.addEventListener( 'click', ev => {
 			ev.preventDefault();
@@ -88,14 +97,14 @@ domReady( () => {
 	/**
 	 * Variation modals.
 	 */
-	const variationModals = document.querySelectorAll( '.newspack-blocks-variation-modal' );
+	const variationModals = document.querySelectorAll( `.${ MODAL_CLASSNAME_BASE }-variation` );
 	variationModals.forEach( variationModal => {
 		variationModal.addEventListener( 'click', ev => {
 			if ( ev.target === variationModal ) {
 				closeCheckout();
 			}
 		} );
-		variationModal.querySelectorAll( '.newspack-blocks-modal__close' ).forEach( button => {
+		variationModal.querySelectorAll( `.${ MODAL_CLASSNAME_BASE }__close` ).forEach( button => {
 			button.addEventListener( 'click', ev => {
 				ev.preventDefault();
 				closeCheckout();
@@ -129,7 +138,9 @@ domReady( () => {
 			form.addEventListener( 'submit', ev => {
 				const formData = new FormData( form );
 				// Clear any open variation modal.
-				variationModals.forEach( variationModal => variationModal.classList.remove( 'open' ) );
+				variationModals.forEach( variationModal => {
+					closeModal( variationModal );
+				} );
 				// Trigger variation modal if variation is not selected.
 				if ( formData.get( 'is_variable' ) && ! formData.get( 'variation_id' ) ) {
 					const variationModal = [ ...variationModals ].find(
@@ -154,15 +165,13 @@ domReady( () => {
 							} );
 						// Open the variations modal.
 						ev.preventDefault();
-						document.body.classList.add( 'newspack-modal-checkout-open' );
-						variationModal.classList.add( 'open' );
+						openModal( variationModal );
 						return;
 					}
 				}
 				// Continue with checkout modal.
 				spinner.style.display = 'flex';
-				modalCheckout.classList.add( 'open' );
-				document.body.classList.add( 'newspack-modal-checkout-open' );
+				openModal( modalCheckout );
 				if ( window.newspackReaderActivation?.overlays ) {
 					modalCheckout.overlayId = window.newspackReaderActivation?.overlays.add();
 				}
@@ -172,12 +181,16 @@ domReady( () => {
 					}
 					const contentRect = entries[ 0 ].contentRect;
 					if ( contentRect ) {
-						modalContent.style.height = contentRect.top + contentRect.bottom + 'px';
+						const iframeHeight = contentRect.top + contentRect.bottom + 'px';
+						// Match iframe and modal content heights to avoid inner iframe scollbar.
+						modalContent.style.height = iframeHeight;
+						iframe.style.height = iframeHeight;
 					}
 				} );
 			} );
 		} );
 	} );
+
 	iframe.addEventListener( 'load', () => {
 		const location = iframe.contentWindow.location;
 		// If RAS is available, set the front-end authentication.
