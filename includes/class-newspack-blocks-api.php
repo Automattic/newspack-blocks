@@ -288,8 +288,6 @@ class Newspack_Blocks_API {
 			$GLOBALS['post'] = $post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			setup_postdata( $post );
 
-			$post_date_gmt = '0000-00-00 00:00:00' === $post->post_date_gmt ? get_gmt_from_date( $post->post_date ) : $post->post_date_gmt;
-
 			// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			$excerpt = apply_filters( 'get_the_excerpt', $post->post_excerpt, $post );
 			$excerpt = apply_filters( 'the_excerpt', $excerpt );
@@ -302,7 +300,6 @@ class Newspack_Blocks_API {
 				'content'        => [
 					'rendered' => post_password_required( $post ) ? '' : $content,
 				],
-				'date_gmt'       => mysql_to_rfc3339( $post_date_gmt ),
 				'date'           => mysql_to_rfc3339( $post->post_date ),
 				'excerpt'        => [
 					'rendered' => post_password_required( $post ) ? '' : $excerpt,
