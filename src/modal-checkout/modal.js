@@ -27,91 +27,106 @@ function domReady( callback ) {
 	document.addEventListener( 'DOMContentLoaded', callback );
 }
 
-const CLASSNAME_BASE = newspackBlocksModal.newspack_class_prefix;
-const MODAL_CLASSNAME_BASE = `${ CLASSNAME_BASE }__modal`;
-
-const triggers = `.wpbnbd.wpbnbd--platform-wc,.wp-block-newspack-blocks-checkout-button,.${ CLASSNAME_BASE }__modal-variation`;
-
-let iframeResizeObserver;
-
-function closeCheckout() {
-	const iframe = document.querySelector( 'iframe[name="newspack_modal_checkout_iframe"]' );
-	if ( iframe ) {
-		iframe.src = 'about:blank';
-	}
-	if ( iframeResizeObserver ) {
-		iframeResizeObserver.disconnect();
-	}
-	Array.from( document.querySelectorAll( `.${ MODAL_CLASSNAME_BASE }-container` ) ).forEach( el => {
-		closeModal( el );
-		if ( el.overlayId && window.newspackReaderActivation?.overlays ) {
-			window.newspackReaderActivation?.overlays.remove( el.overlayId );
-		}
-	} );
-}
-
-function openModal( el ) {
-	el.setAttribute( 'data-state', 'open' );
-}
-
-function closeModal( el ) {
-	el.setAttribute( 'data-state', 'closed' );
-}
-
-window.newspackCloseModalCheckout = closeCheckout;
-
 domReady( () => {
-	/**
-	 * Initialize modal checkout.
-	 */
-	const modalCheckout = document.querySelector( `.${ MODAL_CLASSNAME_BASE }-container` );
-	if ( ! modalCheckout ) {
-		return;
-	}
-	const spinner = document.querySelector( `.${ CLASSNAME_BASE }__spinner` );
-	const iframeName = 'newspack_modal_checkout_iframe';
-	const modalCheckoutInput = document.createElement( 'input' );
-	modalCheckoutInput.type = 'hidden';
-	modalCheckoutInput.name = 'modal_checkout';
-	modalCheckoutInput.value = '1';
-	const modalContent = modalCheckout.querySelector( `.${ MODAL_CLASSNAME_BASE }__content` );
-	const initialHeight = modalContent.clientHeight + 'px';
-	const iframe = document.createElement( 'iframe' );
-	iframe.name = iframeName;
-	iframe.scrolling = 'no';
-	modalContent.appendChild( iframe );
-	modalCheckout.addEventListener( 'click', ev => {
-		if ( ev.target === modalCheckout ) {
-			closeCheckout();
-		}
-	} );
-	const closeButtons = modalCheckout.querySelectorAll( `.${ MODAL_CLASSNAME_BASE }__close` );
-	closeButtons.forEach( button => {
-		button.addEventListener( 'click', ev => {
-			ev.preventDefault();
-			modalContent.style.height = initialHeight;
-			spinner.style.display = 'flex';
-			closeCheckout();
-		} );
-	} );
+	const CLASSNAME_BASE = newspackBlocksModal.newspack_class_prefix;
+	const IFRAME_NAME = 'newspack_modal_checkout_iframe';
+	const MODAL_CHECKOUT_ID = 'newspack_modal_checkout';
+	const MODAL_CLASSNAME_BASE = `${ CLASSNAME_BASE }__modal`;
 
-	/**
-	 * Variation modals.
-	 */
-	const variationModals = document.querySelectorAll( `.${ MODAL_CLASSNAME_BASE }-variation` );
-	variationModals.forEach( variationModal => {
-		variationModal.addEventListener( 'click', ev => {
-			if ( ev.target === variationModal ) {
+	// Initialize empty iframe.
+	const iframe = document.createElement( 'iframe' );
+	iframe.name = IFRAME_NAME;
+
+	const modalCheckout = document.querySelector( `#${ MODAL_CHECKOUT_ID }` );
+	const modalContent = modalCheckout.querySelector( `.${ MODAL_CLASSNAME_BASE }__content` );
+	const modalCheckoutHiddenInput = document.createElement( 'input' );
+	modalCheckoutHiddenInput.type = 'hidden';
+	modalCheckoutHiddenInput.name = 'modal_checkout';
+	modalCheckoutHiddenInput.value = '1';
+
+	const spinner = modalContent.querySelector( `.${ CLASSNAME_BASE }__spinner` );
+	const triggers = `.wpbnbd.wpbnbd--platform-wc,.wp-block-newspack-blocks-checkout-button,.${ CLASSNAME_BASE }__modal-variation`;
+
+	let iframeResizeObserver;
+
+	function closeCheckout() {
+		if ( iframe ) {
+			iframe.src = 'about:blank';
+		}
+		if ( iframeResizeObserver ) {
+			iframeResizeObserver.disconnect();
+		}
+		Array.from( document.querySelectorAll( `.${ MODAL_CLASSNAME_BASE }-container` ) ).forEach(
+			el => {
+				closeModal( el );
+				if ( el.overlayId && window.newspackReaderActivation?.overlays ) {
+					window.newspackReaderActivation?.overlays.remove( el.overlayId );
+				}
+			}
+		);
+	}
+
+	const openCheckout = ( form, submit = false ) => {
+		spinner.style.display = 'flex';
+		openModal( modalCheckout );
+
+		if ( window.newspackReaderActivation?.overlays ) {
+			modalCheckout.overlayId = window.newspackReaderActivation?.overlays.add();
+		}
+
+		if ( submit ) {
+			form.submit();
+		}
+
+		if ( ! modalCheckout ) {
+			return;
+		}
+
+		const initialHeight = modalContent.clientHeight + 'px';
+		modalContent.appendChild( iframe );
+		modalCheckout.addEventListener( 'click', ev => {
+			if ( ev.target === modalCheckout ) {
 				closeCheckout();
 			}
 		} );
-		variationModal.querySelectorAll( `.${ MODAL_CLASSNAME_BASE }__close` ).forEach( button => {
+		const closeButtons = modalCheckout.querySelectorAll( `.${ MODAL_CLASSNAME_BASE }__close` );
+		closeButtons.forEach( button => {
 			button.addEventListener( 'click', ev => {
 				ev.preventDefault();
+				modalContent.style.height = initialHeight;
+				spinner.style.display = 'flex';
 				closeCheckout();
 			} );
 		} );
-	} );
+
+		/**
+		 * Variation modals.
+		 */
+		const variationModals = document.querySelectorAll( `.${ MODAL_CLASSNAME_BASE }-variation` );
+		variationModals.forEach( variationModal => {
+			variationModal.addEventListener( 'click', ev => {
+				if ( ev.target === variationModal ) {
+					closeCheckout();
+				}
+			} );
+			variationModal.querySelectorAll( `.${ MODAL_CLASSNAME_BASE }__close` ).forEach( button => {
+				button.addEventListener( 'click', ev => {
+					ev.preventDefault();
+					closeCheckout();
+				} );
+			} );
+		} );
+	};
+
+	function closeModal( el ) {
+		el.setAttribute( 'data-state', 'closed' );
+	}
+
+	function openModal( el ) {
+		el.setAttribute( 'data-state', 'open' );
+	}
+
+	window.newspackCloseModalCheckout = closeCheckout;
 
 	/**
 	 * Handle triggers.
@@ -120,8 +135,8 @@ domReady( () => {
 	elements.forEach( element => {
 		const forms = element.querySelectorAll( 'form' );
 		forms.forEach( form => {
-			form.appendChild( modalCheckoutInput.cloneNode() );
-			form.target = iframeName;
+			form.appendChild( modalCheckoutHiddenInput.cloneNode() );
+			form.target = IFRAME_NAME;
 
 			// Fill in the referrer field.
 			const afterSuccessUrlInput = form.querySelector( 'input[name="after_success_url"]' );
@@ -138,6 +153,9 @@ domReady( () => {
 
 			form.addEventListener( 'submit', ev => {
 				const formData = new FormData( form );
+				const variationModals = modalCheckout.querySelectorAll(
+					`.${ MODAL_CLASSNAME_BASE }-variation`
+				);
 				// Clear any open variation modal.
 				variationModals.forEach( variationModal => {
 					closeModal( variationModal );
@@ -182,23 +200,11 @@ domReady( () => {
 					}
 				} );
 
-				const openCheckout = ( submit = false ) => {
-					spinner.style.display = 'flex';
-					openModal( modalCheckout );
-					if ( window.newspackReaderActivation?.overlays ) {
-						modalCheckout.overlayId = window.newspackReaderActivation?.overlays.add();
-					}
-
-					if ( submit ) {
-						form.submit();
-					}
-				};
-
 				if ( window.newspackReaderActivation?.openAuthModal ) {
 					ev.preventDefault();
 					window.newspackReaderActivation.openAuthModal( {
 						title: 'Complete your transaction',
-						callback: () => openCheckout( true ),
+						callback: () => openCheckout( form, true ),
 						skipSuccess: true,
 						labels: {
 							signin: {
@@ -211,7 +217,7 @@ domReady( () => {
 						content: '<p>Product Information Here</p>',
 					} );
 				} else {
-					openCheckout( false );
+					openCheckout( form, false );
 				}
 			} );
 		} );
@@ -230,7 +236,7 @@ domReady( () => {
 				ras.setAuthenticated( true );
 			}
 		}
-		const container = iframe.contentDocument.querySelector( '#newspack_modal_checkout' );
+		const container = iframe.contentDocument.querySelector( '#newspack_modal_checkout_containter' );
 		if ( container ) {
 			iframeResizeObserver.observe( container );
 			if ( container.checkoutReady ) {

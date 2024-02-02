@@ -292,7 +292,7 @@ final class Modal_Checkout {
 		$title        = apply_filters( 'newspack_blocks_modal_checkout_title', __( 'Complete your transaction', 'newspack-blocks' ) );
 		$class_prefix = self::get_class_prefix();
 		?>
-		<div class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal-container" ); ?>">
+		<div id="newspack_modal_checkout" class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal-container" ); ?>">
 			<div class="<?php echo esc_attr( "{$class_prefix}__modal-container__overlay" ); ?>"></div>
 			<div class="<?php echo esc_attr( "{$class_prefix}__modal" ); ?>">
 				<header class="<?php echo esc_attr( "{$class_prefix}__modal__header" ); ?>">
@@ -509,7 +509,7 @@ final class Modal_Checkout {
 			<link rel="profile" href="https://gmpg.org/xfn/11" />
 			<?php wp_head(); ?>
 		</head>
-			<body class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal__content" ); ?>" id="newspack_modal_checkout">
+			<body class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal__content" ); ?>" id="newspack_modal_checkout_container">
 			<?php
 				echo do_shortcode( '[woocommerce_checkout]' );
 				wp_footer();
