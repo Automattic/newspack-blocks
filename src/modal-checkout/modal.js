@@ -170,12 +170,6 @@ domReady( () => {
 						return;
 					}
 				}
-				// Continue with checkout modal.
-				spinner.style.display = 'flex';
-				openModal( modalCheckout );
-				if ( window.newspackReaderActivation?.overlays ) {
-					modalCheckout.overlayId = window.newspackReaderActivation?.overlays.add();
-				}
 				iframeResizeObserver = new ResizeObserver( entries => {
 					if ( ! entries || ! entries.length ) {
 						return;
@@ -187,6 +181,38 @@ domReady( () => {
 						iframe.style.height = contentRect.top + contentRect.bottom + 'px';
 					}
 				} );
+
+				const openCheckout = ( submit = false ) => {
+					spinner.style.display = 'flex';
+					openModal( modalCheckout );
+					if ( window.newspackReaderActivation?.overlays ) {
+						modalCheckout.overlayId = window.newspackReaderActivation?.overlays.add();
+					}
+
+					if ( submit ) {
+						form.submit();
+					}
+				};
+
+				if ( window.newspackReaderActivation?.openAuthModal ) {
+					ev.preventDefault();
+					window.newspackReaderActivation.openAuthModal( {
+						title: 'Complete your transaction',
+						callback: () => openCheckout( true ),
+						skipSuccess: true,
+						labels: {
+							signin: {
+								title: 'Sign in to complete transaction',
+							},
+							register: {
+								title: 'Complete your transaction',
+							},
+						},
+						content: '<p>Product Information Here</p>',
+					} );
+				} else {
+					openCheckout( false );
+				}
 			} );
 		} );
 	} );
