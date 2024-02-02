@@ -24,7 +24,7 @@ import classNames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 // eslint-disable-next-line @wordpress/no-unsafe-wp-apis
-import { dateI18n, __experimentalGetSettings } from '@wordpress/date';
+import { dateI18n, getSettings } from '@wordpress/date';
 import { Component, Fragment, RawHTML } from '@wordpress/element';
 import {
 	BlockControls,
@@ -63,7 +63,7 @@ import {
 	pullRight,
 } from '@wordpress/icons';
 
-let IS_SUBTITLE_SUPPORTED_IN_THEME;
+let IS_SUBTITLE_SUPPORTED_IN_THEME: boolean;
 if (
 	typeof window === 'object' &&
 	window.newspack_blocks_data &&
@@ -102,8 +102,8 @@ const squareIcon = (
 	</SVG>
 );
 
-class Edit extends Component {
-	renderPost = post => {
+class Edit extends Component< HomepageArticlesProps > {
+	renderPost = ( post: Post ) => {
 		const { attributes, isUIDisabled } = this.props;
 		const {
 			showImage,
@@ -124,15 +124,17 @@ class Edit extends Component {
 
 		const styles = {
 			minHeight:
-				mediaPosition === 'behind' &&
-				showImage &&
-				post.newspack_featured_image_src &&
-				minHeight + 'vh',
+				( mediaPosition === 'behind' &&
+					showImage &&
+					post.newspack_featured_image_src &&
+					minHeight + 'vh' ) ||
+				undefined,
 			paddingTop:
-				mediaPosition === 'behind' &&
-				showImage &&
-				post.newspack_featured_image_src &&
-				minHeight / 5 + 'vh',
+				( mediaPosition === 'behind' &&
+					showImage &&
+					post.newspack_featured_image_src &&
+					minHeight / 5 + 'vh' ) ||
+				undefined,
 		};
 
 		const postClasses = classNames(
@@ -144,7 +146,7 @@ class Edit extends Component {
 		);
 
 		const postTitle = this.titleForPost( post );
-		const dateFormat = __experimentalGetSettings().formats.date;
+		const dateFormat = getSettings().formats.date;
 		return (
 			<article className={ postClasses } key={ post.id } style={ styles }>
 				{ getPostStatusLabel( post ) }
@@ -237,7 +239,7 @@ class Edit extends Component {
 
 						{ showDate && ! post.newspack_listings_hide_publish_date && (
 							<time className="entry-date published" key="pub-date">
-								{ dateI18n( dateFormat, post.date ) }
+								{ dateI18n( dateFormat, post.date, undefined ) }
 							</time>
 						) }
 					</div>
@@ -246,12 +248,9 @@ class Edit extends Component {
 		);
 	};
 
-	titleForPost = post => {
+	titleForPost = ( post: Post ) => {
 		if ( ! post.title ) {
 			return '';
-		}
-		if ( typeof post.title === 'string' ) {
-			return decodeEntities( post.title.trim() );
 		}
 		if ( typeof post.title === 'object' && post.title.rendered ) {
 			return decodeEntities( post.title.rendered.trim() );
@@ -343,14 +342,16 @@ class Edit extends Component {
 			},
 		];
 
-		const handleAttributeChange = key => value => setAttributes( { [ key ]: value } );
+		const handleAttributeChange = ( key: HomepageArticlesAttributesKey ) => ( value: any ) =>
+			setAttributes( { [ key ]: value } );
 
 		return (
 			<Fragment>
 				<PanelBody title={ __( 'Display Settings', 'newspack-blocks' ) } initialOpen={ true }>
+					{ /* @ts-ignore */ }
 					<QueryControls
 						numberOfItems={ postsToShow }
-						onNumberOfItemsChange={ _postsToShow =>
+						onNumberOfItemsChange={ ( _postsToShow: number ) =>
 							setAttributes( { postsToShow: _postsToShow || 1 } )
 						}
 						specificMode={ specificMode }
@@ -444,7 +445,7 @@ class Edit extends Component {
 							'newspack-blocks'
 						) }
 						checked={ ! attributes.deduplicate }
-						onChange={ value => setAttributes( { deduplicate: ! value } ) }
+						onChange={ ( value: boolean ) => setAttributes( { deduplicate: ! value } ) }
 						className="newspack-blocks-deduplication-toggle"
 					/>
 				</PanelBody>
@@ -513,7 +514,7 @@ class Edit extends Component {
 								'newspack-blocks'
 							) }
 							value={ minHeight }
-							onChange={ _minHeight => setAttributes( { minHeight: _minHeight } ) }
+							onChange={ ( _minHeight: number ) => setAttributes( { minHeight: _minHeight } ) }
 							min={ 0 }
 							max={ 100 }
 							required
@@ -541,7 +542,7 @@ class Edit extends Component {
 						<RangeControl
 							label={ __( 'Max number of words in excerpt', 'newspack-blocks' ) }
 							value={ excerptLength }
-							onChange={ value => setAttributes( { excerptLength: value } ) }
+							onChange={ ( value: number ) => setAttributes( { excerptLength: value } ) }
 							min={ 10 }
 							max={ 100 }
 						/>
@@ -556,14 +557,14 @@ class Edit extends Component {
 							label={ __( '"Read More" link text', 'newspack-blocks' ) }
 							value={ readMoreLabel }
 							placeholder={ readMoreLabel }
-							onChange={ value => setAttributes( { readMoreLabel: value } ) }
+							onChange={ ( value: string ) => setAttributes( { readMoreLabel: value } ) }
 						/>
 					) }
 					<RangeControl
 						className="type-scale-slider"
 						label={ __( 'Type Scale', 'newspack-blocks' ) }
 						value={ typeScale }
-						onChange={ _typeScale => setAttributes( { typeScale: _typeScale } ) }
+						onChange={ ( _typeScale: number ) => setAttributes( { typeScale: _typeScale } ) }
 						min={ 1 }
 						max={ 10 }
 						required
@@ -621,7 +622,7 @@ class Edit extends Component {
 	componentDidMount() {
 		this.props.triggerReflow();
 	}
-	componentDidUpdate( props ) {
+	componentDidUpdate( props: HomepageArticlesProps ) {
 		if ( shouldReflow( props, this.props ) ) {
 			this.props.triggerReflow();
 		}
@@ -662,9 +663,9 @@ class Edit extends Component {
 			'show-image': showImage,
 			[ `columns-${ columns }` ]: postLayout === 'grid',
 			[ `colgap-${ colGap }` ]: postLayout === 'grid',
-			[ `ts-${ typeScale }` ]: typeScale !== '5',
+			[ `ts-${ typeScale }` ]: typeScale !== 5,
 			[ `image-align${ mediaPosition }` ]: showImage,
-			[ `is-${ imageScale }` ]: imageScale !== '1' && showImage,
+			[ `is-${ imageScale }` ]: imageScale !== 1 && showImage,
 			'mobile-stack': mobileStack,
 			[ `is-${ imageShape }` ]: showImage,
 			'has-text-color': textColor.color !== '',
@@ -754,7 +755,7 @@ class Edit extends Component {
 					<div>
 						{ latestPosts && ( ! RichText.isEmpty( sectionHeader ) || isSelected ) && (
 							<RichText
-								onChange={ value => setAttributes( { sectionHeader: value } ) }
+								onChange={ ( value: string ) => setAttributes( { sectionHeader: value } ) }
 								placeholder={ __( 'Write header…', 'newspack-blocks' ) }
 								value={ sectionHeader }
 								tagName="h2"
@@ -787,7 +788,7 @@ class Edit extends Component {
 							<RichText
 								placeholder={ __( 'Load more posts', 'newspack-blocks' ) }
 								value={ moreButtonText }
-								onChange={ value => setAttributes( { moreButtonText: value } ) }
+								onChange={ ( value: string ) => setAttributes( { moreButtonText: value } ) }
 								className="wp-block-button__link"
 								allowedFormats={ [] }
 							/>
@@ -799,7 +800,7 @@ class Edit extends Component {
 					<Toolbar>
 						<AlignmentControl
 							value={ textAlign }
-							onChange={ nextAlign => {
+							onChange={ ( nextAlign: string ) => {
 								setAttributes( { textAlign: nextAlign } );
 							} }
 						/>
@@ -816,6 +817,8 @@ class Edit extends Component {
 
 export default compose( [
 	withColors( { textColor: 'color' } ),
+	// @ts-ignore
 	withSelect( postsBlockSelector ),
+	// @ts-ignore
 	withDispatch( postsBlockDispatch ),
-] )( Edit );
+] as any )( Edit );

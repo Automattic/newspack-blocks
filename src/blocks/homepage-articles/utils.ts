@@ -42,32 +42,6 @@ const POST_QUERY_ATTRIBUTES = [
 	'deduplicate',
 ];
 
-type HomepageArticlesAttributes = {
-	postsToShow: number;
-	authors: AuthorId[];
-	categories: CategoryId[];
-	includeSubcategories: boolean;
-	excerptLength: number;
-	postType: PostType[];
-	showExcerpt: boolean;
-	tags: TagId[];
-	customTaxonomies: Taxonomy[];
-	specificPosts: string[];
-	specificMode: boolean;
-	tagExclusions: TagId[];
-	categoryExclusions: CategoryId[];
-	customTaxonomyExclusions: Taxonomy[];
-};
-
-type HomepageArticlesProps = {
-	attributes: HomepageArticlesAttributes;
-	topBlocksClientIdsInOrder: Block[ 'clientId' ][];
-	latestPosts: Post[];
-	isEditorBlock: boolean;
-	isUIDisabled: boolean;
-	error: undefined | string;
-};
-
 /**
  * Does the props change necessitate a reflow?
  * A reflow should happen if:
@@ -173,10 +147,11 @@ const generatePreviewPost = ( id: PostId ) => {
 		content: {
 			rendered: '<p>' + __( 'The post content.', 'newspack-blocks' ) + '</p>',
 		},
-		date_gmt: now.toISOString(),
+		date: now.toISOString(),
 		excerpt: {
 			rendered: '<p>' + __( 'The post excerpt.', 'newspack-blocks' ) + '</p>',
 		},
+		post_link: '/',
 		featured_media: '1',
 		id,
 		meta: {
@@ -204,7 +179,8 @@ const generatePreviewPost = ( id: PostId ) => {
 			uncropped: `${ PREVIEW_IMAGE_BASE }/newspack-1024x536.jpg`,
 		},
 		newspack_has_custom_excerpt: false,
-		newspack_post_sponsors: false,
+		newspack_sponsors_show_categories: false,
+		newspack_sponsors_show_author: false,
 	};
 };
 
@@ -233,7 +209,7 @@ export const postsBlockSelector = (
 		clientId,
 		attributes,
 	}: { clientId: Block[ 'clientId' ]; attributes: HomepageArticlesAttributes }
-): Omit< HomepageArticlesProps, 'attributes' > => {
+): HomepageArticlesPropsFromDataSelector => {
 	const { getEditedPostAttribute } = select( 'core/editor' );
 	const editorBlocks = getEditedPostAttribute( 'blocks' ) || [];
 	const { getBlocks } = select( 'core/block-editor' );
