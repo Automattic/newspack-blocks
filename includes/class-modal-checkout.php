@@ -289,7 +289,7 @@ final class Modal_Checkout {
 		*
 		* @param string $title The title.
 		*/
-		$title        = apply_filters( 'newspack_blocks_modal_checkout_title', __( 'Complete your transaction', 'newspack-blocks' ) );
+		$title        = self::get_modal_title();
 		$class_prefix = self::get_class_prefix();
 		?>
 		<div id="newspack_modal_checkout" class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal-container" ); ?>">
@@ -471,6 +471,9 @@ final class Modal_Checkout {
 			'newspackBlocksModal',
 			[
 				'newspack_class_prefix' => self::get_class_prefix(),
+				'labels'                => [
+					'auth_modal_title' => self::get_modal_title(),
+				],
 			]
 		);
 		wp_enqueue_style(
@@ -1232,6 +1235,18 @@ final class Modal_Checkout {
 			return [];
 		}
 		return $modules;
+	}
+
+	/**
+	 * Gets the modal header title.
+	 */
+	public static function get_modal_title() {
+		/**
+		* Filters the header title for the modal checkout.
+		*
+		* @param string $title The title.
+		*/
+		return apply_filters( 'newspack_blocks_modal_checkout_title', __( 'Complete your transaction', 'newspack-blocks' ) );
 	}
 
 	/**

@@ -205,7 +205,7 @@ import './checkout.scss';
 		 * Set the checkout as ready so the modal can resolve the loading state.
 		 */
 		function setReady() {
-			const container = document.querySelector( '#newspack_modal_checkout' );
+			const container = document.querySelector( '#newspack_modal_checkout_container' );
 			container.checkoutReady = true;
 			container.dispatchEvent( readyEvent );
 		}
