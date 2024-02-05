@@ -20,6 +20,7 @@ class The_Events_Calendar {
 		add_filter( 'tribe_events_register_event_type_args', [ __CLASS__, 'register_event_type_args' ] );
 		add_filter( 'newspack_blocks_displayed_post_date', [ __CLASS__, 'get_displayed_post_date' ], 10, 2 );
 		add_filter( 'newspack_blocks_formatted_displayed_post_date', [ __CLASS__, 'get_formatted_displayed_post_date' ], 10, 2 );
+		add_filter( 'newspack_blocks_article_meta_footer', [ __CLASS__, 'get_article_meta_footer' ], 10, 2 );
 	}
 
 	/**
@@ -61,6 +62,23 @@ class The_Events_Calendar {
 			}
 		}
 		return $date;
+	}
+
+	/**
+	 * Get the article meta footer.
+	 *
+	 * @param string  $footer The footer.
+	 * @param WP_Post $post   The post object.
+	 */
+	public static function get_article_meta_footer( $footer, $post ) {
+		if ( $post->post_type === 'tribe_events' && function_exists( 'tribe_get_venue' ) ) {
+			$venue = tribe_get_venue( $post );
+			if ( ! $venue ) {
+				return $footer;
+			}
+			return $footer . '<span class="newspack-blocks__tec-venue">' . $venue . '</span>';
+		}
+		return $footer;
 	}
 }
 The_Events_Calendar::init();

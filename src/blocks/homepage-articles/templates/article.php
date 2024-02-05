@@ -241,6 +241,7 @@ call_user_func(
 							esc_html( get_the_modified_date() )
 						);
 					endif;
+					echo Newspack_Blocks::get_article_meta_footer();  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					?>
 				</div><!-- .entry-meta -->
 			<?php endif; ?>

@@ -296,19 +296,20 @@ class Newspack_Blocks_API {
 
 			$meta = new WP_REST_Post_Meta_Fields( 'post' );
 			$data = [
-				'author'         => (int) $post->post_author,
-				'content'        => [
+				'author'              => (int) $post->post_author,
+				'content'             => [
 					'rendered' => post_password_required( $post ) ? '' : $content,
 				],
-				'date'           => Newspack_Blocks::get_displayed_post_date( $post ),
-				'date_formatted' => Newspack_Blocks::get_formatted_displayed_post_date( $post ),
-				'excerpt'        => [
+				'date'                => Newspack_Blocks::get_displayed_post_date( $post ),
+				'date_formatted'      => Newspack_Blocks::get_formatted_displayed_post_date( $post ),
+				'article_meta_footer' => Newspack_Blocks::get_article_meta_footer( $post ),
+				'excerpt'             => [
 					'rendered' => post_password_required( $post ) ? '' : $excerpt,
 				],
-				'featured_media' => (int) get_post_thumbnail_id( $post->ID ),
-				'id'             => $post->ID,
-				'meta'           => $meta->get_value( $post->ID, $request ),
-				'title'          => [
+				'featured_media'      => (int) get_post_thumbnail_id( $post->ID ),
+				'id'                  => $post->ID,
+				'meta'                => $meta->get_value( $post->ID, $request ),
+				'title'               => [
 					'rendered' => get_the_title( $post->ID ),
 				],
 			];

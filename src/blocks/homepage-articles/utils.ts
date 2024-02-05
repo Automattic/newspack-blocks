@@ -149,6 +149,7 @@ const generatePreviewPost = ( id: PostId ) => {
 		},
 		date: now.toISOString(),
 		date_formatted: now.toLocaleString(),
+		article_meta_footer: '',
 		excerpt: {
 			rendered: '<p>' + __( 'The post excerpt.', 'newspack-blocks' ) + '</p>',
 		},

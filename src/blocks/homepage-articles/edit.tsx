@@ -239,6 +239,7 @@ class Edit extends Component< HomepageArticlesProps > {
 								{ post.date_formatted }
 							</time>
 						) }
+						{ post.article_meta_footer ? <RawHTML>{ post.article_meta_footer }</RawHTML> : null }
 					</div>
 				</div>
 			</article>

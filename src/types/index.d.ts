@@ -57,6 +57,7 @@ declare global {
 		post_type: string;
 		date: string;
 		date_formatted: string;
+		article_meta_footer: string;
 		excerpt: {
 			rendered: string;
 		};

@@ -1556,5 +1556,20 @@ class Newspack_Blocks {
 		$date_formatted = ( new DateTime( $date ) )->format( get_option( 'date_format' ) );
 		return apply_filters( 'newspack_blocks_formatted_displayed_post_date', $date_formatted, $post );
 	}
+
+	/**
+	 * Get article meta footer.
+	 *
+	 * @param WP_Post $post Post object.
+	 */
+	public static function get_article_meta_footer( $post = null ) {
+		if ( $post === null ) {
+			$post = get_post();
+		}
+		$meta_footer = apply_filters( 'newspack_blocks_article_meta_footer', '', $post );
+		if ( strlen( $meta_footer ) > 0 ) {
+			return '<span style="margin: 0 6px;" class="newspack_blocks__article-meta-footer__separator">|</span>' . $meta_footer;
+		}
+	}
 }
 Newspack_Blocks::init();
