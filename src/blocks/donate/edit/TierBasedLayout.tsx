@@ -94,10 +94,7 @@ const TierBasedLayout = ( props: ComponentProps ) => {
 							<div className="wpbnbd__tiers__amount">
 								<div
 									dangerouslySetInnerHTML={ {
-										__html: getFrequencyLabel(
-											amount.toFixed( 2 ).replace( /\.?0*$/, '' ),
-											currentFrequency
-										),
+										__html: getFrequencyLabel( amount, currentFrequency ),
 									} }
 								/>
 							</div>

@@ -51,7 +51,7 @@ export const getMigratedAmount = (
 };
 
 export const getFrequencyLabel = (
-	amount: string,
+	amount: number,
 	frequencySlug: DonationFrequencySlug,
 	hideOnceLabel = false
 ) => {
@@ -60,6 +60,8 @@ export const getFrequencyLabel = (
 	if ( ! template ) {
 		return '';
 	}
+
+	const formattedAmount = ( amount || 0 ).toFixed( 2 ).replace( /\.?0*$/, '' );
 
 	const frequency =
 		// eslint-disable-next-line no-nested-ternary
@@ -74,6 +76,6 @@ export const getFrequencyLabel = (
 			  );
 
 	return template
-		.replace( 'AMOUNT_PLACEHOLDER', amount )
+		.replace( 'AMOUNT_PLACEHOLDER', formattedAmount )
 		.replace( 'FREQUENCY_PLACEHOLDER', frequency );
 };
