@@ -10,7 +10,7 @@ import './modal.scss';
 const CLASS_PREFIX = newspackBlocksModal.newspack_class_prefix;
 const IFRAME_NAME = 'newspack_modal_checkout_iframe';
 const MODAL_CHECKOUT_ID = 'newspack_modal_checkout';
-const MODAL_CLASSNAME_BASE = `${ CLASS_PREFIX }__modal`;
+const MODAL_CLASS_PREFIX = `${ CLASS_PREFIX }__modal`;
 
 /**
  * Specify a function to execute when the DOM is fully loaded.
@@ -41,8 +41,9 @@ domReady( () => {
 		return;
 	}
 
-	const modalContent = modalCheckout.querySelector( `.${ MODAL_CLASSNAME_BASE }__content` );
+	const modalContent = modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }__content` );
 	const modalCheckoutHiddenInput = document.createElement( 'input' );
+	const initialHeight = modalContent.clientHeight + 'px';
 	modalCheckoutHiddenInput.type = 'hidden';
 	modalCheckoutHiddenInput.name = 'modal_checkout';
 	modalCheckoutHiddenInput.value = '1';
@@ -73,14 +74,12 @@ domReady( () => {
 		if ( iframeResizeObserver ) {
 			iframeResizeObserver.disconnect();
 		}
-		Array.from( document.querySelectorAll( `.${ MODAL_CLASSNAME_BASE }-container` ) ).forEach(
-			el => {
-				closeModal( el );
-				if ( el.overlayId && window.newspackReaderActivation?.overlays ) {
-					window.newspackReaderActivation?.overlays.remove( el.overlayId );
-				}
+		Array.from( document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-container` ) ).forEach( el => {
+			closeModal( el );
+			if ( el.overlayId && window.newspackReaderActivation?.overlays ) {
+				window.newspackReaderActivation?.overlays.remove( el.overlayId );
 			}
-		);
+		} );
 	};
 
 	const openCheckout = ( form = null ) => {
@@ -95,39 +94,11 @@ domReady( () => {
 			modalCheckout.overlayId = window.newspackReaderActivation?.overlays.add();
 		}
 
-		const initialHeight = modalContent.clientHeight + 'px';
 		modalContent.appendChild( iframe );
 		modalCheckout.addEventListener( 'click', ev => {
 			if ( ev.target === modalCheckout ) {
 				closeCheckout();
 			}
-		} );
-		const closeButtons = modalCheckout.querySelectorAll( `.${ MODAL_CLASSNAME_BASE }__close` );
-		closeButtons.forEach( button => {
-			button.addEventListener( 'click', ev => {
-				ev.preventDefault();
-				modalContent.style.height = initialHeight;
-				spinner.style.display = 'flex';
-				closeCheckout();
-			} );
-		} );
-
-		/**
-		 * Variation modals.
-		 */
-		const variationModals = document.querySelectorAll( `.${ MODAL_CLASSNAME_BASE }-variation` );
-		variationModals.forEach( variationModal => {
-			variationModal.addEventListener( 'click', ev => {
-				if ( ev.target === variationModal ) {
-					closeCheckout();
-				}
-			} );
-			variationModal.querySelectorAll( `.${ MODAL_CLASSNAME_BASE }__close` ).forEach( button => {
-				button.addEventListener( 'click', ev => {
-					ev.preventDefault();
-					closeCheckout();
-				} );
-			} );
 		} );
 	};
 
@@ -142,11 +113,40 @@ domReady( () => {
 	window.newspackCloseModalCheckout = closeCheckout;
 
 	/**
+	 * Handle modal checkout close button.
+	 */
+	modalCheckout.querySelectorAll( `.${ MODAL_CLASS_PREFIX }__close` ).forEach( button => {
+		button.addEventListener( 'click', ev => {
+			ev.preventDefault();
+			modalContent.style.height = initialHeight;
+			spinner.style.display = 'flex';
+			closeCheckout();
+		} );
+	} );
+
+	/**
+	 * Handle variation modal checkout close buttons.
+	 */
+	document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-variation` ).forEach( variationModal => {
+		variationModal.addEventListener( 'click', ev => {
+			if ( ev.target === variationModal ) {
+				closeCheckout();
+			}
+		} );
+		variationModal.querySelectorAll( `.${ MODAL_CLASS_PREFIX }__close` ).forEach( button => {
+			button.addEventListener( 'click', ev => {
+				ev.preventDefault();
+				closeCheckout();
+			} );
+		} );
+	} );
+
+	/**
 	 * Handle triggers.
 	 */
 	document
 		.querySelectorAll(
-			`.wpbnbd.wpbnbd--platform-wc,.wp-block-newspack-blocks-checkout-button,.${ CLASS_PREFIX }__modal-variation`
+			`.wpbnbd.wpbnbd--platform-wc,.wp-block-newspack-blocks-checkout-button,.${ MODAL_CLASS_PREFIX }-variation`
 		)
 		.forEach( element => {
 			const forms = element.querySelectorAll( 'form' );
@@ -169,10 +169,9 @@ domReady( () => {
 
 				form.addEventListener( 'submit', ev => {
 					const formData = new FormData( form );
+					const variationModals = document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-variation` );
+
 					// Clear any open variation modal.
-					const variationModals = document.querySelectorAll(
-						`.${ MODAL_CLASSNAME_BASE }-variation`
-					);
 					variationModals.forEach( variationModal => {
 						closeModal( variationModal );
 					} );
@@ -209,6 +208,7 @@ domReady( () => {
 						window?.newspackReaderActivation?.openAuthModal &&
 						! window?.newspackReaderActivation?.getReader?.()?.authenticated
 					) {
+						ev.preventDefault();
 						// Initialize auth flow is reader is not authenticated.
 						window.newspackReaderActivation.openAuthModal( {
 							title: newspackBlocksModal.labels.auth_modal_title,
