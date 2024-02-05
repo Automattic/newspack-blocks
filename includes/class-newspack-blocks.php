@@ -1528,5 +1528,33 @@ class Newspack_Blocks {
 			],
 		];
 	}
+
+	/**
+	 * Get post date to be displayed.
+	 *
+	 * @param WP_Post $post Post object.
+	 * @return string Date string.
+	 */
+	public static function get_displayed_post_date( $post = null ) {
+		if ( $post === null ) {
+			$post = get_post();
+		}
+		return apply_filters( 'newspack_blocks_displayed_post_date', mysql_to_rfc3339( $post->post_date ), $post );
+	}
+
+	/**
+	 * Get post date to be displayed, formatted.
+	 *
+	 * @param WP_Post $post Post object.
+	 * @return string Formatted date.
+	 */
+	public static function get_formatted_displayed_post_date( $post = null ) {
+		if ( $post === null ) {
+			$post = get_post();
+		}
+		$date = self::get_displayed_post_date( $post );
+		$date_formatted = ( new DateTime( $date ) )->format( get_option( 'date_format' ) );
+		return apply_filters( 'newspack_blocks_formatted_displayed_post_date', $date_formatted, $post );
+	}
 }
 Newspack_Blocks::init();

@@ -300,7 +300,8 @@ class Newspack_Blocks_API {
 				'content'        => [
 					'rendered' => post_password_required( $post ) ? '' : $content,
 				],
-				'date'           => mysql_to_rfc3339( $post->post_date ),
+				'date'           => Newspack_Blocks::get_displayed_post_date( $post ),
+				'date_formatted' => Newspack_Blocks::get_formatted_displayed_post_date( $post ),
 				'excerpt'        => [
 					'rendered' => post_password_required( $post ) ? '' : $excerpt,
 				],

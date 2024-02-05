@@ -54,7 +54,9 @@ declare global {
 		title: {
 			rendered: string;
 		};
+		post_type: string;
 		date: string;
+		date_formatted: string;
 		excerpt: {
 			rendered: string;
 		};

@@ -23,8 +23,6 @@ import classNames from 'classnames';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
-import { dateI18n, getSettings } from '@wordpress/date';
 import { Component, Fragment, RawHTML } from '@wordpress/element';
 import {
 	BlockControls,
@@ -146,7 +144,6 @@ class Edit extends Component< HomepageArticlesProps > {
 		);
 
 		const postTitle = this.titleForPost( post );
-		const dateFormat = getSettings().formats.date;
 		return (
 			<article className={ postClasses } key={ post.id } style={ styles }>
 				{ getPostStatusLabel( post ) }
@@ -239,7 +236,7 @@ class Edit extends Component< HomepageArticlesProps > {
 
 						{ showDate && ! post.newspack_listings_hide_publish_date && (
 							<time className="entry-date published" key="pub-date">
-								{ dateI18n( dateFormat, post.date, undefined ) }
+								{ post.date_formatted }
 							</time>
 						) }
 					</div>

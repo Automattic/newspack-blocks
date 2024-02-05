@@ -148,12 +148,14 @@ const generatePreviewPost = ( id: PostId ) => {
 			rendered: '<p>' + __( 'The post content.', 'newspack-blocks' ) + '</p>',
 		},
 		date: now.toISOString(),
+		date_formatted: now.toLocaleString(),
 		excerpt: {
 			rendered: '<p>' + __( 'The post excerpt.', 'newspack-blocks' ) + '</p>',
 		},
 		post_link: '/',
 		featured_media: '1',
 		id,
+		post_type: 'post',
 		meta: {
 			newspack_post_subtitle: __( 'Post Subtitle', 'newspack-blocks' ),
 		},
