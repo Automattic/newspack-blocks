@@ -386,7 +386,7 @@ final class Modal_Checkout {
 										<form>
 											<input type="hidden" name="newspack_checkout" value="1" />
 											<input type="hidden" name="product_id" value="<?php echo esc_attr( $variation->get_id() ); ?>" />
-											<button class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--primary" ); ?>"><?php esc_html_e( 'Purchase', 'newspack-blocks' ); ?></button>
+											<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--primary" ); ?>"><?php esc_html_e( 'Purchase', 'newspack-blocks' ); ?></button>
 										</form>
 									</li>
 								<?php endforeach; ?>

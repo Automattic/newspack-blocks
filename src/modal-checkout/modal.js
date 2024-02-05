@@ -9,6 +9,7 @@ import './modal.scss';
 
 const CLASS_PREFIX = newspackBlocksModal.newspack_class_prefix;
 const IFRAME_NAME = 'newspack_modal_checkout_iframe';
+const IFRAME_CONTAINER_ID = 'newspack_modal_checkout_container';
 const MODAL_CHECKOUT_ID = 'newspack_modal_checkout';
 const MODAL_CLASS_PREFIX = `${ CLASS_PREFIX }__modal`;
 
@@ -43,7 +44,7 @@ domReady( () => {
 
 	const modalContent = modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }__content` );
 	const modalCheckoutHiddenInput = document.createElement( 'input' );
-	const initialHeight = modalContent.clientHeight + 'px';
+	const spinner = modalContent.querySelector( `.${ CLASS_PREFIX }__spinner` );
 	modalCheckoutHiddenInput.type = 'hidden';
 	modalCheckoutHiddenInput.name = 'modal_checkout';
 	modalCheckoutHiddenInput.value = '1';
@@ -51,8 +52,6 @@ domReady( () => {
 	// Initialize empty iframe.
 	const iframe = document.createElement( 'iframe' );
 	iframe.name = IFRAME_NAME;
-
-	const spinner = modalContent.querySelector( `.${ CLASS_PREFIX }__spinner` );
 
 	const iframeResizeObserver = new ResizeObserver( entries => {
 		if ( ! entries || ! entries.length ) {
@@ -67,14 +66,23 @@ domReady( () => {
 		}
 	} );
 
+	const initialHeight = modalContent.clientHeight + spinner.clientHeight + 'px';
 	const closeCheckout = () => {
-		if ( iframe ) {
+		spinner.style.display = 'flex';
+
+		if ( iframe && modalContent.contains( iframe ) ) {
+			// Reset iframe and modal content heights.
 			iframe.src = 'about:blank';
+			iframe.style.height = '0';
+			modalContent.removeChild( iframe );
+			modalContent.style.height = initialHeight;
 		}
+
 		if ( iframeResizeObserver ) {
 			iframeResizeObserver.disconnect();
 		}
-		Array.from( document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-container` ) ).forEach( el => {
+
+		document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-container` ).forEach( el => {
 			closeModal( el );
 			if ( el.overlayId && window.newspackReaderActivation?.overlays ) {
 				window.newspackReaderActivation?.overlays.remove( el.overlayId );
@@ -82,11 +90,7 @@ domReady( () => {
 		} );
 	};
 
-	const openCheckout = ( form = null ) => {
-		if ( form ) {
-			return form.submit();
-		}
-
+	const openCheckout = () => {
 		spinner.style.display = 'flex';
 		openModal( modalCheckout );
 
@@ -118,14 +122,12 @@ domReady( () => {
 	modalCheckout.querySelectorAll( `.${ MODAL_CLASS_PREFIX }__close` ).forEach( button => {
 		button.addEventListener( 'click', ev => {
 			ev.preventDefault();
-			modalContent.style.height = initialHeight;
-			spinner.style.display = 'flex';
 			closeCheckout();
 		} );
 	} );
 
 	/**
-	 * Handle variation modal checkout close buttons.
+	 * Handle variations modal close button.
 	 */
 	document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-variation` ).forEach( variationModal => {
 		variationModal.addEventListener( 'click', ev => {
@@ -142,7 +144,7 @@ domReady( () => {
 	} );
 
 	/**
-	 * Handle triggers.
+	 * Handle modal checkout triggers.
 	 */
 	document
 		.querySelectorAll(
@@ -175,6 +177,7 @@ domReady( () => {
 					variationModals.forEach( variationModal => {
 						closeModal( variationModal );
 					} );
+
 					// Trigger variation modal if variation is not selected.
 					if ( formData.get( 'is_variable' ) && ! formData.get( 'variation_id' ) ) {
 						const variationModal = [ ...variationModals ].find(
@@ -209,10 +212,11 @@ domReady( () => {
 						! window?.newspackReaderActivation?.getReader?.()?.authenticated
 					) {
 						ev.preventDefault();
-						// Initialize auth flow is reader is not authenticated.
+						// Initialize auth flow if reader is not authenticated.
 						window.newspackReaderActivation.openAuthModal( {
 							title: newspackBlocksModal.labels.auth_modal_title,
-							callback: () => openCheckout( form ),
+							// form.submit does not trigger submit event listener, so we use requestSubmit.
+							callback: () => form.requestSubmit( form.querySelector( 'button[type="submit"]' ) ),
 							skipSuccess: true,
 							labels: {
 								signin: {
@@ -239,6 +243,9 @@ domReady( () => {
 			} );
 		} );
 
+	/**
+	 * Handle iframe load state.
+	 */
 	iframe.addEventListener( 'load', () => {
 		const location = iframe.contentWindow.location;
 		// If RAS is available, set the front-end authentication.
@@ -252,7 +259,7 @@ domReady( () => {
 				ras.setAuthenticated( true );
 			}
 		}
-		const container = iframe.contentDocument.querySelector( '#newspack_modal_checkout_container' );
+		const container = iframe.contentDocument.querySelector( `#${ IFRAME_CONTAINER_ID }` );
 		if ( container ) {
 			iframeResizeObserver.observe( container );
 			if ( container.checkoutReady ) {
