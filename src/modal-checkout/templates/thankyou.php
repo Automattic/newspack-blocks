@@ -49,7 +49,7 @@ function newspack_blocks_replace_login_with_order_summary() {
 
 	$is_success = ! $order->has_status( 'failed' );
 	?>
-
+	<div class="woocommerce-order">
 	<?php if ( $is_success ) : ?>
 		<div class="newspack-ui__box newspack-ui__box--success newspack-ui__box--text-center">
 			<span class="newspack-ui__icon newspack-ui__icon--success">

@@ -55,6 +55,7 @@ final class Modal_Checkout {
 		add_filter( 'woocommerce_enable_order_notes_field', [ __CLASS__, 'enable_order_notes_field' ] );
 		add_action( 'woocommerce_checkout_process', [ __CLASS__, 'wcsg_apply_gift_subscription' ] );
 		add_filter( 'woocommerce_order_received_verify_known_shoppers', '__return_false' );
+		add_filter( 'woocommerce_order_button_html', [ __CLASS__, 'order_button_html' ], 10, 1 );
 		// TODO: Remove once we apply auth flow to checkout modal.
 		add_filter( 'newspack_reader_activation_should_render_auth', '__return_false' );
 
@@ -387,7 +388,7 @@ final class Modal_Checkout {
 										<form>
 											<input type="hidden" name="newspack_checkout" value="1" />
 											<input type="hidden" name="product_id" value="<?php echo esc_attr( $variation->get_id() ); ?>" />
-											<button><?php esc_html_e( 'Purchase', 'newspack-blocks' ); ?></button>
+											<button class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--primary" ); ?>"><?php esc_html_e( 'Purchase', 'newspack-blocks' ); ?></button>
 										</form>
 									</li>
 								<?php endforeach; ?>
@@ -422,7 +423,8 @@ final class Modal_Checkout {
 			'newspack-blocks-modal-checkout',
 			'newspackBlocksModalCheckout',
 			[
-				'labels' => [
+				'newspack_class_prefix' => self::get_class_prefix(),
+				'labels'                => [
 					'billing_details'  => __( 'Billing details', 'newspack-blocks' ),
 					'shipping_details' => __( 'Shipping details', 'newspack-blocks' ),
 					'gift_recipient'   => __( 'Gift recipient', 'newspack-blocks' ),
@@ -591,17 +593,18 @@ final class Modal_Checkout {
 		}
 
 		$custom_templates = [
-			'checkout/form-checkout.php'          => 'src/modal-checkout/templates/form-checkout.php',
 			'checkout/form-coupon.php'            => 'src/modal-checkout/templates/form-coupon.php',
 			'checkout/form-gift-subscription.php' => 'src/modal-checkout/templates/form-gift-subscription.php',
 		];
 
 		// If Newspack UI is present, use our templates.
 		if ( self::get_class_prefix() === 'newspack-ui' ) {
-			$custom_templates['checkout/thankyou.php'] = 'src/modal-checkout/templates/thankyou.php';
 			// Replace the login form with the order summary if using the modal checkout. This is
 			// for the case where the reader used an existing email address.
-			$custom_templates['global/form-login.php'] = 'src/modal-checkout/templates/thankyou.php';
+			$custom_templates['global/form-login.php']       = 'src/modal-checkout/templates/thankyou.php';
+			$custom_templates['checkout/form-checkout.php']  = 'src/modal-checkout/templates/form-checkout.php';
+			$custom_templates['checkout/payment-method.php'] = 'src/modal-checkout/templates/payment-method.php';
+			$custom_templates['checkout/thankyou.php']       = 'src/modal-checkout/templates/thankyou.php';
 		}
 
 		// Only show the woocommerce-subscriptions-gifting fields when we want to.
@@ -1093,8 +1096,9 @@ final class Modal_Checkout {
 		if ( 1 !== $cart->get_cart_contents_count() ) {
 			return;
 		}
+		$class_prefix = self::get_class_prefix();
 		?>
-		<div class="order-details-summary">
+			<div class="<?php echo esc_attr( "order-details-summary {$class_prefix}__box {$class_prefix}__box--text-center" ); ?>">
 			<?php
 			// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce hooks.
 			foreach ( $cart->get_cart() as $cart_item_key => $cart_item ) :
@@ -1237,6 +1241,23 @@ final class Modal_Checkout {
 	 */
 	private static function get_class_prefix() {
 		return class_exists( '\Newspack\Newspack_UI' ) ? 'newspack-ui' : 'newspack-blocks';
+	}
+
+	/**
+	 * Add newspack ui classes to the "Place order" button html.
+	 *
+	 * @param string $html The button html.
+	 */
+	public static function order_button_html( $html ) {
+		if ( ! self::is_modal_checkout() ) {
+			return $html;
+		}
+
+		$class_prefix = self::get_class_prefix();
+
+		$newspack_ui_html = preg_replace( '/class=".*?"/', "class='{$class_prefix}__button {$class_prefix}__button--primary {$class_prefix}__button--wide'", $html );
+
+		return $newspack_ui_html;
 	}
 }
 Modal_Checkout::init();

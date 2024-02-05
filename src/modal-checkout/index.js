@@ -24,7 +24,7 @@ import './checkout.scss';
 
 	function clearNotices() {
 		$(
-			'.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message, .wc-block-components-notice-banner'
+			`.woocommerce-NoticeGroup-checkout, .${ newspackBlocksModalCheckout.newspack_class_prefix }__inline-error, .woocommerce-error, .woocommerce-message, .wc-block-components-notice-banner`
 		).remove();
 	}
 
@@ -154,7 +154,11 @@ import './checkout.scss';
 						$existingError.remove();
 					}
 					$field.addClass( 'woocommerce-invalid' ).removeClass( 'woocommerce-valid' );
-					$field.append( '<span class="woocommerce-error">' + $error.text() + '</span>' );
+					$field.append(
+						`<span class="${ newspackBlocksModalCheckout.newspack_class_prefix }__inline-error">` +
+							$error.text() +
+							'</span>'
+					);
 					$error.remove();
 				} else {
 					if ( ! $error.is( 'li' ) ) {
@@ -239,7 +243,9 @@ import './checkout.scss';
 					if ( code ) {
 						const isError = code.includes( 'error' );
 						$coupon.append(
-							'<p class="result ' + ( isError ? 'error' : '' ) + '">' + $( code ).text() + '</p>'
+							`<p class="result ${ newspackBlocksModalCheckout.newspack_class_prefix }__inline-info">` +
+								$( code ).text() +
+								'</p>'
 						);
 						if ( isError ) {
 							$coupon.find( 'input[name="coupon_code"]' ).focus();
@@ -327,18 +333,25 @@ import './checkout.scss';
 				data[ item.name ] = item.value;
 			} );
 
+			const classname = `${ newspackBlocksModalCheckout.newspack_class_prefix }__inline-info`;
 			const html = [];
 			html.push( '<div class="billing-details">' );
 			html.push( '<h3>' + newspackBlocksModalCheckout.labels.billing_details + '</h3>' );
 			if ( data.billing_first_name || data.billing_last_name ) {
-				html.push( '<p>' + data.billing_first_name + ' ' + data.billing_last_name + '</p>' );
+				html.push(
+					`<p class="${ classname }">` +
+						data.billing_first_name +
+						' ' +
+						data.billing_last_name +
+						'</p>'
+				);
 			}
 			if ( data.billing_company ) {
-				html.push( '<p>' + data.billing_company + '</p>' );
+				html.push( `<p class="${ classname }">` + data.billing_company + '</p>' );
 			}
 			let billingAddress = '';
 			if ( data.billing_address_1 || data.billing_address_2 ) {
-				billingAddress = '<p>';
+				billingAddress = `<p class="${ classname }">`;
 				if ( data.billing_address_1 ) {
 					billingAddress += data.billing_address_1;
 				}
@@ -362,19 +375,19 @@ import './checkout.scss';
 			}
 			html.push( billingAddress );
 			if ( data.billing_email ) {
-				html.push( '<p>' + data.billing_email + '</p>' );
+				html.push( `<p class="${ classname }">` + data.billing_email + '</p>' );
 			}
 			html.push( '</div>' ); // Close billing-details.
 
 			// Shipping details.
 			if ( data.hasOwnProperty( 'shipping_address_1' ) ) {
 				html.push( '<div class="shipping-details">' );
-				html.push( '<h3>' + newspackBlocksModalCheckout.labels.shipping_details + '</h3>' );
+				html.push( '<h2>' + newspackBlocksModalCheckout.labels.shipping_details + '</h2>' );
 				let shippingAddress = '';
 				if ( ! data.ship_to_different_address ) {
 					shippingAddress = billingAddress;
 				} else {
-					shippingAddress = '<p>';
+					shippingAddress = `<p class="${ classname }">`;
 					if ( data.shipping_address_1 ) {
 						shippingAddress += data.shipping_address_1;
 					}
@@ -407,8 +420,8 @@ import './checkout.scss';
 			) {
 				if ( !! data.newspack_wcsg_is_gift && !! data.wcsg_gift_recipients_email ) {
 					html.push( '<div class="gift-details">' );
-					html.push( '<h3>' + newspackBlocksModalCheckout.labels.gift_recipient + '</h3>' );
-					html.push( '<p>' + data.wcsg_gift_recipients_email + '</p>' );
+					html.push( '<h2>' + newspackBlocksModalCheckout.labels.gift_recipient + '</h2>' );
+					html.push( `<p class="${ classname }">` + data.wcsg_gift_recipients_email + '</p>' );
 				}
 			}
 
@@ -485,7 +498,7 @@ import './checkout.scss';
 							handleFormError( result.messages );
 						} else {
 							handleFormError(
-								'<div class="woocommerce-error">' +
+								`<div class="${ newspackBlocksModalCheckout.newspack_class_prefix }__inline-error">` +
 									wc_checkout_params.i18n_checkout_error +
 									'</div>'
 							);

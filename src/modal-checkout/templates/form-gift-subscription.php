@@ -13,10 +13,8 @@ defined( 'ABSPATH' ) || exit;
 	<div class="woocommerce-additional-fields__field-wrapper">
 		<?php if ( ! $is_renewal ) : ?>
 		<p class="newspack-wcsg--gift-toggle form-row form-row-wide">
-			<span class="woocommerce-input-wrapper">
-				<input type="checkbox" id="newspack_wcsg_is_gift" name="newspack_wcsg_is_gift" />
-			</span>
 			<label for="newspack_wcsg_is_gift">
+				<input type="checkbox" id="newspack_wcsg_is_gift" name="newspack_wcsg_is_gift" />
 				<?php echo \esc_html( \Newspack_Blocks\Modal_Checkout::subscriptions_gifting_label() ); ?>
 			</label>
 		</p>

@@ -1,4 +1,5 @@
-#newspack_modal_checkout { /* stylelint-disable-line */
+/* stylelint-disable-next-line */
+#newspack_modal_checkout {
 	padding: 24px;
 
 	.order-review-wrapper.hidden {
@@ -36,15 +37,6 @@
 				max-height: 100px;
 				visibility: visible;
 			}
-		}
-	}
-
-
-	// Modal Checkout already has spacing to account for the header, so we need to remove it from the form.
-	.woocommerce .order-details-summary {
-		// Removes redundant margin from top of modal checkout form.
-		h2 {
-			margin-top: 0;
 		}
 	}
 }
