@@ -75,6 +75,19 @@ final class Modal_Checkout {
 		add_filter( 'googlesitekit_tagmanager_tag_blocked', [ __CLASS__, 'is_modal_checkout' ] );
 		add_filter( 'jetpack_active_modules', [ __CLASS__, 'jetpack_active_modules' ] );
 	}
+
+	/**
+	 * Add information about modal checkout to cart item data.
+	 *
+	 * @param array $cart_item_data Cart item data.
+	 */
+	public static function amend_cart_item_data( $cart_item_data ) {
+		if ( self::is_modal_checkout() ) {
+			$cart_item_data['newspack_modal_checkout_url'] = \home_url( \add_query_arg( null, null ) );
+		}
+		return $cart_item_data;
+	}
+
 	/**
 	 * Dequeue WC styles if on modal checkout.
 	 *
