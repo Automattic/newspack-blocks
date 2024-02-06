@@ -14,22 +14,6 @@ require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/donate/frontend/class-new
  */
 class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate_Renderer_Base {
 	/**
-	 * Get frequency label.
-	 *
-	 * @param string $frequency_slug Frequency slug.
-	 */
-	private static function get_frequency_label( $frequency_slug ) {
-		switch ( $frequency_slug ) {
-			case 'once':
-				return ' ' . __( 'once', 'newspack-blocks' );
-			case 'month':
-				return ' ' . __( 'per month', 'newspack-blocks' );
-			case 'year':
-				return ' ' . __( 'per year', 'newspack-blocks' );
-		}
-	}
-
-	/**
 	 * Get displayed amounts.
 	 *
 	 * @param array $amounts Amounts.
@@ -77,8 +61,7 @@ class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate
 							data-amount="<?php echo esc_attr( $configuration['amounts'][ $frequency_slug ][ $index ] ); ?>"
 							data-tier-index="<?php echo esc_attr( $index ); ?>"
 						>
-							<h3 class="wpbnbd__tiers__amount__number"><?php echo esc_html( $configuration['currencySymbol'] ); ?><?php echo esc_html( $configuration['amounts'][ $frequency_slug ][ $index ] ); ?></h3>
-							<span class="wpbnbd__tiers__amount__frequency"><?php echo esc_html( self::get_frequency_label( $frequency_slug ) ); ?></span>
+							<?php echo wp_kses_post( Newspack_Blocks::get_formatted_amount( $configuration['amounts'][ $frequency_slug ][ $index ], $frequency_slug ) ); ?>
 						</span>
 					<?php endforeach; ?>
 				</span>
@@ -163,7 +146,7 @@ class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate
 						<div class="wpbnbd__tiers__options">
 							<?php foreach ( $displayed_amounts as $index => $amount ) : ?>
 								<?php
-									echo self::render_single_tier( $attributes, $index, $amount, $intial_selected_frequency, $is_any_recommended ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+									echo self::render_single_tier( $attributes, $index, $configuration['amounts'][ $frequency_slug ][ $index ], $intial_selected_frequency, $is_any_recommended ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 								?>
 							<?php endforeach; ?>
 						</div>
