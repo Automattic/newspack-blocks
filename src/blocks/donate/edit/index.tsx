@@ -304,7 +304,9 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 															<div className="wp-block-newspack-blocks-donate__panel-inputs">
 																{ amounts[ frequency ].reduce(
 																	( acc: boolean, suggestedAmount: number ) =>
-																		suggestedAmount < minimumDonation ? true : acc,
+																		! suggestedAmount || suggestedAmount < minimumDonation
+																			? true
+																			: acc,
 																	false
 																) && renderMinAmountWarning() }
 
@@ -341,7 +343,10 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 										<div className="wp-block-newspack-blocks-donate__panel-inputs">
 											{ FREQUENCY_SLUGS.reduce(
 												( acc: boolean, frequencySlug: DonationFrequencySlug ) =>
-													amounts[ frequencySlug ][ 3 ] < attributes.minimumDonation ? true : acc,
+													! amounts[ frequencySlug ][ 3 ] ||
+													amounts[ frequencySlug ][ 3 ] < attributes.minimumDonation
+														? true
+														: acc,
 												false
 											) && renderMinAmountWarning() }
 
