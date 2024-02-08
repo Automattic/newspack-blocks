@@ -15,4 +15,26 @@
 	.autocomplete-tokenfield__help {
 		font-style: italic;
 	}
+
+	&__sortable__item {
+		list-style: none;
+		padding: 12px 6px;
+		margin: 0;
+		border: 1px solid #ddd;
+		margin-bottom: -1px;
+		background: #fff;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		&__drag {
+			margin-right: 6px;
+			cursor: grab;
+		}
+		button {
+			background: transparent;
+			border: 0;
+			padding: 0;
+			cursor: pointer;
+		}
+	}
 }

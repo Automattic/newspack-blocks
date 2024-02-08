@@ -263,11 +263,12 @@ class QueryControls extends Component {
 				) }
 				{ specificMode ? (
 					<AutocompleteTokenField
+						sortable={ true }
+						placeholder={ __( 'Search posts…', 'newspack-blocks' ) }
 						tokens={ specificPosts || [] }
 						onChange={ onSpecificPostsChange }
 						fetchSuggestions={ this.fetchPostSuggestions }
 						fetchSavedInfo={ this.fetchSavedPosts }
-						label={ __( 'Posts', 'newspack-blocks' ) }
 						help={ __(
 							'Begin typing post title, click autocomplete result to select.',
 							'newspack-blocks'
