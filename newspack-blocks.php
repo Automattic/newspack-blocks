@@ -31,9 +31,6 @@ require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/author-profile/class-wp-r
 // REST Controller for Author List Block.
 require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/author-list/class-wp-rest-newspack-author-list-controller.php';
 
-// REST Controller for Donate Block.
-require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/donate/class-wp-rest-newspack-donate-controller.php';
-
 // REST Controller for Iframe Block.
 require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/iframe/class-wp-rest-newspack-iframe-controller.php';
 
@@ -63,15 +60,6 @@ function newspack_author_list_block_register_rest_routes() { // phpcs:ignore Wor
 	$author_list_controller->register_routes();
 }
 add_action( 'rest_api_init', 'newspack_author_list_block_register_rest_routes' );
-
-/**
- * Registers Donate block routes.
- */
-function newspack_donate_block_register_rest_routes() { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
-	$donate_controller = new WP_REST_Newspack_Donate_Controller();
-	$donate_controller->register_routes();
-}
-add_action( 'rest_api_init', 'newspack_donate_block_register_rest_routes' );
 
 /**
  * Registers Iframe block routes.
