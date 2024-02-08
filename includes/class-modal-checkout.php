@@ -42,9 +42,6 @@ final class Modal_Checkout {
 		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 2 );
 		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'woocommerce_checkout_fields' ] );
 		add_filter( 'woocommerce_update_order_review_fragments', [ __CLASS__, 'order_review_fragments' ] );
-		add_filter( 'woocommerce_payment_successful_result', [ __CLASS__, 'woocommerce_payment_successful_result' ] );
-		add_action( 'woocommerce_checkout_create_order_line_item', [ __CLASS__, 'woocommerce_checkout_create_order_line_item' ], 10, 4 );
-		add_filter( 'newspack_donations_cart_item_data', [ __CLASS__, 'amend_cart_item_data' ] );
 		add_filter( 'newspack_recaptcha_verify_captcha', [ __CLASS__, 'recaptcha_verify_captcha' ], 10, 2 );
 		add_filter( 'woocommerce_enqueue_styles', [ __CLASS__, 'dequeue_woocommerce_styles' ] );
 		add_filter( 'wcs_place_subscription_order_text', [ __CLASS__, 'order_button_text' ], 5 );
@@ -89,56 +86,6 @@ final class Modal_Checkout {
 			$cart_item_data['newspack_modal_checkout_url'] = \home_url( \add_query_arg( null, null ) );
 		}
 		return $cart_item_data;
-	}
-
-	/**
-	 * Add information about modal checkout to order item meta.
-	 *
-	 * @param \WC_Order_Item_Product $item The cart item.
-	 * @param string                 $cart_item_key The cart item key.
-	 * @param array                  $values The cart item values.
-	 * @param \WC_Order              $order The order.
-	 * @return void
-	 */
-	public static function woocommerce_checkout_create_order_line_item( $item, $cart_item_key, $values, $order ) {
-		if ( ! empty( $values['newspack_modal_checkout_url'] ) ) {
-			$order->add_meta_data( '_newspack_modal_checkout_url', $values['newspack_modal_checkout_url'] );
-		}
-	}
-
-	/**
-	 * Change the post-transaction return URL.
-	 * This is specifically for non-redirect-based flows, such as Apple Pay.
-	 *
-	 * @param array $result The return payload for a successfull transaction.
-	 */
-	public static function woocommerce_payment_successful_result( $result ) {
-		$order_id           = $result['order_id'];
-		$order              = \wc_get_order( $order_id );
-		$modal_checkout_url = $order->get_meta( '_newspack_modal_checkout_url' );
-		if ( empty( $modal_checkout_url ) ) {
-			return $result;
-		}
-
-		$originating_from_modal = ! empty( $order->get_meta( '_newspack_modal_checkout_url' ) );
-		if ( $originating_from_modal ) {
-			$modal_checkout_url_query = \wp_parse_url( $modal_checkout_url, PHP_URL_QUERY );
-			\wp_parse_str( $modal_checkout_url_query, $modal_checkout_url_query_params );
-			$passed_params_names = [ 'modal_checkout', 'after_success_behavior', 'after_success_url', 'after_success_button_label' ];
-			// Pick passed params from the query params.
-			$passed_params = array_intersect_key( $modal_checkout_url_query_params, array_flip( $passed_params_names ) );
-
-			$result['redirect'] = \add_query_arg(
-				array_merge(
-					$passed_params,
-					[
-						'order_id' => $order_id,
-					]
-				),
-				$result['redirect']
-			);
-		}
-		return $result;
 	}
 
 	/**
