@@ -1,9 +1,17 @@
 /* globals newspackBlocksModal */
 
+import { _x } from '@wordpress/i18n';
+
 /**
  * Style dependencies
  */
 import './modal.scss';
+
+const CLASS_PREFIX = newspackBlocksModal.newspack_class_prefix;
+const IFRAME_NAME = 'newspack_modal_checkout_iframe';
+const IFRAME_CONTAINER_ID = 'newspack_modal_checkout_container';
+const MODAL_CHECKOUT_ID = 'newspack_modal_checkout';
+const MODAL_CLASS_PREFIX = `${ CLASS_PREFIX }__modal`;
 
 /**
  * Specify a function to execute when the DOM is fully loaded.
@@ -27,85 +35,107 @@ function domReady( callback ) {
 	document.addEventListener( 'DOMContentLoaded', callback );
 }
 
-const CLASSNAME_BASE = newspackBlocksModal.newspack_class_prefix;
-const MODAL_CLASSNAME_BASE = `${ CLASSNAME_BASE }__modal`;
-
-const triggers = `.wpbnbd.wpbnbd--platform-wc,.wp-block-newspack-blocks-checkout-button,.${ CLASSNAME_BASE }__modal-variation`;
-
-let iframeResizeObserver;
-
-function closeCheckout() {
-	const iframe = document.querySelector( 'iframe[name="newspack_modal_checkout_iframe"]' );
-	if ( iframe ) {
-		iframe.src = 'about:blank';
-	}
-	if ( iframeResizeObserver ) {
-		iframeResizeObserver.disconnect();
-	}
-	Array.from( document.querySelectorAll( `.${ MODAL_CLASSNAME_BASE }-container` ) ).forEach( el => {
-		closeModal( el );
-		if ( el.overlayId && window.newspackReaderActivation?.overlays ) {
-			window.newspackReaderActivation?.overlays.remove( el.overlayId );
-		}
-	} );
-}
-
-function openModal( el ) {
-	el.setAttribute( 'data-state', 'open' );
-}
-
-function closeModal( el ) {
-	el.setAttribute( 'data-state', 'closed' );
-}
-
-window.newspackCloseModalCheckout = closeCheckout;
-
 domReady( () => {
-	/**
-	 * Initialize modal checkout.
-	 */
-	const modalCheckout = document.querySelector( `.${ MODAL_CLASSNAME_BASE }-container` );
+	const modalCheckout = document.querySelector( `#${ MODAL_CHECKOUT_ID }` );
+
 	if ( ! modalCheckout ) {
 		return;
 	}
-	const spinner = document.querySelector( `.${ CLASSNAME_BASE }__spinner` );
-	const iframeName = 'newspack_modal_checkout_iframe';
-	const modalCheckoutInput = document.createElement( 'input' );
-	modalCheckoutInput.type = 'hidden';
-	modalCheckoutInput.name = 'modal_checkout';
-	modalCheckoutInput.value = '1';
-	const modalContent = modalCheckout.querySelector( `.${ MODAL_CLASSNAME_BASE }__content` );
-	const initialHeight = modalContent.clientHeight + 'px';
+
+	const modalContent = modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }__content` );
+	const modalCheckoutHiddenInput = document.createElement( 'input' );
+	const spinner = modalContent.querySelector( `.${ CLASS_PREFIX }__spinner` );
+	modalCheckoutHiddenInput.type = 'hidden';
+	modalCheckoutHiddenInput.name = 'modal_checkout';
+	modalCheckoutHiddenInput.value = '1';
+
+	// Initialize empty iframe.
 	const iframe = document.createElement( 'iframe' );
-	iframe.name = iframeName;
-	iframe.scrolling = 'no';
-	modalContent.appendChild( iframe );
-	modalCheckout.addEventListener( 'click', ev => {
-		if ( ev.target === modalCheckout ) {
-			closeCheckout();
+	iframe.name = IFRAME_NAME;
+
+	const iframeResizeObserver = new ResizeObserver( entries => {
+		if ( ! entries || ! entries.length ) {
+			return;
+		}
+		const contentRect = entries[ 0 ].contentRect;
+		if ( contentRect ) {
+			const iframeHeight = contentRect.top + contentRect.bottom + 'px';
+			// Match iframe and modal content heights to avoid inner iframe scollbar.
+			modalContent.style.height = iframeHeight;
+			iframe.style.height = iframeHeight;
 		}
 	} );
-	const closeButtons = modalCheckout.querySelectorAll( `.${ MODAL_CLASSNAME_BASE }__close` );
-	closeButtons.forEach( button => {
+
+	const initialHeight = modalContent.clientHeight + spinner.clientHeight + 'px';
+	const closeCheckout = () => {
+		spinner.style.display = 'flex';
+
+		if ( iframe && modalContent.contains( iframe ) ) {
+			// Reset iframe and modal content heights.
+			iframe.src = 'about:blank';
+			iframe.style.height = '0';
+			modalContent.removeChild( iframe );
+			modalContent.style.height = initialHeight;
+		}
+
+		if ( iframeResizeObserver ) {
+			iframeResizeObserver.disconnect();
+		}
+
+		document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-container` ).forEach( el => {
+			closeModal( el );
+			if ( el.overlayId && window.newspackReaderActivation?.overlays ) {
+				window.newspackReaderActivation?.overlays.remove( el.overlayId );
+			}
+		} );
+	};
+
+	const openCheckout = () => {
+		spinner.style.display = 'flex';
+		openModal( modalCheckout );
+
+		if ( window.newspackReaderActivation?.overlays ) {
+			modalCheckout.overlayId = window.newspackReaderActivation?.overlays.add();
+		}
+
+		modalContent.appendChild( iframe );
+		modalCheckout.addEventListener( 'click', ev => {
+			if ( ev.target === modalCheckout ) {
+				closeCheckout();
+			}
+		} );
+	};
+
+	const closeModal = el => {
+		el.setAttribute( 'data-state', 'closed' );
+	};
+
+	const openModal = el => {
+		el.setAttribute( 'data-state', 'open' );
+	};
+
+	window.newspackCloseModalCheckout = closeCheckout;
+
+	/**
+	 * Handle modal checkout close button.
+	 */
+	modalCheckout.querySelectorAll( `.${ MODAL_CLASS_PREFIX }__close` ).forEach( button => {
 		button.addEventListener( 'click', ev => {
 			ev.preventDefault();
-			modalContent.style.height = initialHeight;
-			spinner.style.display = 'flex';
 			closeCheckout();
 		} );
 	} );
 
 	/**
-	 * Variation modals.
+	 * Handle variations modal close button.
 	 */
-	const variationModals = document.querySelectorAll( `.${ MODAL_CLASSNAME_BASE }-variation` );
-	variationModals.forEach( variationModal => {
+	document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-variation` ).forEach( variationModal => {
 		variationModal.addEventListener( 'click', ev => {
 			if ( ev.target === variationModal ) {
 				closeCheckout();
 			}
 		} );
-		variationModal.querySelectorAll( `.${ MODAL_CLASSNAME_BASE }__close` ).forEach( button => {
+		variationModal.querySelectorAll( `.${ MODAL_CLASS_PREFIX }__close` ).forEach( button => {
 			button.addEventListener( 'click', ev => {
 				ev.preventDefault();
 				closeCheckout();
@@ -114,83 +144,108 @@ domReady( () => {
 	} );
 
 	/**
-	 * Handle triggers.
+	 * Handle modal checkout triggers.
 	 */
-	const elements = document.querySelectorAll( triggers );
-	elements.forEach( element => {
-		const forms = element.querySelectorAll( 'form' );
-		forms.forEach( form => {
-			form.appendChild( modalCheckoutInput.cloneNode() );
-			form.target = iframeName;
+	document
+		.querySelectorAll(
+			`.wpbnbd.wpbnbd--platform-wc,.wp-block-newspack-blocks-checkout-button,.${ MODAL_CLASS_PREFIX }-variation`
+		)
+		.forEach( element => {
+			const forms = element.querySelectorAll( 'form' );
+			forms.forEach( form => {
+				form.appendChild( modalCheckoutHiddenInput.cloneNode() );
+				form.target = IFRAME_NAME;
 
-			// Fill in the referrer field.
-			const afterSuccessUrlInput = form.querySelector( 'input[name="after_success_url"]' );
-			const afterSuccessBehaviorInput = form.querySelector(
-				'input[name="after_success_behavior"]'
-			);
-			if (
-				afterSuccessBehaviorInput &&
-				afterSuccessUrlInput &&
-				'referrer' === afterSuccessBehaviorInput.getAttribute( 'value' )
-			) {
-				afterSuccessUrlInput.setAttribute( 'value', document.referrer || window.location.href );
-			}
+				// Fill in the referrer field.
+				const afterSuccessUrlInput = form.querySelector( 'input[name="after_success_url"]' );
+				const afterSuccessBehaviorInput = form.querySelector(
+					'input[name="after_success_behavior"]'
+				);
+				if (
+					afterSuccessBehaviorInput &&
+					afterSuccessUrlInput &&
+					'referrer' === afterSuccessBehaviorInput.getAttribute( 'value' )
+				) {
+					afterSuccessUrlInput.setAttribute( 'value', document.referrer || window.location.href );
+				}
 
-			form.addEventListener( 'submit', ev => {
-				const formData = new FormData( form );
-				// Clear any open variation modal.
-				variationModals.forEach( variationModal => {
-					closeModal( variationModal );
-				} );
-				// Trigger variation modal if variation is not selected.
-				if ( formData.get( 'is_variable' ) && ! formData.get( 'variation_id' ) ) {
-					const variationModal = [ ...variationModals ].find(
-						modal => modal.dataset.productId === formData.get( 'product_id' )
-					);
-					if ( variationModal ) {
-						// Fill in the after success variables in the variation modal.
-						variationModal
-							.querySelectorAll( 'form[target="newspack_modal_checkout"]' )
-							.forEach( singleVariationForm => {
-								[
-									'after_success_behavior',
-									'after_success_url',
-									'after_success_button_label',
-								].forEach( afterSuccessParam => {
-									const input = document.createElement( 'input' );
-									input.type = 'hidden';
-									input.name = afterSuccessParam;
-									input.value = formData.get( afterSuccessParam );
-									singleVariationForm.appendChild( input );
+				form.addEventListener( 'submit', ev => {
+					const formData = new FormData( form );
+					const variationModals = document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-variation` );
+
+					// Clear any open variation modal.
+					variationModals.forEach( variationModal => {
+						closeModal( variationModal );
+					} );
+
+					// Trigger variation modal if variation is not selected.
+					if ( formData.get( 'is_variable' ) && ! formData.get( 'variation_id' ) ) {
+						const variationModal = [ ...variationModals ].find(
+							modal => modal.dataset.productId === formData.get( 'product_id' )
+						);
+						if ( variationModal ) {
+							// Fill in the after success variables in the variation modal.
+							variationModal
+								.querySelectorAll( 'form[target="newspack_modal_checkout"]' )
+								.forEach( singleVariationForm => {
+									[
+										'after_success_behavior',
+										'after_success_url',
+										'after_success_button_label',
+									].forEach( afterSuccessParam => {
+										const input = document.createElement( 'input' );
+										input.type = 'hidden';
+										input.name = afterSuccessParam;
+										input.value = formData.get( afterSuccessParam );
+										singleVariationForm.appendChild( input );
+									} );
 								} );
-							} );
-						// Open the variations modal.
+							// Open the variations modal.
+							ev.preventDefault();
+							openModal( variationModal );
+							return;
+						}
+					}
+
+					if (
+						window?.newspackReaderActivation?.openAuthModal &&
+						! window?.newspackReaderActivation?.getReader?.()?.authenticated
+					) {
 						ev.preventDefault();
-						openModal( variationModal );
-						return;
-					}
-				}
-				// Continue with checkout modal.
-				spinner.style.display = 'flex';
-				openModal( modalCheckout );
-				if ( window.newspackReaderActivation?.overlays ) {
-					modalCheckout.overlayId = window.newspackReaderActivation?.overlays.add();
-				}
-				iframeResizeObserver = new ResizeObserver( entries => {
-					if ( ! entries || ! entries.length ) {
-						return;
-					}
-					const contentRect = entries[ 0 ].contentRect;
-					if ( contentRect ) {
-						// Match iframe and modal content heights to avoid inner iframe scollbar.
-						modalContent.style.height = contentRect.top + contentRect.bottom + 'px';
-						iframe.style.height = contentRect.top + contentRect.bottom + 'px';
+						// Initialize auth flow if reader is not authenticated.
+						window.newspackReaderActivation.openAuthModal( {
+							title: newspackBlocksModal.labels.auth_modal_title,
+							// form.submit does not trigger submit event listener, so we use requestSubmit.
+							callback: () => form.requestSubmit( form.querySelector( 'button[type="submit"]' ) ),
+							skipSuccess: true,
+							labels: {
+								signin: {
+									title: _x(
+										'Sign in to complete transaction',
+										'Login modal title when logged out user attempts to checkout.',
+										'newspack-blocks'
+									),
+								},
+								register: {
+									title: _x(
+										'Register to complete transaction',
+										'Login modal title when unregistered user attempts to checkout',
+										'newspack-blocks'
+									),
+								},
+							},
+						} );
+					} else {
+						// Otherwise initialize checkout.
+						openCheckout();
 					}
 				} );
 			} );
 		} );
-	} );
 
+	/**
+	 * Handle iframe load state.
+	 */
 	iframe.addEventListener( 'load', () => {
 		const location = iframe.contentWindow.location;
 		// If RAS is available, set the front-end authentication.
@@ -204,7 +259,7 @@ domReady( () => {
 				ras.setAuthenticated( true );
 			}
 		}
-		const container = iframe.contentDocument.querySelector( '#newspack_modal_checkout' );
+		const container = iframe.contentDocument.querySelector( `#${ IFRAME_CONTAINER_ID }` );
 		if ( container ) {
 			iframeResizeObserver.observe( container );
 			if ( container.checkoutReady ) {

@@ -53,8 +53,6 @@ final class Modal_Checkout {
 		add_action( 'woocommerce_checkout_process', [ __CLASS__, 'wcsg_apply_gift_subscription' ] );
 		add_filter( 'woocommerce_order_received_verify_known_shoppers', '__return_false' );
 		add_filter( 'woocommerce_order_button_html', [ __CLASS__, 'order_button_html' ], 10, 1 );
-		// TODO: Remove once we apply auth flow to checkout modal.
-		add_filter( 'newspack_reader_activation_should_render_auth', '__return_false' );
 
 		/** Custom handling for registered users. */
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
@@ -238,10 +236,10 @@ final class Modal_Checkout {
 		*
 		* @param string $title The title.
 		*/
-		$title        = apply_filters( 'newspack_blocks_modal_checkout_title', __( 'Complete your transaction', 'newspack-blocks' ) );
+		$title        = self::get_modal_title();
 		$class_prefix = self::get_class_prefix();
 		?>
-		<div class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal-container" ); ?>">
+		<div id="newspack_modal_checkout" class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal-container" ); ?>">
 			<div class="<?php echo esc_attr( "{$class_prefix}__modal-container__overlay" ); ?>"></div>
 			<div class="<?php echo esc_attr( "{$class_prefix}__modal" ); ?>">
 				<header class="<?php echo esc_attr( "{$class_prefix}__modal__header" ); ?>">
@@ -335,7 +333,7 @@ final class Modal_Checkout {
 										<form>
 											<input type="hidden" name="newspack_checkout" value="1" />
 											<input type="hidden" name="product_id" value="<?php echo esc_attr( $variation->get_id() ); ?>" />
-											<button class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--primary" ); ?>"><?php esc_html_e( 'Purchase', 'newspack-blocks' ); ?></button>
+											<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--primary" ); ?>"><?php esc_html_e( 'Purchase', 'newspack-blocks' ); ?></button>
 										</form>
 									</li>
 								<?php endforeach; ?>
@@ -420,6 +418,9 @@ final class Modal_Checkout {
 			'newspackBlocksModal',
 			[
 				'newspack_class_prefix' => self::get_class_prefix(),
+				'labels'                => [
+					'auth_modal_title' => self::get_modal_title(),
+				],
 			]
 		);
 		wp_enqueue_style(
@@ -458,7 +459,7 @@ final class Modal_Checkout {
 			<link rel="profile" href="https://gmpg.org/xfn/11" />
 			<?php wp_head(); ?>
 		</head>
-			<body class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal__content" ); ?>" id="newspack_modal_checkout">
+			<body class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal__content" ); ?>" id="newspack_modal_checkout_container">
 			<?php
 				echo do_shortcode( '[woocommerce_checkout]' );
 				wp_footer();
@@ -1196,6 +1197,18 @@ final class Modal_Checkout {
 			return [];
 		}
 		return $modules;
+	}
+
+	/**
+	 * Gets the modal header title.
+	 */
+	public static function get_modal_title() {
+		/**
+		* Filters the header title for the modal checkout.
+		*
+		* @param string $title The title.
+		*/
+		return apply_filters( 'newspack_blocks_modal_checkout_title', __( 'Complete your transaction', 'newspack-blocks' ) );
 	}
 
 	/**

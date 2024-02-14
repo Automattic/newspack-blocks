@@ -56,6 +56,7 @@ export default function save( { attributes, className } ) {
 					className={ buttonClasses }
 					style={ buttonStyle }
 					value={ text }
+					type="submit"
 				/>
 				<input type="hidden" name="product_id" value={ product } />
 				<input type="hidden" name="newspack_checkout" value="1" />
