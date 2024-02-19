@@ -1550,6 +1550,9 @@ class Newspack_Blocks {
 	 * @return string
 	 */
 	public static function get_formatted_amount( $amount = 0, $frequency = 'day', $hide_once_label = false ) {
+		if ( ! function_exists( 'wc_price' ) ) {
+			return $amount;
+		}
 		if ( ! function_exists( 'wcs_price_string' ) ) {
 			return \wc_price( $amount );
 		}
