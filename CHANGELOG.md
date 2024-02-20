@@ -1,3 +1,11 @@
+## [3.0.1](https://github.com/Automattic/newspack-blocks/compare/v3.0.0...v3.0.1) (2024-02-20)
+
+
+### Bug Fixes
+
+* handle inactive woocommerce ([36a61a2](https://github.com/Automattic/newspack-blocks/commit/36a61a2384002ded40d7ec75f5c9c3f2854a4418))
+* **hpp:** filter invalid autocomplete tokens ([#1671](https://github.com/Automattic/newspack-blocks/issues/1671)) ([b1f9f39](https://github.com/Automattic/newspack-blocks/commit/b1f9f3996aadadf3afd093fac5157e7a04708f3c))
+
 # [3.0.0](https://github.com/Automattic/newspack-blocks/compare/v2.6.2...v3.0.0) (2024-02-20)
 
 
