@@ -1,3 +1,10 @@
+## [3.0.2-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v3.0.1...v3.0.2-alpha.1) (2024-02-23)
+
+
+### Bug Fixes
+
+* **author-blocks:** handle HTML in author bio ([#1672](https://github.com/Automattic/newspack-blocks/issues/1672)) ([4b6c3c4](https://github.com/Automattic/newspack-blocks/commit/4b6c3c4e7a1480e7a68f2737d55fa25389034afa))
+
 ## [3.0.1](https://github.com/Automattic/newspack-blocks/compare/v3.0.0...v3.0.1) (2024-02-20)
 
 
