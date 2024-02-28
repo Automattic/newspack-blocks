@@ -1553,10 +1553,10 @@ class Newspack_Blocks {
 	 *
 	 * @return string
 	 */
-	public static function get_formatted_amount( $amount = false, $frequency = 'day', $hide_once_label = false ) {
+	public static function get_formatted_amount( $amount = 0, $frequency = 'day', $hide_once_label = false ) {
 		if ( ! function_exists( 'wc_price' ) || ( method_exists( 'Newspack\Donations', 'is_platform_wc' ) && ! \Newspack\Donations::is_platform_wc() ) ) {
-			if ( false === $amount ) {
-				return $amount;
+			if ( 0 === $amount ) {
+				return false;
 			}
 
 			$formatter = new NumberFormatter( \get_locale(), NumberFormatter::CURRENCY );
