@@ -97,6 +97,7 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 			<div className="wp-block-newspack-blocks-donate__frequencies frequencies">
 				<div className="tab-container">{ availableFrequencies.map( renderTab ) }</div>
 				{ availableFrequencies.map( frequencySlug => {
+					console.log( amounts );
 					const untieredAmount = amounts[ frequencySlug ][ 3 ];
 					return (
 						<div

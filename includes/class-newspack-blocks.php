@@ -1553,9 +1553,14 @@ class Newspack_Blocks {
 	 *
 	 * @return string
 	 */
-	public static function get_formatted_amount( $amount = 0, $frequency = 'day', $hide_once_label = false ) {
+	public static function get_formatted_amount( $amount = false, $frequency = 'day', $hide_once_label = false ) {
 		if ( ! function_exists( 'wc_price' ) ) {
-			return '$' . $amount;
+			if ( false === $amount ) {
+				return $amount;
+			}
+
+			$formatter = new NumberFormatter( \get_locale(), NumberFormatter::CURRENCY );
+			return '<span class="price-amount">' . $formatter->formatCurrency( $amount, 'USD' ) . '</span>';
 		}
 		if ( ! function_exists( 'wcs_price_string' ) ) {
 			return \wc_price( $amount );

@@ -57,8 +57,17 @@ export const getFrequencyLabel = (
 ) => {
 	const template = window.newspack_blocks_data?.tier_amounts_template;
 
-	if ( ! template || '0' === template ) {
-		return '$' + amount;
+	if ( ! template ) {
+		try {
+			const formatter = new Intl.NumberFormat( navigator?.language || 'en-US', {
+				style: 'currency',
+				currency: 'USD',
+			} );
+
+			return '<span class="price-amount">' + formatter.format( amount ) + '</span>';
+		} catch ( e ) {
+			return '<span class="price-amount">' + amount + '</span>';
+		}
 	}
 
 	const formattedAmount = ( amount || 0 ).toFixed( 2 ).replace( /\.?0*$/, '' );
