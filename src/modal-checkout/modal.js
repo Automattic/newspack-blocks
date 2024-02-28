@@ -1,7 +1,5 @@
 /* globals newspackBlocksModal */
 
-import { _x } from '@wordpress/i18n';
-
 /**
  * Style dependencies
  */
@@ -220,18 +218,10 @@ domReady( () => {
 							skipSuccess: true,
 							labels: {
 								signin: {
-									title: _x(
-										'Sign in to complete transaction',
-										'Login modal title when logged out user attempts to checkout.',
-										'newspack-blocks'
-									),
+									title: newspackBlocksModal.labels.signin_modal_title,
 								},
 								register: {
-									title: _x(
-										'Register to complete transaction',
-										'Login modal title when unregistered user attempts to checkout',
-										'newspack-blocks'
-									),
+									title: newspackBlocksModal.labels.register_modal_title,
 								},
 							},
 						} );

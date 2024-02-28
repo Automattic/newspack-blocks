@@ -416,7 +416,17 @@ final class Modal_Checkout {
 			[
 				'newspack_class_prefix' => self::get_class_prefix(),
 				'labels'                => [
-					'auth_modal_title' => self::get_modal_title(),
+					'auth_modal_title'     => self::get_modal_title(),
+					'signin_modal_title'   => _x(
+						'Sign in to complete transaction',
+						'Login modal title when logged out user attempts to checkout.',
+						'newspack-blocks'
+					),
+					'register_modal_title' => _x(
+						'Register to complete transaction',
+						'Login modal title when unregistered user attempts to checkout',
+						'newspack-blocks'
+					),
 				],
 			]
 		);
