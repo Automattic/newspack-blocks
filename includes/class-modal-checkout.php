@@ -31,6 +31,10 @@ final class Modal_Checkout {
 	 * Initialize hooks.
 	 */
 	public static function init() {
+		if ( ! function_exists( 'WC' ) ) {
+			return;
+		}
+
 		add_action( 'wp_loaded', [ __CLASS__, 'process_checkout_request' ], 5 );
 		add_action( 'wp_footer', [ __CLASS__, 'render_modal_markup' ], 100 );
 		add_action( 'wp_footer', [ __CLASS__, 'render_variation_selection' ], 100 );
