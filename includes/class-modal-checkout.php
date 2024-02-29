@@ -31,10 +31,6 @@ final class Modal_Checkout {
 	 * Initialize hooks.
 	 */
 	public static function init() {
-		if ( ! function_exists( 'WC' ) ) {
-			return;
-		}
-
 		add_action( 'wp_loaded', [ __CLASS__, 'process_checkout_request' ], 5 );
 		add_action( 'wp_footer', [ __CLASS__, 'render_modal_markup' ], 100 );
 		add_action( 'wp_footer', [ __CLASS__, 'render_variation_selection' ], 100 );
@@ -301,6 +297,10 @@ final class Modal_Checkout {
 	 * Render variation selection modal for variable products.
 	 */
 	public static function render_variation_selection() {
+		if ( ! function_exists( 'WC' ) ) {
+			return;
+		}
+
 		$products = array_keys( self::$products );
 		foreach ( $products as $product_id ) {
 			$product = wc_get_product( $product_id );
