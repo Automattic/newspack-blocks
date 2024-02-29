@@ -70,13 +70,14 @@ export const getFrequencyLabel = (
 					: // Translators: %s is the %s is the frequency.
 					  sprintf( __( 'per %s', 'newspack-blocks' ), frequencySlug );
 
-			return (
+			const formattedPrice =
 				'<span class="price-amount">' +
 				formatter.format( amount ) +
 				'</span> <span class="tier-frequency">' +
 				frequencyString +
-				'</span>'
-			);
+				'</span>';
+
+			return formattedPrice.replace( '.00', '' );
 		} catch ( e ) {
 			return '<span class="price-amount">' + amount + '</span>';
 		}
