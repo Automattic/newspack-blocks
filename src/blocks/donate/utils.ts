@@ -64,7 +64,19 @@ export const getFrequencyLabel = (
 				currency: 'USD',
 			} );
 
-			return '<span class="price-amount">' + formatter.format( amount ) + '</span>';
+			const frequencyString =
+				frequencySlug === 'once'
+					? frequencySlug
+					: // Translators: %s is the %s is the frequency.
+					  sprintf( __( 'per %s', 'newspack-blocks' ), frequencySlug );
+
+			return (
+				'<span class="price-amount">' +
+				formatter.format( amount ) +
+				'</span> <span class="tier-frequency">' +
+				frequencyString +
+				'</span>'
+			);
 		} catch ( e ) {
 			return '<span class="price-amount">' + amount + '</span>';
 		}

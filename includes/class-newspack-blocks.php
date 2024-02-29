@@ -1559,8 +1559,11 @@ class Newspack_Blocks {
 				return false;
 			}
 
+			// Translators: %s is the %s is the frequency.
+			$frequency_string = 'once' === $frequency ? $frequency : sprintf( __( 'per %s', 'newspack-blocks' ), $frequency );
+
 			$formatter = new NumberFormatter( \get_locale(), NumberFormatter::CURRENCY );
-			return '<span class="price-amount">' . $formatter->formatCurrency( $amount, 'USD' ) . '</span>';
+			return '<span class="price-amount">' . $formatter->formatCurrency( $amount, 'USD' ) . '</span> <span class="tier-frequency">' . $frequency_string . '</span>';
 		}
 		if ( ! function_exists( 'wcs_price_string' ) ) {
 			return \wc_price( $amount );
