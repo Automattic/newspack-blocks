@@ -250,8 +250,8 @@ class Edit extends Component {
 						<Fragment>
 							{ autoplay && (
 								<Fragment>
-									<button ref={ this.btnPauseRef } />
-									<button ref={ this.btnPlayRef } />
+									<button className="swiper-button swiper-button-pause" ref={ this.btnPauseRef } />
+									<button className="swiper-button swiper-button-play" ref={ this.btnPlayRef } />
 								</Fragment>
 							) }
 							<div className="swiper-wrapper">
@@ -339,8 +339,8 @@ class Edit extends Component {
 							</div>
 							{ ! hasNoPosts && ! hasOnePost && (
 								<>
-									<button className="swiper-button-prev" ref={ this.btnPrevRef } />
-									<button className="swiper-button-next" ref={ this.btnNextRef } />
+									<button className="swiper-button-prev swiper-button" ref={ this.btnPrevRef } />
+									<button className="swiper-button-next swiper-button" ref={ this.btnNextRef } />
 									<div
 										className="swiper-pagination swiper-pagination-bullets"
 										ref={ this.paginationRef }
