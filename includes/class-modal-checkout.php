@@ -1028,9 +1028,11 @@ final class Modal_Checkout {
 		}
 
 		// If billing state is required but billing country is not, we need to ensure a default location is set.
-		$billing_fields = get_option( Donations::DONATION_BILLING_FIELDS_OPTION, [] );
-		if ( ! in_array( 'billing_country', $billing_fields, true ) && in_array( 'billing_state', $billing_fields, true ) ) {
-			return 'base';
+		if ( defined( '\Newspack\Donations::DONATION_BILLING_FIELDS_OPTION' ) ) {
+			$billing_fields = get_option( \Newspack\Donations::DONATION_BILLING_FIELDS_OPTION, [] );
+			if ( ! in_array( 'billing_country', $billing_fields, true ) && in_array( 'billing_state', $billing_fields, true ) ) {
+				return 'base';
+			}
 		}
 
 		return $option_value;
