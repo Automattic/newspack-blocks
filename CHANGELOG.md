@@ -1,9 +1,31 @@
+## [3.0.3](https://github.com/Automattic/newspack-blocks/compare/v3.0.2...v3.0.3) (2024-03-04)
+
+
+### Bug Fixes
+
+* **author-blocks:** handle HTML in author bio ([#1672](https://github.com/Automattic/newspack-blocks/issues/1672)) ([4b6c3c4](https://github.com/Automattic/newspack-blocks/commit/4b6c3c4e7a1480e7a68f2737d55fa25389034afa))
+
+## [3.0.3-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v3.0.2...v3.0.3-alpha.1) (2024-02-29)
+
+
+### Bug Fixes
+
+* **author-blocks:** handle HTML in author bio ([#1672](https://github.com/Automattic/newspack-blocks/issues/1672)) ([4b6c3c4](https://github.com/Automattic/newspack-blocks/commit/4b6c3c4e7a1480e7a68f2737d55fa25389034afa))
+
+## [3.0.2-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v3.0.1...v3.0.2-alpha.1) (2024-02-23)
+
+
+### Bug Fixes
+
+* **author-blocks:** handle HTML in author bio ([#1672](https://github.com/Automattic/newspack-blocks/issues/1672)) ([4b6c3c4](https://github.com/Automattic/newspack-blocks/commit/4b6c3c4e7a1480e7a68f2737d55fa25389034afa))
+
 ## [3.0.2](https://github.com/Automattic/newspack-blocks/compare/v3.0.1...v3.0.2) (2024-02-29)
 
 
 ### Bug Fixes
 
 * donate block layout for NRH ([#1682](https://github.com/Automattic/newspack-blocks/issues/1682)) ([230889e](https://github.com/Automattic/newspack-blocks/commit/230889ed5e42389ffc989d5b3b234494e230d7d0))
+
 
 ## [3.0.1](https://github.com/Automattic/newspack-blocks/compare/v3.0.0...v3.0.1) (2024-02-20)
 
