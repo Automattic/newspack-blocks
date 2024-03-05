@@ -163,7 +163,6 @@ export const getBlockQueries = (
 		const homepageArticleBlocks = [];
 		if ( blockNames.indexOf( block.name ) >= 0 ) {
 			const postsQuery = queryCriteriaFromAttributes( block.attributes );
-			console.log( postsQuery );
 			homepageArticleBlocks.push( { postsQuery, clientId: block.clientId } );
 		}
 		return homepageArticleBlocks.concat( getBlockQueries( block.innerBlocks, blockNames ) );
