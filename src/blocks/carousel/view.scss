@@ -77,6 +77,21 @@
 				}
 			}
 		}
+
+		.entry-caption {
+			margin-top: 1em;
+			width: 100%;
+
+			figcaption {
+				color: #fff;
+				font-size: 0.75em;
+
+				a {
+					font-weight: 400;
+					text-decoration: underline;
+				}
+			}
+		}
 	}
 	.post-thumbnail {
 		margin: 0;
