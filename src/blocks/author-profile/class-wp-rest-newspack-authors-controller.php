@@ -111,27 +111,33 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 
 			$guest_authors = get_posts( $guest_author_args );
 
-			// We only want unlinked guest authors in guest_authors array.
-			foreach ( $guest_authors as $ga ) {
-				$linked_guest_author = get_post_meta( $ga->ID, 'cap-linked_account', true );
+			// If we are searching for a specific ID we want to return the guest author regardless of if it is linked or not.
+			if ( ! $author_id ) {
+				foreach ( $guest_authors as $ga ) {
+					$linked_guest_author = get_post_meta( $ga->ID, 'cap-linked_account', true );
 
-				if ( $linked_guest_author ) {
-					continue;
+					if ( $linked_guest_author ) {
+						continue;
+					}
+
+					$unlinked_guest_authors[] = $ga;
 				}
 
-				$unlinked_guest_authors[] = $ga;
+				$guest_authors = $unlinked_guest_authors;
 			}
 
-			$guest_authors      = $unlinked_guest_authors;
 			$guest_author_total = count( $guest_authors );
 		}
 
-		// If passed an author ID.
-		if ( $author_id && 0 === $guest_author_total ) {
-			$user = get_user_by( 'id', $author_id ); // Get the WP user.
+		// If we are searching for a specific ID we just want to return the specific user.
+		if ( $author_id ) {
+			// Unless we've already identified a guest author.
+			if ( 0 === $guest_author_total ) {
+				$user = get_user_by( 'id', $author_id ); // Get the WP user.
 
-			if ( $user ) {
-				$users = [ $user ];
+				if ( $user ) {
+					$users = [ $user ];
+				}
 			}
 		} else {
 			$user_args = [
