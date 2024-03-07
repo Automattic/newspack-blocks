@@ -196,10 +196,13 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 								);
 							endif;
 							if ( $show_caption || $show_credit ) :
-								?>
-								<div class="entry-caption">
-									<?php echo wp_kses_post( Newspack_Blocks::get_image_caption( get_post_thumbnail_id(), $show_caption, $show_credit ) ); ?>
-								<?php
+								$full_caption = Newspack_Blocks::get_image_caption( get_post_thumbnail_id(), $show_caption, $show_credit );
+								if ( $full_caption ) :
+									?>
+									<div class="entry-caption">
+										<?php echo wp_kses_post( $full_caption ); ?>
+									<?php
+								endif;
 							endif;
 							?>
 						</div><!-- .entry-meta -->

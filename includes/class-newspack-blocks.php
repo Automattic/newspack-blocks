@@ -1615,10 +1615,15 @@ class Newspack_Blocks {
 			$credit = \Newspack\Newspack_Image_Credits::get_media_credit_string( $attachment_id );
 		}
 
+		$full_caption = trim( $caption . ' ' . $credit );
+		if ( empty( $full_caption ) ) {
+			return '';
+		}
+
 		$combined_caption = sprintf(
-			'<figcaption>%1$s %2$s</figcaption>',
-			$caption,
-			$credit
+			'<figcaption%1$s>%2$s</figcaption>',
+			! empty( $credit ) ? ' class="has-credit"' : '',
+			$full_caption
 		);
 
 		return $combined_caption;
