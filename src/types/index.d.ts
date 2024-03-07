@@ -119,6 +119,7 @@ declare global {
 		showDate: boolean;
 		showImage: boolean;
 		showCaption: boolean;
+		showCredit: boolean;
 		disableImageLazyLoad: boolean;
 		fetchPriority: string;
 		imageShape: string;
