@@ -1,3 +1,10 @@
+## [3.0.4](https://github.com/Automattic/newspack-blocks/compare/v3.0.3...v3.0.4) (2024-03-07)
+
+
+### Bug Fixes
+
+* show credit option for homepage posts & carousel blocks ([#1687](https://github.com/Automattic/newspack-blocks/issues/1687)) ([92a7bd3](https://github.com/Automattic/newspack-blocks/commit/92a7bd33dd1b8a41ecd85a62a748e743015d634a))
+
 ## [3.0.3](https://github.com/Automattic/newspack-blocks/compare/v3.0.2...v3.0.3) (2024-03-04)
 
 
