@@ -346,10 +346,6 @@
 			text-overflow: ellipsis;
 			z-index: 3;
 
-			&.has-credit {
-				text-align: left;
-			}
-
 			@include mixins.media( desktop ) {
 				padding: 0 1.5rem;
 			}
