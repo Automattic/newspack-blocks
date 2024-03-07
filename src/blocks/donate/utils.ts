@@ -1,3 +1,4 @@
+import { __, _x, sprintf } from '@wordpress/i18n';
 import type { DonationFrequencySlug } from './types';
 
 const hexToRGB = ( hex: string ): number[] => {
@@ -47,4 +48,56 @@ export const getMigratedAmount = (
 		amounts[ 2 ] * multiplier,
 		untieredAmount * multiplier,
 	];
+};
+
+export const getFrequencyLabel = (
+	amount: number,
+	frequencySlug: DonationFrequencySlug,
+	hideOnceLabel = false
+) => {
+	const template = window.newspack_blocks_data?.tier_amounts_template;
+
+	if ( ! template ) {
+		try {
+			const formatter = new Intl.NumberFormat( navigator?.language || 'en-US', {
+				style: 'currency',
+				currency: 'USD',
+			} );
+
+			const frequencyString =
+				frequencySlug === 'once'
+					? frequencySlug
+					: // Translators: %s is the %s is the frequency.
+					  sprintf( __( 'per %s', 'newspack-blocks' ), frequencySlug );
+
+			const formattedPrice =
+				'<span class="price-amount">' +
+				formatter.format( amount ) +
+				'</span> <span class="tier-frequency">' +
+				frequencyString +
+				'</span>';
+
+			return formattedPrice.replace( '.00', '' );
+		} catch ( e ) {
+			return '<span class="price-amount">' + amount + '</span>';
+		}
+	}
+
+	const formattedAmount = ( amount || 0 ).toFixed( 2 ).replace( /\.?0*$/, '' );
+
+	const frequency =
+		// eslint-disable-next-line no-nested-ternary
+		frequencySlug === 'once'
+			? hideOnceLabel
+				? ''
+				: __( ' once', 'newspack-blocks' )
+			: sprintf(
+					// Translators: %s is the frequency (e.g. per month, per year).
+					_x( ' per %s', 'per `Frequency`', 'newspack-blocks' ),
+					frequencySlug
+			  );
+
+	return template
+		.replace( 'AMOUNT_PLACEHOLDER', formattedAmount )
+		.replace( 'FREQUENCY_PLACEHOLDER', frequency );
 };

@@ -17,6 +17,25 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 	private static $configurations_cache = []; // phpcs:ignore Squiz.Commenting.VariableComment.Missing
 
 	/**
+	 * Get translatable frequency label.
+	 *
+	 * @param string $frequency_slug Frequency slug.
+	 * @param bool   $hide_once_label Whether to hide the "once" label.
+	 *
+	 * @return string
+	 */
+	public static function get_frequency_label( $frequency_slug, $hide_once_label = false ) {
+		switch ( $frequency_slug ) {
+			case 'once':
+				return $hide_once_label ? '' : ' ' . __( 'once', 'newspack-blocks' );
+			case 'month':
+				return ' ' . __( 'per month', 'newspack-blocks' );
+			case 'year':
+				return ' ' . __( 'per year', 'newspack-blocks' );
+		}
+	}
+
+	/**
 	 * Get configuration, based on block attributes and global settings.
 	 *
 	 * @param array $attributes Block attributes.
@@ -34,7 +53,7 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 		$configuration['defaultFrequency'] = $attributes['defaultFrequency'];
 
 		/* If block is in "manual" mode, override certain state properties with values stored in attributes */
-		if ( $attributes['manual'] ?? false ) {
+		if ( Newspack_Blocks::can_use_name_your_price() && ! empty( $attributes['manual'] ) ) {
 			// Migrate old attributes.
 			if ( empty( $attributes['amounts'] ) && isset( $attributes['suggestedAmounts'] ) ) {
 				$other_amount = $configuration['amounts']['month'][3];
@@ -59,9 +78,7 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 					'year'  => $multiplied_amounts,
 				];
 			}
-			if ( isset( $attributes['tiered'] ) ) {
-				$configuration['tiered'] = $attributes['tiered'];
-			}
+			$configuration['tiered'] = $attributes['tiered'] && Newspack_Blocks::can_use_name_your_price();
 			if ( isset( $attributes['amounts'] ) && ! empty( $attributes['amounts'] ) ) {
 				$configuration['amounts'] = $attributes['amounts'];
 			}
@@ -112,19 +129,20 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 			$classname = 'is-style-default';
 		}
 
-		$layout_version                        = ( $is_tiers_based ? 'tiers' : 'frequency' );
-		$container_classnames                  = implode(
-			' ',
-			[
-				'wp-block-newspack-blocks-donate',
-				'wpbnbd',
-				'wpbnbd--' . $layout_version . '-based',
-				'wpbnbd--platform-' . $configuration['platform'],
-				$classname,
-				'wpbnbd-frequencies--' . count( $configuration['frequencies'] ),
-			]
-		);
-		$configuration['container_classnames'] = $container_classnames;
+		$layout_version = ( $is_tiers_based ? 'tiers' : 'frequency' );
+		$class_names    = [
+			'wp-block-newspack-blocks-donate',
+			'wpbnbd',
+			'wpbnbd--' . $layout_version . '-based',
+			'wpbnbd--platform-' . $configuration['platform'],
+			$classname,
+			'wpbnbd-frequencies--' . count( $configuration['frequencies'] ),
+		];
+
+		if ( ! Newspack_Blocks::can_use_name_your_price() ) {
+			$class_names[] = 'wpbnbd--nyp-disabled';
+		}
+		$configuration['container_classnames'] = implode( ' ', $class_names );
 
 		if ( isset( $configuration['minimumDonation'] ) ) {
 			foreach ( $configuration['amounts'] as $frequency => $amounts ) {

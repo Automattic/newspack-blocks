@@ -167,6 +167,12 @@
 			width: calc( 100% + 2px );
 		}
 	}
+
+	@include mixins.media( mobile ) {
+		&.wpbnbd--nyp-disabled .frequencies input[type='radio']:checked ~ .tiers {
+			grid-template-columns: repeat( 3, 1fr );
+		}
+	}
 }
 
 /* Minimal Style */
@@ -205,7 +211,7 @@
 				position: relative;
 				border: none;
 				padding: 8px;
-				min-width: 50%;
+				flex-basis: 100%;
 				&::after {
 					position: absolute;
 					content: '';
@@ -324,5 +330,11 @@
 	button[type='submit'] {
 		margin: 0 auto;
 		min-width: 50%;
+	}
+
+	@include mixins.media( mobile ) {
+		&.wpbnbd--nyp-disabled .frequency input[type='radio']:checked ~ .tiers {
+			grid-template-columns: repeat( 3, 1fr );
+		}
 	}
 }

@@ -9,6 +9,8 @@ declare global {
 			has_recaptcha: boolean;
 			recaptcha_url: string;
 			post_subtitle: boolean;
+			can_use_name_your_price: boolean;
+			tier_amounts_template: string;
 		};
 		grecaptcha: any;
 		newspackReaderActivation: {
@@ -37,6 +39,8 @@ declare global {
 		include?: PostId[];
 		excerptLength?: number;
 		showExcerpt?: boolean;
+		showCaption?: boolean,
+		showCredit?: boolean,
 	};
 
 	type Block = {
@@ -44,7 +48,7 @@ declare global {
 		clientId: string;
 		attributes: {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			[ key: string ]: any;
+			[key: string]: any;
 		};
 		innerBlocks: Block[];
 	};
@@ -83,10 +87,10 @@ declare global {
 		newspack_sponsors_show_categories: boolean;
 		newspack_sponsors_show_author: boolean;
 		newspack_post_sponsors?:
-			| {
-					flag: string;
-			  }[]
-			| false;
+		| {
+			flag: string;
+		}[]
+		| false;
 		newspack_listings_hide_author?: boolean;
 		newspack_listings_hide_publish_date?: boolean;
 	};
@@ -141,7 +145,7 @@ declare global {
 	type HomepageArticlesAttributesKey = keyof HomepageArticlesAttributes;
 
 	type HomepageArticlesPropsFromDataSelector = {
-		topBlocksClientIdsInOrder: Block[ 'clientId' ][];
+		topBlocksClientIdsInOrder: Block['clientId'][];
 		latestPosts: Post[];
 		isEditorBlock: boolean;
 		isUIDisabled: boolean;
@@ -150,15 +154,15 @@ declare global {
 
 	type HomepageArticlesProps = HomepageArticlesPropsFromDataSelector & {
 		attributes: HomepageArticlesAttributes;
-		setAttributes: ( attributes: Partial< HomepageArticlesAttributes > ) => void;
+		setAttributes: (attributes: Partial<HomepageArticlesAttributes>) => void;
 		textColor: {
 			color: string;
 		};
-		setTextColor: ( color: string ) => void;
+		setTextColor: (color: string) => void;
 		triggerReflow: () => void;
 		className: string;
 		isSelected: boolean;
 	};
 }
 
-export {};
+export { };

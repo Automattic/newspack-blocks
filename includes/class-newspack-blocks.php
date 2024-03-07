@@ -231,6 +231,19 @@ class Newspack_Blocks {
 	}
 
 	/**
+	 * Check if the Name Your Price extension is available.
+	 *
+	 * @return bool True if available, false if not.
+	 */
+	public static function can_use_name_your_price() {
+		// If the donation platform is NRH, the Donate block should behave as if Name Your Price is available.
+		if ( method_exists( 'Newspack\Donations', 'is_platform_nrh' ) && \Newspack\Donations::is_platform_nrh() ) {
+			return true;
+		}
+		return class_exists( 'WC_Name_Your_Price_Helpers' );
+	}
+
+	/**
 	 * Enqueue block scripts and styles for editor.
 	 */
 	public static function enqueue_block_editor_assets() {
@@ -257,6 +270,8 @@ class Newspack_Blocks {
 				'has_recaptcha'              => class_exists( 'Newspack\Recaptcha' ) && \Newspack\Recaptcha::can_use_captcha(),
 				'recaptcha_url'              => admin_url( 'admin.php?page=newspack-connections-wizard' ),
 				'custom_taxonomies'          => self::get_custom_taxonomies(),
+				'can_use_name_your_price'    => self::can_use_name_your_price(),
+				'tier_amounts_template'      => self::get_formatted_amount(),
 			];
 
 			if ( class_exists( 'WP_REST_Newspack_Author_List_Controller' ) ) {
@@ -1570,6 +1585,91 @@ class Newspack_Blocks {
 		if ( strlen( $meta_footer ) > 0 ) {
 			return '<span style="margin: 0 6px;" class="newspack_blocks__article-meta-footer__separator">|</span>' . $meta_footer;
 		}
+	}
+
+	/**
+	 * Get a formatted HTML string containing amount and frequency of a donation.
+	 *
+	 * @param float  $amount Amount.
+	 * @param string $frequency Frequency.
+	 * @param bool   $hide_once_label Whether to hide the "once" label.
+	 *
+	 * @return string
+	 */
+	public static function get_formatted_amount( $amount = 0, $frequency = 'day', $hide_once_label = false ) {
+		if ( ! function_exists( 'wc_price' ) || ( method_exists( 'Newspack\Donations', 'is_platform_wc' ) && ! \Newspack\Donations::is_platform_wc() ) ) {
+			if ( 0 === $amount ) {
+				return false;
+			}
+
+			// Translators: %s is the %s is the frequency.
+			$frequency_string = 'once' === $frequency ? $frequency : sprintf( __( 'per %s', 'newspack-blocks' ), $frequency );
+			$formatter        = new NumberFormatter( \get_locale(), NumberFormatter::CURRENCY );
+			$formatted_price  = '<span class="price-amount">' . $formatter->formatCurrency( $amount, 'USD' ) . '</span> <span class="tier-frequency">' . $frequency_string . '</span>';
+			return str_replace( '.00', '', $formatted_price );
+		}
+		if ( ! function_exists( 'wcs_price_string' ) ) {
+			return \wc_price( $amount );
+		}
+		$price_args          = [
+			'recurring_amount'    => $amount,
+			'subscription_period' => 'once' === $frequency ? 'day' : $frequency,
+		];
+		$wc_formatted_amount = \wcs_price_string( $price_args );
+
+		// A '0' value means we want a placeholder string to replace in the editor.
+		if ( 0 === $amount ) {
+			preg_match( '/<\/span>(.*)<\/bdi>/', $wc_formatted_amount, $matches );
+			if ( ! empty( $matches[1] ) ) {
+				$wc_formatted_amount = str_replace( $matches[1], 'AMOUNT_PLACEHOLDER', $wc_formatted_amount );
+			}
+		}
+
+		// A 'day' frequency means we want a placeholder string to replace in the editor.
+		if ( 'day' === $frequency ) {
+			$wc_formatted_amount = preg_replace( '/ \/ ?.*/', 'FREQUENCY_PLACEHOLDER', $wc_formatted_amount );
+		} elseif ( 'once' === $frequency ) {
+			$once_label          = $hide_once_label ? '' : __( ' once', 'newspack-blocks' );
+			$wc_formatted_amount = preg_replace( '/ \/ ?.*/', $once_label, $wc_formatted_amount );
+		}
+		$wc_formatted_amount = str_replace( ' / ', __( ' per ', 'newspack-blocks' ), $wc_formatted_amount );
+
+		return '<span class="wpbnbd__tiers__amount__value">' . $wc_formatted_amount . '</span>';
+	}
+
+	/**
+	 * Get an image caption, optionally with credit appended.
+	 *
+	 * @param int  $attachment_id Attachment ID of the image.
+	 * @param bool $include_caption Whether to include the caption.
+	 * @param bool $include_credit Whether to include the credit.
+	 *
+	 * @return string
+	 */
+	public static function get_image_caption( $attachment_id = null, $include_caption = true, $include_credit = false ) {
+		if ( ! $attachment_id || ( ! $include_caption && ! $include_credit ) ) {
+			return '';
+		}
+
+		$caption = $include_caption ? wp_get_attachment_caption( $attachment_id ) : '';
+		$credit  = '';
+
+		if ( $include_credit && method_exists( 'Newspack\Newspack_Image_Credits', 'get_media_credit_string' ) ) {
+			$credit = \Newspack\Newspack_Image_Credits::get_media_credit_string( $attachment_id );
+		}
+
+		$full_caption = trim( $caption . ' ' . $credit );
+		if ( empty( $full_caption ) ) {
+			return '';
+		}
+
+		$combined_caption = sprintf(
+			'<figcaption%1$s>%2$s</figcaption>',
+			! empty( $credit ) ? ' class="has-credit"' : '',
+			$full_caption
+		);
+
+		return $combined_caption;
 	}
 }
 Newspack_Blocks::init();

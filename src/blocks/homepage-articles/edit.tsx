@@ -109,6 +109,7 @@ class Edit extends Component< HomepageArticlesProps > {
 			mediaPosition,
 			minHeight,
 			showCaption,
+			showCredit,
 			showExcerpt,
 			showReadMore,
 			readMoreLabel,
@@ -163,8 +164,12 @@ class Edit extends Component< HomepageArticlesProps > {
 								<img src={ post.newspack_featured_image_src.uncropped } alt="" />
 							) }
 						</a>
-						{ showCaption && '' !== post.newspack_featured_image_caption && (
-							<figcaption>{ post.newspack_featured_image_caption }</figcaption>
+						{ ( showCaption || showCredit ) && (
+							<div
+								dangerouslySetInnerHTML={ {
+									__html: post.newspack_featured_image_caption,
+								} }
+							/>
 						) }
 					</figure>
 				) }
@@ -270,6 +275,7 @@ class Edit extends Component< HomepageArticlesProps > {
 			postType,
 			showImage,
 			showCaption,
+			showCredit,
 			imageScale,
 			mobileStack,
 			minHeight,
@@ -457,13 +463,22 @@ class Edit extends Component< HomepageArticlesProps > {
 					</PanelRow>
 
 					{ showImage && (
-						<PanelRow>
-							<ToggleControl
-								label={ __( 'Show Featured Image Caption', 'newspack-blocks' ) }
-								checked={ showCaption }
-								onChange={ () => setAttributes( { showCaption: ! showCaption } ) }
-							/>
-						</PanelRow>
+						<>
+							<PanelRow>
+								<ToggleControl
+									label={ __( 'Show Featured Image Caption', 'newspack-blocks' ) }
+									checked={ showCaption }
+									onChange={ () => setAttributes( { showCaption: ! showCaption } ) }
+								/>
+							</PanelRow>
+							<PanelRow>
+								<ToggleControl
+									label={ __( 'Show Featured Image Credit', 'newspack-blocks' ) }
+									checked={ showCredit }
+									onChange={ () => setAttributes( { showCredit: ! showCredit } ) }
+								/>
+							</PanelRow>
+						</>
 					) }
 
 					{ showImage && mediaPosition !== 'top' && mediaPosition !== 'behind' && (
