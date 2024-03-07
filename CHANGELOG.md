@@ -1,10 +1,10 @@
 ## [3.0.4-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v3.0.3...v3.0.4-alpha.1) (2024-03-07)
 
-
 ### Bug Fixes
 
 * correct carousel button styles in editor ([#1680](https://github.com/Automattic/newspack-blocks/issues/1680)) ([d4aba73](https://github.com/Automattic/newspack-blocks/commit/d4aba73ee6a65115122d35b1587afbfc28d08fcd))
 * **modal-checkout:** ensure customer location when state is required but country is not ([#1683](https://github.com/Automattic/newspack-blocks/issues/1683)) ([27badf8](https://github.com/Automattic/newspack-blocks/commit/27badf8690dfcc84819bd495a1e0a947756b7739))
+
 
 ## [3.0.3](https://github.com/Automattic/newspack-blocks/compare/v3.0.2...v3.0.3) (2024-03-04)
 
