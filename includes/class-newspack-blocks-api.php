@@ -74,16 +74,6 @@ class Newspack_Blocks_API {
 	}
 
 	/**
-	 * Get thumbnail featured image captions for the rest field.
-	 *
-	 * @param array $object_info The object info.
-	 * @return string|null Image caption on success, null on failure.
-	 */
-	public static function newspack_blocks_get_image_caption( $object_info ) {
-		return (int) $object_info['featured_media'] > 0 ? trim( wp_get_attachment_caption( $object_info['featured_media'] ) ) : null;
-	}
-
-	/**
 	 * Get author info for the rest field.
 	 *
 	 * @param array $object_info The object info.
@@ -288,8 +278,6 @@ class Newspack_Blocks_API {
 			$GLOBALS['post'] = $post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			setup_postdata( $post );
 
-			$post_date_gmt = '0000-00-00 00:00:00' === $post->post_date_gmt ? get_gmt_from_date( $post->post_date ) : $post->post_date_gmt;
-
 			// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			$excerpt = apply_filters( 'get_the_excerpt', $post->post_excerpt, $post );
 			$excerpt = apply_filters( 'the_excerpt', $excerpt );
@@ -298,19 +286,20 @@ class Newspack_Blocks_API {
 
 			$meta = new WP_REST_Post_Meta_Fields( 'post' );
 			$data = [
-				'author'         => (int) $post->post_author,
-				'content'        => [
+				'author'              => (int) $post->post_author,
+				'content'             => [
 					'rendered' => post_password_required( $post ) ? '' : $content,
 				],
-				'date_gmt'       => mysql_to_rfc3339( $post_date_gmt ),
-				'date'           => mysql_to_rfc3339( $post->post_date ),
-				'excerpt'        => [
+				'date'                => Newspack_Blocks::get_displayed_post_date( $post ),
+				'date_formatted'      => Newspack_Blocks::get_formatted_displayed_post_date( $post ),
+				'article_meta_footer' => Newspack_Blocks::get_article_meta_footer( $post ),
+				'excerpt'             => [
 					'rendered' => post_password_required( $post ) ? '' : $excerpt,
 				],
-				'featured_media' => (int) get_post_thumbnail_id( $post->ID ),
-				'id'             => $post->ID,
-				'meta'           => $meta->get_value( $post->ID, $request ),
-				'title'          => [
+				'featured_media'      => (int) get_post_thumbnail_id( $post->ID ),
+				'id'                  => $post->ID,
+				'meta'                => $meta->get_value( $post->ID, $request ),
+				'title'               => [
 					'rendered' => get_the_title( $post->ID ),
 				],
 			];
@@ -320,7 +309,7 @@ class Newspack_Blocks_API {
 				'newspack_article_classes'          => Newspack_Blocks::get_term_classes( $data['id'] ),
 				'newspack_author_info'              => self::newspack_blocks_get_author_info( $data ),
 				'newspack_category_info'            => self::newspack_blocks_get_primary_category( $data ),
-				'newspack_featured_image_caption'   => self::newspack_blocks_get_image_caption( $data ),
+				'newspack_featured_image_caption'   => Newspack_Blocks::get_image_caption( $data['featured_media'], $attributes['showCaption'], $attributes['showCredit'] ),
 				'newspack_featured_image_src'       => self::newspack_blocks_get_image_src( $data ),
 				'newspack_has_custom_excerpt'       => self::newspack_blocks_has_custom_excerpt( $data ),
 				'newspack_post_sponsors'            => self::newspack_blocks_sponsor_info( $data ),

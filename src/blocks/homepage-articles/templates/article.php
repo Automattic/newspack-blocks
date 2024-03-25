@@ -79,8 +79,8 @@ call_user_func(
 				</a>
 				<?php endif; ?>
 
-				<?php if ( $attributes['showCaption'] && '' !== get_the_post_thumbnail_caption() ) : ?>
-					<figcaption><?php the_post_thumbnail_caption(); ?></figcaption>
+				<?php if ( $attributes['showCaption'] || $attributes['showCredit'] ) : ?>
+					<?php echo wp_kses_post( Newspack_Blocks::get_image_caption( get_post_thumbnail_id(), $attributes['showCaption'], $attributes['showCredit'] ) ); ?>
 				<?php endif; ?>
 			</figure><!-- .featured-image -->
 		<?php endif; ?>
@@ -235,12 +235,13 @@ call_user_func(
 									),
 								)
 							),
-							esc_attr( get_the_date( DATE_W3C ) ),
-							esc_html( get_the_date() ),
+							esc_attr( Newspack_Blocks::get_displayed_post_date() ),
+							esc_html( Newspack_Blocks::get_formatted_displayed_post_date() ),
 							esc_attr( get_the_modified_date( DATE_W3C ) ),
 							esc_html( get_the_modified_date() )
 						);
 					endif;
+					echo Newspack_Blocks::get_article_meta_footer();  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					?>
 				</div><!-- .entry-meta -->
 			<?php endif; ?>

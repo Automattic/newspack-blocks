@@ -23,8 +23,6 @@ import classNames from 'classnames';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
-import { dateI18n, __experimentalGetSettings } from '@wordpress/date';
 import { Component, Fragment, RawHTML } from '@wordpress/element';
 import {
 	BlockControls,
@@ -63,7 +61,7 @@ import {
 	pullRight,
 } from '@wordpress/icons';
 
-let IS_SUBTITLE_SUPPORTED_IN_THEME;
+let IS_SUBTITLE_SUPPORTED_IN_THEME: boolean;
 if (
 	typeof window === 'object' &&
 	window.newspack_blocks_data &&
@@ -102,8 +100,8 @@ const squareIcon = (
 	</SVG>
 );
 
-class Edit extends Component {
-	renderPost = post => {
+class Edit extends Component< HomepageArticlesProps > {
+	renderPost = ( post: Post ) => {
 		const { attributes, isUIDisabled } = this.props;
 		const {
 			showImage,
@@ -111,6 +109,7 @@ class Edit extends Component {
 			mediaPosition,
 			minHeight,
 			showCaption,
+			showCredit,
 			showExcerpt,
 			showReadMore,
 			readMoreLabel,
@@ -124,15 +123,17 @@ class Edit extends Component {
 
 		const styles = {
 			minHeight:
-				mediaPosition === 'behind' &&
-				showImage &&
-				post.newspack_featured_image_src &&
-				minHeight + 'vh',
+				( mediaPosition === 'behind' &&
+					showImage &&
+					post.newspack_featured_image_src &&
+					minHeight + 'vh' ) ||
+				undefined,
 			paddingTop:
-				mediaPosition === 'behind' &&
-				showImage &&
-				post.newspack_featured_image_src &&
-				minHeight / 5 + 'vh',
+				( mediaPosition === 'behind' &&
+					showImage &&
+					post.newspack_featured_image_src &&
+					minHeight / 5 + 'vh' ) ||
+				undefined,
 		};
 
 		const postClasses = classNames(
@@ -144,7 +145,6 @@ class Edit extends Component {
 		);
 
 		const postTitle = this.titleForPost( post );
-		const dateFormat = __experimentalGetSettings().formats.date;
 		return (
 			<article className={ postClasses } key={ post.id } style={ styles }>
 				{ getPostStatusLabel( post ) }
@@ -164,8 +164,12 @@ class Edit extends Component {
 								<img src={ post.newspack_featured_image_src.uncropped } alt="" />
 							) }
 						</a>
-						{ showCaption && '' !== post.newspack_featured_image_caption && (
-							<figcaption>{ post.newspack_featured_image_caption }</figcaption>
+						{ ( showCaption || showCredit ) && (
+							<div
+								dangerouslySetInnerHTML={ {
+									__html: post.newspack_featured_image_caption,
+								} }
+							/>
 						) }
 					</figure>
 				) }
@@ -237,21 +241,19 @@ class Edit extends Component {
 
 						{ showDate && ! post.newspack_listings_hide_publish_date && (
 							<time className="entry-date published" key="pub-date">
-								{ dateI18n( dateFormat, post.date ) }
+								{ post.date_formatted }
 							</time>
 						) }
+						{ post.article_meta_footer ? <RawHTML>{ post.article_meta_footer }</RawHTML> : null }
 					</div>
 				</div>
 			</article>
 		);
 	};
 
-	titleForPost = post => {
+	titleForPost = ( post: Post ) => {
 		if ( ! post.title ) {
 			return '';
-		}
-		if ( typeof post.title === 'string' ) {
-			return decodeEntities( post.title.trim() );
 		}
 		if ( typeof post.title === 'object' && post.title.rendered ) {
 			return decodeEntities( post.title.rendered.trim() );
@@ -273,6 +275,7 @@ class Edit extends Component {
 			postType,
 			showImage,
 			showCaption,
+			showCredit,
 			imageScale,
 			mobileStack,
 			minHeight,
@@ -343,14 +346,16 @@ class Edit extends Component {
 			},
 		];
 
-		const handleAttributeChange = key => value => setAttributes( { [ key ]: value } );
+		const handleAttributeChange = ( key: HomepageArticlesAttributesKey ) => ( value: any ) =>
+			setAttributes( { [ key ]: value } );
 
 		return (
 			<Fragment>
 				<PanelBody title={ __( 'Display Settings', 'newspack-blocks' ) } initialOpen={ true }>
+					{ /* @ts-ignore */ }
 					<QueryControls
 						numberOfItems={ postsToShow }
-						onNumberOfItemsChange={ _postsToShow =>
+						onNumberOfItemsChange={ ( _postsToShow: number ) =>
 							setAttributes( { postsToShow: _postsToShow || 1 } )
 						}
 						specificMode={ specificMode }
@@ -444,7 +449,7 @@ class Edit extends Component {
 							'newspack-blocks'
 						) }
 						checked={ ! attributes.deduplicate }
-						onChange={ value => setAttributes( { deduplicate: ! value } ) }
+						onChange={ ( value: boolean ) => setAttributes( { deduplicate: ! value } ) }
 						className="newspack-blocks-deduplication-toggle"
 					/>
 				</PanelBody>
@@ -458,13 +463,22 @@ class Edit extends Component {
 					</PanelRow>
 
 					{ showImage && (
-						<PanelRow>
-							<ToggleControl
-								label={ __( 'Show Featured Image Caption', 'newspack-blocks' ) }
-								checked={ showCaption }
-								onChange={ () => setAttributes( { showCaption: ! showCaption } ) }
-							/>
-						</PanelRow>
+						<>
+							<PanelRow>
+								<ToggleControl
+									label={ __( 'Show Featured Image Caption', 'newspack-blocks' ) }
+									checked={ showCaption }
+									onChange={ () => setAttributes( { showCaption: ! showCaption } ) }
+								/>
+							</PanelRow>
+							<PanelRow>
+								<ToggleControl
+									label={ __( 'Show Featured Image Credit', 'newspack-blocks' ) }
+									checked={ showCredit }
+									onChange={ () => setAttributes( { showCredit: ! showCredit } ) }
+								/>
+							</PanelRow>
+						</>
 					) }
 
 					{ showImage && mediaPosition !== 'top' && mediaPosition !== 'behind' && (
@@ -513,7 +527,7 @@ class Edit extends Component {
 								'newspack-blocks'
 							) }
 							value={ minHeight }
-							onChange={ _minHeight => setAttributes( { minHeight: _minHeight } ) }
+							onChange={ ( _minHeight: number ) => setAttributes( { minHeight: _minHeight } ) }
 							min={ 0 }
 							max={ 100 }
 							required
@@ -541,7 +555,7 @@ class Edit extends Component {
 						<RangeControl
 							label={ __( 'Max number of words in excerpt', 'newspack-blocks' ) }
 							value={ excerptLength }
-							onChange={ value => setAttributes( { excerptLength: value } ) }
+							onChange={ ( value: number ) => setAttributes( { excerptLength: value } ) }
 							min={ 10 }
 							max={ 100 }
 						/>
@@ -556,14 +570,14 @@ class Edit extends Component {
 							label={ __( '"Read More" link text', 'newspack-blocks' ) }
 							value={ readMoreLabel }
 							placeholder={ readMoreLabel }
-							onChange={ value => setAttributes( { readMoreLabel: value } ) }
+							onChange={ ( value: string ) => setAttributes( { readMoreLabel: value } ) }
 						/>
 					) }
 					<RangeControl
 						className="type-scale-slider"
 						label={ __( 'Type Scale', 'newspack-blocks' ) }
 						value={ typeScale }
-						onChange={ _typeScale => setAttributes( { typeScale: _typeScale } ) }
+						onChange={ ( _typeScale: number ) => setAttributes( { typeScale: _typeScale } ) }
 						min={ 1 }
 						max={ 10 }
 						required
@@ -621,7 +635,7 @@ class Edit extends Component {
 	componentDidMount() {
 		this.props.triggerReflow();
 	}
-	componentDidUpdate( props ) {
+	componentDidUpdate( props: HomepageArticlesProps ) {
 		if ( shouldReflow( props, this.props ) ) {
 			this.props.triggerReflow();
 		}
@@ -662,9 +676,9 @@ class Edit extends Component {
 			'show-image': showImage,
 			[ `columns-${ columns }` ]: postLayout === 'grid',
 			[ `colgap-${ colGap }` ]: postLayout === 'grid',
-			[ `ts-${ typeScale }` ]: typeScale !== '5',
+			[ `ts-${ typeScale }` ]: typeScale !== 5,
 			[ `image-align${ mediaPosition }` ]: showImage,
-			[ `is-${ imageScale }` ]: imageScale !== '1' && showImage,
+			[ `is-${ imageScale }` ]: imageScale !== 1 && showImage,
 			'mobile-stack': mobileStack,
 			[ `is-${ imageShape }` ]: showImage,
 			'has-text-color': textColor.color !== '',
@@ -754,7 +768,7 @@ class Edit extends Component {
 					<div>
 						{ latestPosts && ( ! RichText.isEmpty( sectionHeader ) || isSelected ) && (
 							<RichText
-								onChange={ value => setAttributes( { sectionHeader: value } ) }
+								onChange={ ( value: string ) => setAttributes( { sectionHeader: value } ) }
 								placeholder={ __( 'Write header…', 'newspack-blocks' ) }
 								value={ sectionHeader }
 								tagName="h2"
@@ -787,7 +801,7 @@ class Edit extends Component {
 							<RichText
 								placeholder={ __( 'Load more posts', 'newspack-blocks' ) }
 								value={ moreButtonText }
-								onChange={ value => setAttributes( { moreButtonText: value } ) }
+								onChange={ ( value: string ) => setAttributes( { moreButtonText: value } ) }
 								className="wp-block-button__link"
 								allowedFormats={ [] }
 							/>
@@ -799,7 +813,7 @@ class Edit extends Component {
 					<Toolbar>
 						<AlignmentControl
 							value={ textAlign }
-							onChange={ nextAlign => {
+							onChange={ ( nextAlign: string ) => {
 								setAttributes( { textAlign: nextAlign } );
 							} }
 						/>
@@ -816,6 +830,8 @@ class Edit extends Component {
 
 export default compose( [
 	withColors( { textColor: 'color' } ),
+	// @ts-ignore
 	withSelect( postsBlockSelector ),
+	// @ts-ignore
 	withDispatch( postsBlockDispatch ),
-] )( Edit );
+] as any )( Edit );

@@ -236,6 +236,10 @@ class Newspack_Blocks {
 	 * @return bool True if available, false if not.
 	 */
 	public static function can_use_name_your_price() {
+		// If the donation platform is NRH, the Donate block should behave as if Name Your Price is available.
+		if ( method_exists( 'Newspack\Donations', 'is_platform_nrh' ) && \Newspack\Donations::is_platform_nrh() ) {
+			return true;
+		}
 		return class_exists( 'WC_Name_Your_Price_Helpers' );
 	}
 
@@ -1541,6 +1545,49 @@ class Newspack_Blocks {
 	}
 
 	/**
+	 * Get post date to be displayed.
+	 *
+	 * @param WP_Post $post Post object.
+	 * @return string Date string.
+	 */
+	public static function get_displayed_post_date( $post = null ) {
+		if ( $post === null ) {
+			$post = get_post();
+		}
+		return apply_filters( 'newspack_blocks_displayed_post_date', mysql_to_rfc3339( $post->post_date ), $post );
+	}
+
+	/**
+	 * Get post date to be displayed, formatted.
+	 *
+	 * @param WP_Post $post Post object.
+	 * @return string Formatted date.
+	 */
+	public static function get_formatted_displayed_post_date( $post = null ) {
+		if ( $post === null ) {
+			$post = get_post();
+		}
+		$date = self::get_displayed_post_date( $post );
+		$date_formatted = ( new DateTime( $date ) )->format( get_option( 'date_format' ) );
+		return apply_filters( 'newspack_blocks_formatted_displayed_post_date', $date_formatted, $post );
+	}
+
+	/**
+	 * Get article meta footer.
+	 *
+	 * @param WP_Post $post Post object.
+	 */
+	public static function get_article_meta_footer( $post = null ) {
+		if ( $post === null ) {
+			$post = get_post();
+		}
+		$meta_footer = apply_filters( 'newspack_blocks_article_meta_footer', '', $post );
+		if ( strlen( $meta_footer ) > 0 ) {
+			return '<span style="margin: 0 6px;" class="newspack_blocks__article-meta-footer__separator">|</span>' . $meta_footer;
+		}
+	}
+
+	/**
 	 * Get a formatted HTML string containing amount and frequency of a donation.
 	 *
 	 * @param float  $amount Amount.
@@ -1550,8 +1597,16 @@ class Newspack_Blocks {
 	 * @return string
 	 */
 	public static function get_formatted_amount( $amount = 0, $frequency = 'day', $hide_once_label = false ) {
-		if ( ! function_exists( 'wc_price' ) ) {
-			return $amount;
+		if ( ! function_exists( 'wc_price' ) || ( method_exists( 'Newspack\Donations', 'is_platform_wc' ) && ! \Newspack\Donations::is_platform_wc() ) ) {
+			if ( 0 === $amount ) {
+				return false;
+			}
+
+			// Translators: %s is the %s is the frequency.
+			$frequency_string = 'once' === $frequency ? $frequency : sprintf( __( 'per %s', 'newspack-blocks' ), $frequency );
+			$formatter        = new NumberFormatter( \get_locale(), NumberFormatter::CURRENCY );
+			$formatted_price  = '<span class="price-amount">' . $formatter->formatCurrency( $amount, 'USD' ) . '</span> <span class="tier-frequency">' . $frequency_string . '</span>';
+			return str_replace( '.00', '', $formatted_price );
 		}
 		if ( ! function_exists( 'wcs_price_string' ) ) {
 			return \wc_price( $amount );
@@ -1580,6 +1635,41 @@ class Newspack_Blocks {
 		$wc_formatted_amount = str_replace( ' / ', __( ' per ', 'newspack-blocks' ), $wc_formatted_amount );
 
 		return '<span class="wpbnbd__tiers__amount__value">' . $wc_formatted_amount . '</span>';
+	}
+
+	/**
+	 * Get an image caption, optionally with credit appended.
+	 *
+	 * @param int  $attachment_id Attachment ID of the image.
+	 * @param bool $include_caption Whether to include the caption.
+	 * @param bool $include_credit Whether to include the credit.
+	 *
+	 * @return string
+	 */
+	public static function get_image_caption( $attachment_id = null, $include_caption = true, $include_credit = false ) {
+		if ( ! $attachment_id || ( ! $include_caption && ! $include_credit ) ) {
+			return '';
+		}
+
+		$caption = $include_caption ? wp_get_attachment_caption( $attachment_id ) : '';
+		$credit  = '';
+
+		if ( $include_credit && method_exists( 'Newspack\Newspack_Image_Credits', 'get_media_credit_string' ) ) {
+			$credit = \Newspack\Newspack_Image_Credits::get_media_credit_string( $attachment_id );
+		}
+
+		$full_caption = trim( $caption . ' ' . $credit );
+		if ( empty( $full_caption ) ) {
+			return '';
+		}
+
+		$combined_caption = sprintf(
+			'<figcaption%1$s>%2$s</figcaption>',
+			! empty( $credit ) ? ' class="has-credit"' : '',
+			$full_caption
+		);
+
+		return $combined_caption;
 	}
 }
 Newspack_Blocks::init();
