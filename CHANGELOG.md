@@ -1,3 +1,10 @@
+## [3.0.7-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v3.0.6...v3.0.7-alpha.1) (2024-03-28)
+
+
+### Bug Fixes
+
+* add encoding to all attributes in rest URL ([#1690](https://github.com/Automattic/newspack-blocks/issues/1690)) ([e0f74d7](https://github.com/Automattic/newspack-blocks/commit/e0f74d7a6318a34d21a05b16937975f1b61f0664))
+
 ## [3.0.6](https://github.com/Automattic/newspack-blocks/compare/v3.0.5...v3.0.6) (2024-03-28)
 
 
