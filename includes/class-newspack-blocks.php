@@ -1567,8 +1567,10 @@ class Newspack_Blocks {
 		if ( $post === null ) {
 			$post = get_post();
 		}
-		$date = self::get_displayed_post_date( $post );
-		$date_formatted = ( new DateTime( $date ) )->format( get_option( 'date_format' ) );
+		$date           = self::get_displayed_post_date( $post );
+		$date           = new DateTime( $date );
+		$date_format    = get_option( 'date_format' );
+		$date_formatted = date_i18n( $date_format, $date->getTimestamp() );
 		return apply_filters( 'newspack_blocks_formatted_displayed_post_date', $date_formatted, $post );
 	}
 
