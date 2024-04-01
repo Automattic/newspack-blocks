@@ -1,3 +1,10 @@
+## [3.0.6](https://github.com/Automattic/newspack-blocks/compare/v3.0.5...v3.0.6) (2024-03-28)
+
+
+### Bug Fixes
+
+* translate formatted date for hpp block ([#1697](https://github.com/Automattic/newspack-blocks/issues/1697)) ([5cbb2fd](https://github.com/Automattic/newspack-blocks/commit/5cbb2fd75866818e11f42966341156b48d347d09))
+
 ## [3.0.5](https://github.com/Automattic/newspack-blocks/compare/v3.0.4...v3.0.5) (2024-03-25)
 
 
