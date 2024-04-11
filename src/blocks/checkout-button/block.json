@@ -53,6 +53,10 @@
 			"type": "boolean",
 			"default": false
 		},
+		"hideSubscriptionInput": {
+			"type": "boolean",
+			"default": false
+		},
 		"lists": {
 			"type": "array",
 			"default": [],

@@ -200,6 +200,7 @@ function CheckoutButtonEdit( props ) {
 		price,
 		variation,
 		width,
+		hideSubscriptionInput,
 		lists,
 		newsletterSubscription,
 	} = attributes;
@@ -376,6 +377,17 @@ function CheckoutButtonEdit( props ) {
 									<Spinner />
 								) : (
 									<>
+										<ToggleControl
+											label={ __(
+												'Hide newsletter selection and always subscribe',
+												'newspack-plugin'
+											) }
+											checked={ hideSubscriptionInput }
+											disabled={ inFlight || lists.length !== 1 }
+											onChange={ () =>
+												setAttributes( { hideSubscriptionInput: ! hideSubscriptionInput } )
+											}
+										/>
 										{ lists.length < 1 && (
 											<div style={ { marginBottom: '1.5rem' } }>
 												<Notice isDismissible={ false } status="error">
