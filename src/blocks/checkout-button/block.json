@@ -48,6 +48,17 @@
 		},
 		"width": {
 			"type": "number"
+		},
+		"newsletterSubscription": {
+			"type": "boolean",
+			"default": false
+		},
+		"lists": {
+			"type": "array",
+			"default": [],
+			"items": {
+				"type": "string"
+			}
 		}
 	},
 	"supports": {

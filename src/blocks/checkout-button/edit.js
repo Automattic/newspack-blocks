@@ -28,7 +28,9 @@ import {
 	FormTokenField,
 	Button,
 	ButtonGroup,
+	Notice,
 	Spinner,
+	ToggleControl,
 } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
@@ -190,11 +192,34 @@ function ProductControl( props ) {
 
 function CheckoutButtonEdit( props ) {
 	const { attributes, setAttributes, className } = props;
-	const { placeholder, style, text, product, price, variation, width } = attributes;
+	const {
+		placeholder,
+		style,
+		text,
+		product,
+		price,
+		variation,
+		width,
+		lists,
+		newsletterSubscription,
+	} = attributes;
 
 	const [ productData, setProductData ] = useState( {} );
 	const [ variations, setVariations ] = useState( [] );
 	const [ nyp, setNYP ] = useState( false );
+	const [ inFlight, setInFlight ] = useState( false );
+	const [ listsConfig, setListsConfig ] = useState( {} );
+
+	useEffect( () => {
+		if ( newspack_blocks_data.has_newsletters && newsletterSubscription ) {
+			setInFlight( true );
+			apiFetch( {
+				path: '/newspack-newsletters/v1/lists_config',
+			} )
+				.then( result => setListsConfig( result ) )
+				.finally( () => setInFlight( false ) );
+		}
+	}, [ newsletterSubscription ] );
 
 	function handleProduct( data ) {
 		setProductData( data );
@@ -327,6 +352,59 @@ function CheckoutButtonEdit( props ) {
 						) }
 					</ProductControl>
 				</PanelBody>
+				{ newspack_blocks_data.has_newsletters && (
+					<PanelBody title={ __( 'Newsletter Subscription', 'newspack-plugin' ) }>
+						<ToggleControl
+							label={ __( 'Enable newsletter subscription', 'newspack-plugin' ) }
+							checked={ !! newsletterSubscription }
+							disabled={ inFlight }
+							onChange={ () =>
+								setAttributes( { newsletterSubscription: ! newsletterSubscription } )
+							}
+						/>
+						{ newsletterSubscription && (
+							<>
+								{ ! inFlight && ! Object.keys( listsConfig ).length && (
+									<div style={ { marginBottom: '1.5rem' } }>
+										{ __(
+											'To enable newsletter subscription, you must configure subscription lists on Newspack Newsletters.',
+											'newspack-plugin'
+										) }
+									</div>
+								) }
+								{ inFlight || ! Object.keys( listsConfig ).length ? (
+									<Spinner />
+								) : (
+									<>
+										{ lists.length < 1 && (
+											<div style={ { marginBottom: '1.5rem' } }>
+												<Notice isDismissible={ false } status="error">
+													{ __( 'You must select at least one list.', 'newspack-plugin' ) }
+												</Notice>
+											</div>
+										) }
+										<p>{ __( 'Lists', 'newspack-plugin' ) }:</p>
+										{ Object.keys( listsConfig ).map( listId => (
+											<ToggleControl
+												key={ listId }
+												label={ listsConfig[ listId ].title }
+												checked={ lists.includes( listId ) }
+												disabled={ inFlight }
+												onChange={ () => {
+													if ( ! lists.includes( listId ) ) {
+														setAttributes( { lists: lists.concat( listId ) } );
+													} else {
+														setAttributes( { lists: lists.filter( id => id !== listId ) } );
+													}
+												} }
+											/>
+										) ) }
+									</>
+								) }
+							</>
+						) }
+					</PanelBody>
+				) }
 				<PanelBody title={ __( 'After purchase', 'newspack-blocks' ) }>
 					<RedirectAfterSuccess setAttributes={ setAttributes } attributes={ attributes } />
 				</PanelBody>

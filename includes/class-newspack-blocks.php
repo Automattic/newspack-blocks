@@ -272,6 +272,7 @@ class Newspack_Blocks {
 				'custom_taxonomies'          => self::get_custom_taxonomies(),
 				'can_use_name_your_price'    => self::can_use_name_your_price(),
 				'tier_amounts_template'      => self::get_formatted_amount(),
+				'has_newsletters'            => method_exists( 'Newspack_Newsletters_Subscription', 'add_contact' ),
 			];
 
 			if ( class_exists( 'WP_REST_Newspack_Author_List_Controller' ) ) {
