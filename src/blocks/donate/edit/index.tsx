@@ -35,6 +35,7 @@ import type {
 	DonationAmountsArray,
 	EditState,
 	EditProps,
+	NewsletterSubscriptionLists,
 } from '../types';
 import TierBasedLayout from './TierBasedLayout';
 import FrequencyBasedLayout from './FrequencyBasedLayout';
@@ -57,7 +58,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ error, setError ] = useState( '' );
 	const [ inFlight, setInFlight ] = useState( false );
-	const [ listsConfig, setListsConfig ] = useState( {} );
+	const [ listsConfig, setListsConfig ] = useState< NewsletterSubscriptionLists >( {} );
 
 	const [ settings, setSettings ] = hooks.useObjectState< EditState >( {
 		amounts: {},
@@ -116,12 +117,12 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 	}, [] );
 
 	useEffect( () => {
-		if ( newspack_blocks_data.has_newsletters && attributes.newsletterSubscription ) {
+		if ( window.newspack_blocks_data.has_newsletters && attributes.newsletterSubscription ) {
 			setInFlight( true );
-			apiFetch( {
+			apiFetch< NewsletterSubscriptionLists >( {
 				path: '/newspack-newsletters/v1/lists_config',
 			} )
-				.then( result => {
+				.then( ( result: NewsletterSubscriptionLists ) => {
 					if ( Object.keys( result ).length && ! attributes.lists.length ) {
 						setAttributes( { lists: [ Object.keys( result )[ 0 ] ] } );
 					}
@@ -159,6 +160,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 		return <Placeholder icon={ <Spinner /> } className="component-placeholder__align-center" />;
 	}
 
+	// tslint:disable-next-line
 	const canUseNameYourPrice = window.newspack_blocks_data?.can_use_name_your_price;
 	const isManual = attributes.manual && canUseNameYourPrice;
 	const isTiered = isManual ? attributes.tiered : settings.tiered;
@@ -453,7 +455,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 				<PanelBody title={ __( 'After purchase', 'newspack-blocks' ) }>
 					<RedirectAfterSuccess setAttributes={ setAttributes } attributes={ attributes } />
 				</PanelBody>
-				{ newspack_blocks_data.has_newsletters && (
+				{ window.newspack_blocks_data.has_newsletters && (
 					<PanelBody title={ __( 'Newsletter Subscription', 'newspack-blocks' ) }>
 						<ToggleControl
 							label={ __( 'Enable newsletter subscription', 'newspack-blocks' ) }

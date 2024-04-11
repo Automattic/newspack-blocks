@@ -89,6 +89,9 @@ export type DonateBlockAttributes = OverridableConfiguration & {
 	suggestedAmounts?: [ number, number, number ];
 	suggestedAmountUntiered?: number;
 	minimumDonation: number;
+	lists: string[];
+	hideSubscriptionInput: boolean;
+	newsletterSubscription: boolean;
 };
 
 export type ComponentProps = {
@@ -105,3 +108,11 @@ export type EditProps = {
 	setAttributes: ( attributes: Partial< DonateBlockAttributes > ) => void;
 	className: string;
 };
+
+interface NewsletterSubscriptionList {
+	[ key: string ]: string;
+}
+
+export interface NewsletterSubscriptionLists {
+	[ key: string ]: NewsletterSubscriptionList;
+}
