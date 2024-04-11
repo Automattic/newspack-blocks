@@ -27,24 +27,30 @@ if ( ! defined( 'ABSPATH' ) ) {
  * existing customer account.
  */
 function newspack_blocks_replace_login_with_order_summary() {
-	$order    = isset( $_GET['order_id'] ) ? \wc_get_order( \absint( \wp_unslash( $_GET['order_id'] ) ) ) : false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-	$key      = isset( $_GET['key'] ) ? \wc_clean( \sanitize_text_field( \wp_unslash( $_GET['key'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-	$is_valid = $order && is_a( $order, 'WC_Order' ) && hash_equals( $order->get_order_key(), $key ); // Validate order key to prevent CSRF.
-
-	// Handle the newsletter signup form.
-	$newsletter_confirmation = \Newspack_Blocks\Modal_Checkout::confirm_newsletter_signup();
-	$is_error                = \is_wp_error( $newsletter_confirmation );
-	$no_selected_lists       = $is_error && 'newspack_no_lists_selected' === $newsletter_confirmation->get_error_code();
-	if ( true === $newsletter_confirmation || $no_selected_lists ) {
-		echo \Newspack_Blocks\Modal_Checkout::render_newsletter_confirmation( $no_selected_lists ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		return;
-	} elseif ( $is_error ) {
-		echo esc_html( $newsletter_confirmation->get_error_message() );
-		return;
-	}
+	$order      = isset( $_GET['order_id'] ) ? \wc_get_order( \absint( \wp_unslash( $_GET['order_id'] ) ) ) : false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$key        = isset( $_GET['key'] ) ? \wc_clean( \sanitize_text_field( \wp_unslash( $_GET['key'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$is_valid   = $order && is_a( $order, 'WC_Order' ) && hash_equals( $order->get_order_key(), $key ); // Validate order key to prevent CSRF.
 
 	if ( ! $is_valid ) {
 		return;
+	}
+
+	// Handle the newsletter signup form.
+	$force_subscribe = isset( $_POST['newsletter_subscription_force_subscribe'] ) ? \sanitize_text_field( \wp_unslash( $_POST['newsletter_subscription_force_subscribe'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+	$lists = explode( ',', isset( $_POST['newsletter_subscription_lists'] ) ? \sanitize_text_field( \wp_unslash( $_POST['newsletter_subscription_lists'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+	if ( $force_subscribe && ! empty( $lists ) ) {
+		$newsletter_confirmation = \Newspack_Blocks\Modal_Checkout::confirm_newsletter_signup( $lists );
+		$is_error                = \is_wp_error( $newsletter_confirmation );
+		$no_selected_lists       = $is_error && 'newspack_no_lists_selected' === $newsletter_confirmation->get_error_code();
+
+		if ( true === $newsletter_confirmation || $no_selected_lists ) {
+			echo \Newspack_Blocks\Modal_Checkout::render_newsletter_confirmation( $no_selected_lists ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			return;
+		} elseif ( $is_error ) {
+			echo esc_html( $newsletter_confirmation->get_error_message() );
+			return;
+		}
 	}
 
 	$is_success = ! $order->has_status( 'failed' );
@@ -69,7 +75,7 @@ function newspack_blocks_replace_login_with_order_summary() {
 				</strong>
 			</p>
 		</div>
-		<?php echo \Newspack_Blocks\Modal_Checkout::render_checkout_after_success_markup( $order ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		<?php echo \Newspack_Blocks\Modal_Checkout::render_checkout_after_success_markup( $order, $force_subscribe ? [] : $lists ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	<?php else : ?>
 		<div class="newspack-ui__box newspack-ui__box__error newspack-ui__box--text-center">
 			<p>

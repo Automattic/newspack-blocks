@@ -86,6 +86,20 @@ export default function save( { attributes, className } ) {
 						value={ attributes.afterSuccessURL || '' }
 					/>
 				) }
+				{ attributes.newsletterSubscription && attributes.lists.length && (
+					<>
+						<input
+							type="hidden"
+							name="newsletter_subscription_force_subscribe"
+							value={ attributes.hideSubscriptionInput ? '1' : '' }
+						/>
+						<input
+							type="hidden"
+							name="newsletter_subscription_lists"
+							value={ attributes.lists.join( ',' ) }
+						/>
+					</>
+				) }
 			</form>
 		</div>
 	);

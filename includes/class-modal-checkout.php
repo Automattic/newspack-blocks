@@ -536,6 +536,11 @@ final class Modal_Checkout {
 			$args['key']      = $order->get_order_key();
 		}
 
+		// Pass newsletter subscription list data if present.
+		if ( isset( $_REQUEST['newsletter_subscription_lists'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$args['newsletter_subscription_lists'] = rawurlencode( \sanitize_text_field( \wp_unslash( $_REQUEST['newsletter_subscription_lists'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		}
+
 		return add_query_arg(
 			$args,
 			$url
@@ -790,12 +795,13 @@ final class Modal_Checkout {
 	 * Render markup at the end of the "thank you" view.
 	 *
 	 * @param WC_Order $order The order related to the transaction.
+	 * @param array    $lists Array of available newsletter lists (optional).
 	 *
 	 * @return void
 	 */
-	public static function render_checkout_after_success_markup( $order ) {
-		if ( self::is_newsletter_signup_available() ) {
-			self::render_newsletter_signup_form( $order );
+	public static function render_checkout_after_success_markup( $order, $lists = [] ) {
+		if ( ! empty( $lists ) ) {
+			self::render_newsletter_signup_form( $order, $lists );
 		} else {
 			self::render_after_success_button();
 		}
@@ -834,8 +840,11 @@ final class Modal_Checkout {
 	 * Renders newsletter signup form.
 	 *
 	 * @param WC_Order $order The order related to the transaction.
+	 * @param array    $lists Array of available newsletter lists.
+	 *
+	 * @return void
 	 */
-	private static function render_newsletter_signup_form( $order ) {
+	private static function render_newsletter_signup_form( $order, $lists ) {
 		$email_address = $order->get_billing_email();
 		if ( ! $email_address ) {
 			return;
@@ -884,6 +893,10 @@ final class Modal_Checkout {
 					<?php
 					self::render_hidden_inputs();
 					foreach ( $newsletters_lists as $list ) {
+						// Only render lists that are available and selected.
+						if ( ! in_array( $list['id'], $lists, true ) ) {
+							continue;
+						}
 						$checkbox_id = sprintf( 'newspack-blocks-list-%s', $list['id'] );
 						?>
 							<div class="newspack-modal-newsletters__list-item">
@@ -915,37 +928,27 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Should post-chcekout newsletter signup be available?
-	 */
-	private static function is_newsletter_signup_available() {
-		return defined( 'NEWSPACK_ENABLE_POST_CHECKOUT_NEWSLETTER_SIGNUP' ) && NEWSPACK_ENABLE_POST_CHECKOUT_NEWSLETTER_SIGNUP;
-	}
-
-	/**
 	 * Should newsletter confirmation be rendered?
+	 *
+	 * @param array $lists Array of available newsletter lists.
+	 *
+	 * @return bool
 	 */
-	public static function confirm_newsletter_signup() {
-		if ( ! self::is_newsletter_signup_available() ) {
-			return false;
-		}
+	public static function confirm_newsletter_signup( $lists ) {
 		$signup_data = self::get_newsletter_signup_data();
 		if ( false !== $signup_data ) {
-			if ( empty( $signup_data['lists'] ) ) {
-				return new \WP_Error( 'newspack_no_lists_selected', __( 'No lists selected.', 'newspack-blocks' ) );
-			} else {
-				$result = \Newspack_Newsletters_Subscription::add_contact(
-					[
-						'email'    => $signup_data['email'],
-						'metadata' => [
-							'current_page_url' => home_url( add_query_arg( array(), \wp_get_referer() ) ),
-							'newsletters_subscription_method' => 'post-checkout',
-						],
+			$result = \Newspack_Newsletters_Subscription::add_contact(
+				[
+					'email'    => $signup_data['email'],
+					'metadata' => [
+						'current_page_url'                => home_url( add_query_arg( array(), \wp_get_referer() ) ),
+						'newsletters_subscription_method' => 'post-checkout',
 					],
-					$signup_data['lists']
-				);
-				if ( \is_wp_error( $result ) ) {
-					return $result;
-				}
+				],
+				$lists
+			);
+			if ( \is_wp_error( $result ) ) {
+				return $result;
 			}
 			return true;
 		}

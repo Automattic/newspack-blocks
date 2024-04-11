@@ -200,6 +200,13 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 			<?php
 		}
 
+		if ( isset( $attributes['newsletterSubscription'], $attributes['lists'], $attributes['hideSubscriptionInput'] ) && $attributes['newsletterSubscription'] ) {
+			?>
+				<input type='hidden' name='newsletter_subscription_force_subscribe' value='<?php isset( $attributes['hideSubscriptionInput'] ) ? '1' : ''; ?>' />
+				<input type='hidden' name='newsletter_subscription_lists' value='<?php implode( ',', $attributes['lists'] ); ?>' />
+			<?php
+		}
+
 		return ob_get_clean();
 	}
 
