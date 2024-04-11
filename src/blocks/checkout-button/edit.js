@@ -217,7 +217,12 @@ function CheckoutButtonEdit( props ) {
 			apiFetch( {
 				path: '/newspack-newsletters/v1/lists_config',
 			} )
-				.then( result => setListsConfig( result ) )
+				.then( result => {
+					if ( Object.keys( result ).length && ! attributes.lists.length ) {
+						setAttributes( { lists: [ Object.keys( result )[ 0 ] ] } );
+					}
+					setListsConfig( result );
+				} )
 				.finally( () => setInFlight( false ) );
 		}
 	}, [ newsletterSubscription ] );
@@ -353,70 +358,6 @@ function CheckoutButtonEdit( props ) {
 						) }
 					</ProductControl>
 				</PanelBody>
-				{ newspack_blocks_data.has_newsletters && (
-					<PanelBody title={ __( 'Newsletter Subscription', 'newspack-plugin' ) }>
-						<ToggleControl
-							label={ __( 'Enable newsletter subscription', 'newspack-plugin' ) }
-							checked={ !! newsletterSubscription }
-							disabled={ inFlight }
-							onChange={ () =>
-								setAttributes( { newsletterSubscription: ! newsletterSubscription } )
-							}
-						/>
-						{ newsletterSubscription && (
-							<>
-								{ ! inFlight && ! Object.keys( listsConfig ).length && (
-									<div style={ { marginBottom: '1.5rem' } }>
-										{ __(
-											'To enable newsletter subscription, you must configure subscription lists on Newspack Newsletters.',
-											'newspack-plugin'
-										) }
-									</div>
-								) }
-								{ inFlight || ! Object.keys( listsConfig ).length ? (
-									<Spinner />
-								) : (
-									<>
-										<ToggleControl
-											label={ __(
-												'Hide newsletter selection and always subscribe',
-												'newspack-plugin'
-											) }
-											checked={ hideSubscriptionInput }
-											disabled={ inFlight || lists.length !== 1 }
-											onChange={ () =>
-												setAttributes( { hideSubscriptionInput: ! hideSubscriptionInput } )
-											}
-										/>
-										{ lists.length < 1 && (
-											<div style={ { marginBottom: '1.5rem' } }>
-												<Notice isDismissible={ false } status="error">
-													{ __( 'You must select at least one list.', 'newspack-plugin' ) }
-												</Notice>
-											</div>
-										) }
-										<p>{ __( 'Lists', 'newspack-plugin' ) }:</p>
-										{ Object.keys( listsConfig ).map( listId => (
-											<ToggleControl
-												key={ listId }
-												label={ listsConfig[ listId ].title }
-												checked={ lists.includes( listId ) }
-												disabled={ inFlight }
-												onChange={ () => {
-													if ( ! lists.includes( listId ) ) {
-														setAttributes( { lists: lists.concat( listId ) } );
-													} else {
-														setAttributes( { lists: lists.filter( id => id !== listId ) } );
-													}
-												} }
-											/>
-										) ) }
-									</>
-								) }
-							</>
-						) }
-					</PanelBody>
-				) }
 				<PanelBody title={ __( 'After purchase', 'newspack-blocks' ) }>
 					<RedirectAfterSuccess setAttributes={ setAttributes } attributes={ attributes } />
 				</PanelBody>
@@ -453,6 +394,70 @@ function CheckoutButtonEdit( props ) {
 							max={ parseFloat( nyp.maxPrice ) || null }
 							onChange={ value => setAttributes( { price: value } ) }
 						/>
+					</PanelBody>
+				) }
+				{ newspack_blocks_data.has_newsletters && (
+					<PanelBody title={ __( 'Newsletter Subscription', 'newspack-blocks' ) }>
+						<ToggleControl
+							label={ __( 'Enable newsletter subscription', 'newspack-blocks' ) }
+							checked={ !! newsletterSubscription }
+							disabled={ inFlight }
+							onChange={ () =>
+								setAttributes( { newsletterSubscription: ! newsletterSubscription } )
+							}
+						/>
+						{ newsletterSubscription && (
+							<>
+								{ ! inFlight && ! Object.keys( listsConfig ).length && (
+									<div style={ { marginBottom: '1.5rem' } }>
+										{ __(
+											'To enable newsletter subscription, you must configure subscription lists on Newspack Newsletters.',
+											'newspack-blocks'
+										) }
+									</div>
+								) }
+								{ inFlight || ! Object.keys( listsConfig ).length ? (
+									<Spinner />
+								) : (
+									<>
+										<ToggleControl
+											label={ __(
+												'Hide newsletter selection and always subscribe',
+												'newspack-blocks'
+											) }
+											checked={ hideSubscriptionInput }
+											disabled={ inFlight || lists.length !== 1 }
+											onChange={ () =>
+												setAttributes( { hideSubscriptionInput: ! hideSubscriptionInput } )
+											}
+										/>
+										{ lists.length < 1 && (
+											<div style={ { marginBottom: '1.5rem' } }>
+												<Notice isDismissible={ false } status="error">
+													{ __( 'You must select at least one list.', 'newspack-blocks' ) }
+												</Notice>
+											</div>
+										) }
+										<p>{ __( 'Lists', 'newspack-blocks' ) }:</p>
+										{ Object.keys( listsConfig ).map( listId => (
+											<ToggleControl
+												key={ listId }
+												label={ listsConfig[ listId ].title }
+												checked={ lists.includes( listId ) }
+												disabled={ inFlight }
+												onChange={ () => {
+													if ( ! lists.includes( listId ) ) {
+														setAttributes( { lists: lists.concat( listId ) } );
+													} else {
+														setAttributes( { lists: lists.filter( id => id !== listId ) } );
+													}
+												} }
+											/>
+										) ) }
+									</>
+								) }
+							</>
+						) }
 					</PanelBody>
 				) }
 			</InspectorControls>

@@ -88,6 +88,21 @@
 		},
 		"afterSuccessURL": {
 			"type": "string"
+		},
+		"newsletterSubscription": {
+			"type": "boolean",
+			"default": false
+		},
+		"hideSubscriptionInput": {
+			"type": "boolean",
+			"default": false
+		},
+		"lists": {
+			"type": "array",
+			"default": [],
+			"items": {
+				"type": "string"
+			}
 		}
 	},
 	"supports": {
