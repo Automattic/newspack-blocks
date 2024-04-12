@@ -190,11 +190,13 @@ domReady( () => {
 										'after_success_behavior',
 										'after_success_url',
 										'after_success_button_label',
-									].forEach( afterSuccessParam => {
+										'newsletter_subscription_lists',
+										'newsletter_subscription_force_subscribe',
+									].forEach( customParam => {
 										const input = document.createElement( 'input' );
 										input.type = 'hidden';
-										input.name = afterSuccessParam;
-										input.value = formData.get( afterSuccessParam );
+										input.name = customParam;
+										input.value = formData.get( customParam );
 										singleVariationForm.appendChild( input );
 									} );
 								} );

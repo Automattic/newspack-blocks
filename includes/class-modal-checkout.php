@@ -110,12 +110,14 @@ final class Modal_Checkout {
 			return;
 		}
 
-		$is_newspack_checkout       = filter_input( INPUT_GET, 'newspack_checkout', FILTER_SANITIZE_NUMBER_INT );
-		$product_id                 = filter_input( INPUT_GET, 'product_id', FILTER_SANITIZE_NUMBER_INT );
-		$variation_id               = filter_input( INPUT_GET, 'variation_id', FILTER_SANITIZE_NUMBER_INT );
-		$after_success_behavior     = filter_input( INPUT_GET, 'after_success_behavior', FILTER_SANITIZE_SPECIAL_CHARS );
-		$after_success_url          = filter_input( INPUT_GET, 'after_success_url', FILTER_SANITIZE_SPECIAL_CHARS );
-		$after_success_button_label = filter_input( INPUT_GET, 'after_success_button_label', FILTER_SANITIZE_SPECIAL_CHARS );
+		$is_newspack_checkout                    = filter_input( INPUT_GET, 'newspack_checkout', FILTER_SANITIZE_NUMBER_INT );
+		$product_id                              = filter_input( INPUT_GET, 'product_id', FILTER_SANITIZE_NUMBER_INT );
+		$variation_id                            = filter_input( INPUT_GET, 'variation_id', FILTER_SANITIZE_NUMBER_INT );
+		$after_success_behavior                  = filter_input( INPUT_GET, 'after_success_behavior', FILTER_SANITIZE_SPECIAL_CHARS );
+		$after_success_url                       = filter_input( INPUT_GET, 'after_success_url', FILTER_SANITIZE_SPECIAL_CHARS );
+		$after_success_button_label              = filter_input( INPUT_GET, 'after_success_button_label', FILTER_SANITIZE_SPECIAL_CHARS );
+		$newsletter_subscription_lists           = filter_input( INPUT_GET, 'newsletter_subscription_lists', FILTER_SANITIZE_SPECIAL_CHARS );
+		$newsletter_subscription_force_subscribe = filter_input( INPUT_GET, 'newsletter_subscription_force_subscribe', FILTER_SANITIZE_NUMBER_INT );
 
 		if ( ! $is_newspack_checkout || ! $product_id ) {
 			return;
@@ -135,7 +137,10 @@ final class Modal_Checkout {
 			wp_parse_str( $parsed_url['query'], $params );
 		}
 
-		$params = array_merge( $params, compact( 'after_success_behavior', 'after_success_url', 'after_success_button_label' ) );
+		$params = array_merge(
+			$params,
+			compact( 'after_success_behavior', 'after_success_url', 'after_success_button_label', 'newsletter_subscription_lists', 'newsletter_subscription_force_subscribe' )
+		);
 
 		if ( function_exists( 'wpcom_vip_url_to_postid' ) ) {
 			$referer_post_id = wpcom_vip_url_to_postid( $referer );
@@ -205,9 +210,9 @@ final class Modal_Checkout {
 		}
 		$query_args['modal_checkout'] = 1;
 
-		// Pass through UTM and after_success params so they can be forwarded to the WooCommerce checkout flow.
+		// Pass through UTM, after_success, and newsletter params so they can be forwarded to the WooCommerce checkout flow.
 		foreach ( $params as $param => $value ) {
-			if ( 'utm' === substr( $param, 0, 3 ) || 'after_success' === substr( $param, 0, 13 ) ) {
+			if ( 'utm' === substr( $param, 0, 3 ) || 'after_success' === substr( $param, 0, 13 ) || 'newsletter_subscription' === substr( $param, 0, 23 ) ) {
 				$param                = sanitize_text_field( $param );
 				$query_args[ $param ] = sanitize_text_field( $value );
 			}
@@ -499,10 +504,24 @@ final class Modal_Checkout {
 	}
 
 	/**
+	 * Get newsletter subscription params.
+	 *
+	 * @return array Array of newsletter subscription params.
+	 */
+	private static function get_newsletter_subscription_params() {
+		return array_filter(
+			[
+				'newsletter_subscription_lists'           => isset( $_REQUEST['newsletter_subscription_lists'] ) ? rawurlencode( sanitize_text_field( wp_unslash( $_REQUEST['newsletter_subscription_lists'] ) ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				'newsletter_subscription_force_subscribe' => isset( $_REQUEST['newsletter_subscription_force_subscribe'] ) ? rawurlencode( sanitize_text_field( wp_unslash( $_REQUEST['newsletter_subscription_force_subscribe'] ) ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			]
+		);
+	}
+
+	/**
 	 * Render hidden inputs to pass some params along.
 	 */
 	private static function render_hidden_inputs() {
-		foreach ( self::get_after_success_params() as $key => $value ) {
+		foreach ( array_merge( self::get_after_success_params(), self::get_newsletter_subscription_params() ) as $key => $value ) {
 			?>
 				<input type="hidden" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $value ); ?>" />
 			<?php
@@ -527,18 +546,14 @@ final class Modal_Checkout {
 				'modal_checkout' => '1',
 				'email'          => isset( $_REQUEST['billing_email'] ) ? rawurlencode( \sanitize_email( \wp_unslash( $_REQUEST['billing_email'] ) ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			],
-			self::get_after_success_params()
+			self::get_after_success_params(),
+			self::get_newsletter_subscription_params()
 		);
 
 		// Pass order ID for modal checkout templates.
 		if ( $order && is_a( $order, 'WC_Order' ) ) {
 			$args['order_id'] = $order->get_id();
 			$args['key']      = $order->get_order_key();
-		}
-
-		// Pass newsletter subscription list data if present.
-		if ( isset( $_REQUEST['newsletter_subscription_lists'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$args['newsletter_subscription_lists'] = rawurlencode( \sanitize_text_field( \wp_unslash( $_REQUEST['newsletter_subscription_lists'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		}
 
 		return add_query_arg(
@@ -893,10 +908,11 @@ final class Modal_Checkout {
 					<?php
 					self::render_hidden_inputs();
 					foreach ( $newsletters_lists as $list ) {
-						// Only render lists that are available and selected.
+						// Only render lists that are available via the relevant block.
 						if ( ! in_array( $list['id'], $lists, true ) ) {
 							continue;
 						}
+
 						$checkbox_id = sprintf( 'newspack-blocks-list-%s', $list['id'] );
 						?>
 							<div class="newspack-modal-newsletters__list-item">
@@ -930,23 +946,25 @@ final class Modal_Checkout {
 	/**
 	 * Should newsletter confirmation be rendered?
 	 *
-	 * @param array $lists Array of available newsletter lists.
-	 *
 	 * @return bool
 	 */
-	public static function confirm_newsletter_signup( $lists ) {
+	public static function confirm_newsletter_signup() {
 		$signup_data = self::get_newsletter_signup_data();
 		if ( false !== $signup_data ) {
-			$result = \Newspack_Newsletters_Subscription::add_contact(
-				[
-					'email'    => $signup_data['email'],
-					'metadata' => [
-						'current_page_url'                => home_url( add_query_arg( array(), \wp_get_referer() ) ),
-						'newsletters_subscription_method' => 'post-checkout',
+			if ( empty( $signup_data['lists'] ) ) {
+				return new \WP_Error( 'newspack_no_lists_selected', __( 'No lists selected.', 'newspack-blocks' ) );
+			} else {
+				$result = \Newspack_Newsletters_Subscription::add_contact(
+					[
+						'email'    => $signup_data['email'],
+						'metadata' => [
+							'current_page_url' => home_url( add_query_arg( array(), \wp_get_referer() ) ),
+							'newsletters_subscription_method' => 'post-checkout',
+						],
 					],
-				],
-				$lists
-			);
+					$signup_data['lists']
+				);
+			}
 			if ( \is_wp_error( $result ) ) {
 				return $result;
 			}

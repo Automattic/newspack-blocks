@@ -35,25 +35,23 @@ function newspack_blocks_replace_login_with_order_summary() {
 		return;
 	}
 
-	// Handle the newsletter signup form.
-	$force_subscribe = isset( $_POST['newsletter_subscription_force_subscribe'] ) ? \sanitize_text_field( \wp_unslash( $_POST['newsletter_subscription_force_subscribe'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
-	$lists = explode( ',', isset( $_POST['newsletter_subscription_lists'] ) ? \sanitize_text_field( \wp_unslash( $_POST['newsletter_subscription_lists'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+	// Render the newsletter confirmation if it was submitted.
+	$newsletter_confirmation = \Newspack_Blocks\Modal_Checkout::confirm_newsletter_signup();
+	$is_error                = \is_wp_error( $newsletter_confirmation );
+	$no_selected_lists       = $is_error && 'newspack_no_lists_selected' === $newsletter_confirmation->get_error_code();
 
-	if ( $force_subscribe && ! empty( $lists ) ) {
-		$newsletter_confirmation = \Newspack_Blocks\Modal_Checkout::confirm_newsletter_signup( $lists );
-		$is_error                = \is_wp_error( $newsletter_confirmation );
-		$no_selected_lists       = $is_error && 'newspack_no_lists_selected' === $newsletter_confirmation->get_error_code();
-
-		if ( true === $newsletter_confirmation || $no_selected_lists ) {
-			echo \Newspack_Blocks\Modal_Checkout::render_newsletter_confirmation( $no_selected_lists ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			return;
-		} elseif ( $is_error ) {
-			echo esc_html( $newsletter_confirmation->get_error_message() );
-			return;
-		}
+	if ( true === $newsletter_confirmation || $no_selected_lists ) {
+		echo \Newspack_Blocks\Modal_Checkout::render_newsletter_confirmation( $no_selected_lists ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		return;
+	} elseif ( $is_error ) {
+		echo esc_html( $newsletter_confirmation->get_error_message() );
+		return;
 	}
 
-	$is_success = ! $order->has_status( 'failed' );
+	$is_success      = ! $order->has_status( 'failed' );
+	$force_subscribe = isset( $_GET['newsletter_subscription_force_subscribe'] ) ? \sanitize_text_field( \wp_unslash( $_GET['newsletter_subscription_force_subscribe'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$lists           = isset( $_GET['newsletter_subscription_lists'] ) ? \sanitize_text_field( \wp_unslash( $_GET['newsletter_subscription_lists'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$lists           = empty( $lists ) ? [] : \explode( ',', $lists );
 	?>
 	<div class="woocommerce-order">
 	<?php if ( $is_success ) : ?>

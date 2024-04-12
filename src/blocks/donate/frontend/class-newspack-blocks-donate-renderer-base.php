@@ -179,6 +179,8 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 	 * Render hidden form inputs.
 	 *
 	 * @param array $attributes The block attributes.
+	 *
+	 * @return string|bool
 	 */
 	protected static function render_hidden_form_inputs( $attributes ) {
 		ob_start();
@@ -191,19 +193,25 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 			<input type='hidden' name='newspack_donate' value='1' />
 		<?php
 
-		foreach ( [ [ 'afterSuccessBehavior', 'after_success_behavior' ], [ 'afterSuccessButtonLabel', 'after_success_button_label' ], [ 'afterSuccessURL', 'after_success_url' ] ] as $attribute ) {
+		foreach (
+			[
+				[ 'afterSuccessBehavior', 'after_success_behavior' ],
+				[ 'afterSuccessButtonLabel', 'after_success_button_label' ],
+				[ 'afterSuccessURL', 'after_success_url' ],
+				[ 'hideSubscriptionInput', 'newsletter_subscription_force_subscribe' ],
+				[ 'lists', 'newsletter_subscription_lists' ],
+			] as $attribute
+		) {
 			$attribute_name = $attribute[0];
 			$param_name     = $attribute[1];
-			$value          = isset( $attributes[ $attribute_name ] ) ? $attributes[ $attribute_name ] : '';
+			// Handle the newsletter lists as a comma-separated string.
+			if ( $param_name === 'newsletter_subscription_lists' ) {
+				$value = isset( $attributes[ $attribute_name ] ) ? implode( ',', $attributes[ $attribute_name ] ) : '';
+			} else {
+				$value = isset( $attributes[ $attribute_name ] ) ? $attributes[ $attribute_name ] : '';
+			}
 			?>
 				<input type='hidden' name='<?php echo esc_attr( $param_name ); ?>' value='<?php echo esc_attr( $value ); ?>' />
-			<?php
-		}
-
-		if ( isset( $attributes['newsletterSubscription'], $attributes['lists'], $attributes['hideSubscriptionInput'] ) && $attributes['newsletterSubscription'] ) {
-			?>
-				<input type='hidden' name='newsletter_subscription_force_subscribe' value='<?php isset( $attributes['hideSubscriptionInput'] ) ? '1' : ''; ?>' />
-				<input type='hidden' name='newsletter_subscription_lists' value='<?php implode( ',', $attributes['lists'] ); ?>' />
 			<?php
 		}
 
