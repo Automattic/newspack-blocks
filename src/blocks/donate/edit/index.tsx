@@ -47,6 +47,7 @@ import {
 	DISABLED_IN_TIERS_BASED_LAYOUT_TIER_INDEX,
 } from '../consts';
 import RedirectAfterSuccess from '../../../components/redirect-after-success';
+import NewsletterSubscription from '../../../components/newsletter-subscription';
 
 const TIER_LABELS = [
 	__( 'Low-tier', 'newspack-blocks' ),
@@ -457,70 +458,12 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 				</PanelBody>
 				{ window.newspack_blocks_data.has_newsletters && (
 					<PanelBody title={ __( 'Newsletter Subscription', 'newspack-blocks' ) }>
-						<ToggleControl
-							label={ __( 'Enable newsletter subscription', 'newspack-blocks' ) }
-							checked={ !! attributes.newsletterSubscription }
-							disabled={ inFlight }
-							onChange={ () =>
-								setAttributes( { newsletterSubscription: ! attributes.newsletterSubscription } )
-							}
+						<NewsletterSubscription
+							attributes={ attributes }
+							setAttributes={ setAttributes }
+							inFlight={ inFlight }
+							listsConfig={ listsConfig }
 						/>
-						{ attributes.newsletterSubscription && (
-							<>
-								{ ! inFlight && ! Object.keys( listsConfig ).length && (
-									<div style={ { marginBottom: '1.5rem' } }>
-										{ __(
-											'To enable newsletter subscription, you must configure subscription lists on Newspack Newsletters.',
-											'newspack-blocks'
-										) }
-									</div>
-								) }
-								{ inFlight || ! Object.keys( listsConfig ).length ? (
-									<Spinner />
-								) : (
-									<>
-										<ToggleControl
-											label={ __(
-												'Hide newsletter selection and always subscribe',
-												'newspack-blocks'
-											) }
-											checked={ attributes.hideSubscriptionInput }
-											disabled={ inFlight || attributes.lists.length !== 1 }
-											onChange={ () =>
-												setAttributes( {
-													hideSubscriptionInput: ! attributes.hideSubscriptionInput,
-												} )
-											}
-										/>
-										{ attributes.lists.length < 1 && (
-											<div style={ { marginBottom: '1.5rem' } }>
-												<Notice isDismissible={ false } status="error">
-													{ __( 'You must select at least one list.', 'newspack-blocks' ) }
-												</Notice>
-											</div>
-										) }
-										<p>{ __( 'Lists', 'newspack-blocks' ) }:</p>
-										{ Object.keys( listsConfig ).map( listId => (
-											<ToggleControl
-												key={ listId }
-												label={ listsConfig[ listId ].title }
-												checked={ attributes.lists.includes( listId ) }
-												disabled={ inFlight }
-												onChange={ () => {
-													if ( ! attributes.lists.includes( listId ) ) {
-														setAttributes( { lists: attributes.lists.concat( listId ) } );
-													} else {
-														setAttributes( {
-															lists: attributes.lists.filter( id => id !== listId ),
-														} );
-													}
-												} }
-											/>
-										) ) }
-									</>
-								) }
-							</>
-						) }
 					</PanelBody>
 				) }
 			</InspectorControls>
