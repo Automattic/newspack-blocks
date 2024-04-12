@@ -7,13 +7,13 @@ import { Notice, Spinner, ToggleControl } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import type { NewsletterSubscriptionLists } from '../types';
+import type { NewsletterSubscriptionLists } from '../blocks/donate/types';
 
 type Props = {
 	attributes: {
-		hideSubscriptionInput: bool;
+		hideSubscriptionInput: boolean;
 		lists: string[];
-		newsletterSubscription: bool;
+		newsletterSubscription: boolean;
 	};
 	setAttributes: ( attributes: Partial< Props[ 'attributes' ] > ) => void;
 	inFlight: boolean;
