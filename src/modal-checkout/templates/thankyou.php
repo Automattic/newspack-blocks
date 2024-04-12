@@ -49,9 +49,16 @@ function newspack_blocks_replace_login_with_order_summary() {
 	}
 
 	$is_success      = ! $order->has_status( 'failed' );
+	$email_address   = $order->get_billing_email();
 	$force_subscribe = isset( $_GET['newsletter_subscription_force_subscribe'] ) ? \sanitize_text_field( \wp_unslash( $_GET['newsletter_subscription_force_subscribe'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$lists           = isset( $_GET['newsletter_subscription_lists'] ) ? \sanitize_text_field( \wp_unslash( $_GET['newsletter_subscription_lists'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$lists           = empty( $lists ) ? [] : \explode( ',', $lists );
+
+	if ( $force_subscribe && $email_address ) {
+		\Newspack_Blocks\Modal_Checkout::subscribe_newsletter_contact( $email_address, $lists );
+		// Reset $lists to prevent the newsletter confirmation from showing again.
+		$lists = [];
+	}
 	?>
 	<div class="woocommerce-order">
 	<?php if ( $is_success ) : ?>
@@ -73,7 +80,7 @@ function newspack_blocks_replace_login_with_order_summary() {
 				</strong>
 			</p>
 		</div>
-		<?php echo \Newspack_Blocks\Modal_Checkout::render_checkout_after_success_markup( $order, $force_subscribe ? [] : $lists ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		<?php echo \Newspack_Blocks\Modal_Checkout::render_checkout_after_success_markup( $order, $lists ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	<?php else : ?>
 		<div class="newspack-ui__box newspack-ui__box__error newspack-ui__box--text-center">
 			<p>

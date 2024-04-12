@@ -954,16 +954,7 @@ final class Modal_Checkout {
 			if ( empty( $signup_data['lists'] ) ) {
 				return new \WP_Error( 'newspack_no_lists_selected', __( 'No lists selected.', 'newspack-blocks' ) );
 			} else {
-				$result = \Newspack_Newsletters_Subscription::add_contact(
-					[
-						'email'    => $signup_data['email'],
-						'metadata' => [
-							'current_page_url' => home_url( add_query_arg( array(), \wp_get_referer() ) ),
-							'newsletters_subscription_method' => 'post-checkout',
-						],
-					],
-					$signup_data['lists']
-				);
+				$result = self::subscribe_newsletter_contact( $signup_data['email'], $signup_data['lists'] );
 			}
 			if ( \is_wp_error( $result ) ) {
 				return $result;
@@ -971,6 +962,32 @@ final class Modal_Checkout {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Subscribe_newsletter_contact.
+	 *
+	 * @param string $email_address Email address.
+	 * @param array  $lists Array of newsletter lists.
+	 *
+	 * @return bool|\WP_Error
+	 */
+	public static function subscribe_newsletter_contact( $email_address, $lists ) {
+		// TODO: confirm contact is not already subscribed to the list.
+		$result = \Newspack_Newsletters_Subscription::add_contact(
+			[
+				'email'    => $email_address,
+				'metadata' => [
+					'current_page_url'                => home_url( add_query_arg( array(), \wp_get_referer() ) ),
+					'newsletters_subscription_method' => 'post-checkout',
+				],
+			],
+			$lists
+		);
+		if ( \is_wp_error( $result ) ) {
+			return $result;
+		}
+		return true;
 	}
 
 	/**
