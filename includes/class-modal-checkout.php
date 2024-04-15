@@ -32,6 +32,7 @@ final class Modal_Checkout {
 	 */
 	public static function init() {
 		add_action( 'wp_loaded', [ __CLASS__, 'process_checkout_request' ], 5 );
+		add_action( 'woocommerce_add_to_cart', [ __CLASS__, 'process_donation_request' ], 11 );
 		add_action( 'wp_footer', [ __CLASS__, 'render_modal_markup' ], 100 );
 		add_action( 'wp_footer', [ __CLASS__, 'render_variation_selection' ], 100 );
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'enqueue_scripts' ] );
@@ -104,6 +105,8 @@ final class Modal_Checkout {
 
 	/**
 	 * Process checkout request for modal.
+	 *
+	 * @return void
 	 */
 	public static function process_checkout_request() {
 		if ( is_admin() ) {
@@ -122,6 +125,7 @@ final class Modal_Checkout {
 		if ( ! $is_newspack_checkout || ! $product_id ) {
 			return;
 		}
+
 		if ( $variation_id ) {
 			$product_id = $variation_id;
 		}
@@ -201,7 +205,6 @@ final class Modal_Checkout {
 		\WC()->cart->add_to_cart( $product_id, 1, 0, [], $cart_item_data );
 
 		$query_args = [];
-
 		if ( ! empty( $referer_tags ) ) {
 			$query_args['referer_tags'] = implode( ',', $referer_tags );
 		}
@@ -209,6 +212,48 @@ final class Modal_Checkout {
 			$query_args['referer_categories'] = implode( ',', $referer_categories );
 		}
 		$query_args['modal_checkout'] = 1;
+
+		// Pass through UTM, after_success, and newsletter params so they can be forwarded to the WooCommerce checkout flow.
+		foreach ( $params as $param => $value ) {
+			if ( 'utm' === substr( $param, 0, 3 ) || 'after_success' === substr( $param, 0, 13 ) || 'newsletter_subscription' === substr( $param, 0, 23 ) ) {
+				$param                = sanitize_text_field( $param );
+				$query_args[ $param ] = sanitize_text_field( $value );
+			}
+		}
+
+		$checkout_url = add_query_arg(
+			$query_args,
+			\wc_get_page_permalink( 'checkout' )
+		);
+
+		// Redirect to checkout.
+		\wp_safe_redirect( apply_filters( 'newspack_blocks_checkout_url', $checkout_url ) );
+		exit;
+	}
+
+	/**
+	 * Process donation request for modal.
+	 *
+	 * @return void
+	 */
+	public static function process_donation_request() {
+		if ( is_admin() ) {
+			return;
+		}
+
+		$is_newspack_donation = filter_input( INPUT_GET, 'newspack_donate', FILTER_SANITIZE_NUMBER_INT );
+
+		if ( ! $is_newspack_donation ) {
+			return;
+		}
+
+		$after_success_behavior                  = filter_input( INPUT_GET, 'after_success_behavior', FILTER_SANITIZE_SPECIAL_CHARS );
+		$after_success_url                       = filter_input( INPUT_GET, 'after_success_url', FILTER_SANITIZE_SPECIAL_CHARS );
+		$after_success_button_label              = filter_input( INPUT_GET, 'after_success_button_label', FILTER_SANITIZE_SPECIAL_CHARS );
+		$newsletter_subscription_lists           = filter_input( INPUT_GET, 'newsletter_subscription_lists', FILTER_SANITIZE_SPECIAL_CHARS );
+		$newsletter_subscription_force_subscribe = filter_input( INPUT_GET, 'newsletter_subscription_force_subscribe', FILTER_SANITIZE_NUMBER_INT );
+		$params                                  = compact( 'after_success_behavior', 'after_success_url', 'after_success_button_label', 'newsletter_subscription_lists', 'newsletter_subscription_force_subscribe' );
+		$query_args                              = [ 'modal_checkout' => 1 ];
 
 		// Pass through UTM, after_success, and newsletter params so they can be forwarded to the WooCommerce checkout flow.
 		foreach ( $params as $param => $value ) {
