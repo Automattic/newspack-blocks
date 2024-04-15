@@ -921,6 +921,21 @@ final class Modal_Checkout {
 		if ( empty( $newsletters_lists ) ) {
 			return;
 		}
+		$contact_lists = \Newspack_Newsletters_Subscription::get_contact_lists( $email_address );
+		if ( \is_wp_error( $contact_lists ) ) {
+			// silently fail if existing contact list data is not available.
+			return;
+		}
+		// Check if the user is already subscribed to all of the available lists.
+		$available_lists = array_filter(
+			$lists,
+			function( $item ) use ( $contact_lists ) {
+				return ! in_array( $item, $contact_lists, true );
+			}
+		);
+		if ( empty( $available_lists ) ) {
+			return;
+		}
 		?>
 			<div class="newspack-modal-newsletters">
 				<h4><?php esc_html_e( 'Sign up for newsletters', 'newspack-blocks' ); ?></h4>
@@ -952,30 +967,30 @@ final class Modal_Checkout {
 					<input type="hidden" name="newsletter_signup_email" value="<?php echo esc_html( $email_address ); ?>" />
 					<?php
 					self::render_hidden_inputs();
-					foreach ( $newsletters_lists as $list ) {
+					foreach ( $newsletters_lists as $item ) {
 						// Only render lists that are available via the relevant block.
-						if ( ! in_array( $list['id'], $lists, true ) ) {
+						if ( ! in_array( $item['id'], $available_lists, true ) ) {
 							continue;
 						}
 
-						$checkbox_id = sprintf( 'newspack-blocks-list-%s', $list['id'] );
+						$checkbox_id = sprintf( 'newspack-blocks-list-%s', $item['id'] );
 						?>
 							<div class="newspack-modal-newsletters__list-item">
 							<input
 								type="checkbox"
 								name="lists[]"
-								value="<?php echo \esc_attr( $list['id'] ); ?>"
+								value="<?php echo \esc_attr( $item['id'] ); ?>"
 								id="<?php echo \esc_attr( $checkbox_id ); ?>"
 								<?php
-								if ( isset( $list['checked'] ) && $list['checked'] ) {
+								if ( isset( $item['checked'] ) && $item['checked'] ) {
 									echo 'checked';
 								}
 								?>
 							>
 							<label for="<?php echo \esc_attr( $checkbox_id ); ?>">
-								<b><?php echo \esc_html( $list['title'] ); ?></b>
-								<?php if ( ! empty( $list['description'] ) ) : ?>
-									<span><?php echo \esc_html( $list['description'] ); ?></span>
+								<b><?php echo \esc_html( $item['title'] ); ?></b>
+								<?php if ( ! empty( $item['description'] ) ) : ?>
+									<span><?php echo \esc_html( $item['description'] ); ?></span>
 								<?php endif; ?>
 							</label>
 							</div>
@@ -991,7 +1006,7 @@ final class Modal_Checkout {
 	/**
 	 * Should newsletter confirmation be rendered?
 	 *
-	 * @return bool
+	 * @return bool|WP_Error
 	 */
 	public static function confirm_newsletter_signup() {
 		$signup_data = self::get_newsletter_signup_data();
@@ -1018,7 +1033,6 @@ final class Modal_Checkout {
 	 * @return bool|\WP_Error
 	 */
 	public static function subscribe_newsletter_contact( $email_address, $lists ) {
-		// TODO: confirm contact is not already subscribed to the list.
 		$result = \Newspack_Newsletters_Subscription::add_contact(
 			[
 				'email'    => $email_address,
