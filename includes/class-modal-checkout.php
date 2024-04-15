@@ -909,7 +909,7 @@ final class Modal_Checkout {
 		if ( ! $email_address ) {
 			return;
 		}
-		if ( ! method_exists( '\Newspack\Reader_Activation', 'get_registration_newsletter_lists' ) ) {
+		if ( ! class_exists( 'Newspack\Reader_Activation' ) || ! class_exists( 'Newspack_Newsletters_Subscription' ) ) {
 			return;
 		}
 		$newsletters_lists = array_filter(
@@ -1016,10 +1016,10 @@ final class Modal_Checkout {
 			} else {
 				$result = self::subscribe_newsletter_contact( $signup_data['email'], $signup_data['lists'] );
 			}
-			if ( \is_wp_error( $result ) ) {
-				return $result;
+			if ( ! \is_wp_error( $result ) ) {
+				$result = true;
 			}
-			return true;
+			return $result;
 		}
 		return false;
 	}
@@ -1033,20 +1033,24 @@ final class Modal_Checkout {
 	 * @return bool|\WP_Error
 	 */
 	public static function subscribe_newsletter_contact( $email_address, $lists ) {
-		$result = \Newspack_Newsletters_Subscription::add_contact(
-			[
-				'email'    => $email_address,
-				'metadata' => [
-					'current_page_url'                => home_url( add_query_arg( array(), \wp_get_referer() ) ),
-					'newsletters_subscription_method' => 'post-checkout',
+		if ( ! class_exists( 'Newspack_Newsletters_Subscription' ) ) {
+			$result = false;
+		} else {
+			$result = \Newspack_Newsletters_Subscription::add_contact(
+				[
+					'email'    => $email_address,
+					'metadata' => [
+						'current_page_url'                => home_url( add_query_arg( array(), \wp_get_referer() ) ),
+						'newsletters_subscription_method' => 'post-checkout',
+					],
 				],
-			],
-			$lists
-		);
-		if ( \is_wp_error( $result ) ) {
-			return $result;
+				$lists
+			);
 		}
-		return true;
+		if ( ! \is_wp_error( $result ) ) {
+			$result = true;
+		}
+		return $result;
 	}
 
 	/**
