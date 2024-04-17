@@ -9,6 +9,8 @@
  * @var WC_Order $order
  */
 
+namespace Newspack_Blocks;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -61,10 +63,7 @@ function newspack_blocks_replace_login_with_order_summary() {
 			<p>
 				<strong>
 					<?php
-						esc_html_e(
-							'Thank you for supporting The News Paper! Your transaction was successful.',
-							'newspack-blocks'
-						);
+						echo esc_html( Modal_Checkout::get_modal_checkout_labels( 'thankyou' ) );
 					?>
 				</strong>
 			</p>

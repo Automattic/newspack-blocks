@@ -345,7 +345,7 @@ final class Modal_Checkout {
 										<form>
 											<input type="hidden" name="newspack_checkout" value="1" />
 											<input type="hidden" name="product_id" value="<?php echo esc_attr( $variation->get_id() ); ?>" />
-											<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--primary" ); ?>"><?php echo esc_html( self::get_modal_checkout_labels( 'place_order_variation' ) ); ?></button>
+											<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--primary" ); ?>"><?php echo esc_html( self::get_modal_checkout_labels( 'checkout_confirm_variation' ) ); ?></button>
 										</form>
 									</li>
 								<?php endforeach; ?>
@@ -1041,7 +1041,7 @@ final class Modal_Checkout {
 		if ( ! $cart || $cart->is_empty() ) {
 			return $text;
 		}
-		return self::get_modal_checkout_labels( 'place_order' );
+		return self::get_modal_checkout_labels( 'checkout_confirm' );
 	}
 
 	/**
@@ -1263,41 +1263,47 @@ final class Modal_Checkout {
 	 *
 	 * @return string[]|string The label string or an array of labels keyed by string.
 	 */
-	private static function get_modal_checkout_labels( $key = null ) {
+	public static function get_modal_checkout_labels( $key = null ) {
 		$default_labels = [
-			'title'                   => __( 'Complete your transaction', 'newspack-blocks' ),
-			'billing_details'         => __( 'Billing details', 'newspack-blocks' ),
-			'shipping_details'        => __( 'Shipping details', 'newspack-blocks' ),
-			'gift_recipient'          => __( 'Gift recipient', 'newspack-blocks' ),
-			'auth_modal_title'        => __( 'Complete your transaction', 'newspack-blocks' ),
-			'signin_modal_title'      => _x(
+			'title'                      => __( 'Complete your transaction', 'newspack-blocks' ),
+			'billing_details'            => __( 'Billing details', 'newspack-blocks' ),
+			'shipping_details'           => __( 'Shipping details', 'newspack-blocks' ),
+			'gift_recipient'             => __( 'Gift recipient', 'newspack-blocks' ),
+			'auth_modal_title'           => __( 'Complete your transaction', 'newspack-blocks' ),
+			'signin_modal_title'         => _x(
 				'Sign in to complete transaction',
 				'Login modal title when logged out user attempts to checkout.',
 				'newspack-blocks'
 			),
-			'register_modal_title'    => _x(
+			'register_modal_title'       => _x(
 				'Register to complete transaction',
 				'Login modal title when unregistered user attempts to checkout',
 				'newspack-blocks'
 			),
-			'after_success'           => __( 'Continue browsing', 'newspack-blocks' ),
-			'donation_gift_details'   => __( 'This donation is a gift', 'newspack-blocks' ),
-			'purchase_gift_details'   => __( 'This purchase is a gift', 'newspack-blocks' ),
-			'newsletter_confirmation' => sprintf(
+			'after_success'              => __( 'Continue browsing', 'newspack-blocks' ),
+			'donation_gift_details'      => __( 'This donation is a gift', 'newspack-blocks' ),
+			'purchase_gift_details'      => __( 'This purchase is a gift', 'newspack-blocks' ),
+			'newsletter_confirmation'    => sprintf(
 				// Translators: %s is the site name.
 				__( 'Thanks for supporting %s.', 'newspack-blocks' ),
 				get_option( 'blogname' )
 			),
-			'newsletter_details'      => sprintf(
+			'newsletter_details'         => sprintf(
 				// Translators: %s is the site name.
 				__( 'Get the best of %s directly in your email inbox.', 'newspack-blocks' ),
 				get_bloginfo( 'name' )
 			),
-			'newsletter_signup'       => __( 'Continue', 'newspack-blocks' ),
-			'newsletter_success'      => __( 'Signup successful!', 'newspack-blocks' ),
-			'newsletter_title'        => __( 'Sign up for newsletters', 'newspack-blocks' ),
-			'place_order'             => __( 'Complete transaction', 'newspack-blocks' ),
-			'place_order_variation'   => __( 'Purchase', 'newspack-blocks' ),
+			'newsletter_signup'          => __( 'Continue', 'newspack-blocks' ),
+			'newsletter_success'         => __( 'Signup successful!', 'newspack-blocks' ),
+			'newsletter_title'           => __( 'Sign up for newsletters', 'newspack-blocks' ),
+			'checkout_confirm'           => __( 'Complete transaction', 'newspack-blocks' ),
+			'checkout_confirm_variation' => __( 'Purchase', 'newspack-blocks' ),
+			'checkout_back'              => __( 'Back', 'newspack-blocks' ),
+			'thankyou'                   => sprintf(
+				// Translators: %s is the site name.
+				__( 'Thank you for supporting %s. Your transaction was successful.', 'newspack-blocks' ),
+				get_option( 'blogname' )
+			),
 		];
 
 		if ( empty( self::$modal_checkout_labels ) ) {
