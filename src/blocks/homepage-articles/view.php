@@ -478,19 +478,13 @@ function newspack_blocks_format_byline( $author_info ) {
 			function ( $accumulator, $author ) use ( $author_info, &$index ) {
 				$index++;
 				$penultimate = count( $author_info ) - 2;
-
-				$get_author_posts_url = get_author_posts_url( $author->ID );
-				if ( function_exists( 'coauthors_posts_links' ) ) {
-					$get_author_posts_url = get_author_posts_url( $author->ID, $author->user_nicename );
-				}
-
 				return array_merge(
 					$accumulator,
 					[
 						sprintf(
 							/* translators: 1: author link. 2: author name. 3. variable seperator (comma, 'and', or empty) */
 							'<span class="author vcard"><a class="url fn n" href="%1$s">%2$s</a></span>',
-							esc_url( $get_author_posts_url ),
+							esc_url( $author->url ),
 							esc_html( $author->display_name )
 						),
 						( $index < $penultimate ) ? ', ' : '',
