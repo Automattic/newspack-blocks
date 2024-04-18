@@ -242,7 +242,7 @@ final class Modal_Checkout {
 		*
 		* @param string $title The title.
 		*/
-		$title        = self::get_modal_checkout_labels( 'auth_modal_title' );
+		$title        = self::get_modal_checkout_labels( 'checkout_modal_title' );
 		$class_prefix = self::get_class_prefix();
 		?>
 		<div id="newspack_modal_checkout" class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal-container" ); ?>">
@@ -300,7 +300,7 @@ final class Modal_Checkout {
 		*
 		* @param string $title The title.
 		*/
-		$title        = self::get_modal_checkout_labels( 'title' );
+		$title        = self::get_modal_checkout_labels( 'variation_modal_title' );
 		$products     = array_keys( self::$products );
 		$class_prefix = self::get_class_prefix();
 
@@ -1264,62 +1264,66 @@ final class Modal_Checkout {
 	 * @return string[]|string The label string or an array of labels keyed by string.
 	 */
 	public static function get_modal_checkout_labels( $key = null ) {
-		$default_labels = [
-			'title'                      => __( 'Complete your transaction', 'newspack-blocks' ),
-			'billing_details'            => __( 'Billing details', 'newspack-blocks' ),
-			'shipping_details'           => __( 'Shipping details', 'newspack-blocks' ),
-			'gift_recipient'             => __( 'Gift recipient', 'newspack-blocks' ),
-			'auth_modal_title'           => __( 'Complete your transaction', 'newspack-blocks' ),
-			'signin_modal_title'         => _x(
-				'Sign in to complete transaction',
-				'Login modal title when logged out user attempts to checkout.',
-				'newspack-blocks'
-			),
-			'register_modal_title'       => _x(
-				'Register to complete transaction',
-				'Login modal title when unregistered user attempts to checkout',
-				'newspack-blocks'
-			),
-			'after_success'              => __( 'Continue browsing', 'newspack-blocks' ),
-			'donation_gift_details'      => __( 'This donation is a gift', 'newspack-blocks' ),
-			'purchase_gift_details'      => __( 'This purchase is a gift', 'newspack-blocks' ),
-			'newsletter_confirmation'    => sprintf(
-				// Translators: %s is the site name.
-				__( 'Thanks for supporting %s.', 'newspack-blocks' ),
-				get_option( 'blogname' )
-			),
-			'newsletter_details'         => sprintf(
-				// Translators: %s is the site name.
-				__( 'Get the best of %s directly in your email inbox.', 'newspack-blocks' ),
-				get_bloginfo( 'name' )
-			),
-			'newsletter_signup'          => __( 'Continue', 'newspack-blocks' ),
-			'newsletter_success'         => __( 'Signup successful!', 'newspack-blocks' ),
-			'newsletter_title'           => __( 'Sign up for newsletters', 'newspack-blocks' ),
-			'checkout_confirm'           => __( 'Complete transaction', 'newspack-blocks' ),
-			'checkout_confirm_variation' => __( 'Purchase', 'newspack-blocks' ),
-			'checkout_back'              => __( 'Back', 'newspack-blocks' ),
-			'thankyou'                   => sprintf(
-				// Translators: %s is the site name.
-				__( 'Thank you for supporting %s. Your transaction was successful.', 'newspack-blocks' ),
-				get_option( 'blogname' )
-			),
-		];
-
 		if ( empty( self::$modal_checkout_labels ) ) {
+			$default_labels = [
+				'billing_details'            => __( 'Billing details', 'newspack-blocks' ),
+				'shipping_details'           => __( 'Shipping details', 'newspack-blocks' ),
+				'gift_recipient'             => __( 'Gift recipient', 'newspack-blocks' ),
+				'checkout_modal_title'       => __( 'Complete your transaction', 'newspack-blocks' ),
+				'variation_modal_title'      => __( 'Complete your transaction', 'newspack-blocks' ),
+				'auth_modal_title'           => __( 'Complete your transaction', 'newspack-blocks' ),
+				'signin_modal_title'         => _x(
+					'Sign in to complete transaction',
+					'Login modal title when logged out user attempts to checkout.',
+					'newspack-blocks'
+				),
+				'register_modal_title'       => _x(
+					'Register to complete transaction',
+					'Login modal title when unregistered user attempts to checkout',
+					'newspack-blocks'
+				),
+				'after_success'              => __( 'Continue browsing', 'newspack-blocks' ),
+				'donation_gift_details'      => __( 'This donation is a gift', 'newspack-blocks' ),
+				'purchase_gift_details'      => __( 'This purchase is a gift', 'newspack-blocks' ),
+				'newsletter_confirmation'    => sprintf(
+					// Translators: %s is the site name.
+					__( 'Thanks for supporting %s.', 'newspack-blocks' ),
+					get_option( 'blogname' )
+				),
+				'newsletter_details'         => sprintf(
+					// Translators: %s is the site name.
+					__( 'Get the best of %s directly in your email inbox.', 'newspack-blocks' ),
+					get_bloginfo( 'name' )
+				),
+				'newsletter_signup'          => __( 'Continue', 'newspack-blocks' ),
+				'newsletter_success'         => __( 'Signup successful!', 'newspack-blocks' ),
+				'newsletter_title'           => __( 'Sign up for newsletters', 'newspack-blocks' ),
+				'checkout_confirm'           => __( 'Complete transaction', 'newspack-blocks' ),
+				'checkout_confirm_variation' => __( 'Purchase', 'newspack-blocks' ),
+				'checkout_back'              => __( 'Back', 'newspack-blocks' ),
+				'thankyou'                   => sprintf(
+					// Translators: %s is the site name.
+					__( 'Thank you for supporting %s. Your transaction was successful.', 'newspack-blocks' ),
+					get_option( 'blogname' )
+				),
+			];
+
 			/**
 			* Filters the global labels for modal checkout flow.
 			*
 			* @param mixed[] $labels Labels keyed by name.
 			*/
-			self::$modal_checkout_labels = apply_filters( 'newspack_blocks_modal_checkout_labels', $default_labels );
+			$filtered_labels = apply_filters( 'newspack_blocks_modal_checkout_labels', $default_labels );
+
+			// Merge the default and filtered labels to ensure there are no missing labels.
+			self::$modal_checkout_labels = array_merge( $default_labels, $filtered_labels );
 		}
 
 		if ( ! $key ) {
-			return array_merge( $default_labels, self::$modal_checkout_labels );
+			return self::$modal_checkout_labels;
 		}
 
-		return self::$modal_checkout_labels[ $key ] ?? $default_labels[ $key ] ?? '';
+		return self::$modal_checkout_labels[ $key ] ?? '';
 	}
 }
 Modal_Checkout::init();
