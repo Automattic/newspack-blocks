@@ -42,7 +42,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 				<?php do_action( 'woocommerce_checkout_after_order_review' ); ?>
 			</div>
 			<?php do_action( 'woocommerce_checkout_after_customer_details' ); ?>
-			<button class="newspack-ui__button newspack-ui__button--tertiary newspack-ui__button--wide" id="checkout_back" type="button"><?php esc_html_e( 'Back', 'newspack-blocks' ); ?></button>
+			<button class="newspack-ui__button newspack-ui__button--ghost newspack-ui__button--wide" id="checkout_back" type="button"><?php esc_html_e( 'Back', 'newspack-blocks' ); ?></button>
 		</div>
 	<?php endif; ?>
 </form>
