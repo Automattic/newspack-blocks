@@ -28,6 +28,13 @@ final class Modal_Checkout {
 	private static $products = [];
 
 	/**
+	 * Labels for the modal checkout UI.
+	 *
+	 * @var mixed[]
+	 */
+	private static $modal_checkout_labels = [];
+
+	/**
 	 * Initialize hooks.
 	 */
 	public static function init() {
@@ -235,7 +242,7 @@ final class Modal_Checkout {
 		*
 		* @param string $title The title.
 		*/
-		$title        = self::get_modal_title();
+		$title        = self::get_modal_checkout_labels( 'checkout_modal_title' );
 		$class_prefix = self::get_class_prefix();
 		?>
 		<div id="newspack_modal_checkout" class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal-container" ); ?>">
@@ -293,7 +300,7 @@ final class Modal_Checkout {
 		*
 		* @param string $title The title.
 		*/
-		$title        = apply_filters( 'newspack_blocks_modal_checkout_title', __( 'Complete your transaction', 'newspack-blocks' ) );
+		$title        = self::get_modal_checkout_labels( 'variation_modal_title' );
 		$products     = array_keys( self::$products );
 		$class_prefix = self::get_class_prefix();
 
@@ -338,7 +345,7 @@ final class Modal_Checkout {
 										<form>
 											<input type="hidden" name="newspack_checkout" value="1" />
 											<input type="hidden" name="product_id" value="<?php echo esc_attr( $variation->get_id() ); ?>" />
-											<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--primary" ); ?>"><?php esc_html_e( 'Purchase', 'newspack-blocks' ); ?></button>
+											<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--primary" ); ?>"><?php echo esc_html( self::get_modal_checkout_labels( 'checkout_confirm_variation' ) ); ?></button>
 										</form>
 									</li>
 								<?php endforeach; ?>
@@ -375,9 +382,9 @@ final class Modal_Checkout {
 			[
 				'newspack_class_prefix' => self::get_class_prefix(),
 				'labels'                => [
-					'billing_details'  => __( 'Billing details', 'newspack-blocks' ),
-					'shipping_details' => __( 'Shipping details', 'newspack-blocks' ),
-					'gift_recipient'   => __( 'Gift recipient', 'newspack-blocks' ),
+					'billing_details'  => self::get_modal_checkout_labels( 'billing_details' ),
+					'shipping_details' => self::get_modal_checkout_labels( 'shipping_details' ),
+					'gift_recipient'   => self::get_modal_checkout_labels( 'gift_recipient' ),
 				],
 			]
 		);
@@ -424,17 +431,9 @@ final class Modal_Checkout {
 			[
 				'newspack_class_prefix' => self::get_class_prefix(),
 				'labels'                => [
-					'auth_modal_title'     => self::get_modal_title(),
-					'signin_modal_title'   => _x(
-						'Sign in to complete transaction',
-						'Login modal title when logged out user attempts to checkout.',
-						'newspack-blocks'
-					),
-					'register_modal_title' => _x(
-						'Register to complete transaction',
-						'Login modal title when unregistered user attempts to checkout',
-						'newspack-blocks'
-					),
+					'auth_modal_title'     => self::get_modal_checkout_labels( 'auth_modal_title' ),
+					'signin_modal_title'   => self::get_modal_checkout_labels( 'signin_modal_title' ),
+					'register_modal_title' => self::get_modal_checkout_labels( 'register_modal_title' ),
 				],
 			]
 		);
@@ -708,13 +707,13 @@ final class Modal_Checkout {
 				if ( $is_valid_email ) {
 					\WCS_Gifting::update_cart_item_key( $cart_item, $cart_item_key, $recipient_email );
 				} else {
+					$notice = $self_gifting
+						? __( 'Please enter someone else\' email address to receive this gift.', 'newspack-blocks' )
+						: __( 'Please enter a valid email address to receive this gift.', 'newspack-blocks' );
+
 					// Handle email validation errors.
 					\wc_add_notice(
-						sprintf(
-							// Translators: WCSG email validation error message.
-							__( 'Please enter %s email address to receive this gift.', 'newspack-blocks' ),
-							$self_gifting ? __( 'someone else’s', 'newspack-blocks' ) : __( 'a valid', 'newspack-blocks' )
-						),
+						$notice,
 						'error',
 						[ 'id' => 'wcsg_gift_recipients_email' ]
 					);
@@ -812,7 +811,7 @@ final class Modal_Checkout {
 			return;
 		}
 
-		$button_label = ! empty( $_REQUEST['after_success_button_label'] ) ? urldecode( wp_unslash( $_REQUEST['after_success_button_label'] ) ) : __( 'Continue browsing', 'newspack-blocks' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$button_label = ! empty( $_REQUEST['after_success_button_label'] ) ? urldecode( wp_unslash( $_REQUEST['after_success_button_label'] ) ) : self::get_modal_checkout_labels( 'after_success' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$url          = ! empty( $_REQUEST['after_success_url'] ) ? urldecode( wp_unslash( $_REQUEST['after_success_url'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		?>
 			<button
@@ -854,16 +853,10 @@ final class Modal_Checkout {
 		}
 		?>
 			<div class="newspack-modal-newsletters">
-				<h4><?php esc_html_e( 'Sign up for newsletters', 'newspack-blocks' ); ?></h4>
+				<h4><?php echo esc_html( self::get_modal_checkout_labels( 'newsletter_title' ) ); ?></h4>
 				<div class="newspack-modal-newsletters__info">
 					<?php
-					echo esc_html(
-						sprintf(
-							// Translators: %s is the site name.
-							__( 'Get the best of %s directly in your email inbox.', 'newspack-blocks' ),
-							get_bloginfo( 'name' )
-						)
-					);
+					echo esc_html( self::get_modal_checkout_labels( 'newsletter_details' ) );
 					?>
 					<br>
 					<span>
@@ -908,7 +901,7 @@ final class Modal_Checkout {
 						<?php
 					}
 					?>
-					<input type="submit" value="<?php esc_html_e( 'Continue', 'newspack-blocks' ); ?>">
+					<input type="submit" value="<?php echo esc_html( self::get_modal_checkout_labels( 'newsletter_signup' ) ); ?>">
 				</form>
 			</div>
 		<?php
@@ -979,17 +972,11 @@ final class Modal_Checkout {
 	public static function render_newsletter_confirmation( $no_lists_selected = false ) {
 		?>
 			<?php if ( ! $no_lists_selected ) : ?>
-				<h4><?php esc_html_e( 'Signup successful!', 'newspack-blocks' ); ?></h4>
+				<h4><?php echo esc_html( self::get_modal_checkout_labels( 'newsletter_success' ) ); ?></h4>
 			<?php endif; ?>
 			<p>
 				<?php
-				echo esc_html(
-					sprintf(
-						// Translators: %s is the site name.
-						__( 'Thanks for supporting %s.', 'newspack-blocks' ),
-						get_option( 'blogname' )
-					)
-				);
+				echo esc_html( self::get_modal_checkout_labels( 'newsletter_confirmation' ) );
 				?>
 			</p>
 		<?php
@@ -1054,11 +1041,7 @@ final class Modal_Checkout {
 		if ( ! $cart || $cart->is_empty() ) {
 			return $text;
 		}
-		return sprintf(
-			// Translators: %s is the price.
-			__( 'Complete transaction: %s', 'newspack-blocks' ),
-			esc_html( wp_strip_all_tags( \WC()->cart->get_total() ) )
-		);
+		return self::get_modal_checkout_labels( 'checkout_confirm' );
 	}
 
 	/**
@@ -1221,12 +1204,7 @@ final class Modal_Checkout {
 	 */
 	public static function subscriptions_gifting_label() {
 		$is_donation = method_exists( 'Newspack\Donations', 'is_donation_cart' ) && \Newspack\Donations::is_donation_cart();
-		$label       = sprintf(
-			// Translators: Whether the transaction is a donation or a non-donation purchase.
-			__( 'This %s is a gift', 'newspack-blocks' ),
-			$is_donation ? __( 'donation', 'newspack-blocks' ) : __( 'purchase', 'newspack-blocks' )
-		);
-
+		$label       = $is_donation ? self::get_modal_checkout_labels( 'donation_gift_details' ) : self::get_modal_checkout_labels( 'purchase_gift_details' );
 		return \apply_filters( 'wcsg_enable_gifting_checkbox_label', $label ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce hooks.
 	}
 
@@ -1255,18 +1233,6 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Gets the modal header title.
-	 */
-	public static function get_modal_title() {
-		/**
-		* Filters the header title for the modal checkout.
-		*
-		* @param string $title The title.
-		*/
-		return apply_filters( 'newspack_blocks_modal_checkout_title', __( 'Complete your transaction', 'newspack-blocks' ) );
-	}
-
-	/**
 	 * Get the relevant class prefix (newspack-blocks or newspack-ui) depending on whether Newpack plugin is active.
 	 */
 	private static function get_class_prefix() {
@@ -1288,6 +1254,76 @@ final class Modal_Checkout {
 		$newspack_ui_html = preg_replace( '/class=".*?"/', "class='{$class_prefix}__button {$class_prefix}__button--primary {$class_prefix}__button--wide'", $html );
 
 		return $newspack_ui_html;
+	}
+
+	/**
+	 * Get modal checkout flow labels.
+	 *
+	 * @param string|null $key Key of the label to return (optional).
+	 *
+	 * @return string[]|string The label string or an array of labels keyed by string.
+	 */
+	public static function get_modal_checkout_labels( $key = null ) {
+		if ( empty( self::$modal_checkout_labels ) ) {
+			$default_labels = [
+				'billing_details'            => __( 'Billing details', 'newspack-blocks' ),
+				'shipping_details'           => __( 'Shipping details', 'newspack-blocks' ),
+				'gift_recipient'             => __( 'Gift recipient', 'newspack-blocks' ),
+				'checkout_modal_title'       => __( 'Complete your transaction', 'newspack-blocks' ),
+				'variation_modal_title'      => __( 'Complete your transaction', 'newspack-blocks' ),
+				'auth_modal_title'           => __( 'Complete your transaction', 'newspack-blocks' ),
+				'signin_modal_title'         => _x(
+					'Sign in to complete transaction',
+					'Login modal title when logged out user attempts to checkout.',
+					'newspack-blocks'
+				),
+				'register_modal_title'       => _x(
+					'Register to complete transaction',
+					'Login modal title when unregistered user attempts to checkout',
+					'newspack-blocks'
+				),
+				'after_success'              => __( 'Continue browsing', 'newspack-blocks' ),
+				'donation_gift_details'      => __( 'This donation is a gift', 'newspack-blocks' ),
+				'purchase_gift_details'      => __( 'This purchase is a gift', 'newspack-blocks' ),
+				'newsletter_confirmation'    => sprintf(
+					// Translators: %s is the site name.
+					__( 'Thanks for supporting %s.', 'newspack-blocks' ),
+					get_option( 'blogname' )
+				),
+				'newsletter_details'         => sprintf(
+					// Translators: %s is the site name.
+					__( 'Get the best of %s directly in your email inbox.', 'newspack-blocks' ),
+					get_bloginfo( 'name' )
+				),
+				'newsletter_signup'          => __( 'Continue', 'newspack-blocks' ),
+				'newsletter_success'         => __( 'Signup successful!', 'newspack-blocks' ),
+				'newsletter_title'           => __( 'Sign up for newsletters', 'newspack-blocks' ),
+				'checkout_confirm'           => __( 'Complete transaction', 'newspack-blocks' ),
+				'checkout_confirm_variation' => __( 'Purchase', 'newspack-blocks' ),
+				'checkout_back'              => __( 'Back', 'newspack-blocks' ),
+				'thankyou'                   => sprintf(
+					// Translators: %s is the site name.
+					__( 'Thank you for supporting %s. Your transaction was successful.', 'newspack-blocks' ),
+					get_option( 'blogname' )
+				),
+			];
+
+			/**
+			* Filters the global labels for modal checkout flow.
+			*
+			* @param mixed[] $labels Labels keyed by name.
+			*/
+			$filtered_labels = apply_filters( 'newspack_blocks_modal_checkout_labels', $default_labels );
+
+			// Merge the default and filtered labels to ensure there are no missing labels.
+			self::$modal_checkout_labels = array_merge( $default_labels, $filtered_labels );
+		}
+
+		if ( ! $key ) {
+			return self::$modal_checkout_labels;
+		}
+
+		return self::$modal_checkout_labels[ $key ] ?? '';
 	}
 }
 Modal_Checkout::init();

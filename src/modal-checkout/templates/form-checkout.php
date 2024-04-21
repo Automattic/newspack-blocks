@@ -6,6 +6,8 @@
  * @package Newspack_Blocks
  */
 
+namespace Newspack_Blocks;
+
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce hooks.
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables.
 
@@ -42,7 +44,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 				<?php do_action( 'woocommerce_checkout_after_order_review' ); ?>
 			</div>
 			<?php do_action( 'woocommerce_checkout_after_customer_details' ); ?>
-			<button class="newspack-ui__button newspack-ui__button--ghost newspack-ui__button--wide" id="checkout_back" type="button"><?php esc_html_e( 'Back', 'newspack-blocks' ); ?></button>
+			<button class="newspack-ui__button newspack-ui__button--ghost newspack-ui__button--wide" id="checkout_back" type="button"><?php echo esc_html( Modal_Checkout::get_modal_checkout_labels( 'checkout_back' ) ); ?></button>
 		</div>
 	<?php endif; ?>
 </form>
