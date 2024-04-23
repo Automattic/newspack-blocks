@@ -4,7 +4,7 @@
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Button, Placeholder, FormFileUpload, Spinner, Notice } from '@wordpress/components';
-import { BlockIcon, URLPopover, MediaUpload } from '@wordpress/block-editor';
+import { BlockIcon, URLPopover, MediaUpload, MediaUploadCheck } from '@wordpress/block-editor';
 import { keyboardReturn } from '@wordpress/icons';
 
 /**
@@ -83,17 +83,19 @@ const IframePlaceholder = ( {
 
 	const renderMediaLibraryButton = onSelect => {
 		return (
-			<MediaUpload
-				onSelect={ onSelect }
-				allowedTypes={ allowedTypes }
-				render={ ( { open } ) => {
-					return (
-						<Button variant="tertiary" onClick={ open }>
-							{ __( 'Media Library', 'newspack-blocks' ) }
-						</Button>
-					);
-				} }
-			/>
+			<MediaUploadCheck>
+				<MediaUpload
+					onSelect={ onSelect }
+					allowedTypes={ Object.keys( allowedTypes ) }
+					render={ ( { open } ) => {
+						return (
+							<Button variant="tertiary" onClick={ open }>
+								{ __( 'Media Library', 'newspack-blocks' ) }
+							</Button>
+						);
+					} }
+				/>
+			</MediaUploadCheck>
 		);
 	};
 
@@ -149,7 +151,9 @@ const IframePlaceholder = ( {
 					<Spinner />
 				) : (
 					<FormFileUpload
-						accept={ allowedTypes.join( ',' ) }
+						accept={ Object.keys( allowedTypes )
+							.map( mime => '.' + allowedTypes[ mime ] )
+							.join( ',' ) }
 						onChange={ onUpload }
 						multiple={ false }
 						render={ ( { openFileDialog } ) => (
