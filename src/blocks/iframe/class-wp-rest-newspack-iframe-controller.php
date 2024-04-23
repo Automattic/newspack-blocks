@@ -87,6 +87,155 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 	}
 
 	/**
+	 * Possible mimes for iframe document source file.
+	 *
+	 * @return array
+	 */
+	private static function iframe_document_accepted_file_mimes() {
+		$mimes = get_allowed_mime_types();
+		return [
+			$mimes['pdf']             => 'pdf',
+			$mimes['doc']             => 'doc',
+			$mimes['docx']            => 'docx',
+			$mimes['xla|xls|xlt|xlw'] => 'xls',
+			$mimes['xlsx']            => 'xlsx',
+			$mimes['pot|pps|ppt']     => 'ppt',
+			$mimes['pptx']            => 'pptx',
+		];
+	}
+
+	/**
+	 * Does the current user have enough capabilities to upload archives?
+	 * Archives can contain unfiltered HTML/JS/CS files, so they require a higher level of capabilities than single file uploads.
+	 *
+	 * @return boolean
+	 */
+	public static function can_upload_archives() {
+		/**
+		 * Filters whether the current user is allowed to upload archives.
+		 *
+		 * @param boolean $can_upload_archives Whether the current user is allowed to upload archives.
+		 * @param WP_User $user The current user.
+		 */
+		return apply_filters( 'newspack_blocks_iframe_can_upload_archives', current_user_can( 'manage_options' ), wp_get_current_user() );
+	}
+
+	/**
+	 * Possible mimes for HTML-based embeds (only if contained in a zip).
+	 *
+	 * @return array
+	 */
+	private static function iframe_html_accepted_file_mimes() {
+		$mimes = wp_get_mime_types();
+
+		// Allow HTML/CSS/JS.
+		$allowed_types = [
+			$mimes['htm|html']           => 'html',
+			$mimes['css']                => 'css',
+			$mimes['js']                 => 'js',
+			$mimes['txt|asc|c|cc|h|srt'] => 'css|js',
+		];
+
+		// Allow audio/image/video files.
+		foreach ( $mimes as $key => $type ) {
+			$prefix = explode( '/', $type )[0];
+			if ( in_array( $prefix, [ 'audio', 'image', 'video' ], true ) ) {
+				$allowed_types[ $type ] = $key;
+			}
+		}
+
+		return $allowed_types;
+	}
+
+	/**
+	 * Possible mimes for iframe archive source file.
+	 *
+	 * @return array
+	 */
+	private static function iframe_archive_accepted_file_mimes() {
+		if ( ! self::can_upload_archives() ) {
+			return [];
+		}
+
+		return [ 'application/zip' => 'zip' ];
+	}
+
+	/**
+	 * Possible mimes for iframe source file.
+	 *
+	 * @param boolean $in_archive If true, the file is inside an archive, which can contain HTML/CSS/JS files.
+	 */
+	public static function iframe_accepted_file_mimes( $in_archive = false ) {
+		$accepted_files = array_merge(
+			self::iframe_archive_accepted_file_mimes(),
+			self::iframe_document_accepted_file_mimes()
+		);
+
+		// Allow unfiltered HTML if it's inside an archive.
+		if ( $in_archive ) {
+			$accepted_files = array_merge( $accepted_files, self::iframe_html_accepted_file_mimes() );
+		}
+
+		return $accepted_files;
+	}
+
+	/**
+	 * Ensure an uploaded file is a valid type before allowing upload.
+	 *
+	 * @param array $file_info File info.
+	 *
+	 * @return string|false The file's verified MIME type if allowed, or false if not allowed.
+	 */
+	private function validate_file( $file_info ) {
+		// Verify that the declared MIME type is allowed.
+		if ( ! in_array( $file_info['type'], array_keys( self::iframe_accepted_file_mimes() ), true ) ) {
+			return false;
+		}
+
+		// Ensure the file is actually a file uploaded via HTTP POST.
+		$tmp_file = $file_info['tmp_name'];
+		if ( ! is_uploaded_file( $tmp_file ) ) {
+			return false;
+		}
+
+		// Compare the detected MIME type with the declared one and reject if they mismatch.
+		$true_mime = mime_content_type( $tmp_file );
+		if ( $true_mime !== $file_info['type'] ) {
+			return false;
+		}
+
+		return $true_mime;
+	}
+
+	/**
+	 * Validate the raw contents of a file inside a .zip archive.
+	 *
+	 * @param string $contents The contents of the file.
+	 *
+	 * @return string|false The file's verified MIME type if allowed, or false if not allowed.
+	 */
+	private function validate_archive_file_contents( $contents ) {
+		$finfo  = new finfo( FILEINFO_MIME_TYPE );
+		$mime_type = $finfo->buffer( $contents );
+		if ( ! in_array( $mime_type, array_keys( self::iframe_accepted_file_mimes( true ) ), true ) ) {
+			return false;
+		}
+
+		return $mime_type;
+	}
+
+	/**
+	 * Check whether the given mime_type is a valid archive file type.
+	 *
+	 * @param string $mime_type The mime type to check.
+	 *
+	 * @return boolean
+	 */
+	private function is_archive( $mime_type ) {
+		return in_array( $mime_type, array_keys( self::iframe_archive_accepted_file_mimes() ), true );
+	}
+
+	/**
 	 * Receive the iframe content, handle it, and returns the URL and the folder name.
 	 *
 	 * @param WP_REST_Request $request Request object.
@@ -99,23 +248,28 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 		if ( count( $files ) > 0 && array_key_exists( 'iframe_file', $files ) ) {
 			$iframe_file   = $files['iframe_file'];
 			$iframe_folder = pathinfo( $iframe_file['name'] )['filename'] . '-' . wp_generate_password( 8, false );
+			$is_valid_file = $this->validate_file( $iframe_file );
 
-			if ( in_array( $iframe_file['type'], array_keys( Newspack_Blocks::iframe_document_accepted_file_mimes() ), true ) ) {
+			if ( $this->is_archive( $is_valid_file ) ) {
+				$response = $this->process_iframe_archive( $request, $iframe_folder, $iframe_file['tmp_name'] );
+			} elseif ( $is_valid_file ) {
 				$file_extension = pathinfo( $iframe_file['name'], PATHINFO_EXTENSION );
 				$response       = $this->process_iframe_document( $request, "$iframe_folder.$file_extension", $iframe_file['tmp_name'] );
-			} elseif ( in_array( $iframe_file['type'], array_keys( Newspack_Blocks::iframe_archive_accepted_file_mimes() ), true ) ) {
-				$response = $this->process_iframe_archive( $request, $iframe_folder, $iframe_file['tmp_name'] );
 			} else {
 				$response = new WP_Error(
 					'newspack_blocks',
-					__( 'Could not find the iframe file on your request.', 'newspack-blocks' ),
+					sprintf(
+						// Translators: %s is a list of supported file extensions for uploading.
+						__( "Unsupported filetype. Please make sure it's one of the supported filetypes: % s", 'newspack-blocks' ),
+						implode( ', ', array_values( self::iframe_document_accepted_file_mimes() ) )
+					),
 					[ 'status' => '400' ]
 				);
 			}
 		} else {
 			$response = new WP_Error(
 				'newspack_blocks',
-				__( 'Could not find the iframe file on your request.', 'newspack-blocks' ),
+				__( 'Could not upload this file.', 'newspack-blocks' ),
 				[ 'status' => '400' ]
 			);
 		}
@@ -137,12 +291,12 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 			$media      = get_post( $data['media_id'] );
 			$media_path = get_attached_file( $data['media_id'] );
 
-			if ( $media_path && in_array( $media->post_mime_type, array_keys( Newspack_Blocks::iframe_document_accepted_file_mimes() ), true ) ) {
+			if ( $media_path && in_array( $media->post_mime_type, array_keys( self::iframe_document_accepted_file_mimes() ), true ) ) {
 				$iframe_folder  = $media->post_title . '-' . wp_generate_password( 8, false );
-				$file_extension = Newspack_Blocks::iframe_document_accepted_file_mimes()[ $media->post_mime_type ];
+				$file_extension = self::iframe_document_accepted_file_mimes()[ $media->post_mime_type ];
 
 				$response = $this->process_iframe_document( $request, "$iframe_folder.$file_extension", $media_path );
-			} elseif ( $media_path && in_array( $media->post_mime_type, array_keys( Newspack_Blocks::iframe_archive_accepted_file_mimes() ), true ) ) {
+			} elseif ( $media_path && in_array( $media->post_mime_type, array_keys( self::iframe_archive_accepted_file_mimes() ), true ) ) {
 				$iframe_folder = $media->post_title . '-' . wp_generate_password( 8, false );
 
 				$response = $this->process_iframe_archive( $request, $iframe_folder, $media_path );
@@ -181,7 +335,7 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 				return rest_ensure_response( $head );
 			}
 			$content_type = $head['headers']->offsetGet( 'content-type' );
-			if ( ! empty( $content_type ) && in_array( $content_type, array_keys( Newspack_Blocks::iframe_document_accepted_file_mimes() ), true ) ) {
+			if ( ! empty( $content_type ) && in_array( $content_type, array_keys( self::iframe_document_accepted_file_mimes() ), true ) ) {
 				$mode = 'document';
 			}
 		}
@@ -238,91 +392,96 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	private function process_iframe_archive( $request, $iframe_folder, $media_path ) {
+		$invalid_file_error = new WP_Error(
+			'newspack_blocks',
+			sprintf(
+					// Translators: %s is a list of supported file extensions for uploading.
+				__( "Error reading the archive. Please make sure it's a valid .zip archive file and contains only supported filetypes: %s", 'newspack-blocks' ),
+				implode( ', ', array_values( self::iframe_document_accepted_file_mimes() ) )
+			),
+			[ 'status' => '400' ]
+		);
+
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		if ( ! WP_Filesystem() ) {
+			return $invalid_file_error;
+		}
+		global $wp_filesystem;
+
 		$wp_upload_dir     = wp_upload_dir();
 		$iframe_upload_dir = $wp_upload_dir['path'] . self::IFRAME_UPLOAD_DIR;
-		$iframe_path       = $iframe_upload_dir . $iframe_folder;
-		$data = $request->get_body_params();
+		$iframe_path       = trailingslashit( $iframe_upload_dir . $iframe_folder );
+		$data              = $request->get_body_params();
 
 		// create iframe directory if not existing.
 		if ( ! file_exists( $iframe_upload_dir ) ) {
 			wp_mkdir_p( $iframe_upload_dir );
 		}
 
-		// unzip iframe archive.
-		$zip = new ZipArchive();
-		$res = $zip->open( $media_path );
+		// Extract files from archive.
+		$zip    = new ZipArchive();
+		$opened = $zip->open( $media_path );
+		if ( ! $opened ) {
+			return $invalid_file_error;
+		}
 
-		$is_valid = true;
-		for ( $i = 0; $i < $zip->numFiles; $i++ ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-			$stat = $zip->statIndex( $i );
-			// If there's a PHP file in the archive, it's not valid.
-			if ( false !== strpos( $stat['name'], '.php' ) ) {
-				$is_valid = false;
+		$contains_valid_files = false;
+
+		// Validate all files inside the archive. Only extract files of allowed types.
+		for ( $file_index = 0; $file_index < $zip->numFiles; $file_index++ ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			$contents = $zip->getFromIndex( $file_index );
+			if ( $this->validate_archive_file_contents( $contents ) ) {
+				$stat = $zip->statIndex( $file_index );
+				if ( $stat && isset( $stat['name'] ) ) {
+					if ( ! file_exists( dirname( $iframe_path . $stat['name'] ) ) ) {
+						wp_mkdir_p( dirname( $iframe_path . $stat['name'] ) );
+					}
+					$put = $wp_filesystem->put_contents( $iframe_path . $stat['name'], $contents );
+					if ( ! $put ) {
+						return $invalid_file_error;
+					}
+					$contains_valid_files = true;
+				}
+			}
+		}
+
+		$zip->close();
+
+		// If we didn't extract any files, raise an error.
+		if ( ! $contains_valid_files ) {
+			return $invalid_file_error;
+		}
+
+		// Check for required entrypoint file.
+		$directory    = new \RecursiveDirectoryIterator( $iframe_path );
+		$entry_path = false;
+		foreach ( new \RecursiveIteratorIterator( $directory ) as $file ) {
+			if ( $file->getFilename() === self::IFRAME_ENTRY_FILE ) {
+				// Convert absolute path to URL.
+				$entry_path = str_replace( $wp_upload_dir['path'], $wp_upload_dir['url'], trailingslashit( dirname( $file->getFileInfo() ) ) );
 				break;
 			}
 		}
-		if ( ! $is_valid ) {
+
+		// If we found the entrypoint file, return the iframe URL and folder.
+		if ( $entry_path ) {
+			// Remove previous version if it exists.
+			if ( array_key_exists( 'archive_folder', $data ) && ! empty( $data['archive_folder'] ) ) {
+				$this->remove_folder( $wp_upload_dir['basedir'] . $data['archive_folder'] );
+			}
+
+			$response = [
+				'mode' => 'iframe',
+				'src'  => $entry_path,
+				'dir'  => trailingslashit( path_join( $wp_upload_dir['subdir'] . self::IFRAME_UPLOAD_DIR, $iframe_folder ) ),
+			];
+		} else {
+			// If we can't find the entrypoint file, remove the uploaded archive data and raise an error.
+			$this->remove_folder( $iframe_path );
 			return new WP_Error(
 				'newspack_blocks',
-				__( 'Not a valid iframe archive.', 'newspack-blocks' ),
-				[ 'status' => '400' ]
-			);
-		}
-
-		if ( true === $res ) {
-			$zip->extractTo( $iframe_path );
-			$zip->close();
-
-			// check if iframe entry file is there.
-			if ( file_exists( path_join( $iframe_path, self::IFRAME_ENTRY_FILE ) ) ) {
-				$response = [
-					'mode' => 'iframe',
-					'src'  => $wp_upload_dir['url'] . self::IFRAME_UPLOAD_DIR . $iframe_folder . DIRECTORY_SEPARATOR,
-					'dir'  => path_join( $wp_upload_dir['subdir'] . self::IFRAME_UPLOAD_DIR, $iframe_folder ),
-				];
-
-				// if we need to remove the previous archive, it's a good place to do it here.
-				if ( array_key_exists( 'archive_folder', $data ) && ! empty( $data['archive_folder'] ) ) {
-					$this->remove_folder( $data['archive_folder'] );
-				}
-			} else {
-				// check if its not a one folder archive: archive.zip > archive > index.html.
-				$archive_folders = array_values(
-					array_filter(
-						glob( "$iframe_path/*", GLOB_ONLYDIR ),
-						function( $file ) {
-							return false === strpos( $file, '__MACOSX' );
-						}
-					)
-				);
-
-				if ( 1 === count( $archive_folders ) && file_exists( path_join( $archive_folders[0], self::IFRAME_ENTRY_FILE ) ) ) {
-					$response = [
-						'mode' => 'iframe',
-						'src'  => $wp_upload_dir['url'] . self::IFRAME_UPLOAD_DIR . $iframe_folder . DIRECTORY_SEPARATOR . basename( $archive_folders[0] ) . DIRECTORY_SEPARATOR,
-						'dir'  => path_join( $wp_upload_dir['subdir'] . self::IFRAME_UPLOAD_DIR, $iframe_folder . DIRECTORY_SEPARATOR ),
-					];
-
-					// if we need to remove the previous archive, it's a good place to do it here.
-					if ( array_key_exists( 'archive_folder', $data ) && ! empty( $data['archive_folder'] ) ) {
-						$this->remove_folder( $data['archive_folder'] );
-					}
-				} else {
-					// if not, remove the uploaded archive data and raise an error.
-					$this->remove_folder( $wp_upload_dir['subdir'] . self::IFRAME_UPLOAD_DIR . $iframe_folder, true );
-
-					$response = new WP_Error(
-						'newspack_blocks',
-						/* translators: %s: iframe entry file (e.g. index,html) */
-						sprintf( __( '%s was not found in the iframe archive.', 'newspack-blocks' ), self::IFRAME_ENTRY_FILE ),
-						[ 'status' => '400' ]
-					);
-				}
-			}
-		} else {
-			$response = new WP_Error(
-				'newspack_blocks',
-				__( "Could not unzip the iframe archive, make sure it's a valid .zip archive file.", 'newspack-blocks' ),
+				/* translators: %s: iframe entry file (e.g. index,html) */
+				sprintf( __( 'Required %s entrypoint file was not found in the archive.', 'newspack-blocks' ), self::IFRAME_ENTRY_FILE ),
 				[ 'status' => '400' ]
 			);
 		}

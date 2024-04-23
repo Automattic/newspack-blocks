@@ -101,6 +101,7 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 				src: iframeArchiveSrc,
 				archiveFolder: iframeArchiveFolder,
 			} );
+
 			setShowPreview( true );
 		} catch ( e ) {
 			setError(
