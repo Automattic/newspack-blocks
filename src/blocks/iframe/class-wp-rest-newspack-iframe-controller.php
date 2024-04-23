@@ -467,7 +467,7 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 		if ( $entry_path ) {
 			// Remove previous version if it exists.
 			if ( array_key_exists( 'archive_folder', $data ) && ! empty( $data['archive_folder'] ) ) {
-				$this->remove_folder( $wp_upload_dir['basedir'] . $data['archive_folder'] );
+				$this->remove_folder( $data['archive_folder'] );
 			}
 
 			$response = [
@@ -477,7 +477,7 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 			];
 		} else {
 			// If we can't find the entrypoint file, remove the uploaded archive data and raise an error.
-			$this->remove_folder( $iframe_path );
+			$this->remove_folder( $wp_upload_dir['subdir'] . self::IFRAME_UPLOAD_DIR . $iframe_folder );
 			return new WP_Error(
 				'newspack_blocks',
 				/* translators: %s: iframe entry file (e.g. index,html) */
