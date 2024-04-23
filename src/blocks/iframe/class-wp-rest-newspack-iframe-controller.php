@@ -252,6 +252,23 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 		$zip = new ZipArchive();
 		$res = $zip->open( $media_path );
 
+		$is_valid = true;
+		for ( $i = 0; $i < $zip->numFiles; $i++ ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			$stat = $zip->statIndex( $i );
+			// If there's a PHP file in the archive, it's not valid.
+			if ( false !== strpos( $stat['name'], '.php' ) ) {
+				$is_valid = false;
+				break;
+			}
+		}
+		if ( ! $is_valid ) {
+			return new WP_Error(
+				'newspack_blocks',
+				__( 'Not a valid iframe archive.', 'newspack-blocks' ),
+				[ 'status' => '400' ]
+			);
+		}
+
 		if ( true === $res ) {
 			$zip->extractTo( $iframe_path );
 			$zip->close();
