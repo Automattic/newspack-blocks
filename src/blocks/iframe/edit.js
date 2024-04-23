@@ -196,6 +196,7 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 							height: isFullScreen ? '100vh' : height,
 							maxWidth: '100%',
 							maxHeight: '100%',
+							pointerEvents: 'none',
 						} }
 					/>
 				</div>

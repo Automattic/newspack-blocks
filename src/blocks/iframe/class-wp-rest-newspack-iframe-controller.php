@@ -78,9 +78,7 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 				[
 					'methods'             => WP_REST_Server::DELETABLE,
 					'callback'            => [ $this, 'remove_iframe_archive' ],
-					'permission_callback' => function() {
-						return current_user_can( 'edit_posts' );
-					},
+					'permission_callback' => [ $this, 'can_upload_archives' ],
 				],
 			]
 		);
