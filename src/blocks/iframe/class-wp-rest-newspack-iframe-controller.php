@@ -210,7 +210,7 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 
 		// If we need to remove the previous document, it's a good place to do it here.
 		if ( array_key_exists( 'archive_folder', $data ) && ! empty( $data['archive_folder'] ) ) {
-			$this->remove_folder( $wp_upload_dir['basedir'] . $data['archive_folder'] );
+			$this->remove_folder( $data['archive_folder'] );
 		}
 
 		// Copy uploaded document file to destination.
@@ -241,7 +241,7 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 		$wp_upload_dir     = wp_upload_dir();
 		$iframe_upload_dir = $wp_upload_dir['path'] . self::IFRAME_UPLOAD_DIR;
 		$iframe_path       = $iframe_upload_dir . $iframe_folder;
-		$data              = $request->get_body_params();
+		$data = $request->get_body_params();
 
 		// create iframe directory if not existing.
 		if ( ! file_exists( $iframe_upload_dir ) ) {
@@ -266,7 +266,7 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 
 				// if we need to remove the previous archive, it's a good place to do it here.
 				if ( array_key_exists( 'archive_folder', $data ) && ! empty( $data['archive_folder'] ) ) {
-					$this->remove_folder( $wp_upload_dir['basedir'] . $data['archive_folder'] );
+					$this->remove_folder( $data['archive_folder'] );
 				}
 			} else {
 				// check if its not a one folder archive: archive.zip > archive > index.html.
@@ -288,11 +288,11 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 
 					// if we need to remove the previous archive, it's a good place to do it here.
 					if ( array_key_exists( 'archive_folder', $data ) && ! empty( $data['archive_folder'] ) ) {
-						$this->remove_folder( $wp_upload_dir['basedir'] . $data['archive_folder'] );
+						$this->remove_folder( $data['archive_folder'] );
 					}
 				} else {
 					// if not, remove the uploaded archive data and raise an error.
-					$this->remove_folder( $iframe_path );
+					$this->remove_folder( $wp_upload_dir['subdir'] . self::IFRAME_UPLOAD_DIR . $iframe_folder, true );
 
 					$response = new WP_Error(
 						'newspack_blocks',
@@ -320,11 +320,10 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function remove_iframe_archive( $request ) {
-		$wp_upload_dir = wp_upload_dir();
-		$data          = $request->get_json_params();
+		$data = $request->get_json_params();
 
 		if ( array_key_exists( 'archive_folder', $data ) && ! empty( $data['archive_folder'] ) ) {
-			$this->remove_folder( $wp_upload_dir['basedir'] . $data['archive_folder'] );
+			$this->remove_folder( $data['archive_folder'] );
 		}
 
 		return rest_ensure_response( [] );
@@ -342,7 +341,14 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 			require_once ABSPATH . '/wp-admin/includes/class-wp-filesystem-direct.php';
 		}
 
-		$file_system = new WP_Filesystem_Direct( false );
-		$file_system->rmdir( $folder, true );
+		// Ensure the folder path matches the /year/month/upload-dir/ structure.
+		$folder_path_regex = '/^\/\d{4}\/\d{2}' . preg_quote( self::IFRAME_UPLOAD_DIR, '/' ) . '/';
+		$can_delete = preg_match( $folder_path_regex, $folder );
+
+		if ( $can_delete ) {
+			$file_system = new WP_Filesystem_Direct( false );
+			$wp_upload_dir = wp_upload_dir();
+			$file_system->rmdir( $wp_upload_dir['basedir'] . $folder, true );
+		}
 	}
 }
