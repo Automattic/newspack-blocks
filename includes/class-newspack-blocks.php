@@ -233,6 +233,7 @@ class Newspack_Blocks {
 				'assets_path'                => plugins_url( '/src/assets', NEWSPACK_BLOCKS__PLUGIN_FILE ),
 				'post_subtitle'              => get_theme_support( 'post-subtitle' ),
 				'iframe_accepted_file_mimes' => WP_REST_Newspack_Iframe_Controller::iframe_accepted_file_mimes(),
+				'iframe_can_upload_archives' => WP_REST_Newspack_Iframe_Controller::can_upload_archives(),
 				'supports_recaptcha'         => class_exists( 'Newspack\Recaptcha' ),
 				'has_recaptcha'              => class_exists( 'Newspack\Recaptcha' ) && \Newspack\Recaptcha::can_use_captcha(),
 				'recaptcha_url'              => admin_url( 'admin.php?page=newspack-connections-wizard' ),

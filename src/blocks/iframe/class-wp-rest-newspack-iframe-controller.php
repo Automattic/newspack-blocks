@@ -105,6 +105,22 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 	}
 
 	/**
+	 * Does the current user have enough capabilities to upload archives?
+	 * Archives can contain unfiltered HTML/JS/CS files, so they require a higher level of capabilities than single file uploads.
+	 *
+	 * @return boolean
+	 */
+	public static function can_upload_archives() {
+		/**
+		 * Filters whether the current user is allowed to upload archives.
+		 *
+		 * @param boolean $can_upload_archives Whether the current user is allowed to upload archives.
+		 * @param WP_User $user The current user.
+		 */
+		return apply_filters( 'newspack_blocks_iframe_can_upload_archives', current_user_can( 'manage_options' ), wp_get_current_user() );
+	}
+
+	/**
 	 * Possible mimes for HTML-based embeds (only if contained in a zip).
 	 *
 	 * @return array
@@ -137,6 +153,10 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 	 * @return array
 	 */
 	private static function iframe_archive_accepted_file_mimes() {
+		if ( ! self::can_upload_archives() ) {
+			return [];
+		}
+
 		return [ 'application/zip' => 'zip' ];
 	}
 
@@ -188,7 +208,7 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Validate and sanitize the raw contents of a file inside a .zip archive.
+	 * Validate the raw contents of a file inside a .zip archive.
 	 *
 	 * @param string $contents The contents of the file.
 	 *
