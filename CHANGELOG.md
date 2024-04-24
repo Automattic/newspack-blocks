@@ -1,8 +1,37 @@
+## [3.0.9](https://github.com/Automattic/newspack-blocks/compare/v3.0.8...v3.0.9) (2024-04-24)
+
+
+### Bug Fixes
+
+* assorted hotfixes ([eb9b6e5](https://github.com/Automattic/newspack-blocks/commit/eb9b6e5f13ecd055113baa2c53620775f930b2da))
+
+## [3.0.8](https://github.com/Automattic/newspack-blocks/compare/v3.0.7...v3.0.8) (2024-04-19)
+
+
+### Bug Fixes
+
+* fix wrapping issue happening in Firefox ([#1712](https://github.com/Automattic/newspack-blocks/issues/1712)) ([82c676e](https://github.com/Automattic/newspack-blocks/commit/82c676e62f6832d5ca38c8b149377c45701ffb86))
+
+## [3.0.7](https://github.com/Automattic/newspack-blocks/compare/v3.0.6...v3.0.7) (2024-04-08)
+
+
+### Bug Fixes
+
+* add encoding to all attributes in rest URL ([#1690](https://github.com/Automattic/newspack-blocks/issues/1690)) ([e0f74d7](https://github.com/Automattic/newspack-blocks/commit/e0f74d7a6318a34d21a05b16937975f1b61f0664))
+
+## [3.0.7-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v3.0.6...v3.0.7-alpha.1) (2024-03-28)
+
+
+### Bug Fixes
+
+* add encoding to all attributes in rest URL ([#1690](https://github.com/Automattic/newspack-blocks/issues/1690)) ([e0f74d7](https://github.com/Automattic/newspack-blocks/commit/e0f74d7a6318a34d21a05b16937975f1b61f0664))
+
 ## [3.0.6](https://github.com/Automattic/newspack-blocks/compare/v3.0.5...v3.0.6) (2024-03-28)
 
 
 ### Bug Fixes
 
+* add encoding to all attributes in rest URL ([#1690](https://github.com/Automattic/newspack-blocks/issues/1690)) ([e0f74d7](https://github.com/Automattic/newspack-blocks/commit/e0f74d7a6318a34d21a05b16937975f1b61f0664))
 * translate formatted date for hpp block ([#1697](https://github.com/Automattic/newspack-blocks/issues/1697)) ([5cbb2fd](https://github.com/Automattic/newspack-blocks/commit/5cbb2fd75866818e11f42966341156b48d347d09))
 
 ## [3.0.5](https://github.com/Automattic/newspack-blocks/compare/v3.0.4...v3.0.5) (2024-03-25)

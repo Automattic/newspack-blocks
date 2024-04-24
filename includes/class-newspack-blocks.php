@@ -84,6 +84,7 @@ class Newspack_Blocks {
 
 			foreach ( $blocks as $block ) {
 				if ( 'newspack-blocks/iframe' === $block['blockName']
+					&& is_array( $block['attrs'] )
 					&& array_key_exists( 'isFullScreen', $block['attrs'] )
 					&& $block['attrs']['isFullScreen']
 					) {
@@ -131,39 +132,6 @@ class Newspack_Blocks {
 
 		$script_data['script_path'] = plugins_url( $script_path, NEWSPACK_BLOCKS__PLUGIN_FILE );
 		return $script_data;
-	}
-
-	/**
-	 * Possible mimes for iframe archive source file.
-	 */
-	public static function iframe_archive_accepted_file_mimes() {
-		return [ 'application/zip' => 'zip' ];
-	}
-
-	/**
-	 * Possible mimes for iframe document source file.
-	 */
-	public static function iframe_document_accepted_file_mimes() {
-		$mimes = get_allowed_mime_types();
-		return [
-			$mimes['pdf']             => 'pdf',
-			$mimes['doc']             => 'doc',
-			$mimes['docx']            => 'docx',
-			$mimes['xla|xls|xlt|xlw'] => 'xls',
-			$mimes['xlsx']            => 'xlsx',
-			$mimes['pot|pps|ppt']     => 'ppt',
-			$mimes['pptx']            => 'pptx',
-		];
-	}
-
-	/**
-	 * Possible mimes for iframe source file.
-	 */
-	public static function iframe_accepted_file_mimes() {
-		return array_merge(
-			array_values( self::iframe_archive_accepted_file_mimes() ),
-			array_values( self::iframe_document_accepted_file_mimes() )
-		);
 	}
 
 	/**
@@ -265,7 +233,8 @@ class Newspack_Blocks {
 				'authors_rest_url'           => rest_url( 'newspack-blocks/v1/authors' ),
 				'assets_path'                => plugins_url( '/src/assets', NEWSPACK_BLOCKS__PLUGIN_FILE ),
 				'post_subtitle'              => get_theme_support( 'post-subtitle' ),
-				'iframe_accepted_file_mimes' => self::iframe_accepted_file_mimes(),
+				'iframe_accepted_file_mimes' => WP_REST_Newspack_Iframe_Controller::iframe_accepted_file_mimes(),
+				'iframe_can_upload_archives' => WP_REST_Newspack_Iframe_Controller::can_upload_archives(),
 				'supports_recaptcha'         => class_exists( 'Newspack\Recaptcha' ),
 				'has_recaptcha'              => class_exists( 'Newspack\Recaptcha' ) && \Newspack\Recaptcha::can_use_captcha(),
 				'recaptcha_url'              => admin_url( 'admin.php?page=newspack-connections-wizard' ),
