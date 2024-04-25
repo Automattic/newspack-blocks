@@ -161,6 +161,11 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 				</div>
 			<?php endif; ?>
 
+			<?php
+			if ( ! has_action( 'woocommerce_after_order_notes' ) ) {
+				do_action( 'woocommerce_after_order_notes', $checkout );
+			}
+			?>
 			<div class="after-customer-details">
 				<?php do_action( 'woocommerce_checkout_after_customer_details' ); ?>
 			</div>
