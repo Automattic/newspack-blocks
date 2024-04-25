@@ -385,17 +385,17 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		if ( $has_more_button ) :
 			?>
 			<button type="button" class="wp-block-button__link" data-next="<?php echo esc_url( $articles_rest_url ); ?>">
-			<?php
-			if ( ! empty( $attributes['moreButtonText'] ) ) {
-				echo esc_html( $attributes['moreButtonText'] );
-			} else {
-				esc_html_e( 'Load more posts', 'newspack-blocks' );
-			}
-			?>
+				<span class="label">
+					<?php
+					if ( ! empty( $attributes['moreButtonText'] ) ) {
+						echo esc_html( $attributes['moreButtonText'] );
+					} else {
+						esc_html_e( 'Load more posts', 'newspack-blocks' );
+					}
+					?>
+				</span>
+				<span class="loading"></span>
 			</button>
-			<p class="loading">
-				<?php esc_html_e( 'Loading...', 'newspack-blocks' ); ?>
-			</p>
 			<p class="error">
 				<?php esc_html_e( 'Something went wrong. Please refresh the page and/or try again.', 'newspack-blocks' ); ?>
 			</p>
