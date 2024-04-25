@@ -333,7 +333,7 @@ import './checkout.scss';
 				data[ item.name ] = item.value;
 			} );
 
-			const classname = `${ newspackBlocksModalCheckout.newspack_class_prefix }__helper-text`;
+			const classname = `${ newspackBlocksModalCheckout.newspack_class_prefix }__font--xs`;
 			const html = [];
 			html.push( '<div class="billing-details">' );
 			html.push( '<h3>' + newspackBlocksModalCheckout.labels.billing_details + '</h3>' );
