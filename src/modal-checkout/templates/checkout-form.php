@@ -162,7 +162,8 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 			<?php endif; ?>
 
 			<?php
-			if ( ! has_action( 'woocommerce_after_order_notes' ) ) {
+			global $wp_actions;
+			if ( ! isset( $wp_actions['woocommerce_after_order_notes'] ) ) {
 				do_action( 'woocommerce_after_order_notes', $checkout );
 			}
 			?>
