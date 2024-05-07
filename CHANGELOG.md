@@ -1,3 +1,10 @@
+## [3.0.11](https://github.com/Automattic/newspack-blocks/compare/v3.0.10...v3.0.11) (2024-05-07)
+
+
+### Bug Fixes
+
+* add `woocommerce_after_order_notes` action for integrations that need it ([#1720](https://github.com/Automattic/newspack-blocks/issues/1720)) ([76a3e1b](https://github.com/Automattic/newspack-blocks/commit/76a3e1be103694bccdf5e94534db99cb9cd3ba1c))
+
 ## [3.0.10](https://github.com/Automattic/newspack-blocks/compare/v3.0.9...v3.0.10) (2024-04-24)
 
 
