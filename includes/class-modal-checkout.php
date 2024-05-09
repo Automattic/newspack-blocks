@@ -835,21 +835,22 @@ final class Modal_Checkout {
 	 * @param WC_Order $order The order related to the transaction.
 	 */
 	private static function render_newsletter_signup_form( $order ) {
-		if ( ! method_exists( '\Newspack\Reader_Activation', 'get_post_checkout_newsletter_lists' ) ) {
-			return;
-		}
-
 		$email_address = $order->get_billing_email();
 		if ( ! $email_address ) {
 			return;
 		}
 
+		if ( ! method_exists( '\Newspack\Reader_Activation', 'get_post_checkout_newsletter_lists' ) ) {
+			return;
+		}
+
 		$newsletters_lists = array_filter(
-			\Newspack\Reader_Activation::get_post_checkout_newsletter_lists(),
+			\Newspack\Reader_Activation::get_post_checkout_newsletter_lists( $email_address ),
 			function( $item ) {
 				return $item['active'];
 			}
 		);
+
 		if ( empty( $newsletters_lists ) ) {
 			return;
 		}
