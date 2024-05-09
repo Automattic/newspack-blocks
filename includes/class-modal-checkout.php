@@ -908,10 +908,16 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Should post-chcekout newsletter signup be available?
+	 * Whether post-checkout newsletter signup is available.
+	 *
+	 * @return bool
 	 */
 	private static function is_newsletter_signup_available() {
-		return defined( 'NEWSPACK_ENABLE_POST_CHECKOUT_NEWSLETTER_SIGNUP' ) && NEWSPACK_ENABLE_POST_CHECKOUT_NEWSLETTER_SIGNUP;
+		if ( ! method_exists( '\Newspack\Reader_Activation', 'get_setting' ) ) {
+			return false;
+		}
+
+		return (bool) \Newspack\Reader_Activation::get_setting( 'use_custom_lists' );
 	}
 
 	/**
