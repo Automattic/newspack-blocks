@@ -853,23 +853,25 @@ final class Modal_Checkout {
 		}
 		?>
 			<div class="newspack-modal-newsletters">
-				<h4><?php echo esc_html( self::get_modal_checkout_labels( 'newsletter_title' ) ); ?></h4>
+				<h3><?php echo esc_html( self::get_modal_checkout_labels( 'newsletter_title' ) ); ?></h3>
 				<div class="newspack-modal-newsletters__info">
+					<p>
 					<?php
 					echo esc_html( self::get_modal_checkout_labels( 'newsletter_details' ) );
 					?>
-					<br>
-					<span>
-					<?php
-						echo esc_html(
-							sprintf(
-								// Translators: %s is the user's email address.
-								__( 'Sending to: %s', 'newspack-blocks' ),
-								$email_address
-							)
-						);
-					?>
-					</span>
+						<br>
+						<span class="newspack-ui__color-text-gray">
+						<?php
+							echo esc_html(
+								sprintf(
+									// Translators: %s is the user's email address.
+									__( 'Sending to: %s', 'newspack-blocks' ),
+									$email_address
+								)
+							);
+						?>
+						</span>
+					</p>
 				</div>
 				<form>
 					<input type="hidden" name="modal_checkout" value="1" />
@@ -879,7 +881,7 @@ final class Modal_Checkout {
 					foreach ( $newsletters_lists as $list ) {
 						$checkbox_id = sprintf( 'newspack-blocks-list-%s', $list['id'] );
 						?>
-							<div class="newspack-modal-newsletters__list-item">
+						<label class="newspack-ui__input-card">
 							<input
 								type="checkbox"
 								name="lists[]"
@@ -891,17 +893,15 @@ final class Modal_Checkout {
 								}
 								?>
 							>
-							<label for="<?php echo \esc_attr( $checkbox_id ); ?>">
-								<b><?php echo \esc_html( $list['title'] ); ?></b>
-								<?php if ( ! empty( $list['description'] ) ) : ?>
-									<span><?php echo \esc_html( $list['description'] ); ?></span>
-								<?php endif; ?>
-							</label>
-							</div>
+							<strong><?php echo \esc_html( $list['title'] ); ?></strong><br>
+							<?php if ( ! empty( $list['description'] ) ) : ?>
+								<span class="newspack-ui__helper-text"><?php echo \esc_html( $list['description'] ); ?></span>
+							<?php endif; ?>
+						</label>
 						<?php
 					}
 					?>
-					<input type="submit" value="<?php echo esc_html( self::get_modal_checkout_labels( 'newsletter_signup' ) ); ?>">
+					<input type="submit" class="newspack-ui__button newspack-ui__button--primary newspack-ui__button--wide" value="<?php echo esc_html( self::get_modal_checkout_labels( 'newsletter_signup' ) ); ?>">
 				</form>
 			</div>
 		<?php
