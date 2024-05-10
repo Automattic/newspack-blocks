@@ -57,6 +57,7 @@ final class Modal_Checkout {
 		add_filter( 'woocommerce_order_button_text', [ __CLASS__, 'order_button_text' ], 5 );
 		add_filter( 'option_woocommerce_subscriptions_order_button_text', [ __CLASS__, 'order_button_text' ], 5 );
 		add_action( 'woocommerce_before_checkout_form', [ __CLASS__, 'render_before_checkout_form' ] );
+		add_action( 'woocommerce_before_checkout_form', [ __CLASS__, 'render_name_your_price_form' ], 11 );
 		add_action( 'woocommerce_checkout_before_customer_details', [ __CLASS__, 'render_before_customer_details' ] );
 		add_filter( 'woocommerce_enable_order_notes_field', [ __CLASS__, 'enable_order_notes_field' ] );
 		add_action( 'woocommerce_checkout_process', [ __CLASS__, 'wcsg_apply_gift_subscription' ] );
@@ -1163,7 +1164,44 @@ final class Modal_Checkout {
 			endforeach;
 			// phpcs:enable
 			?>
-		</div>
+			</div>
+		<?php
+	}
+
+	/**
+	 * Render name your price form if nyp is active and available.
+	 */
+	public static function render_name_your_price_form() {
+		if ( ! self::is_modal_checkout() || ! \Newspack_Blocks::can_use_name_your_price() ) {
+			return;
+		}
+		$cart = \WC()->cart;
+		if ( 1 !== $cart->get_cart_contents_count() ) {
+			return;
+		}
+		$class_prefix = self::get_class_prefix();
+		?>
+			<div class="name-your-price">
+				<?php
+				// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce hooks.
+				foreach ( $cart->get_cart() as $cart_item_key => $cart_item ) :
+					$_product = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
+					if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && \WC_Name_Your_Price_Helpers::is_nyp( $_product ) && apply_filters( 'woocommerce_checkout_cart_item_visible', true, $cart_item, $cart_item_key ) ) :
+						?>
+						<h3><?php echo esc_html( self::get_modal_checkout_labels( 'checkout_nyp_title' ) ); ?></h3>
+						<form>
+							<input type="hidden" name="newspack_checkout_name_your_price" value="1" />
+							<div>
+								<input name="newspack_checkout_name_your_price_amount" placeholder="0" />
+								<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--primary" ); ?>"><?php echo esc_html( self::get_modal_checkout_labels( 'checkout_nyp_apply' ) ); ?></button>
+							</div>
+						</form>
+						<?php
+					endif;
+				endforeach;
+				// phpcs:enable
+				?>
+			</div>
 		<?php
 	}
 
@@ -1393,6 +1431,8 @@ final class Modal_Checkout {
 				),
 				'checkout_nyp'               => __( "Your contribution directly funds our work. If you're moved to do so, you can opt to pay more than the standard rate.", 'newspack-blocks' ),
 				'checkout_nyp_thankyou'      => __( "Thank you for your generosity! We couldn't do this without you!", 'newspack-blocks' ),
+				'checkout_nyp_title'         => __( 'Increase your support', 'newspack-blocks' ),
+				'checkout_nyp_apply'         => __( 'Apply', 'newspack-blocks' ),
 			];
 
 			/**

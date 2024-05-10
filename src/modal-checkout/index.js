@@ -425,9 +425,7 @@ import './checkout.scss';
 				}
 			}
 
-			$( '.order-details-summary' ).after(
-				'<div id="checkout_details">' + html.join( '' ) + '</div>'
-			);
+			$( 'form.checkout' ).before( '<div id="checkout_details">' + html.join( '' ) + '</div>' );
 		}
 
 		/**
