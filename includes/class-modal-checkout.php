@@ -1391,6 +1391,8 @@ final class Modal_Checkout {
 					__( 'Thank you for supporting %s. Your transaction was successful.', 'newspack-blocks' ),
 					get_option( 'blogname' )
 				),
+				'checkout_nyp'               => __( "Your contribution directly funds our work. If you're moved to do so, you can opt to pay more than the standard rate.", 'newspack-blocks' ),
+				'checkout_nyp_thankyou'      => __( "Thank you for your generosity! We couldn't do this without you!", 'newspack-blocks' ),
 			];
 
 			/**
