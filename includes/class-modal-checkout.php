@@ -1172,7 +1172,7 @@ final class Modal_Checkout {
 	 * Render name your price form if nyp is active and available.
 	 */
 	public static function render_name_your_price_form() {
-		if ( ! self::is_modal_checkout() || ! \Newspack_Blocks::can_use_name_your_price() ) {
+		if ( ! self::is_modal_checkout() || ! class_exists( '\WC' ) || ! method_exists( '\WC_Name_Your_Price_Helpers', 'is_nyp' ) ) {
 			return;
 		}
 		$cart = \WC()->cart;
