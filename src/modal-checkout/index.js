@@ -287,7 +287,6 @@ import './checkout.scss';
 					opacity: 0.6,
 				},
 			} );
-			$nyp.find( '.result' ).remove();
 			const data = {
 				_ajax_nonce: newspackBlocksModalCheckout.nyp_nonce,
 				action: 'process_name_your_price_request',
@@ -303,6 +302,8 @@ import './checkout.scss';
 				url: newspackBlocksModalCheckout.ajax_url,
 				data,
 				success: ( { success, data: res } ) => {
+					clearNotices();
+					$nyp.find( '.result' ).remove();
 					$nyp.append(
 						`<p class="result ${ newspackBlocksModalCheckout.newspack_class_prefix }__inline-${
 							success ? 'info' : 'error'
@@ -310,7 +311,11 @@ import './checkout.scss';
 							res.message +
 							'</p>'
 					);
-					// TODO: Update price in the checkout if successful.
+					if ( success ) {
+						// TODO: Update price in the checkout if successful.
+					} else {
+						$nyp.find( 'input[name="amount"]' ).focus();
+					}
 				},
 				complete: () => {
 					$nyp.removeClass( 'processing' ).unblock();
