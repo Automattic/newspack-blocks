@@ -289,9 +289,8 @@ import './checkout.scss';
 			} );
 			$nyp.find( '.result' ).remove();
 			const data = {
+				_ajax_nonce: newspackBlocksModalCheckout.nyp_nonce,
 				action: 'process_name_your_price_request',
-				// TODO: Add nonce.
-				// security: 'name-your-price',
 				amount: $nyp.find( 'input[name="amount"]' ).val(),
 				product_id: $nyp.find( 'input[name="product_id"]' ).val(),
 				newspack_checkout_name_your_price: $nyp

@@ -261,6 +261,8 @@ final class Modal_Checkout {
 			return;
 		}
 
+		check_ajax_referer( 'newspack_checkout_name_your_price' );
+
 		$is_newspack_checkout_nyp = filter_input( INPUT_POST, 'newspack_checkout_name_your_price', FILTER_SANITIZE_NUMBER_INT );
 		$product_id               = filter_input( INPUT_POST, 'product_id', FILTER_SANITIZE_NUMBER_INT );
 
@@ -464,6 +466,7 @@ final class Modal_Checkout {
 			'newspackBlocksModalCheckout',
 			[
 				'ajax_url'              => admin_url( 'admin-ajax.php' ),
+				'nyp_nonce'             => wp_create_nonce( 'newspack_checkout_name_your_price' ),
 				'newspack_class_prefix' => self::get_class_prefix(),
 				'labels'                => [
 					'billing_details'  => self::get_modal_checkout_labels( 'billing_details' ),
