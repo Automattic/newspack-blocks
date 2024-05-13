@@ -65,6 +65,7 @@ final class Modal_Checkout {
 		add_filter( 'woocommerce_order_button_html', [ __CLASS__, 'order_button_html' ], 10, 1 );
 		add_action( 'option_woocommerce_default_customer_address', [ __CLASS__, 'ensure_base_default_customer_address' ] );
 		add_action( 'default_option_woocommerce_default_customer_address', [ __CLASS__, 'ensure_base_default_customer_address' ] );
+		add_action( 'wp_ajax_process_name_your_price_request', [ __CLASS__, 'process_name_your_price_request' ] );
 
 		/** Custom handling for registered users. */
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
@@ -249,6 +250,73 @@ final class Modal_Checkout {
 	}
 
 	/**
+	 * Process name your price request for modal.
+	 */
+	public static function process_name_your_price_request() {
+		if ( ! defined( 'DOING_AJAX' ) ) {
+			return;
+		}
+
+		if ( ! \Newspack_Blocks::can_use_name_your_price() || ! method_exists( '\WC_Name_Your_Price_Helpers', 'is_nyp' ) ) {
+			return;
+		}
+
+		$is_newspack_checkout_nyp = filter_input( INPUT_POST, 'newspack_checkout_name_your_price', FILTER_SANITIZE_NUMBER_INT );
+		$product_id               = filter_input( INPUT_POST, 'product_id', FILTER_SANITIZE_NUMBER_INT );
+
+		if ( ! $is_newspack_checkout_nyp || ! $product_id ) {
+			return;
+		}
+
+		\WC()->cart->empty_cart();
+
+		$price     = filter_input( INPUT_POST, 'amount', FILTER_SANITIZE_NUMBER_INT );
+		$min_price = \WC_Name_Your_Price_Helpers::get_minimum_price( $product_id );
+		$max_price = \WC_Name_Your_Price_Helpers::get_maximum_price( $product_id );
+
+		if ( ! empty( $min_price ) && $price < $min_price ) {
+			wp_send_json_error(
+				[
+					'message' => sprintf(
+						// Translators: %s is the minimum price.
+						__( 'Adjusted amount must exceed the minimum price of %s.', 'newspack-blocks' ),
+						\wc_price( $min_price )
+					),
+				]
+			);
+
+			wp_die();
+		}
+
+		if ( ! empty( $max_price ) && $price > $max_price ) {
+			wp_send_json_error(
+				[
+					'message' => sprintf(
+						// Translators: %s is the maximum price.
+						__( 'Adjusted amount must not exceed the maximum price of %s.', 'newspack-blocks' ),
+						\wc_price( $max_price )
+					),
+				]
+			);
+
+			wp_die();
+		}
+
+		$cart_item_data['nyp'] = (float) \WC_Name_Your_Price_Helpers::standardize_number( $price );
+
+		\WC()->cart->add_to_cart( $product_id, 1, 0, [], $cart_item_data );
+
+		wp_send_json_success(
+			[
+				'message' => self::get_modal_checkout_labels( 'checkout_nyp_thankyou' ),
+				'price'   => $price,
+			]
+		);
+
+		wp_die();
+	}
+
+	/**
 	 * Render the markup necessary for the modal checkout.
 	 */
 	public static function render_modal_markup() {
@@ -395,6 +463,7 @@ final class Modal_Checkout {
 			'newspack-blocks-modal-checkout',
 			'newspackBlocksModalCheckout',
 			[
+				'ajax_url'              => admin_url( 'admin-ajax.php' ),
 				'newspack_class_prefix' => self::get_class_prefix(),
 				'labels'                => [
 					'billing_details'  => self::get_modal_checkout_labels( 'billing_details' ),
@@ -1172,7 +1241,7 @@ final class Modal_Checkout {
 	 * Render name your price form if nyp is active and available.
 	 */
 	public static function render_name_your_price_form() {
-		if ( ! self::is_modal_checkout() || ! class_exists( '\WC' ) || ! method_exists( '\WC_Name_Your_Price_Helpers', 'is_nyp' ) ) {
+		if ( ! self::is_modal_checkout() || ! method_exists( '\WC_Name_Your_Price_Helpers', 'is_nyp' ) ) {
 			return;
 		}
 		$cart = \WC()->cart;
@@ -1189,10 +1258,11 @@ final class Modal_Checkout {
 					if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && \WC_Name_Your_Price_Helpers::is_nyp( $_product ) && apply_filters( 'woocommerce_checkout_cart_item_visible', true, $cart_item, $cart_item_key ) ) :
 						?>
 						<h3><?php echo esc_html( self::get_modal_checkout_labels( 'checkout_nyp_title' ) ); ?></h3>
-						<form>
+						<form class="modal_checkout_nyp">
 							<input type="hidden" name="newspack_checkout_name_your_price" value="1" />
+							<input type="hidden" name="product_id" value="<?php echo esc_attr( $_product->get_id() ); ?>" />
 							<div>
-								<input name="newspack_checkout_name_your_price_amount" placeholder="0" />
+								<input name="amount" placeholder="<?php echo esc_attr( \WC_Name_Your_Price_Helpers::get_suggested_price( $_product->get_id() ) ); ?>" />
 								<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--primary" ); ?>"><?php echo esc_html( self::get_modal_checkout_labels( 'checkout_nyp_apply' ) ); ?></button>
 							</div>
 						</form>

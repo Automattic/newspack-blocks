@@ -38,6 +38,7 @@ import './checkout.scss';
 		}
 
 		const $coupon = $( 'form.modal_checkout_coupon' );
+		const $nyp = $( 'form.modal_checkout_nyp' );
 		const $checkout_continue = $( '#checkout_continue' );
 		const $customer_details = $( '#customer_details' );
 		const $after_customer_details = $( '#after_customer_details' );
@@ -267,6 +268,58 @@ import './checkout.scss';
 				$coupon.find( '.result' ).remove();
 				$coupon.find( 'input[name="coupon_code"]' ).val( '' ).focus();
 			} );
+		}
+
+		/**
+		 * Handle name your price submission.
+		 *
+		 * @param {Event} ev
+		 */
+		function handleNYPFormSubmit( ev ) {
+			ev.preventDefault();
+			if ( $nyp.is( '.processing' ) ) {
+				return false;
+			}
+			$nyp.addClass( 'processing' ).block( {
+				message: null,
+				overlayCSS: {
+					background: '#fff',
+					opacity: 0.6,
+				},
+			} );
+			$nyp.find( '.result' ).remove();
+			const data = {
+				action: 'process_name_your_price_request',
+				// TODO: Add nonce.
+				// security: 'name-your-price',
+				amount: $nyp.find( 'input[name="amount"]' ).val(),
+				product_id: $nyp.find( 'input[name="product_id"]' ).val(),
+				newspack_checkout_name_your_price: $nyp
+					.find( 'input[name="newspack_checkout_name_your_price"]' )
+					.val(),
+			};
+			// Ajax request.
+			$.ajax( {
+				type: 'POST',
+				url: newspackBlocksModalCheckout.ajax_url,
+				data,
+				success: ( { success, data: res } ) => {
+					$nyp.append(
+						`<p class="result ${ newspackBlocksModalCheckout.newspack_class_prefix }__inline-${
+							success ? 'info' : 'error'
+						}">` +
+							res.message +
+							'</p>'
+					);
+					// TODO: Update price in the checkout if successful.
+				},
+				complete: () => {
+					$nyp.removeClass( 'processing' ).unblock();
+				},
+			} );
+		}
+		if ( $nyp.length ) {
+			$nyp.on( 'submit', handleNYPFormSubmit );
 		}
 
 		/**
