@@ -893,7 +893,7 @@ final class Modal_Checkout {
 								}
 								?>
 							>
-							<strong><?php echo \esc_html( $list['title'] ); ?></strong><br>
+							<strong><?php echo \esc_html( $list['title'] ); ?></strong>
 							<?php if ( ! empty( $list['description'] ) ) : ?>
 								<span class="newspack-ui__helper-text"><?php echo \esc_html( $list['description'] ); ?></span>
 							<?php endif; ?>
