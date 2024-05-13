@@ -270,8 +270,6 @@ final class Modal_Checkout {
 			return;
 		}
 
-		\WC()->cart->empty_cart();
-
 		$price     = filter_input( INPUT_POST, 'amount', FILTER_SANITIZE_NUMBER_INT );
 		$min_price = \WC_Name_Your_Price_Helpers::get_minimum_price( $product_id );
 		$max_price = \WC_Name_Your_Price_Helpers::get_maximum_price( $product_id );
@@ -304,9 +302,13 @@ final class Modal_Checkout {
 			wp_die();
 		}
 
-		$cart_item_data['nyp'] = (float) \WC_Name_Your_Price_Helpers::standardize_number( $price );
+		foreach ( \WC()->cart->get_cart() as $cart_item_key => $cart_item ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
+			if ( $cart_item['product_id'] !== $product_id ) {
+				continue;
+			}
 
-		\WC()->cart->add_to_cart( $product_id, 1, 0, [], $cart_item_data );
+			$cart_item['data']->set_price( $price );
+		}
 
 		wp_send_json_success(
 			[
