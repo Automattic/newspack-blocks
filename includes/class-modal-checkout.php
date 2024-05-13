@@ -75,7 +75,13 @@ final class Modal_Checkout {
 		add_filter( 'googlesitekit_tagmanager_tag_blocked', [ __CLASS__, 'is_modal_checkout' ] );
 		add_filter( 'jetpack_active_modules', [ __CLASS__, 'jetpack_active_modules' ] );
 
-		// Ensure that options to limit the number of subscriptions per product are respected.
+		/**
+		 * Ensure that options to limit the number of subscriptions per product are respected.
+		 * Note: This is normally called only for regular checkout pages and REST API requests,
+		 * so we need to add the filters for modal checkout.
+		 *
+		 * See: https://github.com/Automattic/woocommerce-subscriptions-core/blob/trunk/includes/class-wcs-limiter.php#L23
+		*/
 		if ( self::is_modal_checkout() && class_exists( 'WCS_Limiter' ) ) {
 			add_filter( 'woocommerce_subscription_is_purchasable', [ 'WCS_Limiter', 'is_purchasable_switch' ], 12, 2 );
 			add_filter( 'woocommerce_subscription_variation_is_purchasable', [ 'WCS_Limiter', 'is_purchasable_switch' ], 12, 2 );
