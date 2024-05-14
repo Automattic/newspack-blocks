@@ -1251,6 +1251,13 @@ final class Modal_Checkout {
 		if ( ! self::is_modal_checkout() || ! function_exists( 'WC' ) || ! method_exists( '\WC_Name_Your_Price_Helpers', 'is_nyp' ) ) {
 			return;
 		}
+
+		// Only show for checkout button modal checkout.
+		$is_donation = method_exists( 'Newspack\Donations', 'is_donation_cart' ) && \Newspack\Donations::is_donation_cart();
+		if ( $is_donation ) {
+			return;
+		}
+
 		$cart = \WC()->cart;
 		if ( 1 !== $cart->get_cart_contents_count() ) {
 			return;
