@@ -257,7 +257,7 @@ final class Modal_Checkout {
 			return;
 		}
 
-		if ( ! \Newspack_Blocks::can_use_name_your_price() || ! method_exists( '\WC_Name_Your_Price_Helpers', 'is_nyp' ) ) {
+		if ( ! function_exists( 'WC' ) || ! \Newspack_Blocks::can_use_name_your_price() || ! method_exists( '\WC_Name_Your_Price_Helpers', 'is_nyp' ) ) {
 			return;
 		}
 
@@ -270,7 +270,7 @@ final class Modal_Checkout {
 			return;
 		}
 
-		$price     = filter_input( INPUT_POST, 'amount', FILTER_SANITIZE_NUMBER_INT );
+		$price     = filter_input( INPUT_POST, 'amount', FILTER_SANITIZE_NUMBER_FLOAT );
 		$min_price = \WC_Name_Your_Price_Helpers::get_minimum_price( $product_id );
 		$max_price = \WC_Name_Your_Price_Helpers::get_maximum_price( $product_id );
 
@@ -310,10 +310,12 @@ final class Modal_Checkout {
 			$cart_item['data']->set_price( $price );
 		}
 
+		\WC()->cart->calculate_totals();
+
 		wp_send_json_success(
 			[
 				'message' => self::get_modal_checkout_labels( 'checkout_nyp_thankyou' ),
-				'price'   => $price,
+				'price'   => \wc_price( $price ),
 			]
 		);
 
@@ -1246,7 +1248,7 @@ final class Modal_Checkout {
 	 * Render name your price form if nyp is active and available.
 	 */
 	public static function render_name_your_price_form() {
-		if ( ! self::is_modal_checkout() || ! method_exists( '\WC_Name_Your_Price_Helpers', 'is_nyp' ) ) {
+		if ( ! self::is_modal_checkout() || ! function_exists( 'WC' ) || ! method_exists( '\WC_Name_Your_Price_Helpers', 'is_nyp' ) ) {
 			return;
 		}
 		$cart = \WC()->cart;

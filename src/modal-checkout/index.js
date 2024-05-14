@@ -296,7 +296,6 @@ import './checkout.scss';
 					.find( 'input[name="newspack_checkout_name_your_price"]' )
 					.val(),
 			};
-			// Ajax request.
 			$.ajax( {
 				type: 'POST',
 				url: newspackBlocksModalCheckout.ajax_url,
@@ -312,7 +311,7 @@ import './checkout.scss';
 							'</p>'
 					);
 					if ( success ) {
-						// TODO: Update price in the checkout if successful.
+						$( '.woocommerce-Price-amount' ).replaceWith( res.price );
 					} else {
 						$nyp.find( 'input[name="amount"]' ).focus();
 					}
