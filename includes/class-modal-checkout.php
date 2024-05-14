@@ -287,17 +287,17 @@ final class Modal_Checkout {
 			wp_die();
 		}
 
-		$cart_item_data = self::amend_cart_item_data( [ 'referer' => $referer ] );
+		$cart_item_data = self::amend_cart_item_data( [ 'referer' => wp_get_referer() ] );
 
 		foreach ( \WC()->cart->get_cart() as $cart_item_key => $cart_item ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
-			if ( $cart_item['product_id'] !== (int) $product_id ) {
+			if ( $cart_item['product_id'] !== (int) $product_id && $cart_item['variation_id'] !== (int) $product_id ) {
 				continue;
 			}
 
 			$cart_item_data['nyp'] = $price;
 			$cart_item_data['base_price'] = isset( $cart_item['base_price'] ) ? $cart_item['base_price'] : $cart_item['nyp'];
 
-			if ( $price <= $cart_item_data['base_price'] ) {
+			if ( $price < $cart_item_data['base_price'] ) {
 				wp_send_json_error(
 					[
 						'message' => sprintf(
