@@ -1269,9 +1269,13 @@ final class Modal_Checkout {
 							<input type="hidden" name="newspack_checkout_name_your_price" value="1" />
 							<input type="hidden" name="product_id" value="<?php echo esc_attr( $_product->get_id() ); ?>" />
 							<div class="modal_checkout_nyp_input">
-								<input type="number" step="any" min="<?php echo esc_attr( \WC_Name_Your_Price_Helpers::get_minimum_price( $_product->get_id() ) ); ?>" name="price" placeholder="<?php echo esc_attr( \WC_Name_Your_Price_Helpers::get_suggested_price( $_product->get_id() ) ); ?>" />
+								<label for="price">
+									<span><?php echo esc_html( \get_woocommerce_currency_symbol() ); ?></span>
+									<input type="number" step="any" min="<?php echo esc_attr( \WC_Name_Your_Price_Helpers::get_minimum_price( $_product->get_id() ) ); ?>" name="price" placeholder="<?php echo esc_attr( \WC_Name_Your_Price_Helpers::get_suggested_price( $_product->get_id() ) ); ?>" />
+								</label>
 								<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--outline" ); ?>"><?php echo esc_html( self::get_modal_checkout_labels( 'checkout_nyp_apply' ) ); ?></button>
 							</div>
+							<p class="result <?php echo esc_attr( "{$class_prefix}__inline-info" ); ?>"><?php echo esc_attr( self::get_modal_checkout_labels( 'checkout_nyp' ) ); ?></p>
 						</form>
 						<?php
 					endif;
