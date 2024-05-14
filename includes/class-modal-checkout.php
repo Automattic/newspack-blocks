@@ -1264,17 +1264,17 @@ final class Modal_Checkout {
 					$_product = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
 					if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && \WC_Name_Your_Price_Helpers::is_nyp( $_product ) && apply_filters( 'woocommerce_checkout_cart_item_visible', true, $cart_item, $cart_item_key ) ) :
 						?>
-						<h3><?php echo esc_html( self::get_modal_checkout_labels( 'checkout_nyp_title' ) ); ?></h3>
 						<form class="modal_checkout_nyp">
+							<h3><?php echo esc_html( self::get_modal_checkout_labels( 'checkout_nyp_title' ) ); ?></h3>
 							<input type="hidden" name="newspack_checkout_name_your_price" value="1" />
 							<input type="hidden" name="product_id" value="<?php echo esc_attr( $_product->get_id() ); ?>" />
-							<div class="modal_checkout_nyp_input">
+							<p class="input-price" >
 								<label for="price">
 									<span><?php echo esc_html( \get_woocommerce_currency_symbol() ); ?></span>
-									<input type="number" step="any" min="<?php echo esc_attr( \WC_Name_Your_Price_Helpers::get_minimum_price( $_product->get_id() ) ); ?>" name="price" placeholder="<?php echo esc_attr( \WC_Name_Your_Price_Helpers::get_suggested_price( $_product->get_id() ) ); ?>" />
+									<input type="number" step="any" min="<?php echo esc_attr( \WC_Name_Your_Price_Helpers::get_minimum_price( $_product->get_id() ) ); ?>" class="input-text" name="price" placeholder="<?php echo esc_attr( \WC_Name_Your_Price_Helpers::get_suggested_price( $_product->get_id() ) ); ?>" />
 								</label>
 								<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--outline" ); ?>"><?php echo esc_html( self::get_modal_checkout_labels( 'checkout_nyp_apply' ) ); ?></button>
-							</div>
+							</p>
 							<p class="result <?php echo esc_attr( "{$class_prefix}__inline-info" ); ?>"><?php echo esc_attr( self::get_modal_checkout_labels( 'checkout_nyp' ) ); ?></p>
 						</form>
 						<?php

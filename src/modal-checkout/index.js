@@ -352,6 +352,9 @@ import './checkout.scss';
 				if ( $coupon.length ) {
 					$coupon.hide();
 				}
+				if ( $nyp.length ) {
+					$nyp.hide();
+				}
 				$customer_details.show();
 				$after_customer_details.hide();
 				$place_order_button.attr( 'disabled', 'disabled' );
@@ -365,6 +368,9 @@ import './checkout.scss';
 			} else {
 				if ( $coupon.length ) {
 					$coupon.show();
+				}
+				if ( $nyp.length ) {
+					$nyp.show();
 				}
 				$customer_details.hide();
 				$after_customer_details.show();
