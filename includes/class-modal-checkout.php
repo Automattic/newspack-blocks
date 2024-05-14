@@ -271,22 +271,7 @@ final class Modal_Checkout {
 		}
 
 		$price     = \WC_Name_Your_Price_Helpers::standardize_number( filter_input( INPUT_POST, 'price', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION ) );
-		$min_price = \WC_Name_Your_Price_Helpers::get_minimum_price( $product_id );
 		$max_price = \WC_Name_Your_Price_Helpers::get_maximum_price( $product_id );
-
-		if ( ! empty( $min_price ) && $price < $min_price ) {
-			wp_send_json_error(
-				[
-					'message' => sprintf(
-						// Translators: %s is the minimum price.
-						__( 'Adjusted amount must be greater than the minimum of %s.', 'newspack-blocks' ),
-						\wc_price( $min_price )
-					),
-				]
-			);
-
-			wp_die();
-		}
 
 		if ( ! empty( $max_price ) && $price > $max_price ) {
 			wp_send_json_error(
@@ -302,29 +287,33 @@ final class Modal_Checkout {
 			wp_die();
 		}
 
+		$cart_item_data = self::amend_cart_item_data( [ 'referer' => $referer ] );
+
 		foreach ( \WC()->cart->get_cart() as $cart_item_key => $cart_item ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 			if ( $cart_item['product_id'] !== (int) $product_id ) {
 				continue;
 			}
 
-			if ( $price < $cart_item['nyp'] ) {
+			$cart_item_data['nyp'] = $price;
+			$cart_item_data['base_price'] = isset( $cart_item['base_price'] ) ? $cart_item['base_price'] : $cart_item['nyp'];
+
+			if ( $price <= $cart_item_data['base_price'] ) {
 				wp_send_json_error(
 					[
 						'message' => sprintf(
 							// Translators: %s is the name-your-price custom price.
 							__( 'Adjusted price must be greater than base price of %s.', 'newspack-blocks' ),
-							\wc_price( $cart_item['nyp'] )
+							\wc_price( $cart_item_data['base_price'] )
 						),
 					]
 				);
 
 				wp_die();
 			}
-
-			$cart_item['data']->set_price( $price );
 		}
 
-		\WC()->cart->calculate_totals();
+		\WC()->cart->empty_cart();
+		\WC()->cart->add_to_cart( $product_id, 1, 0, [], $cart_item_data );
 
 		wp_send_json_success(
 			[
@@ -1266,7 +1255,7 @@ final class Modal_Checkout {
 			return;
 		}
 
-		// Only show for checkout button modal checkout.
+		// Only show nyp form for checkout button modal checkout.
 		$is_donation = method_exists( 'Newspack\Donations', 'is_donation_cart' ) && \Newspack\Donations::is_donation_cart();
 		if ( $is_donation ) {
 			return;
@@ -1287,9 +1276,8 @@ final class Modal_Checkout {
 						continue;
 					}
 					$currency_symbol = \get_woocommerce_currency_symbol();
-					$price           = $_product->get_price();
 					$product_id      = $_product->get_id();
-					$max_price       = \WC_Name_Your_Price_Helpers::get_maximum_price( $product_id );
+					$price           = $_product->get_price();
 					?>
 					<form class="modal_checkout_nyp">
 						<h3><?php echo esc_html( self::get_modal_checkout_labels( 'checkout_nyp_title' ) ); ?></h3>
@@ -1298,7 +1286,7 @@ final class Modal_Checkout {
 						<p class="input-price" >
 							<label for="price">
 								<span class="currency"><?php echo esc_html( $currency_symbol ); ?></span>
-								<input type="number" step=".01" min="<?php echo esc_attr( $price ); ?>" max="<?php echo esc_attr( $max_price ); ?>" name="price" placeholder="<?php echo esc_attr( $price ); ?>" />
+								<input type="number" step=".01" name="price" placeholder="<?php echo esc_attr( $price ); ?>" />
 							</label>
 							<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--outline" ); ?>">
 								<?php echo esc_html( self::get_modal_checkout_labels( 'checkout_nyp_apply' ) ); ?>
