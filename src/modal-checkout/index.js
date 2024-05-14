@@ -290,7 +290,7 @@ import './checkout.scss';
 			const data = {
 				_ajax_nonce: newspackBlocksModalCheckout.nyp_nonce,
 				action: 'process_name_your_price_request',
-				amount: $nyp.find( 'input[name="amount"]' ).val(),
+				price: $nyp.find( 'input[name="price"]' ).val(),
 				product_id: $nyp.find( 'input[name="product_id"]' ).val(),
 				newspack_checkout_name_your_price: $nyp
 					.find( 'input[name="newspack_checkout_name_your_price"]' )
@@ -313,7 +313,7 @@ import './checkout.scss';
 					if ( success ) {
 						$( '.woocommerce-Price-amount' ).replaceWith( res.price );
 					} else {
-						$nyp.find( 'input[name="amount"]' ).focus();
+						$nyp.find( 'input[name="price"]' ).focus();
 					}
 				},
 				complete: () => {

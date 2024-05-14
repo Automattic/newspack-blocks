@@ -270,7 +270,7 @@ final class Modal_Checkout {
 			return;
 		}
 
-		$price     = filter_input( INPUT_POST, 'amount', FILTER_SANITIZE_NUMBER_FLOAT );
+		$price     = \WC_Name_Your_Price_Helpers::standardize_number( filter_input( INPUT_POST, 'price', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION ) );
 		$min_price = \WC_Name_Your_Price_Helpers::get_minimum_price( $product_id );
 		$max_price = \WC_Name_Your_Price_Helpers::get_maximum_price( $product_id );
 
@@ -279,7 +279,7 @@ final class Modal_Checkout {
 				[
 					'message' => sprintf(
 						// Translators: %s is the minimum price.
-						__( 'Adjusted amount must exceed the minimum price of %s.', 'newspack-blocks' ),
+						__( 'Adjusted amount must be greater than the minimum of %s.', 'newspack-blocks' ),
 						\wc_price( $min_price )
 					),
 				]
@@ -293,7 +293,7 @@ final class Modal_Checkout {
 				[
 					'message' => sprintf(
 						// Translators: %s is the maximum price.
-						__( 'Adjusted amount must not exceed the maximum price of %s.', 'newspack-blocks' ),
+						__( 'Adjusted price must be less than the maximum of %s.', 'newspack-blocks' ),
 						\wc_price( $max_price )
 					),
 				]
@@ -303,7 +303,7 @@ final class Modal_Checkout {
 		}
 
 		foreach ( \WC()->cart->get_cart() as $cart_item_key => $cart_item ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
-			if ( $cart_item['product_id'] !== $product_id ) {
+			if ( $cart_item['product_id'] !== (int) $product_id ) {
 				continue;
 			}
 
@@ -1268,9 +1268,9 @@ final class Modal_Checkout {
 						<form class="modal_checkout_nyp">
 							<input type="hidden" name="newspack_checkout_name_your_price" value="1" />
 							<input type="hidden" name="product_id" value="<?php echo esc_attr( $_product->get_id() ); ?>" />
-							<div>
-								<input name="amount" placeholder="<?php echo esc_attr( \WC_Name_Your_Price_Helpers::get_suggested_price( $_product->get_id() ) ); ?>" />
-								<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--primary" ); ?>"><?php echo esc_html( self::get_modal_checkout_labels( 'checkout_nyp_apply' ) ); ?></button>
+							<div class="modal_checkout_nyp_input">
+								<input type="number" step="any" min="<?php echo esc_attr( \WC_Name_Your_Price_Helpers::get_minimum_price( $_product->get_id() ) ); ?>" name="price" placeholder="<?php echo esc_attr( \WC_Name_Your_Price_Helpers::get_suggested_price( $_product->get_id() ) ); ?>" />
+								<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--outline" ); ?>"><?php echo esc_html( self::get_modal_checkout_labels( 'checkout_nyp_apply' ) ); ?></button>
 							</div>
 						</form>
 						<?php
