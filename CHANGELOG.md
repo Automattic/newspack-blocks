@@ -1,9 +1,16 @@
-## [3.0.11](https://github.com/Automattic/newspack-blocks/compare/v3.0.10...v3.0.11) (2024-05-07)
+# [3.1.0-alpha.1](https://github.com/Automattic/newspack-blocks/compare/v3.0.10...v3.1.0-alpha.1) (2024-04-25)
 
 
 ### Bug Fixes
 
-* add `woocommerce_after_order_notes` action for integrations that need it ([#1720](https://github.com/Automattic/newspack-blocks/issues/1720)) ([76a3e1b](https://github.com/Automattic/newspack-blocks/commit/76a3e1be103694bccdf5e94534db99cb9cd3ba1c))
+* **homepage-articles:** author URL ([#1710](https://github.com/Automattic/newspack-blocks/issues/1710)) ([2f80876](https://github.com/Automattic/newspack-blocks/commit/2f80876dbdf1a380789b5c8110fca7f28ef3685f))
+* **iframe-block:** prevent fatal error on blocks without attributes ([#1708](https://github.com/Automattic/newspack-blocks/issues/1708)) ([4077ee8](https://github.com/Automattic/newspack-blocks/commit/4077ee8d83716cfb66448efa51f4e9904bbc034a))
+* make sure font scale 5 previews in editor ([#1706](https://github.com/Automattic/newspack-blocks/issues/1706)) ([43bda7c](https://github.com/Automattic/newspack-blocks/commit/43bda7c42e8bd683cbd66f6de6930d4cd6ee9fb9))
+
+
+### Features
+
+* homepage articles update loading animation ([#1709](https://github.com/Automattic/newspack-blocks/issues/1709)) ([d2ca12e](https://github.com/Automattic/newspack-blocks/commit/d2ca12e366755a129b57e6ee6739f6db37f3691b))
 
 ## [3.0.10](https://github.com/Automattic/newspack-blocks/compare/v3.0.9...v3.0.10) (2024-04-24)
 
