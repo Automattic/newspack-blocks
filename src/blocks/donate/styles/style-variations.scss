@@ -350,8 +350,8 @@
 	position: relative;
 
 	.thanks {
-		background: var( --newspack-ui-color-neutral-0, $newspack-ui-color-neutral-0 );
-		border: 1px solid var( --newspack-ui-color-neutral-30, $newspack-ui-color-neutral-30 );
+		background: var( --newspack-ui-color-neutral-0, colors.$newspack-ui-color-neutral-0 );
+		border: 1px solid var( --newspack-ui-color-neutral-30, colors.$newspack-ui-color-neutral-30 );
 		border-bottom: 0;
 		border-top: 0;
 		color: var( --newspack-ui-color-neutral-60, #6c6c6c );
@@ -362,8 +362,8 @@
 	}
 
 	.money-input {
-		border-color: var( --newspack-ui-color-input-border, $newspack-ui-color-neutral-40 );
-		color: var( --newspack-ui-color-neutral-90, $newspack-ui-color-neutral-90 );
+		border-color: var( --newspack-ui-color-input-border, colors.$newspack-ui-color-neutral-40 );
+		color: var( --newspack-ui-color-neutral-90, colors.$newspack-ui-color-neutral-90 );
 		font-size: var( --newspack-ui-font-size-s, 16px );
 		left: var( --newspack-ui-spacer-5, 24px );
 		line-height: var( --newspack-ui-line-height-s, 1.5 );
@@ -373,13 +373,13 @@
 		transition: border-color 125ms ease-in-out, outline 125ms ease-in-out;
 
 		&:focus-within {
-			border-color: var( --newspack-ui-color-input-border-focus, $newspack-ui-color-neutral-90 );
-			outline: 2px solid var( --newspack-ui-color-input-border-focus, $newspack-ui-color-neutral-90 );
+			border-color: var( --newspack-ui-color-input-border-focus, colors.$newspack-ui-color-neutral-90 );
+			outline: 2px solid var( --newspack-ui-color-input-border-focus, colors.$newspack-ui-color-neutral-90 );
 			outline-offset: -1px;
 		}
 
 		.currency {
-			background: var( --newspack-ui-color-neutral-5, $newspack-ui-color-neutral-5 );
+			background: var( --newspack-ui-color-neutral-5, colors.$newspack-ui-color-neutral-5 );
 			font-size: var( --newspack-ui-font-size-xs, 14px );
 			font-weight: 600;
 			line-height: var( --newspack-ui-spacer-9, 48px );
@@ -402,15 +402,15 @@
 
 	.tab-container .freq-label,
 	.wpbnbd__tiers__selection {
-		background: var( --newspack-ui-color-neutral-10, $newspack-ui-color-neutral-10 );
+		background: var( --newspack-ui-color-neutral-10, colors.$newspack-ui-color-neutral-10 );
 		border: none;
 	}
 
 	.wpbnbd__tiers .wpbnbd__button--active,
 	// Frequency-based version.
 	.tab-container .freq-label.wpbnbd__button--active::after {
-		background: var( --newspack-ui-color-neutral-0, $newspack-ui-color-neutral-0 );
-		border: 1px solid var( --newspack-ui-color-neutral-30, $newspack-ui-color-neutral-30 );
+		background: var( --newspack-ui-color-neutral-0, colors.$newspack-ui-color-neutral-0 );
+		border: 1px solid var( --newspack-ui-color-neutral-30, colors.$newspack-ui-color-neutral-30 );
 		border-radius: var( --newspack-ui-border-radius-xs, 3px );
 	}
 
@@ -429,8 +429,8 @@
 		line-height: var( --newspack-ui-line-height-s, 1.5 );
 
 		input[type='radio']:checked ~ .tiers {
-			background: var( --newspack-ui-color-neutral-0, $newspack-ui-color-neutral-0 );
-			border: 1px solid var( --newspack-ui-color-neutral-30, $newspack-ui-color-neutral-30 );
+			background: var( --newspack-ui-color-neutral-0, colors.$newspack-ui-color-neutral-0 );
+			border: 1px solid var( --newspack-ui-color-neutral-30, colors.$newspack-ui-color-neutral-30 );
 			border-bottom: 0;
 			border-radius: var( --newspack-ui-border-radius-m, 6px ) var( --newspack-ui-border-radius-m, 6px ) 0 0;
 			display: grid;
@@ -449,8 +449,8 @@
 	&.wpbnbd--frequency-based {
 		form {
 			&::after {
-				background: var( --newspack-ui-color-neutral-0, $newspack-ui-color-neutral-0 );
-				border: 1px solid var( --newspack-ui-color-neutral-30, $newspack-ui-color-neutral-30 );
+				background: var( --newspack-ui-color-neutral-0, colors.$newspack-ui-color-neutral-0 );
+				border: 1px solid var( --newspack-ui-color-neutral-30, colors.$newspack-ui-color-neutral-30 );
 				border-radius: 0 0 var( --newspack-ui-border-radius-m, 6px ) var( --newspack-ui-border-radius-m, 6px );
 				border-top: 0;
 				bottom: 0;
@@ -466,7 +466,7 @@
 		}
 
 		.tab-container {
-			background: var( --newspack-ui-color-neutral-10, $newspack-ui-color-neutral-10 );
+			background: var( --newspack-ui-color-neutral-10, colors.$newspack-ui-color-neutral-10 );
 			border-radius: var( --newspack-ui-border-radius-m, 6px );
 			gap: calc( var( --newspack-ui-spacer-base, 8px ) / 2 );
 			margin-left: auto;
@@ -498,7 +498,7 @@
 				width: auto;
 	
 				&:hover {
-					color: var( --newspack-ui-color-neutral-90, $newspack-ui-color-neutral-90 );	
+					color: var( --newspack-ui-color-neutral-90, colors.$newspack-ui-color-neutral-90 );	
 				}
 	
 				&:focus {
@@ -507,22 +507,22 @@
 				}
 	
 				&:focus-visible {
-					outline: 2px solid var( --newspack-ui-color-neutral-90, $newspack-ui-color-neutral-90 );
+					outline: 2px solid var( --newspack-ui-color-neutral-90, colors.$newspack-ui-color-neutral-90 );
 					outline-offset: 1px;
 				}
 	
 				&.wpbnbd__button--active {
-					background: var( --newspack-ui-color-neutral-0, $newspack-ui-color-neutral-0 );
-					border-color: var( --newspack-ui-color-neutral-30, $newspack-ui-color-neutral-30 );
-					color: var( --newspack-ui-color-neutral-90, $newspack-ui-color-neutral-90 );
+					background: var( --newspack-ui-color-neutral-0, colors.$newspack-ui-color-neutral-0 );
+					border-color: var( --newspack-ui-color-neutral-30, colors.$newspack-ui-color-neutral-30 );
+					color: var( --newspack-ui-color-neutral-90, colors.$newspack-ui-color-neutral-90 );
 				}
 			}
 		}
 
 		&.untiered {
 			.input-container {
-				background: var( --newspack-ui-color-neutral-0, $newspack-ui-color-neutral-0 );
-				border: 1px solid var( --newspack-ui-color-neutral-30, $newspack-ui-color-neutral-30 );
+				background: var( --newspack-ui-color-neutral-0, colors.$newspack-ui-color-neutral-0 );
+				border: 1px solid var( --newspack-ui-color-neutral-30, colors.$newspack-ui-color-neutral-30 );
 				border-bottom: 0;
 				border-radius: var( --newspack-ui-border-radius-m, 6px ) var( --newspack-ui-border-radius-m, 6px ) 0 0;
 				margin: var( --newspack-ui-spacer-2, 12px ) 0 0;
@@ -549,7 +549,7 @@
 				position: relative;
 	
 				.tier-label {
-					background: var( --newspack-ui-color-neutral-10, $newspack-ui-color-neutral-10 );
+					background: var( --newspack-ui-color-neutral-10, colors.$newspack-ui-color-neutral-10 );
 					border: 0;
 					border-radius: var( --newspack-ui-border-radius-s, 4px );
 					color: inherit;
@@ -561,13 +561,13 @@
 					transition: background 125ms ease-in-out, color 125ms ease-in-out;
 	
 					&:hover {
-						color: var( --newspack-ui-color-neutral-90, $newspack-ui-color-neutral-90 );
+						color: var( --newspack-ui-color-neutral-90, colors.$newspack-ui-color-neutral-90 );
 					}
 				}
 	
 				.odl {
 					bottom: calc( var( --newspack-ui-spacer-5, 24px ) + var( --newspack-ui-spacer-9, 48px ) + var( --newspack-ui-spacer-base, 8px ) );
-					color: var( --newspack-ui-color-neutral-90, $newspack-ui-color-neutral-90 );
+					color: var( --newspack-ui-color-neutral-90, colors.$newspack-ui-color-neutral-90 );
 					font-weight: 600;
 					left: 0;
 					padding: 0 var( --newspack-ui-spacer-5, 24px );
@@ -584,14 +584,14 @@
 				input[type='radio']:focus,
 				input[type='radio']:checked {
 					+ .tier-label {
-						background: var( --newspack-ui-color-neutral-90, $newspack-ui-color-neutral-90 );
-						color: var( --newspack-ui-color-neutral-0, $newspack-ui-color-neutral-0 );
+						background: var( --newspack-ui-color-neutral-90, colors.$newspack-ui-color-neutral-90 );
+						color: var( --newspack-ui-color-neutral-0, colors.$newspack-ui-color-neutral-0 );
 						outline: none;
 					}
 				}
 	
 				input[type='radio']:focus-visible + .tier-label {
-					outline: 2px solid var( --newspack-ui-color-neutral-90, $newspack-ui-color-neutral-90 );
+					outline: 2px solid var( --newspack-ui-color-neutral-90, colors.$newspack-ui-color-neutral-90 );
 					outline-offset: 1px;
 				}
 			}
@@ -630,7 +630,7 @@
 			}
 
 			&:focus {
-				outline: 2px solid var( --newspack-ui-color-neutral-90, $newspack-ui-color-neutral-90 );
+				outline: 2px solid var( --newspack-ui-color-neutral-90, colors.$newspack-ui-color-neutral-90 );
 				outline-offset: 1px;
 			}
 		}
@@ -638,7 +638,7 @@
 
 	// Layout: Tiers
 	&.wpbnbd--tiers-based {
-		color: var( --newspack-ui-color-neutral-90, $newspack-ui-color-neutral-90 );
+		color: var( --newspack-ui-color-neutral-90, colors.$newspack-ui-color-neutral-90 );
 
 		.wpbnbd__tiers {
 			&__selection {
@@ -672,7 +672,7 @@
 
 					&:hover,
 					&--active {
-						color: var( --newspack-ui-color-neutral-90, $newspack-ui-color-neutral-90 );
+						color: var( --newspack-ui-color-neutral-90, colors.$newspack-ui-color-neutral-90 );
 					}
 
 					&:focus {
@@ -680,7 +680,7 @@
 					}
 
 					&:focus-visible {
-						outline: 2px solid var( --newspack-ui-color-neutral-90, $newspack-ui-color-neutral-90 );
+						outline: 2px solid var( --newspack-ui-color-neutral-90, colors.$newspack-ui-color-neutral-90 );
 						outline-offset: 1px;
 					}
 				}
@@ -696,45 +696,30 @@
 			&__options {
 				margin-left: calc( var( --newspack-ui-spacer-2, 12px ) / -2 );
 				margin-right: calc( var( --newspack-ui-spacer-2, 12px ) / -2 );
-
-				&__dots {
-					background: var( --newspack-ui-color-neutral-0, $newspack-ui-color-neutral-0 );
-					border-radius: 999em;
-					margin: var( --newspack-ui-spacer-2, 12px ) auto 0;
-					padding: var( --newspack-ui-spacer-2, 12px ) calc( var( --newspack-ui-spacer-2, 12px ) / 2 );
-					width: min-content;
-
-					li {
-						background: var( --newspack-ui-color-neutral-40, $newspack-ui-color-neutral-40 );
-						height: var( --newspack-ui-spacer-base, 8px );
-						margin: 0 calc( var( --newspack-ui-spacer-2, 12px ) / 2 );
-						width: var( --newspack-ui-spacer-9, 48px );
-					}
-				}
 			}
 
 			&__tier {
-				background: var( --newspack-ui-color-neutral-0, $newspack-ui-color-neutral-0 );
-				border-color: var( --newspack-ui-color-neutral-30, $newspack-ui-color-neutral-30 );
+				background: var( --newspack-ui-color-neutral-0, colors.$newspack-ui-color-neutral-0 );
+				border-color: var( --newspack-ui-color-neutral-30, colors.$newspack-ui-color-neutral-30 );
 				border-radius: var( --newspack-ui-border-radius-m, 6px );
 				margin-left: calc( var( --newspack-ui-spacer-2, 12px ) / 2 );
 				margin-right: calc( var( --newspack-ui-spacer-2, 12px ) / 2 );
 				padding: var( --newspack-ui-spacer-5, 24px );
 
 				&--recommended {
-					border: 1px solid var( --newspack-ui-color-neutral-90, $newspack-ui-color-neutral-90 );
-					outline: 1px solid var( --newspack-ui-color-neutral-90, $newspack-ui-color-neutral-90 );
+					border: 1px solid var( --newspack-ui-color-neutral-90, colors.$newspack-ui-color-neutral-90 );
+					outline: 1px solid var( --newspack-ui-color-neutral-90, colors.$newspack-ui-color-neutral-90 );
 					outline-offset: -2px;
 				}
 
 				&:not( #{&}--recommended ) {
 					button[type='submit'],
 					.submit-button {
-						border-color: var( --newspack-ui-color-neutral-30, $newspack-ui-color-neutral-30 ) !important;
+						border-color: var( --newspack-ui-color-neutral-30, colors.$newspack-ui-color-neutral-30 ) !important;
 
 						&:hover {
-							background: var( --newspack-ui-color-neutral-5, $newspack-ui-color-neutral-5 ) !important;
-							border-color: var( --newspack-ui-color-neutral-40, $newspack-ui-color-neutral-40 ) !important;
+							background: var( --newspack-ui-color-neutral-5, colors.$newspack-ui-color-neutral-5 ) !important;
+							border-color: var( --newspack-ui-color-neutral-40, colors.$newspack-ui-color-neutral-40 ) !important;
 							opacity: 1;
 						}
 					}
@@ -746,9 +731,9 @@
 			}
 
 			&__recommend-label {
-				background: var( --newspack-ui-color-neutral-90, $newspack-ui-color-neutral-90 );
+				background: var( --newspack-ui-color-neutral-90, colors.$newspack-ui-color-neutral-90 );
 				border-radius: var( --newspack-ui-border-radius-2xs, 2px );
-				color: var( --newspack-ui-color-neutral-0, $newspack-ui-color-neutral-0 );
+				color: var( --newspack-ui-color-neutral-0, colors.$newspack-ui-color-neutral-0 );
 				font-family: inherit;
 				font-size: var( --newspack-ui-font-size-xs, 14px );
 				font-weight: 600;
@@ -767,7 +752,7 @@
 				}
 
 				.amount {
-					color: var( --newspack-ui-color-neutral-90, $newspack-ui-color-neutral-90 );
+					color: var( --newspack-ui-color-neutral-90, colors.$newspack-ui-color-neutral-90 );
 					font-family: inherit;
 					font-size: var( --newspack-ui-font-size-l, clamp( 1.25rem, 0.857rem + 0.803vw, 1.5rem ) );
 				}
@@ -799,7 +784,7 @@
 				}
 
 				&:focus {
-					outline: 2px solid var( --newspack-ui-color-neutral-90, $newspack-ui-color-neutral-90 );
+					outline: 2px solid var( --newspack-ui-color-neutral-90, colors.$newspack-ui-color-neutral-90 );
 					outline-offset: 1px;
 				}
 			}
