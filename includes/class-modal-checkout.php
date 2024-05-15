@@ -1286,7 +1286,7 @@ final class Modal_Checkout {
 						<p class="input-price" >
 							<label for="price">
 								<span class="currency"><?php echo esc_html( $currency_symbol ); ?></span>
-								<input type="number" step=".01" name="price" placeholder="<?php echo esc_attr( $price ); ?>" />
+								<input type="number" min="0" step=".01" name="price" placeholder="<?php echo esc_attr( $price ); ?>" />
 							</label>
 							<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--outline" ); ?>">
 								<?php echo esc_html( self::get_modal_checkout_labels( 'checkout_nyp_apply' ) ); ?>
