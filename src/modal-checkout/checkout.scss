@@ -46,7 +46,7 @@
 			align-items: center;
 			flex-wrap: nowrap;
 			gap: 0.5em;
-			margin: 0;
+			margin: 0 0 8px;
 
 			label {
 				display: flex;
@@ -64,6 +64,10 @@
 				input {
 					padding-left: 32px;
 				}
+			}
+
+			button {
+				margin-top: 0;
 			}
 		}
 	}
