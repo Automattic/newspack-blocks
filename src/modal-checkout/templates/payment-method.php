@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 
 <li class="wc_payment_method payment_method_<?php echo esc_attr( $gateway->id ); ?>">
-	<label class="newspack-ui__input-list" for="payment_method_<?php echo esc_attr( $gateway->id ); ?>">
+	<label class="newspack-ui__input-card" for="payment_method_<?php echo esc_attr( $gateway->id ); ?>">
 		<input id="payment_method_<?php echo esc_attr( $gateway->id ); ?>" type="radio" class="input-radio" name="payment_method" value="<?php echo esc_attr( $gateway->id ); ?>" <?php checked( $gateway->chosen, true ); ?> data-order_button_text="<?php echo esc_attr( $gateway->order_button_text ); ?>" />
 		<span>
 			<?php echo $gateway->get_title(); /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */ ?> <?php echo $gateway->get_icon(); /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */ ?>

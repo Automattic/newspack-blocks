@@ -243,7 +243,7 @@ import './checkout.scss';
 					if ( code ) {
 						const isError = code.includes( 'error' );
 						$coupon.append(
-							`<p class="result ${ newspackBlocksModalCheckout.newspack_class_prefix }__inline-info">` +
+							`<p class="result ${ newspackBlocksModalCheckout.newspack_class_prefix }__helper-text">` +
 								$( code ).text() +
 								'</p>'
 						);
@@ -333,7 +333,7 @@ import './checkout.scss';
 				data[ item.name ] = item.value;
 			} );
 
-			const classname = `${ newspackBlocksModalCheckout.newspack_class_prefix }__inline-info`;
+			const classname = `${ newspackBlocksModalCheckout.newspack_class_prefix }__font--xs`;
 			const html = [];
 			html.push( '<div class="billing-details">' );
 			html.push( '<h3>' + newspackBlocksModalCheckout.labels.billing_details + '</h3>' );
