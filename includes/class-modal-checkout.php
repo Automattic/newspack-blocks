@@ -1292,7 +1292,7 @@ final class Modal_Checkout {
 								<?php echo esc_html( self::get_modal_checkout_labels( 'checkout_nyp_apply' ) ); ?>
 							</button>
 						</p>
-						<p class="result <?php echo esc_attr( "{$class_prefix}__inline-info" ); ?>">
+						<p class="result <?php echo esc_attr( "{$class_prefix}__helper-text" ); ?>">
 							<?php echo esc_attr( self::get_modal_checkout_labels( 'checkout_nyp' ) ); ?>
 						</p>
 					</form>

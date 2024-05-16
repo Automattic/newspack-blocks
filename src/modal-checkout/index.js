@@ -304,8 +304,8 @@ import './checkout.scss';
 					clearNotices();
 					$nyp.find( '.result' ).remove();
 					$nyp.append(
-						`<p class="result ${ newspackBlocksModalCheckout.newspack_class_prefix }__inline-${
-							success ? 'info' : 'error'
+						`<p class="result ${ newspackBlocksModalCheckout.newspack_class_prefix }__${
+							success ? 'helper-text' : 'inline-error'
 						}">` +
 							res.message +
 							'</p>'
