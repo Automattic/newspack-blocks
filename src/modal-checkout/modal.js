@@ -43,6 +43,7 @@ domReady( () => {
 	const modalContent = modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }__content` );
 	const modalCheckoutHiddenInput = document.createElement( 'input' );
 	const spinner = modalContent.querySelector( `.${ CLASS_PREFIX }__spinner` );
+	const loggedIn = document.querySelector( 'body' ).classList.contains( 'logged-in' );
 	modalCheckoutHiddenInput.type = 'hidden';
 	modalCheckoutHiddenInput.name = 'modal_checkout';
 	modalCheckoutHiddenInput.value = '1';
@@ -207,7 +208,8 @@ domReady( () => {
 
 					if (
 						window?.newspackReaderActivation?.openAuthModal &&
-						! window?.newspackReaderActivation?.getReader?.()?.authenticated
+						! window?.newspackReaderActivation?.getReader?.()?.authenticated &&
+						! loggedIn
 					) {
 						ev.preventDefault();
 						// Initialize auth flow if reader is not authenticated.
