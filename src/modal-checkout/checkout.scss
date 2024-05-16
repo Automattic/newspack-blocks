@@ -70,5 +70,9 @@
 				margin-top: 0;
 			}
 		}
+
+		&.processing {
+			opacity: 0.5;
+		}
 	}
 }

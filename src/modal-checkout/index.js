@@ -280,13 +280,9 @@ import './checkout.scss';
 			if ( $nyp.is( '.processing' ) ) {
 				return false;
 			}
-			$nyp.addClass( 'processing' ).block( {
-				message: null,
-				overlayCSS: {
-					background: '#fff',
-					opacity: 0.6,
-				},
-			} );
+			$nyp.addClass( 'processing' );
+			const input = $nyp.find( 'input[name="price"]' );
+			input.attr( 'disabled', true );
 			const data = {
 				_ajax_nonce: newspackBlocksModalCheckout.nyp_nonce,
 				action: 'process_name_your_price_request',
@@ -317,7 +313,9 @@ import './checkout.scss';
 					}
 				},
 				complete: () => {
-					$nyp.removeClass( 'processing' ).unblock();
+					input.attr( 'disabled', false );
+					input.focus();
+					$nyp.removeClass( 'processing' );
 				},
 			} );
 		}
