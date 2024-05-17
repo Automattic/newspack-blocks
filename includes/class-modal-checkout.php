@@ -467,9 +467,14 @@ final class Modal_Checkout {
 	 * Enqueue scripts for the checkout page rendered in a modal.
 	 */
 	public static function enqueue_scripts() {
+		if ( ( ! function_exists( 'is_checkout' ) || ! is_checkout() ) && ( ! function_exists( 'is_order_received_page' ) || ! is_order_received_page() ) ) {
+			return;
+		}
+
 		if ( ! self::is_modal_checkout() ) {
 			return;
 		}
+
 		wp_enqueue_script(
 			'newspack-blocks-modal-checkout',
 			plugins_url( 'dist/modalCheckout.js', \NEWSPACK_BLOCKS__PLUGIN_FILE ),
@@ -484,6 +489,7 @@ final class Modal_Checkout {
 				'ajax_url'              => admin_url( 'admin-ajax.php' ),
 				'nyp_nonce'             => wp_create_nonce( 'newspack_checkout_name_your_price' ),
 				'newspack_class_prefix' => self::get_class_prefix(),
+				'is_checkout_complete'  => function_exists( 'is_order_received_page' ) && is_order_received_page(),
 				'labels'                => [
 					'billing_details'  => self::get_modal_checkout_labels( 'billing_details' ),
 					'shipping_details' => self::get_modal_checkout_labels( 'shipping_details' ),
@@ -899,7 +905,7 @@ final class Modal_Checkout {
 	 *
 	 * @return void
 	 */
-	private static function render_after_success_button() {
+	public static function render_after_success_button() {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		if ( empty( $_REQUEST['modal_checkout'] ) ) {
 			return;
@@ -910,12 +916,12 @@ final class Modal_Checkout {
 		?>
 			<button
 				<?php if ( empty( $url ) ) : ?>
-					onclick="parent.newspackCloseModalCheckout(this);"
+					onclick="parent.newspackCloseModalCheckout(this)"
 				<?php else : ?>
 					href="<?php echo esc_url( $url ); ?>"
 					target="_top"
 				<?php endif; ?>
-				class="newspack-ui__button newspack-ui__button--primary newspack-ui__button--wide"
+				class="newspack-ui__button newspack-ui__button--primary newspack-ui__button--wide newspack-checkout-complete"
 			>
 				<?php echo esc_html( $button_label ); ?>
 			</button>

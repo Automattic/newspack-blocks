@@ -5,33 +5,16 @@
  */
 import './modal.scss';
 
+/**
+ * Internal dependencies
+ */
+import { domReady } from './utils';
+
 const CLASS_PREFIX = newspackBlocksModal.newspack_class_prefix;
 const IFRAME_NAME = 'newspack_modal_checkout_iframe';
 const IFRAME_CONTAINER_ID = 'newspack_modal_checkout_container';
 const MODAL_CHECKOUT_ID = 'newspack_modal_checkout';
 const MODAL_CLASS_PREFIX = `${ CLASS_PREFIX }__modal`;
-
-/**
- * Specify a function to execute when the DOM is fully loaded.
- *
- * @see https://github.com/WordPress/gutenberg/blob/trunk/packages/dom-ready/
- *
- * @param {Function} callback A function to execute after the DOM is ready.
- * @return {void}
- */
-function domReady( callback ) {
-	if ( typeof document === 'undefined' ) {
-		return;
-	}
-	if (
-		document.readyState === 'complete' || // DOMContentLoaded + Images/Styles/etc loaded, so we call directly.
-		document.readyState === 'interactive' // DOMContentLoaded fires at this point, so we call directly.
-	) {
-		return void callback();
-	}
-	// DOMContentLoaded has not fired yet, delay callback until then.
-	document.addEventListener( 'DOMContentLoaded', callback );
-}
 
 domReady( () => {
 	const modalCheckout = document.querySelector( `#${ MODAL_CHECKOUT_ID }` );
@@ -68,7 +51,14 @@ domReady( () => {
 	const closeCheckout = () => {
 		spinner.style.display = 'flex';
 
+		let checkoutComplete = false;
+
 		if ( iframe && modalContent.contains( iframe ) ) {
+			const container = iframe.contentDocument.querySelector( `#${ IFRAME_CONTAINER_ID }` );
+			if ( container.checkoutComplete ) {
+				checkoutComplete = true;
+			}
+
 			// Reset iframe and modal content heights.
 			iframe.src = 'about:blank';
 			iframe.style.height = '0';
@@ -86,6 +76,10 @@ domReady( () => {
 				window.newspackReaderActivation?.overlays.remove( el.overlayId );
 			}
 		} );
+
+		if ( checkoutComplete && window.newspackReaderActivation?.openNewslettersSignupModal ) {
+			window.newspackReaderActivation.openNewslettersSignupModal();
+		}
 	};
 
 	const openCheckout = () => {
