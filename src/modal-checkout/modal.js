@@ -1,4 +1,5 @@
-/* globals newspackBlocksModal */
+/* globals newspack_ras_config, newspackBlocksModal */
+window.newspack_ras_config = window.newspack_ras_config || {};
 
 /**
  * Style dependencies
@@ -43,7 +44,6 @@ domReady( () => {
 	const modalContent = modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }__content` );
 	const modalCheckoutHiddenInput = document.createElement( 'input' );
 	const spinner = modalContent.querySelector( `.${ CLASS_PREFIX }__spinner` );
-	const loggedIn = document.querySelector( 'body' ).classList.contains( 'logged-in' );
 	modalCheckoutHiddenInput.type = 'hidden';
 	modalCheckoutHiddenInput.name = 'modal_checkout';
 	modalCheckoutHiddenInput.value = '1';
@@ -209,7 +209,7 @@ domReady( () => {
 					if (
 						window?.newspackReaderActivation?.openAuthModal &&
 						! window?.newspackReaderActivation?.getReader?.()?.authenticated &&
-						! loggedIn
+						! newspack_ras_config.is_logged_in
 					) {
 						ev.preventDefault();
 						// Initialize auth flow if reader is not authenticated.
