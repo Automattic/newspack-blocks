@@ -67,3 +67,8 @@ registerBlockStyle( 'newspack-blocks/donate', {
 	name: 'minimal',
 	label: __( 'Minimal', 'newapack-blocks' ),
 } );
+
+registerBlockStyle( 'newspack-blocks/donate', {
+	name: 'modern',
+	label: __( 'Modern', 'newapack-blocks' ),
+} );
