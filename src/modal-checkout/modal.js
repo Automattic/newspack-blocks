@@ -1,5 +1,4 @@
-/* globals newspack_ras_config, newspackBlocksModal */
-window.newspack_ras_config = window.newspack_ras_config || {};
+/* globals newspackBlocksModal, newspack_ras_config */
 
 /**
  * Style dependencies
