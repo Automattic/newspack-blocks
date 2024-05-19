@@ -437,7 +437,7 @@
 			gap: calc( var( --newspack-ui-spacer-base, 8px ) / 2 );
 			grid-template-columns: repeat( 2, 1fr );
 			margin: var( --newspack-ui-spacer-2, 12px ) 0 0;
-			padding: var( --newspack-ui-spacer-6, 24px );
+			padding: var( --newspack-ui-spacer-5, 24px );
 		}	
 	}
 
@@ -458,7 +458,7 @@
 				content: '';
 				display: block;
 				font-size: var( --newspack-ui-font-size-s, 16px );
-				height: calc( var( --newspack-ui-spacer-6, 24px ) + var( --newspack-ui-spacer-2, 12px ) + 1.5em + var( --newspack-ui-spacer-2, 12px ) + var( --newspack-ui-spacer-6, 24px ) );
+				height: calc( var( --newspack-ui-spacer-5, 24px ) + var( --newspack-ui-spacer-2, 12px ) + 1.5em + var( --newspack-ui-spacer-2, 12px ) + var( --newspack-ui-spacer-5, 24px ) );
 				position: absolute;
 				width: 100%;
 				z-index: 0;
@@ -614,7 +614,7 @@
 
 		button[type="submit"],
 		.submit-button {
-			margin: 0 calc( 1px + var( --newspack-ui-spacer-6, 24px ) ) calc( 1px + var( --newspack-ui-spacer-6, 24px ) );
+			margin: 0 calc( 1px + var( --newspack-ui-spacer-5, 24px ) ) calc( 1px + var( --newspack-ui-spacer-5, 24px ) );
 			position: relative;
 			padding: var( --newspack-ui-spacer-2, 12px ) var( --newspack-ui-spacer-5, 24px );
 			transition: opacity 125ms ease-in-out, outline 125ms ease-in-out;
