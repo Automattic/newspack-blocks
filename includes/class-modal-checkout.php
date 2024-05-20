@@ -839,15 +839,18 @@ final class Modal_Checkout {
 		if ( ! $email_address ) {
 			return;
 		}
-		if ( ! method_exists( '\Newspack\Reader_Activation', 'get_registration_newsletter_lists' ) ) {
+
+		if ( ! method_exists( '\Newspack\Reader_Activation', 'get_post_checkout_newsletter_lists' ) ) {
 			return;
 		}
+
 		$newsletters_lists = array_filter(
-			\Newspack\Reader_Activation::get_registration_newsletter_lists(),
+			\Newspack\Reader_Activation::get_post_checkout_newsletter_lists( $email_address ),
 			function( $item ) {
 				return $item['active'];
 			}
 		);
+
 		if ( empty( $newsletters_lists ) ) {
 			return;
 		}
@@ -908,10 +911,16 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Should post-chcekout newsletter signup be available?
+	 * Whether post-checkout newsletter signup is available.
+	 *
+	 * @return bool
 	 */
 	private static function is_newsletter_signup_available() {
-		return defined( 'NEWSPACK_ENABLE_POST_CHECKOUT_NEWSLETTER_SIGNUP' ) && NEWSPACK_ENABLE_POST_CHECKOUT_NEWSLETTER_SIGNUP;
+		if ( ! method_exists( '\Newspack\Reader_Activation', 'get_setting' ) ) {
+			return false;
+		}
+
+		return (bool) \Newspack\Reader_Activation::get_setting( 'use_custom_lists' );
 	}
 
 	/**
