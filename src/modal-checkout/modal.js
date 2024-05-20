@@ -1,4 +1,4 @@
-/* globals newspackBlocksModal */
+/* globals newspackBlocksModal, newspack_ras_config */
 
 /**
  * Style dependencies
@@ -207,7 +207,8 @@ domReady( () => {
 
 					if (
 						window?.newspackReaderActivation?.openAuthModal &&
-						! window?.newspackReaderActivation?.getReader?.()?.authenticated
+						! window?.newspackReaderActivation?.getReader?.()?.authenticated &&
+						! newspack_ras_config.is_logged_in
 					) {
 						ev.preventDefault();
 						// Initialize auth flow if reader is not authenticated.
