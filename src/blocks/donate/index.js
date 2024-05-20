@@ -60,15 +60,15 @@ export const settings = {
  */
 registerBlockStyle( 'newspack-blocks/donate', {
 	name: 'alternate',
-	label: __( 'Alternate', 'newapack-blocks' ),
+	label: __( 'Alternate', 'newspack-blocks' ),
 } );
 
 registerBlockStyle( 'newspack-blocks/donate', {
 	name: 'minimal',
-	label: __( 'Minimal', 'newapack-blocks' ),
+	label: __( 'Minimal', 'newspack-blocks' ),
 } );
 
 registerBlockStyle( 'newspack-blocks/donate', {
 	name: 'modern',
-	label: __( 'Modern', 'newapack-blocks' ),
+	label: __( 'Modern', 'newspack-blocks' ),
 } );
