@@ -287,7 +287,7 @@ final class Modal_Checkout {
 		$pattern           = '/\b\d{3,}' . preg_quote( $decimal_separator, '/' ) . '00\b/';
 		preg_match( $pattern, $price_string, $matches );
 		if ( ! empty( $matches ) ) {
-			$replace_pattern = '/\\' . $decimal_separator . '00$/';
+			$replace_pattern = '/' . preg_quote( $decimal_separator, '/' ) . '00$/';
 			$price_string    = preg_replace( $pattern, preg_replace( $replace_pattern, '', $matches[0] ), $price_string );
 		}
 		return $price_string;
