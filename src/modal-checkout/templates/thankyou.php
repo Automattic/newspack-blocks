@@ -56,7 +56,9 @@ function newspack_blocks_replace_login_with_order_summary() {
 				</strong>
 			</p>
 		</div>
-		<?php echo \Newspack_Blocks\Modal_Checkout::render_after_success_button(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		<button class="newspack-ui__button newspack-ui__button--primary newspack-ui__button--wide" onclick="parent.newspackCloseModalCheckout();">
+			<?php echo esc_html( \Newspack_Blocks\Modal_Checkout::get_modal_checkout_labels( 'after_success' ) ); ?>
+		</button>
 	<?php else : ?>
 		<div class="newspack-ui__box newspack-ui__box__error newspack-ui__box--text-center">
 			<p>

@@ -77,8 +77,17 @@ domReady( () => {
 			}
 		} );
 
-		if ( checkoutComplete && window.newspackReaderActivation?.openNewslettersSignupModal ) {
-			window.newspackReaderActivation.openNewslettersSignupModal();
+		if ( checkoutComplete ) {
+			const handleCheckoutComplete = () => {
+				// TODO: Respect after_success_behavior.
+			};
+			if ( window?.newspackReaderActivation?.openNewslettersSignupModal ) {
+				window.newspackReaderActivation.openNewslettersSignupModal( {
+					callback: handleCheckoutComplete,
+				} );
+			} else {
+				handleCheckoutComplete();
+			}
 		}
 	};
 

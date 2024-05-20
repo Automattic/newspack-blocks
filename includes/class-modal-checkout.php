@@ -901,35 +901,6 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Render markup at the end of the "thank you" view.
-	 *
-	 * @return void
-	 */
-	public static function render_after_success_button() {
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended
-		if ( empty( $_REQUEST['modal_checkout'] ) ) {
-			return;
-		}
-
-		$button_label = ! empty( $_REQUEST['after_success_button_label'] ) ? urldecode( wp_unslash( $_REQUEST['after_success_button_label'] ) ) : self::get_modal_checkout_labels( 'after_success' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$url          = ! empty( $_REQUEST['after_success_url'] ) ? urldecode( wp_unslash( $_REQUEST['after_success_url'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		?>
-			<button
-				<?php if ( empty( $url ) ) : ?>
-					onclick="parent.newspackCloseModalCheckout(this)"
-				<?php else : ?>
-					href="<?php echo esc_url( $url ); ?>"
-					target="_top"
-				<?php endif; ?>
-				class="newspack-ui__button newspack-ui__button--primary newspack-ui__button--wide newspack-checkout-complete"
-			>
-				<?php echo esc_html( $button_label ); ?>
-			</button>
-		<?php
-		// phpcs:enable
-	}
-
-	/**
 	 * Render a generic button to close the modal.
 	 *
 	 * @param string $button_label The button label.
