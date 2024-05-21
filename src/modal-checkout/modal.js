@@ -51,14 +51,9 @@ domReady( () => {
 	const closeCheckout = () => {
 		spinner.style.display = 'flex';
 
-		let checkoutComplete = false;
+		const container = iframe.contentDocument.querySelector( `#${ IFRAME_CONTAINER_ID }` );
 
 		if ( iframe && modalContent.contains( iframe ) ) {
-			const container = iframe.contentDocument.querySelector( `#${ IFRAME_CONTAINER_ID }` );
-			if ( container.checkoutComplete ) {
-				checkoutComplete = true;
-			}
-
 			// Reset iframe and modal content heights.
 			iframe.src = 'about:blank';
 			iframe.style.height = '0';
@@ -77,9 +72,24 @@ domReady( () => {
 			}
 		} );
 
-		if ( checkoutComplete ) {
+		if ( container.checkoutComplete ) {
 			const handleCheckoutComplete = () => {
-				// TODO: Respect after_success_behavior.
+				const afterSuccessUrlInput = container.querySelector( 'input[name="after_success_url"]' );
+				const afterSuccessBehaviorInput = container.querySelector(
+					'input[name="after_success_behavior"]'
+				);
+
+				if ( afterSuccessUrlInput && afterSuccessBehaviorInput ) {
+					const afterSuccessUrl = afterSuccessUrlInput.getAttribute( 'value' );
+					const afterSuccessBehavior = afterSuccessBehaviorInput.getAttribute( 'value' );
+
+					if ( 'custom' === afterSuccessBehavior ) {
+						window.location.href = afterSuccessUrl;
+					} else if ( 'referrer' === afterSuccessBehavior ) {
+						const referrer = document.referrer || window.location.href;
+						window.location.href = referrer;
+					}
+				}
 			};
 			if ( window?.newspackReaderActivation?.openNewslettersSignupModal ) {
 				window.newspackReaderActivation.openNewslettersSignupModal( {
@@ -159,11 +169,12 @@ domReady( () => {
 				form.appendChild( modalCheckoutHiddenInput.cloneNode() );
 				form.target = IFRAME_NAME;
 
-				// Fill in the referrer field.
 				const afterSuccessUrlInput = form.querySelector( 'input[name="after_success_url"]' );
 				const afterSuccessBehaviorInput = form.querySelector(
 					'input[name="after_success_behavior"]'
 				);
+
+				// Fill in the referrer field.
 				if (
 					afterSuccessBehaviorInput &&
 					afterSuccessUrlInput &&

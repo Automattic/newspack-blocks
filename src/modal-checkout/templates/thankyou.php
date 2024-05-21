@@ -37,7 +37,10 @@ function newspack_blocks_replace_login_with_order_summary() {
 		return;
 	}
 
-	$is_success = ! $order->has_status( 'failed' );
+	$is_success             = ! $order->has_status( 'failed' );
+	$after_success_behavior = isset( $_GET['after_success_behavior'] ) ? \sanitize_text_field( \wp_unslash( $_GET['after_success_behavior'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$after_success_url      = isset( $_GET['after_success_url'] ) ? esc_url( \sanitize_url( \wp_unslash( $_GET['after_success_url'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$after_success_label    = isset( $_GET['after_success_button_label'] ) ? \sanitize_text_field( \wp_unslash( $_GET['after_success_button_label'] ) ) : \Newspack_Blocks\Modal_Checkout::get_modal_checkout_labels( 'after_success' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	?>
 	<div class="woocommerce-order">
 	<?php if ( $is_success ) : ?>
@@ -56,9 +59,17 @@ function newspack_blocks_replace_login_with_order_summary() {
 				</strong>
 			</p>
 		</div>
-		<button class="newspack-ui__button newspack-ui__button--primary newspack-ui__button--wide" onclick="parent.newspackCloseModalCheckout();">
-			<?php echo esc_html( \Newspack_Blocks\Modal_Checkout::get_modal_checkout_labels( 'after_success' ) ); ?>
-		</button>
+		<form>
+			<?php if ( $after_success_behavior ) : ?>
+				<input type="hidden" name="after_success_behavior" value="<?php echo esc_attr( $after_success_behavior ); ?>">
+			<?php endif; ?>
+			<?php if ( $after_success_behavior ) : ?>
+				<input type="hidden" name="after_success_url" value="<?php echo esc_attr( $after_success_url ); ?>">
+			<?php endif; ?>
+			<button class="newspack-ui__button newspack-ui__button--primary newspack-ui__button--wide" onclick="parent.newspackCloseModalCheckout();">
+				<?php echo esc_html( $after_success_label ); ?>
+			</button>
+		</form>
 	<?php else : ?>
 		<div class="newspack-ui__box newspack-ui__box__error newspack-ui__box--text-center">
 			<p>
