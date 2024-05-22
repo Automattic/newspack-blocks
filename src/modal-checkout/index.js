@@ -242,13 +242,25 @@ import './checkout.scss';
 					$coupon.find( '.result' ).remove();
 					if ( code ) {
 						const isError = code.includes( 'error' );
-						$coupon.append(
-							`<p class="result ${ newspackBlocksModalCheckout.newspack_class_prefix }__helper-text">` +
-								$( code ).text() +
-								'</p>'
-						);
 						if ( isError ) {
 							$coupon.find( 'input[name="coupon_code"]' ).focus();
+							$coupon
+								.find( 'input[name="coupon_code"]' )
+								.addClass( `${ newspackBlocksModalCheckout.newspack_class_prefix }__field-error` );
+							$coupon
+								.find( 'label' )
+								.addClass( `${ newspackBlocksModalCheckout.newspack_class_prefix }__field-error` );
+							$coupon.append(
+								`<p class="result ${ newspackBlocksModalCheckout.newspack_class_prefix }__helper-text ${ newspackBlocksModalCheckout.newspack_class_prefix }__inline-error">` +
+									$( code ).text() +
+									'</p>'
+							);
+						} else {
+							$coupon.append(
+								`<p class="result ${ newspackBlocksModalCheckout.newspack_class_prefix }__helper-text">` +
+									$( code ).text() +
+									'</p>'
+							);
 						}
 						$( document.body ).trigger( 'applied_coupon_in_checkout', [ data.coupon_code ] );
 						$( document.body ).trigger( 'update_checkout', { update_shipping_method: false } );
@@ -382,7 +394,7 @@ import './checkout.scss';
 			// Shipping details.
 			if ( data.hasOwnProperty( 'shipping_address_1' ) ) {
 				html.push( '<div class="shipping-details">' );
-				html.push( '<h2>' + newspackBlocksModalCheckout.labels.shipping_details + '</h2>' );
+				html.push( '<h3>' + newspackBlocksModalCheckout.labels.shipping_details + '</h3>' );
 				let shippingAddress = '';
 				if ( ! data.ship_to_different_address ) {
 					shippingAddress = billingAddress;
