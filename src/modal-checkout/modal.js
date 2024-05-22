@@ -204,7 +204,6 @@ domReady( () => {
 							return;
 						}
 					}
-
 					if (
 						window?.newspackReaderActivation?.openAuthModal &&
 						! window?.newspackReaderActivation?.getReader?.()?.authenticated &&
