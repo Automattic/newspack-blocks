@@ -244,12 +244,9 @@ import './checkout.scss';
 						const isError = code.includes( 'error' );
 						if ( isError ) {
 							$coupon.find( 'input[name="coupon_code"]' ).focus();
-							$coupon
-								.find( 'input[name="coupon_code"]' )
-								.addClass( `${ newspackBlocksModalCheckout.newspack_class_prefix }__field-error` );
-							$coupon
-								.find( 'label' )
-								.addClass( `${ newspackBlocksModalCheckout.newspack_class_prefix }__field-error` );
+							$coupon.addClass(
+								`${ newspackBlocksModalCheckout.newspack_class_prefix }__field-error`
+							);
 							$coupon.append(
 								`<p class="result ${ newspackBlocksModalCheckout.newspack_class_prefix }__helper-text ${ newspackBlocksModalCheckout.newspack_class_prefix }__inline-error">` +
 									$( code ).text() +
@@ -260,6 +257,9 @@ import './checkout.scss';
 								`<p class="result ${ newspackBlocksModalCheckout.newspack_class_prefix }__helper-text">` +
 									$( code ).text() +
 									'</p>'
+							);
+							$coupon.removeClass(
+								`${ newspackBlocksModalCheckout.newspack_class_prefix }__field-error`
 							);
 						}
 						$( document.body ).trigger( 'applied_coupon_in_checkout', [ data.coupon_code ] );
