@@ -119,7 +119,8 @@ class Newspack_Blocks_Patterns {
 					'subscribe-3',
 					'subscribe-4',
 					'subscribe-5',
-					'subscribe-6'
+					'subscribe-6',
+					'subscribe-7'
 				);
 			}
 
