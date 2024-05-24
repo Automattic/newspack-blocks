@@ -39,6 +39,8 @@ final class Modal_Checkout {
 	 */
 	public static function init() {
 		add_action( 'wp_loaded', [ __CLASS__, 'process_checkout_request' ], 5 );
+		add_filter( 'wp_redirect', [ __CLASS__, 'pass_url_param_on_redirect' ] );
+		add_filter( 'woocommerce_cart_product_cannot_be_purchased_message', [ __CLASS__, 'woocommerce_cart_product_cannot_be_purchased_message' ], 10, 2 );
 		add_action( 'wp_footer', [ __CLASS__, 'render_modal_markup' ], 100 );
 		add_action( 'wp_footer', [ __CLASS__, 'render_variation_selection' ], 100 );
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'enqueue_scripts' ] );
@@ -81,6 +83,21 @@ final class Modal_Checkout {
 		add_filter( 'googlesitekit_adsense_tag_blocked', [ __CLASS__, 'is_modal_checkout' ] );
 		add_filter( 'googlesitekit_tagmanager_tag_blocked', [ __CLASS__, 'is_modal_checkout' ] );
 		add_filter( 'jetpack_active_modules', [ __CLASS__, 'jetpack_active_modules' ] );
+
+		/**
+		 * Ensure that options to limit the number of subscriptions per product are respected.
+		 * Note: This is normally called only for regular checkout pages and REST API requests,
+		 * so we need to add the filters for modal checkout.
+		 *
+		 * See: https://github.com/Automattic/woocommerce-subscriptions-core/blob/trunk/includes/class-wcs-limiter.php#L23
+		*/
+		if ( self::is_modal_checkout() && class_exists( 'WCS_Limiter' ) ) {
+			add_filter( 'woocommerce_subscription_is_purchasable', [ 'WCS_Limiter', 'is_purchasable_switch' ], 12, 2 );
+			add_filter( 'woocommerce_subscription_variation_is_purchasable', [ 'WCS_Limiter', 'is_purchasable_switch' ], 12, 2 );
+			add_filter( 'woocommerce_subscription_is_purchasable', [ 'WCS_Limiter', 'is_purchasable_renewal' ], 12, 2 );
+			add_filter( 'woocommerce_subscription_variation_is_purchasable', [ 'WCS_Limiter', 'is_purchasable_renewal' ], 12, 2 );
+			add_filter( 'woocommerce_valid_order_statuses_for_order_again', [ 'WCS_Limiter', 'filter_order_again_statuses_for_limited_subscriptions' ] );
+		}
 	}
 
 	/**
@@ -268,19 +285,26 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Update product price string for subscriptions to use "per" instead of "/"
-	 * and remove the cents when the price is over 3 digits.
+	 * Update product price string for subscriptions to use "per" instead of "/".
 	 *
 	 * @param string $price_string The price string.
 	 */
 	public static function update_subscriptions_product_price_string( $price_string ) {
 		$price_string = str_replace( ' / ', ' ' . __( 'per', 'newspack-blocks' ) . ' ', $price_string );
-		// For prices over 3 digits and 00 cents, remove the cents.
+		return $price_string;
+	}
+
+	/**
+	 * Update price to remove empty decimals (.00) if over three digits.
+	 *
+	 * @param string $price_string The price string.
+	 */
+	public static function maybe_remove_decimal_spaces( $price_string ) {
 		$decimal_separator = wc_get_price_decimal_separator();
 		$pattern           = '/\b\d{3,}' . preg_quote( $decimal_separator, '/' ) . '00\b/';
 		preg_match( $pattern, $price_string, $matches );
 		if ( ! empty( $matches ) ) {
-			$replace_pattern = '/\\' . preg_quote( $decimal_separator, '/' ) . '00$/';
+			$replace_pattern = '/' . preg_quote( $decimal_separator, '/' ) . '00$/';
 			$price_string    = preg_replace( $pattern, preg_replace( $replace_pattern, '', $matches[0] ), $price_string );
 		}
 		return $price_string;
@@ -295,6 +319,7 @@ final class Modal_Checkout {
 		}
 
 		add_filter( 'woocommerce_subscriptions_product_price_string', [ __CLASS__, 'update_subscriptions_product_price_string' ], 10, 1 );
+		add_filter( 'formatted_woocommerce_price', [ __CLASS__, 'maybe_remove_decimal_spaces' ], 10, 1 );
 		/**
 		* Filters the header title for the modal checkout.
 		*
@@ -357,15 +382,13 @@ final class Modal_Checkout {
 			<?php
 		}
 		remove_filter( 'woocommerce_subscriptions_product_price_string', [ __CLASS__, 'update_subscriptions_product_price_string' ], 10, 1 );
+		remove_filter( 'formatted_woocommerce_price', [ __CLASS__, 'maybe_remove_decimal_spaces' ], 10, 1 );
 	}
 
 	/**
 	 * Enqueue scripts for the checkout page rendered in a modal.
 	 */
 	public static function enqueue_scripts() {
-		if ( ! function_exists( 'is_checkout' ) || ! is_checkout() ) {
-			return;
-		}
 		if ( ! self::is_modal_checkout() ) {
 			return;
 		}
@@ -453,10 +476,10 @@ final class Modal_Checkout {
 	 * @return string
 	 */
 	public static function get_checkout_template( $template ) {
-		if ( ! function_exists( 'is_checkout' ) || ! function_exists( 'is_order_received_page' ) ) {
+		if ( ! function_exists( 'is_checkout' ) || ! function_exists( 'is_order_received_page' ) || ! function_exists( 'is_cart' ) ) {
 			return $template;
 		}
-		if ( ! is_checkout() && ! is_order_received_page() ) {
+		if ( ! is_checkout() && ! is_order_received_page() && ! is_cart() ) {
 			return $template;
 		}
 		if ( ! self::is_modal_checkout() ) {
@@ -477,6 +500,12 @@ final class Modal_Checkout {
 			<?php
 				echo do_shortcode( '[woocommerce_checkout]' );
 				wp_footer();
+			?>
+
+			<?php
+			if ( is_cart() ) {
+				self::render_close_button();
+			}
 			?>
 		</body>
 		</html>
@@ -830,6 +859,27 @@ final class Modal_Checkout {
 	}
 
 	/**
+	 * Render a generic button to close the modal.
+	 *
+	 * @param string $button_label The button label.
+	 */
+	private static function render_close_button( $button_label = '' ) {
+		if ( ! $button_label ) {
+			$button_label = __( 'Close window', 'newspack-blocks' );
+		}
+		?>
+			<div class="button-container">
+				<a
+					onclick="parent.newspackCloseModalCheckout(this);"
+					class="button close-button"
+				>
+					<?php echo esc_html( $button_label ); ?>
+				</a>
+			</div>
+		<?php
+	}
+
+	/**
 	 * Renders newsletter signup form.
 	 *
 	 * @param WC_Order $order The order related to the transaction.
@@ -1012,9 +1062,44 @@ final class Modal_Checkout {
 	}
 
 	/**
+	 * Ensure that the modal_checkout param is passed if we get redirected while inside the modal.
+	 * This is so that we can continue hiding site elements that we don't want to show inside the modal.
+	 *
+	 * @param string $location The path or URL to redirect to.
+	 *
+	 * @return string
+	 */
+	public static function pass_url_param_on_redirect( $location ) {
+		if ( self::is_modal_checkout() ) {
+			$location = \add_query_arg( [ 'modal_checkout' => 1 ], $location );
+		}
+		return $location;
+	}
+
+	/**
+	 * Filters the error message shown when a product can't be added to the cart.
+	 *
+	 * @param string     $message Message.
+	 * @param WC_Product $product_data Product data.
+	 *
+	 * @return string
+	 */
+	public static function woocommerce_cart_product_cannot_be_purchased_message( $message, $product_data ) {
+		if ( method_exists( 'WCS_Limiter', 'is_purchasable' ) ) {
+			$product = \wc_get_product( $product_data->get_id() );
+			if ( ! \WCS_Limiter::is_purchasable( false, $product ) ) {
+				$message .= ' ' . __( 'You may only have one subscription of this product at a time.', 'newspack-blocks' );
+			}
+		}
+
+		return $message;
+	}
+
+	/**
 	 * Is this request using the modal checkout?
 	 */
 	public static function is_modal_checkout() {
+
 		$is_modal_checkout = isset( $_REQUEST['modal_checkout'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! $is_modal_checkout && isset( $_REQUEST['post_data'] ) && is_string( $_REQUEST['post_data'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$is_modal_checkout = strpos( $_REQUEST['post_data'], 'modal_checkout=1' ) !== false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
