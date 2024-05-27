@@ -125,10 +125,12 @@ class Newspack_Blocks_Patterns {
 			}
 
 			// Patterns: common variables.
+			// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 			$subscribe_title = esc_html__( 'Subscribe to our newsletter', 'newspack-blocks' );
 			$subscribe_desc  = esc_html__( 'Be the first to know about breaking news, articles, and updates.', 'newspack-blocks' );
 			$subscribe_image = esc_url( plugins_url( 'src/assets/placeholder-subscribe-image.jpg', NEWSPACK_BLOCKS__PLUGIN_FILE ) );
 			$subscribe_cover = esc_url( plugins_url( 'src/assets/placeholder-subscribe-cover.jpg', NEWSPACK_BLOCKS__PLUGIN_FILE ) );
+			// phpcs:enable VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 
 			foreach ( $block_patterns as $block_pattern ) {
 				register_block_pattern(
