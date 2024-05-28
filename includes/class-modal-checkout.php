@@ -363,19 +363,26 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Update product price string for subscriptions to use "per" instead of "/"
-	 * and remove the cents when the price is over 3 digits.
+	 * Update product price string for subscriptions to use "per" instead of "/".
 	 *
 	 * @param string $price_string The price string.
 	 */
 	public static function update_subscriptions_product_price_string( $price_string ) {
 		$price_string = str_replace( ' / ', ' ' . __( 'per', 'newspack-blocks' ) . ' ', $price_string );
-		// For prices over 3 digits and 00 cents, remove the cents.
+		return $price_string;
+	}
+
+	/**
+	 * Update price to remove empty decimals (.00) if over three digits.
+	 *
+	 * @param string $price_string The price string.
+	 */
+	public static function maybe_remove_decimal_spaces( $price_string ) {
 		$decimal_separator = wc_get_price_decimal_separator();
 		$pattern           = '/\b\d{3,}' . preg_quote( $decimal_separator, '/' ) . '00\b/';
 		preg_match( $pattern, $price_string, $matches );
 		if ( ! empty( $matches ) ) {
-			$replace_pattern = '/\\' . preg_quote( $decimal_separator, '/' ) . '00$/';
+			$replace_pattern = '/' . preg_quote( $decimal_separator, '/' ) . '00$/';
 			$price_string    = preg_replace( $pattern, preg_replace( $replace_pattern, '', $matches[0] ), $price_string );
 		}
 		return $price_string;
@@ -390,6 +397,7 @@ final class Modal_Checkout {
 		}
 
 		add_filter( 'woocommerce_subscriptions_product_price_string', [ __CLASS__, 'update_subscriptions_product_price_string' ], 10, 1 );
+		add_filter( 'formatted_woocommerce_price', [ __CLASS__, 'maybe_remove_decimal_spaces' ], 10, 1 );
 		/**
 		* Filters the header title for the modal checkout.
 		*
@@ -452,6 +460,7 @@ final class Modal_Checkout {
 			<?php
 		}
 		remove_filter( 'woocommerce_subscriptions_product_price_string', [ __CLASS__, 'update_subscriptions_product_price_string' ], 10, 1 );
+		remove_filter( 'formatted_woocommerce_price', [ __CLASS__, 'maybe_remove_decimal_spaces' ], 10, 1 );
 	}
 
 	/**
