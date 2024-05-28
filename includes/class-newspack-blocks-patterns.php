@@ -68,7 +68,8 @@ class Newspack_Blocks_Patterns {
 					'donations-1',
 					'donations-2',
 					'donations-3',
-					'donations-4'
+					'donations-4',
+					'donations-5'
 				);
 			}
 
@@ -126,6 +127,10 @@ class Newspack_Blocks_Patterns {
 
 			// Patterns: common variables.
 			// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
+			$donations_title = esc_html__( 'Support our publication', 'newspack-blocks' );
+			$donations_desc  = esc_html__( 'With the support of readers like you, we provide thoughtfully researched articles for a more informed and connected community. This is your chance to support credible, community-based, public-service journalism. Please join us!', 'newspack-blocks' );
+			$donations_image = esc_url( plugins_url( 'src/assets/placeholder-donations-image.jpg', NEWSPACK_BLOCKS__PLUGIN_FILE ) );
+			$donations_cover = esc_url( plugins_url( 'src/assets/placeholder-donations-cover.jpg', NEWSPACK_BLOCKS__PLUGIN_FILE ) );
 			$subscribe_title = esc_html__( 'Subscribe to our newsletter', 'newspack-blocks' );
 			$subscribe_desc  = esc_html__( 'Be the first to know about breaking news, articles, and updates.', 'newspack-blocks' );
 			$subscribe_image = esc_url( plugins_url( 'src/assets/placeholder-subscribe-image.jpg', NEWSPACK_BLOCKS__PLUGIN_FILE ) );
