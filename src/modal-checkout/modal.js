@@ -168,6 +168,7 @@ domReady( () => {
 				form.appendChild( modalCheckoutHiddenInput.cloneNode() );
 				form.target = IFRAME_NAME;
 				form.addEventListener( 'submit', ev => {
+					form.classList.add( 'processing' );
 					const formData = new FormData( form );
 					const variationModals = document.querySelectorAll( '.newspack-blocks__modal-variation' );
 
@@ -200,6 +201,7 @@ domReady( () => {
 								} );
 							// Open the variations modal.
 							ev.preventDefault();
+							form.classList.remove( 'processing' );
 							openModal( variationModal );
 							return;
 						}
@@ -247,6 +249,7 @@ domReady( () => {
 								}
 							} )
 							.finally( () => {
+								form.classList.remove( 'processing' );
 								// Initialize auth flow if reader is not authenticated.
 								window.newspackReaderActivation.openAuthModal( {
 									title: newspackBlocksModal.labels.auth_modal_title,
@@ -266,6 +269,7 @@ domReady( () => {
 								} );
 							} );
 					} else {
+						form.classList.remove( 'processing' );
 						// Otherwise initialize checkout.
 						openCheckout();
 					}
