@@ -66,6 +66,7 @@ final class Modal_Checkout {
 		add_action( 'option_woocommerce_default_customer_address', [ __CLASS__, 'ensure_base_default_customer_address' ] );
 		add_action( 'default_option_woocommerce_default_customer_address', [ __CLASS__, 'ensure_base_default_customer_address' ] );
 		add_action( 'wp_ajax_process_name_your_price_request', [ __CLASS__, 'process_name_your_price_request' ] );
+		add_action( 'wp_ajax_nopriv_get_price_summary_card_markup', [ __CLASS__, 'get_price_summary_card_markup' ] );
 
 		/** Custom handling for registered users. */
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
@@ -538,6 +539,8 @@ final class Modal_Checkout {
 			'newspack-blocks-modal',
 			'newspackBlocksModal',
 			[
+				'newspack_ajax_url'     => admin_url( 'admin-ajax.php' ),
+				'newspack_nonce'        => wp_create_nonce( 'newspack_blocks_price_summary_card' ),
 				'newspack_class_prefix' => self::get_class_prefix(),
 				'labels'                => [
 					'auth_modal_title'     => self::get_modal_checkout_labels( 'auth_modal_title' ),
@@ -1358,6 +1361,68 @@ final class Modal_Checkout {
 		}
 
 		return self::$modal_checkout_labels[ $key ] ?? '';
+	}
+
+
+	/**
+	 * Get markup for the price summary card to render in auth flow.
+	 */
+	public static function get_price_summary_card_markup() {
+		if ( ! DOING_AJAX || ! function_exists( 'WC' ) || ! function_exists( 'wc_get_product' ) || ! function_exists( 'wc_price' ) ) {
+			wp_die();
+		}
+
+		$nonce = filter_input( INPUT_POST, 'security', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'newspack_blocks_price_summary_card' ) ) {
+			wp_die();
+		}
+
+		$is_donation = filter_input( INPUT_POST, 'is_donation', FILTER_VALIDATE_BOOLEAN );
+		if ( $is_donation ) {
+			if ( ! method_exists( 'Newspack\Donations', 'get_donation_product' ) ) {
+				wp_send_json_error( __( 'Donations plugin is not active.', 'newspack-blocks' ) );
+				wp_die();
+			}
+
+			$frequency = filter_input( INPUT_POST, 'frequency', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+			if ( ! $frequency ) {
+				wp_send_json_error( __( 'Invalid donation frequency.', 'newspack-blocks' ) );
+				wp_die();
+			}
+
+			$product_id = \Newspack\Donations::get_donation_product( $frequency );
+		} else {
+			$product_id = filter_input( INPUT_POST, 'product_id', FILTER_SANITIZE_NUMBER_INT );
+		}
+
+		if ( ! $product_id ) {
+			wp_send_json_error( __( 'Invalid product ID.', 'newspack-blocks' ) );
+			wp_die();
+		}
+
+		$product = wc_get_product( $product_id );
+		if ( ! $product ) {
+			wp_send_json_error( __( 'Product not found.', 'newspack-blocks' ) );
+			wp_die();
+		}
+
+		$price = filter_input( INPUT_POST, 'price', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
+		if ( ! $price ) {
+			$price = $product->get_price_html();
+		} else {
+			$price = wc_price( $price );
+		}
+
+		$class_prefix = self::get_class_prefix();
+		$output       = '<div class="order-details-summary ' . $class_prefix . '__box ' . $class_prefix . '__box--text-center">';
+		$output      .= '<h2>';
+		// translators: %1$s is the product name, %2$s is the product price.
+		$output      .= sprintf( __( '%1$s: %2$s', 'newspack-blocks' ), $product->get_name(), $price );
+		$output      .= '</h2>';
+		$output      .= '</div>';
+
+		wp_send_json_success( $output );
+		wp_die();
 	}
 }
 Modal_Checkout::init();

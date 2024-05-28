@@ -210,21 +210,61 @@ domReady( () => {
 						! newspack_ras_config.is_logged_in
 					) {
 						ev.preventDefault();
-						// Initialize auth flow if reader is not authenticated.
-						window.newspackReaderActivation.openAuthModal( {
-							title: newspackBlocksModal.labels.auth_modal_title,
-							// form.submit does not trigger submit event listener, so we use requestSubmit.
-							callback: () => form.requestSubmit( form.querySelector( 'button[type="submit"]' ) ),
-							skipSuccess: true,
-							labels: {
-								signin: {
-									title: newspackBlocksModal.labels.signin_modal_title,
-								},
-								register: {
-									title: newspackBlocksModal.labels.register_modal_title,
-								},
-							},
-						} );
+
+						// Initialize auth flow content string.
+						let content = '';
+
+						const data = new FormData();
+						data.append( 'action', 'get_price_summary_card_markup' );
+						data.append( 'security', newspackBlocksModal.newspack_nonce );
+						if ( formData.has( 'newspack_donate' ) ) {
+							const frequency = formData.get( 'donation_frequency' );
+
+							data.append( 'is_donation', true );
+							data.append( 'frequency', frequency );
+
+							for ( const [ key, value ] of formData.entries() ) {
+								if ( key.includes( frequency ) && !! value ) {
+									data.append( 'price', value );
+								}
+							}
+						}
+
+						if ( formData.has( 'newspack_checkout' ) ) {
+							data.append( 'product_id', formData.get( 'product_id' ) );
+							data.append( 'price', formData.get( 'price' ) );
+						}
+
+						// Fetch price summary card markup.
+						fetch( newspackBlocksModal.newspack_ajax_url, {
+							method: 'POST',
+							body: data,
+						} )
+							.then( response => response.json() )
+							.then( res => {
+								if ( res.success ) {
+									content = res.data;
+								}
+							} )
+							.finally( () => {
+								// Initialize auth flow if reader is not authenticated.
+								window.newspackReaderActivation.openAuthModal( {
+									title: newspackBlocksModal.labels.auth_modal_title,
+									callback: () =>
+										// form.submit does not trigger submit event listener, so we use requestSubmit.
+										form.requestSubmit( form.querySelector( 'button[type="submit"]' ) ),
+									skipSuccess: true,
+									labels: {
+										signin: {
+											title: newspackBlocksModal.labels.signin_modal_title,
+										},
+										register: {
+											title: newspackBlocksModal.labels.register_modal_title,
+										},
+									},
+									content,
+								} );
+							} );
 					} else {
 						// Otherwise initialize checkout.
 						openCheckout();
