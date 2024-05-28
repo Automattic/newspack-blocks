@@ -219,12 +219,12 @@ domReady( () => {
 						const data = new FormData();
 						data.append( 'action', 'get_price_summary_card_markup' );
 						data.append( 'security', newspackBlocksModal.newspack_nonce );
+
+						// Handle donation form.
 						if ( formData.has( 'newspack_donate' ) ) {
 							const frequency = formData.get( 'donation_frequency' );
-
-							data.append( 'is_donation', true );
 							data.append( 'frequency', frequency );
-
+							data.append( 'is_donation', true );
 							for ( const [ key, value ] of formData.entries() ) {
 								if ( key.includes( frequency ) && !! value ) {
 									data.append( 'price', value );
@@ -232,9 +232,11 @@ domReady( () => {
 							}
 						}
 
+						// Handle checkout button form.
 						if ( formData.has( 'newspack_checkout' ) ) {
 							data.append( 'product_id', formData.get( 'product_id' ) );
 							data.append( 'price', formData.get( 'price' ) );
+							data.append( 'frequency', formData.get( 'frequency' ) );
 						}
 
 						// Fetch price summary card markup.

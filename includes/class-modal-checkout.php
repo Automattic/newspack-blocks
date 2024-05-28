@@ -447,6 +447,9 @@ final class Modal_Checkout {
 										</div>
 										<div class="variation"><?php echo esc_html( $name ); ?></div>
 										<form>
+											<?php if ( class_exists( '\WC_Subscriptions_Product' ) && \WC_Subscriptions_Product::is_subscription( $variation ) ) : ?>
+												<input type="hidden" name="frequency" value="<?php echo esc_attr( \WC_Subscriptions_Product::get_period( $variation ) ); ?>" />
+											<?php endif; ?>
 											<input type="hidden" name="newspack_checkout" value="1" />
 											<input type="hidden" name="product_id" value="<?php echo esc_attr( $variation->get_id() ); ?>" />
 											<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--primary" ); ?>"><?php echo esc_html( self::get_modal_checkout_labels( 'checkout_confirm_variation' ) ); ?></button>
@@ -1368,7 +1371,7 @@ final class Modal_Checkout {
 	 * Get markup for the price summary card to render in auth flow.
 	 */
 	public static function get_price_summary_card_markup() {
-		if ( ! DOING_AJAX || ! function_exists( 'WC' ) || ! function_exists( 'wc_get_product' ) || ! function_exists( 'wc_price' ) ) {
+		if ( ! DOING_AJAX || ! function_exists( 'wc_get_product' ) || ! function_exists( 'wc_price' ) ) {
 			wp_die();
 		}
 
@@ -1377,14 +1380,16 @@ final class Modal_Checkout {
 			wp_die();
 		}
 
+		$frequency   = filter_input( INPUT_POST, 'frequency', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		$is_donation = filter_input( INPUT_POST, 'is_donation', FILTER_VALIDATE_BOOLEAN );
+		$price       = filter_input( INPUT_POST, 'price', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
+
 		if ( $is_donation ) {
 			if ( ! method_exists( 'Newspack\Donations', 'get_donation_product' ) ) {
 				wp_send_json_error( __( 'Donations plugin is not active.', 'newspack-blocks' ) );
 				wp_die();
 			}
 
-			$frequency = filter_input( INPUT_POST, 'frequency', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 			if ( ! $frequency ) {
 				wp_send_json_error( __( 'Invalid donation frequency.', 'newspack-blocks' ) );
 				wp_die();
@@ -1406,9 +1411,22 @@ final class Modal_Checkout {
 			wp_die();
 		}
 
-		$price = filter_input( INPUT_POST, 'price', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
 		if ( ! $price ) {
-			$price = $product->get_price_html();
+			$price = $product->get_price();
+		}
+
+		if ( class_exists( '\WC_Subscriptions_Product' ) && \WC_Subscriptions_Product::is_subscription( $product ) && function_exists( 'wcs_price_string' ) ) {
+			if ( ! $frequency ) {
+				$frequency = \WC_Subscriptions_Product::get_period( $product );
+			}
+
+			$price = wcs_price_string(
+				[
+					'recurring_amount'    => $price,
+					'subscription_period' => $frequency,
+					'use_per_slash'       => true,
+				]
+			);
 		} else {
 			$price = wc_price( $price );
 		}
