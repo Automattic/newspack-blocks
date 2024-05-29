@@ -57,6 +57,7 @@ final class Modal_Checkout {
 		add_filter( 'woocommerce_order_button_text', [ __CLASS__, 'order_button_text' ], 5 );
 		add_filter( 'option_woocommerce_subscriptions_order_button_text', [ __CLASS__, 'order_button_text' ], 5 );
 		add_action( 'woocommerce_before_checkout_form', [ __CLASS__, 'render_before_checkout_form' ] );
+		add_action( 'woocommerce_before_checkout_form', [ __CLASS__, 'render_name_your_price_form' ], 11 );
 		add_action( 'woocommerce_checkout_before_customer_details', [ __CLASS__, 'render_before_customer_details' ] );
 		add_filter( 'woocommerce_enable_order_notes_field', [ __CLASS__, 'enable_order_notes_field' ] );
 		add_action( 'woocommerce_checkout_process', [ __CLASS__, 'wcsg_apply_gift_subscription' ] );
@@ -64,6 +65,7 @@ final class Modal_Checkout {
 		add_filter( 'woocommerce_order_button_html', [ __CLASS__, 'order_button_html' ], 10, 1 );
 		add_action( 'option_woocommerce_default_customer_address', [ __CLASS__, 'ensure_base_default_customer_address' ] );
 		add_action( 'default_option_woocommerce_default_customer_address', [ __CLASS__, 'ensure_base_default_customer_address' ] );
+		add_action( 'wp_ajax_process_name_your_price_request', [ __CLASS__, 'process_name_your_price_request' ] );
 
 		/** Custom handling for registered users. */
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
@@ -248,6 +250,82 @@ final class Modal_Checkout {
 	}
 
 	/**
+	 * Process name your price request for modal.
+	 */
+	public static function process_name_your_price_request() {
+		if ( ! defined( 'DOING_AJAX' ) ) {
+			return;
+		}
+
+		if ( ! function_exists( 'WC' ) || ! \Newspack_Blocks::can_use_name_your_price() || ! method_exists( '\WC_Name_Your_Price_Helpers', 'is_nyp' ) ) {
+			return;
+		}
+
+		check_ajax_referer( 'newspack_checkout_name_your_price' );
+
+		$is_newspack_checkout_nyp = filter_input( INPUT_POST, 'newspack_checkout_name_your_price', FILTER_SANITIZE_NUMBER_INT );
+		$product_id               = filter_input( INPUT_POST, 'product_id', FILTER_SANITIZE_NUMBER_INT );
+
+		if ( ! $is_newspack_checkout_nyp || ! $product_id ) {
+			return;
+		}
+
+		$price     = \WC_Name_Your_Price_Helpers::standardize_number( filter_input( INPUT_POST, 'price', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION ) );
+		$max_price = \WC_Name_Your_Price_Helpers::get_maximum_price( $product_id );
+
+		if ( ! empty( $max_price ) && $price > $max_price ) {
+			wp_send_json_error(
+				[
+					'message' => sprintf(
+						// Translators: %s is the maximum price.
+						__( 'Adjusted price must be less than the maximum of %s.', 'newspack-blocks' ),
+						\wc_price( $max_price )
+					),
+				]
+			);
+
+			wp_die();
+		}
+
+		$cart_item_data = self::amend_cart_item_data( [ 'referer' => wp_get_referer() ] );
+
+		foreach ( \WC()->cart->get_cart() as $cart_item_key => $cart_item ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
+			if ( $cart_item['product_id'] !== (int) $product_id && $cart_item['variation_id'] !== (int) $product_id ) {
+				continue;
+			}
+
+			$cart_item_data['nyp'] = $price;
+			$cart_item_data['base_price'] = isset( $cart_item['base_price'] ) ? $cart_item['base_price'] : $cart_item['nyp'];
+
+			if ( $price < $cart_item_data['base_price'] ) {
+				wp_send_json_error(
+					[
+						'message' => sprintf(
+							// Translators: %s is the name-your-price custom price.
+							__( 'Adjusted price must be greater than base price of %s.', 'newspack-blocks' ),
+							\wc_price( $cart_item_data['base_price'] )
+						),
+					]
+				);
+
+				wp_die();
+			}
+		}
+
+		\WC()->cart->empty_cart();
+		\WC()->cart->add_to_cart( $product_id, 1, 0, [], $cart_item_data );
+
+		wp_send_json_success(
+			[
+				'message' => self::get_modal_checkout_labels( 'checkout_nyp_thankyou' ),
+				'price'   => \wc_price( $price ),
+			]
+		);
+
+		wp_die();
+	}
+
+	/**
 	 * Render the markup necessary for the modal checkout.
 	 */
 	public static function render_modal_markup() {
@@ -403,6 +481,8 @@ final class Modal_Checkout {
 			'newspack-blocks-modal-checkout',
 			'newspackBlocksModalCheckout',
 			[
+				'ajax_url'              => admin_url( 'admin-ajax.php' ),
+				'nyp_nonce'             => wp_create_nonce( 'newspack_checkout_name_your_price' ),
 				'newspack_class_prefix' => self::get_class_prefix(),
 				'labels'                => [
 					'billing_details'  => self::get_modal_checkout_labels( 'billing_details' ),
@@ -1172,7 +1252,64 @@ final class Modal_Checkout {
 			endforeach;
 			// phpcs:enable
 			?>
-		</div>
+			</div>
+		<?php
+	}
+
+	/**
+	 * Render name your price form if nyp is active and available.
+	 */
+	public static function render_name_your_price_form() {
+		if ( ! self::is_modal_checkout() || ! function_exists( 'WC' ) || ! method_exists( '\WC_Name_Your_Price_Helpers', 'is_nyp' ) ) {
+			return;
+		}
+
+		// Only show nyp form for checkout button modal checkout.
+		$is_donation = method_exists( 'Newspack\Donations', 'is_donation_cart' ) && \Newspack\Donations::is_donation_cart();
+		if ( $is_donation ) {
+			return;
+		}
+
+		$cart = \WC()->cart;
+		if ( 1 !== $cart->get_cart_contents_count() ) {
+			return;
+		}
+		$class_prefix = self::get_class_prefix();
+		?>
+			<div class="name-your-price">
+				<?php
+				// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce hooks.
+				foreach ( $cart->get_cart() as $cart_item_key => $cart_item ) :
+					$_product = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
+					if ( ! $_product || ! $_product->exists() || $cart_item['quantity'] <= 0 || ! \WC_Name_Your_Price_Helpers::is_nyp( $_product ) || ! apply_filters( 'woocommerce_checkout_cart_item_visible', true, $cart_item, $cart_item_key ) ) {
+						continue;
+					}
+					$currency_symbol = \get_woocommerce_currency_symbol();
+					$product_id      = $_product->get_id();
+					$price           = $_product->get_price();
+					?>
+					<form class="modal_checkout_nyp">
+						<h3><?php echo esc_html( self::get_modal_checkout_labels( 'checkout_nyp_title' ) ); ?></h3>
+						<input type="hidden" name="newspack_checkout_name_your_price" value="1" />
+						<input type="hidden" name="product_id" value="<?php echo esc_attr( $product_id ); ?>" />
+						<p class="input-price" >
+							<label for="price">
+								<span class="currency"><?php echo esc_html( $currency_symbol ); ?></span>
+								<input type="number" min="0" step=".01" name="price" placeholder="<?php echo esc_attr( $price ); ?>" onwheel="return false" />
+							</label>
+							<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--outline" ); ?>">
+								<?php echo esc_html( self::get_modal_checkout_labels( 'checkout_nyp_apply' ) ); ?>
+							</button>
+						</p>
+						<p class="result <?php echo esc_attr( "{$class_prefix}__helper-text" ); ?>">
+							<?php echo esc_attr( self::get_modal_checkout_labels( 'checkout_nyp' ) ); ?>
+						</p>
+					</form>
+					<?php
+				endforeach;
+				// phpcs:enable
+				?>
+			</div>
 		<?php
 	}
 
@@ -1400,6 +1537,10 @@ final class Modal_Checkout {
 					__( 'Thank you for supporting %s. Your transaction was successful.', 'newspack-blocks' ),
 					get_option( 'blogname' )
 				),
+				'checkout_nyp'               => __( "Your contribution directly funds our work. If you're moved to do so, you can opt to pay more than the standard rate.", 'newspack-blocks' ),
+				'checkout_nyp_thankyou'      => __( "Thank you for your generosity! We couldn't do this without you!", 'newspack-blocks' ),
+				'checkout_nyp_title'         => __( 'Increase your support', 'newspack-blocks' ),
+				'checkout_nyp_apply'         => __( 'Apply', 'newspack-blocks' ),
 			];
 
 			/**
