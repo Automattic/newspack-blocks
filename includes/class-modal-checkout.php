@@ -438,21 +438,28 @@ final class Modal_Checkout {
 								<?php
 								$variations = $product->get_available_variations( 'objects' );
 								foreach ( $variations as $variation ) :
-									$name  = wc_get_formatted_variation( $variation, true );
-									$price = $variation->get_price_html();
+									$name         = wc_get_formatted_variation( $variation, true );
+									$price_html   = $variation->get_price_html();
+									$variation_id = $variation->get_id();
+									$price        = $variation->get_price();
+
+									// Use suggested price if NYP is active and set for variation.
+									if ( \Newspack_Blocks::can_use_name_your_price() && \WC_Name_Your_Price_Helpers::is_nyp( $variation_id ) ) {
+										$price = \WC_Name_Your_Price_Helpers::get_suggested_price( $variation_id );
+									}
 									?>
 									<li class="newspack-blocks__options__item"">
 										<div class="summary">
-											<span class="price"><?php echo $price; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+											<span class="price"><?php echo $price_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 										</div>
 										<div class="variation"><?php echo esc_html( $name ); ?></div>
 										<form>
+											<input type="hidden" name="newspack_checkout" value="1" />
+											<input type="hidden" name="product_id" value="<?php echo esc_attr( $variation_id ); ?>" />
+											<input type="hidden" name="price" value="<?php echo esc_attr( $price ); ?>" />
 											<?php if ( class_exists( '\WC_Subscriptions_Product' ) && \WC_Subscriptions_Product::is_subscription( $variation ) ) : ?>
 												<input type="hidden" name="frequency" value="<?php echo esc_attr( \WC_Subscriptions_Product::get_period( $variation ) ); ?>" />
 											<?php endif; ?>
-											<input type="hidden" name="newspack_checkout" value="1" />
-											<input type="hidden" name="product_id" value="<?php echo esc_attr( $variation->get_id() ); ?>" />
-											<input type="hidden" name="price" value="<?php echo esc_attr( $variation->get_price() ); ?>" />
 											<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--primary" ); ?>"><?php echo esc_html( self::get_modal_checkout_labels( 'checkout_confirm_variation' ) ); ?></button>
 										</form>
 									</li>
