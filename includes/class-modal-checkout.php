@@ -452,6 +452,7 @@ final class Modal_Checkout {
 											<?php endif; ?>
 											<input type="hidden" name="newspack_checkout" value="1" />
 											<input type="hidden" name="product_id" value="<?php echo esc_attr( $variation->get_id() ); ?>" />
+											<input type="hidden" name="price" value="<?php echo esc_attr( $variation->get_price() ); ?>" />
 											<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--primary" ); ?>"><?php echo esc_html( self::get_modal_checkout_labels( 'checkout_confirm_variation' ) ); ?></button>
 										</form>
 									</li>
@@ -1387,12 +1388,10 @@ final class Modal_Checkout {
 		if ( $is_donation ) {
 			if ( ! method_exists( 'Newspack\Donations', 'get_donation_product' ) ) {
 				wp_send_json_error( __( 'Donations plugin is not active.', 'newspack-blocks' ) );
-				wp_die();
 			}
 
 			if ( ! $frequency ) {
 				wp_send_json_error( __( 'Invalid donation frequency.', 'newspack-blocks' ) );
-				wp_die();
 			}
 
 			$product_id = \Newspack\Donations::get_donation_product( $frequency );
@@ -1402,13 +1401,11 @@ final class Modal_Checkout {
 
 		if ( ! $product_id ) {
 			wp_send_json_error( __( 'Invalid product ID.', 'newspack-blocks' ) );
-			wp_die();
 		}
 
 		$product = wc_get_product( $product_id );
 		if ( ! $product ) {
 			wp_send_json_error( __( 'Product not found.', 'newspack-blocks' ) );
-			wp_die();
 		}
 
 		if ( ! $price ) {
@@ -1416,7 +1413,7 @@ final class Modal_Checkout {
 		}
 
 		if ( class_exists( '\WC_Subscriptions_Product' ) && \WC_Subscriptions_Product::is_subscription( $product ) && function_exists( 'wcs_price_string' ) ) {
-			if ( ! $frequency ) {
+			if ( $frequency === 'null' ) {
 				$frequency = \WC_Subscriptions_Product::get_period( $product );
 			}
 
@@ -1440,7 +1437,6 @@ final class Modal_Checkout {
 		$output      .= '</div>';
 
 		wp_send_json_success( $output );
-		wp_die();
 	}
 }
 Modal_Checkout::init();
