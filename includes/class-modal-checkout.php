@@ -1215,7 +1215,14 @@ final class Modal_Checkout {
 		if ( ! $cart || $cart->is_empty() ) {
 			return $text;
 		}
-		return self::get_modal_checkout_labels( 'checkout_confirm' );
+		$total = \wp_strip_all_tags( \wc_price( $cart->total ) );
+
+		return sprintf(
+			/* translators: 1: Checkout button confirmation text. 2: Order total. */
+			__( '%1$s: %2$s', 'newspack-blocks' ),
+			self::get_modal_checkout_labels( 'checkout_confirm' ),
+			$total
+		);
 	}
 
 	/**
