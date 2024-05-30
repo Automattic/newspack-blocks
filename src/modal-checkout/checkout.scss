@@ -40,7 +40,16 @@
 		}
 	}
 
+	.name-your-price {
+		margin-bottom: var( --newspack-ui-spacer-5, 20px );
+	}
+
 	.modal_checkout_nyp {
+		h3 {
+			color: var( --newspack-ui-label-color, inherit );
+			margin-bottom: var(--newspack-ui-spacer-base);
+		}
+
 		.input-price {
 			display: flex;
 			align-items: center;
@@ -70,7 +79,10 @@
 				margin-top: 0;
 			}
 		}
+	}
 
+	.modal_checkout_nyp,
+	.modal_checkout_coupon {
 		&.processing {
 			opacity: 0.5;
 		}

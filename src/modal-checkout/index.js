@@ -221,13 +221,9 @@ import './checkout.scss';
 			if ( $coupon.is( '.processing' ) ) {
 				return false;
 			}
-			$coupon.addClass( 'processing' ).block( {
-				message: null,
-				overlayCSS: {
-					background: '#fff',
-					opacity: 0.6,
-				},
-			} );
+			$coupon.addClass( 'processing' );
+			const input = $coupon.find( 'input[name="coupon_code"]' );
+			input.attr( 'disabled', true );
 			const data = {
 				security: wc_checkout_params.apply_coupon_nonce,
 				coupon_code: $coupon.find( 'input[name="coupon_code"]' ).val(),
@@ -269,7 +265,9 @@ import './checkout.scss';
 				},
 				complete: () => {
 					// Unblock form.
-					$coupon.removeClass( 'processing' ).unblock();
+					input.attr( 'disabled', false );
+					input.focus();
+					$coupon.removeClass( 'processing' );
 				},
 			} );
 		}
@@ -320,8 +318,12 @@ import './checkout.scss';
 					);
 					if ( success ) {
 						$( '.woocommerce-Price-amount' ).replaceWith( res.price );
+						$nyp.removeClass(
+							`${ newspackBlocksModalCheckout.newspack_class_prefix }__field-error`
+						);
 					} else {
 						$nyp.find( 'input[name="price"]' ).focus();
+						$nyp.addClass( `${ newspackBlocksModalCheckout.newspack_class_prefix }__field-error` );
 					}
 				},
 				complete: () => {
