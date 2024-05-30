@@ -106,10 +106,12 @@ domReady( () => {
 
 	const closeModal = el => {
 		el.setAttribute( 'data-state', 'closed' );
+		document.body.style.overflow = 'auto';
 	};
 
 	const openModal = el => {
 		el.setAttribute( 'data-state', 'open' );
+		document.body.style.overflow = 'hidden';
 	};
 
 	window.newspackCloseModalCheckout = closeCheckout;

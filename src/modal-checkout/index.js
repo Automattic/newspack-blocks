@@ -38,6 +38,7 @@ import './checkout.scss';
 		}
 
 		const $coupon = $( 'form.modal_checkout_coupon' );
+		const $nyp = $( 'form.modal_checkout_nyp' );
 		const $checkout_continue = $( '#checkout_continue' );
 		const $customer_details = $( '#customer_details' );
 		const $after_customer_details = $( '#after_customer_details' );
@@ -282,6 +283,59 @@ import './checkout.scss';
 		}
 
 		/**
+		 * Handle name your price submission.
+		 *
+		 * @param {Event} ev
+		 */
+		function handleNYPFormSubmit( ev ) {
+			ev.preventDefault();
+			if ( $nyp.is( '.processing' ) ) {
+				return false;
+			}
+			$nyp.addClass( 'processing' );
+			const input = $nyp.find( 'input[name="price"]' );
+			input.attr( 'disabled', true );
+			const data = {
+				_ajax_nonce: newspackBlocksModalCheckout.nyp_nonce,
+				action: 'process_name_your_price_request',
+				price: $nyp.find( 'input[name="price"]' ).val(),
+				product_id: $nyp.find( 'input[name="product_id"]' ).val(),
+				newspack_checkout_name_your_price: $nyp
+					.find( 'input[name="newspack_checkout_name_your_price"]' )
+					.val(),
+			};
+			$.ajax( {
+				type: 'POST',
+				url: newspackBlocksModalCheckout.ajax_url,
+				data,
+				success: ( { success, data: res } ) => {
+					clearNotices();
+					$nyp.find( '.result' ).remove();
+					$nyp.append(
+						`<p class="result ${ newspackBlocksModalCheckout.newspack_class_prefix }__${
+							success ? 'helper-text' : 'inline-error'
+						}">` +
+							res.message +
+							'</p>'
+					);
+					if ( success ) {
+						$( '.woocommerce-Price-amount' ).replaceWith( res.price );
+					} else {
+						$nyp.find( 'input[name="price"]' ).focus();
+					}
+				},
+				complete: () => {
+					input.attr( 'disabled', false );
+					input.focus();
+					$nyp.removeClass( 'processing' );
+				},
+			} );
+		}
+		if ( $nyp.length ) {
+			$nyp.on( 'submit', handleNYPFormSubmit );
+		}
+
+		/**
 		 * Handle form 1st step submission.
 		 *
 		 * @param {Event} ev
@@ -308,6 +362,9 @@ import './checkout.scss';
 				if ( $coupon.length ) {
 					$coupon.hide();
 				}
+				if ( $nyp.length ) {
+					$nyp.hide();
+				}
 				$customer_details.show();
 				$after_customer_details.hide();
 				$place_order_button.attr( 'disabled', 'disabled' );
@@ -321,6 +378,9 @@ import './checkout.scss';
 			} else {
 				if ( $coupon.length ) {
 					$coupon.show();
+				}
+				if ( $nyp.length ) {
+					$nyp.show();
 				}
 				$customer_details.hide();
 				$after_customer_details.show();
@@ -437,9 +497,7 @@ import './checkout.scss';
 				}
 			}
 
-			$( '.order-details-summary' ).after(
-				'<div id="checkout_details">' + html.join( '' ) + '</div>'
-			);
+			$( 'form.checkout' ).before( '<div id="checkout_details">' + html.join( '' ) + '</div>' );
 		}
 
 		/**

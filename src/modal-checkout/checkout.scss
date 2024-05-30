@@ -39,4 +39,40 @@
 			}
 		}
 	}
+
+	.modal_checkout_nyp {
+		.input-price {
+			display: flex;
+			align-items: center;
+			flex-wrap: nowrap;
+			gap: 0.5em;
+			margin: 0 0 8px;
+
+			label {
+				display: flex;
+				align-items: center;
+				margin: 0;
+				position: relative;
+				width: 100%;
+
+				span.currency {
+					padding-left: 16px;
+					position: absolute;
+					left: 0;
+				}
+
+				input {
+					padding-left: 32px;
+				}
+			}
+
+			button {
+				margin-top: 0;
+			}
+		}
+
+		&.processing {
+			opacity: 0.5;
+		}
+	}
 }
