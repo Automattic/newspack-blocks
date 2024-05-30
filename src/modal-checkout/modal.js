@@ -299,9 +299,15 @@ domReady( () => {
 						// Initialize auth flow if reader is not authenticated.
 						window.newspackReaderActivation.openAuthModal( {
 							title: newspackBlocksModal.labels.auth_modal_title,
-							callback: () =>
+								// Add hidden input to signify checkout registration.
+								const input = document.createElement( 'input' );
+								input.type = 'hidden';
+								input.name = '_newspack_checkout_registration';
+								input.value = '1';
+								form.appendChild( input );
 								// form.submit does not trigger submit event listener, so we use requestSubmit.
-								form.requestSubmit( form.querySelector( 'button[type="submit"]' ) ),
+								form.requestSubmit( form.querySelector( 'button[type="submit"]' ) );
+							},
 							skipSuccess: true,
 							labels: {
 								signin: {
