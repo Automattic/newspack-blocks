@@ -86,8 +86,7 @@ domReady( () => {
 					if ( 'custom' === afterSuccessBehavior ) {
 						window.location.href = afterSuccessUrl;
 					} else if ( 'referrer' === afterSuccessBehavior ) {
-						const referrer = document.referrer || window.location.href;
-						window.location.href = referrer;
+						window.history.back();
 					}
 				}
 			};
@@ -168,21 +167,6 @@ domReady( () => {
 			forms.forEach( form => {
 				form.appendChild( modalCheckoutHiddenInput.cloneNode() );
 				form.target = IFRAME_NAME;
-
-				const afterSuccessUrlInput = form.querySelector( 'input[name="after_success_url"]' );
-				const afterSuccessBehaviorInput = form.querySelector(
-					'input[name="after_success_behavior"]'
-				);
-
-				// Fill in the referrer field.
-				if (
-					afterSuccessBehaviorInput &&
-					afterSuccessUrlInput &&
-					'referrer' === afterSuccessBehaviorInput.getAttribute( 'value' )
-				) {
-					afterSuccessUrlInput.setAttribute( 'value', document.referrer || window.location.href );
-				}
-
 				form.addEventListener( 'submit', ev => {
 					const formData = new FormData( form );
 					const variationModals = document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-variation` );
