@@ -14,11 +14,18 @@ defined( 'ABSPATH' ) || exit;
  */
 final class Modal_Checkout {
 	/**
+	 * Checkout registration flag.
+	 *
+	 * @var string
+	 */
+	const CHECKOUT_REGISTRATION_FLAG = '_newspack_checkout_registration';
+
+	/**
 	 * Checkout registration order meta key.
 	 *
 	 * @var string
 	 */
-	const CHECKOUT_REGISTRATION_ORDER_META_KEY = '_newspack_checkout_registration';
+	const CHECKOUT_REGISTRATION_ORDER_META_KEY = '_newspack_checkout_registration_meta';
 
 	/**
 	 * Whether the modal checkout has been enqueued.
@@ -77,7 +84,7 @@ final class Modal_Checkout {
 		/** Custom handling for registered users. */
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
 		add_filter( 'woocommerce_checkout_posted_data', [ __CLASS__, 'skip_account_creation' ], 11 );
-		add_filter( 'woocommerce_checkout_order_processed', [ __CLASS__, 'maybe_add_checkout_registration_order_meta' ], 10, 3 );
+		add_filter( 'woocommerce_checkout_create_order', [ __CLASS__, 'maybe_add_checkout_registration_order_meta' ], 10, 1 );
 
 		// Remove some stuff from the modal checkout page. It's displayed in an iframe, so it should not be treated as a separate page.
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'dequeue_scripts' ], 11 );
@@ -151,7 +158,7 @@ final class Modal_Checkout {
 		$after_success_behavior     = filter_input( INPUT_GET, 'after_success_behavior', FILTER_SANITIZE_SPECIAL_CHARS );
 		$after_success_url          = filter_input( INPUT_GET, 'after_success_url', FILTER_SANITIZE_URL );
 		$after_success_button_label = filter_input( INPUT_GET, 'after_success_button_label', FILTER_SANITIZE_SPECIAL_CHARS );
-		$is_checkout_registration   = filter_input( INPUT_GET, self::CHECKOUT_REGISTRATION_ORDER_META_KEY, FILTER_SANITIZE_NUMBER_INT );
+		$is_checkout_registration   = filter_input( INPUT_GET, self::CHECKOUT_REGISTRATION_FLAG, FILTER_SANITIZE_NUMBER_INT );
 
 		if ( ! $is_newspack_checkout && ! $is_newspack_donate ) {
 			return;
@@ -159,7 +166,7 @@ final class Modal_Checkout {
 
 		// Flag the checkout as a registration.
 		if ( $is_checkout_registration ) {
-			\WC()->session->set( self::CHECKOUT_REGISTRATION_ORDER_META_KEY, true );
+			\WC()->session->set( self::CHECKOUT_REGISTRATION_FLAG, true );
 		}
 
 		if ( $is_newspack_checkout ) {
@@ -699,8 +706,8 @@ final class Modal_Checkout {
 		}
 
 		// Pass checkout registration flag.
-		if ( isset( $_REQUEST[ self::CHECKOUT_REGISTRATION_ORDER_META_KEY ] ) && $_REQUEST[ self::CHECKOUT_REGISTRATION_ORDER_META_KEY ] ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-			$args[ self::CHECKOUT_REGISTRATION_ORDER_META_KEY ] = '1';
+		if ( isset( $_REQUEST[ self::CHECKOUT_REGISTRATION_FLAG ] ) && $_REQUEST[ self::CHECKOUT_REGISTRATION_FLAG ] ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+			$args[ self::CHECKOUT_REGISTRATION_FLAG ] = '1';
 		}
 
 		return add_query_arg(
@@ -1448,21 +1455,19 @@ final class Modal_Checkout {
 	/**
 	 * Conditionally adds the checkout registration order meta flag.
 	 *
-	 * @param int      $order_id The order ID.
-	 * @param array    $data     The order data array.
 	 * @param WC_Order $order    The order object.
 	 *
 	 * @return void.
 	 */
-	public static function maybe_add_checkout_registration_order_meta( $order_id, $data, $order ) {
+	public static function maybe_add_checkout_registration_order_meta( $order ) {
 		if ( ! self::is_modal_checkout() ) {
 			return;
 		}
 
-		$is_checkout_registration = WC()->session->get( self::CHECKOUT_REGISTRATION_ORDER_META_KEY );
+		$is_checkout_registration = \WC()->session->get( self::CHECKOUT_REGISTRATION_FLAG );
 		if ( $is_checkout_registration ) {
-			$order->update_meta_data( self::CHECKOUT_REGISTRATION_ORDER_META_KEY, true );
-			$order->save();
+			$order->add_meta_data( self::CHECKOUT_REGISTRATION_ORDER_META_KEY, true, true );
+			\WC()->session->set( self::CHECKOUT_REGISTRATION_FLAG, null );
 		}
 	}
 }
