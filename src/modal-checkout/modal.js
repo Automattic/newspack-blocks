@@ -16,6 +16,22 @@ const IFRAME_CONTAINER_ID = 'newspack_modal_checkout_container';
 const MODAL_CHECKOUT_ID = 'newspack_modal_checkout';
 const MODAL_CLASS_PREFIX = `${ CLASS_PREFIX }__modal`;
 
+/**
+ * Create a hidden input element.
+ *
+ * @param {string} name  The name of the input.
+ * @param {string} value The value of the input.
+ *
+ * @return {HTMLInputElement} The hidden input element.
+ */
+function createHiddenInput( name, value ) {
+	const input = document.createElement( 'input' );
+	input.name = name;
+	input.value = value;
+	input.type = 'hidden';
+	return input;
+}
+
 domReady( () => {
 	const modalCheckout = document.querySelector( `#${ MODAL_CHECKOUT_ID }` );
 
@@ -24,8 +40,8 @@ domReady( () => {
 	}
 
 	const modalContent = modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }__content` );
-	const spinner = modalContent.querySelector( `.${ CLASS_PREFIX }__spinner` );
 	const modalCheckoutHiddenInput = createHiddenInput( 'modal_checkout', '1' );
+	const spinner = modalContent.querySelector( `.${ CLASS_PREFIX }__spinner` );
 
 	// Initialize empty iframe.
 	const iframe = document.createElement( 'iframe' );
@@ -299,12 +315,9 @@ domReady( () => {
 						// Initialize auth flow if reader is not authenticated.
 						window.newspackReaderActivation.openAuthModal( {
 							title: newspackBlocksModal.labels.auth_modal_title,
-								// Add hidden input to signify checkout registration.
-								const input = document.createElement( 'input' );
-								input.type = 'hidden';
-								input.name = '_newspack_checkout_registration';
-								input.value = '1';
-								form.appendChild( input );
+							callback: () => {
+								// Signal checkout registration.
+								form.appendChild( createHiddenInput( '_newspack_checkout_registration', '1' ) );
 								// form.submit does not trigger submit event listener, so we use requestSubmit.
 								form.requestSubmit( form.querySelector( 'button[type="submit"]' ) );
 							},

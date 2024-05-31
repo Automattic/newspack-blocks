@@ -14,6 +14,13 @@ defined( 'ABSPATH' ) || exit;
  */
 final class Modal_Checkout {
 	/**
+	 * Checkout registration order meta key.
+	 *
+	 * @var string
+	 */
+	const CHECKOUT_REGISTRATION_ORDER_META_KEY = '_newspack_checkout_registration';
+
+	/**
 	 * Whether the modal checkout has been enqueued.
 	 *
 	 * @var boolean
@@ -70,6 +77,7 @@ final class Modal_Checkout {
 		/** Custom handling for registered users. */
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
 		add_filter( 'woocommerce_checkout_posted_data', [ __CLASS__, 'skip_account_creation' ], 11 );
+		add_filter( 'woocommerce_checkout_order_processed', [ __CLASS__, 'maybe_add_checkout_registration_order_meta' ], 10, 3 );
 
 		// Remove some stuff from the modal checkout page. It's displayed in an iframe, so it should not be treated as a separate page.
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'dequeue_scripts' ], 11 );
@@ -137,116 +145,129 @@ final class Modal_Checkout {
 		}
 
 		$is_newspack_checkout       = filter_input( INPUT_GET, 'newspack_checkout', FILTER_SANITIZE_NUMBER_INT );
+		$is_newspack_donate         = filter_input( INPUT_GET, 'newspack_donate', FILTER_SANITIZE_NUMBER_INT );
 		$product_id                 = filter_input( INPUT_GET, 'product_id', FILTER_SANITIZE_NUMBER_INT );
 		$variation_id               = filter_input( INPUT_GET, 'variation_id', FILTER_SANITIZE_NUMBER_INT );
 		$after_success_behavior     = filter_input( INPUT_GET, 'after_success_behavior', FILTER_SANITIZE_SPECIAL_CHARS );
 		$after_success_url          = filter_input( INPUT_GET, 'after_success_url', FILTER_SANITIZE_URL );
 		$after_success_button_label = filter_input( INPUT_GET, 'after_success_button_label', FILTER_SANITIZE_SPECIAL_CHARS );
+		$is_checkout_registration   = filter_input( INPUT_GET, self::CHECKOUT_REGISTRATION_ORDER_META_KEY, FILTER_SANITIZE_NUMBER_INT );
 
-		if ( ! $is_newspack_checkout || ! $product_id ) {
+		if ( ! $is_newspack_checkout && ! $is_newspack_donate ) {
 			return;
 		}
-		if ( $variation_id ) {
-			$product_id = $variation_id;
+
+		// Flag the checkout as a registration.
+		if ( $is_checkout_registration ) {
+			\WC()->session->set( self::CHECKOUT_REGISTRATION_ORDER_META_KEY, true );
 		}
 
-		\WC()->cart->empty_cart();
-
-		$referer    = wp_get_referer();
-		$params     = [];
-		$parsed_url = wp_parse_url( $referer );
-
-		// Get URL params appended to the referer URL.
-		if ( ! empty( $parsed_url['query'] ) ) {
-			wp_parse_str( $parsed_url['query'], $params );
-		}
-
-		$params = array_merge( $params, compact( 'after_success_behavior', 'after_success_url', 'after_success_button_label' ) );
-
-		if ( function_exists( 'wpcom_vip_url_to_postid' ) ) {
-			$referer_post_id = wpcom_vip_url_to_postid( $referer );
-		} else {
-			$referer_post_id = url_to_postid( $referer ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.url_to_postid_url_to_postid
-		}
-
-		$referer_tags       = [];
-		$referer_categories = [];
-		$tags               = get_the_tags( $referer_post_id );
-		if ( $tags && ! empty( $tags ) ) {
-			$referer_tags = array_map(
-				function ( $item ) {
-					return $item->slug;
-				},
-				$tags
-			);
-		}
-
-		$categories = get_the_category( $referer_post_id );
-		if ( $categories && ! empty( $categories ) ) {
-			$referer_categories = array_map(
-				function ( $item ) {
-					return $item->slug;
-				},
-				$categories
-			);
-		}
-
-		$cart_item_data = self::amend_cart_item_data( [ 'referer' => $referer ] );
-
-		$newspack_popup_id = filter_input( INPUT_GET, 'newspack_popup_id', FILTER_SANITIZE_NUMBER_INT );
-		if ( $newspack_popup_id ) {
-			$cart_item_data['newspack_popup_id'] = $newspack_popup_id;
-		}
-
-		/** Apply NYP custom price */
-		$price = filter_input( INPUT_GET, 'price', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		if ( \Newspack_Blocks::can_use_name_your_price() ? \WC_Name_Your_Price_Helpers::is_nyp( $product_id ) : false ) {
-			if ( empty( $price ) ) {
-				$price = \WC_Name_Your_Price_Helpers::get_suggested_price( $product_id );
+		if ( $is_newspack_checkout ) {
+			if ( ! $product_id ) {
+				return;
 			}
-			$min_price = \WC_Name_Your_Price_Helpers::get_minimum_price( $product_id );
-			$max_price = \WC_Name_Your_Price_Helpers::get_maximum_price( $product_id );
-			$price     = ! empty( $max_price ) ? min( $price, $max_price ) : $price;
-			$price     = ! empty( $min_price ) ? max( $price, $min_price ) : $price;
 
-			$cart_item_data['nyp'] = (float) \WC_Name_Your_Price_Helpers::standardize_number( $price );
-		}
-
-		/**
-		 * Filters the cart item data for the modal checkout.
-		 *
-		 * @param array $cart_item_data Cart item data.
-		 */
-		$cart_item_data = apply_filters( 'newspack_blocks_modal_checkout_cart_item_data', $cart_item_data );
-
-		\WC()->cart->add_to_cart( $product_id, 1, 0, [], $cart_item_data );
-
-		$query_args = [];
-
-		if ( ! empty( $referer_tags ) ) {
-			$query_args['referer_tags'] = implode( ',', $referer_tags );
-		}
-		if ( ! empty( $referer_categories ) ) {
-			$query_args['referer_categories'] = implode( ',', $referer_categories );
-		}
-		$query_args['modal_checkout'] = 1;
-
-		// Pass through UTM and after_success params so they can be forwarded to the WooCommerce checkout flow.
-		foreach ( $params as $param => $value ) {
-			if ( 'utm' === substr( $param, 0, 3 ) || 'after_success' === substr( $param, 0, 13 ) ) {
-				$param                = sanitize_text_field( $param );
-				$query_args[ $param ] = sanitize_text_field( $value );
+			if ( $variation_id ) {
+				$product_id = $variation_id;
 			}
+
+			\WC()->cart->empty_cart();
+
+			$referer    = wp_get_referer();
+			$params     = [];
+			$parsed_url = wp_parse_url( $referer );
+
+			// Get URL params appended to the referer URL.
+			if ( ! empty( $parsed_url['query'] ) ) {
+				wp_parse_str( $parsed_url['query'], $params );
+			}
+
+			$params = array_merge( $params, compact( 'after_success_behavior', 'after_success_url', 'after_success_button_label' ) );
+
+			if ( function_exists( 'wpcom_vip_url_to_postid' ) ) {
+				$referer_post_id = wpcom_vip_url_to_postid( $referer );
+			} else {
+				$referer_post_id = url_to_postid( $referer ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.url_to_postid_url_to_postid
+			}
+
+			$referer_tags       = [];
+			$referer_categories = [];
+			$tags               = get_the_tags( $referer_post_id );
+			if ( $tags && ! empty( $tags ) ) {
+				$referer_tags = array_map(
+					function ( $item ) {
+						return $item->slug;
+					},
+					$tags
+				);
+			}
+
+			$categories = get_the_category( $referer_post_id );
+			if ( $categories && ! empty( $categories ) ) {
+				$referer_categories = array_map(
+					function ( $item ) {
+						return $item->slug;
+					},
+					$categories
+				);
+			}
+
+			$cart_item_data = self::amend_cart_item_data( [ 'referer' => $referer ] );
+
+			$newspack_popup_id = filter_input( INPUT_GET, 'newspack_popup_id', FILTER_SANITIZE_NUMBER_INT );
+			if ( $newspack_popup_id ) {
+				$cart_item_data['newspack_popup_id'] = $newspack_popup_id;
+			}
+
+			/** Apply NYP custom price */
+			$price = filter_input( INPUT_GET, 'price', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+			if ( \Newspack_Blocks::can_use_name_your_price() ? \WC_Name_Your_Price_Helpers::is_nyp( $product_id ) : false ) {
+				if ( empty( $price ) ) {
+					$price = \WC_Name_Your_Price_Helpers::get_suggested_price( $product_id );
+				}
+				$min_price = \WC_Name_Your_Price_Helpers::get_minimum_price( $product_id );
+				$max_price = \WC_Name_Your_Price_Helpers::get_maximum_price( $product_id );
+				$price     = ! empty( $max_price ) ? min( $price, $max_price ) : $price;
+				$price     = ! empty( $min_price ) ? max( $price, $min_price ) : $price;
+
+				$cart_item_data['nyp'] = (float) \WC_Name_Your_Price_Helpers::standardize_number( $price );
+			}
+
+			/**
+			* Filters the cart item data for the modal checkout.
+			*
+			* @param array $cart_item_data Cart item data.
+			*/
+			$cart_item_data = apply_filters( 'newspack_blocks_modal_checkout_cart_item_data', $cart_item_data );
+
+			\WC()->cart->add_to_cart( $product_id, 1, 0, [], $cart_item_data );
+
+			$query_args = [];
+			if ( ! empty( $referer_tags ) ) {
+				$query_args['referer_tags'] = implode( ',', $referer_tags );
+			}
+			if ( ! empty( $referer_categories ) ) {
+				$query_args['referer_categories'] = implode( ',', $referer_categories );
+			}
+			$query_args['modal_checkout'] = 1;
+
+			// Pass through UTM and after_success params so they can be forwarded to the WooCommerce checkout flow.
+			foreach ( $params as $param => $value ) {
+				if ( 'utm' === substr( $param, 0, 3 ) || 'after_success' === substr( $param, 0, 13 ) ) {
+					$param                = sanitize_text_field( $param );
+					$query_args[ $param ] = sanitize_text_field( $value );
+				}
+			}
+
+			$checkout_url = add_query_arg(
+				$query_args,
+				\wc_get_page_permalink( 'checkout' )
+			);
+
+			// Redirect to checkout.
+			\wp_safe_redirect( apply_filters( 'newspack_blocks_checkout_url', $checkout_url ) );
+			exit;
 		}
-
-		$checkout_url = add_query_arg(
-			$query_args,
-			\wc_get_page_permalink( 'checkout' )
-		);
-
-		// Redirect to checkout.
-		\wp_safe_redirect( apply_filters( 'newspack_blocks_checkout_url', $checkout_url ) );
-		exit;
 	}
 
 	/**
@@ -675,6 +696,11 @@ final class Modal_Checkout {
 		if ( $order && is_a( $order, 'WC_Order' ) ) {
 			$args['order_id'] = $order->get_id();
 			$args['key']      = $order->get_order_key();
+		}
+
+		// Pass checkout registration flag.
+		if ( isset( $_REQUEST[ self::CHECKOUT_REGISTRATION_ORDER_META_KEY ] ) && $_REQUEST[ self::CHECKOUT_REGISTRATION_ORDER_META_KEY ] ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+			$args[ self::CHECKOUT_REGISTRATION_ORDER_META_KEY ] = '1';
 		}
 
 		return add_query_arg(
@@ -1387,7 +1413,6 @@ final class Modal_Checkout {
 		return self::$modal_checkout_labels[ $key ] ?? '';
 	}
 
-
 	/**
 	 * Get price string for the price summary card to render in auth flow.
 	 *
@@ -1418,6 +1443,27 @@ final class Modal_Checkout {
 
 		// translators: 1 is the name of the item. 2 is the price of the item.
 		return sprintf( __( '%1$s: %2$s', 'newspack-blocks' ), $name, $price );
+	}
+
+	/**
+	 * Conditionally adds the checkout registration order meta flag.
+	 *
+	 * @param int      $order_id The order ID.
+	 * @param array    $data     The order data array.
+	 * @param WC_Order $order    The order object.
+	 *
+	 * @return void.
+	 */
+	public static function maybe_add_checkout_registration_order_meta( $order_id, $data, $order ) {
+		if ( ! self::is_modal_checkout() ) {
+			return;
+		}
+
+		$is_checkout_registration = WC()->session->get( self::CHECKOUT_REGISTRATION_ORDER_META_KEY );
+		if ( $is_checkout_registration ) {
+			$order->update_meta_data( self::CHECKOUT_REGISTRATION_ORDER_META_KEY, true );
+			$order->save();
+		}
 	}
 }
 Modal_Checkout::init();
