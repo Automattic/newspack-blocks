@@ -129,7 +129,7 @@
 		}
 	}
 
-	// Replace with the stuff from the plugin directly.
+	// Product variations styles
 	&__modal-variation {
 		.newspack-blocks {
 			&__selection {
@@ -162,7 +162,7 @@
 					flex: 1 1 100%;
 					text-align: center;
 
-					@media ( min-width: 600px ) {
+					@media ( min-width: variables.$mobile_width ) {
 						flex: 1 1 30%;
 						max-width: calc( 33.3333% - 10px );
 						&:first-child:nth-last-child( 2 ),
