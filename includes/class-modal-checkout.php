@@ -413,6 +413,7 @@ final class Modal_Checkout {
 			if ( ! $product->is_type( 'variable' ) ) {
 				continue;
 			}
+			$product_name = $product->get_name();
 			?>
 			<div
 				class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal-container newspack-blocks__modal-variation" ); ?>"
@@ -430,18 +431,18 @@ final class Modal_Checkout {
 						</button>
 					</header>
 					<section class="<?php echo esc_attr( "{$class_prefix}__modal__content" ); ?>">
-						<div class="newspack-blocks__selection" data-product-id="<?php echo esc_attr( $product_id ); ?>">
-							<h3><?php echo esc_html( $product->get_name() ); ?></h3>
+						<div class="<?php echo esc_attr( "{$class_prefix}__selection" ); ?>" data-product-id="<?php echo esc_attr( $product_id ); ?>">
+							<h3><?php echo esc_html( $product_name ); ?></h3>
 							<p><?php esc_html_e( 'Select an option to continue:', 'newspack-blocks' ); ?></p>
 							<ul class="newspack-blocks__options"">
 								<?php
 								$variations = $product->get_available_variations( 'objects' );
 								foreach ( $variations as $variation ) :
-									$name         = wc_get_formatted_variation( $variation, true );
-									$price_html   = $variation->get_price_html();
-									$variation_id = $variation->get_id();
-									$price        = $variation->get_price();
-									$frequency    = '';
+									$variation_id   = $variation->get_id();
+									$variation_name = wc_get_formatted_variation( $variation, true );
+									$price          = $variation->get_price();
+									$price_html     = $variation->get_price_html();
+									$frequency      = '';
 
 									// Use suggested price if NYP is active and set for variation.
 									if ( \Newspack_Blocks::can_use_name_your_price() && \WC_Name_Your_Price_Helpers::is_nyp( $variation_id ) ) {
@@ -452,6 +453,13 @@ final class Modal_Checkout {
 										$frequency = \WC_Subscriptions_Product::get_period( $variation );
 									}
 
+									$name = sprintf(
+										/* translators: 1: variable product name, 2: product variation name */
+										__( '%1$s - %2$s', 'newspack-blocks' ),
+										$product_name,
+										$variation_name
+									);
+
 									$product_price_summary = self::get_summary_card_price_string( $name, $price, $frequency );
 
 									?>
@@ -459,7 +467,7 @@ final class Modal_Checkout {
 										<div class="summary">
 											<span class="price"><?php echo $price_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 										</div>
-										<div class="variation"><?php echo esc_html( $name ); ?></div>
+										<div class="variation"><?php echo esc_html( $variation_name ); ?></div>
 										<form>
 											<input type="hidden" name="newspack_checkout" value="1" />
 											<input type="hidden" name="product_id" value="<?php echo esc_attr( $variation_id ); ?>" />

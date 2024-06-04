@@ -7,7 +7,6 @@
 
 namespace Newspack_Blocks\Checkout_Button;
 
-use Newspack_Blocks;
 use Newspack_Blocks\Modal_Checkout;
 
 /**
