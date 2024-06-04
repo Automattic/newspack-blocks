@@ -66,7 +66,6 @@ final class Modal_Checkout {
 		add_action( 'option_woocommerce_default_customer_address', [ __CLASS__, 'ensure_base_default_customer_address' ] );
 		add_action( 'default_option_woocommerce_default_customer_address', [ __CLASS__, 'ensure_base_default_customer_address' ] );
 		add_action( 'wp_ajax_process_name_your_price_request', [ __CLASS__, 'process_name_your_price_request' ] );
-		add_action( 'wp_ajax_nopriv_get_price_summary_card_markup', [ __CLASS__, 'get_price_summary_card_markup' ] );
 
 		/** Custom handling for registered users. */
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
@@ -442,11 +441,19 @@ final class Modal_Checkout {
 									$price_html   = $variation->get_price_html();
 									$variation_id = $variation->get_id();
 									$price        = $variation->get_price();
+									$frequency    = '';
 
 									// Use suggested price if NYP is active and set for variation.
 									if ( \Newspack_Blocks::can_use_name_your_price() && \WC_Name_Your_Price_Helpers::is_nyp( $variation_id ) ) {
 										$price = \WC_Name_Your_Price_Helpers::get_suggested_price( $variation_id );
 									}
+
+									if ( class_exists( '\WC_Subscriptions_Product' ) && \WC_Subscriptions_Product::is_subscription( $variation ) ) {
+										$frequency = \WC_Subscriptions_Product::get_period( $variation );
+									}
+
+									$product_price_summary = self::get_summary_card_price_string( $name, $price, $frequency );
+
 									?>
 									<li class="newspack-blocks__options__item"">
 										<div class="summary">
@@ -456,10 +463,7 @@ final class Modal_Checkout {
 										<form>
 											<input type="hidden" name="newspack_checkout" value="1" />
 											<input type="hidden" name="product_id" value="<?php echo esc_attr( $variation_id ); ?>" />
-											<input type="hidden" name="price" value="<?php echo esc_attr( $price ); ?>" />
-											<?php if ( class_exists( '\WC_Subscriptions_Product' ) && \WC_Subscriptions_Product::is_subscription( $variation ) ) : ?>
-												<input type="hidden" name="frequency" value="<?php echo esc_attr( \WC_Subscriptions_Product::get_period( $variation ) ); ?>" />
-											<?php endif; ?>
+											<input type="hidden" name="product_price_summary" value="<?php echo esc_attr( $product_price_summary ); ?>" />
 											<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--primary" ); ?>"><?php echo esc_html( self::get_modal_checkout_labels( 'checkout_confirm_variation' ) ); ?></button>
 										</form>
 									</li>
@@ -550,8 +554,6 @@ final class Modal_Checkout {
 			'newspack-blocks-modal',
 			'newspackBlocksModal',
 			[
-				'newspack_ajax_url'     => admin_url( 'admin-ajax.php' ),
-				'newspack_nonce'        => wp_create_nonce( 'newspack_blocks_price_summary_card' ),
 				'newspack_class_prefix' => self::get_class_prefix(),
 				'labels'                => [
 					'auth_modal_title'     => self::get_modal_checkout_labels( 'auth_modal_title' ),
@@ -1376,74 +1378,35 @@ final class Modal_Checkout {
 
 
 	/**
-	 * Get markup for the price summary card to render in auth flow.
+	 * Get price string for the price summary card to render in auth flow.
+	 *
+	 * @param string $name      The name.
+	 * @param string $price     The price. Optional. If not provided, the price string will contain 0.
+	 * @param string $frequency The frequency. Optional. If not provided, the price will be treated as a one-time payment.
 	 */
-	public static function get_price_summary_card_markup() {
-		if ( ! DOING_AJAX || ! function_exists( 'wc_get_product' ) || ! function_exists( 'wc_price' ) ) {
-			wp_die();
-		}
-
-		$nonce = filter_input( INPUT_POST, 'security', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'newspack_blocks_price_summary_card' ) ) {
-			wp_die();
-		}
-
-		$frequency   = filter_input( INPUT_POST, 'frequency', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		$is_donation = filter_input( INPUT_POST, 'is_donation', FILTER_VALIDATE_BOOLEAN );
-		$price       = filter_input( INPUT_POST, 'price', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
-
-		if ( $is_donation ) {
-			if ( ! method_exists( 'Newspack\Donations', 'get_donation_product' ) ) {
-				wp_send_json_error( __( 'Donations plugin is not active.', 'newspack-blocks' ) );
-			}
-
-			if ( ! $frequency ) {
-				wp_send_json_error( __( 'Invalid donation frequency.', 'newspack-blocks' ) );
-			}
-
-			$product_id = \Newspack\Donations::get_donation_product( $frequency );
-		} else {
-			$product_id = filter_input( INPUT_POST, 'product_id', FILTER_SANITIZE_NUMBER_INT );
-		}
-
-		if ( ! $product_id ) {
-			wp_send_json_error( __( 'Invalid product ID.', 'newspack-blocks' ) );
-		}
-
-		$product = wc_get_product( $product_id );
-		if ( ! $product ) {
-			wp_send_json_error( __( 'Product not found.', 'newspack-blocks' ) );
-		}
-
+	public static function get_summary_card_price_string( $name, $price = '', $frequency = '' ) {
 		if ( ! $price ) {
-			$price = $product->get_price();
+			$price = '0';
 		}
 
-		if ( class_exists( '\WC_Subscriptions_Product' ) && \WC_Subscriptions_Product::is_subscription( $product ) && function_exists( 'wcs_price_string' ) ) {
-			if ( $frequency === 'null' ) {
-				$frequency = \WC_Subscriptions_Product::get_period( $product );
+		if ( function_exists( 'wcs_price_string' ) && function_exists( 'wc_price' ) ) {
+			if ( $frequency && $frequency !== 'once' ) {
+				$price = wp_strip_all_tags(
+					wcs_price_string(
+						[
+							'recurring_amount'    => $price,
+							'subscription_period' => $frequency,
+							'use_per_slash'       => true,
+						]
+					)
+				);
+			} else {
+				$price = wp_strip_all_tags( wc_price( $price ) );
 			}
-
-			$price = wcs_price_string(
-				[
-					'recurring_amount'    => $price,
-					'subscription_period' => $frequency,
-					'use_per_slash'       => true,
-				]
-			);
-		} else {
-			$price = wc_price( $price );
 		}
 
-		$class_prefix = self::get_class_prefix();
-		$output       = '<div class="order-details-summary ' . $class_prefix . '__box ' . $class_prefix . '__box--text-center">';
-		$output      .= '<h2>';
-		// translators: %1$s is the product name, %2$s is the product price.
-		$output      .= sprintf( __( '%1$s: %2$s', 'newspack-blocks' ), $product->get_name(), $price );
-		$output      .= '</h2>';
-		$output      .= '</div>';
-
-		wp_send_json_success( $output );
+		// translators: 1 is the name of the item. 2 is the price of the item.
+		return sprintf( __( '%1$s: %2$s', 'newspack-blocks' ), $name, $price );
 	}
 }
 Modal_Checkout::init();

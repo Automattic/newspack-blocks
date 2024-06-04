@@ -206,6 +206,9 @@ domReady( () => {
 							return;
 						}
 					}
+
+					form.classList.remove( 'processing' );
+
 					if (
 						window?.newspackReaderActivation?.openAuthModal &&
 						! window?.newspackReaderActivation?.getReader?.()?.authenticated &&
@@ -213,65 +216,78 @@ domReady( () => {
 					) {
 						ev.preventDefault();
 
-						// Initialize auth flow content string.
+						const data = new FormData( form );
 						let content = '';
+						let price = '0';
+						let priceSummary = '';
 
-						const data = new FormData();
-						data.append( 'action', 'get_price_summary_card_markup' );
-						data.append( 'security', newspackBlocksModal.newspack_nonce );
+						if ( data.get( 'newspack_donate' ) ) {
+							// Handle donation form.
+							const frequency = data.get( 'donation_frequency' );
+							const priceInputs = form.querySelectorAll(
+								`input[name="donation_value_${ frequency }"]`
+							);
+							const priceSummaryInputs = form.querySelectorAll(
+								`input[name^="donation_price_summary_${ frequency }"]`
+							);
 
-						// Handle donation form.
-						if ( formData.has( 'newspack_donate' ) ) {
-							const frequency = formData.get( 'donation_frequency' );
-							data.append( 'frequency', frequency );
-							data.append( 'is_donation', true );
-							for ( const [ key, value ] of formData.entries() ) {
-								if ( key.includes( frequency ) && !! value ) {
-									data.append( 'price', value );
-								}
+							if ( priceInputs ) {
+								priceInputs.forEach( input => {
+									if ( input.checked ) {
+										price = input.value;
+									}
+								} );
+							}
+
+							if ( priceSummaryInputs ) {
+								priceSummaryInputs.forEach( input => {
+									const value = price === 'other' ? '0' : price;
+									if ( input.value.includes( value ) ) {
+										priceSummary = input.value;
+									}
+
+									if ( value === '0' && priceSummary ) {
+										const otherPrice = form.querySelector(
+											`input[name="donation_value_${ frequency }_other"]`
+										).value;
+
+										if ( otherPrice ) {
+											priceSummary = priceSummary.replace( '0', otherPrice );
+										}
+									}
+								} );
+							}
+						} else if ( data.get( 'newspack_checkout' ) ) {
+							// Handle checkout button form.
+							const priceSummaryInput = form.querySelector( 'input[name="product_price_summary"]' );
+
+							if ( priceSummaryInput ) {
+								priceSummary = priceSummaryInput.value;
 							}
 						}
 
-						// Handle checkout button form.
-						if ( formData.has( 'newspack_checkout' ) ) {
-							data.append( 'product_id', formData.get( 'product_id' ) );
-							data.append( 'price', formData.get( 'price' ) );
-							data.append( 'frequency', formData.get( 'frequency' ) );
+						if ( priceSummary ) {
+							content = `<div class="order-details-summary ${ CLASS_PREFIX }__box ${ CLASS_PREFIX }__box--text-center"><h2>${ priceSummary }</h2></div>`;
 						}
 
-						// Fetch price summary card markup.
-						fetch( newspackBlocksModal.newspack_ajax_url, {
-							method: 'POST',
-							body: data,
-						} )
-							.then( response => response.json() )
-							.then( res => {
-								if ( res.success ) {
-									content = res.data;
-								}
-							} )
-							.finally( () => {
-								form.classList.remove( 'processing' );
-								// Initialize auth flow if reader is not authenticated.
-								window.newspackReaderActivation.openAuthModal( {
-									title: newspackBlocksModal.labels.auth_modal_title,
-									callback: () =>
-										// form.submit does not trigger submit event listener, so we use requestSubmit.
-										form.requestSubmit( form.querySelector( 'button[type="submit"]' ) ),
-									skipSuccess: true,
-									labels: {
-										signin: {
-											title: newspackBlocksModal.labels.signin_modal_title,
-										},
-										register: {
-											title: newspackBlocksModal.labels.register_modal_title,
-										},
-									},
-									content,
-								} );
-							} );
+						// Initialize auth flow if reader is not authenticated.
+						window.newspackReaderActivation.openAuthModal( {
+							title: newspackBlocksModal.labels.auth_modal_title,
+							callback: () =>
+								// form.submit does not trigger submit event listener, so we use requestSubmit.
+								form.requestSubmit( form.querySelector( 'button[type="submit"]' ) ),
+							skipSuccess: true,
+							labels: {
+								signin: {
+									title: newspackBlocksModal.labels.signin_modal_title,
+								},
+								register: {
+									title: newspackBlocksModal.labels.register_modal_title,
+								},
+							},
+							content,
+						} );
 					} else {
-						form.classList.remove( 'processing' );
 						// Otherwise initialize checkout.
 						openCheckout();
 					}

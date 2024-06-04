@@ -9,6 +9,8 @@ defined( 'ABSPATH' ) || exit;
 
 require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/donate/frontend/class-newspack-blocks-donate-renderer-base.php';
 
+use Newspack_Blocks\Modal_Checkout;
+
 /**
  * Renders the frequency-based Donate block.
  */
@@ -161,6 +163,11 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 											<?php echo esc_html( $configuration['currencySymbol'] ); ?>
 										</span>
 										<input
+											type='hidden'
+											name='donation_price_summary_<?php echo esc_attr( $frequency_slug ); ?>'
+											value='<?php echo esc_attr( Modal_Checkout::get_summary_card_price_string( __( 'Donate', 'newspack-blocks' ), $formatted_amount, $frequency_slug ) ); ?>'
+										/>
+										<input
 											type='number'
 											min='<?php echo esc_attr( $configuration['minimumDonation'] ); ?>'
 											name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>_untiered'
@@ -169,6 +176,11 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 										/>
 									</div>
 									<?php else : ?>
+									<input
+										type='hidden'
+										name='donation_price_summary_<?php echo esc_attr( $frequency_slug ); ?>'
+										value='<?php echo esc_attr( Modal_Checkout::get_summary_card_price_string( __( 'Donate', 'newspack-blocks' ), $formatted_amount, $frequency_slug ) ); ?>'
+									/>
 									<input
 										type='radio'
 										name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>'
@@ -229,6 +241,11 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 											if ( 3 === $index ) : // The "other" tier.
 												?>
 												<input
+													type='hidden'
+													name='donation_price_summary_<?php echo esc_attr( $frequency_slug ); ?>'
+													value='<?php echo esc_attr( Modal_Checkout::get_summary_card_price_string( __( 'Donate', 'newspack-blocks' ), '', $frequency_slug ) ); ?>'
+												/>
+												<input
 													type='radio'
 													class='other-input'
 													name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>'
@@ -261,6 +278,11 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 												<?php
 												else :
 													?>
+												<input
+													type='hidden'
+													name='donation_price_summary_<?php echo esc_attr( $frequency_slug ); ?>'
+													value='<?php echo esc_attr( Modal_Checkout::get_summary_card_price_string( __( 'Donate', 'newspack-blocks' ), $amount, $frequency_slug ) ); ?>'
+												/>
 												<input
 													type='radio'
 													name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>'
