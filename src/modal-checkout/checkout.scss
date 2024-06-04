@@ -17,13 +17,11 @@
 	// Billing and Shipping fields - make sure there's not a small orphan row
 	.woocommerce form {
 		.form-row-first:not( :has( + .form-row-last ) ),
-		.form-row-last,
-		.form-row-wide {
-			+ .form-row-last {
-				clear: both;
-				float: none;
-				width: 100%;
-			}
+		.form-row-last + .form-row-last,
+		.form-row-wide + .form-row-last {
+			clear: both;
+			float: none;
+			width: 100%;
 		}
 	}
 
