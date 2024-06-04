@@ -50,6 +50,7 @@ final class Modal_Checkout {
 		add_filter( 'woocommerce_get_checkout_order_received_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
 		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 2 );
 		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'woocommerce_checkout_fields' ] );
+		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'change_phone_css_class' ] );
 		add_filter( 'woocommerce_update_order_review_fragments', [ __CLASS__, 'order_review_fragments' ] );
 		add_filter( 'newspack_recaptcha_verify_captcha', [ __CLASS__, 'recaptcha_verify_captcha' ], 10, 2 );
 		add_filter( 'woocommerce_enqueue_styles', [ __CLASS__, 'dequeue_woocommerce_styles' ] );
@@ -750,6 +751,18 @@ final class Modal_Checkout {
 			}
 			unset( $fields['billing'][ $key ] );
 		}
+		return $fields;
+	}
+
+	/**
+	 * Add the form-row-last CSS class to billing phone field.
+	 *
+	 * @param array $fields Checkout fields.
+	 *
+	 * @return array
+	 */
+	public static function change_phone_css_class( $fields ) {
+		$fields['billing']['billing_phone']['class'] = 'form-row-last';
 		return $fields;
 	}
 
