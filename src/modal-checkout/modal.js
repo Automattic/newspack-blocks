@@ -43,6 +43,7 @@ domReady( () => {
 	const modalContent = modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }__content` );
 	const modalCheckoutHiddenInput = document.createElement( 'input' );
 	const spinner = modalContent.querySelector( `.${ CLASS_PREFIX }__spinner` );
+	let modalTrigger;
 	modalCheckoutHiddenInput.type = 'hidden';
 	modalCheckoutHiddenInput.name = 'modal_checkout';
 	modalCheckoutHiddenInput.value = '1';
@@ -86,6 +87,10 @@ domReady( () => {
 				window.newspackReaderActivation?.overlays.remove( el.overlayId );
 			}
 		} );
+
+		if ( modalTrigger ) {
+			modalTrigger.focus();
+		}
 	};
 
 	const openCheckout = () => {
@@ -144,6 +149,9 @@ domReady( () => {
 		} );
 	} );
 
+	/**
+	 * Close the modal with the escape key.
+	 */
 	document.addEventListener( 'keydown', function ( ev ) {
 		if ( ev.key === 'Escape' ) {
 			closeCheckout();
@@ -210,9 +218,11 @@ domReady( () => {
 							// Open the variations modal.
 							ev.preventDefault();
 							openModal( variationModal );
+							modalTrigger = ev.submitter;
 							return;
 						}
 					}
+
 					if (
 						window?.newspackReaderActivation?.openAuthModal &&
 						! window?.newspackReaderActivation?.getReader?.()?.authenticated &&
