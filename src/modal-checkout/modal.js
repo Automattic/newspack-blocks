@@ -184,7 +184,7 @@ domReady( () => {
 						if ( variationModal ) {
 							// Fill in the after success variables in the variation modal.
 							variationModal
-								.querySelectorAll( 'form[target="newspack_modal_checkout"]' )
+								.querySelectorAll( `form[target="${ IFRAME_NAME }"]` )
 								.forEach( singleVariationForm => {
 									[
 										'after_success_behavior',
