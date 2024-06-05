@@ -93,6 +93,12 @@ export default ( parentEl: HTMLElement ) => {
 		buttonEl.addEventListener( 'click', () => {
 			const tierIndex = parseInt( buttonEl.getAttribute( 'data-tier-index' ) || '' );
 
+			// Remove hidden index input from tiers form.
+			const hiddenIndexInputEl = initFormEl.querySelector( 'input[name="donation_tier_index"]' );
+			if ( hiddenIndexInputEl ) {
+				hiddenIndexInputEl.remove();
+			}
+
 			// Append hidden index input to tiers form.
 			const indexInputEl = document.createElement( 'input' );
 			indexInputEl.setAttribute( 'type', 'hidden' );

@@ -267,6 +267,13 @@ domReady( () => {
 									} );
 								} else {
 									// TODO: Handle tiers based donation tiers.
+									const index = data.get( 'donation_tier_index' );
+									if ( index ) {
+										const donationData = JSON.parse( donationTiers?.[ index ].dataset.product );
+										if ( donationData.hasOwnProperty( `donation_price_summary_${ frequency }` ) ) {
+											priceSummary = donationData[ `donation_price_summary_${ frequency }` ];
+										}
+									}
 								}
 							}
 						} else if ( data.get( 'newspack_checkout' ) ) {
