@@ -215,10 +215,20 @@
 	}
 
 	// Override checkout payment method box.
-	.wc_payment_method {
 
+	.wc_payment_methods {
+		margin: 0 0 var( --newspack-ui-spacer-5, 24px );
+
+		label[for="payment_method_stripe"] {
+			&.newspack-ui__input-card {
+				padding: var( --newspack-ui-spacer-3, 16px ) !important;
+			}
+		}
+	}
+
+	.wc_payment_method {
 		+ .wc_payment_method {
-			margin-top: calc( var( --newspack-ui-spacer-5, 24px ) / -2 );
+			margin-top: var( --newspack-ui-spacer-2, 12px );
 		}
 
 		span {
@@ -357,16 +367,6 @@
 				font-size: var( --newspack-ui-font-size-xs, 14px );
 				line-height: var( --newspack-ui-line-height-xs, 1.4286 );
 				padding: 0;
-			}
-		}
-	}
-
-	.wc_payment_methods {
-		margin: 0;
-
-		label[for="payment_method_stripe"] {
-			&.newspack-ui__input-card {
-				padding: var( --newspack-ui-spacer-3, 16px ) !important;
 			}
 		}
 	}
