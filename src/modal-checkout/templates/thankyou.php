@@ -33,23 +33,14 @@ function newspack_blocks_replace_login_with_order_summary() {
 	$key      = isset( $_GET['key'] ) ? \wc_clean( \sanitize_text_field( \wp_unslash( $_GET['key'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$is_valid = $order && is_a( $order, 'WC_Order' ) && hash_equals( $order->get_order_key(), $key ); // Validate order key to prevent CSRF.
 
-	// Handle the newsletter signup form.
-	$newsletter_confirmation = \Newspack_Blocks\Modal_Checkout::confirm_newsletter_signup();
-	$is_error                = \is_wp_error( $newsletter_confirmation );
-	$no_selected_lists       = $is_error && 'newspack_no_lists_selected' === $newsletter_confirmation->get_error_code();
-	if ( true === $newsletter_confirmation || $no_selected_lists ) {
-		echo \Newspack_Blocks\Modal_Checkout::render_newsletter_confirmation( $no_selected_lists ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		return;
-	} elseif ( $is_error ) {
-		echo esc_html( $newsletter_confirmation->get_error_message() );
-		return;
-	}
-
 	if ( ! $is_valid ) {
 		return;
 	}
 
-	$is_success = ! $order->has_status( 'failed' );
+	$is_success             = ! $order->has_status( 'failed' );
+	$after_success_behavior = isset( $_GET['after_success_behavior'] ) ? \sanitize_text_field( \wp_unslash( $_GET['after_success_behavior'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$after_success_url      = isset( $_GET['after_success_url'] ) ? esc_url( \sanitize_url( \wp_unslash( $_GET['after_success_url'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$after_success_label    = isset( $_GET['after_success_button_label'] ) ? \sanitize_text_field( \wp_unslash( $_GET['after_success_button_label'] ) ) : \Newspack_Blocks\Modal_Checkout::get_modal_checkout_labels( 'after_success' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	?>
 	<div class="woocommerce-order">
 	<?php if ( $is_success ) : ?>
@@ -68,7 +59,17 @@ function newspack_blocks_replace_login_with_order_summary() {
 				</strong>
 			</p>
 		</div>
-		<?php echo \Newspack_Blocks\Modal_Checkout::render_checkout_after_success_markup( $order ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		<form>
+			<?php if ( $after_success_behavior ) : ?>
+				<input type="hidden" name="after_success_behavior" value="<?php echo esc_attr( $after_success_behavior ); ?>">
+			<?php endif; ?>
+			<?php if ( $after_success_behavior ) : ?>
+				<input type="hidden" name="after_success_url" value="<?php echo esc_attr( $after_success_url ); ?>">
+			<?php endif; ?>
+			<button class="newspack-ui__button newspack-ui__button--primary newspack-ui__button--wide" onclick="parent.newspackCloseModalCheckout();">
+				<?php echo esc_html( $after_success_label ); ?>
+			</button>
+		</form>
 	<?php else : ?>
 		<div class="newspack-ui__box newspack-ui__box__error newspack-ui__box--text-center">
 			<p>

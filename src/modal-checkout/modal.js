@@ -6,33 +6,16 @@
 import './modal.scss';
 import * as a11y from './accessibilityTweaks.js';
 
+/**
+ * Internal dependencies
+ */
+import { domReady } from './utils';
+
 const CLASS_PREFIX = newspackBlocksModal.newspack_class_prefix;
 const IFRAME_NAME = 'newspack_modal_checkout_iframe';
 const IFRAME_CONTAINER_ID = 'newspack_modal_checkout_container';
 const MODAL_CHECKOUT_ID = 'newspack_modal_checkout';
 const MODAL_CLASS_PREFIX = `${ CLASS_PREFIX }__modal`;
-
-/**
- * Specify a function to execute when the DOM is fully loaded.
- *
- * @see https://github.com/WordPress/gutenberg/blob/trunk/packages/dom-ready/
- *
- * @param {Function} callback A function to execute after the DOM is ready.
- * @return {void}
- */
-function domReady( callback ) {
-	if ( typeof document === 'undefined' ) {
-		return;
-	}
-	if (
-		document.readyState === 'complete' || // DOMContentLoaded + Images/Styles/etc loaded, so we call directly.
-		document.readyState === 'interactive' // DOMContentLoaded fires at this point, so we call directly.
-	) {
-		return void callback();
-	}
-	// DOMContentLoaded has not fired yet, delay callback until then.
-	document.addEventListener( 'DOMContentLoaded', callback );
-}
 
 domReady( () => {
 	const modalCheckout = document.querySelector( `#${ MODAL_CHECKOUT_ID }` );
@@ -70,6 +53,8 @@ domReady( () => {
 	const closeCheckout = () => {
 		spinner.style.display = 'flex';
 
+		const container = iframe.contentDocument.querySelector( `#${ IFRAME_CONTAINER_ID }` );
+
 		if ( iframe && modalContent.contains( iframe ) ) {
 			// Reset iframe and modal content heights.
 			iframe.src = 'about:blank';
@@ -91,6 +76,33 @@ domReady( () => {
 
 		if ( modalTrigger ) {
 			modalTrigger.focus();
+		}
+
+		if ( container.checkoutComplete ) {
+			const handleCheckoutComplete = () => {
+				const afterSuccessUrlInput = container.querySelector( 'input[name="after_success_url"]' );
+				const afterSuccessBehaviorInput = container.querySelector(
+					'input[name="after_success_behavior"]'
+				);
+
+				if ( afterSuccessUrlInput && afterSuccessBehaviorInput ) {
+					const afterSuccessUrl = afterSuccessUrlInput.getAttribute( 'value' );
+					const afterSuccessBehavior = afterSuccessBehaviorInput.getAttribute( 'value' );
+
+					if ( 'custom' === afterSuccessBehavior ) {
+						window.location.href = afterSuccessUrl;
+					} else if ( 'referrer' === afterSuccessBehavior ) {
+						window.history.back();
+					}
+				}
+			};
+			if ( window?.newspackReaderActivation?.openNewslettersSignupModal ) {
+				window.newspackReaderActivation.openNewslettersSignupModal( {
+					callback: handleCheckoutComplete,
+				} );
+			} else {
+				handleCheckoutComplete();
+			}
 		}
 	};
 
@@ -171,20 +183,6 @@ domReady( () => {
 			forms.forEach( form => {
 				form.appendChild( modalCheckoutHiddenInput.cloneNode() );
 				form.target = IFRAME_NAME;
-
-				// Fill in the referrer field.
-				const afterSuccessUrlInput = form.querySelector( 'input[name="after_success_url"]' );
-				const afterSuccessBehaviorInput = form.querySelector(
-					'input[name="after_success_behavior"]'
-				);
-				if (
-					afterSuccessBehaviorInput &&
-					afterSuccessUrlInput &&
-					'referrer' === afterSuccessBehaviorInput.getAttribute( 'value' )
-				) {
-					afterSuccessUrlInput.setAttribute( 'value', document.referrer || window.location.href );
-				}
-
 				form.addEventListener( 'submit', ev => {
 					const formData = new FormData( form );
 					const variationModals = document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-variation` );
@@ -202,7 +200,7 @@ domReady( () => {
 						if ( variationModal ) {
 							// Fill in the after success variables in the variation modal.
 							variationModal
-								.querySelectorAll( 'form[target="newspack_modal_checkout"]' )
+								.querySelectorAll( `form[target="${ IFRAME_NAME }"]` )
 								.forEach( singleVariationForm => {
 									[
 										'after_success_behavior',
