@@ -165,7 +165,6 @@ domReady( () => {
 				form.appendChild( modalCheckoutHiddenInput.cloneNode() );
 				form.target = IFRAME_NAME;
 				form.addEventListener( 'submit', ev => {
-					ev.preventDefault();
 					form.classList.add( 'processing' );
 
 					const productData = form.dataset.product;
@@ -212,6 +211,7 @@ domReady( () => {
 								} );
 
 							// Open the variations modal.
+							ev.preventDefault();
 							form.classList.remove( 'processing' );
 							openModal( variationModal );
 							return;
@@ -274,7 +274,7 @@ domReady( () => {
 										}
 									} );
 								} else {
-									// TODO: Handle tiers based donation tiers.
+									// Handle tiers based donation tiers.
 									const index = data.get( 'donation_tier_index' );
 									if ( index ) {
 										const donationData = JSON.parse( donationTiers?.[ index ].dataset.product );
@@ -337,7 +337,7 @@ domReady( () => {
 				ras.setAuthenticated( true );
 			}
 		}
-		const container = iframe.contentDocument.querySelector( `#${ IFRAME_CONTAINER_ID }` );
+		const container = iframe?.contentDocument?.querySelector( `#${ IFRAME_CONTAINER_ID }` );
 		if ( container ) {
 			iframeResizeObserver.observe( container );
 			if ( container.checkoutReady ) {
