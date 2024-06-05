@@ -48,7 +48,7 @@ domReady( () => {
 	const closeCheckout = () => {
 		spinner.style.display = 'flex';
 
-		const container = iframe.contentDocument.querySelector( `#${ IFRAME_CONTAINER_ID }` );
+		const container = iframe?.contentDocument?.querySelector( `#${ IFRAME_CONTAINER_ID }` );
 
 		if ( iframe && modalContent.contains( iframe ) ) {
 			// Reset iframe and modal content heights.
@@ -69,7 +69,7 @@ domReady( () => {
 			}
 		} );
 
-		if ( container.checkoutComplete ) {
+		if ( container?.checkoutComplete ) {
 			const handleCheckoutComplete = () => {
 				const afterSuccessUrlInput = container.querySelector( 'input[name="after_success_url"]' );
 				const afterSuccessBehaviorInput = container.querySelector(
@@ -165,9 +165,17 @@ domReady( () => {
 				form.appendChild( modalCheckoutHiddenInput.cloneNode() );
 				form.target = IFRAME_NAME;
 				form.addEventListener( 'submit', ev => {
+					ev.preventDefault();
 					form.classList.add( 'processing' );
-					const formData = new FormData( form );
 
+					const productData = form.dataset.product;
+					if ( productData ) {
+						const data = JSON.parse( productData );
+						Object.keys( data ).forEach( key => {
+							form.appendChild( createHiddenInput( key, data[ key ] ) );
+						} );
+					}
+					const formData = new FormData( form );
 					const variationModals = document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-variation` );
 					// Clear any open variation modal.
 					variationModals.forEach( variationModal => {
@@ -194,9 +202,9 @@ domReady( () => {
 									} );
 
 									// Append the product data hidden inputs.
-									const productData = singleVariationForm.dataset.product;
-									if ( productData ) {
-										const data = JSON.parse( productData );
+									const variationData = singleVariationForm.dataset.product;
+									if ( variationData ) {
+										const data = JSON.parse( variationData );
 										Object.keys( data ).forEach( key => {
 											singleVariationForm.appendChild( createHiddenInput( key, data[ key ] ) );
 										} );
@@ -204,18 +212,9 @@ domReady( () => {
 								} );
 
 							// Open the variations modal.
-							ev.preventDefault();
 							form.classList.remove( 'processing' );
 							openModal( variationModal );
 							return;
-						}
-					} else {
-						const productData = form.dataset.product;
-						if ( productData ) {
-							const data = JSON.parse( productData );
-							Object.keys( data ).forEach( key => {
-								form.appendChild( createHiddenInput( key, data[ key ] ) );
-							} );
 						}
 					}
 

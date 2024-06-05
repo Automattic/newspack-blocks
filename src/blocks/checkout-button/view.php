@@ -40,7 +40,7 @@ function render_callback( $attributes, $content ) {
 		$product_id = $attributes['variation'];
 	}
 
-	if ( ! $is_variable && function_exists( 'wc_get_product' ) ) {
+	if ( function_exists( 'wc_get_product' ) ) {
 		$product = wc_get_product( $product_id );
 		if ( ! $product ) {
 			return $content;
@@ -61,22 +61,25 @@ function render_callback( $attributes, $content ) {
 			$price = \WC_Name_Your_Price_Helpers::get_suggested_price( $product_id );
 		}
 
+		$is_variable           = $attributes['is_variable'];
+		$variation_id          = $attributes['variation'];
 		$product_price_summary = Modal_Checkout::get_summary_card_price_string( $name, $price, $frequency );
-		$product_data          = wp_json_encode(
-			[
-				'price'                 => $price,
-				'product_price_summary' => $product_price_summary,
-				'product_id'            => $product_id,
-				'variation_id'          => $attributes['variation'],
-				'is_variable'           => $attributes['is_variable'],
-			]
-		);
+		$product_data          = [
+			'is_variable'  => $is_variable,
+			'variation_id' => $variation_id,
+			'product_id'   => $product_id,
+		];
+
+		if ( ! $is_variable || $variation_id ) {
+			$product_data['price']                 = $price;
+			$product_data['product_price_summary'] = $product_price_summary;
+		}
 
 		$pos = strpos( $content, '<form>' );
 		if ( $pos ) {
 			$content = substr_replace(
 				$content,
-				'<form data-product="' . esc_attr( $product_data ) . '">',
+				'<form data-product="' . esc_attr( wp_json_encode( $product_data ) ) . '">',
 				$pos,
 				0
 			);
