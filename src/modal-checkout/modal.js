@@ -8,7 +8,7 @@ import './modal.scss';
 /**
  * Internal dependencies
  */
-import { domReady } from './utils';
+import { createHiddenInput, domReady } from './utils';
 
 const CLASS_PREFIX = newspackBlocksModal.newspack_class_prefix;
 const IFRAME_NAME = 'newspack_modal_checkout_iframe';
@@ -24,11 +24,8 @@ domReady( () => {
 	}
 
 	const modalContent = modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }__content` );
-	const modalCheckoutHiddenInput = document.createElement( 'input' );
 	const spinner = modalContent.querySelector( `.${ CLASS_PREFIX }__spinner` );
-	modalCheckoutHiddenInput.type = 'hidden';
-	modalCheckoutHiddenInput.name = 'modal_checkout';
-	modalCheckoutHiddenInput.value = '1';
+	const modalCheckoutHiddenInput = createHiddenInput( 'modal_checkout', '1' );
 
 	// Initialize empty iframe.
 	const iframe = document.createElement( 'iframe' );
@@ -170,45 +167,59 @@ domReady( () => {
 				form.addEventListener( 'submit', ev => {
 					form.classList.add( 'processing' );
 					const formData = new FormData( form );
-					const variationModals = document.querySelectorAll( '.newspack-blocks__modal-variation' );
 
+					const variationModals = document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-variation` );
 					// Clear any open variation modal.
 					variationModals.forEach( variationModal => {
 						closeModal( variationModal );
 					} );
-
 					// Trigger variation modal if variation is not selected.
 					if ( formData.get( 'is_variable' ) && ! formData.get( 'variation_id' ) ) {
 						const variationModal = [ ...variationModals ].find(
 							modal => modal.dataset.productId === formData.get( 'product_id' )
 						);
 						if ( variationModal ) {
-							// Fill in the after success variables in the variation modal.
 							variationModal
 								.querySelectorAll( `form[target="${ IFRAME_NAME }"]` )
 								.forEach( singleVariationForm => {
+									// Fill in the after success variables in the variation modal.
 									[
 										'after_success_behavior',
 										'after_success_url',
 										'after_success_button_label',
 									].forEach( afterSuccessParam => {
-										const input = document.createElement( 'input' );
-										input.type = 'hidden';
-										input.name = afterSuccessParam;
-										input.value = formData.get( afterSuccessParam );
-										singleVariationForm.appendChild( input );
+										singleVariationForm.appendChild(
+											createHiddenInput( afterSuccessParam, formData.get( afterSuccessParam ) )
+										);
 									} );
+
+									// Append the product data hidden inputs.
+									const productData = singleVariationForm.dataset.product;
+									if ( productData ) {
+										const data = JSON.parse( productData );
+										Object.keys( data ).forEach( key => {
+											singleVariationForm.appendChild( createHiddenInput( key, data[ key ] ) );
+										} );
+									}
 								} );
+
 							// Open the variations modal.
 							ev.preventDefault();
 							form.classList.remove( 'processing' );
 							openModal( variationModal );
 							return;
 						}
+					} else {
+						const productData = form.dataset.product;
+						if ( productData ) {
+							const data = JSON.parse( productData );
+							Object.keys( data ).forEach( key => {
+								form.appendChild( createHiddenInput( key, data[ key ] ) );
+							} );
+						}
 					}
 
 					form.classList.remove( 'processing' );
-
 					if (
 						window?.newspackReaderActivation?.openAuthModal &&
 						! window?.newspackReaderActivation?.getReader?.()?.authenticated &&
@@ -222,43 +233,43 @@ domReady( () => {
 						let priceSummary = '';
 
 						if ( data.get( 'newspack_donate' ) ) {
-							// Handle donation form.
 							const frequency = data.get( 'donation_frequency' );
-							const priceInputs = form.querySelectorAll(
+							const donationTiers = form.querySelectorAll( `.donation-tier__${ frequency }` );
+							const frequencyInputs = form.querySelectorAll(
 								`input[name="donation_value_${ frequency }"]`
 							);
-							const priceSummaryInputs = form.querySelectorAll(
-								`input[name^="donation_price_summary_${ frequency }"]`
-							);
-
-							if ( priceInputs ) {
-								priceInputs.forEach( input => {
-									if ( input.checked ) {
-										price = input.value;
-									}
-								} );
-							}
-
-							if ( priceSummaryInputs ) {
-								priceSummaryInputs.forEach( input => {
-									const value = price === 'other' ? '0' : price;
-									if ( input.value.includes( value ) ) {
-										priceSummary = input.value;
-									}
-
-									if ( value === '0' && priceSummary ) {
-										const otherPrice = form.querySelector(
-											`input[name="donation_value_${ frequency }_other"]`
-										).value;
-
-										if ( otherPrice ) {
-											priceSummary = priceSummary.replace( '0', otherPrice );
+							if ( donationTiers?.length ) {
+								if ( frequencyInputs?.length ) {
+									// Handle frequency based donation tiers.
+									frequencyInputs.forEach( input => {
+										if ( input.checked ) {
+											price = input.value;
 										}
-									}
-								} );
+									} );
+
+									donationTiers.forEach( el => {
+										const value = price === 'other' ? '0' : price;
+										const donationData = JSON.parse( el.dataset.product );
+										if (
+											donationData.hasOwnProperty( `donation_price_summary_${ frequency }` ) &&
+											donationData?.[ `donation_price_summary_${ frequency }` ].includes( value )
+										) {
+											priceSummary = donationData[ `donation_price_summary_${ frequency }` ];
+										}
+
+										if ( price === 'other' && priceSummary ) {
+											// Replace placeholder price with price input for other.
+											const otherPrice = data.get( `donation_value_${ frequency }_other` );
+											if ( otherPrice ) {
+												priceSummary = priceSummary.replace( '0', otherPrice );
+											}
+										}
+									} );
+								} else {
+									// TODO: Handle tiers based donation tiers.
+								}
 							}
 						} else if ( data.get( 'newspack_checkout' ) ) {
-							// Handle checkout button form.
 							const priceSummaryInput = form.querySelector( 'input[name="product_price_summary"]' );
 
 							if ( priceSummaryInput ) {

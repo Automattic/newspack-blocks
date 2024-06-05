@@ -92,6 +92,14 @@ export default ( parentEl: HTMLElement ) => {
 	tierSelectionButtonsEls.forEach( buttonEl => {
 		buttonEl.addEventListener( 'click', () => {
 			const tierIndex = parseInt( buttonEl.getAttribute( 'data-tier-index' ) || '' );
+
+			// Append hidden index input to tiers form.
+			const indexInputEl = document.createElement( 'input' );
+			indexInputEl.setAttribute( 'type', 'hidden' );
+			indexInputEl.setAttribute( 'name', 'donation_tier_index' );
+			indexInputEl.setAttribute( 'value', tierIndex.toString() );
+			initFormEl.appendChild( indexInputEl );
+
 			const tierHeadingEl: HTMLElement | null = parentEl.querySelector(
 				'.wpbnbd__tiers__tier-tile h2'
 			);

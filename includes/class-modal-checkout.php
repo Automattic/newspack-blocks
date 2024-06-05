@@ -459,8 +459,12 @@ final class Modal_Checkout {
 										$product_name,
 										$variation_name
 									);
-
 									$product_price_summary = self::get_summary_card_price_string( $name, $price, $frequency );
+									$product_data          = [
+										'product_price_summary' => $product_price_summary,
+										'product_id'   => $product_id,
+										'variation_id' => $variation_id,
+									];
 
 									?>
 									<li class="newspack-blocks__options__item"">
@@ -468,10 +472,8 @@ final class Modal_Checkout {
 											<span class="price"><?php echo $price_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 										</div>
 										<div class="variation"><?php echo esc_html( $variation_name ); ?></div>
-										<form>
+										<form data-product="<?php echo esc_attr( wp_json_encode( $product_data ) ); ?>">
 											<input type="hidden" name="newspack_checkout" value="1" />
-											<input type="hidden" name="product_id" value="<?php echo esc_attr( $variation_id ); ?>" />
-											<input type="hidden" name="product_price_summary" value="<?php echo esc_attr( $product_price_summary ); ?>" />
 											<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--primary" ); ?>"><?php echo esc_html( self::get_modal_checkout_labels( 'checkout_confirm_variation' ) ); ?></button>
 										</form>
 									</li>

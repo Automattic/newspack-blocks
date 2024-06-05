@@ -34,12 +34,13 @@ function render_callback( $attributes, $content ) {
 	if ( empty( $attributes['product'] ) ) {
 		return '';
 	}
-	$product_id = $attributes['product'];
-	if ( $attributes['is_variable'] && ! empty( $attributes['variation'] ) ) {
+	$product_id  = $attributes['product'];
+	$is_variable = $attributes['is_variable'];
+	if ( $is_variable && ! empty( $attributes['variation'] ) ) {
 		$product_id = $attributes['variation'];
 	}
 
-	if ( function_exists( 'wc_get_product' ) ) {
+	if ( ! $is_variable && function_exists( 'wc_get_product' ) ) {
 		$product = wc_get_product( $product_id );
 		if ( ! $product ) {
 			return $content;
@@ -52,16 +53,33 @@ function render_callback( $attributes, $content ) {
 
 		$name  = $product->get_name();
 		$price = $product->get_price();
-		// Use suggested price if NYP is active and set for variation.
-		if ( class_exists( '\WC_Name_Your_Price_Helpers' ) && \WC_Name_Your_Price_Helpers::is_nyp( $product_id ) ) {
+		if ( isset( $attributes['price'] ) && $attributes['price'] ) {
+			// Default to the price set in the block attributes.
+			$price = $attributes['price'];
+		} elseif ( class_exists( '\WC_Name_Your_Price_Helpers' ) && \WC_Name_Your_Price_Helpers::is_nyp( $product_id ) ) {
+			// Use suggested price if NYP is active and set for variation.
 			$price = \WC_Name_Your_Price_Helpers::get_suggested_price( $product_id );
 		}
 
-		// Add hidden input with product price summary.
-		$input = '<input type="hidden" name="product_price_summary" value="' . esc_attr( Modal_Checkout::get_summary_card_price_string( $name, $price, $frequency ) ) . '">';
-		$pos = strpos( $content, '</form>' );
+		$product_price_summary = Modal_Checkout::get_summary_card_price_string( $name, $price, $frequency );
+		$product_data          = wp_json_encode(
+			[
+				'price'                 => $price,
+				'product_price_summary' => $product_price_summary,
+				'product_id'            => $product_id,
+				'variation_id'          => $attributes['variation'],
+				'is_variable'           => $attributes['is_variable'],
+			]
+		);
+
+		$pos = strpos( $content, '<form>' );
 		if ( $pos ) {
-			$content = substr_replace( $content, $input, $pos, 0 );
+			$content = substr_replace(
+				$content,
+				'<form data-product="' . esc_attr( $product_data ) . '">',
+				$pos,
+				0
+			);
 		}
 	}
 
