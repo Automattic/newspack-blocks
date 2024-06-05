@@ -139,7 +139,7 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 
 						<?php foreach ( $configuration['frequencies'] as $frequency_slug => $frequency_name ) : ?>
 							<?php
-								$formatted_amount = $configuration['amounts'][ $frequency_slug ][3];
+								$formatted_amount = Newspack_Blocks::can_use_name_your_price() ? '' : $configuration['amounts'][ $frequency_slug ][3];
 								$product_data     = wp_json_encode(
 									[
 										'donation_price_summary_' . $frequency_slug => Modal_Checkout::get_summary_card_price_string( __( 'Donate', 'newspack-blocks' ), $formatted_amount, $frequency_slug ),
@@ -147,7 +147,7 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 								);
 							?>
 							<div
-								class='wp-block-newspack-blocks-donate__frequency frequency'
+								class="wp-block-newspack-blocks-donate__frequency donation-frequency__<?php echo esc_attr( $frequency_slug ); ?> frequency"
 								id='tab-panel-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>'
 								role='tabpanel'
 								aria-labelledby='tab-newspack-donate-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>'

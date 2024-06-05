@@ -234,32 +234,41 @@ domReady( () => {
 
 						if ( data.get( 'newspack_donate' ) ) {
 							const frequency = data.get( 'donation_frequency' );
-							const donationTiers = form.querySelectorAll( `.donation-tier__${ frequency }` );
-							const frequencyInputs = form.querySelectorAll(
-								`input[name="donation_value_${ frequency }"]`
+							const donationTiers = form.querySelectorAll(
+								`.donation-tier__${ frequency }, .donation-frequency__${ frequency }`
 							);
+
 							if ( donationTiers?.length ) {
+								const frequencyInputs = form.querySelectorAll(
+									`input[name="donation_value_${ frequency }"], input[name="donation_value_${ frequency }_untiered"]`
+								);
+
 								if ( frequencyInputs?.length ) {
 									// Handle frequency based donation tiers.
 									frequencyInputs.forEach( input => {
-										if ( input.checked ) {
+										if ( input.checked && input.value !== 'other' ) {
 											price = input.value;
 										}
 									} );
 
 									donationTiers.forEach( el => {
-										const value = price === 'other' ? '0' : price;
 										const donationData = JSON.parse( el.dataset.product );
 										if (
 											donationData.hasOwnProperty( `donation_price_summary_${ frequency }` ) &&
-											donationData?.[ `donation_price_summary_${ frequency }` ].includes( value )
+											donationData?.[ `donation_price_summary_${ frequency }` ].includes( price )
 										) {
 											priceSummary = donationData[ `donation_price_summary_${ frequency }` ];
 										}
 
-										if ( price === 'other' && priceSummary ) {
+										if ( price === '0' && priceSummary ) {
 											// Replace placeholder price with price input for other.
-											const otherPrice = data.get( `donation_value_${ frequency }_other` );
+											let otherPrice = data.get( `donation_value_${ frequency }_other` );
+
+											// Fallback to untiered price if other price is not set.
+											if ( ! otherPrice ) {
+												otherPrice = data.get( `donation_value_${ frequency }_untiered` );
+											}
+
 											if ( otherPrice ) {
 												priceSummary = priceSummary.replace( '0', otherPrice );
 											}
