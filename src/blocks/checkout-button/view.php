@@ -57,12 +57,22 @@ function render_callback( $attributes ) {
 	}
 
 	// Generate the button.
+	$button_color = '';
+	// Get button color from style attribute since style engine doesn't seem to handle this.
+	if ( isset( $style['elements']['link']['color']['text'] ) ) {
+		$color = $style['elements']['link']['color']['text'];
+		$color = explode( '|', $color );
+		if ( isset( $color[2] ) ) {
+			$button_color = $color[2];
+		}
+	}
 	$button_styles = Newspack_Blocks::block_styles(
 		$attributes,
 		[
 			$background_color ? 'background-color:' . esc_attr( $background_color ) . ';' : '',
 			$font_size ? 'font-size:' . esc_attr( $font_size ) . ';' : '',
 			$width ? 'width:' . esc_attr( $width ) . '%;' : '',
+			$button_color ? 'color:' . esc_attr( $button_color ) . ';' : '',
 		]
 	);
 	$button_classes = Newspack_Blocks::block_classes(
@@ -73,6 +83,7 @@ function render_callback( $attributes ) {
 			$background_color ? 'has-background has-' . esc_attr( $background_color ) . '-background-color' : '',
 			$text_align ? 'has-text-align-' . esc_attr( $text_align ) : '',
 			isset( $style['border']['radius'] ) && $style['border']['radius'] === 0 ? 'no-border-radius' : '',
+			$button_color ? 'has-text-color has-' . esc_attr( $button_color ) . '-color' : '',
 		]
 	);
 
