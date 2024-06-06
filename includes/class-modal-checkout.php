@@ -100,6 +100,7 @@ final class Modal_Checkout {
 		add_filter( 'googlesitekit_adsense_tag_blocked', [ __CLASS__, 'is_modal_checkout' ] );
 		add_filter( 'googlesitekit_tagmanager_tag_blocked', [ __CLASS__, 'is_modal_checkout' ] );
 		add_filter( 'jetpack_active_modules', [ __CLASS__, 'jetpack_active_modules' ] );
+		add_filter( 'woocommerce_checkout_update_order_review_expired', [ __CLASS__, 'is_not_modal_checkout_filter' ] );
 
 		/**
 		 * Ensure that options to limit the number of subscriptions per product are respected.
@@ -178,8 +179,6 @@ final class Modal_Checkout {
 				$product_id = $variation_id;
 			}
 
-			\WC()->cart->empty_cart();
-
 			$referer    = wp_get_referer();
 			$params     = [];
 			$parsed_url = wp_parse_url( $referer );
@@ -247,6 +246,7 @@ final class Modal_Checkout {
 			*/
 			$cart_item_data = apply_filters( 'newspack_blocks_modal_checkout_cart_item_data', $cart_item_data );
 
+			\WC()->cart->empty_cart();
 			\WC()->cart->add_to_cart( $product_id, 1, 0, [], $cart_item_data );
 
 			$query_args = [];
@@ -593,8 +593,9 @@ final class Modal_Checkout {
 			'newspack-blocks-modal',
 			'newspackBlocksModal',
 			[
-				'newspack_class_prefix' => self::get_class_prefix(),
-				'labels'                => [
+				'checkout_registration_flag' => self::CHECKOUT_REGISTRATION_FLAG,
+				'newspack_class_prefix'      => self::get_class_prefix(),
+				'labels'                     => [
 					'auth_modal_title'     => self::get_modal_checkout_labels( 'auth_modal_title' ),
 					'signin_modal_title'   => self::get_modal_checkout_labels( 'signin_modal_title' ),
 					'register_modal_title' => self::get_modal_checkout_labels( 'register_modal_title' ),

@@ -16,22 +16,6 @@ const IFRAME_CONTAINER_ID = 'newspack_modal_checkout_container';
 const MODAL_CHECKOUT_ID = 'newspack_modal_checkout';
 const MODAL_CLASS_PREFIX = `${ CLASS_PREFIX }__modal`;
 
-/**
- * Create a hidden input element.
- *
- * @param {string} name  The name of the input.
- * @param {string} value The value of the input.
- *
- * @return {HTMLInputElement} The hidden input element.
- */
-function createHiddenInput( name, value ) {
-	const input = document.createElement( 'input' );
-	input.name = name;
-	input.value = value;
-	input.type = 'hidden';
-	return input;
-}
-
 domReady( () => {
 	const modalCheckout = document.querySelector( `#${ MODAL_CHECKOUT_ID }` );
 
@@ -317,7 +301,9 @@ domReady( () => {
 							title: newspackBlocksModal.labels.auth_modal_title,
 							callback: () => {
 								// Signal checkout registration.
-								form.appendChild( createHiddenInput( '_newspack_checkout_registration', '1' ) );
+								form.appendChild(
+									createHiddenInput( newspackBlocksModal.checkout_registration_flag, '1' )
+								);
 								// form.submit does not trigger submit event listener, so we use requestSubmit.
 								form.requestSubmit( form.querySelector( 'button[type="submit"]' ) );
 							},
