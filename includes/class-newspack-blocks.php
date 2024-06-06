@@ -394,6 +394,26 @@ class Newspack_Blocks {
 	}
 
 	/**
+	 * Utility to assemble the styles for a server-side rendered block.
+	 *
+	 * @param array $attributes Block attributes.
+	 *
+	 * @return string style list.
+	 */
+	public static function block_styles( $attributes = array() ) {
+		$styles = [];
+
+		if ( isset( $attributes['style'] ) && is_array( $attributes['style'] ) ) {
+			$engine_styles = wp_style_engine_get_styles( $attributes['style'], [ 'context' => 'block-supports' ] );
+			if ( isset( $engine_styles['css'] ) ) {
+				$styles[] = $engine_styles['css'];
+			}
+		}
+
+		return implode( '', $styles );
+	}
+
+	/**
 	 * Return the most appropriate thumbnail size to display.
 	 *
 	 * @param string $orientation The block's orientation settings: landscape|portrait|square.
