@@ -42,30 +42,40 @@ function render_callback( $attributes ) {
 	\Newspack_Blocks\Modal_Checkout::enqueue_modal( $product_id );
 	\Newspack_Blocks::enqueue_view_assets( 'checkout-button' );
 
+	$background_color           = $attributes['backgroundColor'] ?? '';
 	$font_size                  = $attributes['fontSize'] ?? '';
-	$text_align                 = $attributes['textAlign'] ?? '';
 	$style                      = $attributes['style'] ?? [];
+	$text_align                 = $attributes['textAlign'] ?? '';
 	$width                      = $attributes['width'] ?? '';
-	$is_variable                = $attributes['is_variable'];
 	$after_success_behavior     = $attributes['afterSuccessBehavior'] ?? '';
 	$after_success_button_label = $attributes['afterSuccessButtonLabel'] ?? '';
 	$after_success_url          = $attributes['afterSuccessURL'] ?? '';
+	$is_variable                = $attributes['is_variable'];
 
 	if ( $is_variable && $variation_id ) {
 		$product_id = $variation_id;
 	}
 
 	// Generate the button.
-	$button_styles  = Newspack_Blocks::block_styles( $attributes );
+	$button_styles = Newspack_Blocks::block_styles(
+		$attributes,
+		[
+			$background_color ? 'background-color:' . esc_attr( $background_color ) . ';' : '',
+			$font_size ? 'font-size:' . esc_attr( $font_size ) . ';' : '',
+			$width ? 'width:' . esc_attr( $width ) . '%;' : '',
+		]
+	);
 	$button_classes = Newspack_Blocks::block_classes(
 		'button',
 		$attributes,
 		[
 			'wp-block-button__link',
+			$background_color ? 'has-background has-' . esc_attr( $background_color ) . '-background-color' : '',
 			$text_align ? 'has-text-align-' . esc_attr( $text_align ) : '',
-			isset( $style['border']['radius'] ) && $style['border']['radius'] !== 0 ? 'no-border-radius' : '',
+			isset( $style['border']['radius'] ) && $style['border']['radius'] === 0 ? 'no-border-radius' : '',
 		]
 	);
+
 	$button = sprintf(
 		'<button class="%1$s" style="%2$s" aria-label="%3$s" type="submit">%3$s</button>',
 		$button_classes,
