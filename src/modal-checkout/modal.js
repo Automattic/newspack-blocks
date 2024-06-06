@@ -148,7 +148,7 @@ domReady( () => {
 	/**
 	 * Handle variations modal close button.
 	 */
-	document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-variation` ).forEach( variationModal => {
+	document.querySelectorAll( '.newspack-blocks__modal-variation' ).forEach( variationModal => {
 		variationModal.addEventListener( 'click', ev => {
 			if ( ev.target === variationModal ) {
 				closeCheckout();
@@ -176,7 +176,7 @@ domReady( () => {
 	 */
 	document
 		.querySelectorAll(
-			`.wpbnbd.wpbnbd--platform-wc,.wp-block-newspack-blocks-checkout-button,.${ MODAL_CLASS_PREFIX }-variation`
+			'.wpbnbd.wpbnbd--platform-wc, .wp-block-newspack-blocks-checkout-button, .newspack-blocks__modal-variation'
 		)
 		.forEach( element => {
 			const forms = element.querySelectorAll( 'form' );
@@ -185,7 +185,7 @@ domReady( () => {
 				form.target = IFRAME_NAME;
 				form.addEventListener( 'submit', ev => {
 					const formData = new FormData( form );
-					const variationModals = document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-variation` );
+					const variationModals = document.querySelectorAll( '.newspack-blocks__modal-variation' );
 
 					// Clear any open variation modal.
 					variationModals.forEach( variationModal => {
