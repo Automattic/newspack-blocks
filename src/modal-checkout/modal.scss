@@ -129,19 +129,19 @@
 		}
 	}
 
+	// Product variations styles
 	&__modal-variation {
 		.newspack-blocks {
-			&__modal {
-				&__content {
-					padding: 24px;
-					overflow: auto;
-					border-radius: 5px;
-					h3 {
-						font-size: 16px;
-						margin: 0;
-					}
-					p {
-						font-size: 0.8em;
+			&__selection {
+				> *:first-child {
+					margin-top: 0;
+				}
+
+				h3 {
+					margin: 0;
+
+					+ p {
+						margin-top: calc( var( --newspack-ui-spacer-base, 8px ) / 2);
 					}
 				}
 			}
@@ -150,16 +150,19 @@
 				list-style: none;
 				display: flex;
 				flex-wrap: wrap;
-				gap: 16px;
-				margin: 0;
+				gap: var( --newspack-ui-spacer-2, 12px );
+				margin: var( --newspack-ui-spacer-5, 24px ) 0 0;
 				padding: 0;
 
 				&__item {
-					border: 1px solid #ddd;
-					border-radius: 6px;
-					text-align: center;
+					border: 1px solid var(--newspack-ui-color-border, colors.$newspack-ui-color-neutral-30 );
+					border-radius: var( --newspack-ui-border-radius-m, 6px );
+					display: flex;
+					flex-direction: column;
 					flex: 1 1 100%;
-					@media ( min-width: 600px ) {
+					text-align: center;
+
+					@media ( min-width: variables.$mobile_width ) {
 						flex: 1 1 30%;
 						max-width: calc( 33.3333% - 10px );
 						&:first-child:nth-last-child( 2 ),
@@ -168,29 +171,49 @@
 							max-width: calc( 50% - 10px );
 						}
 					}
+
 					.summary {
-						font-size: 14px;
-						padding: 12px;
-						border-bottom: 1px solid #ddd;
-						bdi {
-							display: block;
-							font-weight: 600;
-							font-size: 32px;
+						font-size: var( --newspack-ui-font-size-xs, 14px );
+						line-height: var( --newspack-ui-line-height-xs, 1.4286 );
+						padding: var( --newspack-ui-spacer-5, 24px ) var( --newspack-ui-spacer-2, 12px );
+						position: relative;
+
+						.price {
+							// Scale up just the primary price for a product, not the other fees:
+							> .amount > bdi,
+							> ins > .amount > bdi {
+								display: block;
+								font-weight: 600;
+								font-size: var( --newspack-ui-font-size-xl, clamp( 1.375rem, 0.394rem + 2.008vw, 2rem ) );
+								line-height: var( --newspack-ui-line-height-xl, 1.375 );
+							}
+
+							del {
+								color: var( --newspack-ui-color-neutral-60, colors.$newspack-ui-color-neutral-60 );
+								left: 0;
+								position: absolute;
+								top: calc( var( --newspack-ui-spacer-base, 8px ) * 0.75 );
+								width: 100%;
+							}
 						}
 					}
+
 					.variation {
-						padding: 12px;
-						font-size: 14px;
-						line-height: 1.5;
-						border-bottom: 1px solid #ddd;
+						border-top: 1px solid var(--newspack-ui-color-border, colors.$newspack-ui-color-neutral-30 );
+						font-size: var( --newspack-ui-font-size-xs, 14px );
 						font-weight: 600;
+						line-height: var( --newspack-ui-line-height-xs, 1.4286 );
+						margin-top: auto;
+						padding: var( --newspack-ui-spacer-2, 12px );
 					}
+
 					form {
-						padding: 12px;
+						border-top: 1px solid var(--newspack-ui-color-border, colors.$newspack-ui-color-neutral-30 );
+						padding: var( --newspack-ui-spacer-2, 12px ) var( --newspack-ui-spacer-2, 12px ) 0;
 						button {
 							display: block;
+							margin-top: 0 !important;
 							width: 100%;
-							font-size: 14px;
 						}
 					}
 				}
