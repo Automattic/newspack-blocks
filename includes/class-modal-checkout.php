@@ -416,7 +416,7 @@ final class Modal_Checkout {
 			}
 			?>
 			<div
-				class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal-container {$class_prefix}__modal-variation" ); ?>"
+				class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal-container newspack-blocks__modal-variation" ); ?>"
 				data-product-id="<?php echo esc_attr( $product_id ); ?>"
 			>
 				<div class="<?php echo esc_attr( "{$class_prefix}__modal-container__overlay" ); ?>"></div>
@@ -431,17 +431,17 @@ final class Modal_Checkout {
 						</button>
 					</header>
 					<section class="<?php echo esc_attr( "{$class_prefix}__modal__content" ); ?>">
-						<div class="<?php echo esc_attr( "{$class_prefix}__selection" ); ?>" data-product-id="<?php echo esc_attr( $product_id ); ?>">
+						<div class="newspack-blocks__selection" data-product-id="<?php echo esc_attr( $product_id ); ?>">
 							<h3><?php echo esc_html( $product->get_name() ); ?></h3>
 							<p><?php esc_html_e( 'Select an option to continue:', 'newspack-blocks' ); ?></p>
-							<ul class="<?php echo esc_attr( "{$class_prefix}__options" ); ?>">
+							<ul class="newspack-blocks__options"">
 								<?php
 								$variations = $product->get_available_variations( 'objects' );
 								foreach ( $variations as $variation ) :
 									$name  = wc_get_formatted_variation( $variation, true );
 									$price = $variation->get_price_html();
 									?>
-									<li class="<?php echo esc_attr( "{$class_prefix}__options__item" ); ?>">
+									<li class="newspack-blocks__options__item"">
 										<div class="summary">
 											<span class="price"><?php echo $price; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 										</div>
