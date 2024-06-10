@@ -42,7 +42,6 @@ domReady(
 			const container = document.querySelector( '#newspack_modal_checkout_container' );
 			if ( container ) {
 				container.checkoutComplete = true;
-				a11y.trapFocus( container );
 			}
 		} else {
 			$( document.body ).on( 'init_checkout', function () {
@@ -228,6 +227,7 @@ domReady(
 					const container = document.querySelector( '#newspack_modal_checkout_container' );
 					container.checkoutReady = true;
 					container.dispatchEvent( readyEvent );
+					a11y.trapFocus( container );
 				}
 
 				/**

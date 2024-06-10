@@ -358,7 +358,9 @@ final class Modal_Checkout {
 					</div>
 				</section>
 				<?php // temp way to capture focus in the second screen. ?>
-				<span tabindex="0"></span>
+				<?php
+					// echo '<span tabindex="0" id="last-element"></span>';
+				?>
 			</div>
 		</div>
 		<?php
