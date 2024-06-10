@@ -466,6 +466,10 @@ final class Modal_Checkout {
 										'variation_id' => $variation_id,
 									];
 
+									// Remove colon for nyp variations.
+									if ( class_exists( '\WC_Name_Your_Price_Helpers' ) && \WC_Name_Your_Price_Helpers::is_nyp( $variation->get_id() ) ) {
+										$price = str_replace( ':', '', $price );
+									}
 									?>
 									<li class="newspack-blocks__options__item"">
 										<div class="summary">
