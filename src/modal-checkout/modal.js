@@ -259,7 +259,9 @@ domReady( () => {
 					spinner.style.display = 'none';
 				} );
 			}
-		} else {
+		} else if ( 'about:blank' !== location.href ) {
+			// Make sure the iframe has actually loaded something, even if not the expected container.
+			// This check prevents an issue in Chrome where the 'load' event fired twice and the spinner was hidden too soon.
 			spinner.style.display = 'none';
 		}
 	} );
