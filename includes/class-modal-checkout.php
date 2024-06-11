@@ -244,6 +244,12 @@ final class Modal_Checkout {
 			\wc_get_page_permalink( 'checkout' )
 		);
 
+		// WTF
+		// \Newspack\Logger::log( 'fires in process_checkout_request() for product ' . print_r( $params, true ) );
+		$trigger = 'TBD';
+		// Send price, product ID and trigger (checkout button block, donate block, other );
+		\do_action( 'wtf_am_i_doing', $price, $product_id, $trigger );
+
 		// Redirect to checkout.
 		\wp_safe_redirect( apply_filters( 'newspack_blocks_checkout_url', $checkout_url ) );
 		exit;
@@ -572,6 +578,8 @@ final class Modal_Checkout {
 			return $template;
 		}
 		$class_prefix = self::get_class_prefix();
+		// WTF
+		// \Newspack\Logger::log( 'this is a modal and it fires once' );
 		ob_start();
 		?>
 		<!doctype html>

@@ -22,6 +22,20 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 	echo esc_html( apply_filters( 'woocommerce_checkout_must_be_logged_in_message', __( 'You must be logged in to checkout.', 'newspack-blocks' ) ) );
 	return;
 }
+
+// WTF
+// \Newspack\Logger::log( 'fires in process_checkout_request() for product ' . print_r( $params, true ) );
+$trigger = 'TBD';
+// Send price, product ID and trigger (checkout button block, donate block, other );
+
+// TODO: there is absolutely a better way to get these.
+$price = WC()->cart->cart_contents_total;
+foreach( WC()->cart->get_cart() as $cart_item ){
+	$product_id = $cart_item['product_id'];
+	break;
+}
+\do_action( 'wtf_am_i_doing', $price, $product_id, $trigger );
+
 ?>
 
 <form name="checkout" method="post" class="checkout woocommerce-checkout" action="<?php echo esc_url( wc_get_checkout_url() ); ?>" enctype="multipart/form-data">
