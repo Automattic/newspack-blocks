@@ -250,7 +250,7 @@ final class Modal_Checkout {
 		 * @param string $price Purchase price.
 		 * @param string $product_id Purchase product ID.
 		 */
-		\do_action( 'newspack_blocks_checkout_button_modal', $price, $product_id );
+		\do_action( 'newspack_blocks_checkout_button_modal', $price, $product_id, $referer );
 
 		// Redirect to checkout.
 		\wp_safe_redirect( apply_filters( 'newspack_blocks_checkout_url', $checkout_url ) );

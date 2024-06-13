@@ -40,16 +40,3 @@ function render_callback( $attributes, $content ) {
 	\Newspack_Blocks::enqueue_view_assets( 'checkout-button' );
 	return $content;
 }
-
-
-/**
- * Process registration form.
- */
-/*
-function process_form() {
-	// WTF
-	$product_id = $_REQUEST['product_id'];
-	\Newspack\Logger::log( 'uh, maybe the checkout button block form is sent??' . $product_id );
-}
-add_action( 'template_redirect', __NAMESPACE__ . '\\process_form' );
-*/
