@@ -766,6 +766,12 @@ final class Modal_Checkout {
 			}
 			unset( $fields['billing'][ $key ] );
 		}
+
+		/**
+		 * Add the form-row-last CSS class to billing phone field.
+		 */
+		$fields['billing']['billing_phone']['class'] = 'form-row-last';
+
 		return $fields;
 	}
 

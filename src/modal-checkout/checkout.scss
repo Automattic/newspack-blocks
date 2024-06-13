@@ -32,6 +32,17 @@
 	}
 
 	// Billing & Shipping fields
+	// Make sure there's not a small orphan row
+	.woocommerce form {
+		.form-row-first:not( :has( + .form-row-last ) ),
+		.form-row-last + .form-row-last,
+		.form-row-wide + .form-row-last {
+			clear: both;
+			float: none;
+			width: 100%;
+		}
+	}
+
 	.woocommerce-checkout {
 		h3 {
 			font-size: var( --newspack-ui-font-size-s, 16px );
