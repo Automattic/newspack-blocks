@@ -1,7 +1,7 @@
 @use '../../../shared/sass/variables';
 @use '../../../shared/sass/mixins';
 
-.editor-styles-wrapper div.wp-block-columns {
+body:not( [class*="block-theme"] ) .editor-styles-wrapper div.wp-block-columns {
 	gap: 32px;
 
 	&.is-style-borders {
@@ -34,11 +34,11 @@
 
 				&::after {
 					border-right: 1px solid variables.$color__border;
-					bottom: 12px;
+					bottom: 0;
 					content: '';
 					position: absolute;
 					right: -32px;
-					top: 12px;
+					top: 0;
 				}
 
 				&:nth-child( odd )::after {

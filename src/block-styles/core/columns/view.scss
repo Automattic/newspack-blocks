@@ -1,7 +1,7 @@
 @use '../../../shared/sass/variables';
 @use '../../../shared/sass/mixins';
 
-div.wp-block-columns {
+body:not( [class*="block-theme"] ) div.wp-block-columns {
 	gap: 32px;
 
 	&.is-style-borders {
