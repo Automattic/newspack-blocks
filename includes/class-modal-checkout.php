@@ -746,7 +746,6 @@ final class Modal_Checkout {
 		 * at the Checkout Button Block level.
 		 */
 		$billing_fields = apply_filters( 'newspack_blocks_donate_billing_fields_keys', [] );
-
 		if ( empty( $billing_fields ) ) {
 			return $fields;
 		}
