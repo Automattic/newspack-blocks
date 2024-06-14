@@ -51,8 +51,6 @@ domReady( () => {
 	const closeCheckout = () => {
 		spinner.style.display = 'flex';
 
-		const container = iframe.contentDocument.querySelector( `#${ IFRAME_CONTAINER_ID }` );
-
 		if ( iframe && modalContent.contains( iframe ) ) {
 			// Reset iframe and modal content heights.
 			iframe.src = 'about:blank';
@@ -72,30 +70,34 @@ domReady( () => {
 			}
 		} );
 
-		if ( container.checkoutComplete ) {
-			const handleCheckoutComplete = () => {
-				const afterSuccessUrlInput = container.querySelector( 'input[name="after_success_url"]' );
-				const afterSuccessBehaviorInput = container.querySelector(
-					'input[name="after_success_behavior"]'
-				);
+		if ( iframe.contentDocument ) {
+			const container = iframe.contentDocument.querySelector( `#${ IFRAME_CONTAINER_ID }` );
 
-				if ( afterSuccessUrlInput && afterSuccessBehaviorInput ) {
-					const afterSuccessUrl = afterSuccessUrlInput.getAttribute( 'value' );
-					const afterSuccessBehavior = afterSuccessBehaviorInput.getAttribute( 'value' );
+			if ( container.checkoutComplete ) {
+				const handleCheckoutComplete = () => {
+					const afterSuccessUrlInput = container.querySelector( 'input[name="after_success_url"]' );
+					const afterSuccessBehaviorInput = container.querySelector(
+						'input[name="after_success_behavior"]'
+					);
 
-					if ( 'custom' === afterSuccessBehavior ) {
-						window.location.href = afterSuccessUrl;
-					} else if ( 'referrer' === afterSuccessBehavior ) {
-						window.history.back();
+					if ( afterSuccessUrlInput && afterSuccessBehaviorInput ) {
+						const afterSuccessUrl = afterSuccessUrlInput.getAttribute( 'value' );
+						const afterSuccessBehavior = afterSuccessBehaviorInput.getAttribute( 'value' );
+
+						if ( 'custom' === afterSuccessBehavior ) {
+							window.location.href = afterSuccessUrl;
+						} else if ( 'referrer' === afterSuccessBehavior ) {
+							window.history.back();
+						}
 					}
+				};
+				if ( window?.newspackReaderActivation?.openNewslettersSignupModal ) {
+					window.newspackReaderActivation.openNewslettersSignupModal( {
+						callback: handleCheckoutComplete,
+					} );
+				} else {
+					handleCheckoutComplete();
 				}
-			};
-			if ( window?.newspackReaderActivation?.openNewslettersSignupModal ) {
-				window.newspackReaderActivation.openNewslettersSignupModal( {
-					callback: handleCheckoutComplete,
-				} );
-			} else {
-				handleCheckoutComplete();
 			}
 		}
 	};
