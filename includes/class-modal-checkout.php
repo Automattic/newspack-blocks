@@ -746,6 +746,7 @@ final class Modal_Checkout {
 		 * at the Checkout Button Block level.
 		 */
 		$billing_fields = apply_filters( 'newspack_blocks_donate_billing_fields_keys', [] );
+
 		if ( empty( $billing_fields ) ) {
 			return $fields;
 		}
@@ -760,7 +761,9 @@ final class Modal_Checkout {
 		/**
 		 * Add the form-row-last CSS class to billing phone field.
 		 */
-		$fields['billing']['billing_phone']['class'] = 'form-row-last';
+		if ( in_array( 'billing_phone', $billing_fields, true ) ) {
+			$fields['billing']['billing_phone']['class'] = 'form-row-last';
+		}
 
 		return $fields;
 	}
