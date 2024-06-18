@@ -9,6 +9,8 @@ defined( 'ABSPATH' ) || exit;
 
 require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/donate/frontend/class-newspack-blocks-donate-renderer-base.php';
 
+use Newspack_Blocks\Modal_Checkout;
+
 /**
  * Renders the tiers-based Donate block.
  */
@@ -33,12 +35,11 @@ class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate
 	 * @param bool   $is_any_recommended Is any option recommended.
 	 */
 	private static function render_single_tier( $attributes, $index, $amount, $selected_frequency, $is_any_recommended ) {
-		$configuration = self::get_configuration( $attributes );
-
-		$has_recommend_label = isset( $attributes['tiersBasedOptions'][ $index ]['recommendLabel'] ) && ! empty( $attributes['tiersBasedOptions'][ $index ]['recommendLabel'] );
-		$has_description     = isset( $attributes['tiersBasedOptions'][ $index ]['description'] ) && ! empty( $attributes['tiersBasedOptions'][ $index ]['description'] );
-		$is_reverse_style    = ! $has_recommend_label && $is_any_recommended;
-		$button_style_attr   = 'style="' . self::get_button_style( $attributes, $is_reverse_style ) . '"';
+		$configuration         = self::get_configuration( $attributes );
+		$has_recommend_label   = isset( $attributes['tiersBasedOptions'][ $index ]['recommendLabel'] ) && ! empty( $attributes['tiersBasedOptions'][ $index ]['recommendLabel'] );
+		$has_description       = isset( $attributes['tiersBasedOptions'][ $index ]['description'] ) && ! empty( $attributes['tiersBasedOptions'][ $index ]['description'] );
+		$is_reverse_style      = ! $has_recommend_label && $is_any_recommended;
+		$button_style_attr     = 'style="' . self::get_button_style( $attributes, $is_reverse_style ) . '"';
 
 		ob_start();
 		?>
@@ -56,11 +57,26 @@ class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate
 			<div class="wpbnbd__tiers__amount">
 				<span>
 					<?php foreach ( $configuration['frequencies'] as $frequency_slug => $frequency_name ) : ?>
+						<?php
+							$amount                = $configuration['amounts'][ $frequency_slug ][ $index ];
+							$product_price_summary = Modal_Checkout::get_summary_card_price_string(
+								__( 'Donate', 'newspack-blocks' ),
+								$amount,
+								$frequency_slug
+							);
+							$product_data = wp_json_encode(
+								[
+									'donation_price_summary_' . $frequency_slug => $product_price_summary,
+								]
+							);
+						?>
 						<span
 							style="<?php echo $frequency_slug === $selected_frequency ? '' : 'display:none;'; ?>"
+							class="donation-tier__<?php echo esc_attr( $frequency_slug ); ?>"
 							data-frequency-slug="<?php echo esc_attr( $frequency_slug ); ?>"
 							data-amount="<?php echo esc_attr( $configuration['amounts'][ $frequency_slug ][ $index ] ); ?>"
 							data-tier-index="<?php echo esc_attr( $index ); ?>"
+							data-product="<?php echo esc_attr( $product_data ); ?>"
 						>
 							<?php echo wp_kses_post( Newspack_Blocks::get_formatted_amount( $configuration['amounts'][ $frequency_slug ][ $index ], $frequency_slug ) ); ?>
 						</span>
