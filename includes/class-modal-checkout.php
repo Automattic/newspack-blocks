@@ -466,9 +466,11 @@ final class Modal_Checkout {
 										'variation_id' => $variation_id,
 									];
 
-									// Remove colon for nyp variations.
+									// Replace nyp price html for variations.
 									if ( class_exists( '\WC_Name_Your_Price_Helpers' ) && \WC_Name_Your_Price_Helpers::is_nyp( $variation->get_id() ) ) {
-										$price = str_replace( ':', '', $price );
+										$price_html = str_replace( ':', '', $price_html );
+										$price_html = str_replace( '<span class="suggested-text">', '<span class="suggested-text"><span class="suggested-prefix">', $price_html );
+										$price_html = str_replace( '<span class="woocommerce-Price-amount amount">', '</span><span class="woocommerce-Price-amount amount">', $price_html );
 									}
 									?>
 									<li class="newspack-blocks__options__item"">
