@@ -14,7 +14,7 @@
 		"html-entities": "^2.5.2",
 		"identity-obj-proxy": "^3.0.0",
 		"lint-staged": "^15.2.7",
-		"newspack-scripts": "~/Repositories/newspack-scripts",
+		"newspack-scripts": "^5.6.0-alpha.2",
 		"postcss-scss": "^4.0.9"
 	},
 	"description": "=== Newspack Blocks === Contributors: (this should be a list of wordpress.org userid's) Donate link: https://example.com/ Tags: comments, spam Requires at least: 4.5 Tested up to: 5.1.1 Stable tag: 0.1.0 License: GPLv2 or later License URI: https://www.gnu.org/licenses/gpl-2.0.html",
@@ -28,7 +28,7 @@
 	},
 	"scripts": {
 		"cm": "newspack-scripts commit",
-		"semantic-release": "newspack-scripts semantic-release",
+		"semantic-release": "newspack-scripts release --files=newspack-blocks.php",
 		"build": "newspack-scripts wp-scripts build",
 		"start": "npm ci && newspack-scripts watch",
 		"watch": "newspack-scripts wp-scripts start",
