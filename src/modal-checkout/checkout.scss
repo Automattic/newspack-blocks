@@ -1,11 +1,11 @@
-@use '../shared/sass/colors';
+@use "../shared/sass/colors";
 
 // stylelint-disable-next-line selector-id-pattern
 #newspack_modal_checkout_container {
-	padding: var( --newspack-ui-spacer-5, 24px );
+	padding: var(--newspack-ui-spacer-5, 24px);
 
 	form p {
-		margin: 0 0 var( --newspack-ui-spacer-5, 24px );
+		margin: 0 0 var(--newspack-ui-spacer-5, 24px);
 
 		&:last-child {
 			margin-bottom: 0;
@@ -28,13 +28,13 @@
 
 	// Required fields.
 	.woocommerce form .form-row .required {
-		color: var( --newspack-ui-color-error-50, colors.$color__error );
+		color: var(--newspack-ui-color-error-50, colors.$color__error);
 	}
 
 	// Billing & Shipping fields
 	// Make sure there's not a small orphan row
 	.woocommerce form {
-		.form-row-first:not( :has( + .form-row-last ) ),
+		.form-row-first:not(:has(+ .form-row-last)),
 		.form-row-last + .form-row-last,
 		.form-row-wide + .form-row-last {
 			clear: both;
@@ -45,20 +45,20 @@
 
 	.woocommerce-checkout {
 		h3 {
-			font-size: var( --newspack-ui-font-size-s, 16px );
-			line-height: var( --newspack-ui-line-height-s, 1.5 );
-			margin: 0 0 var( --newspack-ui-spacer-5, 24px );
+			font-size: var(--newspack-ui-font-size-s, 16px);
+			line-height: var(--newspack-ui-line-height-s, 1.5);
+			margin: 0 0 var(--newspack-ui-spacer-5, 24px);
 		}
 
 		.woocommerce-billing-fields h3 {
-			margin: 0 0 var( --newspack-ui-spacer-5, 24px );
+			margin: 0 0 var(--newspack-ui-spacer-5, 24px);
 		}
 
 		// After Customer Details
 		// stylelint-disable-next-line selector-id-pattern
 		#after_customer_details {
 			h3 {
-				margin-bottom: var( --newspack-ui-spacer-2, 12px );
+				margin-bottom: var(--newspack-ui-spacer-2, 12px);
 			}
 		}
 
@@ -68,8 +68,8 @@
 		.woocommerce-shipping-fields,
 		.woocommerce-additional-fields {
 			label {
-				font-size: var( --newspack-ui-font-size-s, 16px );
-				line-height: var( --newspack-ui-line-height-s, 1.5 );
+				font-size: var(--newspack-ui-font-size-s, 16px);
+				line-height: var(--newspack-ui-line-height-s, 1.5);
 			}
 
 		}
@@ -78,17 +78,17 @@
 	// Override billing details spacing.
 	// stylelint-disable-next-line selector-id-pattern
 	#checkout_details {
-		margin-bottom: var( --newspack-ui-spacer-5, 24px );
+		margin-bottom: var(--newspack-ui-spacer-5, 24px);
 
 		h3 {
-			margin: 0 0 var( --newspack-ui-spacer-base, 8px );
+			margin: 0 0 var(--newspack-ui-spacer-base, 8px);
 		}
 	}
 
 	.billing-details,
 	.shipping-details {
-		&:not(:last-child ) {
-			margin-bottom: var( --newspack-ui-spacer-5, 24px );
+		&:not(:last-child) {
+			margin-bottom: var(--newspack-ui-spacer-5, 24px);
 		}
 
 		p {
@@ -107,7 +107,7 @@
 	}
 
 	.shipping_address {
-		margin-top: var( --newspack-ui-spacer-5, 24px );
+		margin-top: var(--newspack-ui-spacer-5, 24px);
 	}
 
 
@@ -144,12 +144,12 @@
 
 	// Name Your Price styles
 	.name-your-price {
-		margin-bottom: var( --newspack-ui-spacer-5, 24px );
+		margin-bottom: var(--newspack-ui-spacer-5, 24px);
 	}
 
 	.modal_checkout_nyp {
 		h3 {
-			color: var( --newspack-ui-label-color, inherit );
+			color: var(--newspack-ui-label-color, inherit);
 			margin-bottom: var(--newspack-ui-spacer-base, 8px);
 		}
 
@@ -186,17 +186,17 @@
 
 	// Coupon Styles
 	.woocommerce-form-coupon {
-		margin-bottom: var( --newspack-ui-spacer-5, 24px );
+		margin-bottom: var(--newspack-ui-spacer-5, 24px);
 
 		h3 {
-			color: var( --newspack-ui-label-color, inherit );
-			margin-bottom: var( --newspack-ui-spacer-base, 8px );
+			color: var(--newspack-ui-label-color, inherit);
+			margin-bottom: var(--newspack-ui-spacer-base, 8px);
 		}
 
 		p:first-of-type {
 			align-items: center;
 			display: flex;
-			gap: var( --newspack-ui-spacer-base, colors.$newspack-ui-color-neutral-90 );
+			gap: var(--newspack-ui-spacer-base, colors.$newspack-ui-color-neutral-90);
 
 			input,
 			button {
@@ -204,7 +204,7 @@
 			}
 
 			+ .newspack-ui__helper-text {
-				margin-top: calc( var( --newspack-ui-spacer-3, 16px ) * -1 );
+				margin-top: calc(var(--newspack-ui-spacer-3, 16px) * -1);
 			}
 		}
 	}
@@ -228,22 +228,22 @@
 	// Override checkout payment method box.
 
 	.wc_payment_methods {
-		margin: 0 0 var( --newspack-ui-spacer-5, 24px );
+		margin: 0 0 var(--newspack-ui-spacer-5, 24px);
 
 		label[for="payment_method_stripe"] {
 			&.newspack-ui__input-card {
-				padding: var( --newspack-ui-spacer-3, 16px ) !important;
+				padding: var(--newspack-ui-spacer-3, 16px) !important;
 			}
 		}
 	}
 
 	.wc_payment_method {
 		+ .wc_payment_method {
-			margin-top: var( --newspack-ui-spacer-2, 12px );
+			margin-top: var(--newspack-ui-spacer-2, 12px);
 		}
 
 		span {
-			font-weight: var( --newspack-ui-font-weight-strong, 600 );
+			font-weight: var(--newspack-ui-font-weight-strong, 600);
 		}
 
 		> label:first-of-type {
@@ -256,31 +256,31 @@
 			padding: 0;
 
 			p {
-				color: var( --newspack-ui-color-neutral-60, colors.$newspack-ui-color-neutral-60 );
-				font-size: var( --newspack-ui-font-size-xs, 14px );
-				line-height: var( --newspack-ui-line-height-xs, 1.4286 );
+				color: var(--newspack-ui-color-neutral-60, colors.$newspack-ui-color-neutral-60);
+				font-size: var(--newspack-ui-font-size-xs, 14px);
+				line-height: var(--newspack-ui-line-height-xs, 1.4286);
 			}
 
 			ul.wc-saved-payment-methods {
 				padding: 0;
 
 				li {
-					margin-bottom: var( --newspack-ui-spacer-3, 16px );
+					margin-bottom: var(--newspack-ui-spacer-3, 16px);
 
 					label {
-						font-size: var( --newspack-ui-font-size-xs, 14px );
+						font-size: var(--newspack-ui-font-size-xs, 14px);
 						font-weight: normal;
-						line-height: var( --newspack-ui-line-height-xs, 1.4286 );
+						line-height: var(--newspack-ui-line-height-xs, 1.4286);
 					}
 
 					input {
-						margin-right: var( --newspack-ui-spacer-base, 8px );
+						margin-right: var(--newspack-ui-spacer-base, 8px);
 					}
 				}
 			}
 
 			fieldset {
-				margin: 0 0 var( --newspack-ui-spacer-2, 12px );
+				margin: 0 0 var(--newspack-ui-spacer-2, 12px);
 				padding: 0 !important; // To override inline styles.
 
 				&:last-child {
@@ -288,13 +288,13 @@
 				}
 
 				p {
-					font-size: var(--newspack-ui-font-size-xs, 14px );
-					line-height: var( --newspack-ui-line-height-xs, 1.4286 );
+					font-size: var(--newspack-ui-font-size-xs, 14px);
+					line-height: var(--newspack-ui-line-height-xs, 1.4286);
 					margin-bottom: 0;
 
 					&.form-row {
 						display: flex;
-						gap: var( --newspack-ui-spacer-2, 12px );
+						gap: var(--newspack-ui-spacer-2, 12px);
 						align-items: flex-start;
 
 						input {
@@ -312,8 +312,8 @@
 			.newspack-cover-fees,
 			.woocommerce-SavedPaymentMethods-saveNew {
 				label {
-					font-size: var( --newspack-ui-font-size-xs, 14px );
-					line-height: var( --newspack-ui-line-height-xs, 1.4286 );
+					font-size: var(--newspack-ui-font-size-xs, 14px);
+					line-height: var(--newspack-ui-line-height-xs, 1.4286);
 				}
 
 				&::before {
@@ -348,35 +348,35 @@
 	// Stripe inputs
 	.wc-credit-card-form {
 		.form-row-wide {
-			margin-bottom: var( --newspack-ui-spacer-base, 8px );
+			margin-bottom: var(--newspack-ui-spacer-base, 8px);
 		}
 		.wc-stripe-elements-field,
 		.wc-stripe-iban-element-field {
-			border: 1px solid var( --newspack-ui-color-input-border, colors.$newspack-ui-color-neutral-30 );
-			border-radius: var( --newspack-ui-border-radius-m, 6px );
+			border: 1px solid var(--newspack-ui-color-input-border, colors.$newspack-ui-color-neutral-30);
+			border-radius: var(--newspack-ui-border-radius-m, 6px);
 			display: block;
-			font-family: var( --newspack-ui-font-family, system-ui );
-			font-size: var( --newspack-ui-font-size-s, 16px );
-			line-height: var( --newspack-ui-line-height-s, 1.5 );
-			padding: calc( var( --newspack-ui-spacer-2, 12px ) - 1px ) calc( var( --newspack-ui-spacer-3, 16px ) - 1px );
+			font-family: var(--newspack-ui-font-family, system-ui);
+			font-size: var(--newspack-ui-font-size-s, 16px);
+			line-height: var(--newspack-ui-line-height-s, 1.5);
+			padding: calc(var(--newspack-ui-spacer-2, 12px) - 1px) calc(var(--newspack-ui-spacer-3, 16px) - 1px);
 		}
 
-		&:has( div.stripe-source-errors[role="alert"]:not( :empty ) ) {
+		&:has(div.stripe-source-errors[role="alert"]:not(:empty)) {
 			.wc-stripe-elements-field,
 			.wc-stripe-iban-element-field {
-				border-color: var( --newspack-ui-color-error-50, colors.$color__error );
+				border-color: var(--newspack-ui-color-error-50, colors.$color__error);
 			}
 
 			label {
-				color: var( --newspack-ui-color-error-50, colors.$color__error );
+				color: var(--newspack-ui-color-error-50, colors.$color__error);
 			}
 
 			.woocommerce_error {
 				background: transparent;
-				color: var( --newspack-ui-color-error-50, colors.$color__error );
-				font-family: var( --newspack-ui-font-family, system-ui );
-				font-size: var( --newspack-ui-font-size-xs, 14px );
-				line-height: var( --newspack-ui-line-height-xs, 1.4286 );
+				color: var(--newspack-ui-color-error-50, colors.$color__error);
+				font-family: var(--newspack-ui-font-family, system-ui);
+				font-size: var(--newspack-ui-font-size-xs, 14px);
+				line-height: var(--newspack-ui-line-height-xs, 1.4286);
 				padding: 0;
 			}
 		}
@@ -385,7 +385,7 @@
 	// Woo Payments inputs
 	#wcpay-upe-element,
 	.wcpay-upe-element {
-		margin: var( --newspack-ui-spacer-3, 16px ) 0;
+		margin: var(--newspack-ui-spacer-3, 16px) 0;
 		padding: 0;
 	}
 
@@ -395,8 +395,8 @@
 		td,
 		label,
 		small {
-			font-size: var( --newspack-ui-font-size-xs, 14px ) !important;
-			line-height: var( --newspack-ui-line-height-xs, 1.4286 ) !important;
+			font-size: var(--newspack-ui-font-size-xs, 14px) !important;
+			line-height: var(--newspack-ui-line-height-xs, 1.4286) !important;
 		}
 
 		thead th,
@@ -414,13 +414,13 @@
 	}
 
 	.woocommerce .first-payment-date {
-		font-family: var( --newspack-ui-font-family, system-ui );
+		font-family: var(--newspack-ui-font-family, system-ui);
 	}
 
 	// Override checkout form terms and condition text.
 	.woocommerce-terms-and-conditions-wrapper {
-		font-size: var( --newspack-ui-font-size-xs, 14px );
-		line-height: var( --newspack-ui-line-height-xs, 1.4286 );
+		font-size: var(--newspack-ui-font-size-xs, 14px);
+		line-height: var(--newspack-ui-line-height-xs, 1.4286);
 		margin-bottom: 0;
 	}
 
@@ -429,21 +429,21 @@
 		input,
 		textarea,
 		.select2-container--default .select2-selection--single {
-			border-color: var( --newspack-ui-color-error-50, colors.$color__error );
+			border-color: var(--newspack-ui-color-error-50, colors.$color__error);
 
 			&:focus {
-				outline-color: var( --newspack-ui-color-error-50, colors.$color__error );
+				outline-color: var(--newspack-ui-color-error-50, colors.$color__error);
 			}
 		}
 
 		label {
-			color: var( --newspack-ui-color-error-50, colors.$color__error );
+			color: var(--newspack-ui-color-error-50, colors.$color__error);
 		}
 	}
 
 	// Privacy Policy
 	.woocommerce-privacy-policy-text {
-		color: var( --newspack-ui-color-neutral-60, colors.$newspack-ui-color-neutral-60 );
+		color: var(--newspack-ui-color-neutral-60, colors.$newspack-ui-color-neutral-60);
 	}
 
 	// Buttons - adjust spacing
