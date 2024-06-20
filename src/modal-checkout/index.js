@@ -45,7 +45,7 @@ domReady(
 		} else {
 			$( document.body ).on( 'init_checkout', function () {
 				let originalFormHandlers = [];
-				let isEditingDetails = false;
+				let isModalPagination = true;
 
 				const $form = $( 'form.checkout' );
 
@@ -229,6 +229,21 @@ domReady(
 					container.dispatchEvent( readyEvent );
 				}
 
+				function triggerTest() {
+					const data = {
+						action: 'this_is_a_test',
+					};
+					// Ajax request.
+					$.ajax( {
+						type: 'POST',
+						url: newspackBlocksModalCheckout.ajax_url,
+						data,
+						success: () => {
+							isModalPagination = false;
+						},
+					} );
+				}
+
 				/**
 				 * Handle coupon form submit.
 				 *
@@ -349,7 +364,6 @@ domReady(
 				 * @param {Event} ev
 				 */
 				function handleFormSubmit( ev ) {
-					isEditingDetails = true;
 					ev.preventDefault();
 					validateForm();
 				}
@@ -400,9 +414,9 @@ domReady(
 						originalFormHandlers.forEach( handler => {
 							$form.on( 'submit', handler.handler );
 						} );
-						isEditingDetails = false;
 					}
-					$form.triggerHandler( 'editing_details', [ isEditingDetails ] );
+
+					$form.triggerHandler( 'editing_details' );
 				}
 
 				/**
@@ -543,12 +557,13 @@ domReady(
 					serializedForm.push( { name: 'woocommerce_checkout_update_totals', value: '1' } );
 
 					// Only fire this when Continue button is triggered, not when modal is initially loaded.
-					if ( isEditingDetails ) {
-						serializedForm.push( {
-							name: 'newspack_modal_checkout_submit_billing_details',
-							value: '1',
-						} );
-					}
+					// if ( isEditingDetails ) {
+					// 	serializedForm.push( {
+					// 		name: 'newspack_modal_checkout_submit_billing_details',
+					// 		value: '1',
+					// 	} );
+					// }
+
 					// Ajax request.
 					$.ajax( {
 						type: 'POST',
@@ -581,6 +596,10 @@ domReady(
 							// 'messages' in the response to see if it was successful.
 							const success = ! result.messages;
 							if ( success ) {
+								if ( isModalPagination ) {
+									triggerTest();
+								}
+
 								setEditingDetails( false );
 							} else if ( ! silent ) {
 								if ( result.messages ) {

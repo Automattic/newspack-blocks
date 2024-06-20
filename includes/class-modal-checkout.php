@@ -66,6 +66,8 @@ final class Modal_Checkout {
 		add_action( 'option_woocommerce_default_customer_address', [ __CLASS__, 'ensure_base_default_customer_address' ] );
 		add_action( 'default_option_woocommerce_default_customer_address', [ __CLASS__, 'ensure_base_default_customer_address' ] );
 		add_action( 'wp_ajax_process_name_your_price_request', [ __CLASS__, 'process_name_your_price_request' ] );
+		add_action( 'wp_ajax_this_is_a_test', [ __CLASS__, 'this_is_a_test' ] );
+		add_action( 'wp_ajax_nopriv_this_is_a_test', [ __CLASS__, 'this_is_a_test' ] );
 
 		/** Custom handling for registered users. */
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
@@ -548,6 +550,7 @@ final class Modal_Checkout {
 			'newspack-blocks-modal',
 			'newspackBlocksModal',
 			[
+				'ajax_url'              => admin_url( 'admin-ajax.php' ),
 				'newspack_class_prefix' => self::get_class_prefix(),
 				'labels'                => [
 					'auth_modal_title'     => self::get_modal_checkout_labels( 'auth_modal_title' ),
@@ -1368,6 +1371,19 @@ final class Modal_Checkout {
 		}
 
 		return self::$modal_checkout_labels[ $key ] ?? '';
+	}
+
+	/**
+	 * This is a test.
+	 *
+	 * @return void
+	 */
+	public static function this_is_a_test() {
+		if ( ! defined( 'DOING_AJAX' ) ) {
+			return;
+		}
+
+		// TODO: Trigger data events hook (do_action).
 	}
 }
 Modal_Checkout::init();
