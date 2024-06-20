@@ -86,6 +86,9 @@ final class Modal_Checkout {
 		add_filter( 'googlesitekit_tagmanager_tag_blocked', [ __CLASS__, 'is_modal_checkout' ] );
 		add_filter( 'jetpack_active_modules', [ __CLASS__, 'jetpack_active_modules' ] );
 
+		// Continue button experiment.
+		add_filter( 'wp_loaded', [ __CLASS__, 'modal_pagination' ] );
+
 		/**
 		 * Ensure that options to limit the number of subscriptions per product are respected.
 		 * Note: This is normally called only for regular checkout pages and REST API requests,
@@ -100,6 +103,16 @@ final class Modal_Checkout {
 			add_filter( 'woocommerce_subscription_variation_is_purchasable', [ 'WCS_Limiter', 'is_purchasable_renewal' ], 12, 2 );
 			add_filter( 'woocommerce_valid_order_statuses_for_order_again', [ 'WCS_Limiter', 'filter_order_again_statuses_for_limited_subscriptions' ] );
 		}
+	}
+
+	/**
+	 * Continue button experiment.
+	 */
+	public static function modal_pagination() {
+		if ( empty( $_REQUEST['newspack_modal_checkout_submit_billing_details'] ) ) {
+			return;
+		}
+		error_log( '##############CONTINUE BUTTON CLICKED' );
 	}
 
 	/**

@@ -45,6 +45,7 @@ domReady(
 		} else {
 			$( document.body ).on( 'init_checkout', function () {
 				let originalFormHandlers = [];
+				let isEditingDetails = false;
 
 				const $form = $( 'form.checkout' );
 
@@ -357,7 +358,7 @@ domReady(
 				 *
 				 * @param {boolean} isEditingDetails
 				 */
-				function setEditingDetails( isEditingDetails ) {
+				function setEditingDetails( _isEditingDetails ) {
 					// Scroll to top.
 					window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
 					// Update checkout.
@@ -365,7 +366,7 @@ domReady(
 					clearNotices();
 					// Clear checkout details.
 					$( '#checkout_details' ).remove();
-					if ( isEditingDetails ) {
+					if ( _isEditingDetails ) {
 						if ( $coupon.length ) {
 							$coupon.hide();
 						}
@@ -382,6 +383,7 @@ domReady(
 							$form.off( 'submit', handler.handler );
 						} );
 						$form.on( 'submit', handleFormSubmit );
+						isEditingDetails = true;
 					} else {
 						if ( $coupon.length ) {
 							$coupon.show();
@@ -398,6 +400,7 @@ domReady(
 						originalFormHandlers.forEach( handler => {
 							$form.on( 'submit', handler.handler );
 						} );
+						isEditingDetails = false;
 					}
 					$form.triggerHandler( 'editing_details', [ isEditingDetails ] );
 				}
@@ -411,7 +414,6 @@ domReady(
 					$form.serializeArray().forEach( item => {
 						data[ item.name ] = item.value;
 					} );
-
 					const classname = `${ newspackBlocksModalCheckout.newspack_class_prefix }__font--xs`;
 					const html = [];
 					html.push( '<div class="billing-details">' );
@@ -499,7 +501,7 @@ domReady(
 					) {
 						if ( !! data.newspack_wcsg_is_gift && !! data.wcsg_gift_recipients_email ) {
 							html.push( '<div class="gift-details">' );
-							html.push( '<h2>' + newspackBlocksModalCheckout.labels.gift_recipient + '</h2>' );
+							html.push( '<h3>' + newspackBlocksModalCheckout.labels.gift_recipient + '</h3>' );
 							html.push( `<p class="${ classname }">` + data.wcsg_gift_recipients_email + '</p>' );
 						}
 					}
@@ -539,6 +541,12 @@ domReady(
 					const serializedForm = $form.serializeArray();
 					// Add 'update totals' parameter so it just performs validation.
 					serializedForm.push( { name: 'woocommerce_checkout_update_totals', value: '1' } );
+
+					// Only fire this when Continue button is triggered, not when modal is initially loaded.
+					if ( isEditingDetails ) {
+						serializedForm.push( { name: 'newspack_modal_checkout_submit_billing_details', value: '1' } );
+					}
+
 					// Ajax request.
 					$.ajax( {
 						type: 'POST',
