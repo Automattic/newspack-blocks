@@ -461,7 +461,7 @@ domReady(
 					// Shipping details.
 					if ( data.hasOwnProperty( 'shipping_address_1' ) ) {
 						html.push( '<div class="shipping-details">' );
-						html.push( '<h2>' + newspackBlocksModalCheckout.labels.shipping_details + '</h2>' );
+						html.push( '<h3>' + newspackBlocksModalCheckout.labels.shipping_details + '</h3>' );
 						let shippingAddress = '';
 						if ( ! data.ship_to_different_address ) {
 							shippingAddress = billingAddress;
