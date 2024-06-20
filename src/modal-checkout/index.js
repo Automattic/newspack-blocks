@@ -349,6 +349,7 @@ domReady(
 				 * @param {Event} ev
 				 */
 				function handleFormSubmit( ev ) {
+					isEditingDetails = true;
 					ev.preventDefault();
 					validateForm();
 				}
@@ -356,7 +357,7 @@ domReady(
 				/**
 				 * Set the checkout state as editing billing/shipping fields or not.
 				 *
-				 * @param {boolean} isEditingDetails
+				 * @param {boolean} _isEditingDetails
 				 */
 				function setEditingDetails( _isEditingDetails ) {
 					// Scroll to top.
@@ -383,7 +384,6 @@ domReady(
 							$form.off( 'submit', handler.handler );
 						} );
 						$form.on( 'submit', handleFormSubmit );
-						isEditingDetails = true;
 					} else {
 						if ( $coupon.length ) {
 							$coupon.show();
@@ -544,9 +544,11 @@ domReady(
 
 					// Only fire this when Continue button is triggered, not when modal is initially loaded.
 					if ( isEditingDetails ) {
-						serializedForm.push( { name: 'newspack_modal_checkout_submit_billing_details', value: '1' } );
+						serializedForm.push( {
+							name: 'newspack_modal_checkout_submit_billing_details',
+							value: '1',
+						} );
 					}
-
 					// Ajax request.
 					$.ajax( {
 						type: 'POST',
