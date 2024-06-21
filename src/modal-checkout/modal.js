@@ -15,6 +15,7 @@ const IFRAME_NAME = 'newspack_modal_checkout_iframe';
 const IFRAME_CONTAINER_ID = 'newspack_modal_checkout_container';
 const MODAL_CHECKOUT_ID = 'newspack_modal_checkout';
 const MODAL_CLASS_PREFIX = `${ CLASS_PREFIX }__modal`;
+const VARIATON_MODAL_CLASS_PREFIX = 'newspack-blocks__modal-variation';
 
 domReady( () => {
 	const modalCheckout = document.querySelector( `#${ MODAL_CHECKOUT_ID }` );
@@ -175,7 +176,7 @@ domReady( () => {
 						} );
 					}
 					const formData = new FormData( form );
-					const variationModals = document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-variation` );
+					const variationModals = document.querySelectorAll( `.${ VARIATON_MODAL_CLASS_PREFIX }` );
 					// Clear any open variation modal.
 					variationModals.forEach( variationModal => {
 						closeModal( variationModal );

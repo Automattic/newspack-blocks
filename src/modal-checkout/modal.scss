@@ -176,24 +176,28 @@
 						font-size: var( --newspack-ui-font-size-xs, 14px );
 						line-height: var( --newspack-ui-line-height-xs, 1.4286 );
 						padding: var( --newspack-ui-spacer-5, 24px ) var( --newspack-ui-spacer-2, 12px );
+						height: 100%;
 						position: relative;
 
 						.price {
-							// Scale up just the primary price for a product, not the other fees:
-							> .amount > bdi,
-							> ins > .amount > bdi {
-								display: block;
-								font-weight: 600;
-								font-size: var( --newspack-ui-font-size-xl, clamp( 1.375rem, 0.394rem + 2.008vw, 2rem ) );
-								line-height: var( --newspack-ui-line-height-xl, 1.375 );
-							}
-
-							del {
+							del,
+							.suggested-prefix {
 								color: var( --newspack-ui-color-neutral-60, colors.$newspack-ui-color-neutral-60 );
 								left: 0;
 								position: absolute;
 								top: calc( var( --newspack-ui-spacer-base, 8px ) * 0.75 );
 								width: 100%;
+							}
+
+							// Scale up just the primary price for a product, not the other fees:
+							> .amount > bdi,
+							> ins > .amount > bdi,
+							> .suggested-text > .amount > bdi {
+								color: initial;
+								display: block;
+								font-weight: 600;
+								font-size: var( --newspack-ui-font-size-xl, clamp( 1.375rem, 0.394rem + 2.008vw, 2rem ) );
+								line-height: var( --newspack-ui-line-height-xl, 1.375 );
 							}
 						}
 					}
