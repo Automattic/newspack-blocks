@@ -34,8 +34,6 @@ domReady(
 			).remove();
 		}
 
-		console.log( newspackBlocksModalCheckout );
-
 		if ( newspackBlocksModalCheckout.is_checkout_complete ) {
 			/**
 			 * Set the checkout as complete so the modal can resolve post checkout flows.
@@ -239,8 +237,6 @@ domReady(
 						action: 'modal_continue_clicked',
 						_ajax_nonce: newspackBlocksModalCheckout.continue_nonce,
 					};
-
-					console.log( data );
 
 					// Ajax request.
 					$.ajax( {
