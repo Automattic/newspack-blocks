@@ -417,6 +417,7 @@ final class Modal_Checkout {
 			if ( ! $product->is_type( 'variable' ) ) {
 				continue;
 			}
+			$product_name = $product->get_name();
 			?>
 			<div
 				class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal-container newspack-blocks__modal-variation" ); ?>"
@@ -434,22 +435,54 @@ final class Modal_Checkout {
 						</button>
 					</header>
 					<section class="<?php echo esc_attr( "{$class_prefix}__modal__content" ); ?>">
-						<div class="newspack-blocks__selection" data-product-id="<?php echo esc_attr( $product_id ); ?>">
-							<h3><?php echo esc_html( $product->get_name() ); ?></h3>
+						<div class="<?php echo esc_attr( "{$class_prefix}__selection" ); ?>" data-product-id="<?php echo esc_attr( $product_id ); ?>">
+							<h3><?php echo esc_html( $product_name ); ?></h3>
 							<p><?php esc_html_e( 'Select an option to continue:', 'newspack-blocks' ); ?></p>
 							<ul class="newspack-blocks__options"">
 								<?php
 								$variations = $product->get_available_variations( 'objects' );
 								foreach ( $variations as $variation ) :
-									$name  = wc_get_formatted_variation( $variation, true );
-									$price = $variation->get_price_html();
+									$variation_id   = $variation->get_id();
+									$variation_name = wc_get_formatted_variation( $variation, true );
+									$price          = $variation->get_price();
+									$price_html     = $variation->get_price_html();
+									$frequency      = '';
+
+									// Use suggested price if NYP is active and set for variation.
+									if ( \Newspack_Blocks::can_use_name_your_price() && \WC_Name_Your_Price_Helpers::is_nyp( $variation_id ) ) {
+										$price = \WC_Name_Your_Price_Helpers::get_suggested_price( $variation_id );
+									}
+
+									if ( class_exists( '\WC_Subscriptions_Product' ) && \WC_Subscriptions_Product::is_subscription( $variation ) ) {
+										$frequency = \WC_Subscriptions_Product::get_period( $variation );
+									}
+
+									$name = sprintf(
+										/* translators: 1: variable product name, 2: product variation name */
+										__( '%1$s - %2$s', 'newspack-blocks' ),
+										$product_name,
+										$variation_name
+									);
+									$product_price_summary = self::get_summary_card_price_string( $name, $price, $frequency );
+									$product_data          = [
+										'product_price_summary' => $product_price_summary,
+										'product_id'   => $product_id,
+										'variation_id' => $variation_id,
+									];
+
+									// Replace nyp price html for variations.
+									if ( class_exists( '\WC_Name_Your_Price_Helpers' ) && \WC_Name_Your_Price_Helpers::is_nyp( $variation->get_id() ) ) {
+										$price_html = str_replace( ':', '', $price_html );
+										$price_html = str_replace( '<span class="suggested-text">', '<span class="suggested-text"><span class="suggested-prefix">', $price_html );
+										$price_html = str_replace( '<span class="woocommerce-Price-amount amount">', '</span><span class="woocommerce-Price-amount amount">', $price_html );
+									}
 									?>
 									<li class="newspack-blocks__options__item"">
 										<div class="summary">
-											<span class="price"><?php echo $price; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+											<span class="price"><?php echo $price_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 										</div>
-										<div class="variation"><?php echo esc_html( $name ); ?></div>
-										<form>
+										<div class="variation"><?php echo esc_html( $variation_name ); ?></div>
+										<form data-product="<?php echo esc_attr( wp_json_encode( $product_data ) ); ?>">
 											<input type="hidden" name="newspack_checkout" value="1" />
 											<input type="hidden" name="product_id" value="<?php echo esc_attr( $variation->get_id() ); ?>" />
 											<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--primary" ); ?>"><?php echo esc_html( self::get_modal_checkout_labels( 'checkout_confirm_variation' ) ); ?></button>
@@ -760,6 +793,12 @@ final class Modal_Checkout {
 			}
 			unset( $fields['billing'][ $key ] );
 		}
+
+		/**
+		 * Add the form-row-last CSS class to billing phone field.
+		 */
+		$fields['billing']['billing_phone']['class'] = 'form-row-last';
+
 		return $fields;
 	}
 
@@ -1356,6 +1395,39 @@ final class Modal_Checkout {
 		}
 
 		return self::$modal_checkout_labels[ $key ] ?? '';
+	}
+
+
+	/**
+	 * Get price string for the price summary card to render in auth flow.
+	 *
+	 * @param string $name      The name.
+	 * @param string $price     The price. Optional. If not provided, the price string will contain 0.
+	 * @param string $frequency The frequency. Optional. If not provided, the price will be treated as a one-time payment.
+	 */
+	public static function get_summary_card_price_string( $name, $price = '', $frequency = '' ) {
+		if ( ! $price ) {
+			$price = '0';
+		}
+
+		if ( function_exists( 'wcs_price_string' ) && function_exists( 'wc_price' ) ) {
+			if ( $frequency && $frequency !== 'once' ) {
+				$price = wp_strip_all_tags(
+					wcs_price_string(
+						[
+							'recurring_amount'    => $price,
+							'subscription_period' => $frequency,
+							'use_per_slash'       => true,
+						]
+					)
+				);
+			} else {
+				$price = wp_strip_all_tags( wc_price( $price ) );
+			}
+		}
+
+		// translators: 1 is the name of the item. 2 is the price of the item.
+		return sprintf( __( '%1$s: %2$s', 'newspack-blocks' ), $name, $price );
 	}
 }
 Modal_Checkout::init();

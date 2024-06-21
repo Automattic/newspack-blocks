@@ -371,6 +371,9 @@ domReady(
 						if ( $coupon.length ) {
 							$coupon.hide();
 						}
+						if ( $nyp.length ) {
+							$nyp.hide();
+						}
 						$customer_details.show();
 						$after_customer_details.hide();
 						$place_order_button.attr( 'disabled', 'disabled' );
@@ -384,6 +387,9 @@ domReady(
 					} else {
 						if ( $coupon.length ) {
 							$coupon.show();
+						}
+						if ( $nyp.length ) {
+							$nyp.show();
 						}
 						$customer_details.hide();
 						$after_customer_details.show();
@@ -457,7 +463,7 @@ domReady(
 					// Shipping details.
 					if ( data.hasOwnProperty( 'shipping_address_1' ) ) {
 						html.push( '<div class="shipping-details">' );
-						html.push( '<h2>' + newspackBlocksModalCheckout.labels.shipping_details + '</h2>' );
+						html.push( '<h3>' + newspackBlocksModalCheckout.labels.shipping_details + '</h3>' );
 						let shippingAddress = '';
 						if ( ! data.ship_to_different_address ) {
 							shippingAddress = billingAddress;

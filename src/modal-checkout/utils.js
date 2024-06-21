@@ -19,3 +19,24 @@ export function domReady( callback ) {
 	// DOMContentLoaded has not fired yet, delay callback until then.
 	document.addEventListener( 'DOMContentLoaded', callback );
 }
+
+/**
+ * Create a hidden input field.
+ *
+ * @param {string} name  The name of the input field.
+ * @param {string} value The value of the input field. Optional.
+ *
+ * @return {HTMLInputElement} The hidden input element.
+ */
+export function createHiddenInput( name, value = null ) {
+	const input = document.createElement( 'input' );
+	input.type = 'hidden';
+	input.name = name;
+
+	// Set the value if provided.
+	if ( value ) {
+		input.value = value;
+	}
+
+	return input;
+}
