@@ -34,6 +34,8 @@ domReady(
 			).remove();
 		}
 
+		console.log( newspackBlocksModalCheckout );
+
 		if ( newspackBlocksModalCheckout.is_checkout_complete ) {
 			/**
 			 * Set the checkout as complete so the modal can resolve post checkout flows.
@@ -229,10 +231,17 @@ domReady(
 					container.dispatchEvent( readyEvent );
 				}
 
-				function triggerTest() {
+				/**
+				 * Fire when 'Continue' button is clicked in modal checkout.
+				 */
+				function modalContinue() {
 					const data = {
-						action: 'this_is_a_test',
+						action: 'modal_continue_clicked',
+						_ajax_nonce: newspackBlocksModalCheckout.continue_nonce,
 					};
+
+					console.log( data );
+
 					// Ajax request.
 					$.ajax( {
 						type: 'POST',
@@ -371,9 +380,9 @@ domReady(
 				/**
 				 * Set the checkout state as editing billing/shipping fields or not.
 				 *
-				 * @param {boolean} _isEditingDetails
+				 * @param {boolean} isEditingDetails
 				 */
-				function setEditingDetails( _isEditingDetails ) {
+				function setEditingDetails( isEditingDetails ) {
 					// Scroll to top.
 					window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
 					// Update checkout.
@@ -381,7 +390,7 @@ domReady(
 					clearNotices();
 					// Clear checkout details.
 					$( '#checkout_details' ).remove();
-					if ( _isEditingDetails ) {
+					if ( isEditingDetails ) {
 						if ( $coupon.length ) {
 							$coupon.hide();
 						}
@@ -556,14 +565,6 @@ domReady(
 					// Add 'update totals' parameter so it just performs validation.
 					serializedForm.push( { name: 'woocommerce_checkout_update_totals', value: '1' } );
 
-					// Only fire this when Continue button is triggered, not when modal is initially loaded.
-					// if ( isEditingDetails ) {
-					// 	serializedForm.push( {
-					// 		name: 'newspack_modal_checkout_submit_billing_details',
-					// 		value: '1',
-					// 	} );
-					// }
-
 					// Ajax request.
 					$.ajax( {
 						type: 'POST',
@@ -597,9 +598,8 @@ domReady(
 							const success = ! result.messages;
 							if ( success ) {
 								if ( isModalPagination ) {
-									triggerTest();
+									modalContinue();
 								}
-
 								setEditingDetails( false );
 							} else if ( ! silent ) {
 								if ( result.messages ) {

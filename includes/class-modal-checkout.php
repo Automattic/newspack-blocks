@@ -66,8 +66,8 @@ final class Modal_Checkout {
 		add_action( 'option_woocommerce_default_customer_address', [ __CLASS__, 'ensure_base_default_customer_address' ] );
 		add_action( 'default_option_woocommerce_default_customer_address', [ __CLASS__, 'ensure_base_default_customer_address' ] );
 		add_action( 'wp_ajax_process_name_your_price_request', [ __CLASS__, 'process_name_your_price_request' ] );
-		add_action( 'wp_ajax_this_is_a_test', [ __CLASS__, 'this_is_a_test' ] );
-		add_action( 'wp_ajax_nopriv_this_is_a_test', [ __CLASS__, 'this_is_a_test' ] );
+		add_action( 'wp_ajax_modal_continue_clicked', [ __CLASS__, 'modal_continue_clicked' ] );
+		add_action( 'wp_ajax_nopriv_modal_continue_clicked', [ __CLASS__, 'modal_continue_clicked' ] );
 
 		/** Custom handling for registered users. */
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
@@ -500,6 +500,7 @@ final class Modal_Checkout {
 			[
 				'ajax_url'              => admin_url( 'admin-ajax.php' ),
 				'nyp_nonce'             => wp_create_nonce( 'newspack_checkout_name_your_price' ),
+				'continue_nonce'        => wp_create_nonce( 'newspack_checkout_continue' ),
 				'newspack_class_prefix' => self::get_class_prefix(),
 				'is_checkout_complete'  => function_exists( 'is_order_received_page' ) && is_order_received_page(),
 				'labels'                => [
@@ -1374,16 +1375,25 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * This is a test.
+	 * Details TK.
 	 *
 	 * @return void
 	 */
-	public static function this_is_a_test() {
+	public static function modal_continue_clicked() {
 		if ( ! defined( 'DOING_AJAX' ) ) {
 			return;
 		}
+		$metadata = [
+			'registration_method' => 'TK',
+			'current_modal_page'  => '2',
+			'currency'            => \get_woocommerce_currency(),
+		];
 
-		// TODO: Trigger data events hook (do_action).
+		/**
+		 * Action to fire for checkout button block modal.
+		 */
+		\do_action( 'newspack_blocks_modal_continue', $metadata );
+		\wp_die();
 	}
 }
 Modal_Checkout::init();
