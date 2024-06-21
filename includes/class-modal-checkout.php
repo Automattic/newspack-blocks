@@ -1383,10 +1383,9 @@ final class Modal_Checkout {
 		if ( ! defined( 'DOING_AJAX' ) ) {
 			return;
 		}
+
 		$metadata = [
-			'registration_method' => 'TK',
-			'current_modal_page'  => '2',
-			'currency'            => \get_woocommerce_currency(),
+			'current_modal_page' => '2',
 		];
 
 		/**
