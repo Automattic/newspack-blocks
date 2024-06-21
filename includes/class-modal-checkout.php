@@ -1387,8 +1387,9 @@ final class Modal_Checkout {
 			return;
 		}
 
+		// Data to send along with this action.
 		$metadata = [
-			'current_modal_page' => '2',
+			'modal_pagination' => '2',
 		];
 
 		/**
