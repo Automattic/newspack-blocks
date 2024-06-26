@@ -95,6 +95,8 @@ domReady( () => {
 			} else {
 				handleCheckoutComplete();
 			}
+			// Ensure we always reset the modal title once the modal closes.
+			setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
 		}
 	};
 
@@ -358,6 +360,9 @@ domReady( () => {
 			if ( container.checkoutComplete ) {
 				// Update the modal title to reflect successful transaction.
 				setModalTitle( newspackBlocksModal.labels.thankyou_modal_title );
+			} else {
+				// Revert modal title default value.
+				setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
 			}
 			if ( container.checkoutReady ) {
 				spinner.style.display = 'none';

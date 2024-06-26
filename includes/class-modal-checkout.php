@@ -574,8 +574,9 @@ final class Modal_Checkout {
 				'newspack_class_prefix' => self::get_class_prefix(),
 				'labels'                => [
 					'auth_modal_title'     => self::get_modal_checkout_labels( 'auth_modal_title' ),
-					'signin_modal_title'   => self::get_modal_checkout_labels( 'signin_modal_title' ),
+					'checkout_modal_title' => self::get_modal_checkout_labels( 'checkout_modal_title' ),
 					'register_modal_title' => self::get_modal_checkout_labels( 'register_modal_title' ),
+					'signin_modal_title'   => self::get_modal_checkout_labels( 'signin_modal_title' ),
 					'thankyou_modal_title' => self::get_modal_checkout_labels( 'checkout_success' ),
 				],
 			]
