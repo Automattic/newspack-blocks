@@ -95,7 +95,8 @@ domReady( () => {
 			} else {
 				handleCheckoutComplete();
 			}
-			// Ensure we always reset the modal title once the modal closes.
+			// Ensure we always reset the modal title and width once the modal closes.
+			setModalWidth();
 			setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
 		}
 	};
@@ -138,6 +139,24 @@ domReady( () => {
 		}
 
 		modalTitle.innerText = title;
+	};
+
+	/**
+	 * Sets the width of the modal.
+	 *
+	 * @param {string} size Options are 'small' or 'default'. Default is 'default'.
+	 */
+	const setModalWidth = ( size = 'default' ) => {
+		const modal = modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }` );
+		if ( ! modal ) {
+			return;
+		}
+
+		if ( size === 'small' ) {
+			modal.classList.add( `${ MODAL_CLASS_PREFIX }--small` );
+		} else {
+			modal.classList.remove( `${ MODAL_CLASS_PREFIX }--small` );
+		}
 	};
 
 	window.newspackCloseModalCheckout = closeCheckout;
@@ -363,10 +382,12 @@ domReady( () => {
 		if ( container ) {
 			iframeResizeObserver.observe( container );
 			if ( container.checkoutComplete ) {
-				// Update the modal title to reflect successful transaction.
+				// Update the modal title and width to reflect successful transaction.
+				setModalWidth( 'small' );
 				setModalTitle( newspackBlocksModal.labels.thankyou_modal_title );
 			} else {
-				// Revert modal title default value.
+				// Revert modal title and width default value.
+				setModalWidth();
 				setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
 			}
 			if ( container.checkoutReady ) {
@@ -374,13 +395,6 @@ domReady( () => {
 			} else {
 				container.addEventListener( 'checkout-ready', () => {
 					spinner.style.display = 'none';
-				} );
-
-				container.addEventListener( 'checkout-complete', () => {
-					const modalContainer = modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }` );
-					if ( modalContainer ) {
-						modalContainer.classList.add( `${ MODAL_CLASS_PREFIX }--small` );
-					}
 				} );
 			}
 		} else if ( 'about:blank' !== location.href ) {
