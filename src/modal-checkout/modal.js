@@ -25,8 +25,8 @@ domReady( () => {
 	}
 
 	const modalContent = modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }__content` );
-	const spinner = modalContent.querySelector( `.${ CLASS_PREFIX }__spinner` );
 	const modalCheckoutHiddenInput = createHiddenInput( 'modal_checkout', '1' );
+	const spinner = modalContent.querySelector( `.${ CLASS_PREFIX }__spinner` );
 
 	// Initialize empty iframe.
 	const iframe = document.createElement( 'iframe' );
@@ -300,9 +300,14 @@ domReady( () => {
 						// Initialize auth flow if reader is not authenticated.
 						window.newspackReaderActivation.openAuthModal( {
 							title: newspackBlocksModal.labels.auth_modal_title,
-							callback: () =>
+							callback: () => {
+								// Signal checkout registration.
+								form.appendChild(
+									createHiddenInput( newspackBlocksModal.checkout_registration_flag, '1' )
+								);
 								// form.submit does not trigger submit event listener, so we use requestSubmit.
-								form.requestSubmit( form.querySelector( 'button[type="submit"]' ) ),
+								form.requestSubmit( form.querySelector( 'button[type="submit"]' ) );
+							},
 							skipSuccess: true,
 							labels: {
 								signin: {

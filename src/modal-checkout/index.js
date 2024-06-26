@@ -330,6 +330,7 @@ domReady(
 							} else {
 								$nyp.find( 'input[name="price"]' ).focus();
 							}
+							$( document.body ).trigger( 'update_checkout' );
 						},
 						complete: () => {
 							input.attr( 'disabled', false );
