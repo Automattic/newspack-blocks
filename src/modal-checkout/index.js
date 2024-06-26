@@ -3,7 +3,6 @@
  * Style dependencies
  */
 import './checkout.scss';
-import * as a11y from './accessibilityTweaks.js';
 
 /**
  * Internal dependencies
@@ -227,7 +226,6 @@ domReady(
 					const container = document.querySelector( '#newspack_modal_checkout_container' );
 					container.checkoutReady = true;
 					container.dispatchEvent( readyEvent );
-					a11y.trapFocus( container );
 				}
 
 				/**

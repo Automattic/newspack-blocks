@@ -357,9 +357,9 @@ final class Modal_Checkout {
 						<span></span>
 					</div>
 				</section>
-				<?php // temp way to capture focus in the second screen. ?>
 				<?php
-					// echo '<span tabindex="0" id="last-element"></span>';
+					// Hacky way to help trap focus in the modal for accessibility, without involving the iframe.
+					echo '<span tabindex="0" id="newspack-a11y-last-element"></span>';
 				?>
 			</div>
 		</div>

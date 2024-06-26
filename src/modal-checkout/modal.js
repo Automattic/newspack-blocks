@@ -128,7 +128,7 @@ domReady( () => {
 	const openModal = el => {
 		el.setAttribute( 'data-state', 'open' );
 		document.body.style.overflow = 'hidden';
-		a11y.trapFocus( el );
+		a11y.trapFocus( el, true );
 	};
 
 	window.newspackCloseModalCheckout = closeCheckout;
@@ -182,6 +182,8 @@ domReady( () => {
 				form.appendChild( modalCheckoutHiddenInput.cloneNode() );
 				form.target = IFRAME_NAME;
 				form.addEventListener( 'submit', ev => {
+					modalTrigger = ev.submitter;
+
 					form.classList.add( 'processing' );
 
 					const productData = form.dataset.product;
@@ -231,6 +233,7 @@ domReady( () => {
 							ev.preventDefault();
 							form.classList.remove( 'processing' );
 							openModal( variationModal );
+							a11y.trapFocus( variationModal, false );
 							modalTrigger = ev.submitter;
 							return;
 						}
@@ -331,6 +334,7 @@ domReady( () => {
 								},
 							},
 							content,
+							trigger: ev.submitter,
 						} );
 					} else {
 						// Otherwise initialize checkout.
