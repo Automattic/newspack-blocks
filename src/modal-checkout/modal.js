@@ -375,6 +375,13 @@ domReady( () => {
 				container.addEventListener( 'checkout-ready', () => {
 					spinner.style.display = 'none';
 				} );
+
+				container.addEventListener( 'checkout-complete', () => {
+					const modalContainer = modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }` );
+					if ( modalContainer ) {
+						modalContainer.classList.add( `${ MODAL_CLASS_PREFIX }--small` );
+					}
+				} );
 			}
 		} else if ( 'about:blank' !== location.href ) {
 			// Make sure the iframe has actually loaded something, even if not the expected container.

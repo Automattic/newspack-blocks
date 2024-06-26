@@ -16,6 +16,7 @@ domReady(
 		}
 
 		const readyEvent = new CustomEvent( 'checkout-ready' );
+		const completeEvent = new CustomEvent( 'checkout-complete' );
 
 		function getEventHandlers( element, event ) {
 			const events = $._data( element, 'events' );
@@ -36,11 +37,19 @@ domReady(
 
 		if ( newspackBlocksModalCheckout.is_checkout_complete ) {
 			/**
+			 * Set the checkout as complete so the modal can resolve post checkout state.
+			 */
+			function setComplete() {
+				container.checkoutComplete = true;
+				container.dispatchEvent( completeEvent );
+			}
+
+			/**
 			 * Set the checkout as complete so the modal can resolve post checkout flows.
 			 */
 			const container = document.querySelector( '#newspack_modal_checkout_container' );
 			if ( container ) {
-				container.checkoutComplete = true;
+				setComplete();
 			}
 		} else {
 			$( document.body ).on( 'init_checkout', function () {
