@@ -576,6 +576,7 @@ final class Modal_Checkout {
 					'auth_modal_title'     => self::get_modal_checkout_labels( 'auth_modal_title' ),
 					'signin_modal_title'   => self::get_modal_checkout_labels( 'signin_modal_title' ),
 					'register_modal_title' => self::get_modal_checkout_labels( 'register_modal_title' ),
+					'thankyou_modal_title' => self::get_modal_checkout_labels( 'checkout_success' ),
 				],
 			]
 		);
@@ -1364,6 +1365,7 @@ final class Modal_Checkout {
 				'checkout_confirm'           => __( 'Complete transaction', 'newspack-blocks' ),
 				'checkout_confirm_variation' => __( 'Purchase', 'newspack-blocks' ),
 				'checkout_back'              => __( 'Back', 'newspack-blocks' ),
+				'checkout_success'           => __( 'Transaction successful', 'newspack-blocks' ),
 				'thankyou'                   => sprintf(
 					// Translators: %s is the site name.
 					__( 'Thank you for supporting %s. Your transaction was successful.', 'newspack-blocks' ),
