@@ -4,7 +4,7 @@
  * Style dependencies
  */
 import './modal.scss';
-import * as a11y from './accessibilityTweaks.js';
+import * as a11y from './accessibility.js';
 
 /**
  * Internal dependencies
@@ -118,6 +118,8 @@ domReady( () => {
 				closeCheckout();
 			}
 		} );
+
+		a11y.trapFocus( modalCheckout, iframe );
 	};
 
 	const closeModal = el => {
@@ -128,7 +130,6 @@ domReady( () => {
 	const openModal = el => {
 		el.setAttribute( 'data-state', 'open' );
 		document.body.style.overflow = 'hidden';
-		a11y.trapFocus( el, true );
 	};
 
 	window.newspackCloseModalCheckout = closeCheckout;
@@ -182,8 +183,6 @@ domReady( () => {
 				form.appendChild( modalCheckoutHiddenInput.cloneNode() );
 				form.target = IFRAME_NAME;
 				form.addEventListener( 'submit', ev => {
-					modalTrigger = ev.submitter;
-
 					form.classList.add( 'processing' );
 
 					const productData = form.dataset.product;
@@ -194,6 +193,12 @@ domReady( () => {
 						} );
 					}
 					const formData = new FormData( form );
+
+					// If we're not going from variation picker to checkout, set the modal trigger:
+					if ( ! formData.get( 'variation_id' ) ) {
+						modalTrigger = ev.submitter;
+					}
+
 					const variationModals = document.querySelectorAll( `.${ VARIATON_MODAL_CLASS_PREFIX }` );
 					// Clear any open variation modal.
 					variationModals.forEach( variationModal => {
@@ -234,7 +239,6 @@ domReady( () => {
 							form.classList.remove( 'processing' );
 							openModal( variationModal );
 							a11y.trapFocus( variationModal, false );
-							modalTrigger = ev.submitter;
 							return;
 						}
 					}
