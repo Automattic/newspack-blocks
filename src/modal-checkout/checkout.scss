@@ -455,4 +455,9 @@
 	#checkout_back {
 		margin-top: 0;
 	}
+
+	// Hide woocommerce errors since we are rendering errors inline.
+	form.checkout .woocommerce-NoticeGroup {
+		display: none;
+	}
 }
