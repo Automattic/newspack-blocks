@@ -95,6 +95,8 @@ domReady( () => {
 			} else {
 				handleCheckoutComplete();
 			}
+			// Ensure we always reset the modal title once the modal closes.
+			setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
 		}
 	};
 
@@ -122,6 +124,20 @@ domReady( () => {
 	const openModal = el => {
 		el.setAttribute( 'data-state', 'open' );
 		document.body.style.overflow = 'hidden';
+	};
+
+	/**
+	 * Set the modal title.
+	 *
+	 * @param {string} title The title to set.
+	 */
+	const setModalTitle = title => {
+		const modalTitle = modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }__header h2` );
+		if ( ! modalTitle ) {
+			return;
+		}
+
+		modalTitle.innerText = title;
 	};
 
 	window.newspackCloseModalCheckout = closeCheckout;
@@ -346,6 +362,13 @@ domReady( () => {
 		const container = iframe?.contentDocument?.querySelector( `#${ IFRAME_CONTAINER_ID }` );
 		if ( container ) {
 			iframeResizeObserver.observe( container );
+			if ( container.checkoutComplete ) {
+				// Update the modal title to reflect successful transaction.
+				setModalTitle( newspackBlocksModal.labels.thankyou_modal_title );
+			} else {
+				// Revert modal title default value.
+				setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
+			}
 			if ( container.checkoutReady ) {
 				spinner.style.display = 'none';
 			} else {
