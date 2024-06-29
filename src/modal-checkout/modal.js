@@ -8,13 +8,14 @@ import './modal.scss';
 /**
  * Internal dependencies
  */
-import { domReady } from './utils';
+import { createHiddenInput, domReady } from './utils';
 
 const CLASS_PREFIX = newspackBlocksModal.newspack_class_prefix;
 const IFRAME_NAME = 'newspack_modal_checkout_iframe';
 const IFRAME_CONTAINER_ID = 'newspack_modal_checkout_container';
 const MODAL_CHECKOUT_ID = 'newspack_modal_checkout';
 const MODAL_CLASS_PREFIX = `${ CLASS_PREFIX }__modal`;
+const VARIATON_MODAL_CLASS_PREFIX = 'newspack-blocks__modal-variation';
 
 domReady( () => {
 	const modalCheckout = document.querySelector( `#${ MODAL_CHECKOUT_ID }` );
@@ -24,11 +25,8 @@ domReady( () => {
 	}
 
 	const modalContent = modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }__content` );
-	const modalCheckoutHiddenInput = document.createElement( 'input' );
+	const modalCheckoutHiddenInput = createHiddenInput( 'modal_checkout', '1' );
 	const spinner = modalContent.querySelector( `.${ CLASS_PREFIX }__spinner` );
-	modalCheckoutHiddenInput.type = 'hidden';
-	modalCheckoutHiddenInput.name = 'modal_checkout';
-	modalCheckoutHiddenInput.value = '1';
 
 	// Initialize empty iframe.
 	const iframe = document.createElement( 'iframe' );
@@ -51,7 +49,7 @@ domReady( () => {
 	const closeCheckout = () => {
 		spinner.style.display = 'flex';
 
-		const container = iframe.contentDocument.querySelector( `#${ IFRAME_CONTAINER_ID }` );
+		const container = iframe?.contentDocument?.querySelector( `#${ IFRAME_CONTAINER_ID }` );
 
 		if ( iframe && modalContent.contains( iframe ) ) {
 			// Reset iframe and modal content heights.
@@ -72,7 +70,7 @@ domReady( () => {
 			}
 		} );
 
-		if ( container.checkoutComplete ) {
+		if ( container?.checkoutComplete ) {
 			const handleCheckoutComplete = () => {
 				const afterSuccessUrlInput = container.querySelector( 'input[name="after_success_url"]' );
 				const afterSuccessBehaviorInput = container.querySelector(
@@ -97,6 +95,9 @@ domReady( () => {
 			} else {
 				handleCheckoutComplete();
 			}
+			// Ensure we always reset the modal title and width once the modal closes.
+			setModalWidth();
+			setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
 		}
 	};
 
@@ -124,6 +125,38 @@ domReady( () => {
 	const openModal = el => {
 		el.setAttribute( 'data-state', 'open' );
 		document.body.style.overflow = 'hidden';
+	};
+
+	/**
+	 * Set the modal title.
+	 *
+	 * @param {string} title The title to set.
+	 */
+	const setModalTitle = title => {
+		const modalTitle = modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }__header h2` );
+		if ( ! modalTitle ) {
+			return;
+		}
+
+		modalTitle.innerText = title;
+	};
+
+	/**
+	 * Sets the width of the modal.
+	 *
+	 * @param {string} size Options are 'small' or 'default'. Default is 'default'.
+	 */
+	const setModalWidth = ( size = 'default' ) => {
+		const modal = modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }` );
+		if ( ! modal ) {
+			return;
+		}
+
+		if ( size === 'small' ) {
+			modal.classList.add( `${ MODAL_CLASS_PREFIX }--small` );
+		} else {
+			modal.classList.remove( `${ MODAL_CLASS_PREFIX }--small` );
+		}
 	};
 
 	window.newspackCloseModalCheckout = closeCheckout;
@@ -168,53 +201,148 @@ domReady( () => {
 				form.appendChild( modalCheckoutHiddenInput.cloneNode() );
 				form.target = IFRAME_NAME;
 				form.addEventListener( 'submit', ev => {
-					const formData = new FormData( form );
-					const variationModals = document.querySelectorAll( '.newspack-blocks__modal-variation' );
+					form.classList.add( 'processing' );
 
+					const productData = form.dataset.product;
+					if ( productData ) {
+						const data = JSON.parse( productData );
+						Object.keys( data ).forEach( key => {
+							form.appendChild( createHiddenInput( key, data[ key ] ) );
+						} );
+					}
+					const formData = new FormData( form );
+					const variationModals = document.querySelectorAll( `.${ VARIATON_MODAL_CLASS_PREFIX }` );
 					// Clear any open variation modal.
 					variationModals.forEach( variationModal => {
 						closeModal( variationModal );
 					} );
-
 					// Trigger variation modal if variation is not selected.
 					if ( formData.get( 'is_variable' ) && ! formData.get( 'variation_id' ) ) {
 						const variationModal = [ ...variationModals ].find(
 							modal => modal.dataset.productId === formData.get( 'product_id' )
 						);
 						if ( variationModal ) {
-							// Fill in the after success variables in the variation modal.
 							variationModal
 								.querySelectorAll( `form[target="${ IFRAME_NAME }"]` )
 								.forEach( singleVariationForm => {
+									// Fill in the after success variables in the variation modal.
 									[
 										'after_success_behavior',
 										'after_success_url',
 										'after_success_button_label',
 									].forEach( afterSuccessParam => {
-										const input = document.createElement( 'input' );
-										input.type = 'hidden';
-										input.name = afterSuccessParam;
-										input.value = formData.get( afterSuccessParam );
-										singleVariationForm.appendChild( input );
+										singleVariationForm.appendChild(
+											createHiddenInput( afterSuccessParam, formData.get( afterSuccessParam ) )
+										);
 									} );
+
+									// Append the product data hidden inputs.
+									const variationData = singleVariationForm.dataset.product;
+									if ( variationData ) {
+										const data = JSON.parse( variationData );
+										Object.keys( data ).forEach( key => {
+											singleVariationForm.appendChild( createHiddenInput( key, data[ key ] ) );
+										} );
+									}
 								} );
+
 							// Open the variations modal.
 							ev.preventDefault();
+							form.classList.remove( 'processing' );
 							openModal( variationModal );
 							return;
 						}
 					}
+
+					form.classList.remove( 'processing' );
 					if (
 						window?.newspackReaderActivation?.openAuthModal &&
 						! window?.newspackReaderActivation?.getReader?.()?.authenticated &&
 						! newspack_ras_config.is_logged_in
 					) {
 						ev.preventDefault();
+
+						const data = new FormData( form );
+						let content = '';
+						let price = '0';
+						let priceSummary = '';
+
+						if ( data.get( 'newspack_donate' ) ) {
+							const frequency = data.get( 'donation_frequency' );
+							const donationTiers = form.querySelectorAll(
+								`.donation-tier__${ frequency }, .donation-frequency__${ frequency }`
+							);
+
+							if ( donationTiers?.length ) {
+								const frequencyInputs = form.querySelectorAll(
+									`input[name="donation_value_${ frequency }"], input[name="donation_value_${ frequency }_untiered"]`
+								);
+
+								if ( frequencyInputs?.length ) {
+									// Handle frequency based donation tiers.
+									frequencyInputs.forEach( input => {
+										if ( input.checked && input.value !== 'other' ) {
+											price = input.value;
+										}
+									} );
+
+									donationTiers.forEach( el => {
+										const donationData = JSON.parse( el.dataset.product );
+										if (
+											donationData.hasOwnProperty( `donation_price_summary_${ frequency }` ) &&
+											donationData?.[ `donation_price_summary_${ frequency }` ].includes( price )
+										) {
+											priceSummary = donationData[ `donation_price_summary_${ frequency }` ];
+										}
+
+										if ( price === '0' && priceSummary ) {
+											// Replace placeholder price with price input for other.
+											let otherPrice = data.get( `donation_value_${ frequency }_other` );
+
+											// Fallback to untiered price if other price is not set.
+											if ( ! otherPrice ) {
+												otherPrice = data.get( `donation_value_${ frequency }_untiered` );
+											}
+
+											if ( otherPrice ) {
+												priceSummary = priceSummary.replace( '0', otherPrice );
+											}
+										}
+									} );
+								} else {
+									// Handle tiers based donation tiers.
+									const index = data.get( 'donation_tier_index' );
+									if ( index ) {
+										const donationData = JSON.parse( donationTiers?.[ index ].dataset.product );
+										if ( donationData.hasOwnProperty( `donation_price_summary_${ frequency }` ) ) {
+											priceSummary = donationData[ `donation_price_summary_${ frequency }` ];
+										}
+									}
+								}
+							}
+						} else if ( data.get( 'newspack_checkout' ) ) {
+							const priceSummaryInput = form.querySelector( 'input[name="product_price_summary"]' );
+
+							if ( priceSummaryInput ) {
+								priceSummary = priceSummaryInput.value;
+							}
+						}
+
+						if ( priceSummary ) {
+							content = `<div class="order-details-summary ${ CLASS_PREFIX }__box ${ CLASS_PREFIX }__box--text-center"><h2>${ priceSummary }</h2></div>`;
+						}
+
 						// Initialize auth flow if reader is not authenticated.
 						window.newspackReaderActivation.openAuthModal( {
 							title: newspackBlocksModal.labels.auth_modal_title,
-							// form.submit does not trigger submit event listener, so we use requestSubmit.
-							callback: () => form.requestSubmit( form.querySelector( 'button[type="submit"]' ) ),
+							callback: () => {
+								// Signal checkout registration.
+								form.appendChild(
+									createHiddenInput( newspackBlocksModal.checkout_registration_flag, '1' )
+								);
+								// form.submit does not trigger submit event listener, so we use requestSubmit.
+								form.requestSubmit( form.querySelector( 'button[type="submit"]' ) );
+							},
 							skipSuccess: true,
 							labels: {
 								signin: {
@@ -224,6 +352,7 @@ domReady( () => {
 									title: newspackBlocksModal.labels.register_modal_title,
 								},
 							},
+							content,
 						} );
 					} else {
 						// Otherwise initialize checkout.
@@ -249,9 +378,18 @@ domReady( () => {
 				ras.setAuthenticated( true );
 			}
 		}
-		const container = iframe.contentDocument.querySelector( `#${ IFRAME_CONTAINER_ID }` );
+		const container = iframe?.contentDocument?.querySelector( `#${ IFRAME_CONTAINER_ID }` );
 		if ( container ) {
 			iframeResizeObserver.observe( container );
+			if ( container.checkoutComplete ) {
+				// Update the modal title and width to reflect successful transaction.
+				setModalWidth( 'small' );
+				setModalTitle( newspackBlocksModal.labels.thankyou_modal_title );
+			} else {
+				// Revert modal title and width default value.
+				setModalWidth();
+				setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
+			}
 			if ( container.checkoutReady ) {
 				spinner.style.display = 'none';
 			} else {

@@ -9,6 +9,8 @@ defined( 'ABSPATH' ) || exit;
 
 require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/donate/frontend/class-newspack-blocks-donate-renderer-base.php';
 
+use Newspack_Blocks\Modal_Checkout;
+
 /**
  * Renders the frequency-based Donate block.
  */
@@ -137,16 +139,21 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 
 						<?php foreach ( $configuration['frequencies'] as $frequency_slug => $frequency_name ) : ?>
 							<?php
-								$formatted_amount = $configuration['amounts'][ $frequency_slug ][3];
+								$formatted_amount = Newspack_Blocks::can_use_name_your_price() ? '' : $configuration['amounts'][ $frequency_slug ][3];
+								$product_data     = wp_json_encode(
+									[
+										'donation_price_summary_' . $frequency_slug => Modal_Checkout::get_summary_card_price_string( __( 'Donate', 'newspack-blocks' ), $formatted_amount, $frequency_slug ),
+									]
+								);
 							?>
-
 							<div
-								class='wp-block-newspack-blocks-donate__frequency frequency'
+								class="wp-block-newspack-blocks-donate__frequency donation-frequency__<?php echo esc_attr( $frequency_slug ); ?> frequency"
 								id='tab-panel-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>'
 								role='tabpanel'
 								aria-labelledby='tab-newspack-donate-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>'
+								data-product='<?php echo esc_attr( $product_data ); ?>'
 								<?php ( $frequency_slug === $configuration['defaultFrequency'] ? 'tabindex="0"' : '' ); ?>
-								>
+							>
 								<?php echo self::render_frequency_selection( $frequency_slug, $frequency_name, $uid, $configuration ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 								<div class='input-container'>
 									<?php if ( Newspack_Blocks::can_use_name_your_price() ) : ?>
@@ -224,10 +231,24 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 								<?php echo self::render_frequency_selection( $frequency_slug, $frequency_name, $uid, $configuration ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 								<div class='wp-block-newspack-blocks-donate__tiers tiers'>
 									<?php foreach ( $suggested_amounts[ $frequency_slug ] as $index => $amount ) : ?>
-										<div class='wp-block-newspack-blocks-donate__tier'>
-											<?php
-											if ( 3 === $index ) : // The "other" tier.
-												?>
+										<?php
+											$product_price_summary = Modal_Checkout::get_summary_card_price_string(
+												__( 'Donate', 'newspack-blocks' ),
+												// Don't show the amount for the "other" tier.
+												3 === $index ? '' : $amount,
+												$frequency_slug
+											);
+											$product_data = wp_json_encode(
+												[
+													'donation_price_summary_' . $frequency_slug => $product_price_summary,
+												]
+											);
+										?>
+										<div
+											class='wp-block-newspack-blocks-donate__tier donation-tier__<?php echo esc_attr( $frequency_slug ); ?>'
+											data-product='<?php echo esc_attr( $product_data ); ?>'
+										>
+											<?php if ( 3 === $index ) : // The "other" tier. ?>
 												<input
 													type='radio'
 													class='other-input'
@@ -274,9 +295,7 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 												>
 													<?php echo esc_html( $configuration['currencySymbol'] . $amount ); ?>
 												</label>
-													<?php
-												endif;
-												?>
+											<?php endif; ?>
 										</div>
 									<?php endforeach; ?>
 								</div>
