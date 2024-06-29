@@ -1378,7 +1378,7 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Details TK.
+	 * Send GA4 data for the modal checkout pagination.
 	 *
 	 * @return void
 	 */
@@ -1387,8 +1387,19 @@ final class Modal_Checkout {
 			return;
 		}
 
+		// Loop over $cart items to get product_id.
+		foreach ( WC()->cart->get_cart() as $cart_item ) {
+			$product_id = $cart_item['product_id'];
+		}
+
+		// Get the cart subtotal.
+		$amount = WC()->cart->get_displayed_subtotal();
+
 		// Data to send along with this action.
 		$metadata = [
+			'product_id'       => $product_id,
+			'amount'           => $amount,
+			'currency'         => get_woocommerce_currency(),
 			'modal_pagination' => '2',
 		];
 
