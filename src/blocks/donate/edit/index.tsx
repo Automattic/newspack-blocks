@@ -18,12 +18,14 @@ import {
 	Spinner,
 	SelectControl,
 	ToggleControl,
+	Toolbar,
 	TextControl,
 	Button,
 	Notice,
 } from '@wordpress/components';
-import { InspectorControls, ColorPaletteControl } from '@wordpress/block-editor';
+import { BlockControls, ColorPaletteControl, InspectorControls } from '@wordpress/block-editor';
 import { isEmpty, pick } from 'lodash';
+import { Icon, formatListBullets, grid } from '@wordpress/icons';
 
 /**
  * Internal dependencies
@@ -145,6 +147,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 	const isManual = attributes.manual && canUseNameYourPrice;
 	const isTiered = isManual ? attributes.tiered : settings.tiered;
 	const isTierBasedLayoutEnabled = isTiered && attributes.layoutOption === 'tiers';
+	const tierLayoutStyle = attributes.tierStyle;
 
 	const amounts = isManual ? attributes.amounts : settings.amounts;
 
@@ -166,8 +169,24 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 			'wpbnbd',
 			`wpbnbd--${ isTierBasedLayoutEnabled ? 'tiers-based' : 'frequency-based' }`,
 			`wpbnbd--platform-${ settings.platform }`,
-			`wpbnbd-frequencies--${ availableFrequencies.length }`
+			`wpbnbd-frequencies--${ availableFrequencies.length }`,
+			isTierBasedLayoutEnabled && `wpbnbd--tier-style-${ tierLayoutStyle }`
 		);
+
+	const tiersLayoutControls = [
+		{
+			icon: <Icon icon={ grid } />,
+			title: __( 'Grid View', 'newspack-blocks' ),
+			onClick: () => setAttributes( { tierStyle: 'grid' } ),
+			isActive: attributes.tierStyle === 'grid',
+		},
+		{
+			icon: <Icon icon={ formatListBullets } />,
+			title: __( 'List View', 'newspack-blocks' ),
+			onClick: () => setAttributes( { tierStyle: 'list' } ),
+			isActive: attributes.tierStyle === 'list',
+		},
+	];
 
 	const minimumDonation = isManual ? attributes.minimumDonation : settings.minimumDonation;
 	const displayedAmounts = { ...amounts };
@@ -204,9 +223,14 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 	return (
 		<>
 			{ isTierBasedLayoutEnabled ? (
-				<div className={ getWrapperClassNames() }>
-					<TierBasedLayout { ...componentProps } amounts={ displayedAmounts } />
-				</div>
+				<>
+					<div className={ getWrapperClassNames() }>
+						<TierBasedLayout { ...componentProps } amounts={ displayedAmounts } />
+					</div>
+					<BlockControls>
+						<Toolbar controls={ tiersLayoutControls } />
+					</BlockControls>
+				</>
 			) : (
 				<div className={ getWrapperClassNames( [ isTiered ? 'tiered' : 'untiered' ] ) }>
 					<FrequencyBasedLayout
