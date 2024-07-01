@@ -435,7 +435,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 						<p>
 							{ sprintf(
 								// translators: %s is either 'enabled' or 'disabled'.
-								__( 'reCAPTCHA v3 is currently %s.', 'newspack' ),
+								__( 'reCAPTCHA is currently %s.', 'newspack' ),
 								window.newspack_blocks_data.has_recaptcha
 									? __( 'enabled', 'newspack' )
 									: __( 'disabled', 'newspack' )
@@ -444,7 +444,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 						{ ! window.newspack_blocks_data.has_recaptcha && (
 							<p>
 								{ __(
-									"It's highly recommended that you enable reCAPTCHA v3 protection to prevent spambots from using this form!",
+									"It's highly recommended that you enable reCAPTCHA protection to prevent spambots from using this form!",
 									'newspack'
 								) }
 							</p>
