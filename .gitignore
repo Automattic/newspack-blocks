@@ -1,20 +1,43 @@
-.DS_Store
+# Editors
+project.xml
+project.properties
+/nbproject/private/
+.buildpath
+.project
+.settings*
+.idea
+.vscode
+*.sublime-project
+*.sublime-workspace
+.sublimelinterrc
+
+# NPM
 .cache
-phpcs.xml
-phpunit.xml
-.phpunit.result.cache
+/node_modules/
+
+# Sass
+.sass-cache/
+
+# OS X metadata
+.DS_Store
+
+# Windows junk
 Thumbs.db
-wp-cli.local.yml
-node_modules/
-*.sql
-*.tar.gz
-*.zip
 
-.idea/
-
+# Composer
 /vendor/
-dist/
-release/
-coverage
 
+# Built files
+/dist
+/src/components/dist
+/src/components/shared
+/src/components/node_modules
+release
+
+# Tests
+codecov/
+coverage/
+.phpunit.result.cache
+
+# Misc
 tsconfig.tsbuildinfo
