@@ -22,7 +22,7 @@
 	"dependencies": {
 		"classnames": "^2.5.1",
 		"lodash": "^4.17.21",
-		"newspack-components": "^2.2.1",
+		"newspack-components": "^3.0.0",
 		"react": "^17.0.2",
 		"redux": "^4.2.1",
 		"redux-saga": "^1.3.0",
