@@ -201,7 +201,7 @@ const getPreviewPosts = ( attributes: HomepageArticlesAttributes ) =>
 
 type Select = ( namespace: string ) => {
 	// core/blocks-editor
-	getBlocks: () => Block[];
+	getBlocks: ( clientId?: string ) => Block[];
 	// core/editor
 	getEditedPostAttribute: ( attribute: string ) => Block[];
 	// core
