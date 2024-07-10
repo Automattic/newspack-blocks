@@ -464,22 +464,11 @@
 		margin-top: 0;
 	}
 
-	form.checkout .woocommerce-NoticeGroup {
-		align-items: center;
-		background: color.adjust( wp-colors.$alert-red, $lightness: 51% );
-		display: flex;
-		justify-content: flex-start;
-		margin: 32px 0;
-		padding: 6px 8px;
-		border-radius: 2px;
-		box-shadow: 0 0 8px 4px rgba( black, 0.08 );
-		border-left: 3px solid wp-colors.$alert-red;
-		box-sizing: border-box;
-
-		ul.woocommerce-error {
-			background: none;
-			color: wp-colors.$gray-900;
-			margin: 0 !important;
-		}
+	form.checkout .woocommerce-NoticeGroup ul.woocommerce-error {
+		background: none;
+		color: inherit;
+		list-style-type: none;
+		padding-left: 0;
+		padding-right: 0;
 	}
 }
