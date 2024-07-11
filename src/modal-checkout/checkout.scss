@@ -461,4 +461,20 @@
 	#checkout_back {
 		margin-top: 0;
 	}
+
+	form.checkout .woocommerce-NoticeGroup {
+		ul.woocommerce-error {
+			background: none;
+			color: inherit;
+			list-style-type: none;
+			padding-left: 0;
+			padding-right: 0;
+		}
+
+		.woocommerce-message,
+		.woocommerce-error,
+		.woocommerce-info {
+			font-size: var( --newspack-ui-font-size-xs, 14px );
+		}
+	}
 }
