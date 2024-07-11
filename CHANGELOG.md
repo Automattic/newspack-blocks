@@ -1,3 +1,10 @@
+## [3.4.1](https://github.com/Automattic/newspack-blocks/compare/v3.4.0...v3.4.1) (2024-07-11)
+
+
+### Bug Fixes
+
+* account for patterns when rendering hpp in editor ([#1794](https://github.com/Automattic/newspack-blocks/issues/1794)) ([17556c2](https://github.com/Automattic/newspack-blocks/commit/17556c2cb4eeb718aecbbd7258a986dac06df5ef))
+
 # [3.4.0](https://github.com/Automattic/newspack-blocks/compare/v3.3.0...v3.4.0) (2024-07-01)
 
 
