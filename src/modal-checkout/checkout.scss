@@ -21,11 +21,6 @@
 		display: none;
 	}
 
-	// Hide reCAPTCHA badge
-	.grecaptcha-badge {
-		visibility: hidden !important;
-	}
-
 	// Required fields.
 	.woocommerce form .form-row .required {
 		color: var( --newspack-ui-color-error-50, colors.$color__error );
