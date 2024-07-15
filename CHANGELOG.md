@@ -1,3 +1,15 @@
+# [3.5.0](https://github.com/Automattic/newspack-blocks/compare/v3.4.1...v3.5.0) (2024-07-15)
+
+
+### Bug Fixes
+
+* remove references to reCAPTCHA v3 (because we now support v2 too) ([#1744](https://github.com/Automattic/newspack-blocks/issues/1744)) ([b7fb752](https://github.com/Automattic/newspack-blocks/commit/b7fb752c4f5e903485939ccf025d0a7270c1e157))
+
+
+### Features
+
+* **checkout-button:** add wp-block-button to the wrapperclasses ([#1777](https://github.com/Automattic/newspack-blocks/issues/1777)) ([88bc28c](https://github.com/Automattic/newspack-blocks/commit/88bc28c70a3d214d38e05e50df403e0ac48dbf83))
+
 ## [3.4.1](https://github.com/Automattic/newspack-blocks/compare/v3.4.0...v3.4.1) (2024-07-11)
 
 
