@@ -929,7 +929,7 @@ final class Modal_Checkout {
 			if ( empty( $signup_data['lists'] ) ) {
 				return new \WP_Error( 'newspack_no_lists_selected', __( 'No lists selected.', 'newspack-blocks' ) );
 			} else {
-				$result = \Newspack_Newsletters_Subscription::add_contact(
+				$result = \Newspack_Newsletters_Contacts::upsert(
 					[
 						'email'    => $signup_data['email'],
 						'metadata' => [
