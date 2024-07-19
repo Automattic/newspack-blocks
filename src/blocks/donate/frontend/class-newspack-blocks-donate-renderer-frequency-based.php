@@ -139,10 +139,15 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 
 						<?php foreach ( $configuration['frequencies'] as $frequency_slug => $frequency_name ) : ?>
 							<?php
-								$formatted_amount = Newspack_Blocks::can_use_name_your_price() ? '' : $configuration['amounts'][ $frequency_slug ][3];
-								$product_data     = wp_json_encode(
+								$amount                = $configuration['amounts'][ $frequency_slug ][3];
+								$product_price_summary = Modal_Checkout::get_summary_card_price_string(
+									__( 'Donate', 'newspack-blocks' ),
+									'',
+									$frequency_slug
+								);
+								$product_data = wp_json_encode(
 									[
-										'donation_price_summary_' . $frequency_slug => Modal_Checkout::get_summary_card_price_string( __( 'Donate', 'newspack-blocks' ), $formatted_amount, $frequency_slug ),
+										'donation_price_summary_' . $frequency_slug => $product_price_summary,
 									]
 								);
 							?>
@@ -171,7 +176,7 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 											type='number'
 											min='<?php echo esc_attr( $configuration['minimumDonation'] ); ?>'
 											name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>_untiered'
-											value='<?php echo esc_attr( $formatted_amount ); ?>'
+											value='<?php echo esc_attr( $amount ); ?>'
 											id='newspack-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-untiered-input'
 										/>
 									</div>
@@ -179,7 +184,7 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 									<input
 										type='radio'
 										name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>'
-										value='<?php echo esc_attr( $formatted_amount ); ?>'
+										value='<?php echo esc_attr( $amount ); ?>'
 										id='newspack-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-untiered-input'
 										checked
 									/>
@@ -187,7 +192,7 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 										class='tier-select-label tier-label'
 										for='newspack-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-untiered-input'
 									>
-										<?php echo wp_kses_post( Newspack_Blocks::get_formatted_amount( $formatted_amount, $frequency_slug ) ); ?>
+										<?php echo wp_kses_post( Newspack_Blocks::get_formatted_amount( $amount, $frequency_slug ) ); ?>
 									</label>
 									<?php endif; ?>
 								</div>
