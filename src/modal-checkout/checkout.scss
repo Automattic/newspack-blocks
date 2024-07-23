@@ -21,11 +21,6 @@
 		display: none;
 	}
 
-	// Hide reCAPTCHA badge
-	.grecaptcha-badge {
-		visibility: hidden !important;
-	}
-
 	// Required fields.
 	.woocommerce form .form-row .required {
 		color: var( --newspack-ui-color-error-50, colors.$color__error );
@@ -97,7 +92,7 @@
 	}
 
 	.shipping_address {
-		margin-top: var( --newspack-ui-spacer-5, 24px );
+		margin: var( --newspack-ui-spacer-5, 24px ) 0 0;
 	}
 
 	#ship-to-different-address {
@@ -124,6 +119,10 @@
 
 	// Gift Subscriptions
 	.newspack-wcsg {
+		&--wrapper {
+			margin: var( --newspack-ui-spacer-5, 24px ) 0 0;
+		}
+
 		&--gift-toggle {
 			align-items: center;
 			display: flex;
@@ -132,7 +131,7 @@
 
 			label {
 				display: flex !important;
-				margin: 0;
+				margin-bottom: 0;
 			}
 
 			.woocommerce-input-wrapper {
@@ -148,8 +147,8 @@
 			visibility: hidden;
 
 			&.visible {
-				margin-top: var( --newspack-ui-spacer-5, 24px );
-				max-height: 100px;
+				margin: var( --newspack-ui-spacer-5, 24px ) 0 0;
+				max-height: initial;
 				visibility: visible;
 			}
 		}
@@ -467,5 +466,21 @@
 	// stylelint-disable-next-line selector-id-pattern
 	#checkout_back {
 		margin-top: 0;
+	}
+
+	form.checkout .woocommerce-NoticeGroup {
+		ul.woocommerce-error {
+			background: none;
+			color: inherit;
+			list-style-type: none;
+			padding-left: 0;
+			padding-right: 0;
+		}
+
+		.woocommerce-message,
+		.woocommerce-error,
+		.woocommerce-info {
+			font-size: var( --newspack-ui-font-size-xs, 14px );
+		}
 	}
 }
