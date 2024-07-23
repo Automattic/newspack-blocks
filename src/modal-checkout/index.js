@@ -15,6 +15,7 @@ domReady(
 			return;
 		}
 
+		const CLASS_PREFIX = newspackBlocksModalCheckout.newspack_class_prefix;
 		const readyEvent = new CustomEvent( 'checkout-ready' );
 
 		function getEventHandlers( element, event ) {
@@ -30,7 +31,7 @@ domReady(
 
 		function clearNotices() {
 			$(
-				`.woocommerce-NoticeGroup-checkout, .${ newspackBlocksModalCheckout.newspack_class_prefix }__inline-error, .woocommerce-error, .woocommerce-message, .wc-block-components-notice-banner`
+				`.woocommerce-NoticeGroup-checkout, .${ CLASS_PREFIX }__inline-error, .woocommerce-error, .woocommerce-message, .wc-block-components-notice-banner`
 			).remove();
 		}
 
@@ -107,6 +108,16 @@ domReady(
 				} );
 
 				/**
+				 * Apply newspack styling to default Woo chekcout errors.
+				 */
+				$( document ).on( 'checkout_error', function () {
+					const $error = $( '.woocommerce-NoticeGroup-checkout' );
+					if ( $error ) {
+						$error.addClass( `${ CLASS_PREFIX }__notice ${ CLASS_PREFIX }__notice--error` );
+					}
+				} );
+
+				/**
 				 * Handle gift options.
 				 */
 				if ( $gift_options.length ) {
@@ -174,9 +185,7 @@ domReady(
 							}
 							$field.addClass( 'woocommerce-invalid' ).removeClass( 'woocommerce-valid' );
 							$field.append(
-								`<span class="${ newspackBlocksModalCheckout.newspack_class_prefix }__inline-error">` +
-									$error.text() +
-									'</span>'
+								`<span class="${ CLASS_PREFIX }__inline-error">` + $error.text() + '</span>'
 							);
 							$error.remove();
 						} else {
@@ -284,9 +293,7 @@ domReady(
 							if ( code ) {
 								const isError = code.includes( 'error' );
 								$coupon.append(
-									`<p class="result ${ newspackBlocksModalCheckout.newspack_class_prefix }__helper-text">` +
-										$( code ).text() +
-										'</p>'
+									`<p class="result ${ CLASS_PREFIX }__helper-text">` + $( code ).text() + '</p>'
 								);
 								if ( isError ) {
 									$coupon.find( 'input[name="coupon_code"]' ).focus();
@@ -340,7 +347,7 @@ domReady(
 							clearNotices();
 							$nyp.find( '.result' ).remove();
 							$nyp.append(
-								`<p class="result ${ newspackBlocksModalCheckout.newspack_class_prefix }__${
+								`<p class="result ${ CLASS_PREFIX }__${
 									success ? 'helper-text' : 'inline-error'
 								}">` +
 									res.message +
@@ -603,7 +610,7 @@ domReady(
 									handleFormError( result.messages );
 								} else {
 									handleFormError(
-										`<div class="${ newspackBlocksModalCheckout.newspack_class_prefix }__inline-error">` +
+										`<div class="${ CLASS_PREFIX }__inline-error">` +
 											wc_checkout_params.i18n_checkout_error +
 											'</div>'
 									);
