@@ -1440,6 +1440,8 @@ final class Modal_Checkout {
 	 * @param string $name      The name.
 	 * @param string $price     The price. Optional. If not provided, the price string will contain 0.
 	 * @param string $frequency The frequency. Optional. If not provided, the price will be treated as a one-time payment.
+	 *
+	 * @return string The price string.
 	 */
 	public static function get_summary_card_price_string( $name, $price = '', $frequency = '' ) {
 		if ( ! $price ) {
