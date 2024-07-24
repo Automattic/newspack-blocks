@@ -329,7 +329,7 @@ domReady( () => {
 						}
 
 						if ( priceSummary ) {
-							content = `<div class="order-details-summary ${ CLASS_PREFIX }__box ${ CLASS_PREFIX }__box--text-center"><h2>${ priceSummary }</h2></div>`;
+							content = `<div class="order-details-summary ${ CLASS_PREFIX }__box ${ CLASS_PREFIX }__box--text-center"><p><strong>${ priceSummary }</strong></p></div>`;
 						}
 
 						// Initialize auth flow if reader is not authenticated.
