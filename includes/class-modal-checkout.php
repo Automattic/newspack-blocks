@@ -459,9 +459,9 @@ final class Modal_Checkout {
 						</button>
 					</header>
 					<section class="<?php echo esc_attr( "{$class_prefix}__modal__content" ); ?>">
+						<h3><?php echo esc_html( $product_name ); ?></h3>
+						<p><?php esc_html_e( 'Select an option to continue:', 'newspack-blocks' ); ?></p>
 						<div class="<?php echo esc_attr( "{$class_prefix}__selection" ); ?>" data-product-id="<?php echo esc_attr( $product_id ); ?>">
-							<h3><?php echo esc_html( $product_name ); ?></h3>
-							<p><?php esc_html_e( 'Select an option to continue:', 'newspack-blocks' ); ?></p>
 							<ul class="newspack-blocks__options"">
 								<?php
 								$variations = $product->get_available_variations( 'objects' );
