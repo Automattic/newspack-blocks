@@ -366,6 +366,8 @@ domReady(
 				 * @param {boolean} isEditingDetails
 				 */
 				function setEditingDetails( isEditingDetails ) {
+					const newspack_grecaptcha = window.newspack_grecaptcha || {};
+
 					// Scroll to top.
 					window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
 					// Update checkout.
@@ -374,6 +376,12 @@ domReady(
 					// Clear checkout details.
 					$( '#checkout_details' ).remove();
 					if ( isEditingDetails ) {
+						$form.append( '<input name="is_validation_only" type="hidden" value="1" />' );
+						// Destroy reCAPTCHA inputs so we don't trigger validation between checkout steps.
+						if ( newspack_grecaptcha?.destroyV3Captchas ) {
+							$form.removeData( 'newspack-recaptcha' );
+							newspack_grecaptcha.destroyV3Captchas( $form.get() );
+						}
 						if ( $coupon.length ) {
 							$coupon.hide();
 						}
@@ -391,6 +399,15 @@ domReady(
 						} );
 						$form.on( 'submit', handleFormSubmit );
 					} else {
+						if ( $form.find( '[name="is_validation_only"]' ) ) {
+							$form.find( '[name="is_validation_only"]' ).remove();
+						}
+
+						// Initiate reCAPTCHA, if available.
+						if ( newspack_grecaptcha?.renderV3Captchas ) {
+							$form.data( 'newspack-recaptcha', 'newspack_modal_checkout' );
+							newspack_grecaptcha.renderV3Captchas( $form.get() );
+						}
 						if ( $coupon.length ) {
 							$coupon.show();
 						}
