@@ -377,9 +377,8 @@ domReady(
 					if ( isEditingDetails ) {
 						$form.append( '<input name="is_validation_only" type="hidden" value="1" />' );
 						// Destroy reCAPTCHA inputs so we don't trigger validation between checkout steps.
-						if ( newspack_grecaptcha?.destroyV3Captchas ) {
-							$form.removeData( 'newspack-recaptcha' );
-							newspack_grecaptcha.destroyV3Captchas( $form.get() );
+						if ( 'v3' === newspack_grecaptcha?.version ) {
+							newspack_grecaptcha.destroy( $form.get() );
 						}
 						if ( $coupon.length ) {
 							$coupon.hide();
@@ -402,9 +401,9 @@ domReady(
 						}
 
 						// Initiate reCAPTCHA, if available.
-						if ( newspack_grecaptcha?.renderV3Captchas ) {
+						if ( newspack_grecaptcha?.render ) {
 							$form.data( 'newspack-recaptcha', 'newspack_modal_checkout' );
-							newspack_grecaptcha.renderV3Captchas( $form.get() );
+							newspack_grecaptcha.render( $form.get() );
 						}
 						if ( $coupon.length ) {
 							$coupon.show();
