@@ -143,6 +143,10 @@ domReady(
 							ev.preventDefault();
 							setEditingDetails( true );
 						} );
+						// Remain on 1st step if subscriptions gift options are present.
+						if ( $gift_options.length ) {
+							setEditingDetails( true );
+						}
 						setReady();
 					} );
 				} else {
