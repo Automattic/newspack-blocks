@@ -57,7 +57,6 @@ domReady(
 				const $checkout_continue = $( '#checkout_continue' );
 				const $customer_details = $( '#customer_details' );
 				const $after_customer_details = $( '#after_customer_details' );
-				const $place_order_button = $( '#place_order' );
 				const $gift_options = $( '.newspack-wcsg--wrapper' );
 
 				/**
@@ -334,6 +333,7 @@ domReady(
 						},
 						complete: () => {
 							unblockForm( $nyp );
+							input.attr( 'disabled', false );
 							input.focus();
 						},
 					} );
@@ -601,9 +601,10 @@ domReady(
 					if ( form.is( '.processing' ) ) {
 						return false;
 					}
-
-					$checkout_continue.attr( 'disabled', 'disabled' );
-					$place_order_button.attr( 'disabled', 'disabled' );
+					const buttons = form.find( 'button[type=submit]' );
+					buttons.each( ( i, el ) => {
+						$( el ).attr( 'disabled', true );
+					} );
 					form.addClass( 'processing' );
 					return true;
 				}
@@ -619,9 +620,10 @@ domReady(
 					if ( ! form.is( '.processing' ) ) {
 						return false;
 					}
-
-					$checkout_continue.removeAttr( 'disabled' );
-					$place_order_button.removeAttr( 'disabled' );
+					const buttons = form.find( 'button[type=submit]' );
+					buttons.each( ( i, el ) => {
+						$( el ).attr( 'disabled', false );
+					} );
 					form.removeClass( 'processing' );
 					return true;
 				}
