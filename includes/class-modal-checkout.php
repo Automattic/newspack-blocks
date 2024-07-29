@@ -962,6 +962,9 @@ final class Modal_Checkout {
 				return true;
 			}
 		}
+		if ( class_exists( 'WC_Subscriptions_Cart' ) && \WC_Subscriptions_Cart::cart_contains_subscription() ) {
+			return true;
+		}
 		return false;
 	}
 
