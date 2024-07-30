@@ -89,6 +89,7 @@ final class Modal_Checkout {
 			add_filter( 'woocommerce_subscription_variation_is_purchasable', [ 'WCS_Limiter', 'is_purchasable_renewal' ], 12, 2 );
 			add_filter( 'woocommerce_valid_order_statuses_for_order_again', [ 'WCS_Limiter', 'filter_order_again_statuses_for_limited_subscriptions' ] );
 		}
+		add_filter( 'woocommerce_subscriptions_product_limited_for_user', [ __CLASS__, 'subscriptions_product_limited_for_user' ], 10, 3 );
 	}
 
 	/**
@@ -1125,6 +1126,22 @@ final class Modal_Checkout {
 	}
 
 	/**
+	 * Get user from email.
+	 *
+	 * @return false|int User ID if found by email address, false otherwise.
+	 */
+	private static function get_user_id_from_email() {
+		$billing_email = filter_input( INPUT_POST, 'billing_email', FILTER_SANITIZE_EMAIL );
+		if ( $billing_email ) {
+			$customer = \get_user_by( 'email', $billing_email );
+			if ( $customer ) {
+				return $customer->ID;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * If a reader tries to make a purchase with an email address that
 	 * has been previously registered, automatically associate the transaction
 	 * with the user.
@@ -1137,12 +1154,9 @@ final class Modal_Checkout {
 		if ( ! self::is_modal_checkout() ) {
 			return $customer_id;
 		}
-		$billing_email = filter_input( INPUT_POST, 'billing_email', FILTER_SANITIZE_EMAIL );
-		if ( $billing_email ) {
-			$customer = \get_user_by( 'email', $billing_email );
-			if ( $customer ) {
-				$customer_id = $customer->ID;
-			}
+		$id_from_email = self::get_user_id_from_email();
+		if ( $id_from_email ) {
+			return $id_from_email;
 		}
 		return $customer_id;
 	}
@@ -1190,6 +1204,24 @@ final class Modal_Checkout {
 			return [];
 		}
 		return $modules;
+	}
+
+	/**
+	 * Trigger the subscriptions-limiting logic, using the user gleaned from the email address.
+	 *
+	 * @param bool           $is_limited_for_user If the subscription should be limited.
+	 * @param int|WC_Product $product A WC_Product object or the ID of a product.
+	 * @param int            $user_id The user ID.
+	 */
+	public static function subscriptions_product_limited_for_user( $is_limited_for_user, $product, $user_id ) {
+		if ( $user_id !== 0 ) {
+			return $is_limited_for_user;
+		}
+		$id_from_email = self::get_user_id_from_email();
+		if ( $id_from_email ) {
+			return wcs_is_product_limited_for_user( $product, $id_from_email );
+		}
+		return $is_limited_for_user;
 	}
 }
 Modal_Checkout::init();
