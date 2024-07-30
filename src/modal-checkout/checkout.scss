@@ -473,4 +473,8 @@
 			font-size: var( --newspack-ui-font-size-xs, 14px );
 		}
 	}
+
+	.processing {
+		opacity: 0.5;
+	}
 }
