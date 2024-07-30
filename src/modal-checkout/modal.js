@@ -87,6 +87,7 @@ domReady( () => {
 						window.history.back();
 					}
 				}
+				window?.newspackReaderActivation?.setCheckoutStatus?.( false );
 			};
 			if ( window?.newspackReaderActivation?.openNewslettersSignupModal ) {
 				window.newspackReaderActivation.openNewslettersSignupModal( {
@@ -98,6 +99,8 @@ domReady( () => {
 			// Ensure we always reset the modal title and width once the modal closes.
 			setModalWidth();
 			setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
+		} else {
+			window?.newspackReaderActivation?.setCheckoutStatus?.( false );
 		}
 	};
 
@@ -256,9 +259,10 @@ domReady( () => {
 
 					form.classList.remove( 'processing' );
 					if (
-						window?.newspackReaderActivation?.openAuthModal &&
+						! newspack_ras_config.is_logged_in &&
 						! window?.newspackReaderActivation?.getReader?.()?.authenticated &&
-						! newspack_ras_config.is_logged_in
+						window?.newspackReaderActivation?.openAuthModal &&
+						window?.newspackReaderActivation?.setCheckoutStatus
 					) {
 						ev.preventDefault();
 
@@ -332,6 +336,7 @@ domReady( () => {
 							content = `<div class="order-details-summary ${ CLASS_PREFIX }__box ${ CLASS_PREFIX }__box--text-center"><p><strong>${ priceSummary }</strong></p></div>`;
 						}
 
+						window.newspackReaderActivation.setCheckoutStatus( true );
 						// Initialize auth flow if reader is not authenticated.
 						window.newspackReaderActivation.openAuthModal( {
 							title: newspackBlocksModal.labels.auth_modal_title,
