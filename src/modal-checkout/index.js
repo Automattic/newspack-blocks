@@ -396,9 +396,11 @@ domReady(
 						} );
 						$form.on( 'submit', handleFormSubmit );
 					} else {
-						if ( $form.find( '[name="is_validation_only"]' ) ) {
-							$form.find( '[name="is_validation_only"]' ).remove();
+                        const validationOnlyField = $form.find( '[name="is_validation_only"]' );
+                        if ( validationOnlyField.length ) {
+							$validationOnlyField.remove();
 						}
+
 
 						// Initiate reCAPTCHA, if available.
 						if ( newspack_grecaptcha?.render ) {
