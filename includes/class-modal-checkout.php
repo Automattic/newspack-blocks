@@ -474,9 +474,9 @@ final class Modal_Checkout {
 						</button>
 					</header>
 					<section class="<?php echo esc_attr( "{$class_prefix}__modal__content" ); ?>">
+						<h3><?php echo esc_html( $product_name ); ?></h3>
+						<p><?php esc_html_e( 'Select an option to continue:', 'newspack-blocks' ); ?></p>
 						<div class="<?php echo esc_attr( "{$class_prefix}__selection" ); ?>" data-product-id="<?php echo esc_attr( $product_id ); ?>">
-							<h3><?php echo esc_html( $product_name ); ?></h3>
-							<p><?php esc_html_e( 'Select an option to continue:', 'newspack-blocks' ); ?></p>
 							<ul class="newspack-blocks__options"">
 								<?php
 								$variations = $product->get_available_variations( 'objects' );
@@ -972,6 +972,9 @@ final class Modal_Checkout {
 				return true;
 			}
 		}
+		if ( class_exists( 'WC_Subscriptions_Cart' ) && \WC_Subscriptions_Cart::cart_contains_subscription() ) {
+			return true;
+		}
 		return false;
 	}
 
@@ -1139,13 +1142,15 @@ final class Modal_Checkout {
 				$_product = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
 				if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters( 'woocommerce_checkout_cart_item_visible', true, $cart_item, $cart_item_key ) ) :
 					?>
-					<h2>
-						<?php
-						echo apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key ) . ': '; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-						echo wc_get_formatted_cart_item_data( $cart_item ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-						?>
-						<?php echo apply_filters( 'woocommerce_cart_item_subtotal', $cart->get_product_subtotal( $_product, $cart_item['quantity'] ), $cart_item, $cart_item_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-					</h2>
+					<p>
+						<strong>
+							<?php
+							echo apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key ) . ': '; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							echo wc_get_formatted_cart_item_data( $cart_item ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							?>
+							<?php echo apply_filters( 'woocommerce_cart_item_subtotal', $cart->get_product_subtotal( $_product, $cart_item['quantity'] ), $cart_item, $cart_item_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						</strong>
+					</p>
 					<?php
 				endif;
 			endforeach;
@@ -1454,6 +1459,8 @@ final class Modal_Checkout {
 	 * @param string $name      The name.
 	 * @param string $price     The price. Optional. If not provided, the price string will contain 0.
 	 * @param string $frequency The frequency. Optional. If not provided, the price will be treated as a one-time payment.
+	 *
+	 * @return string The price string.
 	 */
 	public static function get_summary_card_price_string( $name, $price = '', $frequency = '' ) {
 		if ( ! $price ) {
