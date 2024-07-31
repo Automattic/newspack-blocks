@@ -135,15 +135,12 @@ domReady(
 				 */
 				if ( $checkout_continue.length ) {
 					setEditingDetails( true );
-					// Perform initial validation so it can skip 1st step if possible.
-					validateForm( true, () => {
-						// Attach handler to "Back" button.
-						$form.on( 'click', '#checkout_back', function ( ev ) {
-							ev.preventDefault();
-							setEditingDetails( true );
-						} );
+					if ( ! $gift_options.length ) {
+						// Perform initial validation so it can skip 1st step if possible.
+						validateForm( true, setReady );
+					} else {
 						setReady();
-					} );
+					}
 				} else {
 					setReady();
 				}
@@ -580,6 +577,17 @@ domReady(
 							const success = ! result.messages;
 							if ( success ) {
 								setEditingDetails( false );
+								// If click #checkout_back event handler doesn't already exist add it to the form.
+								if (
+									! $._data( $form[ 0 ], 'events' )?.click?.some(
+										handler => handler.selector === '#checkout_back'
+									)
+								) {
+									$form.on( 'click', '#checkout_back', function ( ev ) {
+										ev.preventDefault();
+										setEditingDetails( true );
+									} );
+								}
 							} else if ( ! silent ) {
 								if ( result.messages ) {
 									handleFormError( result.messages );
