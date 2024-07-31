@@ -271,6 +271,19 @@ final class Modal_Checkout {
 				\wc_get_page_permalink( 'checkout' )
 			);
 
+			// Get data to send for this purchase.
+			$checkout_button_metadata = [
+				'currency'   => \get_woocommerce_currency(),
+				'amount'     => $price,
+				'product_id' => $product_id,
+				'referer'    => $referer,
+			];
+
+			/**
+			 * Action to fire for checkout button block modal.
+			 */
+			\do_action( 'newspack_blocks_checkout_button_modal', $checkout_button_metadata );
+
 			// Redirect to checkout.
 			\wp_safe_redirect( apply_filters( 'newspack_blocks_checkout_url', $checkout_url ) );
 			exit;

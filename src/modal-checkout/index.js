@@ -410,7 +410,7 @@ domReady(
 						data[ item.name ] = item.value;
 					} );
 
-					const classname = `${ CLASS_PREFIX }__font--xs`;
+					const classname = `${ newspackBlocksModalCheckout.newspack_class_prefix }__font--xs`;
 					const html = [];
 					html.push( '<div class="billing-details">' );
 					html.push( '<h3>' + newspackBlocksModalCheckout.labels.billing_details + '</h3>' );
