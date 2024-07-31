@@ -87,6 +87,7 @@ domReady( () => {
 						window.history.back();
 					}
 				}
+				window?.newspackReaderActivation?.setCheckoutStatus?.( false );
 			};
 			if ( window?.newspackReaderActivation?.openNewslettersSignupModal ) {
 				window.newspackReaderActivation.openNewslettersSignupModal( {
@@ -98,6 +99,8 @@ domReady( () => {
 			// Ensure we always reset the modal title and width once the modal closes.
 			setModalWidth();
 			setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
+		} else {
+			window?.newspackReaderActivation?.setCheckoutStatus?.( false );
 		}
 	};
 
@@ -255,13 +258,16 @@ domReady( () => {
 					}
 
 					form.classList.remove( 'processing' );
+
+					// Set reader activation checkout status flag if available.
+					window?.newspackReaderActivation?.setCheckoutStatus?.( true );
+
 					if (
-						window?.newspackReaderActivation?.openAuthModal &&
+						! newspack_ras_config.is_logged_in &&
 						! window?.newspackReaderActivation?.getReader?.()?.authenticated &&
-						! newspack_ras_config.is_logged_in
+						window?.newspackReaderActivation?.openAuthModal
 					) {
 						ev.preventDefault();
-
 						const data = new FormData( form );
 						let content = '';
 						let price = '0';
