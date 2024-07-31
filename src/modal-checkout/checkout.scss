@@ -12,6 +12,17 @@
 		}
 	}
 
+	table.woocommerce-checkout-review-order-table {
+		thead > tr > th {
+			font-weight: var( --newspack-ui-font-weight-strong, 600 );
+		}
+
+		tfoot > tr.order-total > th,
+		tfoot > tr.recurring-totals > th {
+			font-weight: var( --newspack-ui-font-weight-strong, 600 );
+		}
+	}
+
 	.order-review-wrapper.hidden {
 		display: none;
 	}
