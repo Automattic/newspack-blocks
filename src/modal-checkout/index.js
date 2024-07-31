@@ -494,7 +494,7 @@ domReady(
 					) {
 						if ( !! data.newspack_wcsg_is_gift && !! data.wcsg_gift_recipients_email ) {
 							html.push( '<div class="gift-details">' );
-							html.push( '<h2>' + newspackBlocksModalCheckout.labels.gift_recipient + '</h2>' );
+							html.push( '<h3>' + newspackBlocksModalCheckout.labels.gift_recipient + '</h3>' );
 							html.push( `<p class="${ classname }">` + data.wcsg_gift_recipients_email + '</p>' );
 						}
 					}
