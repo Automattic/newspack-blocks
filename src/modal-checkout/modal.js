@@ -258,14 +258,16 @@ domReady( () => {
 					}
 
 					form.classList.remove( 'processing' );
+
+					// Set reader activation checkout status flag if available.
+					window?.newspackReaderActivation?.setCheckoutStatus?.( true );
+
 					if (
 						! newspack_ras_config.is_logged_in &&
 						! window?.newspackReaderActivation?.getReader?.()?.authenticated &&
-						window?.newspackReaderActivation?.openAuthModal &&
-						window?.newspackReaderActivation?.setCheckoutStatus
+						window?.newspackReaderActivation?.openAuthModal
 					) {
 						ev.preventDefault();
-
 						const data = new FormData( form );
 						let content = '';
 						let price = '0';
@@ -336,7 +338,6 @@ domReady( () => {
 							content = `<div class="order-details-summary ${ CLASS_PREFIX }__box ${ CLASS_PREFIX }__box--text-center"><p><strong>${ priceSummary }</strong></p></div>`;
 						}
 
-						window.newspackReaderActivation.setCheckoutStatus( true );
 						// Initialize auth flow if reader is not authenticated.
 						window.newspackReaderActivation.openAuthModal( {
 							title: newspackBlocksModal.labels.auth_modal_title,
