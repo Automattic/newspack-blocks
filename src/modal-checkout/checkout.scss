@@ -261,6 +261,7 @@
 				color: var( --newspack-ui-color-neutral-60, colors.$newspack-ui-color-neutral-60 );
 				font-size: var( --newspack-ui-font-size-xs, 14px );
 				line-height: var( --newspack-ui-line-height-xs, 1.4286 );
+				margin: 0;
 			}
 
 			ul.wc-saved-payment-methods {
@@ -340,16 +341,16 @@
 		}
 	}
 
+	.wc-saved-payment-methods {
+		margin-top: var( --newspack-ui-spacer-3, 16px );
+	}
+
 	// WooCommerce Payments
 	#payment {
 		.payment_method_woocommerce_payments {
 
 			.testmode-info {
 				margin-bottom: 0;
-
-				+ .wc-saved-payment-methods {
-					margin-top: var( --newspack-ui-spacer-5, 24px );
-				}
 			}
 		}
 	}
@@ -394,7 +395,7 @@
 	// Woo Payments inputs
 	#wcpay-upe-element,
 	.wcpay-upe-element {
-		margin: var( --newspack-ui-spacer-5, 24px ) 0 var( --newspack-ui-spacer-3, 16px ) 0;
+		margin: 0 0 var( --newspack-ui-spacer-3, 16px );
 		padding: 0;
 	}
 
