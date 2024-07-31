@@ -81,7 +81,8 @@
 	}
 
 	.billing-details,
-	.shipping-details {
+	.shipping-details,
+	.gift-details {
 		&:not(:last-child ) {
 			margin-bottom: var( --newspack-ui-spacer-5, 24px );
 		}
@@ -341,8 +342,15 @@
 
 	// WooCommerce Payments
 	#payment {
-		.payment_method_woocommerce_payments .testmode-info {
-			margin-bottom: 0;
+		.payment_method_woocommerce_payments {
+
+			.testmode-info {
+				margin-bottom: 0;
+
+				+ .wc-saved-payment-methods {
+					margin-top: var( --newspack-ui-spacer-5, 24px );
+				}
+			}
 		}
 	}
 
