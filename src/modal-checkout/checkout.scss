@@ -352,6 +352,11 @@
 			.testmode-info {
 				margin-bottom: 0;
 			}
+
+			// stylelint-disable-next-line selector-id-pattern
+			#wc-woocommerce_payments-upe-form {
+				margin-top: var( --newspack-ui-spacer-3, 16px );
+			}
 		}
 	}
 
