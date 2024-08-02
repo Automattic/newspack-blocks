@@ -547,7 +547,7 @@ final class Modal_Checkout {
 
 		$dependencies = [ 'jquery' ];
 		// Add support reCAPTCHA dependencies, if connected.
-		if ( class_exists( 'Newspack\Recaptcha' ) ) {
+		if ( class_exists( 'Newspack\Recaptcha' ) && \Newspack\Recaptcha::can_use_captcha() ) {
 			$dependencies[] = \Newspack\Recaptcha::SCRIPT_HANDLE;
 		}
 
