@@ -340,7 +340,7 @@ domReady(
 								$nyp.find( 'input[name="price"]' ).focus();
 								$nyp.find( 'h3, input[name="price"]' ).addClass( 'newspack-ui__field-error' );
 							}
-							$( document.body ).trigger( 'update_checkout' );
+							$( document.body ).trigger( 'update_checkout', { update_shipping_method: false } );
 						},
 						complete: () => {
 							unblockForm( $nyp );
@@ -369,10 +369,6 @@ domReady(
 				 * @param {boolean} isEditingDetails
 				 */
 				function setEditingDetails( isEditingDetails ) {
-					// Scroll to top.
-					window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
-					// Update checkout.
-					$( document.body ).trigger( 'update_checkout' );
 					clearNotices();
 					// Clear checkout details.
 					$( '#checkout_details' ).remove();
@@ -409,6 +405,8 @@ domReady(
 						} );
 					}
 					$form.triggerHandler( 'editing_details', [ isEditingDetails ] );
+					// Scroll to top.
+					window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
 				}
 
 				/**
