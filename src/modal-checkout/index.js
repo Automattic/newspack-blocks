@@ -262,10 +262,22 @@ domReady(
 							if ( code ) {
 								const isError = code.includes( 'error' );
 								$coupon.append(
-									`<p class="result ${ CLASS_PREFIX }__helper-text">` + $( code ).text() + '</p>'
+									`<p class="result ${ CLASS_PREFIX }__helper-text ${
+										isError ? CLASS_PREFIX + '__inline-error' : ''
+									}">` +
+										$( code ).text() +
+										'</p>'
 								);
 								if ( isError ) {
 									$coupon.find( 'input[name="coupon_code"]' ).focus();
+									$coupon
+										.find( 'h3, input[name="coupon_code"]' )
+										.addClass( 'newspack-ui__field-error' );
+								} else {
+									$coupon.find( 'input[name="coupon_code"]' ).focus();
+									$coupon
+										.find( 'h3, input[name="coupon_code"]' )
+										.removeClass( 'newspack-ui__field-error' );
 								}
 								$( document.body ).trigger( 'applied_coupon_in_checkout', [ data.coupon_code ] );
 								$( document.body ).trigger( 'update_checkout', { update_shipping_method: false } );
@@ -315,16 +327,18 @@ domReady(
 							clearNotices();
 							$nyp.find( '.result' ).remove();
 							$nyp.append(
-								`<p class="result ${ CLASS_PREFIX }__${
-									success ? 'helper-text' : 'inline-error'
+								`<p class="result ${ CLASS_PREFIX }__helper-text ${
+									! success ? CLASS_PREFIX + '__inline-error' : ''
 								}">` +
 									res.message +
 									'</p>'
 							);
 							if ( success ) {
 								$( '.woocommerce-Price-amount' ).replaceWith( res.price );
+								$nyp.find( 'h3, input[name="price"]' ).removeClass( 'newspack-ui__field-error' );
 							} else {
 								$nyp.find( 'input[name="price"]' ).focus();
+								$nyp.find( 'h3, input[name="price"]' ).addClass( 'newspack-ui__field-error' );
 							}
 							$( document.body ).trigger( 'update_checkout' );
 						},
