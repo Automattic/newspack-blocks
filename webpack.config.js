@@ -61,20 +61,9 @@ const entry = {
 	...viewBlocksScripts,
 };
 
-Object.keys( entry ).forEach( key => {
-	const value = entry[ key ];
-	if ( Array.isArray( value ) ) {
-		entry[ key ] = [ 'regenerator-runtime/runtime', ...value ];
-	} else {
-		entry[ key ] = [ 'regenerator-runtime/runtime', value ];
-	}
-} );
-
 const webpackConfig = getBaseWebpackConfig(
-	{ WP: true },
 	{
 		entry,
-		'output-path': path.join( __dirname, 'dist' ),
 	}
 );
 
