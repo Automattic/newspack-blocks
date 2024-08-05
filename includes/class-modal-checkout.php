@@ -34,7 +34,7 @@ final class Modal_Checkout {
 		add_action( 'wp_loaded', [ __CLASS__, 'process_checkout_request' ], 5 );
 		add_filter( 'wp_redirect', [ __CLASS__, 'pass_url_param_on_redirect' ] );
 		add_filter( 'woocommerce_cart_product_cannot_be_purchased_message', [ __CLASS__, 'woocommerce_cart_product_cannot_be_purchased_message' ], 10, 2 );
-		add_filter( 'woocommerce_add_error', [ __CLASS__, 'hide_expiry_message' ] );
+		add_filter( 'woocommerce_add_error', [ __CLASS__, 'hide_expiry_message_shop_link' ] );
 		add_action( 'wp_footer', [ __CLASS__, 'render_modal_markup' ], 100 );
 		add_action( 'wp_footer', [ __CLASS__, 'render_variation_selection' ], 100 );
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'enqueue_scripts' ] );
@@ -1057,14 +1057,14 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * We don't want to show this message in modal checkout because the Shop page doesn't work well inside.
+	 * We don't want to show the Shop page link in modal checkout because the Shop page doesn't work well inside.
 	 * Unfortunately Woo doesn't provide a filter for this message, so we need to detect it by string matching.
 	 * May not work if the message has been translated or modified elsewhere.
 	 *
 	 * @param string $message The message.
 	 * @return string
 	 */
-	public static function hide_expiry_message( $message ) {
+	public static function hide_expiry_message_shop_link( $message ) {
 		if ( self::is_modal_checkout() && strpos( $message, 'Sorry, your session has expired' ) !== false ) {
 			return __( 'Could not complete this transaction. Please contact us for assistance.', 'newspack-blocks' );
 		}
