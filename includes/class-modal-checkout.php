@@ -34,6 +34,7 @@ final class Modal_Checkout {
 		add_action( 'wp_loaded', [ __CLASS__, 'process_checkout_request' ], 5 );
 		add_filter( 'wp_redirect', [ __CLASS__, 'pass_url_param_on_redirect' ] );
 		add_filter( 'woocommerce_cart_product_cannot_be_purchased_message', [ __CLASS__, 'woocommerce_cart_product_cannot_be_purchased_message' ], 10, 2 );
+		add_filter( 'woocommerce_add_error', [ __CLASS__, 'hide_expiry_message' ] );
 		add_action( 'wp_footer', [ __CLASS__, 'render_modal_markup' ], 100 );
 		add_action( 'wp_footer', [ __CLASS__, 'render_variation_selection' ], 100 );
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'enqueue_scripts' ] );
@@ -1028,6 +1029,15 @@ final class Modal_Checkout {
 	}
 
 	/**
+	 * Alternative error message to show when limiting a subscription product's purchase.
+	 *
+	 * @return string
+	 */
+	public static function get_subscription_limited_message() {
+		return __( 'You may only have one subscription of this product at a time.', 'newspack-blocks' );
+	}
+
+	/**
 	 * Filters the error message shown when a product can't be added to the cart.
 	 *
 	 * @param string     $message Message.
@@ -1039,10 +1049,25 @@ final class Modal_Checkout {
 		if ( method_exists( 'WCS_Limiter', 'is_purchasable' ) ) {
 			$product = \wc_get_product( $product_data->get_id() );
 			if ( ! \WCS_Limiter::is_purchasable( false, $product ) ) {
-				$message .= ' ' . __( 'You may only have one subscription of this product at a time.', 'newspack-blocks' );
+				$message .= ' ' . self::get_subscription_limited_message();
 			}
 		}
 
+		return $message;
+	}
+
+	/**
+	 * We don't want to show this message in modal checkout because the Shop page doesn't work well inside.
+	 * Unfortunately Woo doesn't provide a filter for this message, so we need to detect it by string matching.
+	 * May not work if the message has been translated or modified elsewhere.
+	 *
+	 * @param string $message The message.
+	 * @return string
+	 */
+	public static function hide_expiry_message( $message ) {
+		if ( self::is_modal_checkout() && strpos( $message, 'Sorry, your session has expired' ) !== false ) {
+			return __( 'Could not complete this transaction. Please contact us for assistance.', 'newspack-blocks' );
+		}
 		return $message;
 	}
 
@@ -1219,7 +1244,10 @@ final class Modal_Checkout {
 		}
 		$id_from_email = self::get_user_id_from_email();
 		if ( $id_from_email ) {
-			return wcs_is_product_limited_for_user( $product, $id_from_email );
+			$is_limited_for_user = wcs_is_product_limited_for_user( $product, $id_from_email );
+			if ( $is_limited_for_user ) {
+				add_filter( 'woocommerce_cart_item_removed_message', [ __CLASS__, 'get_subscription_limited_message' ], 10, 2 );
+			}
 		}
 		return $is_limited_for_user;
 	}
