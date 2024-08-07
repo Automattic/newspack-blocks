@@ -8,6 +8,7 @@ import './modal.scss';
 /**
  * Internal dependencies
  */
+import { manageDismissed, manageOpened } from './analytics';
 import { createHiddenInput, domReady } from './utils';
 
 const CLASS_PREFIX = newspackBlocksModal.newspack_class_prefix;
@@ -98,6 +99,9 @@ domReady( () => {
 			// Ensure we always reset the modal title and width once the modal closes.
 			setModalWidth();
 			setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
+		} else {
+			// Track a dismissal event (modal has been manually closed without completing the checkout).
+			manageDismissed();
 		}
 	};
 
@@ -255,6 +259,12 @@ domReady( () => {
 					}
 
 					form.classList.remove( 'processing' );
+
+					const data = new FormData( form );
+					const isDonateBlock = data.get( 'newspack_donate' );
+					const isCheckoutButtonBlock = data.get( 'newspack_checkout' );
+					const blockType = isDonateBlock ? 'donate' : 'checkout_button';
+
 					if (
 						window?.newspackReaderActivation?.openAuthModal &&
 						! window?.newspackReaderActivation?.getReader?.()?.authenticated &&
@@ -262,12 +272,11 @@ domReady( () => {
 					) {
 						ev.preventDefault();
 
-						const data = new FormData( form );
 						let content = '';
 						let price = '0';
 						let priceSummary = '';
 
-						if ( data.get( 'newspack_donate' ) ) {
+						if ( isDonateBlock ) {
 							const frequency = data.get( 'donation_frequency' );
 							const donationTiers = form.querySelectorAll(
 								`.donation-tier__${ frequency }, .donation-frequency__${ frequency }`
@@ -320,7 +329,7 @@ domReady( () => {
 									}
 								}
 							}
-						} else if ( data.get( 'newspack_checkout' ) ) {
+						} else if ( isCheckoutButtonBlock ) {
 							const priceSummaryInput = form.querySelector( 'input[name="product_price_summary"]' );
 
 							if ( priceSummaryInput ) {
@@ -357,6 +366,7 @@ domReady( () => {
 					} else {
 						// Otherwise initialize checkout.
 						openCheckout();
+						manageOpened( blockType );
 					}
 				} );
 			} );

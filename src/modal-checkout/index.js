@@ -7,6 +7,7 @@ import './checkout.scss';
 /**
  * Internal dependencies
  */
+import { manageLoaded, managePagination } from './analytics';
 import { domReady } from './utils';
 
 domReady(
@@ -45,6 +46,7 @@ domReady(
 			}
 		} else {
 			$( document.body ).on( 'init_checkout', function () {
+				manageLoaded();
 				let originalFormHandlers = [];
 
 				const $form = $( 'form.checkout' );
@@ -141,6 +143,7 @@ domReady(
 						$form.on( 'click', '#checkout_back', function ( ev ) {
 							ev.preventDefault();
 							setEditingDetails( true );
+							managePagination( 'back' );
 						} );
 						setReady();
 					} );
@@ -563,6 +566,7 @@ domReady(
 							const success = ! result.messages;
 							if ( success ) {
 								setEditingDetails( false );
+								managePagination( 'continue' );
 							} else if ( ! silent ) {
 								if ( result.messages ) {
 									handleFormError( result.messages );
