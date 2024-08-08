@@ -9,13 +9,20 @@
  * Cache dynamic blocks for improved performance.
  */
 class Newspack_Blocks_Caching {
+
+	const CACHE_GROUP = 'newspack_blocks';
+
 	/**
 	 * Add hooks and filters.
 	 */
 	public static function init() {
-		if ( defined( 'NEWSPACK_CACHE_BLOCKS' ) && NEWSPACK_CACHE_BLOCKS ) {
+		if ( defined( 'NEWSPACK_BLOCKS_CACHE_BLOCKS' ) && NEWSPACK_BLOCKS_CACHE_BLOCKS ) {
 			add_filter( 'pre_render_block', [ __CLASS__, 'maybe_serve_cached_block' ], 10, 2 );
 			add_filter( 'render_block', [ __CLASS__, 'maybe_cache_block' ], 9999, 2 );
+
+			if ( ! defined( 'NEWSPACK_BLOCKS_CACHE_BLOCKS_TIME' ) ) {
+				define( 'NEWSPACK_BLOCKS_CACHE_BLOCKS_TIME', 300 );
+			}
 		}
 	}
 
@@ -68,7 +75,7 @@ class Newspack_Blocks_Caching {
 	 * @param string $message Message to log.
 	 */
 	protected static function debug_log( $message ) {
-		if ( defined( 'NEWSPACK_LOG_LEVEL' ) && (int) NEWSPACK_LOG_LEVEL >= 2 ) {
+		if ( defined( 'NEWSPACK_LOG_LEVEL' ) && (int) NEWSPACK_LOG_LEVEL >= 2 && class_exists( 'Newspack\Logger' ) ) {
 			Newspack\Logger::log( $message );
 		}
 	}
@@ -88,30 +95,18 @@ class Newspack_Blocks_Caching {
 		$cache_key = self::get_cache_key( $block_data );
 		self::debug_log( sprintf( 'Checking cache for: %s', $cache_key ) );
 
-		$cached_data = wp_cache_get( $cache_key );
-		if ( ! is_array( $cached_data ) || ! isset( $cached_data['timestamp_generated'], $cached_data['cached_content'] ) ) {
+		$cached_data = wp_cache_get( $cache_key, self::CACHE_GROUP );
+		if ( ! is_array( $cached_data ) || ! isset( $cached_data['timestamp_generated'], $cached_data['cached_content'] ) || empty( $cached_data['cached_content'] ) ) {
 			self::debug_log( sprintf( 'Cached data not found for: %s', $cache_key ) );
 			return $block_html;
 		}
 
-		// Check to see if cache needs to be refreshed.
-		// We're using WP_Query so that the query here gets cached for further cache checks.
-		$latest_update = get_posts(
-			[
-				'post_type'      => 'post',
-				'post_status'    => 'publish',
-				'orderby'        => 'modified',
-				'order'          => 'DESC',
-				'posts_per_page' => 1,
-			]
-		);
-		if ( empty( $latest_update ) ) {
-			return $block_html;
-		}
-
-		$last_update_timestamp = strtotime( $latest_update[0]->post_modified_gmt );
-		if ( $last_update_timestamp > $cached_data['timestamp_generated'] ) {
-			self::debug_log( sprintf( 'A post has been updated since %s was cached. Not serving from cache.', $cache_key ) );
+		// Double-check to make sure cached data is still valid.
+		if ( $cached_data['timestamp_generated'] + NEWSPACK_BLOCKS_CACHE_BLOCKS_TIME < time() ) {
+			if ( class_exists( 'Newspack\Logger' ) ) {
+				Newspack\Logger::log( 'Flushing cache for block because it expired' );
+			}
+			wp_cache_delete( $cache_key, self::CACHE_GROUP );
 			return $block_html;
 		}
 
@@ -141,7 +136,7 @@ class Newspack_Blocks_Caching {
 			'timestamp_generated' => time(),
 			'cached_content'      => $block_html,
 		];
-		wp_cache_set( $cache_key, $cache_data );
+		wp_cache_set( $cache_key, $cache_data, self::CACHE_GROUP, NEWSPACK_BLOCKS_CACHE_BLOCKS_TIME );
 
 		self::debug_log( sprintf( 'Caching block: %s', $cache_key ) );
 
