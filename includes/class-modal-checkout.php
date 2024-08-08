@@ -84,7 +84,7 @@ final class Modal_Checkout {
 		/** Custom handling for registered users. */
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
 		add_filter( 'woocommerce_checkout_posted_data', [ __CLASS__, 'skip_account_creation' ], 11 );
-		add_filter( 'woocommerce_checkout_create_order', [ __CLASS__, 'maybe_add_checkout_registration_order_meta' ], 10, 1 );
+		add_action( 'woocommerce_checkout_create_order', [ __CLASS__, 'maybe_add_checkout_registration_order_meta' ], 10, 1 );
 
 		// Remove some stuff from the modal checkout page. It's displayed in an iframe, so it should not be treated as a separate page.
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'dequeue_scripts' ], 11 );
@@ -1478,7 +1478,7 @@ final class Modal_Checkout {
 	 *
 	 * @return void.
 	 */
-	public static function maybe_add_checkout_registration_order_meta( $order ) { // phpcs:ignore WordPressVIPMinimum.Hooks.AlwaysReturnInFilter.VoidReturn, WordPressVIPMinimum.Hooks.AlwaysReturnInFilter.MissingReturnStatement
+	public static function maybe_add_checkout_registration_order_meta( $order ) {
 		if ( ! self::is_modal_checkout() ) {
 			return;
 		}
