@@ -50,20 +50,20 @@ const placeholderBlocksScript = path.join( __dirname, 'src', 'setup', 'placehold
 
 const blockStylesScript = [ path.join( __dirname, 'src', 'block-styles', 'view' ) ];
 
+const entry = {
+	placeholder_blocks: placeholderBlocksScript,
+	editor: editorScript,
+	block_styles: blockStylesScript,
+	modal: path.join( __dirname, 'src/modal-checkout/modal.js' ),
+	modalCheckout: path.join( __dirname, 'src/modal-checkout' ),
+	frequencyBased: path.join( __dirname, 'src/blocks/donate/frequency-based' ),
+	tiersBased: path.join( __dirname, 'src/blocks/donate/tiers-based' ),
+	...viewBlocksScripts,
+};
+
 const webpackConfig = getBaseWebpackConfig(
-	{ WP: true },
 	{
-		entry: {
-			placeholder_blocks: placeholderBlocksScript,
-			editor: editorScript,
-			block_styles: blockStylesScript,
-			modal: path.join( __dirname, 'src/modal-checkout/modal.js' ),
-			modalCheckout: path.join( __dirname, 'src/modal-checkout' ),
-			frequencyBased: path.join( __dirname, 'src/blocks/donate/frequency-based' ),
-			tiersBased: path.join( __dirname, 'src/blocks/donate/tiers-based' ),
-			...viewBlocksScripts,
-		},
-		'output-path': path.join( __dirname, 'dist' ),
+		entry,
 	}
 );
 
