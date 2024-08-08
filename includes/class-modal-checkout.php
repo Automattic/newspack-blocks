@@ -37,7 +37,7 @@ final class Modal_Checkout {
 		add_action( 'wp_footer', [ __CLASS__, 'render_modal_markup' ], 100 );
 		add_action( 'wp_footer', [ __CLASS__, 'render_variation_selection' ], 100 );
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'enqueue_scripts' ] );
-		add_filter( 'show_admin_bar', [ __CLASS__, 'show_admin_bar' ] );
+		add_filter( 'show_admin_bar', [ __CLASS__, 'show_admin_bar' ] ); // phpcs:ignore WordPressVIPMinimum.UserExperience.AdminBarRemoval.RemovalDetected
 		add_action( 'template_include', [ __CLASS__, 'get_checkout_template' ] );
 		add_filter( 'woocommerce_get_return_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
 		add_filter( 'woocommerce_get_checkout_order_received_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
@@ -876,7 +876,7 @@ final class Modal_Checkout {
 				</div>
 				<form>
 					<input type="hidden" name="modal_checkout" value="1" />
-					<input type="hidden" name="newsletter_signup_email" value="<?php echo esc_html( $email_address ); ?>" />
+					<input type="hidden" name="newsletter_signup_email" value="<?php echo esc_attr( $email_address ); ?>" />
 					<?php
 					self::render_hidden_inputs();
 					foreach ( $newsletters_lists as $list ) {
@@ -904,7 +904,7 @@ final class Modal_Checkout {
 						<?php
 					}
 					?>
-					<input type="submit" value="<?php esc_html_e( 'Continue', 'newspack-blocks' ); ?>">
+					<input type="submit" value="<?php esc_attr_e( 'Continue', 'newspack-blocks' ); ?>">
 				</form>
 			</div>
 		<?php
