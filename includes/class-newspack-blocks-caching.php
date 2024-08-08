@@ -136,7 +136,7 @@ class Newspack_Blocks_Caching {
 			'timestamp_generated' => time(),
 			'cached_content'      => $block_html,
 		];
-		wp_cache_set( $cache_key, $cache_data, self::CACHE_GROUP, NEWSPACK_BLOCKS_CACHE_BLOCKS_TIME );
+		wp_cache_set( $cache_key, $cache_data, self::CACHE_GROUP, NEWSPACK_BLOCKS_CACHE_BLOCKS_TIME ); // phpcs:ignore WordPressVIPMinimum.Performance.LowExpiryCacheTime.CacheTimeUndetermined
 
 		self::debug_log( sprintf( 'Caching block: %s', $cache_key ) );
 
