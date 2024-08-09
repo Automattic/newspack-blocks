@@ -7,7 +7,7 @@ import './checkout.scss';
 /**
  * Internal dependencies
  */
-import { manageLoaded, managePagination } from './analytics';
+import { manageCheckoutAttempt, manageLoaded, managePagination } from './analytics';
 import { domReady } from './utils';
 
 domReady(
@@ -143,6 +143,10 @@ domReady(
 							ev.preventDefault();
 							setEditingDetails( true );
 							managePagination( 'back' );
+						} );
+						// Attach handler to "Place Order" button.
+						$form.on( 'click', '#place_order', function ( ev ) {
+							manageCheckoutAttempt();
 						} );
 						setReady();
 					} );

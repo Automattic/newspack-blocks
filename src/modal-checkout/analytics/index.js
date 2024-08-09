@@ -1,3 +1,4 @@
+export { manageCheckoutAttempt } from './ga4/checkout-attempt';
 export { manageDismissed } from './ga4/dismissed';
 export { manageLoaded } from './ga4/loaded';
 export { manageOpened } from './ga4/opened';

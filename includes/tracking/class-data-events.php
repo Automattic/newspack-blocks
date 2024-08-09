@@ -33,7 +33,7 @@ final class Data_Events {
 	 * Register listeners.
 	 */
 	public static function register_listeners() {
-		if ( ! method_exists( 'Newspack\Data_Events', 'register_listener' ) ) {
+		if ( ! method_exists( 'Newspack\Data_Events', 'register_handler' ) ) {
 			return;
 		}
 
@@ -52,9 +52,11 @@ final class Data_Events {
 		*/
 
 		\Newspack\Data_Events::register_listener(
-			'woocommerce_checkout_order_created',
+			'woocommerce_order_status_completed',
 			'modal_checkout_interaction',
-			[ __CLASS__, 'checkout_attempt' ]
+			function ( $order_id, $order ) {
+				return \Newspack\Data_Events\Utils::get_order_data( $order_id, true );
+			}
 		);
 	}
 
@@ -77,10 +79,6 @@ final class Data_Events {
 	 * @param string $product_id Product's ID.
 	 */
 	public static function build_js_data_events( $product_id, $cart_item ) {
-		if ( ! method_exists( 'Newspack\Data_Events', 'register_listener' ) ) {
-			return '';
-		}
-
 		// Set action type to the kind of purchase: product, subscription, or donation.
 		$action_type  = 'product';
 		$recurrence = 'once';
@@ -99,12 +97,12 @@ final class Data_Events {
 		}
 
 		$data_order_details = [
-			'action_type'  => $action_type, // donation, subscription, regular product
-			'product_id'   => $product_id,
-			'amount'       => $cart_item['data']->get_price(),
-			'currency'     => \get_woocommerce_currency(),
-			'referer'      => $cart_item['referer'],
-			'recurrence'   => $recurrence,
+			'action_type' => $action_type, // donation, subscription, regular product
+			'product_id'  => $product_id,
+			'amount'      => $cart_item['data']->get_price(),
+			'currency'    => \get_woocommerce_currency(),
+			'referer'     => $cart_item['referer'],
+			'recurrence'  => $recurrence,
 		];
 
 		return $data_order_details;
@@ -155,33 +153,6 @@ final class Data_Events {
 
 		$data = array_merge( $data, $metadata );
 
-		return $data;
-	}
-
-	/**
-	 * Fires when a reader attempts to complete an order with the modal checkout.
-	 *
-	 * @param array $order WooCommerce order information.
-	 *
-	 * @return ?array
-	 *
-	 * TODO: Move to front end -- check-out attempt
-	 */
-	public static function checkout_attempt( $order ) {
-		$order_data = \Newspack\Data_Events\Utils::get_order_data( $order->get_id(), true );
-
-		if ( empty( $order_data ) ) {
-			return;
-		}
-
-		$data = [
-			'action'     => self::FORM_SUBMISSION,
-			'order_id'   => $order->get_id(),
-			'amount'     => $order->get_total(),
-			'currency'   => $order->get_currency(),
-			'recurrence' => $order_data['recurrence'],
-			'product_id' => $order_data['platform_data']['product_id'],
-		];
 		return $data;
 	}
 }
