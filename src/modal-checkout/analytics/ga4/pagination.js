@@ -1,4 +1,4 @@
-import { getEventPayload, sendEvent } from './utils';
+import { getEventPayload, getProductDetails, sendEvent } from './utils';
 
 /**
  * Event fired when switching between steps of the multi-step checkout flow.
@@ -11,6 +11,14 @@ export const managePagination = ( action = 'continue' ) => {
 		return;
 	}
 
-	const payload = getEventPayload( action );
+	const { action_type, amount, currency, product_id, recurrence, referer } = getProductDetails();
+	const payload = getEventPayload( action, {
+		action_type,
+		amount,
+		currency,
+		product_id,
+		recurrence,
+		referer,
+	} );
 	sendEvent( payload );
 };
