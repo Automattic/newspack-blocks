@@ -26,3 +26,21 @@ export const sendEvent = ( payload, eventName = 'np_modal_checkout_interaction' 
 		window.gtag( 'event', eventName, payload );
 	}
 };
+
+/**
+ * Get product details from the data-order-details attribute.
+ *
+ * @returns {Object} Product details.
+ *                   action_type
+ *                   amount
+ *                   currency
+ *                   product_id
+ *                   recurrence
+ *                   referer
+ */
+export const getProductDetails = () => {
+	const productDetailsContainer = document.getElementById( 'modal-checkout-product-details' );
+	const productDetailsJSON = productDetailsContainer ? productDetailsContainer.getAttribute( 'data-order-details' ) : false;
+	const productDetails = productDetailsJSON ? JSON.parse( productDetailsJSON ) : false;
+	return productDetails || {};
+}
