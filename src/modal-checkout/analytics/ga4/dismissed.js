@@ -5,7 +5,7 @@ import { getEventPayload, sendEvent } from './utils';
  */
 
 export const manageDismissed = () => {
-	if ( 'function' !== typeof gtag ) {
+	if ( 'function' !== typeof window.gtag ) {
 		return;
 	}
 	const extraParams = {};

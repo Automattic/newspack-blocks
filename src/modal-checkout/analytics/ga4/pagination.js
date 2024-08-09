@@ -7,9 +7,10 @@ import { getEventPayload, sendEvent } from './utils';
  */
 
 export const managePagination = ( action = 'continue' ) => {
-	if ( 'function' !== typeof gtag ) {
+	if ( 'function' !== typeof window.gtag ) {
 		return;
 	}
+
 	const payload = getEventPayload( action );
 	sendEvent( payload );
 };

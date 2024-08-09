@@ -46,7 +46,6 @@ domReady(
 			}
 		} else {
 			$( document.body ).on( 'init_checkout', function () {
-				manageLoaded();
 				let originalFormHandlers = [];
 
 				const $form = $( 'form.checkout' );
@@ -237,6 +236,7 @@ domReady(
 					const container = document.querySelector( '#newspack_modal_checkout_container' );
 					container.checkoutReady = true;
 					container.dispatchEvent( readyEvent );
+					manageLoaded( container );
 				}
 
 				/**
@@ -353,6 +353,7 @@ domReady(
 				function handleFormSubmit( ev ) {
 					ev.preventDefault();
 					validateForm();
+					managePagination( 'continue' );
 				}
 
 				/**
@@ -566,7 +567,7 @@ domReady(
 							const success = ! result.messages;
 							if ( success ) {
 								setEditingDetails( false );
-								managePagination( 'continue' );
+								// managePagination( 'continue' );
 							} else if ( ! silent ) {
 								if ( result.messages ) {
 									handleFormError( result.messages );

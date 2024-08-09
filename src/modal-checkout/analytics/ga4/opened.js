@@ -8,7 +8,7 @@ import { getEventPayload, sendEvent } from './utils';
  * @param {string} blockType The type of block that triggered the open event: donate or checkout_button.
  */
 export const manageOpened = ( blockType = 'donate' ) => {
-	if ( 'function' !== typeof gtag ) {
+	if ( 'function' !== typeof window.gtag ) {
 		return;
 	}
 	const payload = getEventPayload( 'opened', {

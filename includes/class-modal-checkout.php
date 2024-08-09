@@ -658,8 +658,17 @@ final class Modal_Checkout {
 			<meta name="viewport" content="width=device-width, initial-scale=1" />
 			<link rel="profile" href="https://gmpg.org/xfn/11" />
 			<?php wp_head(); ?>
+			<!-- Google tag (gtag.js) -->
+			<script async src="https://www.googletagmanager.com/gtag/js?id=G-9Y0Y0DVP1T"></script>
+			<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+
+			gtag('config', 'G-9Y0Y0DVP1T');
+			</script>
 		</head>
-			<body class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal__content" ); ?>" id="newspack_modal_checkout_container">
+		<body class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal__content" ); ?>" id="newspack_modal_checkout_container">
 			<?php
 				echo do_shortcode( '[woocommerce_checkout]' );
 				wp_footer();
@@ -1138,8 +1147,14 @@ final class Modal_Checkout {
 			foreach ( $cart->get_cart() as $cart_item_key => $cart_item ) :
 				$_product = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
 				if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters( 'woocommerce_checkout_cart_item_visible', true, $cart_item, $cart_item_key ) ) :
+					// Create an empty array to store data order information.
+					$data_order_details = [];
+					// Create an array of order information to pass to GA4 via JavaScript.
+					if ( method_exists( 'Newspack_Blocks\Tracking\Data_Events', 'build_js_data_events') ) {
+						$data_order_details = \Newspack_Blocks\Tracking\Data_Events::build_js_data_events( $_product->get_id(), $cart_item );
+					}
 					?>
-					<p class="modal-checkout-product-details" data-order-details="<?php echo wp_json_encode( [ 'product_name' => $_product->get_name() ] ); ?>">
+					<p id="modal-checkout-product-details" data-order-details='<?php echo wp_json_encode( $data_order_details ); ?>'>
 						<strong>
 							<?php
 							echo apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key ) . ': '; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
