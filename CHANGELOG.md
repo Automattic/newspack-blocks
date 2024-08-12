@@ -1,3 +1,10 @@
+## [3.6.1](https://github.com/Automattic/newspack-blocks/compare/v3.6.0...v3.6.1) (2024-08-12)
+
+
+### Bug Fixes
+
+* **wc-subs-limiting:** handle not-logged-in user ([#1816](https://github.com/Automattic/newspack-blocks/issues/1816)) ([d85a818](https://github.com/Automattic/newspack-blocks/commit/d85a8188515cf1e90256b7ecb2b3dbdb5e83ec10))
+
 # [3.6.0](https://github.com/Automattic/newspack-blocks/compare/v3.5.0...v3.6.0) (2024-07-30)
 
 
