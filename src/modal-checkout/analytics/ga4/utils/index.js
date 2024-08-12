@@ -21,7 +21,6 @@ export const getEventPayload = ( action, extraParams = {} ) => {
 
 export const sendEvent = ( payload, eventName = 'np_modal_checkout_interaction' ) => {
 	if ( 'function' === typeof window.gtag && payload ) {
-		console.log( eventName );
 		console.log( payload );
 		window.gtag( 'event', eventName, payload );
 	}

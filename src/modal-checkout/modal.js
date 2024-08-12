@@ -9,6 +9,7 @@ import './modal.scss';
  * Internal dependencies
  */
 import { manageDismissed, manageOpened } from './analytics';
+import { getProductDetails } from './analytics/ga4/utils';
 import { createHiddenInput, domReady } from './utils';
 
 const CLASS_PREFIX = newspackBlocksModal.newspack_class_prefix;
@@ -101,7 +102,10 @@ domReady( () => {
 			setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
 		} else {
 			// Track a dismissal event (modal has been manually closed without completing the checkout).
-			manageDismissed();
+			let getProductDataModal = {};
+			const getModalData = document.getElementById( 'newspack_modal_checkout' ).getAttribute( 'data-product' );
+			getProductDataModal = getModalData ? JSON.parse( getModalData ) : {};
+			manageDismissed( getProductDataModal );
 		}
 	};
 
@@ -254,6 +258,12 @@ domReady( () => {
 							ev.preventDefault();
 							form.classList.remove( 'processing' );
 							openModal( variationModal );
+
+							// TODO: fix this duplication (see below):
+							let getProductDataModal = {};
+							const getForm = form.getAttribute('data-product' );
+							getProductDataModal = getForm ? JSON.parse( getForm ) : {};
+							manageOpened( getProductDataModal );
 							return;
 						}
 					}
@@ -263,7 +273,12 @@ domReady( () => {
 					const data = new FormData( form );
 					const isDonateBlock = data.get( 'newspack_donate' );
 					const isCheckoutButtonBlock = data.get( 'newspack_checkout' );
-					const blockType = isDonateBlock ? 'donate' : 'checkout_button';
+
+					let getProductDataModal = {};
+					if ( isCheckoutButtonBlock ) {
+						const getForm = form.getAttribute('data-product' );
+						getProductDataModal = getForm ? JSON.parse( getForm ) : {};
+					}
 
 					if (
 						window?.newspackReaderActivation?.openAuthModal &&
@@ -366,7 +381,9 @@ domReady( () => {
 					} else {
 						// Otherwise initialize checkout.
 						openCheckout();
-						manageOpened( blockType );
+						manageOpened( getProductDataModal );
+						// Append product data info to the modal itself, so we can grab it for manageDismissed:
+						document.getElementById( 'newspack_modal_checkout' ).setAttribute( 'data-product', JSON.stringify( getProductDataModal ) );
 					}
 				} );
 			} );

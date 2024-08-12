@@ -126,9 +126,13 @@ function render_callback( $attributes ) {
 		$variation_id          = $attributes['variation'];
 		$product_price_summary = Modal_Checkout::get_summary_card_price_string( $name, $price, $frequency );
 		$product_data          = [
+			'action_type'  => ! empty( $frequency ) ? 'subscription' : 'product',
+			'currency'     => \get_woocommerce_currency(),
 			'is_variable'  => $is_variable,
-			'variation_id' => $variation_id,
 			'product_id'   => $product_id,
+			'recurrence'   => ! empty( $frequency ) ? $frequency : 'once',
+			'referer'      => substr( \get_permalink(), strlen( home_url() ) ), // TODO: this probably isn't great.
+			'variation_id' => $variation_id,
 		];
 
 		if ( ! $is_variable || $variation_id ) {
