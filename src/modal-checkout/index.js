@@ -612,14 +612,12 @@ domReady(
 							cb( { messages } );
 						},
 					} );
-
-					// Attach handler to "Place Order" button.
-					$form.on( 'click', '#place_order', function () {
-						manageCheckoutAttempt();
-					} );
 				}
 
-
+				// Attach handler to "Place Order" button.
+				$form.on( 'click', '#place_order', function () {
+					manageCheckoutAttempt();
+				} );
 
 				/**
 				 * Blocks provided form.

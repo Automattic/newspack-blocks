@@ -16,7 +16,6 @@ export const manageOpened = ( getProductDataModal = '' ) => {
 		action_type,
 		amount,
 		currency,
-		is_variable,
 		variation_id,
 		product_id,
 		price,
@@ -25,18 +24,19 @@ export const manageOpened = ( getProductDataModal = '' ) => {
 	} = getProductDataModal;
 
 	const extraParams = {
-		action_type: is_variable ? 'variation_picker' : action_type, // switch action type for variaton picker? this can probably be moved.
+		action_type, // donation, product, subscription -- should we also track variations using is_variable?
 		currency,
 		product_id,
 		recurrence,
 		referer,
 	};
 
-	// This essentially amounts to a check whether is_variable; on that first step, there won't be a price to grab:
+	// On the first variable screen, there may not be a price so we want to check for it.
 	if ( amount || price ) {
 		extraParams.amount = amount ? amount : price;
 	}
 
+	// There's only a variation ID for variable products, after you've selected one.
 	if ( variation_id ) {
 		extraParams.variation_id = variation_id;
 	}

@@ -27,18 +27,14 @@ export const sendEvent = ( payload, eventName = 'np_modal_checkout_interaction' 
 };
 
 /**
- * Get product details from the data-order-details attribute.
+ * Get product details from the data-order-details attribute, for inside the iframe.
  *
- * @returns {Object} Product details.
- *                   action_type
- *                   amount
- *                   currency
- *                   product_id
- *                   recurrence
- *                   referer
+ * @return {Object} Product details.
+ *
+ * @param {string} detailsElement ID of HTML element to get product details from.
  */
-export const getProductDetails = () => {
-	const productDetailsContainer = document.getElementById( 'modal-checkout-product-details' );
+export const getProductDetails = ( detailsElement ) => {
+	const productDetailsContainer = document.getElementById( detailsElement );
 	const productDetailsJSON = productDetailsContainer ? productDetailsContainer.getAttribute( 'data-order-details' ) : false;
 	const productDetails = productDetailsJSON ? JSON.parse( productDetailsJSON ) : false;
 	return productDetails || {};

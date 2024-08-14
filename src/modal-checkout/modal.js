@@ -106,12 +106,8 @@ domReady( () => {
 			window?.newspackReaderActivation?.setCheckoutStatus?.( false );
 
 			// Track a dismissal event (modal has been manually closed without completing the checkout).
-			const getModalData = document
-				.getElementById( 'newspack_modal_checkout' )
-				.getAttribute( 'data-product' );
-			getProductDataModal = getModalData ? JSON.parse( getModalData ) : {};
-			manageDismissed( getProductDataModal );
-			document.getElementById( 'newspack_modal_checkout' ).removeAttribute( 'data-product' );
+			manageDismissed();
+			document.getElementById( 'newspack_modal_checkout' ).removeAttribute( 'data-order-details' );
 		}
 	};
 
@@ -225,16 +221,18 @@ domReady( () => {
 							form.appendChild( createHiddenInput( key, data[ key ] ) );
 						} );
 					}
-					const formData = new FormData( form );
+
+					const data = new FormData( form );
+
 					const variationModals = document.querySelectorAll( `.${ VARIATON_MODAL_CLASS_PREFIX }` );
 					// Clear any open variation modal.
 					variationModals.forEach( variationModal => {
 						closeModal( variationModal );
 					} );
 					// Trigger variation modal if variation is not selected.
-					if ( formData.get( 'is_variable' ) && ! formData.get( 'variation_id' ) ) {
+					if ( data.get( 'is_variable' ) && ! data.get( 'variation_id' ) ) {
 						const variationModal = [ ...variationModals ].find(
-							modal => modal.dataset.productId === formData.get( 'product_id' )
+							modal => modal.dataset.productId === data.get( 'product_id' )
 						);
 						if ( variationModal ) {
 							variationModal
@@ -247,16 +245,17 @@ domReady( () => {
 										'after_success_button_label',
 									].forEach( afterSuccessParam => {
 										singleVariationForm.appendChild(
-											createHiddenInput( afterSuccessParam, formData.get( afterSuccessParam ) )
+											createHiddenInput( afterSuccessParam, data.get( afterSuccessParam ) )
 										);
 									} );
 
 									// Append the product data hidden inputs.
+									// TODOGA4: I've added more info to the params, is it needlessly being added here?
 									const variationData = singleVariationForm.dataset.product;
 									if ( variationData ) {
-										const data = JSON.parse( variationData );
-										Object.keys( data ).forEach( key => {
-											singleVariationForm.appendChild( createHiddenInput( key, data[ key ] ) );
+										const varData = JSON.parse( variationData );
+										Object.keys( varData ).forEach( key => {
+											singleVariationForm.appendChild( createHiddenInput( key, varData[ key ] ) );
 										} );
 									}
 								} );
@@ -267,38 +266,37 @@ domReady( () => {
 							openModal( variationModal );
 
 							// TODOGA4: fix this duplication (see below):
-							const getForm = form.getAttribute( 'data-product' );
-							getProductDataModal = getForm ? JSON.parse( getForm ) : {};
+							const getDataProduct = form.getAttribute( 'data-product' );
+							getProductDataModal = getDataProduct ? JSON.parse( getDataProduct ) : {};
 							manageOpened( getProductDataModal );
+
 							// Append product data info to the modal itself, so we can grab it for manageDismissed:
 							document
 								.getElementById( 'newspack_modal_checkout' )
-								.setAttribute( 'data-product', JSON.stringify( getProductDataModal ) );
+								.setAttribute( 'data-order-details', JSON.stringify( getProductDataModal ) );
 							return;
 						}
 					}
 
 					form.classList.remove( 'processing' );
 
-					// TODOGA4: this is kind of duplicated with the part below that starts with "let content = '';"
-					const data = new FormData( form );
+					// Set reader activation checkout status flag if available.
+					window?.newspackReaderActivation?.setCheckoutStatus?.( true );
 
 					const isDonateBlock = data.get( 'newspack_donate' );
 					const isCheckoutButtonBlock = data.get( 'newspack_checkout' );
 
+					// Set up some GA4 information.
 					if ( isCheckoutButtonBlock ) {
-						const getForm = form.getAttribute( 'data-product' );
-						getProductDataModal = getForm ? JSON.parse( getForm ) : {};
-					}
-
-					if ( isDonateBlock ) {
+						const getDataProduct = form.getAttribute( 'data-product' );
+						getProductDataModal = getDataProduct ? JSON.parse( getDataProduct ) : {};
+					} else if ( isDonateBlock ) {
 						// Get donation information and append to the modal checkout for GA4:
 						const donationFreq = data.get( 'donation_frequency' );
 						let donationValue = '';
 
 						for ( const key of data.keys() ) {
-							// find values that match the frequency name, that aren't empty
-							// TODOGA4: there's probably a better way to do this to check for issues -- like make an array and make sure there's only one?
+							// Find values that match the frequency name, that aren't empty
 							if (
 								key.indexOf( 'donation_value_' + donationFreq ) >= 0 &&
 								'other' !== data.get( key ) &&
@@ -318,9 +316,6 @@ domReady( () => {
 						};
 					}
 
-					// Set reader activation checkout status flag if available.
-					window?.newspackReaderActivation?.setCheckoutStatus?.( true );
-
 					if (
 						! newspack_ras_config.is_logged_in &&
 						! window?.newspackReaderActivation?.getReader?.()?.authenticated &&
@@ -333,6 +328,8 @@ domReady( () => {
 						let priceSummary = '';
 
 						if ( isDonateBlock ) {
+
+
 							const frequency = data.get( 'donation_frequency' );
 							const donationTiers = form.querySelectorAll(
 								`.donation-tier__${ frequency }, .donation-frequency__${ frequency }`
@@ -423,10 +420,10 @@ domReady( () => {
 						// Otherwise initialize checkout.
 						openCheckout();
 						manageOpened( getProductDataModal );
-						// Append product data info to the modal itself, so we can grab it for manageDismissed:
+						// Append product data info to the modal, so we can grab it for manageDismissed.
 						document
 							.getElementById( 'newspack_modal_checkout' )
-							.setAttribute( 'data-product', JSON.stringify( getProductDataModal ) );
+							.setAttribute( 'data-order-details', JSON.stringify( getProductDataModal ) );
 					}
 				} );
 			} );
