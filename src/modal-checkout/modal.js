@@ -19,6 +19,8 @@ const MODAL_CHECKOUT_ID = 'newspack_modal_checkout';
 const MODAL_CLASS_PREFIX = `${ CLASS_PREFIX }__modal`;
 const VARIATON_MODAL_CLASS_PREFIX = 'newspack-blocks__modal-variation';
 
+let getProductDataModal = {};
+
 domReady( () => {
 	const modalCheckout = document.querySelector( `#${ MODAL_CHECKOUT_ID }` );
 
@@ -102,10 +104,11 @@ domReady( () => {
 			setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
 		} else {
 			// Track a dismissal event (modal has been manually closed without completing the checkout).
-			let getProductDataModal = {};
-			const getModalData = document.getElementById( 'newspack_modal_checkout' ).getAttribute( 'data-product' );
+			const getModalData = document.getElementById( 'newspack_modal_checkout' )
+				.getAttribute( 'data-product' );
 			getProductDataModal = getModalData ? JSON.parse( getModalData ) : {};
 			manageDismissed( getProductDataModal );
+			document.getElementById( 'newspack_modal_checkout' ).removeAttribute( 'data-product' );
 		}
 	};
 
@@ -212,6 +215,9 @@ domReady( () => {
 					form.classList.add( 'processing' );
 
 					const productData = form.dataset.product;
+
+					// TODOGA4: this is probably where we want to attach stuff to the modal for GA4.
+
 					if ( productData ) {
 						const data = JSON.parse( productData );
 						Object.keys( data ).forEach( key => {
@@ -259,9 +265,8 @@ domReady( () => {
 							form.classList.remove( 'processing' );
 							openModal( variationModal );
 
-							// TODO: fix this duplication (see below):
-							let getProductDataModal = {};
-							const getForm = form.getAttribute('data-product' );
+							// TODOGA4: fix this duplication (see below):
+							const getForm = form.getAttribute( 'data-product' );
 							getProductDataModal = getForm ? JSON.parse( getForm ) : {};
 							manageOpened( getProductDataModal );
 							return;
@@ -269,15 +274,39 @@ domReady( () => {
 					}
 
 					form.classList.remove( 'processing' );
-
 					const data = new FormData( form );
+
 					const isDonateBlock = data.get( 'newspack_donate' );
 					const isCheckoutButtonBlock = data.get( 'newspack_checkout' );
 
-					let getProductDataModal = {};
 					if ( isCheckoutButtonBlock ) {
-						const getForm = form.getAttribute('data-product' );
+						const getForm = form.getAttribute( 'data-product' );
 						getProductDataModal = getForm ? JSON.parse( getForm ) : {};
+					}
+
+					if ( isDonateBlock ) {
+						// Get donation information and append to the modal checkout for GA4:
+						const donationFreq = data.get( 'donation_frequency' );
+						let donationValue = '';
+
+						for ( const key of data.keys() ) {
+							// find values that match the frequency name, that aren't empty
+							// TODOGA4: there's probably a better way to do this to check for issues -- like make an array and make sure there's only one?
+							if (
+								key.indexOf( 'donation_value_' + donationFreq ) >= 0 &&
+								'other' !== data.get( key ) &&
+								'' !== data.get( key ) ) {
+								donationValue = data.get( key );
+							}
+						}
+
+						// TODOGA4: we also need to get stuff off the block itself -- currency and product_id (TK)
+						getProductDataModal = {
+							amount: donationValue,
+							action_type: 'donation',
+							recurrence: donationFreq,
+							referer: data.get( '_wp_http_referer' ),
+						};
 					}
 
 					if (
@@ -383,7 +412,9 @@ domReady( () => {
 						openCheckout();
 						manageOpened( getProductDataModal );
 						// Append product data info to the modal itself, so we can grab it for manageDismissed:
-						document.getElementById( 'newspack_modal_checkout' ).setAttribute( 'data-product', JSON.stringify( getProductDataModal ) );
+						document
+							.getElementById( 'newspack_modal_checkout' )
+							.setAttribute( 'data-product', JSON.stringify( getProductDataModal ) );
 					}
 				} );
 			} );

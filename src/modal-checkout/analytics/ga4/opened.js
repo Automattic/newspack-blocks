@@ -1,4 +1,4 @@
-// TODO: track when a modal open attempt is triggered by a checkout button, donate button
+// TODOGA4: track when a modal open attempt is triggered by a checkout button, donate button
 
 import { getEventPayload, sendEvent } from './utils';
 
@@ -12,17 +12,30 @@ export const manageOpened = ( getProductDataModal = '' ) => {
 		return;
 	}
 
-	const { action_type, currency, is_variable, variation_id, product_id, price, recurrence, referer } = getProductDataModal;
+	const {
+		action_type,
+		amount,
+		currency,
+		is_variable,
+		variation_id,
+		product_id,
+		price,
+		recurrence,
+		referer
+	} = getProductDataModal;
+
+	// TODOGA4: why are there a price and an amount? How to deduplicate??
+	// Also, what to do with the variable ones? Should they be skipped entirely, or just empty if empty?
 
 	const payload = getEventPayload( 'opened', {
 		action_type,
-		amount: price,
+		amount: amount ? amount : price, // Checkout uses price; Donate uses amount.
 		currency,
 		product_id,
 		recurrence,
 		referer,
-		is_variable,
-		variation_id,
+		is_variable: is_variable ? is_variable : '',
+		variation_id: variation_id ? variation_id : '',
 	} );
 
 	sendEvent( payload );

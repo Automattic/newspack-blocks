@@ -140,11 +140,17 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 			'wpbnbd-frequencies--' . count( $configuration['frequencies'] ),
 			$is_tiers_based ? 'wpbnbd--tier-style-' . $tier_style : null,
 		];
-
 		if ( ! Newspack_Blocks::can_use_name_your_price() ) {
 			$class_names[] = 'wpbnbd--nyp-disabled';
 		}
 		$configuration['container_classnames'] = implode( ' ', $class_names );
+
+		// Add some attributes for GA4 tracking to the block.
+		$product_data = [
+			'currency'   => \get_woocommerce_currency(), // TODO: need to pick this up from front-end events.
+			'product_id' => 'TK'
+		];
+		$configuration['product_data'] = wp_json_encode( $product_data );
 
 		if ( isset( $configuration['minimumDonation'] ) ) {
 			foreach ( $configuration['amounts'] as $frequency => $amounts ) {
