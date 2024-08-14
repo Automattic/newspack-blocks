@@ -9,7 +9,6 @@ import './modal.scss';
  * Internal dependencies
  */
 import { manageDismissed, manageOpened } from './analytics';
-import { getProductDetails } from './analytics/ga4/utils';
 import { createHiddenInput, domReady } from './utils';
 
 const CLASS_PREFIX = newspackBlocksModal.newspack_class_prefix;
@@ -104,7 +103,8 @@ domReady( () => {
 			setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
 		} else {
 			// Track a dismissal event (modal has been manually closed without completing the checkout).
-			const getModalData = document.getElementById( 'newspack_modal_checkout' )
+			const getModalData = document
+				.getElementById( 'newspack_modal_checkout' )
 				.getAttribute( 'data-product' );
 			getProductDataModal = getModalData ? JSON.parse( getModalData ) : {};
 			manageDismissed( getProductDataModal );
@@ -216,8 +216,6 @@ domReady( () => {
 
 					const productData = form.dataset.product;
 
-					// TODOGA4: this is probably where we want to attach stuff to the modal for GA4.
-
 					if ( productData ) {
 						const data = JSON.parse( productData );
 						Object.keys( data ).forEach( key => {
@@ -269,6 +267,10 @@ domReady( () => {
 							const getForm = form.getAttribute( 'data-product' );
 							getProductDataModal = getForm ? JSON.parse( getForm ) : {};
 							manageOpened( getProductDataModal );
+							// Append product data info to the modal itself, so we can grab it for manageDismissed:
+							document
+								.getElementById( 'newspack_modal_checkout' )
+								.setAttribute( 'data-product', JSON.stringify( getProductDataModal ) );
 							return;
 						}
 					}
@@ -295,7 +297,8 @@ domReady( () => {
 							if (
 								key.indexOf( 'donation_value_' + donationFreq ) >= 0 &&
 								'other' !== data.get( key ) &&
-								'' !== data.get( key ) ) {
+								'' !== data.get( key )
+							) {
 								donationValue = data.get( key );
 							}
 						}
@@ -304,6 +307,7 @@ domReady( () => {
 						getProductDataModal = {
 							amount: donationValue,
 							action_type: 'donation',
+							currency: data.get( 'donation_currency' ),
 							recurrence: donationFreq,
 							referer: data.get( '_wp_http_referer' ),
 						};

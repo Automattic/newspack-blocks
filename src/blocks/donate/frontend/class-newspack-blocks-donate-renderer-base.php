@@ -145,11 +145,6 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 		}
 		$configuration['container_classnames'] = implode( ' ', $class_names );
 
-		// Add some attributes for GA4 tracking to the block.
-		$product_data = [
-			'currency'   => \get_woocommerce_currency(), // TODO: need to pick this up from front-end events.
-			'product_id' => 'TK'
-		];
 		$configuration['product_data'] = wp_json_encode( $product_data );
 
 		if ( isset( $configuration['minimumDonation'] ) ) {
@@ -197,6 +192,7 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 		wp_referer_field();
 		?>
 			<input type='hidden' name='newspack_donate' value='1' />
+			<input type='hidden' name='donation_currency' value='<?php echo esc_attr( \get_woocommerce_currency() ); ?>' />
 		<?php
 
 		foreach ( [ [ 'afterSuccessBehavior', 'after_success_behavior' ], [ 'afterSuccessButtonLabel', 'after_success_button_label' ], [ 'afterSuccessURL', 'after_success_url' ] ] as $attribute ) {

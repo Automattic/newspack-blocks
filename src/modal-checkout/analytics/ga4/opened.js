@@ -5,7 +5,7 @@ import { getEventPayload, sendEvent } from './utils';
 /**
  * Execute a callback function to send a GA event when a prompt is dismissed.
  *
- * @param {object} getProductDataModal Information about the purchase being made.
+ * @param {Object} getProductDataModal Information about the purchase being made.
  */
 export const manageOpened = ( getProductDataModal = '' ) => {
 	if ( 'function' !== typeof window.gtag ) {
@@ -21,22 +21,27 @@ export const manageOpened = ( getProductDataModal = '' ) => {
 		product_id,
 		price,
 		recurrence,
-		referer
+		referer,
 	} = getProductDataModal;
 
-	// TODOGA4: why are there a price and an amount? How to deduplicate??
-	// Also, what to do with the variable ones? Should they be skipped entirely, or just empty if empty?
-
-	const payload = getEventPayload( 'opened', {
-		action_type,
-		amount: amount ? amount : price, // Checkout uses price; Donate uses amount.
+	const extraParams = {
+		action_type: is_variable ? 'variation_picker' : action_type, // switch action type for variaton picker? this can probably be moved.
 		currency,
 		product_id,
 		recurrence,
 		referer,
-		is_variable: is_variable ? is_variable : '',
-		variation_id: variation_id ? variation_id : '',
-	} );
+	};
+
+	// This essentially amounts to a check whether is_variable; on that first step, there won't be a price to grab:
+	if ( amount || price ) {
+		extraParams.amount = amount ? amount : price;
+	}
+
+	if ( variation_id ) {
+		extraParams.variation_id = variation_id;
+	}
+
+	const payload = getEventPayload( 'opened', extraParams );
 
 	sendEvent( payload );
 };

@@ -145,7 +145,7 @@ domReady(
 							managePagination( 'back' );
 						} );
 						// Attach handler to "Place Order" button.
-						$form.on( 'click', '#place_order', function ( ev ) {
+						$form.on( 'click', '#place_order', function () {
 							manageCheckoutAttempt();
 						} );
 						setReady();
@@ -571,7 +571,6 @@ domReady(
 							const success = ! result.messages;
 							if ( success ) {
 								setEditingDetails( false );
-								// managePagination( 'continue' );
 							} else if ( ! silent ) {
 								if ( result.messages ) {
 									handleFormError( result.messages );
