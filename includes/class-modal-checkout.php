@@ -55,10 +55,11 @@ final class Modal_Checkout {
 		add_action( 'wp_loaded', [ __CLASS__, 'process_checkout_request' ], 5 );
 		add_filter( 'wp_redirect', [ __CLASS__, 'pass_url_param_on_redirect' ] );
 		add_filter( 'woocommerce_cart_product_cannot_be_purchased_message', [ __CLASS__, 'woocommerce_cart_product_cannot_be_purchased_message' ], 10, 2 );
+		add_filter( 'woocommerce_add_error', [ __CLASS__, 'hide_expiry_message_shop_link' ] );
 		add_action( 'wp_footer', [ __CLASS__, 'render_modal_markup' ], 100 );
 		add_action( 'wp_footer', [ __CLASS__, 'render_variation_selection' ], 100 );
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'enqueue_scripts' ] );
-		add_filter( 'show_admin_bar', [ __CLASS__, 'show_admin_bar' ] );
+		add_filter( 'show_admin_bar', [ __CLASS__, 'show_admin_bar' ] ); // phpcs:ignore WordPressVIPMinimum.UserExperience.AdminBarRemoval.RemovalDetected
 		add_action( 'template_include', [ __CLASS__, 'get_checkout_template' ] );
 		add_filter( 'woocommerce_get_return_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
 		add_filter( 'woocommerce_get_checkout_order_received_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
@@ -84,7 +85,7 @@ final class Modal_Checkout {
 		/** Custom handling for registered users. */
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
 		add_filter( 'woocommerce_checkout_posted_data', [ __CLASS__, 'skip_account_creation' ], 11 );
-		add_filter( 'woocommerce_checkout_create_order', [ __CLASS__, 'maybe_add_checkout_registration_order_meta' ], 10, 1 );
+		add_action( 'woocommerce_checkout_create_order', [ __CLASS__, 'maybe_add_checkout_registration_order_meta' ], 10, 1 );
 
 		// Remove some stuff from the modal checkout page. It's displayed in an iframe, so it should not be treated as a separate page.
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'dequeue_scripts' ], 11 );
@@ -95,10 +96,7 @@ final class Modal_Checkout {
 		add_filter( 'newspack_theme_enqueue_js', [ __CLASS__, 'is_not_modal_checkout_filter' ] );
 		add_filter( 'newspack_theme_enqueue_print_styles', [ __CLASS__, 'is_not_modal_checkout_filter' ] );
 		add_filter( 'cmplz_site_needs_cookiewarning', [ __CLASS__, 'is_not_modal_checkout_filter' ] );
-		// add_filter( 'googlesitekit_analytics_tag_blocked', [ __CLASS__, 'is_modal_checkout' ] );
-		// add_filter( 'googlesitekit_analytics-4_tag_blocked', [ __CLASS__, 'is_modal_checkout' ] );
 		add_filter( 'googlesitekit_adsense_tag_blocked', [ __CLASS__, 'is_modal_checkout' ] );
-		// add_filter( 'googlesitekit_tagmanager_tag_blocked', [ __CLASS__, 'is_modal_checkout' ] );
 		add_filter( 'jetpack_active_modules', [ __CLASS__, 'jetpack_active_modules' ] );
 		add_filter( 'woocommerce_checkout_update_order_review_expired', [ __CLASS__, 'is_not_modal_checkout_filter' ] );
 
@@ -116,6 +114,7 @@ final class Modal_Checkout {
 			add_filter( 'woocommerce_subscription_variation_is_purchasable', [ 'WCS_Limiter', 'is_purchasable_renewal' ], 12, 2 );
 			add_filter( 'woocommerce_valid_order_statuses_for_order_again', [ 'WCS_Limiter', 'filter_order_again_statuses_for_limited_subscriptions' ] );
 		}
+		add_filter( 'woocommerce_subscriptions_product_limited_for_user', [ __CLASS__, 'subscriptions_product_limited_for_user' ], 10, 3 );
 	}
 
 	/**
@@ -658,7 +657,6 @@ final class Modal_Checkout {
 			<meta name="viewport" content="width=device-width, initial-scale=1" />
 			<link rel="profile" href="https://gmpg.org/xfn/11" />
 			<?php wp_head(); ?>
-
 		</head>
 		<body class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal__content" ); ?>" id="newspack_modal_checkout_container">
 			<?php
@@ -1050,6 +1048,15 @@ final class Modal_Checkout {
 	}
 
 	/**
+	 * Alternative error message to show when limiting a subscription product's purchase.
+	 *
+	 * @return string
+	 */
+	public static function get_subscription_limited_message() {
+		return __( 'You may only have one subscription of this product at a time.', 'newspack-blocks' );
+	}
+
+	/**
 	 * Filters the error message shown when a product can't be added to the cart.
 	 *
 	 * @param string     $message Message.
@@ -1061,10 +1068,25 @@ final class Modal_Checkout {
 		if ( method_exists( 'WCS_Limiter', 'is_purchasable' ) ) {
 			$product = \wc_get_product( $product_data->get_id() );
 			if ( ! \WCS_Limiter::is_purchasable( false, $product ) ) {
-				$message .= ' ' . __( 'You may only have one subscription of this product at a time.', 'newspack-blocks' );
+				$message .= ' ' . self::get_subscription_limited_message();
 			}
 		}
 
+		return $message;
+	}
+
+	/**
+	 * We don't want to show the Shop page link in modal checkout because the Shop page doesn't work well inside.
+	 * Unfortunately Woo doesn't provide a filter for this message, so we need to detect it by string matching.
+	 * May not work if the message has been translated or modified elsewhere.
+	 *
+	 * @param string $message The message.
+	 * @return string
+	 */
+	public static function hide_expiry_message_shop_link( $message ) {
+		if ( self::is_modal_checkout() && strpos( $message, 'Sorry, your session has expired' ) !== false ) {
+			return __( 'Could not complete this transaction. Please contact us for assistance.', 'newspack-blocks' );
+		}
 		return $message;
 	}
 
@@ -1142,7 +1164,7 @@ final class Modal_Checkout {
 					// Create an empty array to store data order information.
 					$data_order_details = [];
 					// Create an array of order information to pass to GA4 via JavaScript.
-					if ( method_exists( 'Newspack_Blocks\Tracking\Data_Events', 'build_js_data_events') ) {
+					if ( method_exists( 'Newspack_Blocks\Tracking\Data_Events', 'build_js_data_events' ) ) {
 						$data_order_details = \Newspack_Blocks\Tracking\Data_Events::build_js_data_events( $_product->get_id(), $cart_item );
 					}
 					?>
@@ -1293,6 +1315,22 @@ final class Modal_Checkout {
 	}
 
 	/**
+	 * Get user from email.
+	 *
+	 * @return false|int User ID if found by email address, false otherwise.
+	 */
+	private static function get_user_id_from_email() {
+		$billing_email = filter_input( INPUT_POST, 'billing_email', FILTER_SANITIZE_EMAIL );
+		if ( $billing_email ) {
+			$customer = \get_user_by( 'email', $billing_email );
+			if ( $customer ) {
+				return $customer->ID;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * If a reader tries to make a purchase with an email address that
 	 * has been previously registered, automatically associate the transaction
 	 * with the user.
@@ -1305,12 +1343,9 @@ final class Modal_Checkout {
 		if ( ! self::is_modal_checkout() ) {
 			return $customer_id;
 		}
-		$billing_email = filter_input( INPUT_POST, 'billing_email', FILTER_SANITIZE_EMAIL );
-		if ( $billing_email ) {
-			$customer = \get_user_by( 'email', $billing_email );
-			if ( $customer ) {
-				$customer_id = $customer->ID;
-			}
+		$id_from_email = self::get_user_id_from_email();
+		if ( $id_from_email ) {
+			return $id_from_email;
 		}
 		return $customer_id;
 	}
@@ -1508,6 +1543,27 @@ final class Modal_Checkout {
 			$order->add_meta_data( self::CHECKOUT_REGISTRATION_ORDER_META_KEY, true, true );
 			\WC()->session->set( self::CHECKOUT_REGISTRATION_FLAG, null );
 		}
+	}
+
+	/**
+	 * Trigger the subscriptions-limiting logic, using the user gleaned from the email address.
+	 *
+	 * @param bool           $is_limited_for_user If the subscription should be limited.
+	 * @param int|WC_Product $product A WC_Product object or the ID of a product.
+	 * @param int            $user_id The user ID.
+	 */
+	public static function subscriptions_product_limited_for_user( $is_limited_for_user, $product, $user_id ) {
+		if ( $user_id !== 0 ) {
+			return $is_limited_for_user;
+		}
+		$id_from_email = self::get_user_id_from_email();
+		if ( $id_from_email ) {
+			$is_limited_for_user = wcs_is_product_limited_for_user( $product, $id_from_email );
+			if ( $is_limited_for_user ) {
+				add_filter( 'woocommerce_cart_item_removed_message', [ __CLASS__, 'get_subscription_limited_message' ], 10, 2 );
+			}
+		}
+		return $is_limited_for_user;
 	}
 }
 Modal_Checkout::init();

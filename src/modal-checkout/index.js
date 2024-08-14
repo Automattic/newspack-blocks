@@ -136,20 +136,12 @@ domReady(
 				 */
 				if ( $checkout_continue.length ) {
 					setEditingDetails( true );
-					// Perform initial validation so it can skip 1st step if possible.
-					validateForm( true, () => {
-						// Attach handler to "Back" button.
-						$form.on( 'click', '#checkout_back', function ( ev ) {
-							ev.preventDefault();
-							setEditingDetails( true );
-							managePagination( 'back' );
-						} );
-						// Attach handler to "Place Order" button.
-						$form.on( 'click', '#place_order', function () {
-							manageCheckoutAttempt();
-						} );
+					if ( ! $gift_options.length ) {
+						// Perform initial validation so it can skip 1st step if possible.
+						validateForm( true, setReady );
+					} else {
 						setReady();
-					} );
+					}
 				} else {
 					setReady();
 				}
@@ -272,10 +264,22 @@ domReady(
 							if ( code ) {
 								const isError = code.includes( 'error' );
 								$coupon.append(
-									`<p class="result ${ CLASS_PREFIX }__helper-text">` + $( code ).text() + '</p>'
+									`<p class="result ${ CLASS_PREFIX }__helper-text ${
+										isError ? CLASS_PREFIX + '__inline-error' : ''
+									}">` +
+										$( code ).text() +
+										'</p>'
 								);
 								if ( isError ) {
 									$coupon.find( 'input[name="coupon_code"]' ).focus();
+									$coupon
+										.find( 'h3, input[name="coupon_code"]' )
+										.addClass( 'newspack-ui__field-error' );
+								} else {
+									$coupon.find( 'input[name="coupon_code"]' ).focus();
+									$coupon
+										.find( 'h3, input[name="coupon_code"]' )
+										.removeClass( 'newspack-ui__field-error' );
 								}
 								$( document.body ).trigger( 'applied_coupon_in_checkout', [ data.coupon_code ] );
 								$( document.body ).trigger( 'update_checkout', { update_shipping_method: false } );
@@ -325,18 +329,20 @@ domReady(
 							clearNotices();
 							$nyp.find( '.result' ).remove();
 							$nyp.append(
-								`<p class="result ${ CLASS_PREFIX }__${
-									success ? 'helper-text' : 'inline-error'
+								`<p class="result ${ CLASS_PREFIX }__helper-text ${
+									! success ? CLASS_PREFIX + '__inline-error' : ''
 								}">` +
 									res.message +
 									'</p>'
 							);
 							if ( success ) {
 								$( '.woocommerce-Price-amount' ).replaceWith( res.price );
+								$nyp.find( 'h3, input[name="price"]' ).removeClass( 'newspack-ui__field-error' );
 							} else {
 								$nyp.find( 'input[name="price"]' ).focus();
+								$nyp.find( 'h3, input[name="price"]' ).addClass( 'newspack-ui__field-error' );
 							}
-							$( document.body ).trigger( 'update_checkout' );
+							$( document.body ).trigger( 'update_checkout', { update_shipping_method: false } );
 						},
 						complete: () => {
 							unblockForm( $nyp );
@@ -357,7 +363,7 @@ domReady(
 				function handleFormSubmit( ev ) {
 					ev.preventDefault();
 					validateForm();
-					managePagination( 'continue' );
+					managePagination( 'continue' ); // TODOGA4: this is firing whether or not the form validates.
 				}
 
 				/**
@@ -366,10 +372,6 @@ domReady(
 				 * @param {boolean} isEditingDetails
 				 */
 				function setEditingDetails( isEditingDetails ) {
-					// Scroll to top.
-					window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
-					// Update checkout.
-					$( document.body ).trigger( 'update_checkout' );
 					clearNotices();
 					// Clear checkout details.
 					$( '#checkout_details' ).remove();
@@ -406,6 +408,8 @@ domReady(
 						} );
 					}
 					$form.triggerHandler( 'editing_details', [ isEditingDetails ] );
+					// Scroll to top.
+					window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
 				}
 
 				/**
@@ -505,7 +509,7 @@ domReady(
 					) {
 						if ( !! data.newspack_wcsg_is_gift && !! data.wcsg_gift_recipients_email ) {
 							html.push( '<div class="gift-details">' );
-							html.push( '<h2>' + newspackBlocksModalCheckout.labels.gift_recipient + '</h2>' );
+							html.push( '<h3>' + newspackBlocksModalCheckout.labels.gift_recipient + '</h3>' );
 							html.push( `<p class="${ classname }">` + data.wcsg_gift_recipients_email + '</p>' );
 						}
 					}
@@ -571,6 +575,18 @@ domReady(
 							const success = ! result.messages;
 							if ( success ) {
 								setEditingDetails( false );
+								// If click #checkout_back event handler doesn't already exist add it to the form.
+								if (
+									! $._data( $form[ 0 ], 'events' )?.click?.some(
+										handler => handler.selector === '#checkout_back'
+									)
+								) {
+									$form.on( 'click', '#checkout_back', function ( ev ) {
+										ev.preventDefault();
+										setEditingDetails( true );
+										managePagination( 'back' );
+									} );
+								}
 							} else if ( ! silent ) {
 								if ( result.messages ) {
 									handleFormError( result.messages );
@@ -596,7 +612,14 @@ domReady(
 							cb( { messages } );
 						},
 					} );
+
+					// Attach handler to "Place Order" button.
+					$form.on( 'click', '#place_order', function () {
+						manageCheckoutAttempt();
+					} );
 				}
+
+
 
 				/**
 				 * Blocks provided form.

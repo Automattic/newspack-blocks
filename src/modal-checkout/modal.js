@@ -90,6 +90,7 @@ domReady( () => {
 						window.history.back();
 					}
 				}
+				window?.newspackReaderActivation?.setCheckoutStatus?.( false );
 			};
 			if ( window?.newspackReaderActivation?.openNewslettersSignupModal ) {
 				window.newspackReaderActivation.openNewslettersSignupModal( {
@@ -102,6 +103,8 @@ domReady( () => {
 			setModalWidth();
 			setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
 		} else {
+			window?.newspackReaderActivation?.setCheckoutStatus?.( false );
+
 			// Track a dismissal event (modal has been manually closed without completing the checkout).
 			const getModalData = document
 				.getElementById( 'newspack_modal_checkout' )
@@ -276,6 +279,8 @@ domReady( () => {
 					}
 
 					form.classList.remove( 'processing' );
+
+					// TODOGA4: this is kind of duplicated with the part below that starts with "let content = '';"
 					const data = new FormData( form );
 
 					const isDonateBlock = data.get( 'newspack_donate' );
@@ -313,10 +318,13 @@ domReady( () => {
 						};
 					}
 
+					// Set reader activation checkout status flag if available.
+					window?.newspackReaderActivation?.setCheckoutStatus?.( true );
+
 					if (
-						window?.newspackReaderActivation?.openAuthModal &&
+						! newspack_ras_config.is_logged_in &&
 						! window?.newspackReaderActivation?.getReader?.()?.authenticated &&
-						! newspack_ras_config.is_logged_in
+						window?.newspackReaderActivation?.openAuthModal
 					) {
 						ev.preventDefault();
 
