@@ -306,11 +306,12 @@ domReady( () => {
 							}
 						}
 
-						// TODOGA4: we also need to get stuff off the block itself -- currency and product_id (TK)
+						// TODOGA4:
 						getProductDataModal = {
 							amount: donationValue,
 							action_type: 'donation',
 							currency: data.get( 'donation_currency' ),
+							product_id: data.get( 'donation_product_id' ),
 							product_type: 'donation',
 							recurrence: donationFreq,
 							referer: data.get( '_wp_http_referer' ),

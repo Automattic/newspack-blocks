@@ -189,10 +189,17 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 		 * Action to add custom fields before the form fields of the donation block.
 		 */
 		do_action( 'newspack_blocks_donate_before_form_fields' );
+
+		$donation_product_id = '';
+		if ( defined( '\Newspack\Donations::DONATION_PRODUCT_ID_OPTION' ) ) {
+			$donation_product_id = get_option( \Newspack\Donations::DONATION_PRODUCT_ID_OPTION, 0 );
+		}
+
 		wp_referer_field();
 		?>
 			<input type='hidden' name='newspack_donate' value='1' />
 			<input type='hidden' name='donation_currency' value='<?php echo esc_attr( \get_woocommerce_currency() ); ?>' />
+			<input type='hidden' name='donation_product_id' value='<?php echo esc_attr( $donation_product_id ); ?>' />
 		<?php
 
 		foreach ( [ [ 'afterSuccessBehavior', 'after_success_behavior' ], [ 'afterSuccessButtonLabel', 'after_success_button_label' ], [ 'afterSuccessURL', 'after_success_url' ] ] as $attribute ) {
