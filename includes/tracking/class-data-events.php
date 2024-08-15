@@ -78,12 +78,11 @@ final class Data_Events {
 	 * @param array  $cart_item Cart item.
 	 */
 	public static function build_js_data_events( $product_id, $cart_item ) {
-		// Set action type to the kind of purchase: product, subscription, or donation.
 		$action_type  = 'checkout_button';
-		$recurrence   = 'once';
 		$product_type = 'other';
+		$recurrence   = self::get_purchase_recurrence( $product_id );
 
-		// Check if it's a donation product.
+		// Check if it's a donation product, and update action_type, product_type.
 		if ( method_exists( 'Newspack\Donations', 'is_donation_product' ) ) {
 			if ( \Newspack\Donations::is_donation_product( $product_id ) ) {
 				$action_type = 'donation';
@@ -91,7 +90,7 @@ final class Data_Events {
 			}
 		}
 
-		// Check if it's associated with a membership.
+		// Check if it's associated with a membership and update product_type.
 		if ( self::is_membership_product( $product_id ) ) {
 			$product_type = 'membership';
 		}
@@ -100,9 +99,9 @@ final class Data_Events {
 			'amount'       => $cart_item['data']->get_price(),
 			'action_type'  => $action_type,
 			'currency'     => \get_woocommerce_currency(),
-			'product_id'   => $product_id,
+			'product_id'   => strval( $product_id ),
 			'product_type' => $product_type,
-			'referer'      => $cart_item['referer'],
+			'referer'      => substr( $cart_item['referer'], strlen( home_url() ) ), // remove domain from referer.
 			'recurrence'   => $recurrence,
 		];
 
