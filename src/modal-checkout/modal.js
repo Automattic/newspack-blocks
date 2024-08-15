@@ -93,7 +93,7 @@ domReady( () => {
 						window.history.back();
 					}
 				}
-				window?.newspackReaderActivation?.setCheckoutStatus?.( false );
+				window?.newspackReaderActivation?.resetCheckoutData?.();
 			};
 			if ( window?.newspackReaderActivation?.openNewslettersSignupModal ) {
 				window.newspackReaderActivation.openNewslettersSignupModal( {
@@ -106,7 +106,7 @@ domReady( () => {
 			setModalWidth();
 			setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
 		} else {
-			window?.newspackReaderActivation?.setCheckoutStatus?.( false );
+			window?.newspackReaderActivation?.resetCheckoutData?.();
 		}
 	};
 
@@ -286,11 +286,16 @@ domReady( () => {
 
 					form.classList.remove( 'processing' );
 
-					// Set reader activation checkout status flag if available.
-					window?.newspackReaderActivation?.setCheckoutStatus?.( true );
+					// Set reader activation checkout data if available.
+					window?.newspackReaderActivation?.setCheckoutData?.( {
+						status: true,
+						type: element.classList.contains( 'wpbnbd.wpbnbd--platform-wc' ) ? 'donate' : 'checkout_button',
+						button_text: element.querySelector( 'button[type="submit"]' )?.innerText,
+					} );
 
 					if (
-						! newspack_ras_config.is_logged_in &&
+						typeof newspack_ras_config !== 'undefined' &&
+						! newspack_ras_config?.is_logged_in &&
 						! window?.newspackReaderActivation?.getReader?.()?.authenticated &&
 						window?.newspackReaderActivation?.openAuthModal
 					) {
@@ -438,4 +443,38 @@ domReady( () => {
 			spinner.style.display = 'none';
 		}
 	} );
+
+	/**
+	 * Handle modal checkout url param triggers.
+	 */
+	const handleModalCheckoutUrlParam = () => {
+		const urlParams = new URLSearchParams( window.location.search );
+		if ( urlParams.has( 'modal_checkout' ) ) {
+			const type = urlParams.get( 'type' );
+
+			if ( type ) {
+				let query = type === 'donate' ? '.wp-block-newspack-blocks-donate' : '.wp-block-newspack-blocks-checkout-button';
+				const buttonText = urlParams.get( 'button_text' );
+				if ( buttonText ) {
+					query += ` button:contains('${ buttonText }')`;
+				}
+				const block = document.querySelector( query );
+				if ( block ) {
+					const form = block.querySelector( 'form' );
+					if ( form ) {
+						// Signal checkout registration.
+						form.appendChild(
+							createHiddenInput( newspackBlocksModal.checkout_registration_flag, '1' )
+						);
+						// form.submit does not trigger submit event listener, so we use requestSubmit.
+						form.requestSubmit( form.querySelector( 'button[type="submit"]' ) );
+					}
+				}
+			}
+
+			// Remove the URL param to prevent re-triggering.
+			// window.history.replaceState( null, null, window.location.pathname );
+		}
+	};
+	handleModalCheckoutUrlParam();
 } );
