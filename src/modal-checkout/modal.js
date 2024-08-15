@@ -210,7 +210,10 @@ domReady( () => {
 					if ( productData ) {
 						const data = JSON.parse( productData );
 						Object.keys( data ).forEach( key => {
-							form.appendChild( createHiddenInput( key, data[ key ] ) );
+							const existingInputs = form.querySelectorAll( 'input[name="' +  key + '"]' );
+							if ( 0 === existingInputs.length ) {
+								form.appendChild( createHiddenInput( key, data[ key ] ) );
+							}
 						} );
 					}
 					const formData = new FormData( form );
