@@ -287,7 +287,7 @@ domReady( () => {
 					const isCheckoutButtonBlock = data.get( 'newspack_checkout' );
 
 					// Set up some GA4 information.
-					if ( isCheckoutButtonBlock ) {
+					if ( isCheckoutButtonBlock ) { // this fires on the second in-modal variations screen, too
 						const getDataProduct = form.getAttribute( 'data-product' );
 						getProductDataModal = getDataProduct ? JSON.parse( getDataProduct ) : {};
 					} else if ( isDonateBlock ) {

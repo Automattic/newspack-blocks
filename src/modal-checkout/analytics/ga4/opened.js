@@ -16,12 +16,13 @@ export const manageOpened = ( getProductDataModal = '' ) => {
 		action_type,
 		amount,
 		currency,
-		variation_id,
+		is_variable,
 		price,
 		product_id,
 		product_type,
 		recurrence,
 		referer,
+		variation_id,
 	} = getProductDataModal;
 
 	const extraParams = {
@@ -41,6 +42,10 @@ export const manageOpened = ( getProductDataModal = '' ) => {
 	// There's only a variation ID for variable products, after you've selected one.
 	if ( variation_id ) {
 		extraParams.variation_id = variation_id;
+	}
+
+	if ( is_variable ) {
+		extraParams.is_variable = is_variable;
 	}
 
 	const payload = getEventPayload( 'opened', extraParams );

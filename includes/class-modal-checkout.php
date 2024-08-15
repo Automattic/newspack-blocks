@@ -483,6 +483,7 @@ final class Modal_Checkout {
 									$price          = $variation->get_price();
 									$price_html     = $variation->get_price_html();
 									$frequency      = '';
+									$product_type   = 'other';
 
 									// Use suggested price if NYP is active and set for variation.
 									if ( \Newspack_Blocks::can_use_name_your_price() && \WC_Name_Your_Price_Helpers::is_nyp( $variation_id ) ) {
@@ -493,6 +494,13 @@ final class Modal_Checkout {
 										$frequency = \WC_Subscriptions_Product::get_period( $variation );
 									}
 
+									// Check if it's a membership or 'other' product.
+									if ( method_exists( 'Newspack_Blocks\Tracking\Data_Events', 'is_membership_product' ) ) {
+										if ( \Newspack_Blocks\Tracking\Data_Events::is_membership_product( $product_id ) ) {
+											$product_type = 'membership';
+										}
+									}
+
 									$name = sprintf(
 										/* translators: 1: variable product name, 2: product variation name */
 										__( '%1$s - %2$s', 'newspack-blocks' ),
@@ -501,8 +509,13 @@ final class Modal_Checkout {
 									);
 									$product_price_summary = self::get_summary_card_price_string( $name, $price, $frequency );
 									$product_data          = [
+										'action_type'  => 'checkout_button',
+										'currency'     => \get_woocommerce_currency(),
 										'product_price_summary' => $product_price_summary,
 										'product_id'   => $product_id,
+										'product_type' => $product_type,
+										'recurrence'   => ! empty( $frequency ) ? $frequency : 'once',
+										'referer'      => substr( \get_permalink(), strlen( home_url() ) ), // TODO: Is this OK?
 										'variation_id' => $variation_id,
 									];
 
