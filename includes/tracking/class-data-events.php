@@ -50,6 +50,28 @@ final class Data_Events {
 	}
 
 	/**
+	 * Returns whether a product ID is associated with a membership.
+	 *
+	 * @param string $product_id Product's ID.
+	 */
+	public static function is_membership_product( $product_id ) {
+		if ( ! function_exists( 'wc_memberships_get_membership_plans' ) ) {
+			return false;
+		}
+		$membership_plans = wc_memberships_get_membership_plans();
+		$plans            = [];
+
+		foreach ( $membership_plans as $plan ) {
+			$subscription_plan  = new \WC_Memberships_Integration_Subscriptions_Membership_Plan( $plan->get_id() );
+			$required_products = $subscription_plan->get_subscription_product_ids();
+			if ( in_array( $product_id, $required_products ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Returns an array of product information.
 	 *
 	 * @param string $product_id Product's ID.
@@ -57,29 +79,31 @@ final class Data_Events {
 	 */
 	public static function build_js_data_events( $product_id, $cart_item ) {
 		// Set action type to the kind of purchase: product, subscription, or donation.
-		$action_type  = 'product';
-		$recurrence = 'once';
-
-		// Check if it's a subscription product.
-		$recurrence = self::get_purchase_recurrence( $product_id );
-		if ( 'once' !== $recurrence ) {
-			$action_type = 'subscription';
-		}
+		$action_type  = 'checkout_button';
+		$recurrence   = 'once';
+		$product_type = 'other';
 
 		// Check if it's a donation product.
 		if ( method_exists( 'Newspack\Donations', 'is_donation_product' ) ) {
 			if ( \Newspack\Donations::is_donation_product( $product_id ) ) {
 				$action_type = 'donation';
+				$product_type = 'donation';
 			}
 		}
 
+		// Check if it's associated with a membership.
+		if ( self::is_membership_product( $product_id ) ) {
+			$product_type = 'membership';
+		}
+
 		$data_order_details = [
-			'action_type' => $action_type,
-			'product_id'  => $product_id,
-			'amount'      => $cart_item['data']->get_price(),
-			'currency'    => \get_woocommerce_currency(),
-			'referer'     => $cart_item['referer'],
-			'recurrence'  => $recurrence,
+			'amount'       => $cart_item['data']->get_price(),
+			'action_type'  => $action_type,
+			'currency'     => \get_woocommerce_currency(),
+			'product_id'   => $product_id,
+			'product_type' => $product_type,
+			'referer'      => $cart_item['referer'],
+			'recurrence'   => $recurrence,
 		];
 
 		return $data_order_details;

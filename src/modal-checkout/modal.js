@@ -311,6 +311,7 @@ domReady( () => {
 							amount: donationValue,
 							action_type: 'donation',
 							currency: data.get( 'donation_currency' ),
+							product_type: 'donation',
 							recurrence: donationFreq,
 							referer: data.get( '_wp_http_referer' ),
 						};
@@ -328,7 +329,6 @@ domReady( () => {
 						let priceSummary = '';
 
 						if ( isDonateBlock ) {
-
 
 							const frequency = data.get( 'donation_frequency' );
 							const donationTiers = form.querySelectorAll(

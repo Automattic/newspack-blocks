@@ -112,6 +112,13 @@ function render_callback( $attributes ) {
 			$frequency = \WC_Subscriptions_Product::get_period( $product );
 		}
 
+		$product_type = 'other';
+		if ( method_exists( 'Newspack_Blocks\Tracking\Data_Events', 'is_membership_product' ) ) {
+			if ( Newspack_Blocks\Tracking\Data_Events::is_membership_product( $product_id ) ) {
+				$product_type = 'membership';
+			}
+		}
+
 		// TODOGA4: the price here may not be accurate -- it uses the suggested, not minimum NYP price.
 		$name  = $product->get_name();
 		$price = $product->get_price();
@@ -128,12 +135,13 @@ function render_callback( $attributes ) {
 		$product_price_summary = Modal_Checkout::get_summary_card_price_string( $name, $price, $frequency );
 
 		$product_data = [
-			'action_type' => ! empty( $frequency ) ? 'subscription' : 'product',
-			'currency'    => \get_woocommerce_currency(),
-			'is_variable' => $is_variable,
-			'product_id'  => $product_id,
-			'recurrence'  => ! empty( $frequency ) ? $frequency : 'once',
-			'referer'     => substr( \get_permalink(), strlen( home_url() ) ), // TODO: Is this OK?
+			'action_type'  => 'checkout_button',
+			'currency'     => \get_woocommerce_currency(),
+			'is_variable'  => $is_variable,
+			'product_id'   => $product_id,
+			'product_type' => $product_type,
+			'recurrence'   => ! empty( $frequency ) ? $frequency : 'once',
+			'referer'      => substr( \get_permalink(), strlen( home_url() ) ), // TODO: Is this OK?
 		];
 
 		if ( ! $is_variable || $variation_id ) {

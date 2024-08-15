@@ -9,12 +9,13 @@ export const manageDismissed = () => {
 	}
 
 	// TODOGA4: this works but is clunky:
-	const { action_type, amount, currency, price, product_id, recurrence, referer } = getProductDetails( 'newspack_modal_checkout' );
+	const { action_type, amount, currency, price, product_id, product_type, recurrence, referer } = getProductDetails( 'newspack_modal_checkout' );
 
 	const extraParams = {
-		action_type, // donation, product, subscription -- should we also track variations using is_variable?
+		action_type,
 		currency,
 		product_id,
+		product_type,
 		recurrence,
 		referer,
 	};

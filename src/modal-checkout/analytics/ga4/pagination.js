@@ -11,12 +11,13 @@ export const managePagination = ( action = 'continue' ) => {
 		return;
 	}
 
-	const { action_type, amount, currency, product_id, recurrence, referer } = getProductDetails( 'modal-checkout-product-details' );
+	const { action_type, amount, currency, product_id, product_type, recurrence, referer } = getProductDetails( 'modal-checkout-product-details' );
 	const payload = getEventPayload( action, {
 		action_type,
 		amount,
 		currency,
 		product_id,
+		product_type,
 		recurrence,
 		referer,
 	} );

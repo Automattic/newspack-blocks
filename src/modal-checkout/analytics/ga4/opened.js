@@ -17,16 +17,18 @@ export const manageOpened = ( getProductDataModal = '' ) => {
 		amount,
 		currency,
 		variation_id,
-		product_id,
 		price,
+		product_id,
+		product_type,
 		recurrence,
 		referer,
 	} = getProductDataModal;
 
 	const extraParams = {
-		action_type, // donation, product, subscription -- should we also track variations using is_variable?
+		action_type,
 		currency,
 		product_id,
+		product_type,
 		recurrence,
 		referer,
 	};

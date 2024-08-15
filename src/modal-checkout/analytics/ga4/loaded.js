@@ -15,6 +15,7 @@ export const manageLoaded = () => {
 			amount,
 			currency,
 			product_id,
+			product_type,
 			recurrence,
 			referer
 		} = getProductDetails( 'modal-checkout-product-details' );
@@ -24,6 +25,7 @@ export const manageLoaded = () => {
 			amount,
 			currency,
 			product_id,
+			product_type,
 			recurrence,
 			referer,
 		} );

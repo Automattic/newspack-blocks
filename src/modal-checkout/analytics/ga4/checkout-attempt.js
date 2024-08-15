@@ -11,12 +11,13 @@ export const manageCheckoutAttempt = () => {
 		return;
 	}
 
-	const { action_type, amount, currency, product_id, recurrence, referer } = getProductDetails( 'modal-checkout-product-details' );
+	const { action_type, amount, currency, product_id, product_type, recurrence, referer } = getProductDetails( 'modal-checkout-product-details' );
 	const payload = getEventPayload( 'checkout_attempt', {
 		action_type,
 		amount,
 		currency,
 		product_id,
+		product_type,
 		recurrence,
 		referer,
 	} );
