@@ -290,10 +290,20 @@ domReady( () => {
 					let data = {};
 					if ( element.classList.contains( 'wpbnbd--platform-wc' ) ) {
 						const frequency = formData.get( 'donation_frequency' );
+						let layout;
+						if ( formData.has( `donation_value_${ frequency }_untiered` ) ) {
+							layout = 'untiered';
+						} else if ( formData.has( 'donation_tier_index' ) ) {
+							layout = 'tiered';
+						} else {
+							layout = 'frequency';
+						}
+
 						data = {
 							type: 'donate',
+							layout,
 							frequency,
-							amount: formData.get( `donation_value_${ frequency }` ),
+							amount: formData.has( `donation_value_${ frequency }` ) ? formData.get( `donation_value_${ frequency }` ) : formData.get( `donation_value_${ frequency }_untiered` ),
 							other: formData.get( `donation_value_${ frequency }_other` ),
 						};
 					} else {
@@ -456,46 +466,67 @@ domReady( () => {
 	/**
 	 * Triggers checkout form submit.
 	 *
-	 * @param {HTMLFormElement} form The form element.
+	 * @param {HTMLFormElement}        form   The form element.
+	 * @param {HTMLButtonElement|null} submit Optional. The submit button element.
 	 */
-	const triggerCheckout = ( form ) => {
+	const triggerCheckout = ( form, submit = null ) => {
 		// Signal checkout registration.
 		form.appendChild(
 			createHiddenInput( newspackBlocksModal.checkout_registration_flag, '1' )
 		);
+
+		if ( submit ) {
+			submit = form.querySelector( 'button[type="submit"]' );
+		}
 		// form.submit does not trigger submit event listener, so we use requestSubmit.
-		form.requestSubmit( form.querySelector( 'button[type="submit"]' ) );
+		form.requestSubmit( submit );
 	}
 
 	/**
 	 * Handle donation form triggers.
 	 *
+	 * @param {string}      layout    The donation layout.
 	 * @param {string}      frequency The donation frequency.
 	 * @param {string}      amount    The donation amount.
 	 * @param {string|null} other     Optional. The custom amount when other is selected.
 	 */
-	const triggerDonationForm = ( frequency, amount, other = null ) => {
+	const triggerDonationForm = ( layout, frequency, amount, other = null ) => {
 		let form;
+		let submit = null;
 		document.querySelectorAll( '.wpbnbd.wpbnbd--platform-wc form' )
 			.forEach( donationForm => {
-				if ( frequency && amount ) {
-					const frequencyInput = donationForm.querySelector( `input[name="donation_frequency"][value="${ frequency }"]` );
-					const amountInput = donationForm.querySelector( `input[name="donation_value_${ frequency }"][value="${ amount }"]` );
+				const frequencyInput = donationForm.querySelector( `input[name="donation_frequency"][value="${ frequency }"]` );
+				let amountInput;
+				if ( layout === 'tiered' ) {
+					const submitButton = donationForm.querySelector( `button[type="submit"][name="donation_value_${ frequency }"][value="${ amount }"]` );
+					if ( submitButton ) {
+						form = donationForm;
+						submit = submitButton;
+					}
+				} else {
+					if ( layout === 'untiered' ) {
+						amountInput = donationForm.querySelector( `input[name="donation_value_${ frequency }_untiered"]` );
+					} else {
+						amountInput = donationForm.querySelector( `input[name="donation_value_${ frequency }"][value="${ amount }"]` );
+					}
 					if ( frequencyInput && amountInput ) {
 						frequencyInput.checked = true;
-						amountInput.checked = true;
-						if ( amount === 'other' ) {
+						if ( layout === 'untiered' ) {
+							amountInput.value = amount;
+						} else if ( amount === 'other' ) {
 							const otherInput = donationForm.querySelector( `input[name="donation_value_${ frequency }_other"]` );
 							if ( otherInput && other ) {
 								otherInput.value = other;
 							}
+						} else {
+							amountInput.checked = true;
 						}
 						form = donationForm;
 					}
 				}
 			} );
 		if ( form ) {
-			triggerCheckout( form );
+			triggerCheckout( form, submit );
 		}
 	}
 
@@ -550,11 +581,12 @@ domReady( () => {
 
 		const type = urlParams.get( 'type' );
 		if ( type === 'donate' ) {
+			const layout = urlParams.get( 'layout' );
 			const frequency = urlParams.get( 'frequency' );
 			const amount = urlParams.get( 'amount' );
 			const other = urlParams.get( 'other' );
-			if ( frequency && amount ) {
-				triggerDonationForm( frequency, amount, other );
+			if ( layout && frequency && amount ) {
+				triggerDonationForm( layout, frequency, amount, other );
 			}
 		}
 		if ( type === 'checkout_button' ) {
