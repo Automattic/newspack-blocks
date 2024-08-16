@@ -288,10 +288,13 @@ domReady( () => {
 
 					// Set reader activation checkout data if available.
 					let data = {};
-					if ( element.classList.contains( 'wpbnbd.wpbnbd--platform-wc' ) ) {
+					if ( element.classList.contains( 'wpbnbd--platform-wc' ) ) {
+						const frequency = formData.get( 'donation_frequency' );
 						data = {
 							type: 'donate',
-							frequency: formData.get( 'donation_frequency' ),
+							frequency,
+							amount: formData.get( `donation_value_${ frequency }` ),
+							other: formData.get( `donation_value_${ frequency }_other` ),
 						};
 					} else {
 						data = {
