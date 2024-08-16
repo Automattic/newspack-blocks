@@ -290,7 +290,8 @@ domReady( () => {
 					window?.newspackReaderActivation?.setCheckoutData?.( {
 						status: true,
 						type: element.classList.contains( 'wpbnbd.wpbnbd--platform-wc' ) ? 'donate' : 'checkout_button',
-						button_text: element.querySelector( 'button[type="submit"]' )?.innerText,
+						product_id: formData.get( 'product_id' ),
+						variation_id: formData.get( 'variation_id' ),
 					} );
 
 					if (
@@ -449,32 +450,65 @@ domReady( () => {
 	 */
 	const handleModalCheckoutUrlParam = () => {
 		const urlParams = new URLSearchParams( window.location.search );
-		if ( urlParams.has( 'modal_checkout' ) ) {
-			const type = urlParams.get( 'type' );
+		if ( ! urlParams.has( 'modal_checkout' ) ) {
+			return;
+		}
 
-			if ( type ) {
-				let query = type === 'donate' ? '.wp-block-newspack-blocks-donate' : '.wp-block-newspack-blocks-checkout-button';
-				const buttonText = urlParams.get( 'button_text' );
-				if ( buttonText ) {
-					query += ` button:contains('${ buttonText }')`;
+		const type = urlParams.get( 'type' );
+		if ( ! type ) {
+			return;
+		}
+
+		if ( type === 'donate' ) {
+			// TODO: Handle donate modal checkout.
+			return;
+		}
+
+		if ( type === 'checkout_button' ) {
+			let form;
+			const productId = urlParams.get( 'product_id' );
+			if ( ! productId ) {
+				return;
+			}
+			const variationId = urlParams.get( 'variation_id' );
+			if ( variationId ) {
+				const variationModals = document.querySelectorAll( `.${ VARIATON_MODAL_CLASS_PREFIX }` );
+				const variationModal = [ ...variationModals ].find(
+					modal => modal.dataset.productId === productId
+				);
+				if ( variationModal ) {
+					const forms = variationModal.querySelectorAll( `form[target="${ IFRAME_NAME }"]` );
+					forms.forEach( variationForm => {
+						const productData = JSON.parse( variationForm.dataset.product );
+						if ( productData?.variation_id === Number( variationId ) ) {
+							form = variationForm;
+						}
+					} );
 				}
-				const block = document.querySelector( query );
-				if ( block ) {
-					const form = block.querySelector( 'form' );
-					if ( form ) {
-						// Signal checkout registration.
-						form.appendChild(
-							createHiddenInput( newspackBlocksModal.checkout_registration_flag, '1' )
-						);
-						// form.submit does not trigger submit event listener, so we use requestSubmit.
-						form.requestSubmit( form.querySelector( 'button[type="submit"]' ) );
+			} else {
+				const checkoutButtons = document.querySelectorAll( '.wp-block-newspack-blocks-checkout-button' );
+				checkoutButtons.forEach( button => {
+					const checkoutButtonForm = button.querySelector( 'form' );
+					if ( ! checkoutButtonForm ) {
+						return;
 					}
-				}
+					const productData = JSON.parse( checkoutButtonForm.dataset.product );
+					if ( productData?.product_id === productId ) {
+						form = checkoutButtonForm;
+					}
+				} );
 			}
 
-			// Remove the URL param to prevent re-triggering.
-			// window.history.replaceState( null, null, window.location.pathname );
+			if ( form ) {
+				// Trigger checkout button click.
+				form.appendChild(
+					createHiddenInput( newspackBlocksModal.checkout_registration_flag, '1' )
+				);
+				form.requestSubmit( form.querySelector( 'button[type="submit"]' ) );
+			}
 		}
+		// Remove the URL param to prevent re-triggering.
+		window.history.replaceState( null, null, window.location.pathname );
 	};
 	handleModalCheckoutUrlParam();
 } );
