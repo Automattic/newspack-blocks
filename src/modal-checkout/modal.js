@@ -287,11 +287,22 @@ domReady( () => {
 					form.classList.remove( 'processing' );
 
 					// Set reader activation checkout data if available.
+					let data = {};
+					if ( element.classList.contains( 'wpbnbd.wpbnbd--platform-wc' ) ) {
+						data = {
+							type: 'donate',
+							frequency: formData.get( 'donation_frequency' ),
+						};
+					} else {
+						data = {
+							type: 'checkout_button',
+							product_id: formData.get( 'product_id' ),
+							variation_id: formData.get( 'variation_id' ),
+						};
+					}
 					window?.newspackReaderActivation?.setCheckoutData?.( {
 						status: true,
-						type: element.classList.contains( 'wpbnbd.wpbnbd--platform-wc' ) ? 'donate' : 'checkout_button',
-						product_id: formData.get( 'product_id' ),
-						variation_id: formData.get( 'variation_id' ),
+						...data,
 					} );
 
 					if (
@@ -301,13 +312,12 @@ domReady( () => {
 						window?.newspackReaderActivation?.openAuthModal
 					) {
 						ev.preventDefault();
-						const data = new FormData( form );
 						let content = '';
 						let price = '0';
 						let priceSummary = '';
 
-						if ( data.get( 'newspack_donate' ) ) {
-							const frequency = data.get( 'donation_frequency' );
+						if ( formData.get( 'newspack_donate' ) ) {
+							const frequency = formData.get( 'donation_frequency' );
 							const donationTiers = form.querySelectorAll(
 								`.donation-tier__${ frequency }, .donation-frequency__${ frequency }`
 							);
@@ -350,7 +360,7 @@ domReady( () => {
 									} );
 								} else {
 									// Handle tiers based donation tiers.
-									const index = data.get( 'donation_tier_index' );
+									const index = formData.get( 'donation_tier_index' );
 									if ( index ) {
 										const donationData = JSON.parse( donationTiers?.[ index ].dataset.product );
 										if ( donationData.hasOwnProperty( `donation_price_summary_${ frequency }` ) ) {
@@ -459,13 +469,30 @@ domReady( () => {
 			return;
 		}
 
+		let form;
 		if ( type === 'donate' ) {
-			// TODO: Handle donate modal checkout.
-			return;
+			const donationForms = document.querySelectorAll( '.wpbnbd.wpbnbd--platform-wc form' );
+			donationForms.forEach( donationForm => {
+				const frequency = urlParams.get( 'frequency' );
+				const amount = urlParams.get( 'amount' );
+				if ( frequency && amount ) {
+					const frequencyInput = donationForm.querySelector( `input[name="donation_frequency"][value="${ frequency }"]` );
+					const amountInput = donationForm.querySelector( `input[name="donation_value_${ frequency }"][value="${ amount }"]` );
+					if ( frequencyInput && amountInput ) {
+						frequencyInput.checked = true;
+						amountInput.checked = true;
+						if ( amount === 'other' ) {
+							const otherInput = donationForm.querySelector( `input[name="donation_value_${ frequency }_other"]` );
+							if ( otherInput ) {
+								otherInput.value = urlParams.get( 'other' );
+							}
+						}
+						form = donationForm;
+					}
+				}
+			} );
 		}
-
 		if ( type === 'checkout_button' ) {
-			let form;
 			const productId = urlParams.get( 'product_id' );
 			if ( ! productId ) {
 				return;
@@ -498,14 +525,13 @@ domReady( () => {
 					}
 				} );
 			}
-
-			if ( form ) {
-				// Trigger checkout button click.
-				form.appendChild(
-					createHiddenInput( newspackBlocksModal.checkout_registration_flag, '1' )
-				);
-				form.requestSubmit( form.querySelector( 'button[type="submit"]' ) );
-			}
+		}
+		if ( form ) {
+			// Trigger checkout button click.
+			form.appendChild(
+				createHiddenInput( newspackBlocksModal.checkout_registration_flag, '1' )
+			);
+			form.requestSubmit( form.querySelector( 'button[type="submit"]' ) );
 		}
 		// Remove the URL param to prevent re-triggering.
 		window.history.replaceState( null, null, window.location.pathname );
