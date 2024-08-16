@@ -103,6 +103,22 @@
 		}
 	}
 
+	// Country dropdown when displaying a single country.
+	/* stylelint-disable selector-id-pattern */
+	#billing_country_field,
+	#shipping_country_field {
+		&:has(input[readonly][autocomplete="country"]) {
+			.required {
+				display: none;
+			}
+
+			strong {
+				font-weight: normal;
+			}
+		}
+	}
+	/* stylelint-enable */
+
 	// Different shipping address toggle
 	#ship-to-different-address {
 		margin: var(--newspack-ui-spacer-5, 24px) 0 0;
