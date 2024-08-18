@@ -35,9 +35,11 @@ function buildLoadMoreHandler( blockWrapperEl ) {
 		return;
 	}
 	const postsContainerEl = blockWrapperEl.querySelector( '[data-posts]' );
+	const isInfiniteScroll = btnEl.getAttribute( 'data-infinite-scroll' );
 
 	// Set initial state flags.
 	let isFetching = false;
+	let isInfiniteScrolling = false;
 	let isEndOfData = false;
 
 	btnEl.addEventListener( 'click', () => {
@@ -85,6 +87,8 @@ function buildLoadMoreHandler( blockWrapperEl ) {
 			isFetching = false;
 
 			blockWrapperEl.classList.remove( 'is-loading' );
+
+			isInfiniteScrolling = false;
 		}
 
 		/**
@@ -97,6 +101,25 @@ function buildLoadMoreHandler( blockWrapperEl ) {
 			blockWrapperEl.classList.add( 'is-error' );
 		}
 	} );
+	if ( isInfiniteScroll ) {
+		// Create an intersection observer instance
+		const btnObserver = new IntersectionObserver(
+			entries => {
+				entries.forEach( entry => {
+					if ( entry.isIntersecting && ! isInfiniteScrolling ) {
+						btnEl.click();
+						isInfiniteScrolling = true;
+					}
+				} );
+			},
+			{
+				root: null,
+				rootMargin: '0px',
+				threshold: 1,
+			}
+		);
+		btnObserver.observe( btnEl );
+	}
 }
 
 /**

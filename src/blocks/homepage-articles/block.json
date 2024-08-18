@@ -18,6 +18,10 @@
 			"type": "boolean",
 			"default": false
 		},
+		"infiniteScroll": {
+			"type": "boolean",
+			"default": false
+		},
 		"readMoreLabel": {
 			"type": "string",
 			"default": "Keep reading"
