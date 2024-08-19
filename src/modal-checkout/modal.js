@@ -93,6 +93,7 @@ domReady( () => {
 						window.history.back();
 					}
 				}
+				window?.newspackReaderActivation?.setCheckoutStatus?.( false );
 			};
 			if ( window?.newspackReaderActivation?.openNewslettersSignupModal ) {
 				window.newspackReaderActivation.openNewslettersSignupModal( {
@@ -104,6 +105,8 @@ domReady( () => {
 			// Ensure we always reset the modal title and width once the modal closes.
 			setModalWidth();
 			setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
+		} else {
+			window?.newspackReaderActivation?.setCheckoutStatus?.( false );
 		}
 	};
 
@@ -224,7 +227,10 @@ domReady( () => {
 					if ( productData ) {
 						const data = JSON.parse( productData );
 						Object.keys( data ).forEach( key => {
-							form.appendChild( createHiddenInput( key, data[ key ] ) );
+							const existingInputs = form.querySelectorAll( 'input[name="' +  key + '"]' );
+							if ( 0 === existingInputs.length ) {
+								form.appendChild( createHiddenInput( key, data[ key ] ) );
+							}
 						} );
 					}
 					const formData = new FormData( form );
@@ -280,13 +286,15 @@ domReady( () => {
 
 					form.classList.remove( 'processing' );
 
+					// Set reader activation checkout status flag if available.
+					window?.newspackReaderActivation?.setCheckoutStatus?.( true );
+
 					if (
-						window?.newspackReaderActivation?.openAuthModal &&
+						! newspack_ras_config.is_logged_in &&
 						! window?.newspackReaderActivation?.getReader?.()?.authenticated &&
-						! newspack_ras_config.is_logged_in
+						window?.newspackReaderActivation?.openAuthModal
 					) {
 						ev.preventDefault();
-
 						const data = new FormData( form );
 						let content = '';
 						let price = '0';
@@ -354,7 +362,7 @@ domReady( () => {
 						}
 
 						if ( priceSummary ) {
-							content = `<div class="order-details-summary ${ CLASS_PREFIX }__box ${ CLASS_PREFIX }__box--text-center"><h2>${ priceSummary }</h2></div>`;
+							content = `<div class="order-details-summary ${ CLASS_PREFIX }__box ${ CLASS_PREFIX }__box--text-center"><p><strong>${ priceSummary }</strong></p></div>`;
 						}
 
 						// Initialize auth flow if reader is not authenticated.

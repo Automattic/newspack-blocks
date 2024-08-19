@@ -57,7 +57,6 @@ domReady(
 				const $checkout_continue = $( '#checkout_continue' );
 				const $customer_details = $( '#customer_details' );
 				const $after_customer_details = $( '#after_customer_details' );
-				const $place_order_button = $( '#place_order' );
 				const $gift_options = $( '.newspack-wcsg--wrapper' );
 
 				/**
@@ -136,15 +135,12 @@ domReady(
 				 */
 				if ( $checkout_continue.length ) {
 					setEditingDetails( true );
-					// Perform initial validation so it can skip 1st step if possible.
-					validateForm( true, () => {
-						// Attach handler to "Back" button.
-						$form.on( 'click', '#checkout_back', function ( ev ) {
-							ev.preventDefault();
-							setEditingDetails( true );
-						} );
+					if ( ! $gift_options.length ) {
+						// Perform initial validation so it can skip 1st step if possible.
+						validateForm( true, setReady );
+					} else {
 						setReady();
-					} );
+					}
 				} else {
 					setReady();
 				}
@@ -155,7 +151,7 @@ domReady(
 				 * @param {string} error_message
 				 */
 				function handleFormError( error_message ) {
-					$form.removeClass( 'processing' ).unblock();
+					unblockForm( $form );
 					$form
 						.find( '.input-text, select, input:checkbox' )
 						.trigger( 'validate' )
@@ -244,16 +240,10 @@ domReady(
 				 */
 				function handleCouponSubmit( ev ) {
 					ev.preventDefault();
-					if ( $coupon.is( '.processing' ) ) {
+					const blocked = blockForm( $coupon );
+					if ( ! blocked ) {
 						return false;
 					}
-					$coupon.addClass( 'processing' ).block( {
-						message: null,
-						overlayCSS: {
-							background: '#fff',
-							opacity: 0.6,
-						},
-					} );
 					const data = {
 						security: wc_checkout_params.apply_coupon_nonce,
 						coupon_code: $coupon.find( 'input[name="coupon_code"]' ).val(),
@@ -272,18 +262,29 @@ domReady(
 							if ( code ) {
 								const isError = code.includes( 'error' );
 								$coupon.append(
-									`<p class="result ${ CLASS_PREFIX }__helper-text">` + $( code ).text() + '</p>'
+									`<p class="result ${ CLASS_PREFIX }__helper-text ${
+										isError ? CLASS_PREFIX + '__inline-error' : ''
+									}">` +
+										$( code ).text() +
+										'</p>'
 								);
 								if ( isError ) {
 									$coupon.find( 'input[name="coupon_code"]' ).focus();
+									$coupon
+										.find( 'h3, input[name="coupon_code"]' )
+										.addClass( 'newspack-ui__field-error' );
+								} else {
+									$coupon.find( 'input[name="coupon_code"]' ).focus();
+									$coupon
+										.find( 'h3, input[name="coupon_code"]' )
+										.removeClass( 'newspack-ui__field-error' );
 								}
 								$( document.body ).trigger( 'applied_coupon_in_checkout', [ data.coupon_code ] );
 								$( document.body ).trigger( 'update_checkout', { update_shipping_method: false } );
 							}
 						},
 						complete: () => {
-							// Unblock form.
-							$coupon.removeClass( 'processing' ).unblock();
+							unblockForm( $coupon );
 						},
 					} );
 				}
@@ -303,10 +304,10 @@ domReady(
 				 */
 				function handleNYPFormSubmit( ev ) {
 					ev.preventDefault();
-					if ( $nyp.is( '.processing' ) ) {
+					const blocked = blockForm( $nyp );
+					if ( ! blocked ) {
 						return false;
 					}
-					$nyp.addClass( 'processing' );
 					const input = $nyp.find( 'input[name="price"]' );
 					input.attr( 'disabled', true );
 					const data = {
@@ -326,23 +327,25 @@ domReady(
 							clearNotices();
 							$nyp.find( '.result' ).remove();
 							$nyp.append(
-								`<p class="result ${ CLASS_PREFIX }__${
-									success ? 'helper-text' : 'inline-error'
+								`<p class="result ${ CLASS_PREFIX }__helper-text ${
+									! success ? CLASS_PREFIX + '__inline-error' : ''
 								}">` +
 									res.message +
 									'</p>'
 							);
 							if ( success ) {
 								$( '.woocommerce-Price-amount' ).replaceWith( res.price );
+								$nyp.find( 'h3, input[name="price"]' ).removeClass( 'newspack-ui__field-error' );
 							} else {
 								$nyp.find( 'input[name="price"]' ).focus();
+								$nyp.find( 'h3, input[name="price"]' ).addClass( 'newspack-ui__field-error' );
 							}
-							$( document.body ).trigger( 'update_checkout' );
+							$( document.body ).trigger( 'update_checkout', { update_shipping_method: false } );
 						},
 						complete: () => {
+							unblockForm( $nyp );
 							input.attr( 'disabled', false );
 							input.focus();
-							$nyp.removeClass( 'processing' );
 						},
 					} );
 				}
@@ -366,10 +369,6 @@ domReady(
 				 * @param {boolean} isEditingDetails
 				 */
 				function setEditingDetails( isEditingDetails ) {
-					// Scroll to top.
-					window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
-					// Update checkout.
-					$( document.body ).trigger( 'update_checkout' );
 					clearNotices();
 					// Clear checkout details.
 					$( '#checkout_details' ).remove();
@@ -382,7 +381,6 @@ domReady(
 						}
 						$customer_details.show();
 						$after_customer_details.hide();
-						$place_order_button.attr( 'disabled', 'disabled' );
 						$customer_details.find( 'input' ).first().focus();
 						// Remove default form event handlers.
 						originalFormHandlers = getEventHandlers( $form[ 0 ], 'submit' ).slice( 0 );
@@ -399,7 +397,6 @@ domReady(
 						}
 						$customer_details.hide();
 						$after_customer_details.show();
-						$place_order_button.removeAttr( 'disabled' );
 						renderCheckoutDetails();
 						// Store event handlers.
 						$form.off( 'submit', handleFormSubmit );
@@ -408,6 +405,8 @@ domReady(
 						} );
 					}
 					$form.triggerHandler( 'editing_details', [ isEditingDetails ] );
+					// Scroll to top.
+					window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
 				}
 
 				/**
@@ -507,7 +506,7 @@ domReady(
 					) {
 						if ( !! data.newspack_wcsg_is_gift && !! data.wcsg_gift_recipients_email ) {
 							html.push( '<div class="gift-details">' );
-							html.push( '<h2>' + newspackBlocksModalCheckout.labels.gift_recipient + '</h2>' );
+							html.push( '<h3>' + newspackBlocksModalCheckout.labels.gift_recipient + '</h3>' );
 							html.push( `<p class="${ classname }">` + data.wcsg_gift_recipients_email + '</p>' );
 						}
 					}
@@ -524,17 +523,11 @@ domReady(
 				 * @param {Function} cb     Callback function.
 				 */
 				function validateForm( silent = false, cb = () => {} ) {
-					if ( $form.is( '.processing' ) ) {
+					const blocked = blockForm( $form );
+					if ( ! blocked ) {
 						return false;
 					}
 					clearNotices();
-					$form.addClass( 'processing' ).block( {
-						message: null,
-						overlayCSS: {
-							background: '#fff',
-							opacity: 0.6,
-						},
-					} );
 
 					// Remove generic errors.
 					const $genericErrors = $form.find(
@@ -572,14 +565,24 @@ domReady(
 								return;
 							}
 
-							// Unblock form.
-							$form.removeClass( 'processing' ).unblock();
+							unblockForm( $form );
 
 							// Result will always be 'failure' from the server. We'll check for
 							// 'messages' in the response to see if it was successful.
 							const success = ! result.messages;
 							if ( success ) {
 								setEditingDetails( false );
+								// If click #checkout_back event handler doesn't already exist add it to the form.
+								if (
+									! $._data( $form[ 0 ], 'events' )?.click?.some(
+										handler => handler.selector === '#checkout_back'
+									)
+								) {
+									$form.on( 'click', '#checkout_back', function ( ev ) {
+										ev.preventDefault();
+										setEditingDetails( true );
+									} );
+								}
 							} else if ( ! silent ) {
 								if ( result.messages ) {
 									handleFormError( result.messages );
@@ -605,6 +608,44 @@ domReady(
 							cb( { messages } );
 						},
 					} );
+				}
+
+				/**
+				 * Blocks provided form.
+				 *
+				 * @param {jQuery} form
+				 *
+				 * @return {boolean} Whether the form was blocked or not.
+				 */
+				function blockForm( form ) {
+					if ( form.is( '.processing' ) ) {
+						return false;
+					}
+					const buttons = form.find( 'button[type=submit]' );
+					buttons.each( ( i, el ) => {
+						$( el ).attr( 'disabled', true );
+					} );
+					form.addClass( 'processing' );
+					return true;
+				}
+
+				/**
+				 * Unblocks provided form.
+				 *
+				 * @param {jQuery} form
+				 *
+				 * @return {boolean} Whether the form was unblocked or not.
+				 */
+				function unblockForm( form ) {
+					if ( ! form.is( '.processing' ) ) {
+						return false;
+					}
+					const buttons = form.find( 'button[type=submit]' );
+					buttons.each( ( i, el ) => {
+						$( el ).attr( 'disabled', false );
+					} );
+					form.removeClass( 'processing' );
+					return true;
 				}
 			} );
 		}
