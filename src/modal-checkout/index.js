@@ -35,12 +35,6 @@ domReady(
 			).remove();
 		}
 
-		document.addEventListener( 'keydown', function ( ev ) {
-			if ( ev.key === 'Escape' ) {
-				parent.newspackCloseModalCheckout();
-			}
-		} );
-
 		if ( newspackBlocksModalCheckout.is_checkout_complete ) {
 			/**
 			 * Set the checkout as complete so the modal can resolve post checkout flows.
@@ -655,5 +649,13 @@ domReady(
 				}
 			} );
 		}
+
+		// Close modal when 'Esc' key is pressed and focus is inside of the iframe.
+		document.addEventListener( 'keydown', function ( ev ) {
+			if ( ev.key === 'Escape' ) {
+				parent.newspackCloseModalCheckout();
+			}
+		} );
+
 	} )( jQuery )
 );
