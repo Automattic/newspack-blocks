@@ -35,6 +35,12 @@ domReady(
 			).remove();
 		}
 
+		document.addEventListener( 'keydown', function ( ev ) {
+			if ( ev.key === 'Escape' ) {
+				parent.newspackCloseModalCheckout();
+			}
+		} );
+
 		if ( newspackBlocksModalCheckout.is_checkout_complete ) {
 			/**
 			 * Set the checkout as complete so the modal can resolve post checkout flows.
