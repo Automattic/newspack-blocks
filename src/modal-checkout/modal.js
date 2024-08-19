@@ -538,7 +538,7 @@ domReady( () => {
 	 */
 	const triggerCheckoutButtonForm = ( productId, variationId = null ) => {
 		let form;
-		if ( variationId ) {
+		if ( variationId && variationId !== productId ) {
 			const variationModals = document.querySelectorAll( `.${ VARIATON_MODAL_CLASS_PREFIX }` );
 			const variationModal = [ ...variationModals ].find(
 				modal => modal.dataset.productId === productId
