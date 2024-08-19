@@ -466,20 +466,15 @@ domReady( () => {
 	/**
 	 * Triggers checkout form submit.
 	 *
-	 * @param {HTMLFormElement}        form   The form element.
-	 * @param {HTMLButtonElement|null} submit Optional. The submit button element.
+	 * @param {HTMLFormElement} form The form element.
 	 */
-	const triggerCheckout = ( form, submit = null ) => {
+	const triggerCheckout = form => {
 		// Signal checkout registration.
 		form.appendChild(
 			createHiddenInput( newspackBlocksModal.checkout_registration_flag, '1' )
 		);
-
-		if ( submit ) {
-			submit = form.querySelector( 'button[type="submit"]' );
-		}
 		// form.submit does not trigger submit event listener, so we use requestSubmit.
-		form.requestSubmit( submit );
+		form.requestSubmit( form.querySelector( 'button[type="submit"]' ) );
 	}
 
 	/**
@@ -492,18 +487,19 @@ domReady( () => {
 	 */
 	const triggerDonationForm = ( layout, frequency, amount, other = null ) => {
 		let form;
-		let submit = null;
 		document.querySelectorAll( '.wpbnbd.wpbnbd--platform-wc form' )
 			.forEach( donationForm => {
 				const frequencyInput = donationForm.querySelector( `input[name="donation_frequency"][value="${ frequency }"]` );
-				let amountInput;
+				if ( ! frequencyInput ) {
+					return;
+				}
 				if ( layout === 'tiered' ) {
 					const submitButton = donationForm.querySelector( `button[type="submit"][name="donation_value_${ frequency }"][value="${ amount }"]` );
 					if ( submitButton ) {
-						form = donationForm;
-						submit = submitButton;
+						submitButton.click();
 					}
 				} else {
+					let amountInput;
 					if ( layout === 'untiered' ) {
 						amountInput = donationForm.querySelector( `input[name="donation_value_${ frequency }_untiered"]` );
 					} else {
@@ -526,7 +522,7 @@ domReady( () => {
 				}
 			} );
 		if ( form ) {
-			triggerCheckout( form, submit );
+			triggerCheckout( form );
 		}
 	}
 
@@ -575,7 +571,7 @@ domReady( () => {
 	 */
 	const handleModalCheckoutUrlParams = () => {
 		const urlParams = new URLSearchParams( window.location.search );
-		if ( ! urlParams.has( 'modal_checkout' ) ) {
+		if ( ! urlParams.has( MODAL_CHECKOUT_ID ) ) {
 			return;
 		}
 
