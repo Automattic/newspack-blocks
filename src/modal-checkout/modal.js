@@ -290,12 +290,17 @@ domReady( () => {
 					let data = {};
 					if ( element.classList.contains( 'wpbnbd--platform-wc' ) ) {
 						const frequency = formData.get( 'donation_frequency' );
+						let amount;
 						let layout;
 						if ( formData.has( `donation_value_${ frequency }_untiered` ) ) {
+							amount = formData.get( `donation_value_${ frequency }` )
 							layout = 'untiered';
 						} else if ( formData.has( 'donation_tier_index' ) ) {
+							const donationTier = form.querySelector( `button[data-tier-index="${ formData.get('donation_tier_index') }"]` );
+							amount = donationTier?.value;
 							layout = 'tiered';
 						} else {
+							amount = formData.get( `donation_value_${ frequency }` )
 							layout = 'frequency';
 						}
 
@@ -303,7 +308,7 @@ domReady( () => {
 							type: 'donate',
 							layout,
 							frequency,
-							amount: formData.has( `donation_value_${ frequency }` ) ? formData.get( `donation_value_${ frequency }` ) : formData.get( `donation_value_${ frequency }_untiered` ),
+							amount,
 							other: formData.get( `donation_value_${ frequency }_other` ),
 						};
 					} else {
