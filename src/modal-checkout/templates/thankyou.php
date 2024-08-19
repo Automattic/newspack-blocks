@@ -66,7 +66,7 @@ function newspack_blocks_replace_login_with_order_summary() {
 			<?php if ( $after_success_behavior ) : ?>
 				<input type="hidden" name="after_success_url" value="<?php echo esc_attr( $after_success_url ); ?>">
 			<?php endif; ?>
-			<button class="newspack-ui__button newspack-ui__button--primary newspack-ui__button--wide" onclick="parent.newspackCloseModalCheckout();">
+			<button class="newspack-ui__button newspack-ui__button--primary newspack-ui__button--wide" id="checkout-after-success" onclick="parent.newspackCloseModalCheckout();">
 				<?php echo esc_html( $after_success_label ); ?>
 			</button>
 		</form>

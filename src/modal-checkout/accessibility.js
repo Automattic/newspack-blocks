@@ -22,16 +22,23 @@ export function trapFocus( currentModal, iframe = false ) {
 			/* eslint-disable @wordpress/no-global-active-element */
 			if ( e.shiftKey ) {
 				if ( document.activeElement === firstFocusableEl ) {
-					const iframeBody = iframe.contentWindow.document;
-					const customerDetails = iframeBody.getElementById( 'customer_details' );
-					const afterCustomerDetails = iframeBody.getElementById( 'after_customer_details' );
+					const iframeBody = iframe.contentWindow.document,
+						customerDetails = iframeBody.getElementById( 'customer_details' ), // Get billing page 1 wrapper.
+						afterCustomerDetails = iframeBody.getElementById( 'after_customer_details' ), // Get billing page 2 wrapper.
+						afterSuccess = iframeBody.getElementById( 'checkout-after-success' ); // Get after success button.
 
-					// If the first screen is visible, make the Continue button the last element.
-					if ( customerDetails.offsetParent !== null ) {
-						lastFocusableEl = iframeBody.getElementById( 'checkout_continue' );
-						// If the second screen is visible, make the Back button the last element.
-					} else if ( afterCustomerDetails !== null ) {
-						lastFocusableEl = iframeBody.getElementById( 'checkout_back' );
+					// If the after success button is visible, make it the last element.
+					if ( afterSuccess !== null ) {
+						lastFocusableEl = afterSuccess;
+					} else {
+						if ( customerDetails.offsetParent !== null ) {
+							// If the first billing screen is visible, make the Continue button the last element.
+							lastFocusableEl = iframeBody.getElementById( 'checkout_continue' );
+						}
+						if ( afterCustomerDetails !== null ) {
+							// If the second billing screen is visible, make the Back button the last element.
+							lastFocusableEl = iframeBody.getElementById( 'checkout_back' );
+						}
 					}
 
 					lastFocusableEl.focus();

@@ -419,6 +419,7 @@ domReady( () => {
 				// Update the modal title and width to reflect successful transaction.
 				setModalWidth( 'small' );
 				setModalTitle( newspackBlocksModal.labels.thankyou_modal_title );
+				a11y.trapFocus( modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }` ) );
 			} else {
 				// Revert modal title and width default value.
 				setModalWidth();
