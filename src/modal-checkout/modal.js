@@ -293,7 +293,7 @@ domReady( () => {
 						let amount;
 						let layout;
 						if ( formData.has( `donation_value_${ frequency }_untiered` ) ) {
-							amount = formData.get( `donation_value_${ frequency }` )
+							amount = formData.get( `donation_value_${ frequency }_untiered` );
 							layout = 'untiered';
 						} else if ( formData.has( 'donation_tier_index' ) ) {
 							const donationTier = form.querySelector( `button[data-tier-index="${ formData.get('donation_tier_index') }"]` );
@@ -364,11 +364,11 @@ domReady( () => {
 
 										if ( price === '0' && priceSummary ) {
 											// Replace placeholder price with price input for other.
-											let otherPrice = data.get( `donation_value_${ frequency }_other` );
+											let otherPrice = formData.get( `donation_value_${ frequency }_other` );
 
 											// Fallback to untiered price if other price is not set.
 											if ( ! otherPrice ) {
-												otherPrice = data.get( `donation_value_${ frequency }_untiered` );
+												otherPrice = formData.get( `donation_value_${ frequency }_untiered` );
 											}
 
 											if ( otherPrice ) {
@@ -387,7 +387,7 @@ domReady( () => {
 									}
 								}
 							}
-						} else if ( data.get( 'newspack_checkout' ) ) {
+						} else if ( formData.get( 'newspack_checkout' ) ) {
 							const priceSummaryInput = form.querySelector( 'input[name="product_price_summary"]' );
 
 							if ( priceSummaryInput ) {

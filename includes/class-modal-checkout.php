@@ -514,7 +514,6 @@ final class Modal_Checkout {
 										<div class="variation"><?php echo esc_html( $variation_name ); ?></div>
 										<form data-product="<?php echo esc_attr( wp_json_encode( $product_data ) ); ?>">
 											<input type="hidden" name="newspack_checkout" value="1" />
-											<input type="hidden" name="product_id" value="<?php echo esc_attr( $variation->get_id() ); ?>" />
 											<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--primary" ); ?>"><?php echo esc_html( self::get_modal_checkout_labels( 'checkout_confirm_variation' ) ); ?></button>
 										</form>
 									</li>
