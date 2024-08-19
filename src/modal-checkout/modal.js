@@ -499,17 +499,20 @@ domReady( () => {
 					return;
 				}
 				if ( layout === 'tiered' ) {
+					const frequencyButton = document.querySelector( `button[data-frequency-slug="${ frequency }"]` );
+					if ( ! frequencyButton ) {
+						return;
+					}
+					frequencyButton.click();
 					const submitButton = donationForm.querySelector( `button[type="submit"][name="donation_value_${ frequency }"][value="${ amount }"]` );
-					if ( submitButton ) {
-						submitButton.click();
+					if ( ! submitButton ) {
+						return;
 					}
+					submitButton.click();
 				} else {
-					let amountInput;
-					if ( layout === 'untiered' ) {
-						amountInput = donationForm.querySelector( `input[name="donation_value_${ frequency }_untiered"]` );
-					} else {
-						amountInput = donationForm.querySelector( `input[name="donation_value_${ frequency }"][value="${ amount }"]` );
-					}
+					const amountInput = ( layout === 'untiered' ) ?
+						donationForm.querySelector( `input[name="donation_value_${ frequency }_untiered"]` ) :
+						donationForm.querySelector( `input[name="donation_value_${ frequency }"][value="${ amount }"]` );
 					if ( frequencyInput && amountInput ) {
 						frequencyInput.checked = true;
 						if ( layout === 'untiered' ) {
