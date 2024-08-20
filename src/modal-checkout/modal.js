@@ -28,7 +28,7 @@ domReady( () => {
 	const modalContent = modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }__content` );
 	const modalCheckoutHiddenInput = createHiddenInput( 'modal_checkout', '1' );
 	const spinner = modalContent.querySelector( `.${ CLASS_PREFIX }__spinner` );
-	let modalTrigger = document.querySelector( '.newspack-reader__account-link' )[0];
+	let modalTrigger = document.querySelector( '.newspack-reader__account-link' )?.[0];
 
 	// Initialize empty iframe.
 	const iframe = document.createElement( 'iframe' );
