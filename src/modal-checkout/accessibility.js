@@ -31,14 +31,15 @@ export function trapFocus( currentModal, iframe = false ) {
 					if ( afterSuccess !== null ) {
 						lastFocusableEl = afterSuccess;
 					} else {
+						/* eslint-disable no-lonely-if */
 						if ( customerDetails.offsetParent !== null ) {
 							// If the first billing screen is visible, make the Continue button the last element.
 							lastFocusableEl = iframeBody.getElementById( 'checkout_continue' );
-						}
-						if ( afterCustomerDetails !== null ) {
+						} else if ( afterCustomerDetails.offsetParent !== null ) {
 							// If the second billing screen is visible, make the Back button the last element.
 							lastFocusableEl = iframeBody.getElementById( 'checkout_back' );
 						}
+						/* eslint-enable no-lonely-if */
 					}
 
 					lastFocusableEl.focus();
