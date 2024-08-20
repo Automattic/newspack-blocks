@@ -5,7 +5,13 @@
 export function trapFocus( currentModal, iframe = false ) {
 	const focusableEls =
 		'button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])';
-	const firstFocusableEl = currentModal.querySelectorAll( focusableEls )[ 0 ]; // get first element to be focused inside modal
+	const focusableElsAll = currentModal.querySelectorAll( focusableEls );
+	// Make sure we have elements to focus on before continuing.
+	if ( 0 === focusableElsAll.length ) {
+		return false;
+	}
+
+	const firstFocusableEl = focusableElsAll?.[ 0 ]; // get first element to be focused inside modal
 	let lastFocusableEl; // Define last element to be focused on.
 
 	firstFocusableEl.focus();
@@ -54,7 +60,6 @@ export function trapFocus( currentModal, iframe = false ) {
 			firstFocusableEl.focus();
 		} );
 	} else {
-		const focusableElsAll = currentModal.querySelectorAll( focusableEls );
 		lastFocusableEl = focusableElsAll[ focusableElsAll.length - 1 ]; // get last element to be focused inside modal
 
 		document.addEventListener( 'keydown', function ( e ) {
