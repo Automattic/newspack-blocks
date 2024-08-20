@@ -106,11 +106,23 @@
 	// Different shipping address toggle
 	#ship-to-different-address {
 		margin: var(--newspack-ui-spacer-5, 24px) 0 0;
-
-		&,
 		label {
-			display: block;
-			margin-bottom: 0;
+			display: flex;
+			font-weight: 600;
+			margin: 0;
+
+			input[type="checkbox"] {
+				display: grid;
+			}
+		}
+
+		span {
+			font-weight: unset;
+
+			&::before,
+			&::after {
+				display: none;
+			}
 		}
 	}
 

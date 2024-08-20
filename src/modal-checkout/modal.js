@@ -4,6 +4,7 @@
  * Style dependencies
  */
 import './modal.scss';
+import * as a11y from './accessibility.js';
 
 /**
  * Internal dependencies
@@ -27,6 +28,7 @@ domReady( () => {
 	const modalContent = modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }__content` );
 	const modalCheckoutHiddenInput = createHiddenInput( 'modal_checkout', '1' );
 	const spinner = modalContent.querySelector( `.${ CLASS_PREFIX }__spinner` );
+	let modalTrigger = document.querySelector( '.newspack-reader__account-link' )?.[0];
 
 	// Initialize empty iframe.
 	const iframe = document.createElement( 'iframe' );
@@ -69,6 +71,10 @@ domReady( () => {
 				window.newspackReaderActivation?.overlays.remove( el.overlayId );
 			}
 		} );
+
+		if ( modalTrigger ) {
+			modalTrigger.focus();
+		}
 
 		if ( container?.checkoutComplete ) {
 			const handleCheckoutComplete = () => {
@@ -118,6 +124,8 @@ domReady( () => {
 				closeCheckout();
 			}
 		} );
+
+		a11y.trapFocus( modalCheckout, iframe );
 	};
 
 	const closeModal = el => {
@@ -192,6 +200,15 @@ domReady( () => {
 	} );
 
 	/**
+	 * Close the modal with the escape key.
+	 */
+	document.addEventListener( 'keydown', function ( ev ) {
+		if ( ev.key === 'Escape' ) {
+			closeCheckout();
+		}
+	} );
+
+	/**
 	 * Handle modal checkout triggers.
 	 */
 	document
@@ -217,6 +234,12 @@ domReady( () => {
 						} );
 					}
 					const formData = new FormData( form );
+
+					// If we're not going from variation picker to checkout, set the modal trigger:
+					if ( ! formData.get( 'variation_id' ) ) {
+						modalTrigger = ev.submitter;
+					}
+
 					const variationModals = document.querySelectorAll( `.${ VARIATON_MODAL_CLASS_PREFIX }` );
 					// Clear any open variation modal.
 					variationModals.forEach( variationModal => {
@@ -256,6 +279,7 @@ domReady( () => {
 							ev.preventDefault();
 							form.classList.remove( 'processing' );
 							openModal( variationModal );
+							a11y.trapFocus( variationModal, false );
 							return;
 						}
 					}
@@ -362,6 +386,7 @@ domReady( () => {
 								},
 							},
 							content,
+							trigger: ev.submitter,
 						} );
 					} else {
 						// Otherwise initialize checkout.
@@ -394,6 +419,7 @@ domReady( () => {
 				// Update the modal title and width to reflect successful transaction.
 				setModalWidth( 'small' );
 				setModalTitle( newspackBlocksModal.labels.thankyou_modal_title );
+				a11y.trapFocus( modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }` ) );
 			} else {
 				// Revert modal title and width default value.
 				setModalWidth();

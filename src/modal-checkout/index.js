@@ -649,5 +649,13 @@ domReady(
 				}
 			} );
 		}
+
+		// Close modal when 'Esc' key is pressed and focus is inside of the iframe.
+		document.addEventListener( 'keydown', function ( ev ) {
+			if ( ev.key === 'Escape' ) {
+				parent.newspackCloseModalCheckout();
+			}
+		} );
+
 	} )( jQuery )
 );
