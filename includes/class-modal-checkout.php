@@ -249,9 +249,13 @@ final class Modal_Checkout {
 			$cart_item_data = apply_filters( 'newspack_blocks_modal_checkout_cart_item_data', $cart_item_data );
 
 			\WC()->cart->empty_cart();
-			\WC()->cart->add_to_cart( $product_id, 1, 0, [], $cart_item_data );
+			$is_added_to_cart = \WC()->cart->add_to_cart( $product_id, 1, 0, [], $cart_item_data );
 
 			$query_args = [];
+			if ( ! $is_added_to_cart ) {
+				// If the product cannot be added to the cart, add error state query arg.
+				$query_args['cart_error'] = 1;
+			}
 			if ( ! empty( $referer_tags ) ) {
 				$query_args['referer_tags'] = implode( ',', $referer_tags );
 			}
@@ -656,12 +660,6 @@ final class Modal_Checkout {
 			<?php
 				echo do_shortcode( '[woocommerce_checkout]' );
 				wp_footer();
-			?>
-
-			<?php
-			if ( is_cart() ) {
-				self::render_close_button();
-			}
 			?>
 		</body>
 		</html>
