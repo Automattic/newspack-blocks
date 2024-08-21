@@ -1542,6 +1542,9 @@ final class Modal_Checkout {
 	 * @param int            $user_id The user ID.
 	 */
 	public static function subscriptions_product_limited_for_user( $is_limited_for_user, $product, $user_id ) {
+		if ( method_exists( 'WCSG_Product', 'is_giftable' ) && \WCSG_Product::is_giftable( $product ) ) {
+			return false;
+		}
 		if ( $user_id !== 0 ) {
 			return $is_limited_for_user;
 		}
