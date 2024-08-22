@@ -117,6 +117,8 @@ final class Modal_Checkout {
 			add_filter( 'woocommerce_subscription_variation_is_purchasable', [ 'WCS_Limiter', 'is_purchasable_renewal' ], 12, 2 );
 			add_filter( 'woocommerce_valid_order_statuses_for_order_again', [ 'WCS_Limiter', 'filter_order_again_statuses_for_limited_subscriptions' ] );
 		}
+		add_filter( 'woocommerce_subscription_is_purchasable', [ __CLASS__, 'gift_subscription_is_purchasable' ], 99, 2 );
+		add_filter( 'woocommerce_subscription_variation_is_purchasable', [ __CLASS__, 'gift_subscription_is_purchasable' ], 99, 2 );
 		add_filter( 'woocommerce_subscriptions_product_limited_for_user', [ __CLASS__, 'subscriptions_product_limited_for_user' ], 10, 3 );
 	}
 
@@ -867,8 +869,8 @@ final class Modal_Checkout {
 				$args  = [
 					'email'      => $email,
 					'is_renewal' => false,
+					'is_limited' => function_exists( 'wcs_is_product_limited_for_user' ) && wcs_is_product_limited_for_user( $cart_item['product_id'] ),
 				];
-
 				if ( \WCSG_Cart::contains_gifted_renewal() ) {
 					$recipient_user_id = \WCSG_Cart::get_recipient_from_cart_item( \wcs_cart_contains_renewal() );
 					$recipient_user    = \get_userdata( $recipient_user_id );
@@ -877,7 +879,6 @@ final class Modal_Checkout {
 						$args['is_renewal'] = true;
 					}
 				}
-
 				\wc_get_template( 'checkout/form-gift-subscription.php', $args );
 			}
 		}
@@ -907,7 +908,7 @@ final class Modal_Checkout {
 					\WCS_Gifting::update_cart_item_key( $cart_item, $cart_item_key, $recipient_email );
 				} else {
 					$notice = $self_gifting
-						? __( 'Please enter someone else\' email address to receive this gift.', 'newspack-blocks' )
+						? __( 'Please enter someone else\'s email address to receive this gift.', 'newspack-blocks' )
 						: __( 'Please enter a valid email address to receive this gift.', 'newspack-blocks' );
 
 					// Handle email validation errors.
@@ -1542,8 +1543,8 @@ final class Modal_Checkout {
 	 * @param int            $user_id The user ID.
 	 */
 	public static function subscriptions_product_limited_for_user( $is_limited_for_user, $product, $user_id ) {
-		if ( method_exists( 'WCSG_Product', 'is_giftable' ) && \WCSG_Product::is_giftable( $product ) ) {
-			return false;
+		if ( ! self::is_modal_checkout() ) {
+			return $is_limited_for_user;
 		}
 		if ( $user_id !== 0 ) {
 			return $is_limited_for_user;
@@ -1556,6 +1557,19 @@ final class Modal_Checkout {
 			}
 		}
 		return $is_limited_for_user;
+	}
+
+	/**
+	 * Allow giftable limited subscriptions to be purchasable.
+	 *
+	 * @param bool           $purchasable If the subscription is purchasable.
+	 * @param int|WC_Product $product     The product or product ID.
+	 */
+	public static function gift_subscription_is_purchasable( $purchasable, $product ) {
+		if ( ! class_exists( 'WCS_Limiter' ) || ! method_exists( 'WCSG_Product', 'is_giftable' ) ) {
+			return $purchasable;
+		}
+		return \WCSG_Product::is_giftable( $product );
 	}
 }
 Modal_Checkout::init();

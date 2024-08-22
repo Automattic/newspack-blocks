@@ -64,6 +64,7 @@ domReady(
 				const $customer_details = $( '#customer_details' );
 				const $after_customer_details = $( '#after_customer_details' );
 				const $gift_options = $( '.newspack-wcsg--wrapper' );
+				const $is_forced_gifting = $gift_options?.find( '.newspack-wcsg--gift-toggle input' )?.is( ':checked' );
 
 				/**
 				 * Handle styling update for selected payment method.
@@ -127,13 +128,15 @@ domReady(
 				if ( $gift_options.length ) {
 					const $gift_toggle = $gift_options.find( '.newspack-wcsg--gift-toggle input' );
 					const $gift_email = $gift_options.find( '.newspack-wcsg--gift-email' );
-					$gift_toggle.on( 'change', function () {
+					const toggleGifting = () => {
 						if ( $gift_toggle.is( ':checked' ) ) {
 							$gift_email.addClass( 'visible' );
 						} else {
 							$gift_email.removeClass( 'visible' );
 						}
-					} );
+					}
+					$gift_toggle.on( 'change', toggleGifting );
+					toggleGifting();
 				}
 
 				/**
@@ -385,6 +388,10 @@ domReady(
 						if ( $nyp.length ) {
 							$nyp.hide();
 						}
+						if ( $gift_options.length && $is_forced_gifting ) {
+							// Ensure gifting is always disabled if forced.
+							$gift_options.find( '.newspack-wcsg--gift-toggle input' ).attr( 'disabled', true );
+						}
 						$customer_details.show();
 						$after_customer_details.hide();
 						$customer_details.find( 'input' ).first().focus();
@@ -543,9 +550,14 @@ domReady(
 						$genericErrors.remove();
 					}
 
+					if ( $is_forced_gifting ) {
+						// If gifting is forced, we need to remove the disabled attr before submitting.
+						$gift_options?.find( 'input' )?.attr( 'disabled', false );
+					}
 					const serializedForm = $form.serializeArray();
 					// Add 'update totals' parameter so it just performs validation.
 					serializedForm.push( { name: 'woocommerce_checkout_update_totals', value: '1' } );
+
 					// Ajax request.
 					$.ajax( {
 						type: 'POST',
