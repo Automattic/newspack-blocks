@@ -518,6 +518,10 @@
 	#wcpay-express-checkout-button-separator,
 	#wc-stripe-payment-request-button-separator {
 		display: none !important; // !important needed to override inline styles.
+
+		&[style*="display:none"] + .newspack-ui__word-divider {
+			display: none;
+		}
 	}
 
 	// stylelint-disable-next-line selector-id-pattern
