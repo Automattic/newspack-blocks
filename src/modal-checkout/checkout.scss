@@ -513,6 +513,13 @@
 		margin-bottom: 0;
 	}
 
+	// Express checkout dividers.
+	// This is being replaced with JavaScript so it can be styled correctly.
+	#wcpay-express-checkout-button-separator,
+	#wc-stripe-payment-request-button-separator {
+		display: none !important; // !important needed to override inline styles.
+	}
+
 	// stylelint-disable-next-line selector-id-pattern
 	#checkout_back {
 		margin-top: 0;
