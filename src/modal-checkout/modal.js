@@ -518,6 +518,7 @@ domReady( () => {
 						if ( layout === 'untiered' ) {
 							amountInput.value = amount;
 						} else if ( amount === 'other' ) {
+							amountInput.click();
 							const otherInput = donationForm.querySelector( `input[name="donation_value_${ frequency }_other"]` );
 							if ( otherInput && other ) {
 								otherInput.value = other;
