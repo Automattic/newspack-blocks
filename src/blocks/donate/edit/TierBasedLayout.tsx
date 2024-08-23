@@ -44,22 +44,24 @@ const TierBasedLayout = ( props: ComponentProps ) => {
 
 	return (
 		<form className="wpbnbd__tiers" onSubmit={ e => e.preventDefault() }>
-			<div className="wpbnbd__tiers__selection">
-				{ availableFrequencies.map( frequencySlug => {
-					const isActive = currentFrequency === frequencySlug;
-					return (
-						<button
-							key={ frequencySlug }
-							className={ classNames( 'wpbnbd__button', {
-								'wpbnbd__button--active': isActive,
-							} ) }
-							onClick={ () => setCurrencyFrequency( frequencySlug ) }
-						>
-							{ FREQUENCIES[ frequencySlug ] }
-						</button>
-					);
-				} ) }
-			</div>
+			{ availableFrequencies.length > 1 && (
+				<div className="wpbnbd__tiers__selection">
+					{ availableFrequencies.map( frequencySlug => {
+						const isActive = currentFrequency === frequencySlug;
+						return (
+							<button
+								key={ frequencySlug }
+								className={ classNames( 'wpbnbd__button', {
+									'wpbnbd__button--active': isActive,
+								} ) }
+								onClick={ () => setCurrencyFrequency( frequencySlug ) }
+							>
+								{ FREQUENCIES[ frequencySlug ] }
+							</button>
+						);
+					} ) }
+				</div>
+			)}
 			<div className="wpbnbd__tiers__options">
 				{ displayedAmounts.map( ( amount, index ) => {
 					const recommendLabel = attributes.tiersBasedOptions[ index ].recommendLabel || '';

@@ -129,11 +129,13 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 				<div class='wp-block-newspack-blocks-donate__options'>
 					<div class='wp-block-newspack-blocks-donate__frequencies frequencies'>
 
+						<?php if ( count( $configuration['frequencies'] ) > 1 ) : ?>
 						<div role='tablist' class='tab-container'>
 							<?php foreach ( $configuration['frequencies'] as $frequency_slug => $frequency_name ) : ?>
 								<?php echo self::render_frequency_tab( $frequency_slug, $frequency_name, $uid, $configuration ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 							<?php endforeach; ?>
 						</div>
+						<?php endif; ?>
 
 						<?php foreach ( $configuration['frequencies'] as $frequency_slug => $frequency_name ) : ?>
 							<?php
@@ -206,11 +208,13 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 				<?php echo self::render_hidden_form_inputs( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				<div class='wp-block-newspack-blocks-donate__options'>
 					<div class='wp-block-newspack-blocks-donate__frequencies frequencies'>
+						<?php if ( count( $configuration['frequencies'] ) > 1 ) : ?>
 						<div role='tablist' class='tab-container'>
 							<?php foreach ( $configuration['frequencies'] as $frequency_slug => $frequency_name ) : ?>
 								<?php echo self::render_frequency_tab( $frequency_slug, $frequency_name, $uid, $configuration ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 							<?php endforeach; ?>
 						</div>
+						<?php endif; ?>
 
 						<?php foreach ( $configuration['frequencies'] as $frequency_slug => $frequency_name ) : ?>
 

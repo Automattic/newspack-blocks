@@ -136,6 +136,7 @@ class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate
 					<?php echo self::render_hidden_form_inputs( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					<input type="hidden" name="<?php echo esc_attr( self::FREQUENCY_PARAM ); ?>" value="<?php echo esc_attr( $intial_selected_frequency ); ?>">
 					<div class="wpbnbd__tiers">
+						<?php if ( count( $configuration['frequencies'] ) > 1 ) : ?>
 						<div class="wpbnbd__tiers__selection">
 							<?php foreach ( $configuration['frequencies'] as $frequency_slug => $frequency_name ) : ?>
 								<button
@@ -145,6 +146,7 @@ class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate
 									class="wpbnbd__button <?php echo $intial_selected_frequency === $frequency_slug ? 'wpbnbd__button--active' : ''; ?>"
 								><?php echo esc_html( $frequency_name ); ?></button>
 							<?php endforeach; ?>
+						<?php endif; ?>
 						</div>
 						<div class="wpbnbd__tiers__options">
 							<?php foreach ( $displayed_amounts as $index => $amount ) : ?>
