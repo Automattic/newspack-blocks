@@ -319,7 +319,7 @@ domReady( () => {
 						};
 					}
 					window?.newspackReaderActivation?.setCheckoutData?.( {
-						status: true,
+						is_pending_checkout: true,
 						...data,
 					} );
 
