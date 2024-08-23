@@ -45,6 +45,12 @@ domReady(
 			}
 		} else {
 			$( document.body ).on( 'init_checkout', function () {
+
+				// If present, update the markup used for the WooPayments express checkout divider.
+				$( '#wcpay-express-checkout-button-separator, #wc-stripe-payment-request-button-separator' ).after(
+					'<div class="newspack-ui__word-divider">' + newspackBlocksModalCheckout.divider_text + '</div>'
+				);
+
 				let originalFormHandlers = [];
 
 				const $form = $( 'form.checkout' );
@@ -106,7 +112,7 @@ domReady(
 				} );
 
 				/**
-				 * Apply newspack styling to default Woo chekcout errors.
+				 * Apply newspack styling to default Woo checkout errors.
 				 */
 				$( document ).on( 'checkout_error', function () {
 					const $error = $( '.woocommerce-NoticeGroup-checkout' );
