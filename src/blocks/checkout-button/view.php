@@ -119,7 +119,6 @@ function render_callback( $attributes ) {
 			}
 		}
 
-		// TODOGA4: the price here may not be accurate -- it uses the suggested, not minimum NYP price.
 		$name  = $product->get_name();
 		$price = $product->get_price();
 		if ( ! empty( $attributes['price'] ) ) {
