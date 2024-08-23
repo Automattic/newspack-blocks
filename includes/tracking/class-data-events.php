@@ -13,6 +13,16 @@ namespace Newspack_Blocks\Tracking;
 final class Data_Events {
 
 	/**
+	 * The name of the action for form submissions
+	 */
+	const FORM_SUBMISSION_SUCCESS = 'form_submission_success';
+
+	/**
+	 * The name of the action for form submissions
+	 */
+	const FORM_SUBMISSION_FAILURE = 'form_submission_failure';
+
+	/**
 	 * Initialize hooks.
 	 */
 	public static function init() {
@@ -27,12 +37,14 @@ final class Data_Events {
 			return;
 		}
 
+		/*
+		 * TODOGA4: this isn't working as expected:
+		 * woocommerce_order_status_completed should work here but it's not firing for the checkout_button_block for some reason.
+		 */
 		\Newspack\Data_Events::register_listener(
-			'woocommerce_order_status_completed',
+			'woocommerce_checkout_order_processed',
 			'modal_checkout_interaction',
-			function ( $order_id, $order ) {
-				return \Newspack\Data_Events\Utils::get_order_data( $order_id, true );
-			}
+			[ __CLASS__, 'order_status_completed' ]
 		);
 	}
 
@@ -71,6 +83,52 @@ final class Data_Events {
 		return false;
 	}
 
+
+	/**
+	 * Returns the product type: product, subscription, donation, or membership.
+	 *
+	 * @param string $product_id Product's ID.
+	 */
+	public static function get_product_type( $product_id ) {
+		$product_type = 'product';
+		$recurrence   = self::get_purchase_recurrence( $product_id );
+
+		// Check if it's a subscription product.
+		if ( 'once' !== $recurrence ) {
+			$product_type = 'subscription';
+		}
+
+		// Check if it's a donation product.
+		if ( method_exists( 'Newspack\Donations', 'is_donation_product' ) ) {
+			if ( \Newspack\Donations::is_donation_product( $product_id ) ) {
+				$product_type = 'donation';
+			}
+		}
+
+		// Check if it's a membership product.
+		if ( self::is_membership_product( $product_id ) ) {
+			$product_type = 'membership';
+		}
+
+		return $product_type;
+	}
+
+	/**
+	 * Returns the action type: checkout_button or donation.
+	 *
+	 * @param string $product_id Product's ID.
+	 */
+	public static function get_action_type( $product_id ) {
+		$action_type = 'checkout_button';
+		// Check if it's a donation product, and update action_type, product_type.
+		if ( method_exists( 'Newspack\Donations', 'is_donation_product' ) ) {
+			if ( \Newspack\Donations::is_donation_product( $product_id ) ) {
+				$action_type = 'donation';
+			}
+		}
+		return $action_type;
+	}
+
 	/**
 	 * Returns an array of product information.
 	 *
@@ -78,34 +136,52 @@ final class Data_Events {
 	 * @param array  $cart_item Cart item.
 	 */
 	public static function build_js_data_events( $product_id, $cart_item ) {
-		$action_type  = 'checkout_button';
-		$product_type = 'other';
-		$recurrence   = self::get_purchase_recurrence( $product_id );
-
-		// Check if it's a donation product, and update action_type, product_type.
-		if ( method_exists( 'Newspack\Donations', 'is_donation_product' ) ) {
-			if ( \Newspack\Donations::is_donation_product( $product_id ) ) {
-				$action_type = 'donation';
-				$product_type = 'donation';
-			}
-		}
-
-		// Check if it's associated with a membership and update product_type.
-		if ( self::is_membership_product( $product_id ) ) {
-			$product_type = 'membership';
-		}
-
 		$data_order_details = [
 			'amount'       => $cart_item['data']->get_price(),
-			'action_type'  => $action_type,
+			'action_type'  => self::get_action_type( $product_id ),
 			'currency'     => \get_woocommerce_currency(),
 			'product_id'   => strval( $product_id ),
-			'product_type' => $product_type,
+			'product_type' => self::get_product_type( $product_id ),
 			'referer'      => substr( $cart_item['referer'], strlen( home_url() ) ), // remove domain from referer.
-			'recurrence'   => $recurrence,
+			'recurrence'   => self::get_purchase_recurrence( $product_id ),
 		];
 
 		return $data_order_details;
+	}
+
+	/**
+	 * Send data to GA4.
+	 *
+	 * @param string    $order_id Order's ID.
+	 * @param array     $posted_data Posted Data.
+	 * @param \WC_Order $order Order object.
+	 */
+	public static function order_status_completed( $order_id, $posted_data, $order ) {
+		// Check if in a modal checkout; if no, bail.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$is_modal_checkout = ( isset( $_REQUEST['modal_checkout'] ) ? true : false );
+		if ( ! $is_modal_checkout ) {
+			return;
+		}
+
+		$action = self::FORM_SUBMISSION_SUCCESS;
+		$data = \Newspack\Data_Events\Utils::get_order_data( $order_id, false );
+
+		if ( empty( $data ) ) {
+			return;
+		}
+
+		$product_id = '';
+		foreach ( $order->get_items() as $item ) {
+			$product_id = $item->get_product_id();
+		}
+
+		$data['action']       = $action;
+		$data['action_type']  = self::get_action_type( $product_id );
+		$data['product_id']   = $product_id;
+		$data['product_type'] = self::get_product_type( $product_id );
+
+		return $data;
 	}
 }
 Data_Events::init();
