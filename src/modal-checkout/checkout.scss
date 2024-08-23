@@ -539,6 +539,7 @@
 		.woocommerce-info {
 			background: none;
 			color: inherit;
+			font-family: var(--newspack-ui-font-family, system-ui);
 			font-size: var(--newspack-ui-font-size-xs, 14px);
 			list-style-type: none;
 			margin: 0;
