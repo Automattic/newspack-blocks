@@ -382,9 +382,9 @@ final class Modal_Checkout {
 		?>
 		<div id="newspack_modal_checkout" class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal-container" ); ?>">
 			<div class="<?php echo esc_attr( "{$class_prefix}__modal-container__overlay" ); ?>"></div>
-			<div class="<?php echo esc_attr( "{$class_prefix}__modal" ); ?>">
+			<div class="<?php echo esc_attr( "{$class_prefix}__modal" ); ?>" role="dialog" aria-modal="true" aria-labelledby="newspack-modal-checkout-label">
 				<header class="<?php echo esc_attr( "{$class_prefix}__modal__header" ); ?>">
-					<h2><?php echo esc_html( $title ); ?></h2>
+					<h2 id="newspack-modal-checkout-label"><?php echo esc_html( $title ); ?></h2>
 					<button class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--icon {$class_prefix}__button--ghost {$class_prefix}__modal__close" ); ?>">
 						<span class="screen-reader-text"><?php esc_html_e( 'Close', 'newspack-blocks' ); ?></span>
 						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
@@ -397,6 +397,10 @@ final class Modal_Checkout {
 						<span></span>
 					</div>
 				</section>
+				<?php
+					// Hacky way to help trap focus in the modal for accessibility, without involving the iframe.
+					echo '<span tabindex="0" id="newspack-a11y-last-element"></span>';
+				?>
 			</div>
 		</div>
 		<?php
@@ -460,9 +464,9 @@ final class Modal_Checkout {
 				data-product-id="<?php echo esc_attr( $product_id ); ?>"
 			>
 				<div class="<?php echo esc_attr( "{$class_prefix}__modal-container__overlay" ); ?>"></div>
-				<div class="<?php echo esc_attr( "{$class_prefix}__modal" ); ?>">
+				<div class="<?php echo esc_attr( "{$class_prefix}__modal" ); ?>" role="dialog" aria-modal="true" aria-labelledby="newspack-modal-checkout-label">
 					<header class="<?php echo esc_attr( "{$class_prefix}__modal__header" ); ?>">
-						<h2><?php echo esc_html( $title ); ?></h2>
+						<h2 id="newspack-modal-checkout-label"><?php echo esc_html( $title ); ?></h2>
 						<button class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--icon {$class_prefix}__button--ghost {$class_prefix}__modal__close" ); ?>">
 							<span class="screen-reader-text"><?php esc_html_e( 'Close', 'newspack-blocks' ); ?></span>
 							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
@@ -576,6 +580,7 @@ final class Modal_Checkout {
 				'nyp_nonce'             => wp_create_nonce( 'newspack_checkout_name_your_price' ),
 				'newspack_class_prefix' => self::get_class_prefix(),
 				'is_checkout_complete'  => function_exists( 'is_order_received_page' ) && is_order_received_page(),
+				'divider_text'          => esc_html__( 'Or', 'newspack-blocks' ),
 				'labels'                => [
 					'billing_details'  => self::get_modal_checkout_labels( 'billing_details' ),
 					'shipping_details' => self::get_modal_checkout_labels( 'shipping_details' ),

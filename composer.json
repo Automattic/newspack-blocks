@@ -5,7 +5,7 @@
 	"require-dev": {
 		"composer/installers": "~2.0",
 		"automattic/vipwpcs": "^3.0",
-		"brainmaestro/composer-git-hooks": "^2.6",
+		"brainmaestro/composer-git-hooks": "^3.0",
 		"wp-coding-standards/wpcs": "^3.0",
 		"dealerdirect/phpcodesniffer-composer-installer": "*",
 		"phpcompatibility/phpcompatibility-wp": "*",

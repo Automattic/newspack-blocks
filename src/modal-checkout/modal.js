@@ -4,6 +4,7 @@
  * Style dependencies
  */
 import './modal.scss';
+import * as a11y from './accessibility.js';
 
 /**
  * Internal dependencies
@@ -30,6 +31,7 @@ domReady( () => {
 	const modalContent = modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }__content` );
 	const modalCheckoutHiddenInput = createHiddenInput( 'modal_checkout', '1' );
 	const spinner = modalContent.querySelector( `.${ CLASS_PREFIX }__spinner` );
+	let modalTrigger = document.querySelector( '.newspack-reader__account-link' )?.[0];
 
 	// Initialize empty iframe.
 	const iframe = document.createElement( 'iframe' );
@@ -72,6 +74,10 @@ domReady( () => {
 				window.newspackReaderActivation?.overlays.remove( el.overlayId );
 			}
 		} );
+
+		if ( modalTrigger ) {
+			modalTrigger.focus();
+		}
 
 		if ( container?.checkoutComplete ) {
 			const handleCheckoutComplete = () => {
@@ -125,6 +131,8 @@ domReady( () => {
 				closeCheckout();
 			}
 		} );
+
+		a11y.trapFocus( modalCheckout, iframe );
 	};
 
 	const closeModal = el => {
@@ -199,6 +207,15 @@ domReady( () => {
 	} );
 
 	/**
+	 * Close the modal with the escape key.
+	 */
+	document.addEventListener( 'keydown', function ( ev ) {
+		if ( ev.key === 'Escape' ) {
+			closeCheckout();
+		}
+	} );
+
+	/**
 	 * Handle modal checkout triggers.
 	 */
 	document
@@ -218,11 +235,18 @@ domReady( () => {
 					if ( productData ) {
 						const data = JSON.parse( productData );
 						Object.keys( data ).forEach( key => {
-							form.appendChild( createHiddenInput( key, data[ key ] ) );
+							const existingInputs = form.querySelectorAll( 'input[name="' +  key + '"]' );
+							if ( 0 === existingInputs.length ) {
+								form.appendChild( createHiddenInput( key, data[ key ] ) );
+							}
 						} );
 					}
+					const formData = new FormData( form );
 
-					const data = new FormData( form );
+					// If we're not going from variation picker to checkout, set the modal trigger:
+					if ( ! formData.get( 'variation_id' ) ) {
+						modalTrigger = ev.submitter;
+					}
 
 					const variationModals = document.querySelectorAll( `.${ VARIATON_MODAL_CLASS_PREFIX }` );
 					// Clear any open variation modal.
@@ -230,9 +254,9 @@ domReady( () => {
 						closeModal( variationModal );
 					} );
 					// Trigger variation modal if variation is not selected.
-					if ( data.get( 'is_variable' ) && ! data.get( 'variation_id' ) ) {
+					if ( formData.get( 'is_variable' ) && ! formData.get( 'variation_id' ) ) {
 						const variationModal = [ ...variationModals ].find(
-							modal => modal.dataset.productId === data.get( 'product_id' )
+							modal => modal.dataset.productId === formData.get( 'product_id' )
 						);
 						if ( variationModal ) {
 							variationModal
@@ -245,7 +269,7 @@ domReady( () => {
 										'after_success_button_label',
 									].forEach( afterSuccessParam => {
 										singleVariationForm.appendChild(
-											createHiddenInput( afterSuccessParam, data.get( afterSuccessParam ) )
+											createHiddenInput( afterSuccessParam, formData.get( afterSuccessParam ) )
 										);
 									} );
 
@@ -253,9 +277,9 @@ domReady( () => {
 									// TODOGA4: I've added more info to the params, is it needlessly being added here?
 									const variationData = singleVariationForm.dataset.product;
 									if ( variationData ) {
-										const varData = JSON.parse( variationData );
-										Object.keys( varData ).forEach( key => {
-											singleVariationForm.appendChild( createHiddenInput( key, varData[ key ] ) );
+										const data = JSON.parse( variationData );
+										Object.keys( data ).forEach( key => {
+											singleVariationForm.appendChild( createHiddenInput( key, data[ key ] ) );
 										} );
 									}
 								} );
@@ -264,6 +288,7 @@ domReady( () => {
 							ev.preventDefault();
 							form.classList.remove( 'processing' );
 							openModal( variationModal );
+							a11y.trapFocus( variationModal, false );
 
 							// TODOGA4: fix this duplication (see below):
 							const getDataProduct = form.getAttribute( 'data-product' );
@@ -283,8 +308,8 @@ domReady( () => {
 					// Set reader activation checkout status flag if available.
 					window?.newspackReaderActivation?.setCheckoutStatus?.( true );
 
-					const isDonateBlock = data.get( 'newspack_donate' );
-					const isCheckoutButtonBlock = data.get( 'newspack_checkout' );
+					const isDonateBlock = formData.get( 'newspack_donate' );
+					const isCheckoutButtonBlock = formData.get( 'newspack_checkout' );
 
 					// Set up some GA4 information.
 					if ( isCheckoutButtonBlock ) { // this fires on the second in-modal variations screen, too
@@ -292,17 +317,17 @@ domReady( () => {
 						getProductDataModal = getDataProduct ? JSON.parse( getDataProduct ) : {};
 					} else if ( isDonateBlock ) {
 						// Get donation information and append to the modal checkout for GA4:
-						const donationFreq = data.get( 'donation_frequency' );
+						const donationFreq = formData.get( 'donation_frequency' );
 						let donationValue = '';
 
-						for ( const key of data.keys() ) {
+						for ( const key of formData.keys() ) {
 							// Find values that match the frequency name, that aren't empty
 							if (
 								key.indexOf( 'donation_value_' + donationFreq ) >= 0 &&
-								'other' !== data.get( key ) &&
-								'' !== data.get( key )
+								'other' !== formData.get( key ) &&
+								'' !== formData.get( key )
 							) {
-								donationValue = data.get( key );
+								donationValue = formData.get( key );
 							}
 						}
 
@@ -310,11 +335,11 @@ domReady( () => {
 						getProductDataModal = {
 							amount: donationValue,
 							action_type: 'donation',
-							currency: data.get( 'donation_currency' ),
-							product_id: data.get( 'donation_product_id' ),
+							currency: formData.get( 'donation_currency' ),
+							product_id: formData.get( 'donation_product_id' ),
 							product_type: 'donation',
 							recurrence: donationFreq,
-							referer: data.get( '_wp_http_referer' ),
+							referer: formData.get( '_wp_http_referer' ),
 						};
 					}
 
@@ -331,7 +356,7 @@ domReady( () => {
 
 						if ( isDonateBlock ) {
 
-							const frequency = data.get( 'donation_frequency' );
+							const frequency = formData.get( 'donation_frequency' );
 							const donationTiers = form.querySelectorAll(
 								`.donation-tier__${ frequency }, .donation-frequency__${ frequency }`
 							);
@@ -360,11 +385,11 @@ domReady( () => {
 
 										if ( price === '0' && priceSummary ) {
 											// Replace placeholder price with price input for other.
-											let otherPrice = data.get( `donation_value_${ frequency }_other` );
+											let otherPrice = formData.get( `donation_value_${ frequency }_other` );
 
 											// Fallback to untiered price if other price is not set.
 											if ( ! otherPrice ) {
-												otherPrice = data.get( `donation_value_${ frequency }_untiered` );
+												otherPrice = formData.get( `donation_value_${ frequency }_untiered` );
 											}
 
 											if ( otherPrice ) {
@@ -374,7 +399,7 @@ domReady( () => {
 									} );
 								} else {
 									// Handle tiers based donation tiers.
-									const index = data.get( 'donation_tier_index' );
+									const index = formData.get( 'donation_tier_index' );
 									if ( index ) {
 										const donationData = JSON.parse( donationTiers?.[ index ].dataset.product );
 										if ( donationData.hasOwnProperty( `donation_price_summary_${ frequency }` ) ) {
@@ -416,6 +441,7 @@ domReady( () => {
 								},
 							},
 							content,
+							trigger: ev.submitter,
 						} );
 					} else {
 						// Otherwise initialize checkout.
@@ -453,6 +479,7 @@ domReady( () => {
 				// Update the modal title and width to reflect successful transaction.
 				setModalWidth( 'small' );
 				setModalTitle( newspackBlocksModal.labels.thankyou_modal_title );
+				a11y.trapFocus( modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }` ) );
 			} else {
 				// Revert modal title and width default value.
 				setModalWidth();
