@@ -145,8 +145,6 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 		}
 		$configuration['container_classnames'] = implode( ' ', $class_names );
 
-		$configuration['product_data'] = wp_json_encode( $product_data );
-
 		if ( isset( $configuration['minimumDonation'] ) ) {
 			foreach ( $configuration['amounts'] as $frequency => $amounts ) {
 				foreach ( $amounts as $index => $amount ) {
