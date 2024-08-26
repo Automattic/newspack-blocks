@@ -31,8 +31,17 @@ domReady(
 
 		function clearNotices() {
 			$(
-				`.woocommerce-NoticeGroup-checkout, .${ CLASS_PREFIX }__inline-error, .woocommerce-error, .woocommerce-message, .wc-block-components-notice-banner`
+				`.woocommerce-NoticeGroup-checkout, .${ CLASS_PREFIX }__inline-error, .woocommerce-error, .woocommerce-message, .wc-block-components-notice-banner, .woocommerce-notices-wrapper`
 			).remove();
+		}
+
+		/**
+		 * Set the checkout as ready so the modal can resolve the loading state.
+		 */
+		function setReady() {
+			const container = document.querySelector( '#newspack_modal_checkout_container' );
+			container.checkoutReady = true;
+			container.dispatchEvent( readyEvent );
 		}
 
 		if ( newspackBlocksModalCheckout.is_checkout_complete ) {
@@ -108,16 +117,6 @@ domReady(
 						$el.addClass( 'hidden' );
 					} else {
 						$el.removeClass( 'hidden' );
-					}
-				} );
-
-				/**
-				 * Apply newspack styling to default Woo checkout errors.
-				 */
-				$( document ).on( 'checkout_error', function () {
-					const $error = $( '.woocommerce-NoticeGroup-checkout' );
-					if ( $error ) {
-						$error.addClass( `${ CLASS_PREFIX }__notice ${ CLASS_PREFIX }__notice--error` );
 					}
 				} );
 
@@ -228,15 +227,6 @@ domReady(
 
 					$( document.body ).trigger( 'update_checkout' );
 					$( document.body ).trigger( 'checkout_error', [ error_message ] );
-				}
-
-				/**
-				 * Set the checkout as ready so the modal can resolve the loading state.
-				 */
-				function setReady() {
-					const container = document.querySelector( '#newspack_modal_checkout_container' );
-					container.checkoutReady = true;
-					container.dispatchEvent( readyEvent );
 				}
 
 				/**
@@ -656,12 +646,24 @@ domReady(
 			} );
 		}
 
+		/**
+		 * Apply newspack styling to default Woo checkout errors.
+		 */
+		$( document.body ).on( 'checkout_error', function () {
+			const $errors = $( '.woocommerce-NoticeGroup-checkout, .woocommerce-notices-wrapper' );
+			if ( $errors.length ) {
+				$errors.each(
+					( _, error ) => $( error ).addClass(`${ CLASS_PREFIX }__notice ${ CLASS_PREFIX }__notice--error` )
+				);
+			}
+			setReady();
+		} );
+
 		// Close modal when 'Esc' key is pressed and focus is inside of the iframe.
 		document.addEventListener( 'keydown', function ( ev ) {
 			if ( ev.key === 'Escape' ) {
 				parent.newspackCloseModalCheckout();
 			}
 		} );
-
 	} )( jQuery )
 );
