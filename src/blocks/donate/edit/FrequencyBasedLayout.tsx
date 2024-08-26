@@ -92,12 +92,16 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 	// This code is fired on tab select and updates aria elements, tabindex states, and radio buttons
 	const displayAmount = ( amount: number ) => amount.toFixed( 2 ).replace( /\.?0*$/, '' );
 
+	const renderFormHeader = () => {
+		return availableFrequencies.length > 1 && (
+			<div className="tab-container">{ availableFrequencies.map( renderTab ) }</div>
+		)
+	}
+
 	const renderUntieredForm = () => (
 		<div className="wp-block-newspack-blocks-donate__options">
 			<div className="wp-block-newspack-blocks-donate__frequencies frequencies">
-				{availableFrequencies.length > 1 && (
-					<div className="tab-container">{ availableFrequencies.map( renderTab ) }</div>
-				)}
+				{renderFormHeader()}
 				{ availableFrequencies.map( frequencySlug => {
 					const untieredAmount = amounts[ frequencySlug ][ 3 ];
 					return (
@@ -159,9 +163,7 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 	const renderTieredForm = () => (
 		<div className="wp-block-newspack-blocks-donate__options">
 			<div className="wp-block-newspack-blocks-donate__frequencies frequencies">
-				{ availableFrequencies.length > 1 && (
-					<div className="tab-container">{ availableFrequencies.map( renderTab ) }</div>
-				)}
+				{ renderFormHeader()}
 				{ availableFrequencies.map( frequencySlug => (
 					<div
 						className="wp-block-newspack-blocks-donate__frequency frequency"
