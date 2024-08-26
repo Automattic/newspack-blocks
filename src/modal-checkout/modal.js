@@ -54,14 +54,16 @@ domReady( () => {
 		const afterSuccessBehaviorInput = container.querySelector(
 			'input[name="after_success_behavior"]'
 		);
+		const hasNewsletterPopup = document?.querySelector( '.newspack-newsletters-signup-modal' );
 
 		// We want to block closing the modal if redirecting elsewhere:
 		let shouldCloseModal = true;
+
 		if (
 			afterSuccessUrlInput &&
 			afterSuccessBehaviorInput &&
 			container?.checkoutComplete &&
-			! window?.newspackReaderActivation?._openNewslettersSignupModal
+			! hasNewsletterPopup
 		) {
 			shouldCloseModal = false;
 		}
