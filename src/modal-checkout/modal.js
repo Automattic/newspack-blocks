@@ -93,7 +93,7 @@ domReady( () => {
 						window.history.back();
 					}
 				}
-				window?.newspackReaderActivation?.setCheckoutStatus?.( false );
+				window?.newspackReaderActivation?.resetCheckoutData?.();
 			};
 			if ( window?.newspackReaderActivation?.openNewslettersSignupModal ) {
 				window.newspackReaderActivation.openNewslettersSignupModal( {
@@ -106,7 +106,7 @@ domReady( () => {
 			setModalWidth();
 			setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
 		} else {
-			window?.newspackReaderActivation?.setCheckoutStatus?.( false );
+			window?.newspackReaderActivation?.resetCheckoutData?.();
 		}
 	};
 
@@ -286,22 +286,56 @@ domReady( () => {
 
 					form.classList.remove( 'processing' );
 
-					// Set reader activation checkout status flag if available.
-					window?.newspackReaderActivation?.setCheckoutStatus?.( true );
+					// Set reader activation checkout data if available.
+					let data = {};
+					if ( element.classList.contains( 'wpbnbd--platform-wc' ) ) {
+						const frequency = formData.get( 'donation_frequency' );
+						let amount;
+						let layout;
+						if ( formData.has( `donation_value_${ frequency }_untiered` ) ) {
+							amount = formData.get( `donation_value_${ frequency }_untiered` );
+							layout = 'untiered';
+						} else if ( formData.has( 'donation_tier_index' ) ) {
+							const donationTier = form.querySelector( `button[data-tier-index="${ formData.get('donation_tier_index') }"]` );
+							amount = donationTier?.value;
+							layout = 'tiered';
+						} else {
+							amount = formData.get( `donation_value_${ frequency }` )
+							layout = 'frequency';
+						}
+
+						data = {
+							type: 'donate',
+							layout,
+							frequency,
+							amount,
+							other: formData.get( `donation_value_${ frequency }_other` ),
+						};
+					} else {
+						data = {
+							type: 'checkout_button',
+							product_id: formData.get( 'product_id' ),
+							variation_id: formData.get( 'variation_id' ),
+						};
+					}
+					window?.newspackReaderActivation?.setCheckoutData?.( {
+						is_pending_checkout: true,
+						...data,
+					} );
 
 					if (
-						! newspack_ras_config.is_logged_in &&
+						typeof newspack_ras_config !== 'undefined' &&
+						! newspack_ras_config?.is_logged_in &&
 						! window?.newspackReaderActivation?.getReader?.()?.authenticated &&
 						window?.newspackReaderActivation?.openAuthModal
 					) {
 						ev.preventDefault();
-						const data = new FormData( form );
 						let content = '';
 						let price = '0';
 						let priceSummary = '';
 
-						if ( data.get( 'newspack_donate' ) ) {
-							const frequency = data.get( 'donation_frequency' );
+						if ( formData.get( 'newspack_donate' ) ) {
+							const frequency = formData.get( 'donation_frequency' );
 							const donationTiers = form.querySelectorAll(
 								`.donation-tier__${ frequency }, .donation-frequency__${ frequency }`
 							);
@@ -330,11 +364,11 @@ domReady( () => {
 
 										if ( price === '0' && priceSummary ) {
 											// Replace placeholder price with price input for other.
-											let otherPrice = data.get( `donation_value_${ frequency }_other` );
+											let otherPrice = formData.get( `donation_value_${ frequency }_other` );
 
 											// Fallback to untiered price if other price is not set.
 											if ( ! otherPrice ) {
-												otherPrice = data.get( `donation_value_${ frequency }_untiered` );
+												otherPrice = formData.get( `donation_value_${ frequency }_untiered` );
 											}
 
 											if ( otherPrice ) {
@@ -344,7 +378,7 @@ domReady( () => {
 									} );
 								} else {
 									// Handle tiers based donation tiers.
-									const index = data.get( 'donation_tier_index' );
+									const index = formData.get( 'donation_tier_index' );
 									if ( index ) {
 										const donationData = JSON.parse( donationTiers?.[ index ].dataset.product );
 										if ( donationData.hasOwnProperty( `donation_price_summary_${ frequency }` ) ) {
@@ -353,7 +387,7 @@ domReady( () => {
 									}
 								}
 							}
-						} else if ( data.get( 'newspack_checkout' ) ) {
+						} else if ( formData.get( 'newspack_checkout' ) ) {
 							const priceSummaryInput = form.querySelector( 'input[name="product_price_summary"]' );
 
 							if ( priceSummaryInput ) {
@@ -369,12 +403,7 @@ domReady( () => {
 						window.newspackReaderActivation.openAuthModal( {
 							title: newspackBlocksModal.labels.auth_modal_title,
 							callback: () => {
-								// Signal checkout registration.
-								form.appendChild(
-									createHiddenInput( newspackBlocksModal.checkout_registration_flag, '1' )
-								);
-								// form.submit does not trigger submit event listener, so we use requestSubmit.
-								form.requestSubmit( form.querySelector( 'button[type="submit"]' ) );
+								triggerCheckout( form );
 							},
 							skipSuccess: true,
 							labels: {
@@ -438,4 +467,142 @@ domReady( () => {
 			spinner.style.display = 'none';
 		}
 	} );
+
+	/**
+	 * Triggers checkout form submit.
+	 *
+	 * @param {HTMLFormElement} form The form element.
+	 */
+	const triggerCheckout = form => {
+		// Signal checkout registration.
+		form.appendChild(
+			createHiddenInput( newspackBlocksModal.checkout_registration_flag, '1' )
+		);
+		// form.submit does not trigger submit event listener, so we use requestSubmit.
+		form.requestSubmit( form.querySelector( 'button[type="submit"]' ) );
+	}
+
+	/**
+	 * Handle donation form triggers.
+	 *
+	 * @param {string}      layout    The donation layout.
+	 * @param {string}      frequency The donation frequency.
+	 * @param {string}      amount    The donation amount.
+	 * @param {string|null} other     Optional. The custom amount when other is selected.
+	 */
+	const triggerDonationForm = ( layout, frequency, amount, other = null ) => {
+		let form;
+		document.querySelectorAll( '.wpbnbd.wpbnbd--platform-wc form' )
+			.forEach( donationForm => {
+				const frequencyInput = donationForm.querySelector( `input[name="donation_frequency"][value="${ frequency }"]` );
+				if ( ! frequencyInput ) {
+					return;
+				}
+				if ( layout === 'tiered' ) {
+					const frequencyButton = document.querySelector( `button[data-frequency-slug="${ frequency }"]` );
+					if ( ! frequencyButton ) {
+						return;
+					}
+					frequencyButton.click();
+					const submitButton = donationForm.querySelector( `button[type="submit"][name="donation_value_${ frequency }"][value="${ amount }"]` );
+					if ( ! submitButton ) {
+						return;
+					}
+					submitButton.click();
+				} else {
+					const amountInput = ( layout === 'untiered' ) ?
+						donationForm.querySelector( `input[name="donation_value_${ frequency }_untiered"]` ) :
+						donationForm.querySelector( `input[name="donation_value_${ frequency }"][value="${ amount }"]` );
+					if ( frequencyInput && amountInput ) {
+						frequencyInput.checked = true;
+						if ( layout === 'untiered' ) {
+							amountInput.value = amount;
+						} else if ( amount === 'other' ) {
+							amountInput.click();
+							const otherInput = donationForm.querySelector( `input[name="donation_value_${ frequency }_other"]` );
+							if ( otherInput && other ) {
+								otherInput.value = other;
+							}
+						} else {
+							amountInput.checked = true;
+						}
+						form = donationForm;
+					}
+				}
+			} );
+		if ( form ) {
+			triggerCheckout( form );
+		}
+	}
+
+	/**
+	 * Handle checkout button form triggers.
+	 *
+	 * @param {number}      productId   The product ID.
+	 * @param {number|null} variationId Optional. The variation ID.
+	 */
+	const triggerCheckoutButtonForm = ( productId, variationId = null ) => {
+		let form;
+		if ( variationId && variationId !== productId ) {
+			const variationModals = document.querySelectorAll( `.${ VARIATON_MODAL_CLASS_PREFIX }` );
+			const variationModal = [ ...variationModals ].find(
+				modal => modal.dataset.productId === productId
+			);
+			if ( variationModal ) {
+				const forms = variationModal.querySelectorAll( `form[target="${ IFRAME_NAME }"]` );
+				forms.forEach( variationForm => {
+					const productData = JSON.parse( variationForm.dataset.product );
+					if ( productData?.variation_id === Number( variationId ) ) {
+						form = variationForm;
+					}
+				} );
+			}
+		} else {
+			const checkoutButtons = document.querySelectorAll( '.wp-block-newspack-blocks-checkout-button' );
+			checkoutButtons.forEach( button => {
+				const checkoutButtonForm = button.querySelector( 'form' );
+				if ( ! checkoutButtonForm ) {
+					return;
+				}
+				const productData = JSON.parse( checkoutButtonForm.dataset.product );
+				if ( productData?.product_id === productId ) {
+					form = checkoutButtonForm;
+				}
+			} );
+		}
+		if ( form ) {
+			triggerCheckout( form );
+		}
+	}
+
+	/**
+	 * Handle modal checkout url param triggers.
+	 */
+	const handleModalCheckoutUrlParams = () => {
+		const urlParams = new URLSearchParams( window.location.search );
+		if ( ! urlParams.has( MODAL_CHECKOUT_ID ) ) {
+			return;
+		}
+
+		const type = urlParams.get( 'type' );
+		if ( type === 'donate' ) {
+			const layout = urlParams.get( 'layout' );
+			const frequency = urlParams.get( 'frequency' );
+			const amount = urlParams.get( 'amount' );
+			const other = urlParams.get( 'other' );
+			if ( layout && frequency && amount ) {
+				triggerDonationForm( layout, frequency, amount, other );
+			}
+		}
+		if ( type === 'checkout_button' ) {
+			const productId = urlParams.get( 'product_id' );
+			const variationId = urlParams.get( 'variation_id' );
+			if ( productId ) {
+				triggerCheckoutButtonForm( productId, variationId );
+			}
+		}
+		// Remove the URL param to prevent re-triggering.
+		window.history.replaceState( null, null, window.location.pathname );
+	};
+	handleModalCheckoutUrlParams();
 } );
