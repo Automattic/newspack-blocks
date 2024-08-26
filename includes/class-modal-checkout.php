@@ -533,7 +533,11 @@ final class Modal_Checkout {
 	 * Enqueue scripts for the checkout page rendered in a modal.
 	 */
 	public static function enqueue_scripts() {
-		if ( ( ! function_exists( 'is_checkout' ) || ! is_checkout() ) && ( ! function_exists( 'is_order_received_page' ) || ! is_order_received_page() ) ) {
+		if (
+			( ! function_exists( 'is_checkout' ) || ! is_checkout() ) &&
+			( ! function_exists( 'is_cart' ) || ! is_cart() ) &&
+			( ! function_exists( 'is_order_received_page' ) || ! is_order_received_page() )
+		) {
 			return;
 		}
 
@@ -642,6 +646,7 @@ final class Modal_Checkout {
 			return $template;
 		}
 		$class_prefix = self::get_class_prefix();
+		$wc_errors    = wc_get_notices( 'error' );
 		ob_start();
 		?>
 		<!doctype html>
@@ -654,14 +659,16 @@ final class Modal_Checkout {
 		</head>
 			<body class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal__content" ); ?>" id="newspack_modal_checkout_container">
 			<?php
-				echo do_shortcode( '[woocommerce_checkout]' );
-				wp_footer();
-			?>
-
-			<?php
-			if ( is_cart() ) {
-				self::render_close_button();
-			}
+			echo do_shortcode( '[woocommerce_checkout]' );
+			wp_footer();
+			// Trigger checkout error event if there are cart errors.
+			if ( is_cart() && ! empty( $wc_errors ) ) :
+				?>
+				<script>
+					jQuery( document.body ).trigger( 'checkout_error' );
+				</script>
+				<?php
+			endif;
 			?>
 		</body>
 		</html>
