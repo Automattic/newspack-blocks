@@ -57,18 +57,9 @@ domReady( () => {
 		const hasNewsletterPopup = document?.querySelector( '.newspack-newsletters-signup-modal' );
 
 		// We want to block closing the modal if redirecting elsewhere:
-		let shouldCloseModal = true;
+		const shouldCloseModal = ! afterSuccessUrlInput || ! afterSuccessBehaviorInput || ! container?.checkoutComplete;
 
-		if (
-			afterSuccessUrlInput &&
-			afterSuccessBehaviorInput &&
-			container?.checkoutComplete &&
-			! hasNewsletterPopup
-		) {
-			shouldCloseModal = false;
-		}
-
-		if ( shouldCloseModal ) {
+		if ( shouldCloseModal || hasNewsletterPopup ) {
 			spinner.style.display = 'flex';
 			if ( iframe && modalContent.contains( iframe ) ) {
 				// Reset iframe and modal content heights.
@@ -112,7 +103,7 @@ domReady( () => {
 			if ( window?.newspackReaderActivation?.openNewslettersSignupModal ) {
 				window.newspackReaderActivation.openNewslettersSignupModal( {
 					callback: handleCheckoutComplete,
-					skipClose: ( afterSuccessUrlInput && afterSuccessBehaviorInput ) ? true : false,
+					closeOnSuccess: shouldCloseModal,
 				} );
 			} else {
 				handleCheckoutComplete();
