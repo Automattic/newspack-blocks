@@ -677,6 +677,13 @@ domReady(
 					( _, error ) => $( error ).addClass(`${ CLASS_PREFIX }__notice ${ CLASS_PREFIX }__notice--error` )
 				);
 			}
+			const $checkout_error_back = $( '#checkout_error_back' );
+			if ( $checkout_error_back.length ) {
+				$checkout_error_back.on( 'click', ev => {
+					ev.preventDefault();
+					parent.newspackCloseModalCheckout()
+				} );
+			}
 			setReady();
 		} );
 
