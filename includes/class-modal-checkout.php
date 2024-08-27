@@ -1064,7 +1064,11 @@ final class Modal_Checkout {
 	 * @return string
 	 */
 	public static function get_subscription_limited_message() {
-		return __( 'You may only have one subscription of this product at a time.', 'newspack-blocks' );
+		return sprintf(
+			// translators: %s: Site name.
+			__( "You're already a subscriber! You can only have one active subscription at a time. Thank you for supporting %s.", 'newspack-blocks' ),
+			get_bloginfo( 'name' )
+		);
 	}
 
 	/**
@@ -1079,7 +1083,7 @@ final class Modal_Checkout {
 		if ( method_exists( 'WCS_Limiter', 'is_purchasable' ) ) {
 			$product = \wc_get_product( $product_data->get_id() );
 			if ( ! \WCS_Limiter::is_purchasable( false, $product ) ) {
-				$message .= ' ' . self::get_subscription_limited_message();
+				$message = self::get_subscription_limited_message();
 			}
 		}
 
