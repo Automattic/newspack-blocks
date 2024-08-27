@@ -545,10 +545,16 @@ final class Modal_Checkout {
 			return;
 		}
 
+		$dependencies = [ 'jquery' ];
+		// Add support reCAPTCHA dependencies, if connected.
+		if ( class_exists( 'Newspack\Recaptcha' ) && \Newspack\Recaptcha::can_use_captcha() ) {
+			$dependencies[] = \Newspack\Recaptcha::SCRIPT_HANDLE;
+		}
+
 		wp_enqueue_script(
 			'newspack-blocks-modal-checkout',
 			plugins_url( 'dist/modalCheckout.js', \NEWSPACK_BLOCKS__PLUGIN_FILE ),
-			[ 'jquery' ],
+			$dependencies,
 			\NEWSPACK_BLOCKS__VERSION,
 			true
 		);
@@ -1021,12 +1027,16 @@ final class Modal_Checkout {
 	 * @param string $url The URL from which the checkout originated.
 	 */
 	public static function recaptcha_verify_captcha( $should_verify, $url ) {
+		$is_validation_only = boolval( filter_input( INPUT_POST, 'is_validation_only', FILTER_SANITIZE_NUMBER_INT ) );
 		parse_str( \wp_parse_url( $url, PHP_URL_QUERY ), $query );
 		if (
-			// Only in the context of a checkout request.
-			defined( 'WOOCOMMERCE_CHECKOUT' )
-			&& isset( $query['wc-ajax'] )
-			&& 'wc_stripe_create_order' === $query['wc-ajax']
+			// Only in the context of a true checkout request.
+			$is_validation_only ||
+			(
+				defined( 'WOOCOMMERCE_CHECKOUT' )
+				&& isset( $query['wc-ajax'] )
+				&& 'wc_stripe_create_order' === $query['wc-ajax']
+			)
 		) {
 			return false;
 		}
