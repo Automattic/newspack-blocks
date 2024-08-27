@@ -49,40 +49,44 @@ domReady( () => {
 
 	const initialHeight = modalContent.clientHeight + spinner.clientHeight + 'px';
 	const closeCheckout = () => {
-		spinner.style.display = 'flex';
-
 		const container = iframe?.contentDocument?.querySelector( `#${ IFRAME_CONTAINER_ID }` );
+		const afterSuccessUrlInput = container.querySelector( 'input[name="after_success_url"]' );
+		const afterSuccessBehaviorInput = container.querySelector(
+			'input[name="after_success_behavior"]'
+		);
+		const hasNewsletterPopup = document?.querySelector( '.newspack-newsletters-signup-modal' );
 
-		if ( iframe && modalContent.contains( iframe ) ) {
-			// Reset iframe and modal content heights.
-			iframe.src = 'about:blank';
-			iframe.style.height = '0';
-			modalContent.removeChild( iframe );
-			modalContent.style.height = initialHeight;
-		}
+		// We want to block closing the modal if redirecting elsewhere:
+		const shouldCloseModal = ! afterSuccessUrlInput || ! afterSuccessBehaviorInput || ! container?.checkoutComplete;
 
-		if ( iframeResizeObserver ) {
-			iframeResizeObserver.disconnect();
-		}
-
-		document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-container` ).forEach( el => {
-			closeModal( el );
-			if ( el.overlayId && window.newspackReaderActivation?.overlays ) {
-				window.newspackReaderActivation?.overlays.remove( el.overlayId );
+		if ( shouldCloseModal || hasNewsletterPopup ) {
+			spinner.style.display = 'flex';
+			if ( iframe && modalContent.contains( iframe ) ) {
+				// Reset iframe and modal content heights.
+				iframe.src = 'about:blank';
+				iframe.style.height = '0';
+				modalContent.removeChild( iframe );
+				modalContent.style.height = initialHeight;
 			}
-		} );
 
-		if ( modalTrigger ) {
-			modalTrigger.focus();
+			if ( iframeResizeObserver ) {
+				iframeResizeObserver.disconnect();
+			}
+
+			document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-container` ).forEach( el => {
+				closeModal( el );
+				if ( el.overlayId && window.newspackReaderActivation?.overlays ) {
+					window.newspackReaderActivation?.overlays.remove( el.overlayId );
+				}
+			} );
+
+			if ( modalTrigger ) {
+				modalTrigger.focus();
+			}
 		}
 
 		if ( container?.checkoutComplete ) {
 			const handleCheckoutComplete = () => {
-				const afterSuccessUrlInput = container.querySelector( 'input[name="after_success_url"]' );
-				const afterSuccessBehaviorInput = container.querySelector(
-					'input[name="after_success_behavior"]'
-				);
-
 				if ( afterSuccessUrlInput && afterSuccessBehaviorInput ) {
 					const afterSuccessUrl = afterSuccessUrlInput.getAttribute( 'value' );
 					const afterSuccessBehavior = afterSuccessBehaviorInput.getAttribute( 'value' );
@@ -95,16 +99,21 @@ domReady( () => {
 				}
 				window?.newspackReaderActivation?.resetCheckoutData?.();
 			};
+
 			if ( window?.newspackReaderActivation?.openNewslettersSignupModal ) {
 				window.newspackReaderActivation.openNewslettersSignupModal( {
 					callback: handleCheckoutComplete,
+					closeOnSuccess: shouldCloseModal,
 				} );
 			} else {
 				handleCheckoutComplete();
 			}
+
 			// Ensure we always reset the modal title and width once the modal closes.
-			setModalWidth();
-			setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
+			if ( shouldCloseModal ) {
+				setModalWidth();
+				setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
+			}
 		} else {
 			window?.newspackReaderActivation?.resetCheckoutData?.();
 		}
