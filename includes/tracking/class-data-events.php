@@ -38,7 +38,8 @@ final class Data_Events {
 		}
 
 		/*
-		 * TODOGA4: this isn't working as expected:
+		 *
+		 *
 		 * woocommerce_order_status_completed should work here but it's not firing for the checkout_button_block for some reason.
 		 */
 		\Newspack\Data_Events::register_listener(
@@ -98,16 +99,16 @@ final class Data_Events {
 			$product_type = 'subscription';
 		}
 
+		// Check if it's a membership product.
+		if ( self::is_membership_product( $product_id ) ) {
+			$product_type = 'membership';
+		}
+
 		// Check if it's a donation product.
 		if ( method_exists( 'Newspack\Donations', 'is_donation_product' ) ) {
 			if ( \Newspack\Donations::is_donation_product( $product_id ) ) {
 				$product_type = 'donation';
 			}
-		}
-
-		// Check if it's a membership product.
-		if ( self::is_membership_product( $product_id ) ) {
-			$product_type = 'membership';
 		}
 
 		return $product_type;
@@ -164,22 +165,16 @@ final class Data_Events {
 			return;
 		}
 
-		$action = self::FORM_SUBMISSION_SUCCESS;
-		$data = \Newspack\Data_Events\Utils::get_order_data( $order_id, false );
-
+		$data = \Newspack\Data_Events\Utils::get_order_data( $order_id );
 		if ( empty( $data ) ) {
 			return;
 		}
 
-		$product_id = '';
-		foreach ( $order->get_items() as $item ) {
-			$product_id = $item->get_product_id();
-		}
-
-		$data['action']       = $action;
+		$product_id           = is_array( $data['platform_data']['product_id'] ) ? $data['platform_data']['product_id'][0] : $data['platform_data']['product_id'];
+		$data['action']       = self::FORM_SUBMISSION_SUCCESS;
 		$data['action_type']  = self::get_action_type( $product_id );
-		$data['product_id']   = $product_id;
 		$data['product_type'] = self::get_product_type( $product_id );
+		$data['recurrence']   = self::get_purchase_recurrence( $product_id );
 
 		return $data;
 	}
