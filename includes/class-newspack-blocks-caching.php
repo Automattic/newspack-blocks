@@ -49,24 +49,35 @@ class Newspack_Blocks_Caching {
 	 */
 	protected static function get_cache_key( $block_data ) {
 		$block_attributes = $block_data['attrs'];
+		$cache_key        = 'np_cached_block_' . md5( wp_json_encode( $block_attributes ) );
+		return $cache_key;
+	}
 
-		// We're using a heuristic here to increase the rate of cache hits with very limited downside.
-		// Pages should each have their own cache, because they are likely a landing page with various article blocks.
-		// Posts and other publicly_queryable post types should all share a cache, because 99% of the time article blocks
-		// are in the sidebar, below-content, or (if within content) fetching specific posts. We want an article block in
-		// the e.g. sidebar to be served from cache across all posts.
-		// The tradeoff is that occasionally the current post may show up in an article block on a post.
-		// Archives and non-singular should all use the global cache, because there is nothing that would need de-duplication.
-		if ( is_singular() ) {
+	/**
+	 * Get the cache group for cached data.
+	 *
+	 * We're using a heuristic here to increase the rate of cache hits with very limited downside.
+	 * Pages should each have their own cache group, because they are likely a landing page with various article blocks.
+	 * Posts and other publicly_queryable post types should all share a cache group, because 99% of the time article blocks
+	 * are in the sidebar, below-content, or (if within content) fetching specific posts. We want an article block in
+	 * the e.g. sidebar to be served from cache across all posts.
+	 *
+	 * The tradeoff is that occasionally the current post may show up in an article block on a post.
+	 * Archives should all use a global cache group, because there is nothing that would need de-duplication.
+	 *
+	 * @return string Cache group.
+	 */
+	protected static function get_cache_group() {
+		if ( is_singular() || is_front_page() ) {
 			$post_type        = get_post_type();
 			$post_type_object = get_post_type_object( $post_type );
 			if ( ! $post_type_object->publicly_queryable ) {
-				$block_attributes['parent_post'] = get_the_ID();
+				return sprintf( self::CACHE_GROUP . '-post-%d', get_the_ID() );
 			}
+			return self::CACHE_GROUP;
+		} else {
+			return self::CACHE_GROUP;
 		}
-
-		$cache_key = 'np_cached_block_' . md5( wp_json_encode( $block_attributes ) );
-		return $cache_key;
 	}
 
 	/**
@@ -92,25 +103,26 @@ class Newspack_Blocks_Caching {
 			return $block_html;
 		}
 
-		$cache_key = self::get_cache_key( $block_data );
-		self::debug_log( sprintf( 'Checking cache for: %s', $cache_key ) );
+		$cache_key   = self::get_cache_key( $block_data );
+		$cache_group = self::get_cache_group();
+		self::debug_log( sprintf( 'Checking cache for item %s in group %s', $cache_key, $cache_group ) );
 
-		$cached_data = wp_cache_get( $cache_key, self::CACHE_GROUP );
+		$cached_data = wp_cache_get( $cache_key, $cache_group );
 		if ( ! is_array( $cached_data ) || ! isset( $cached_data['timestamp_generated'], $cached_data['cached_content'] ) || empty( $cached_data['cached_content'] ) ) {
-			self::debug_log( sprintf( 'Cached data not found for: %s', $cache_key ) );
+			self::debug_log( sprintf( 'Cached data not found for item %s in group %s', $cache_key, $cache_group ) );
 			return $block_html;
 		}
 
 		// Double-check to make sure cached data is still valid.
 		if ( $cached_data['timestamp_generated'] + NEWSPACK_BLOCKS_CACHE_BLOCKS_TIME < time() ) {
 			if ( class_exists( 'Newspack\Logger' ) ) {
-				Newspack\Logger::log( 'Flushing cache for block because it expired' );
+				Newspack\Logger::log( sprintf( 'Flushing cache for item %s in group %s because it expired', $cache_key, $cache_group ) );
 			}
-			wp_cache_delete( $cache_key, self::CACHE_GROUP );
+			wp_cache_delete( $cache_key, $cache_group );
 			return $block_html;
 		}
 
-		self::debug_log( sprintf( 'Serving cached block: %s', $cache_key ) );
+		self::debug_log( sprintf( 'Serving cached block: item %s in group %s', $cache_key, $cache_group ) );
 
 		Newspack_Blocks::enqueue_view_assets( 'homepage-articles' );
 
@@ -130,15 +142,16 @@ class Newspack_Blocks_Caching {
 			return $block_html;
 		}
 
-		$cache_key = self::get_cache_key( $block_data );
+		$cache_key   = self::get_cache_key( $block_data );
+		$cache_group = self::get_cache_group();
 
 		$cache_data = [
 			'timestamp_generated' => time(),
 			'cached_content'      => $block_html,
 		];
-		wp_cache_set( $cache_key, $cache_data, self::CACHE_GROUP, NEWSPACK_BLOCKS_CACHE_BLOCKS_TIME ); // phpcs:ignore WordPressVIPMinimum.Performance.LowExpiryCacheTime.CacheTimeUndetermined
+		wp_cache_set( $cache_key, $cache_data, $cache_group, NEWSPACK_BLOCKS_CACHE_BLOCKS_TIME ); // phpcs:ignore WordPressVIPMinimum.Performance.LowExpiryCacheTime.CacheTimeUndetermined
 
-		self::debug_log( sprintf( 'Caching block: %s', $cache_key ) );
+		self::debug_log( sprintf( 'Caching block: item %s in group %s', $cache_key, $cache_group ) );
 
 		return $block_html;
 	}
