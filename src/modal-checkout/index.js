@@ -404,7 +404,7 @@ domReady(
 						// Initiate reCAPTCHA, if available.
 						if ( newspack_grecaptcha?.render ) {
 							$form.data( 'newspack-recaptcha', 'newspack_modal_checkout' );
-							newspack_grecaptcha.render( $form.get() );
+							newspack_grecaptcha.render( $form.get(), ( error ) => handleFormError( error ) );
 						}
 						if ( $coupon.length ) {
 							$coupon.show();
