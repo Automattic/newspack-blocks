@@ -32,8 +32,18 @@ domReady(
 
 		function clearNotices() {
 			$(
-				`.woocommerce-NoticeGroup-checkout, .${ CLASS_PREFIX }__inline-error, .woocommerce-error, .woocommerce-message, .wc-block-components-notice-banner`
+				`.woocommerce-NoticeGroup-checkout, .${ CLASS_PREFIX }__inline-error, .woocommerce-error, .woocommerce-message, .wc-block-components-notice-banner, .woocommerce-notices-wrapper`
 			).remove();
+		}
+
+		/**
+		 * Set the checkout as ready so the modal can resolve the loading state.
+		 */
+		function setReady() {
+			const container = document.querySelector( '#newspack_modal_checkout_container' );
+			container.checkoutReady = true;
+			container.dispatchEvent( readyEvent );
+			manageLoaded( container );
 		}
 
 		if ( newspackBlocksModalCheckout.is_checkout_complete ) {
@@ -109,16 +119,6 @@ domReady(
 						$el.addClass( 'hidden' );
 					} else {
 						$el.removeClass( 'hidden' );
-					}
-				} );
-
-				/**
-				 * Apply newspack styling to default Woo checkout errors.
-				 */
-				$( document ).on( 'checkout_error', function () {
-					const $error = $( '.woocommerce-NoticeGroup-checkout' );
-					if ( $error ) {
-						$error.addClass( `${ CLASS_PREFIX }__notice ${ CLASS_PREFIX }__notice--error` );
 					}
 				} );
 
@@ -229,16 +229,6 @@ domReady(
 
 					$( document.body ).trigger( 'update_checkout' );
 					$( document.body ).trigger( 'checkout_error', [ error_message ] );
-				}
-
-				/**
-				 * Set the checkout as ready so the modal can resolve the loading state.
-				 */
-				function setReady() {
-					const container = document.querySelector( '#newspack_modal_checkout_container' );
-					container.checkoutReady = true;
-					container.dispatchEvent( readyEvent );
-					manageLoaded( container );
 				}
 
 				/**
@@ -378,10 +368,21 @@ domReady(
 				 * @param {boolean} isEditingDetails
 				 */
 				function setEditingDetails( isEditingDetails ) {
+					const newspack_grecaptcha = window.newspack_grecaptcha || {};
+
+					// Scroll to top.
+					window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
+					// Update checkout.
+					$( document.body ).trigger( 'update_checkout' );
 					clearNotices();
 					// Clear checkout details.
 					$( '#checkout_details' ).remove();
 					if ( isEditingDetails ) {
+						$form.append( '<input name="is_validation_only" type="hidden" value="1" />' );
+						// Destroy reCAPTCHA inputs so we don't trigger validation between checkout steps.
+						if ( 'v3' === newspack_grecaptcha?.version ) {
+							newspack_grecaptcha.destroy( $form.get() );
+						}
 						if ( $coupon.length ) {
 							$coupon.hide();
 						}
@@ -398,6 +399,16 @@ domReady(
 						} );
 						$form.on( 'submit', handleFormSubmit );
 					} else {
+						const $validationOnlyField = $form.find( '[name="is_validation_only"]' );
+						if ( $validationOnlyField.length ) {
+							$validationOnlyField.remove();
+						}
+
+						// Initiate reCAPTCHA, if available.
+						if ( newspack_grecaptcha?.render ) {
+							$form.data( 'newspack-recaptcha', 'newspack_modal_checkout' );
+							newspack_grecaptcha.render( $form.get() );
+						}
 						if ( $coupon.length ) {
 							$coupon.show();
 						}
@@ -665,12 +676,24 @@ domReady(
 			} );
 		}
 
+		/**
+		 * Apply newspack styling to default Woo checkout errors.
+		 */
+		$( document.body ).on( 'checkout_error', function () {
+			const $errors = $( '.woocommerce-NoticeGroup-checkout, .woocommerce-notices-wrapper' );
+			if ( $errors.length ) {
+				$errors.each(
+					( _, error ) => $( error ).addClass(`${ CLASS_PREFIX }__notice ${ CLASS_PREFIX }__notice--error` )
+				);
+			}
+			setReady();
+		} );
+
 		// Close modal when 'Esc' key is pressed and focus is inside of the iframe.
 		document.addEventListener( 'keydown', function ( ev ) {
 			if ( ev.key === 'Escape' ) {
 				parent.newspackCloseModalCheckout();
 			}
 		} );
-
 	} )( jQuery )
 );

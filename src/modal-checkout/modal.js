@@ -52,40 +52,44 @@ domReady( () => {
 
 	const initialHeight = modalContent.clientHeight + spinner.clientHeight + 'px';
 	const closeCheckout = () => {
-		spinner.style.display = 'flex';
-
 		const container = iframe?.contentDocument?.querySelector( `#${ IFRAME_CONTAINER_ID }` );
+		const afterSuccessUrlInput = container.querySelector( 'input[name="after_success_url"]' );
+		const afterSuccessBehaviorInput = container.querySelector(
+			'input[name="after_success_behavior"]'
+		);
+		const hasNewsletterPopup = document?.querySelector( '.newspack-newsletters-signup-modal' );
 
-		if ( iframe && modalContent.contains( iframe ) ) {
-			// Reset iframe and modal content heights.
-			iframe.src = 'about:blank';
-			iframe.style.height = '0';
-			modalContent.removeChild( iframe );
-			modalContent.style.height = initialHeight;
-		}
+		// We want to block closing the modal if redirecting elsewhere:
+		const shouldCloseModal = ! afterSuccessUrlInput || ! afterSuccessBehaviorInput || ! container?.checkoutComplete;
 
-		if ( iframeResizeObserver ) {
-			iframeResizeObserver.disconnect();
-		}
-
-		document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-container` ).forEach( el => {
-			closeModal( el );
-			if ( el.overlayId && window.newspackReaderActivation?.overlays ) {
-				window.newspackReaderActivation?.overlays.remove( el.overlayId );
+		if ( shouldCloseModal || hasNewsletterPopup ) {
+			spinner.style.display = 'flex';
+			if ( iframe && modalContent.contains( iframe ) ) {
+				// Reset iframe and modal content heights.
+				iframe.src = 'about:blank';
+				iframe.style.height = '0';
+				modalContent.removeChild( iframe );
+				modalContent.style.height = initialHeight;
 			}
-		} );
 
-		if ( modalTrigger ) {
-			modalTrigger.focus();
+			if ( iframeResizeObserver ) {
+				iframeResizeObserver.disconnect();
+			}
+
+			document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-container` ).forEach( el => {
+				closeModal( el );
+				if ( el.overlayId && window.newspackReaderActivation?.overlays ) {
+					window.newspackReaderActivation?.overlays.remove( el.overlayId );
+				}
+			} );
+
+			if ( modalTrigger ) {
+				modalTrigger.focus();
+			}
 		}
 
 		if ( container?.checkoutComplete ) {
 			const handleCheckoutComplete = () => {
-				const afterSuccessUrlInput = container.querySelector( 'input[name="after_success_url"]' );
-				const afterSuccessBehaviorInput = container.querySelector(
-					'input[name="after_success_behavior"]'
-				);
-
 				if ( afterSuccessUrlInput && afterSuccessBehaviorInput ) {
 					const afterSuccessUrl = afterSuccessUrlInput.getAttribute( 'value' );
 					const afterSuccessBehavior = afterSuccessBehaviorInput.getAttribute( 'value' );
@@ -96,20 +100,25 @@ domReady( () => {
 						window.history.back();
 					}
 				}
-				window?.newspackReaderActivation?.setCheckoutStatus?.( false );
+				window?.newspackReaderActivation?.resetCheckoutData?.();
 			};
+
 			if ( window?.newspackReaderActivation?.openNewslettersSignupModal ) {
 				window.newspackReaderActivation.openNewslettersSignupModal( {
 					callback: handleCheckoutComplete,
+					closeOnSuccess: shouldCloseModal,
 				} );
 			} else {
 				handleCheckoutComplete();
 			}
+
 			// Ensure we always reset the modal title and width once the modal closes.
-			setModalWidth();
-			setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
+			if ( shouldCloseModal ) {
+				setModalWidth();
+				setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
+			}
 		} else {
-			window?.newspackReaderActivation?.setCheckoutStatus?.( false );
+			window?.newspackReaderActivation?.resetCheckoutData?.();
 
 			// Track a dismissal event (modal has been manually closed without completing the checkout).
 			manageDismissed();
@@ -305,8 +314,42 @@ domReady( () => {
 
 					form.classList.remove( 'processing' );
 
-					// Set reader activation checkout status flag if available.
-					window?.newspackReaderActivation?.setCheckoutStatus?.( true );
+					// Set reader activation checkout data if available.
+					let data = {};
+					if ( element.classList.contains( 'wpbnbd--platform-wc' ) ) {
+						const frequency = formData.get( 'donation_frequency' );
+						let amount;
+						let layout;
+						if ( formData.has( `donation_value_${ frequency }_untiered` ) ) {
+							amount = formData.get( `donation_value_${ frequency }_untiered` );
+							layout = 'untiered';
+						} else if ( formData.has( 'donation_tier_index' ) ) {
+							const donationTier = form.querySelector( `button[data-tier-index="${ formData.get('donation_tier_index') }"]` );
+							amount = donationTier?.value;
+							layout = 'tiered';
+						} else {
+							amount = formData.get( `donation_value_${ frequency }` )
+							layout = 'frequency';
+						}
+
+						data = {
+							type: 'donate',
+							layout,
+							frequency,
+							amount,
+							other: formData.get( `donation_value_${ frequency }_other` ),
+						};
+					} else {
+						data = {
+							type: 'checkout_button',
+							product_id: formData.get( 'product_id' ),
+							variation_id: formData.get( 'variation_id' ),
+						};
+					}
+					window?.newspackReaderActivation?.setCheckoutData?.( {
+						is_pending_checkout: true,
+						...data,
+					} );
 
 					const isDonateBlock = formData.get( 'newspack_donate' );
 					const isCheckoutButtonBlock = formData.get( 'newspack_checkout' );
@@ -344,18 +387,17 @@ domReady( () => {
 					}
 
 					if (
-						! newspack_ras_config.is_logged_in &&
+						typeof newspack_ras_config !== 'undefined' &&
+						! newspack_ras_config?.is_logged_in &&
 						! window?.newspackReaderActivation?.getReader?.()?.authenticated &&
 						window?.newspackReaderActivation?.openAuthModal
 					) {
 						ev.preventDefault();
-
 						let content = '';
 						let price = '0';
 						let priceSummary = '';
 
 						if ( isDonateBlock ) {
-
 							const frequency = formData.get( 'donation_frequency' );
 							const donationTiers = form.querySelectorAll(
 								`.donation-tier__${ frequency }, .donation-frequency__${ frequency }`
@@ -424,12 +466,7 @@ domReady( () => {
 						window.newspackReaderActivation.openAuthModal( {
 							title: newspackBlocksModal.labels.auth_modal_title,
 							callback: () => {
-								// Signal checkout registration.
-								form.appendChild(
-									createHiddenInput( newspackBlocksModal.checkout_registration_flag, '1' )
-								);
-								// form.submit does not trigger submit event listener, so we use requestSubmit.
-								form.requestSubmit( form.querySelector( 'button[type="submit"]' ) );
+								triggerCheckout( form );
 							},
 							skipSuccess: true,
 							labels: {
@@ -498,4 +535,142 @@ domReady( () => {
 			spinner.style.display = 'none';
 		}
 	} );
+
+	/**
+	 * Triggers checkout form submit.
+	 *
+	 * @param {HTMLFormElement} form The form element.
+	 */
+	const triggerCheckout = form => {
+		// Signal checkout registration.
+		form.appendChild(
+			createHiddenInput( newspackBlocksModal.checkout_registration_flag, '1' )
+		);
+		// form.submit does not trigger submit event listener, so we use requestSubmit.
+		form.requestSubmit( form.querySelector( 'button[type="submit"]' ) );
+	}
+
+	/**
+	 * Handle donation form triggers.
+	 *
+	 * @param {string}      layout    The donation layout.
+	 * @param {string}      frequency The donation frequency.
+	 * @param {string}      amount    The donation amount.
+	 * @param {string|null} other     Optional. The custom amount when other is selected.
+	 */
+	const triggerDonationForm = ( layout, frequency, amount, other = null ) => {
+		let form;
+		document.querySelectorAll( '.wpbnbd.wpbnbd--platform-wc form' )
+			.forEach( donationForm => {
+				const frequencyInput = donationForm.querySelector( `input[name="donation_frequency"][value="${ frequency }"]` );
+				if ( ! frequencyInput ) {
+					return;
+				}
+				if ( layout === 'tiered' ) {
+					const frequencyButton = document.querySelector( `button[data-frequency-slug="${ frequency }"]` );
+					if ( ! frequencyButton ) {
+						return;
+					}
+					frequencyButton.click();
+					const submitButton = donationForm.querySelector( `button[type="submit"][name="donation_value_${ frequency }"][value="${ amount }"]` );
+					if ( ! submitButton ) {
+						return;
+					}
+					submitButton.click();
+				} else {
+					const amountInput = ( layout === 'untiered' ) ?
+						donationForm.querySelector( `input[name="donation_value_${ frequency }_untiered"]` ) :
+						donationForm.querySelector( `input[name="donation_value_${ frequency }"][value="${ amount }"]` );
+					if ( frequencyInput && amountInput ) {
+						frequencyInput.checked = true;
+						if ( layout === 'untiered' ) {
+							amountInput.value = amount;
+						} else if ( amount === 'other' ) {
+							amountInput.click();
+							const otherInput = donationForm.querySelector( `input[name="donation_value_${ frequency }_other"]` );
+							if ( otherInput && other ) {
+								otherInput.value = other;
+							}
+						} else {
+							amountInput.checked = true;
+						}
+						form = donationForm;
+					}
+				}
+			} );
+		if ( form ) {
+			triggerCheckout( form );
+		}
+	}
+
+	/**
+	 * Handle checkout button form triggers.
+	 *
+	 * @param {number}      productId   The product ID.
+	 * @param {number|null} variationId Optional. The variation ID.
+	 */
+	const triggerCheckoutButtonForm = ( productId, variationId = null ) => {
+		let form;
+		if ( variationId && variationId !== productId ) {
+			const variationModals = document.querySelectorAll( `.${ VARIATON_MODAL_CLASS_PREFIX }` );
+			const variationModal = [ ...variationModals ].find(
+				modal => modal.dataset.productId === productId
+			);
+			if ( variationModal ) {
+				const forms = variationModal.querySelectorAll( `form[target="${ IFRAME_NAME }"]` );
+				forms.forEach( variationForm => {
+					const productData = JSON.parse( variationForm.dataset.product );
+					if ( productData?.variation_id === Number( variationId ) ) {
+						form = variationForm;
+					}
+				} );
+			}
+		} else {
+			const checkoutButtons = document.querySelectorAll( '.wp-block-newspack-blocks-checkout-button' );
+			checkoutButtons.forEach( button => {
+				const checkoutButtonForm = button.querySelector( 'form' );
+				if ( ! checkoutButtonForm ) {
+					return;
+				}
+				const productData = JSON.parse( checkoutButtonForm.dataset.product );
+				if ( productData?.product_id === productId ) {
+					form = checkoutButtonForm;
+				}
+			} );
+		}
+		if ( form ) {
+			triggerCheckout( form );
+		}
+	}
+
+	/**
+	 * Handle modal checkout url param triggers.
+	 */
+	const handleModalCheckoutUrlParams = () => {
+		const urlParams = new URLSearchParams( window.location.search );
+		if ( ! urlParams.has( MODAL_CHECKOUT_ID ) ) {
+			return;
+		}
+
+		const type = urlParams.get( 'type' );
+		if ( type === 'donate' ) {
+			const layout = urlParams.get( 'layout' );
+			const frequency = urlParams.get( 'frequency' );
+			const amount = urlParams.get( 'amount' );
+			const other = urlParams.get( 'other' );
+			if ( layout && frequency && amount ) {
+				triggerDonationForm( layout, frequency, amount, other );
+			}
+		}
+		if ( type === 'checkout_button' ) {
+			const productId = urlParams.get( 'product_id' );
+			const variationId = urlParams.get( 'variation_id' );
+			if ( productId ) {
+				triggerCheckoutButtonForm( productId, variationId );
+			}
+		}
+		// Remove the URL param to prevent re-triggering.
+		window.history.replaceState( null, null, window.location.pathname );
+	};
+	handleModalCheckoutUrlParams();
 } );
