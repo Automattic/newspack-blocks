@@ -173,6 +173,7 @@ final class Data_Events {
 		$product_id           = is_array( $data['platform_data']['product_id'] ) ? $data['platform_data']['product_id'][0] : $data['platform_data']['product_id'];
 		$data['action']       = self::FORM_SUBMISSION_SUCCESS;
 		$data['action_type']  = self::get_action_type( $product_id );
+		$data['product_id']   = $product_id;
 		$data['product_type'] = self::get_product_type( $product_id );
 		$data['recurrence']   = self::get_purchase_recurrence( $product_id );
 
