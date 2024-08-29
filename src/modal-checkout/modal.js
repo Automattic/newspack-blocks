@@ -277,9 +277,10 @@ domReady( () => {
 										'after_success_url',
 										'after_success_button_label',
 									].forEach( afterSuccessParam => {
-										singleVariationForm.appendChild(
-											createHiddenInput( afterSuccessParam, formData.get( afterSuccessParam ) )
-										);
+										const existingInputs = singleVariationForm.querySelectorAll( 'input[name="' +  afterSuccessParam + '"]' );
+										if ( 0 === existingInputs.length ) {
+											singleVariationForm.appendChild( createHiddenInput( afterSuccessParam, formData.get( afterSuccessParam ) ) );
+										}
 									} );
 
 									// Append the product data hidden inputs.
@@ -288,7 +289,10 @@ domReady( () => {
 									if ( variationData ) {
 										const data = JSON.parse( variationData );
 										Object.keys( data ).forEach( key => {
-											singleVariationForm.appendChild( createHiddenInput( key, data[ key ] ) );
+											const existingInputs = singleVariationForm.querySelectorAll( 'input[name="' +  key + '"]' );
+											if ( 0 === existingInputs.length ) {
+												singleVariationForm.appendChild( createHiddenInput( key, data[ key ] ) );
+											}
 										} );
 									}
 								} );
