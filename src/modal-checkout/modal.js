@@ -29,10 +29,11 @@ domReady( () => {
 	const modalCheckoutHiddenInput = createHiddenInput( 'modal_checkout', '1' );
 	const spinner = modalContent.querySelector( `.${ CLASS_PREFIX }__spinner` );
 	let modalTrigger = document.querySelector( '.newspack-reader__account-link' )?.[0];
-
 	// Initialize empty iframe.
+	const initialHeight = '600px'; // Fixed initial height to avoid too much layout shift.
 	const iframe = document.createElement( 'iframe' );
 	iframe.name = IFRAME_NAME;
+	iframe.style.height = initialHeight;
 
 	const iframeResizeObserver = new ResizeObserver( entries => {
 		if ( ! entries || ! entries.length ) {
@@ -46,8 +47,6 @@ domReady( () => {
 			iframe.style.height = iframeHeight;
 		}
 	} );
-
-	const initialHeight = modalContent.clientHeight + spinner.clientHeight + 'px';
 	const closeCheckout = () => {
 		const container = iframe?.contentDocument?.querySelector( `#${ IFRAME_CONTAINER_ID }` );
 		const afterSuccessUrlInput = container?.querySelector( 'input[name="after_success_url"]' );
@@ -64,9 +63,9 @@ domReady( () => {
 			if ( iframe && modalContent.contains( iframe ) ) {
 				// Reset iframe and modal content heights.
 				iframe.src = 'about:blank';
-				iframe.style.height = '0';
-				modalContent.removeChild( iframe );
+				iframe.style.height = initialHeight;
 				modalContent.style.height = initialHeight;
+				modalContent.removeChild( iframe );
 			}
 
 			if ( iframeResizeObserver ) {
