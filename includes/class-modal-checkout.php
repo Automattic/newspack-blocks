@@ -692,6 +692,7 @@ final class Modal_Checkout {
 			// Trigger checkout error event if there are cart errors.
 			if ( is_cart() && ! empty( $wc_errors ) ) :
 				?>
+				<button class="newspack-ui__button newspack-ui__button--primary newspack-ui__button--wide" id="checkout_error_back" type="submit"><?php esc_html_e( 'Go back', 'newspack-blocks' ); ?></button>
 				<script>
 					jQuery( document.body ).trigger( 'checkout_error' );
 				</script>
@@ -1086,7 +1087,11 @@ final class Modal_Checkout {
 	 * @return string
 	 */
 	public static function get_subscription_limited_message() {
-		return __( 'You may only have one subscription of this product at a time.', 'newspack-blocks' );
+		return sprintf(
+			// translators: %s: Site name.
+			__( "You're already a subscriber! You can only have one active subscription at a time. Thank you for supporting %s.", 'newspack-blocks' ),
+			get_bloginfo( 'name' )
+		);
 	}
 
 	/**
@@ -1101,7 +1106,7 @@ final class Modal_Checkout {
 		if ( method_exists( 'WCS_Limiter', 'is_purchasable' ) ) {
 			$product = \wc_get_product( $product_data->get_id() );
 			if ( ! \WCS_Limiter::is_purchasable( false, $product ) ) {
-				$message .= ' ' . self::get_subscription_limited_message();
+				$message = self::get_subscription_limited_message();
 			}
 		}
 
