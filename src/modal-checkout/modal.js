@@ -50,8 +50,8 @@ domReady( () => {
 	const initialHeight = modalContent.clientHeight + spinner.clientHeight + 'px';
 	const closeCheckout = () => {
 		const container = iframe?.contentDocument?.querySelector( `#${ IFRAME_CONTAINER_ID }` );
-		const afterSuccessUrlInput = container.querySelector( 'input[name="after_success_url"]' );
-		const afterSuccessBehaviorInput = container.querySelector(
+		const afterSuccessUrlInput = container?.querySelector( 'input[name="after_success_url"]' );
+		const afterSuccessBehaviorInput = container?.querySelector(
 			'input[name="after_success_behavior"]'
 		);
 		const hasNewsletterPopup = document?.querySelector( '.newspack-newsletters-signup-modal' );
