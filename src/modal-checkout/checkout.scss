@@ -529,6 +529,11 @@
 		margin-top: 0;
 	}
 
+	// stylelint-disable-next-line selector-id-pattern
+	#checkout_error_back {
+		margin-bottom: 0;
+	}
+
 	form.checkout .woocommerce-NoticeGroup,
 	.woocommerce .woocommerce-notices-wrapper {
 		li div {
@@ -550,6 +555,7 @@
 
 	.woocommerce .woocommerce-notices-wrapper {
 		margin-bottom: var(--newspack-ui-spacer-5, 24px);
+		margin-top: 0;
 	}
 
 	.processing {
