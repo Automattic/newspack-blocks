@@ -25,7 +25,7 @@ export const manageOpened = ( getProductDataModal = '' ) => {
 		variation_id,
 	} = getProductDataModal;
 
-	const extraParams = {
+	const params = {
 		action_type,
 		currency,
 		product_id,
@@ -36,19 +36,19 @@ export const manageOpened = ( getProductDataModal = '' ) => {
 
 	// On the first variable screen, there may not be a price so we want to check for it.
 	if ( amount || price ) {
-		extraParams.amount = amount ? amount : price;
+		params.amount = amount ? amount : price;
 	}
 
 	// There's only a variation ID for variable products, after you've selected one.
 	if ( variation_id ) {
-		extraParams.variation_id = variation_id;
+		params.variation_id = variation_id;
 	}
 
 	if ( is_variable ) {
-		extraParams.is_variable = is_variable;
+		params.is_variable = is_variable;
 	}
 
-	const payload = getEventPayload( 'opened', extraParams );
+	const payload = getEventPayload( 'opened', params );
 
 	sendEvent( payload );
 };

@@ -487,7 +487,7 @@ final class Modal_Checkout {
 									$price          = $variation->get_price();
 									$price_html     = $variation->get_price_html();
 									$frequency      = '';
-									$product_type   = 'other';
+									$product_type   = 'product';
 
 									// Use suggested price if NYP is active and set for variation.
 									if ( \Newspack_Blocks::can_use_name_your_price() && \WC_Name_Your_Price_Helpers::is_nyp( $variation_id ) ) {
@@ -498,11 +498,9 @@ final class Modal_Checkout {
 										$frequency = \WC_Subscriptions_Product::get_period( $variation );
 									}
 
-									// Check if it's a membership or 'other' product.
-									if ( method_exists( 'Newspack_Blocks\Tracking\Data_Events', 'is_membership_product' ) ) {
-										if ( \Newspack_Blocks\Tracking\Data_Events::is_membership_product( $product_id ) ) {
-											$product_type = 'membership';
-										}
+									// Update the product type.
+									if ( method_exists( 'Newspack_Blocks\Tracking\Data_Events', 'get_product_type' ) ) {
+										$product_type = \Newspack_Blocks\Tracking\Data_Events::get_product_type( $product_id );
 									}
 
 									$name = sprintf(
@@ -513,6 +511,7 @@ final class Modal_Checkout {
 									);
 									$product_price_summary = self::get_summary_card_price_string( $name, $price, $frequency );
 									$product_data          = [
+										'amount'       => $price,
 										'action_type'  => 'checkout_button',
 										'currency'     => \get_woocommerce_currency(),
 										'product_price_summary' => $product_price_summary,
@@ -1199,7 +1198,7 @@ final class Modal_Checkout {
 					$data_order_details = [];
 					// Create an array of order information to pass to GA4 via JavaScript.
 					if ( method_exists( 'Newspack_Blocks\Tracking\Data_Events', 'build_js_data_events' ) ) {
-						$data_order_details = \Newspack_Blocks\Tracking\Data_Events::build_js_data_events( $_product->get_id(), $cart_item );
+						$data_order_details = \Newspack_Blocks\Tracking\Data_Events::build_js_data_events( $_product->get_id(), $cart_item, $_product->get_parent_id() );
 					}
 					?>
 					<p id="modal-checkout-product-details" data-order-details='<?php echo wp_json_encode( $data_order_details ); ?>'>

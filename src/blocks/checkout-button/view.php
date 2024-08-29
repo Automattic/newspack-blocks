@@ -112,12 +112,12 @@ function render_callback( $attributes ) {
 			$frequency = \WC_Subscriptions_Product::get_period( $product );
 		}
 
-		$product_type = 'other';
-		if ( method_exists( 'Newspack_Blocks\Tracking\Data_Events', 'is_membership_product' ) ) {
-			if ( Newspack_Blocks\Tracking\Data_Events::is_membership_product( $product_id ) ) {
-				$product_type = 'membership';
-			}
+		$product_type = 'product';
+		// Update the product type.
+		if ( method_exists( 'Newspack_Blocks\Tracking\Data_Events', 'get_product_type' ) ) {
+			$product_type = \Newspack_Blocks\Tracking\Data_Events::get_product_type( $product_id );
 		}
+
 
 		$name  = $product->get_name();
 		$price = $product->get_price();

@@ -135,8 +135,14 @@ final class Data_Events {
 	 *
 	 * @param string $product_id Product's ID.
 	 * @param array  $cart_item Cart item.
+	 * @param string $product_parent_id Product's ID when it has variations.
 	 */
-	public static function build_js_data_events( $product_id, $cart_item ) {
+	public static function build_js_data_events( $product_id, $cart_item, $product_parent_id = '' ) {
+		if ( '' !== $product_parent_id ) {
+			$variation_id = $product_id;
+			$product_id = $product_parent_id;
+		}
+
 		$data_order_details = [
 			'amount'       => $cart_item['data']->get_price(),
 			'action_type'  => self::get_action_type( $product_id ),
@@ -145,8 +151,8 @@ final class Data_Events {
 			'product_type' => self::get_product_type( $product_id ),
 			'referer'      => substr( $cart_item['referer'], strlen( home_url() ) ), // remove domain from referer.
 			'recurrence'   => self::get_purchase_recurrence( $product_id ),
+			'variation_id' => strval( $variation_id ),
 		];
-
 		return $data_order_details;
 	}
 

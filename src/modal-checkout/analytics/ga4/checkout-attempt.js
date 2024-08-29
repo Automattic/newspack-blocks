@@ -11,8 +11,9 @@ export const manageCheckoutAttempt = () => {
 		return;
 	}
 
-	const { action_type, amount, currency, product_id, product_type, recurrence, referer } = getProductDetails( 'modal-checkout-product-details' );
-	const payload = getEventPayload( 'form_submission', {
+	const { action_type, amount, currency, product_id, product_type, recurrence, referer, variation_id } = getProductDetails( 'modal-checkout-product-details' );
+
+	const params = {
 		action_type,
 		amount,
 		currency,
@@ -20,6 +21,13 @@ export const manageCheckoutAttempt = () => {
 		product_type,
 		recurrence,
 		referer,
-	} );
+	};
+
+	// There's only a variation ID for variable products, after you've selected one.
+	if ( variation_id ) {
+		params.variation_id = variation_id;
+	}
+
+	const payload = getEventPayload( 'form_submission', params );
 	sendEvent( payload );
 };

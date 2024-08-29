@@ -8,23 +8,28 @@ export const manageDismissed = () => {
 		return;
 	}
 
-	// TODOGA4: this works but is clunky:
-	const { action_type, amount, currency, price, product_id, product_type, recurrence, referer } = getProductDetails( 'newspack_modal_checkout' );
+	const { action_type, amount, currency, price, product_id, product_type, recurrence, referer, variation_id } = getProductDetails( 'newspack_modal_checkout' );
 
-	const extraParams = {
+	const params = {
 		action_type,
 		currency,
 		product_id,
 		product_type,
 		recurrence,
 		referer,
+		variation_id,
 	};
 
 	// On the first variable screen, there may not be a price so we want to check for it.
 	if ( amount || price ) {
-		extraParams.amount = amount ? amount : price;
+		params.amount = amount ? amount : price;
 	}
 
-	const payload = getEventPayload( 'dismissed', extraParams );
+	// There's only a variation ID for variable products, after you've selected one.
+	if ( variation_id ) {
+		params.variation_id = variation_id;
+	}
+
+	const payload = getEventPayload( 'dismissed', params );
 	sendEvent( payload );
 };
