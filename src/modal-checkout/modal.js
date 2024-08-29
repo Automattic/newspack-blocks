@@ -50,8 +50,8 @@ domReady( () => {
 	const initialHeight = modalContent.clientHeight + spinner.clientHeight + 'px';
 	const closeCheckout = () => {
 		const container = iframe?.contentDocument?.querySelector( `#${ IFRAME_CONTAINER_ID }` );
-		const afterSuccessUrlInput = container.querySelector( 'input[name="after_success_url"]' );
-		const afterSuccessBehaviorInput = container.querySelector(
+		const afterSuccessUrlInput = container?.querySelector( 'input[name="after_success_url"]' );
+		const afterSuccessBehaviorInput = container?.querySelector(
 			'input[name="after_success_behavior"]'
 		);
 		const hasNewsletterPopup = document?.querySelector( '.newspack-newsletters-signup-modal' );
@@ -73,12 +73,7 @@ domReady( () => {
 				iframeResizeObserver.disconnect();
 			}
 
-			document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-container` ).forEach( el => {
-				closeModal( el );
-				if ( el.overlayId && window.newspackReaderActivation?.overlays ) {
-					window.newspackReaderActivation?.overlays.remove( el.overlayId );
-				}
-			} );
+			document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-container` ).forEach( el => closeModal( el ) );
 
 			if ( modalTrigger ) {
 				modalTrigger.focus();
@@ -122,11 +117,6 @@ domReady( () => {
 	const openCheckout = () => {
 		spinner.style.display = 'flex';
 		openModal( modalCheckout );
-
-		if ( window.newspackReaderActivation?.overlays ) {
-			modalCheckout.overlayId = window.newspackReaderActivation?.overlays.add();
-		}
-
 		modalContent.appendChild( iframe );
 		modalCheckout.addEventListener( 'click', ev => {
 			if ( ev.target === modalCheckout ) {
@@ -138,11 +128,17 @@ domReady( () => {
 	};
 
 	const closeModal = el => {
+		if ( el.overlayId && window.newspackReaderActivation?.overlays ) {
+			window.newspackReaderActivation?.overlays.remove( el.overlayId );
+		}
 		el.setAttribute( 'data-state', 'closed' );
 		document.body.style.overflow = 'auto';
 	};
 
 	const openModal = el => {
+		if ( window.newspackReaderActivation?.overlays ) {
+			modalCheckout.overlayId = window.newspackReaderActivation?.overlays.add();
+		}
 		el.setAttribute( 'data-state', 'open' );
 		document.body.style.overflow = 'hidden';
 	};
