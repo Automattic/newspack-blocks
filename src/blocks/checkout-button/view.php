@@ -144,17 +144,19 @@ function render_callback( $attributes ) {
 		];
 
 		if ( ! $is_variable || $variation_id ) {
-			// Have to reset this with the parent ID, not the variation ID.
+			$product_data['price']                 = $price;
+			$product_data['product_price_summary'] = $product_price_summary;
+		}
+
+		if ( $varition_id ) {
+			// TODOGA4: this situation seems clunky; we're doing a lot of shuffling around to get the "right" product ID, variation ID, and product type.
 			if ( method_exists( 'Newspack_Blocks\Tracking\Data_Events', 'get_product_type' ) ) {
 				$product_type = \Newspack_Blocks\Tracking\Data_Events::get_product_type( $product->get_parent_id() );
 			}
+			$product_data['product_id']   = $product->get_parent_id(); // Reset Product ID as parent ID.
+			$product_data['product_type'] = $product_type;
+			$product_data['variation_id'] = $product_id; // The product ID grabbed above is actually the variation ID.
 
-			// TODOGA4: this situation seems clunky; we're doing a lot of shuffling around to get the "right" product ID, variation ID, and product type.
-			$product_data['price']                 = $price;
-			$product_data['product_id']            = $product->get_parent_id(); // Reset Product ID as parent ID.
-			$product_data['product_price_summary'] = $product_price_summary;
-			$product_data['product_type']          = $product_type;
-			$product_data['variation_id']          = $product_id; // The product ID grabbed above is actually the variation ID.
 		}
 
 		$form = sprintf(
