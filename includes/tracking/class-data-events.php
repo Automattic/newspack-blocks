@@ -138,7 +138,8 @@ final class Data_Events {
 	 * @param string $product_parent_id Product's ID when it has variations.
 	 */
 	public static function build_js_data_events( $product_id, $cart_item, $product_parent_id = '' ) {
-		if ( '' !== $product_parent_id ) {
+		// Reassign the IDs to make sure the product is the product and the variation is the variation.
+		if ( '' !== $product_parent_id && 0 !== $product_parent_id ) {
 			$variation_id = $product_id;
 			$product_id = $product_parent_id;
 		}
@@ -176,7 +177,14 @@ final class Data_Events {
 			return;
 		}
 
-		$product_id           = is_array( $data['platform_data']['product_id'] ) ? $data['platform_data']['product_id'][0] : $data['platform_data']['product_id'];
+		$product_id = is_array( $data['platform_data']['product_id'] ) ? $data['platform_data']['product_id'][0] : $data['platform_data']['product_id'];
+
+		// TODOGA4: No idea if this part is really necessary -- what ID should the donate block track with throughout the transaction?
+		$donation_product_id = get_option( \Newspack\Donations::DONATION_PRODUCT_ID_OPTION, 0 );
+		if ( 'donation' === self::get_product_type( $product_id ) && 0 > $donation_product_id ) {
+			$product_id = $donation_product_id;
+		}
+
 		$data['action']       = self::FORM_SUBMISSION_SUCCESS;
 		$data['action_type']  = self::get_action_type( $product_id );
 		$data['product_id']   = $product_id;
