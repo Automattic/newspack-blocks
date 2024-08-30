@@ -37,10 +37,8 @@ final class Data_Events {
 			return;
 		}
 
-		/*
-		 *
-		 *
-		 * woocommerce_order_status_completed should work here but it's not firing for the checkout_button_block for some reason.
+		/**
+		 * Modal Checkout Interation: Completed Order.
 		 */
 		\Newspack\Data_Events::register_listener(
 			'woocommerce_checkout_order_processed',
@@ -87,6 +85,7 @@ final class Data_Events {
 
 	/**
 	 * Returns the product type: product, subscription, donation, or membership.
+	 * TODOGA4: move this check & related functions into a more central location, and update based on final decision for product types.
 	 *
 	 * @param string $product_id Product's ID.
 	 */
@@ -177,13 +176,8 @@ final class Data_Events {
 			return;
 		}
 
+		// TODOGA4: For Donate blocks, which ID should we use? It currently switches between main Donation product & frequency product.
 		$product_id = is_array( $data['platform_data']['product_id'] ) ? $data['platform_data']['product_id'][0] : $data['platform_data']['product_id'];
-
-		// TODOGA4: No idea if this part is really necessary -- what ID should the donate block track with throughout the transaction?
-		$donation_product_id = get_option( \Newspack\Donations::DONATION_PRODUCT_ID_OPTION, 0 );
-		if ( 'donation' === self::get_product_type( $product_id ) && 0 > $donation_product_id ) {
-			$product_id = $donation_product_id;
-		}
 
 		$data['action']       = self::FORM_SUBMISSION_SUCCESS;
 		$data['action_type']  = self::get_action_type( $product_id );

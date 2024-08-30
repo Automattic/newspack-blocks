@@ -21,7 +21,7 @@ export const getEventPayload = ( action, extraParams = {} ) => {
 
 export const sendEvent = ( payload, eventName = 'np_modal_checkout_interaction' ) => {
 	if ( 'function' === typeof window.gtag && payload ) {
-		console.log( payload );
+		console.log( payload ); // TODOGA4: Needs to be removed when PR is merged.
 		window.gtag( 'event', eventName, payload );
 	}
 };

@@ -299,7 +299,7 @@ domReady( () => {
 							openModal( variationModal );
 							a11y.trapFocus( variationModal, false );
 
-							// TODOGA4: fix this duplication (see below):
+							// Set up some GA4 information.
 							const getDataProduct = form.getAttribute( 'data-product' );
 							getProductDataModal = getDataProduct ? JSON.parse( getDataProduct ) : {};
 							manageOpened( getProductDataModal );
@@ -374,7 +374,7 @@ domReady( () => {
 							}
 						}
 
-						// TODOGA4:
+						// Get product information together to be appended to the modal for GA4 events outside of the iframe.
 						getProductDataModal = {
 							amount: donationValue,
 							action_type: 'donation',
@@ -484,7 +484,7 @@ domReady( () => {
 						// Otherwise initialize checkout.
 						openCheckout();
 						manageOpened( getProductDataModal );
-						// Append product data info to the modal, so we can grab it for manageDismissed.
+						// Append product data info to the modal, so we can grab it for GA4 events outside of the iframe.
 						document
 							.getElementById( 'newspack_modal_checkout' )
 							.setAttribute( 'data-order-details', JSON.stringify( getProductDataModal ) );

@@ -1,5 +1,3 @@
-// TODOGA4: track when a modal open attempt is triggered by a checkout button, donate button
-
 import { getEventPayload, sendEvent } from './utils';
 
 /**

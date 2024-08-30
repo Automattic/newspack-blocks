@@ -515,11 +515,11 @@ final class Modal_Checkout {
 										'action_type'  => 'checkout_button',
 										'currency'     => \get_woocommerce_currency(),
 										'product_price_summary' => $product_price_summary,
-										'product_id'   => $product_id,
+										'product_id'   => (string) $product_id,
 										'product_type' => $product_type,
 										'recurrence'   => ! empty( $frequency ) ? $frequency : 'once',
 										'referer'      => substr( \get_permalink(), strlen( home_url() ) ), // TODO: Is this OK?
-										'variation_id' => $variation_id,
+										'variation_id' => (string) $variation_id,
 									];
 
 									// Replace nyp price html for variations.
