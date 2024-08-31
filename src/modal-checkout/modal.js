@@ -332,7 +332,8 @@ domReady( () => {
 						typeof newspack_ras_config !== 'undefined' &&
 						! newspack_ras_config?.is_logged_in &&
 						! window?.newspackReaderActivation?.getReader?.()?.authenticated &&
-						window?.newspackReaderActivation?.openAuthModal
+						window?.newspackReaderActivation?.openAuthModal &&
+						newspackBlocksModal.is_ras_enabled
 					) {
 						ev.preventDefault();
 						let content = '';

@@ -530,6 +530,15 @@ final class Modal_Checkout {
 	}
 
 	/**
+	 * Check if Reader Activation is enabled.
+	 */
+	public static function is_ras_enabled() {
+		if ( method_exists( 'Newspack\Reader_Activation', 'is_enabled' ) && \Newspack\Reader_Activation::is_enabled() ) {
+			return 'true';
+		}
+	}
+
+	/**
 	 * Enqueue scripts for the checkout page rendered in a modal.
 	 */
 	public static function enqueue_scripts() {
@@ -558,6 +567,7 @@ final class Modal_Checkout {
 			\NEWSPACK_BLOCKS__VERSION,
 			true
 		);
+
 		wp_localize_script(
 			'newspack-blocks-modal-checkout',
 			'newspackBlocksModalCheckout',
@@ -617,6 +627,7 @@ final class Modal_Checkout {
 			[
 				'checkout_registration_flag' => self::CHECKOUT_REGISTRATION_FLAG,
 				'newspack_class_prefix'      => self::get_class_prefix(),
+				'ras_enabled'                => self::is_ras_enabled(),
 				'labels'                     => [
 					'auth_modal_title'     => self::get_modal_checkout_labels( 'auth_modal_title' ),
 					'checkout_modal_title' => self::get_modal_checkout_labels( 'checkout_modal_title' ),
