@@ -556,7 +556,10 @@ final class Modal_Checkout {
 			plugins_url( 'dist/modalCheckout.js', \NEWSPACK_BLOCKS__PLUGIN_FILE ),
 			$dependencies,
 			\NEWSPACK_BLOCKS__VERSION,
-			true
+			[
+				'strategy'  => 'defer',
+				'in_footer' => true,
+			]
 		);
 		wp_localize_script(
 			'newspack-blocks-modal-checkout',
@@ -609,7 +612,10 @@ final class Modal_Checkout {
 			plugins_url( 'dist/modal.js', \NEWSPACK_BLOCKS__PLUGIN_FILE ),
 			[],
 			\NEWSPACK_BLOCKS__VERSION,
-			true
+			[
+				'strategy'  => 'defer',
+				'in_footer' => true,
+			]
 		);
 		wp_localize_script(
 			'newspack-blocks-modal',
