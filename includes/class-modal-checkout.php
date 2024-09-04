@@ -557,7 +557,7 @@ final class Modal_Checkout {
 			$dependencies,
 			\NEWSPACK_BLOCKS__VERSION,
 			[
-				'strategy'  => 'defer',
+				'strategy'  => 'async',
 				'in_footer' => true,
 			]
 		);
@@ -613,7 +613,7 @@ final class Modal_Checkout {
 			[],
 			\NEWSPACK_BLOCKS__VERSION,
 			[
-				'strategy'  => 'defer',
+				'strategy'  => 'async',
 				'in_footer' => true,
 			]
 		);
