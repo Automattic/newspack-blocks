@@ -635,14 +635,14 @@ domReady(
 				 * @return {boolean} Whether the form was blocked or not.
 				 */
 				function blockForm( form ) {
-					if ( form.is( '.processing' ) ) {
+					if ( form.is( '.modal-processing' ) ) {
 						return false;
 					}
 					const buttons = form.find( 'button[type=submit]' );
 					buttons.each( ( i, el ) => {
 						$( el ).attr( 'disabled', true );
 					} );
-					form.addClass( 'processing' );
+					form.addClass( 'modal-processing' );
 					return true;
 				}
 
@@ -654,14 +654,14 @@ domReady(
 				 * @return {boolean} Whether the form was unblocked or not.
 				 */
 				function unblockForm( form ) {
-					if ( ! form.is( '.processing' ) ) {
+					if ( ! form.is( '.modal-processing' ) ) {
 						return false;
 					}
 					const buttons = form.find( 'button[type=submit]' );
 					buttons.each( ( i, el ) => {
 						$( el ).attr( 'disabled', false );
 					} );
-					form.removeClass( 'processing' );
+					form.removeClass( 'modal-processing' );
 					return true;
 				}
 			} );

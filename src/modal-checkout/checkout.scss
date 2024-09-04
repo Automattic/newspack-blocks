@@ -253,7 +253,7 @@
 	// Processing styles
 	.modal_checkout_nyp,
 	.modal_checkout_coupon {
-		&.processing {
+		&.modal-processing {
 			opacity: 0.5;
 		}
 	}
@@ -558,7 +558,7 @@
 		margin-top: 0;
 	}
 
-	.processing {
+	.modal-processing {
 		opacity: 0.5;
 	}
 }

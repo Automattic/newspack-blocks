@@ -232,7 +232,7 @@ domReady( () => {
 				form.appendChild( modalCheckoutHiddenInput.cloneNode() );
 				form.target = IFRAME_NAME;
 				form.addEventListener( 'submit', ev => {
-					form.classList.add( 'processing' );
+					form.classList.add( 'modal-processing' );
 
 					const productData = form.dataset.product;
 					if ( productData ) {
@@ -288,14 +288,14 @@ domReady( () => {
 
 							// Open the variations modal.
 							ev.preventDefault();
-							form.classList.remove( 'processing' );
+							form.classList.remove( 'modal-processing' );
 							openModal( variationModal );
 							a11y.trapFocus( variationModal, false );
 							return;
 						}
 					}
 
-					form.classList.remove( 'processing' );
+					form.classList.remove( 'modal-processing' );
 
 					// Set reader activation checkout data if available.
 					let data = {};
