@@ -366,11 +366,6 @@ domReady(
 				 */
 				function setEditingDetails( isEditingDetails ) {
 					const newspack_grecaptcha = window.newspack_grecaptcha || {};
-
-					// Scroll to top.
-					window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
-					// Update checkout.
-					$( document.body ).trigger( 'update_checkout' );
 					clearNotices();
 					// Clear checkout details.
 					$( '#checkout_details' ).remove();
