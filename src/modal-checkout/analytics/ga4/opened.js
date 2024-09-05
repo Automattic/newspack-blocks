@@ -10,6 +10,8 @@ export const manageOpened = ( getProductDataModal = '' ) => {
 		return;
 	}
 
+	let action = 'opened';
+
 	const {
 		action_type,
 		amount = '',
@@ -40,13 +42,14 @@ export const manageOpened = ( getProductDataModal = '' ) => {
 	// There's only a variation ID for variable products, after you've selected one.
 	if ( variation_id ) {
 		params.variation_id = variation_id;
+		action = 'opened_variation'; // Change the action to reflect it's coming from inside the variation picker modal.
 	}
 
 	if ( is_variable ) {
 		params.is_variable = is_variable;
 	}
 
-	const payload = getEventPayload( 'opened', params );
+	const payload = getEventPayload( action, params );
 
 	sendEvent( payload );
 };
