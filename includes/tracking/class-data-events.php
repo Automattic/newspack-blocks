@@ -138,6 +138,7 @@ final class Data_Events {
 	 */
 	public static function build_js_data_events( $product_id, $cart_item, $product_parent_id = '' ) {
 		// Reassign the IDs to make sure the product is the product and the variation is the variation.
+		$variation_id = '';
 		if ( '' !== $product_parent_id && 0 !== $product_parent_id ) {
 			$variation_id = $product_id;
 			$product_id = $product_parent_id;
@@ -146,10 +147,10 @@ final class Data_Events {
 		$data_order_details = [
 			'amount'       => $cart_item['data']->get_price(),
 			'action_type'  => self::get_action_type( $product_id ),
-			'currency'     => \get_woocommerce_currency(),
+			'currency'     => function_exists( 'get_woocommerce_currency' ) ? \get_woocommerce_currency() : 'USD',
 			'product_id'   => strval( $product_id ),
 			'product_type' => self::get_product_type( $product_id ),
-			'referer'      => substr( $cart_item['referer'], strlen( home_url() ) ), // remove domain from referer.
+			'referrer'     => substr( $cart_item['referer'], strlen( home_url() ) ), // remove domain from referrer.
 			'recurrence'   => self::get_purchase_recurrence( $product_id ),
 			'variation_id' => strval( $variation_id ),
 		];

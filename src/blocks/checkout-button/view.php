@@ -113,11 +113,8 @@ function render_callback( $attributes ) {
 			$frequency = \WC_Subscriptions_Product::get_period( $product );
 		}
 
-		$product_type = 'product';
-		// Update the product type.
-		if ( method_exists( 'Newspack_Blocks\Tracking\Data_Events', 'get_product_type' ) ) {
-			$product_type = \Newspack_Blocks\Tracking\Data_Events::get_product_type( $product_id );
-		}
+		// Get the product type.
+		$product_type = \Newspack_Blocks\Tracking\Data_Events::get_product_type( $product_id );
 
 		$name  = $product->get_name();
 		$price = $product->get_price();
@@ -141,12 +138,12 @@ function render_callback( $attributes ) {
 
 		$product_data = [
 			'action_type'  => 'checkout_button',
-			'currency'     => \get_woocommerce_currency(),
+			'currency'     => function_exists( 'get_woocommerce_currency' ) ? \get_woocommerce_currency() : 'USD',
 			'is_variable'  => $is_variable,
 			'product_id'   => $product_id,
 			'product_type' => $product_type,
 			'recurrence'   => $recurrence,
-			'referer'      => substr( \get_permalink(), strlen( home_url() ) ), // TODO: Is this OK?
+			'referrer'     => substr( \get_permalink(), strlen( home_url() ) ), // TODO: Is this OK?
 		];
 
 		if ( ! $is_variable || $variation_id ) {
@@ -154,13 +151,10 @@ function render_callback( $attributes ) {
 			$product_data['product_price_summary'] = $product_price_summary;
 		}
 
-		if ( $varition_id ) {
+		if ( $variation_id ) {
 			// TODOGA4: this situation seems clunky; we're doing a lot of shuffling around to get the "right" product ID, variation ID, and product type.
-			if ( method_exists( 'Newspack_Blocks\Tracking\Data_Events', 'get_product_type' ) ) {
-				$product_type = \Newspack_Blocks\Tracking\Data_Events::get_product_type( $product->get_parent_id() );
-			}
 			$product_data['product_id']   = $product->get_parent_id(); // Reset Product ID as parent ID.
-			$product_data['product_type'] = $product_type;
+			$product_data['product_type'] = \Newspack_Blocks\Tracking\Data_Events::get_product_type( $product->get_parent_id() );
 			$product_data['variation_id'] = $product_id; // Overwrite us setting the product ID as the variation ID.
 
 		}

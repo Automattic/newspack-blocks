@@ -12,15 +12,15 @@ export const manageOpened = ( getProductDataModal = '' ) => {
 
 	const {
 		action_type,
-		amount,
+		amount = '',
 		currency,
-		is_variable,
-		price,
+		is_variable = '',
+		price = '',
 		product_id,
 		product_type,
 		recurrence,
-		referer,
-		variation_id,
+		referrer,
+		variation_id = '',
 	} = getProductDataModal;
 
 	const params = {
@@ -29,7 +29,7 @@ export const manageOpened = ( getProductDataModal = '' ) => {
 		product_id,
 		product_type,
 		recurrence,
-		referer,
+		referrer,
 	};
 
 	// On the first variable screen, there may not be a price so we want to check for it.

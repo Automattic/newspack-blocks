@@ -17,8 +17,8 @@ export const manageLoaded = () => {
 			product_id,
 			product_type,
 			recurrence,
-			referer,
-			variation_id
+			referrer,
+			variation_id = ''
 		} = getProductDetails( 'modal-checkout-product-details' );
 
 		const params = {
@@ -28,7 +28,7 @@ export const manageLoaded = () => {
 			product_id,
 			product_type,
 			recurrence,
-			referer,
+			referrer,
 		};
 
 		// There's only a variation ID for variable products, after you've selected one.

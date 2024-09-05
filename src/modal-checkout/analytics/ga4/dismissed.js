@@ -8,7 +8,7 @@ export const manageDismissed = () => {
 		return;
 	}
 
-	const { action_type, amount, currency, price, product_id, product_type, recurrence, referer, variation_id } = getProductDetails( 'newspack_modal_checkout' );
+	const { action_type, amount = '', currency, price = '', product_id, product_type, recurrence, referrer, variation_id = '' } = getProductDetails( 'newspack_modal_checkout' );
 
 	const params = {
 		action_type,
@@ -16,7 +16,7 @@ export const manageDismissed = () => {
 		product_id,
 		product_type,
 		recurrence,
-		referer,
+		referrer,
 		variation_id,
 	};
 

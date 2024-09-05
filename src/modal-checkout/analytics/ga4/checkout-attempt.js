@@ -11,7 +11,7 @@ export const manageCheckoutAttempt = () => {
 		return;
 	}
 
-	const { action_type, amount, currency, product_id, product_type, recurrence, referer, variation_id } = getProductDetails( 'modal-checkout-product-details' );
+	const { action_type, amount, currency, product_id, product_type, recurrence, referrer, variation_id = '' } = getProductDetails( 'modal-checkout-product-details' );
 
 	const params = {
 		action_type,
@@ -20,7 +20,7 @@ export const manageCheckoutAttempt = () => {
 		product_id,
 		product_type,
 		recurrence,
-		referer,
+		referrer,
 	};
 
 	// There's only a variation ID for variable products, after you've selected one.

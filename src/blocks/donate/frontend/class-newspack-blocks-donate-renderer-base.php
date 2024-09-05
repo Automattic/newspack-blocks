@@ -193,10 +193,12 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 			$donation_product_id = get_option( \Newspack\Donations::DONATION_PRODUCT_ID_OPTION, 0 );
 		}
 
+		$currency = function_exists( 'get_woocommerce_currency' ) ? \get_woocommerce_currency() : 'USD';
+
 		wp_referer_field();
 		?>
 			<input type='hidden' name='newspack_donate' value='1' />
-			<input type='hidden' name='donation_currency' value='<?php echo esc_attr( \get_woocommerce_currency() ); ?>' />
+			<input type='hidden' name='donation_currency' value='<?php echo esc_attr( $currency ); ?>' />
 			<input type='hidden' name='donation_product_id' value='<?php echo esc_attr( $donation_product_id ); ?>' />
 		<?php
 

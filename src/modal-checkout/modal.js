@@ -382,7 +382,7 @@ domReady( () => {
 							product_id: formData.get( 'donation_product_id' ),
 							product_type: 'donation',
 							recurrence: donationFreq,
-							referer: formData.get( '_wp_http_referer' ),
+							referrer: formData.get( '_wp_http_referer' ),
 						};
 					}
 
