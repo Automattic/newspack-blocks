@@ -88,7 +88,7 @@ function render_callback( $attributes ) {
 	);
 
 	$button = sprintf(
-		'<button class="%1$s" style="%2$s" aria-label="%3$s" type="submit">%3$s</button>',
+		'<button class="%1$s" style="%2$s" type="submit">%3$s</button>',
 		$button_classes,
 		$button_styles,
 		$text
