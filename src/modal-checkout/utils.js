@@ -7,7 +7,7 @@
  * @return {void}
  */
 export function domReady( callback ) {
-	if ( typeof document === 'undefined' ) {
+	if ( typeof document === 'undefined' || typeof callback !== 'function' ) {
 		return;
 	}
 	if (
