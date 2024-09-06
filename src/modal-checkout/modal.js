@@ -362,6 +362,7 @@ domReady( () => {
 						// Get donation information and append to the modal checkout for GA4:
 						const donationFreq = formData.get( 'donation_frequency' );
 						let donationValue = '';
+						let productId = '';
 
 						for ( const key of formData.keys() ) {
 							// Find values that match the frequency name, that aren't empty
@@ -374,12 +375,20 @@ domReady( () => {
 							}
 						}
 
+						// Get IDs for donation frequencies, and compare them to the selected frequency.
+						const freqIds = JSON.parse( formData.get( 'frequency_ids' ) );
+						for ( const freq in freqIds ) {
+							if ( freq === donationFreq ) {
+								productId = freqIds[freq].toString();
+							}
+						}
+
 						// Get product information together to be appended to the modal for GA4 events outside of the iframe.
 						getProductDataModal = {
 							amount: donationValue,
 							action_type: 'donation',
 							currency: formData.get( 'donation_currency' ),
-							product_id: formData.get( 'donation_product_id' ),
+							product_id: productId,
 							product_type: 'donation',
 							recurrence: donationFreq,
 							referrer: formData.get( '_wp_http_referer' ),

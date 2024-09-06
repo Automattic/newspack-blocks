@@ -188,18 +188,19 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 		 */
 		do_action( 'newspack_blocks_donate_before_form_fields' );
 
-		$donation_product_id = '';
-		if ( defined( '\Newspack\Donations::DONATION_PRODUCT_ID_OPTION' ) ) {
-			$donation_product_id = get_option( \Newspack\Donations::DONATION_PRODUCT_ID_OPTION, 0 );
-		}
-
 		$currency = function_exists( 'get_woocommerce_currency' ) ? \get_woocommerce_currency() : 'USD';
 
+		$donate_child_ids = [];
+		if ( method_exists( 'Newspack\Donations', 'get_donation_product' ) ) {
+			$donate_child_ids['year']  = Newspack\Donations::get_donation_product( 'year' );
+			$donate_child_ids['month'] = Newspack\Donations::get_donation_product( 'month' );
+			$donate_child_ids['once']  = Newspack\Donations::get_donation_product( 'once' );
+		}
 		wp_referer_field();
 		?>
 			<input type='hidden' name='newspack_donate' value='1' />
 			<input type='hidden' name='donation_currency' value='<?php echo esc_attr( $currency ); ?>' />
-			<input type='hidden' name='donation_product_id' value='<?php echo esc_attr( $donation_product_id ); ?>' />
+			<input type='hidden' name='frequency_ids' value='<?php echo esc_attr( wp_json_encode( $donate_child_ids ) ); ?>' />
 		<?php
 
 		foreach ( [ [ 'afterSuccessBehavior', 'after_success_behavior' ], [ 'afterSuccessButtonLabel', 'after_success_button_label' ], [ 'afterSuccessURL', 'after_success_url' ] ] as $attribute ) {
@@ -210,7 +211,6 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 				<input type='hidden' name='<?php echo esc_attr( $param_name ); ?>' value='<?php echo esc_attr( $value ); ?>' />
 			<?php
 		}
-
 		return ob_get_clean();
 	}
 
