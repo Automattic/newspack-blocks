@@ -369,11 +369,6 @@ domReady(
 				 */
 				function setEditingDetails( isEditingDetails ) {
 					const newspack_grecaptcha = window.newspack_grecaptcha || {};
-
-					// Scroll to top.
-					window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
-					// Update checkout.
-					$( document.body ).trigger( 'update_checkout' );
 					clearNotices();
 					// Clear checkout details.
 					$( '#checkout_details' ).remove();
@@ -407,7 +402,7 @@ domReady(
 						// Initiate reCAPTCHA, if available.
 						if ( newspack_grecaptcha?.render ) {
 							$form.data( 'newspack-recaptcha', 'newspack_modal_checkout' );
-							newspack_grecaptcha.render( $form.get() );
+							newspack_grecaptcha.render( $form.get(), ( error ) => handleFormError( error ) );
 						}
 						if ( $coupon.length ) {
 							$coupon.show();
@@ -644,14 +639,14 @@ domReady(
 				 * @return {boolean} Whether the form was blocked or not.
 				 */
 				function blockForm( form ) {
-					if ( form.is( '.processing' ) ) {
+					if ( form.is( '.modal-processing' ) ) {
 						return false;
 					}
 					const buttons = form.find( 'button[type=submit]' );
 					buttons.each( ( i, el ) => {
 						$( el ).attr( 'disabled', true );
 					} );
-					form.addClass( 'processing' );
+					form.addClass( 'modal-processing' );
 					return true;
 				}
 
@@ -663,14 +658,14 @@ domReady(
 				 * @return {boolean} Whether the form was unblocked or not.
 				 */
 				function unblockForm( form ) {
-					if ( ! form.is( '.processing' ) ) {
+					if ( ! form.is( '.modal-processing' ) ) {
 						return false;
 					}
 					const buttons = form.find( 'button[type=submit]' );
 					buttons.each( ( i, el ) => {
 						$( el ).attr( 'disabled', false );
 					} );
-					form.removeClass( 'processing' );
+					form.removeClass( 'modal-processing' );
 					return true;
 				}
 			} );

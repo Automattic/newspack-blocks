@@ -32,10 +32,12 @@ domReady( () => {
 	const modalCheckoutHiddenInput = createHiddenInput( 'modal_checkout', '1' );
 	const spinner = modalContent.querySelector( `.${ CLASS_PREFIX }__spinner` );
 	let modalTrigger = document.querySelector( '.newspack-reader__account-link' )?.[0];
-
 	// Initialize empty iframe.
+	const initialHeight = '600px'; // Fixed initial height to avoid too much layout shift.
 	const iframe = document.createElement( 'iframe' );
 	iframe.name = IFRAME_NAME;
+	iframe.style.height = initialHeight;
+	iframe.style.visibility = 'hidden';
 
 	const iframeResizeObserver = new ResizeObserver( entries => {
 		if ( ! entries || ! entries.length ) {
@@ -43,14 +45,17 @@ domReady( () => {
 		}
 		const contentRect = entries[ 0 ].contentRect;
 		if ( contentRect ) {
-			const iframeHeight = contentRect.top + contentRect.bottom + 'px';
+			const iframeHeight = contentRect.top + contentRect.bottom;
+			if ( iframeHeight === 0 ) {
+				// If height is 0, hide iframe content instead of resizing to avoid layout shift.
+				iframe.style.visibility = 'hidden';
+				return;
+			}
 			// Match iframe and modal content heights to avoid inner iframe scollbar.
-			modalContent.style.height = iframeHeight;
-			iframe.style.height = iframeHeight;
+			modalContent.style.height = iframeHeight + 'px';
+			iframe.style.height = iframeHeight + 'px';
 		}
 	} );
-
-	const initialHeight = modalContent.clientHeight + spinner.clientHeight + 'px';
 	const closeCheckout = () => {
 		const container = iframe?.contentDocument?.querySelector( `#${ IFRAME_CONTAINER_ID }` );
 		const afterSuccessUrlInput = container?.querySelector( 'input[name="after_success_url"]' );
@@ -67,9 +72,10 @@ domReady( () => {
 			if ( iframe && modalContent.contains( iframe ) ) {
 				// Reset iframe and modal content heights.
 				iframe.src = 'about:blank';
-				iframe.style.height = '0';
-				modalContent.removeChild( iframe );
+				iframe.style.height = initialHeight;
+				iframe.style.visibility = 'hidden';
 				modalContent.style.height = initialHeight;
+				modalContent.removeChild( iframe );
 			}
 
 			if ( iframeResizeObserver ) {
@@ -109,7 +115,7 @@ domReady( () => {
 
 			// Ensure we always reset the modal title and width once the modal closes.
 			if ( shouldCloseModal ) {
-				setModalWidth();
+				setModalSize();
 				setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
 			}
 		} else {
@@ -165,11 +171,11 @@ domReady( () => {
 	};
 
 	/**
-	 * Sets the width of the modal.
+	 * Sets the size of the modal.
 	 *
 	 * @param {string} size Options are 'small' or 'default'. Default is 'default'.
 	 */
-	const setModalWidth = ( size = 'default' ) => {
+	const setModalSize = ( size = 'default' ) => {
 		const modal = modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }` );
 		if ( ! modal ) {
 			return;
@@ -233,7 +239,7 @@ domReady( () => {
 				form.appendChild( modalCheckoutHiddenInput.cloneNode() );
 				form.target = IFRAME_NAME;
 				form.addEventListener( 'submit', ev => {
-					form.classList.add( 'processing' );
+					form.classList.add( 'modal-processing' );
 
 					const productData = form.dataset.product;
 
@@ -295,7 +301,7 @@ domReady( () => {
 
 							// Open the variations modal.
 							ev.preventDefault();
-							form.classList.remove( 'processing' );
+							form.classList.remove( 'modal-processing' );
 							openModal( variationModal );
 							a11y.trapFocus( variationModal, false );
 
@@ -312,7 +318,7 @@ domReady( () => {
 						}
 					}
 
-					form.classList.remove( 'processing' );
+					form.classList.remove( 'modal-processing' );
 
 					// Set reader activation checkout data if available.
 					let data = {};
@@ -519,29 +525,36 @@ domReady( () => {
 			}
 		}
 		const container = iframe?.contentDocument?.querySelector( `#${ IFRAME_CONTAINER_ID }` );
-		if ( container ) {
+		const setModalReady = () => {
 			iframeResizeObserver.observe( container );
+			if ( spinner.style.display !== 'none' ) {
+				spinner.style.display = 'none';
+			}
+			if ( iframe.style.visibility !== 'visible' ) {
+				iframe.style.visibility = 'visible';
+			}
+		}
+		if ( container ) {
 			if ( container.checkoutComplete ) {
 				// Update the modal title and width to reflect successful transaction.
-				setModalWidth( 'small' );
+				setModalSize( 'small' );
 				setModalTitle( newspackBlocksModal.labels.thankyou_modal_title );
+				setModalReady();
 				a11y.trapFocus( modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }` ) );
 			} else {
 				// Revert modal title and width default value.
-				setModalWidth();
+				setModalSize();
 				setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
 			}
 			if ( container.checkoutReady ) {
-				spinner.style.display = 'none';
+				setModalReady();
 			} else {
-				container.addEventListener( 'checkout-ready', () => {
-					spinner.style.display = 'none';
-				} );
+				container.addEventListener( 'checkout-ready', () => setModalReady() );
 			}
+		// Make sure the iframe has actually loaded something, even if not the expected container.
+		// This check prevents an issue in Chrome where the 'load' event fired twice and the spinner was hidden too soon.
 		} else if ( 'about:blank' !== location.href ) {
-			// Make sure the iframe has actually loaded something, even if not the expected container.
-			// This check prevents an issue in Chrome where the 'load' event fired twice and the spinner was hidden too soon.
-			spinner.style.display = 'none';
+			setModalReady();
 		}
 	} );
 
