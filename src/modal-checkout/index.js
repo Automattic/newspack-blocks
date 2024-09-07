@@ -39,11 +39,14 @@ domReady(
 		/**
 		 * Set the checkout as ready so the modal can resolve the loading state.
 		 */
-		function setReady() {
+		function setReady( init_modal_opened = true ) {
 			const container = document.querySelector( '#newspack_modal_checkout_container' );
 			container.checkoutReady = true;
 			container.dispatchEvent( readyEvent );
-			manageLoaded( container );
+			if ( init_modal_opened ) {
+				// Only fire this data event when the modal is being opened.
+				manageLoaded( container );
+			}
 		}
 
 		if ( newspackBlocksModalCheckout.is_checkout_complete ) {
@@ -688,7 +691,7 @@ domReady(
 					parent.newspackCloseModalCheckout()
 				} );
 			}
-			setReady();
+			setReady( false );
 		} );
 
 		// Close modal when 'Esc' key is pressed and focus is inside of the iframe.

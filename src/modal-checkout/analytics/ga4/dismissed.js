@@ -17,7 +17,6 @@ export const manageDismissed = () => {
 		product_type,
 		recurrence,
 		referrer,
-		variation_id,
 	};
 
 	// On the first variable screen, there may not be a price so we want to check for it.
