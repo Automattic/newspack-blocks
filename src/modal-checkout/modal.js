@@ -298,7 +298,7 @@ domReady( () => {
 					form.classList.remove( 'modal-processing' );
 
 					// Set reader activation checkout data if available.
-					let data = {};
+					const data = { is_pending_checkout: true };
 					if ( element.classList.contains( 'wpbnbd--platform-wc' ) ) {
 						const frequency = formData.get( 'donation_frequency' );
 						let amount;
@@ -315,24 +315,17 @@ domReady( () => {
 							layout = 'frequency';
 						}
 
-						data = {
-							type: 'donate',
-							layout,
-							frequency,
-							amount,
-							other: formData.get( `donation_value_${ frequency }_other` ),
-						};
+						data.type = 'donate';
+						data.layout = layout;
+						data.frequency = frequency;
+						data.amount = amount;
+						data.other = formData.get( `donation_value_${ frequency }_other` );
 					} else {
-						data = {
-							type: 'checkout_button',
-							product_id: formData.get( 'product_id' ),
-							variation_id: formData.get( 'variation_id' ),
-						};
+						data.type = 'checkout_button';
+						data.product_id = formData.get( 'product_id' );
+						data.variation_id = formData.get( 'variation_id' );
 					}
-					window?.newspackReaderActivation?.setCheckoutData?.( {
-						is_pending_checkout: true,
-						...data,
-					} );
+					window?.newspackReaderActivation?.setCheckoutData?.( data );
 
 					if (
 						typeof newspack_ras_config !== 'undefined' &&
@@ -414,6 +407,10 @@ domReady( () => {
 						window.newspackReaderActivation.openAuthModal( {
 							title: newspackBlocksModal.labels.auth_modal_title,
 							callback: () => {
+								// Signal checkout registration.
+								form.appendChild(
+									createHiddenInput( newspackBlocksModal.checkout_registration_flag, '1' )
+								);
 								triggerCheckout( form );
 							},
 							skipSuccess: true,
@@ -492,10 +489,6 @@ domReady( () => {
 	 * @param {HTMLFormElement} form The form element.
 	 */
 	const triggerCheckout = form => {
-		// Signal checkout registration.
-		form.appendChild(
-			createHiddenInput( newspackBlocksModal.checkout_registration_flag, '1' )
-		);
 		// form.submit does not trigger submit event listener, so we use requestSubmit.
 		form.requestSubmit( form.querySelector( 'button[type="submit"]' ) );
 	}
