@@ -150,7 +150,7 @@ final class Data_Events {
 			'currency'     => function_exists( 'get_woocommerce_currency' ) ? \get_woocommerce_currency() : 'USD',
 			'product_id'   => strval( $product_id ),
 			'product_type' => self::get_product_type( $product_id ),
-			'referrer'     => substr( $cart_item['referer'], strlen( home_url() ) ), // remove domain from referrer.
+			'referrer'     => str_replace( home_url(), '', $cart_item['referer'] ), // Keeps format consistent for Homepage with Donate and Checkout Button blocks.
 			'recurrence'   => self::get_purchase_recurrence( $product_id ),
 			'variation_id' => strval( $variation_id ),
 		];
