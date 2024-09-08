@@ -297,36 +297,6 @@ domReady( () => {
 
 					form.classList.remove( 'modal-processing' );
 
-					// Set reader activation checkout data if available.
-					const data = { is_pending_checkout: true };
-					if ( element.classList.contains( 'wpbnbd--platform-wc' ) ) {
-						const frequency = formData.get( 'donation_frequency' );
-						let amount;
-						let layout;
-						if ( formData.has( `donation_value_${ frequency }_untiered` ) ) {
-							amount = formData.get( `donation_value_${ frequency }_untiered` );
-							layout = 'untiered';
-						} else if ( formData.has( 'donation_tier_index' ) ) {
-							const donationTier = form.querySelector( `button[data-tier-index="${ formData.get('donation_tier_index') }"]` );
-							amount = donationTier?.value;
-							layout = 'tiered';
-						} else {
-							amount = formData.get( `donation_value_${ frequency }` )
-							layout = 'frequency';
-						}
-
-						data.type = 'donate';
-						data.layout = layout;
-						data.frequency = frequency;
-						data.amount = amount;
-						data.other = formData.get( `donation_value_${ frequency }_other` );
-					} else {
-						data.type = 'checkout_button';
-						data.product_id = formData.get( 'product_id' );
-						data.variation_id = formData.get( 'variation_id' );
-					}
-					window?.newspackReaderActivation?.setCheckoutData?.( data );
-
 					if (
 						typeof newspack_ras_config !== 'undefined' &&
 						! newspack_ras_config?.is_logged_in &&
@@ -403,6 +373,36 @@ domReady( () => {
 							content = `<div class="order-details-summary ${ CLASS_PREFIX }__box ${ CLASS_PREFIX }__box--text-center"><p><strong>${ priceSummary }</strong></p></div>`;
 						}
 
+						// Set reader activation checkout data if available.
+						const data = {};
+						if ( element.classList.contains( 'wpbnbd--platform-wc' ) ) {
+							const frequency = formData.get( 'donation_frequency' );
+							let amount;
+							let layout;
+							if ( formData.has( `donation_value_${ frequency }_untiered` ) ) {
+								amount = formData.get( `donation_value_${ frequency }_untiered` );
+								layout = 'untiered';
+							} else if ( formData.has( 'donation_tier_index' ) ) {
+								const donationTier = form.querySelector( `button[data-tier-index="${ formData.get('donation_tier_index') }"]` );
+								amount = donationTier?.value;
+								layout = 'tiered';
+							} else {
+								amount = formData.get( `donation_value_${ frequency }` )
+								layout = 'frequency';
+							}
+
+							data.type = 'donate';
+							data.layout = layout;
+							data.frequency = frequency;
+							data.amount = amount;
+							data.other = formData.get( `donation_value_${ frequency }_other` );
+						} else {
+							data.type = 'checkout_button';
+							data.product_id = formData.get( 'product_id' );
+							data.variation_id = formData.get( 'variation_id' );
+						}
+						window.newspackReaderActivation?.setCheckoutData?.( data );
+
 						// Initialize auth flow if reader is not authenticated.
 						window.newspackReaderActivation.openAuthModal( {
 							title: newspackBlocksModal.labels.auth_modal_title,
@@ -414,6 +414,7 @@ domReady( () => {
 								triggerCheckout( form );
 							},
 							skipSuccess: true,
+							skipNewslettersSignup: true,
 							labels: {
 								signin: {
 									title: newspackBlocksModal.labels.signin_modal_title,
