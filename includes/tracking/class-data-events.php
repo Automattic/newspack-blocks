@@ -177,7 +177,6 @@ final class Data_Events {
 			return;
 		}
 
-		// TODOGA4: For Donate blocks, which ID should we use? It currently switches between main Donation product & frequency product.
 		$product_id = is_array( $data['platform_data']['product_id'] ) ? $data['platform_data']['product_id'][0] : $data['platform_data']['product_id'];
 
 		$data['action']       = self::FORM_SUBMISSION_SUCCESS;

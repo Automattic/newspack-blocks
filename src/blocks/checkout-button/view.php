@@ -52,7 +52,6 @@ function render_callback( $attributes ) {
 	$after_success_url          = $attributes['afterSuccessURL'] ?? '';
 	$is_variable                = $attributes['is_variable'];
 
-	// TODOGA4: We're undoing this later for GA4 to accurately get product ID vs variation ID. Not sure if that's right.
 	if ( $is_variable && $variation_id ) {
 		$product_id = $variation_id;
 	}
@@ -152,7 +151,7 @@ function render_callback( $attributes ) {
 		}
 
 		if ( $variation_id ) {
-			// TODOGA4: this situation seems clunky; we're doing a lot of shuffling around to get the "right" product ID, variation ID, and product type.
+			// We're doing a lot of shuffling around to get the "right" product ID, variation ID, and product type for GA4.
 			$product_data['product_id']   = $product->get_parent_id(); // Reset Product ID as parent ID.
 			$product_data['product_type'] = \Newspack_Blocks\Tracking\Data_Events::get_product_type( $product->get_parent_id() );
 			$product_data['variation_id'] = $product_id; // Overwrite us setting the product ID as the variation ID.
