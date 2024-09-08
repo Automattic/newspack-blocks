@@ -286,7 +286,6 @@ domReady( () => {
 									} );
 
 									// Append the product data hidden inputs.
-									// TODOGA4: I've added more info to the params, is it needlessly being added here?
 									const variationData = singleVariationForm.dataset.product;
 									if ( variationData ) {
 										const data = JSON.parse( variationData );

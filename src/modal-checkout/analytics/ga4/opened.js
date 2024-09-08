@@ -38,18 +38,24 @@ export const manageOpened = ( getProductDataModal = '' ) => {
 		params.amount = amount ? amount : price;
 	}
 
-	// These params are not always available for product variations when 'opened' is fired -- you need to pick a variation.
-	if ( variation_id ) {
-		params.variation_id = variation_id;
-		action = 'opened_variation'; // Change the action to reflect it's coming from inside the variation picker modal.
-	}
-
+	// Only pass is_variable if available -- it only is for variable products.
 	if ( is_variable ) {
 		params.is_variable = is_variable;
 	}
 
+	// Only pass the variation_id if available -- it only is when a variation is picked.
+	if ( variation_id ) {
+		params.variation_id = variation_id;
+	}
+
+	// Only pass the recurrence if available -- for variable products, it won't be until a variation is picked.
 	if ( recurrence ) {
 		params.recurrence = recurrence;
+	}
+
+	// Change the action when opening the initial variation modal.
+	if ( is_variable && ! variation_id ) {
+		action = 'opened_variations';
 	}
 
 	const payload = getEventPayload( action, params );
