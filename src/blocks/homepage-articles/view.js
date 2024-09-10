@@ -38,8 +38,8 @@ function buildLoadMoreHandler( blockWrapperEl ) {
 	const isInfiniteScroll = btnEl.getAttribute( 'data-infinite-scroll' );
 
 	// Set initial state flags.
+	window.isInfiniteScrolling = false;
 	let isFetching = false;
-	let isInfiniteScrolling = false;
 	let isEndOfData = false;
 
 	btnEl.addEventListener( 'click', () => {
@@ -88,7 +88,7 @@ function buildLoadMoreHandler( blockWrapperEl ) {
 
 			blockWrapperEl.classList.remove( 'is-loading' );
 
-			isInfiniteScrolling = false;
+			window.isInfiniteScrolling = false;
 		}
 
 		/**
@@ -106,9 +106,9 @@ function buildLoadMoreHandler( blockWrapperEl ) {
 		const btnObserver = new IntersectionObserver(
 			entries => {
 				entries.forEach( entry => {
-					if ( entry.isIntersecting && ! isInfiniteScrolling ) {
+					if ( entry.isIntersecting && ! window.isInfiniteScrolling ) {
 						btnEl.click();
-						isInfiniteScrolling = true;
+						window.isInfiniteScrolling = true;
 					}
 				} );
 			},
