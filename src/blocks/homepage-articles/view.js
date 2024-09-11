@@ -41,6 +41,15 @@ function buildLoadMoreHandler( blockWrapperEl ) {
 	window.newspackBlocksIsFetching = window.newspackBlocksIsFetching || false;
 	window.newspackBlocksFetchQueue = window.newspackBlocksFetchQueue || [];
 	let isEndOfData = false;
+	let isPending = false;
+
+	const maybeLoadMore = () => {
+		if ( isPending ) {
+			return;
+		}
+		isPending = true;
+		loadMore();
+	};
 
 	const loadMore = () => {
 		// Early return if no more posts to render.
@@ -112,9 +121,10 @@ function buildLoadMoreHandler( blockWrapperEl ) {
 		if ( window.newspackBlocksFetchQueue.length ) {
 			window.newspackBlocksFetchQueue.shift()();
 		}
+		isPending = false;
 	}
 
-	btnEl.addEventListener( 'click', loadMore );
+	btnEl.addEventListener( 'click', maybeLoadMore );
 
 	if ( isInfiniteScroll ) {
 		// Create an intersection observer instance
@@ -122,7 +132,7 @@ function buildLoadMoreHandler( blockWrapperEl ) {
 			entries => {
 				entries.forEach( entry => {
 					if ( entry.isIntersecting ) {
-						loadMore();
+						maybeLoadMore();
 					}
 				} );
 			},
