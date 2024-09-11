@@ -25,6 +25,8 @@ require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'includes/class-modal-checkout.php';
 
 require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'includes/plugins/class-the-events-calendar.php';
 
+require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'includes/tracking/class-data-events.php';
+
 // REST Controller for Articles Block.
 require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/homepage-articles/class-wp-rest-newspack-articles-controller.php';
 

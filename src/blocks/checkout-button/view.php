@@ -112,6 +112,9 @@ function render_callback( $attributes ) {
 			$frequency = \WC_Subscriptions_Product::get_period( $product );
 		}
 
+		// Get the product type.
+		$product_type = \Newspack_Blocks\Tracking\Data_Events::get_product_type( $product_id );
+
 		$name  = $product->get_name();
 		$price = $product->get_price();
 		if ( ! empty( $attributes['price'] ) ) {
@@ -125,15 +128,34 @@ function render_callback( $attributes ) {
 		$is_variable           = $attributes['is_variable'];
 		$variation_id          = $attributes['variation'];
 		$product_price_summary = Modal_Checkout::get_summary_card_price_string( $name, $price, $frequency );
-		$product_data          = [
+
+		// If this is a variable product without a variation picked, we're not sure about the frequency.
+		$recurrence = ! empty( $frequency ) ? $frequency : 'once';
+		if ( $is_variable && empty( $variation_id ) ) {
+			$recurrence = '';
+		}
+
+		$product_data = [
+			'action_type'  => 'checkout_button',
+			'currency'     => function_exists( 'get_woocommerce_currency' ) ? \get_woocommerce_currency() : 'USD',
 			'is_variable'  => $is_variable,
-			'variation_id' => $variation_id,
 			'product_id'   => $product_id,
+			'product_type' => $product_type,
+			'recurrence'   => $recurrence,
+			'referrer'     => substr( \get_permalink(), strlen( home_url() ) ), // TODO: Is this OK?
 		];
 
 		if ( ! $is_variable || $variation_id ) {
 			$product_data['price']                 = $price;
 			$product_data['product_price_summary'] = $product_price_summary;
+		}
+
+		if ( $variation_id ) {
+			// We're doing a lot of shuffling around to get the "right" product ID, variation ID, and product type for GA4.
+			$product_data['product_id']   = $product->get_parent_id(); // Reset Product ID as parent ID.
+			$product_data['product_type'] = \Newspack_Blocks\Tracking\Data_Events::get_product_type( $product->get_parent_id() );
+			$product_data['variation_id'] = $product_id; // Overwrite us setting the product ID as the variation ID.
+
 		}
 
 		$form = sprintf(

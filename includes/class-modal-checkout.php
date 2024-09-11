@@ -96,10 +96,7 @@ final class Modal_Checkout {
 		add_filter( 'newspack_theme_enqueue_js', [ __CLASS__, 'is_not_modal_checkout_filter' ] );
 		add_filter( 'newspack_theme_enqueue_print_styles', [ __CLASS__, 'is_not_modal_checkout_filter' ] );
 		add_filter( 'cmplz_site_needs_cookiewarning', [ __CLASS__, 'is_not_modal_checkout_filter' ] );
-		add_filter( 'googlesitekit_analytics_tag_blocked', [ __CLASS__, 'is_modal_checkout' ] );
-		add_filter( 'googlesitekit_analytics-4_tag_blocked', [ __CLASS__, 'is_modal_checkout' ] );
 		add_filter( 'googlesitekit_adsense_tag_blocked', [ __CLASS__, 'is_modal_checkout' ] );
-		add_filter( 'googlesitekit_tagmanager_tag_blocked', [ __CLASS__, 'is_modal_checkout' ] );
 		add_filter( 'jetpack_active_modules', [ __CLASS__, 'jetpack_active_modules' ] );
 		add_filter( 'woocommerce_checkout_update_order_review_expired', [ __CLASS__, 'is_not_modal_checkout_filter' ] );
 
@@ -272,6 +269,19 @@ final class Modal_Checkout {
 				$query_args,
 				\wc_get_page_permalink( 'checkout' )
 			);
+
+			// Get data to send for this purchase.
+			$checkout_button_metadata = [
+				'currency'   => function_exists( 'get_woocommerce_currency' ) ? \get_woocommerce_currency() : 'USD',
+				'amount'     => $price,
+				'product_id' => $product_id,
+				'referrer'   => $referer,
+			];
+
+			/**
+			 * Action to fire for checkout button block modal.
+			 */
+			\do_action( 'newspack_blocks_checkout_button_modal', $checkout_button_metadata );
 
 			// Redirect to checkout.
 			\wp_safe_redirect( apply_filters( 'newspack_blocks_checkout_url', $checkout_url ) );
@@ -477,6 +487,7 @@ final class Modal_Checkout {
 									$price          = $variation->get_price();
 									$price_html     = $variation->get_price_html();
 									$frequency      = '';
+									$product_type = \Newspack_Blocks\Tracking\Data_Events::get_product_type( $product_id );
 
 									// Use suggested price if NYP is active and set for variation.
 									if ( \Newspack_Blocks::can_use_name_your_price() && \WC_Name_Your_Price_Helpers::is_nyp( $variation_id ) ) {
@@ -495,9 +506,15 @@ final class Modal_Checkout {
 									);
 									$product_price_summary = self::get_summary_card_price_string( $name, $price, $frequency );
 									$product_data          = [
+										'amount'       => $price,
+										'action_type'  => 'checkout_button',
+										'currency'     => function_exists( 'get_woocommerce_currency' ) ? \get_woocommerce_currency() : 'USD',
 										'product_price_summary' => $product_price_summary,
-										'product_id'   => $product_id,
-										'variation_id' => $variation_id,
+										'product_id'   => (string) $product_id,
+										'product_type' => $product_type,
+										'recurrence'   => ! empty( $frequency ) ? $frequency : 'once',
+										'referrer'     => substr( \get_permalink(), strlen( home_url() ) ), // TODO: Is this OK?
+										'variation_id' => (string) $variation_id,
 									];
 
 									// Replace nyp price html for variations.
@@ -669,7 +686,7 @@ final class Modal_Checkout {
 			<link rel="profile" href="https://gmpg.org/xfn/11" />
 			<?php wp_head(); ?>
 		</head>
-			<body class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal__content" ); ?>" id="newspack_modal_checkout_container">
+		<body class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal__content" ); ?>" id="newspack_modal_checkout_container">
 			<?php
 			echo do_shortcode( '[woocommerce_checkout]' );
 			wp_footer();
@@ -1183,8 +1200,12 @@ final class Modal_Checkout {
 			foreach ( $cart->get_cart() as $cart_item_key => $cart_item ) :
 				$_product = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
 				if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters( 'woocommerce_checkout_cart_item_visible', true, $cart_item, $cart_item_key ) ) :
+					// Create an empty array to store data order information.
+					$data_order_details = [];
+					// Create an array of order information to pass to GA4 via JavaScript.
+					$data_order_details = \Newspack_Blocks\Tracking\Data_Events::build_js_data_events( $_product->get_id(), $cart_item, $_product->get_parent_id() );
 					?>
-					<p>
+					<p id="modal-checkout-product-details" data-order-details='<?php echo wp_json_encode( $data_order_details ); ?>'>
 						<strong>
 							<?php
 							echo apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key ) . ': '; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

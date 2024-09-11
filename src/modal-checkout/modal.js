@@ -9,6 +9,7 @@ import * as a11y from './accessibility.js';
 /**
  * Internal dependencies
  */
+import { manageDismissed, manageOpened } from './analytics';
 import { createHiddenInput, domReady } from './utils';
 
 const CLASS_PREFIX = newspackBlocksModal.newspack_class_prefix;
@@ -17,6 +18,8 @@ const IFRAME_CONTAINER_ID = 'newspack_modal_checkout_container';
 const MODAL_CHECKOUT_ID = 'newspack_modal_checkout';
 const MODAL_CLASS_PREFIX = `${ CLASS_PREFIX }__modal`;
 const VARIATON_MODAL_CLASS_PREFIX = 'newspack-blocks__modal-variation';
+
+let getProductDataModal = {};
 
 domReady( () => {
 	const modalCheckout = document.querySelector( `#${ MODAL_CHECKOUT_ID }` );
@@ -117,6 +120,10 @@ domReady( () => {
 			}
 		} else {
 			window?.newspackReaderActivation?.resetCheckoutData?.();
+
+			// Track a dismissal event (modal has been manually closed without completing the checkout).
+			manageDismissed();
+			document.getElementById( 'newspack_modal_checkout' ).removeAttribute( 'data-order-details' );
 		}
 	};
 
@@ -235,6 +242,7 @@ domReady( () => {
 					form.classList.add( 'modal-processing' );
 
 					const productData = form.dataset.product;
+
 					if ( productData ) {
 						const data = JSON.parse( productData );
 						Object.keys( data ).forEach( key => {
@@ -271,9 +279,10 @@ domReady( () => {
 										'after_success_url',
 										'after_success_button_label',
 									].forEach( afterSuccessParam => {
-										singleVariationForm.appendChild(
-											createHiddenInput( afterSuccessParam, formData.get( afterSuccessParam ) )
-										);
+										const existingInputs = singleVariationForm.querySelectorAll( 'input[name="' +  afterSuccessParam + '"]' );
+										if ( 0 === existingInputs.length ) {
+											singleVariationForm.appendChild( createHiddenInput( afterSuccessParam, formData.get( afterSuccessParam ) ) );
+										}
 									} );
 
 									// Append the product data hidden inputs.
@@ -281,7 +290,10 @@ domReady( () => {
 									if ( variationData ) {
 										const data = JSON.parse( variationData );
 										Object.keys( data ).forEach( key => {
-											singleVariationForm.appendChild( createHiddenInput( key, data[ key ] ) );
+											const existingInputs = singleVariationForm.querySelectorAll( 'input[name="' +  key + '"]' );
+											if ( 0 === existingInputs.length ) {
+												singleVariationForm.appendChild( createHiddenInput( key, data[ key ] ) );
+											}
 										} );
 									}
 								} );
@@ -291,11 +303,65 @@ domReady( () => {
 							form.classList.remove( 'modal-processing' );
 							openModal( variationModal );
 							a11y.trapFocus( variationModal, false );
+
+							// Set up some GA4 information.
+							const getDataProduct = form.getAttribute( 'data-product' );
+							getProductDataModal = getDataProduct ? JSON.parse( getDataProduct ) : {};
+							manageOpened( getProductDataModal );
+
+							// Append product data info to the modal itself, so we can grab it for manageDismissed:
+							document
+								.getElementById( 'newspack_modal_checkout' )
+								.setAttribute( 'data-order-details', JSON.stringify( getProductDataModal ) );
 							return;
 						}
 					}
 
 					form.classList.remove( 'modal-processing' );
+
+					const isDonateBlock = formData.get( 'newspack_donate' );
+					const isCheckoutButtonBlock = formData.get( 'newspack_checkout' );
+
+					// Set up some GA4 information.
+					if ( isCheckoutButtonBlock ) { // this fires on the second in-modal variations screen, too
+						const getDataProduct = form.getAttribute( 'data-product' );
+						getProductDataModal = getDataProduct ? JSON.parse( getDataProduct ) : {};
+					} else if ( isDonateBlock ) {
+						// Get donation information and append to the modal checkout for GA4:
+						const donationFreq = formData.get( 'donation_frequency' );
+						let donationValue = '';
+						let productId = '';
+
+						for ( const key of formData.keys() ) {
+							// Find values that match the frequency name, that aren't empty
+							if (
+								key.indexOf( 'donation_value_' + donationFreq ) >= 0 &&
+								'other' !== formData.get( key ) &&
+								'' !== formData.get( key )
+							) {
+								donationValue = formData.get( key );
+							}
+						}
+
+						// Get IDs for donation frequencies, and compare them to the selected frequency.
+						const freqIds = JSON.parse( formData.get( 'frequency_ids' ) );
+						for ( const freq in freqIds ) {
+							if ( freq === donationFreq ) {
+								productId = freqIds[freq].toString();
+							}
+						}
+
+						// Get product information together to be appended to the modal for GA4 events outside of the iframe.
+						getProductDataModal = {
+							amount: donationValue,
+							action_type: 'donation',
+							currency: formData.get( 'donation_currency' ),
+							product_id: productId,
+							product_type: 'donation',
+							recurrence: donationFreq,
+							referrer: formData.get( '_wp_http_referer' ),
+						};
+					}
 
 					if (
 						typeof newspack_ras_config !== 'undefined' &&
@@ -308,7 +374,7 @@ domReady( () => {
 						let price = '0';
 						let priceSummary = '';
 
-						if ( formData.get( 'newspack_donate' ) ) {
+						if ( isDonateBlock ) {
 							const frequency = formData.get( 'donation_frequency' );
 							const donationTiers = form.querySelectorAll(
 								`.donation-tier__${ frequency }, .donation-frequency__${ frequency }`
@@ -361,7 +427,7 @@ domReady( () => {
 									}
 								}
 							}
-						} else if ( formData.get( 'newspack_checkout' ) ) {
+						} else if ( isCheckoutButtonBlock ) {
 							const priceSummaryInput = form.querySelector( 'input[name="product_price_summary"]' );
 
 							if ( priceSummaryInput ) {
@@ -429,6 +495,11 @@ domReady( () => {
 					} else {
 						// Otherwise initialize checkout.
 						openCheckout();
+						manageOpened( getProductDataModal );
+						// Append product data info to the modal, so we can grab it for GA4 events outside of the iframe.
+						document
+							.getElementById( 'newspack_modal_checkout' )
+							.setAttribute( 'data-order-details', JSON.stringify( getProductDataModal ) );
 					}
 				} );
 			} );

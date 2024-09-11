@@ -7,6 +7,7 @@ import './checkout.scss';
 /**
  * Internal dependencies
  */
+import { manageCheckoutAttempt, manageLoaded, managePagination } from './analytics';
 import { domReady } from './utils';
 
 domReady(
@@ -38,10 +39,14 @@ domReady(
 		/**
 		 * Set the checkout as ready so the modal can resolve the loading state.
 		 */
-		function setReady() {
+		function setReady( init_modal_opened = true ) {
 			const container = document.querySelector( '#newspack_modal_checkout_container' );
 			container.checkoutReady = true;
 			container.dispatchEvent( readyEvent );
+			if ( init_modal_opened ) {
+				// Only fire this data event when the modal is being opened.
+				manageLoaded( container );
+			}
 		}
 
 		if ( newspackBlocksModalCheckout.is_checkout_complete ) {
@@ -360,6 +365,7 @@ domReady(
 				function handleFormSubmit( ev ) {
 					ev.preventDefault();
 					validateForm();
+					managePagination( 'continue' ); // TODOGA4: this is firing whether or not the form validates.
 				}
 
 				/**
@@ -434,7 +440,7 @@ domReady(
 						data[ item.name ] = item.value;
 					} );
 
-					const classname = `${ CLASS_PREFIX }__font--xs`;
+					const classname = `${ newspackBlocksModalCheckout.newspack_class_prefix }__font--xs`;
 					const html = [];
 					html.push( '<div class="billing-details">' );
 					html.push( '<h3>' + newspackBlocksModalCheckout.labels.billing_details + '</h3>' );
@@ -596,6 +602,7 @@ domReady(
 									$form.on( 'click', '#checkout_back', function ( ev ) {
 										ev.preventDefault();
 										setEditingDetails( true );
+										managePagination( 'back' );
 									} );
 								}
 							} else if ( ! silent ) {
@@ -624,6 +631,11 @@ domReady(
 						},
 					} );
 				}
+
+				// Attach handler to "Place Order" button.
+				$form.on( 'click', '#place_order', function () {
+					manageCheckoutAttempt();
+				} );
 
 				/**
 				 * Blocks provided form.
@@ -682,7 +694,7 @@ domReady(
 					parent.newspackCloseModalCheckout()
 				} );
 			}
-			setReady();
+			setReady( false );
 		} );
 
 		// Close modal when 'Esc' key is pressed and focus is inside of the iframe.
