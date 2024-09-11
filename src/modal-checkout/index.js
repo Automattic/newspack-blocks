@@ -114,15 +114,18 @@ domReady(
 					const $el = $wrapper.clone();
 					// Remove existing table from inside the payment methods.
 					$( '#payment .order-review-wrapper' ).remove();
-					// Move new order review table to the payment methods.
-					$( '.payment_methods' ).after( $el );
-					// Toggle visibility according to table content.
 					const $table = $el.find( 'table' );
+					// Toggle visibility according to table content.
 					if ( $table.is( '.empty' ) ) {
 						$el.addClass( 'hidden' );
 					} else {
+						// WooCommerce blocks the order review table while updating.
+						// We need to make sure the cloned table is always unblocked.
+						$table.unblock();
 						$el.removeClass( 'hidden' );
 					}
+					// Move new order review table to the payment methods.
+					$( '.payment_methods' ).after( $el );
 				} );
 
 				/**

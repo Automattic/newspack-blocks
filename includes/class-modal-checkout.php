@@ -454,7 +454,7 @@ final class Modal_Checkout {
 		$products = array_keys( self::$products );
 		foreach ( $products as $product_id ) {
 			$product = wc_get_product( $product_id );
-			if ( ! $product->is_type( 'variable' ) ) {
+			if ( ! $product || ! $product->is_type( 'variable' ) ) {
 				continue;
 			}
 			$product_name = $product->get_name();
@@ -573,7 +573,10 @@ final class Modal_Checkout {
 			plugins_url( 'dist/modalCheckout.js', \NEWSPACK_BLOCKS__PLUGIN_FILE ),
 			$dependencies,
 			\NEWSPACK_BLOCKS__VERSION,
-			true
+			[
+				'strategy'  => 'async',
+				'in_footer' => true,
+			]
 		);
 		wp_localize_script(
 			'newspack-blocks-modal-checkout',
@@ -626,7 +629,10 @@ final class Modal_Checkout {
 			plugins_url( 'dist/modal.js', \NEWSPACK_BLOCKS__PLUGIN_FILE ),
 			[],
 			\NEWSPACK_BLOCKS__VERSION,
-			true
+			[
+				'strategy'  => 'async',
+				'in_footer' => true,
+			]
 		);
 		wp_localize_script(
 			'newspack-blocks-modal',
