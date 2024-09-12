@@ -520,13 +520,16 @@
 			margin-top: var(--newspack-ui-spacer-5, 24px);
 
 			label {
-				display: flex;
-				gap: 0; // We can't use the default label gap because there are multiple elements.
+				display: block;
 				margin: 0;
+				padding: 0 0 0 calc(var(--newspack-ui-spacer-4, 20px) + var(--newspack-ui-spacer-base, 8px)); // This is hacky but lets us pair the checkbox width + gap of normal checkboxes.
+				position: relative;
 			}
 
 			input {
+				inset: 0 auto auto 0;
 				margin: 2px var(--newspack-ui-spacer-base, 8px) 0 0;
+				position: absolute;
 			}
 		}
 	}
