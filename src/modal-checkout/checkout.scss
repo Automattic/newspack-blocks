@@ -508,6 +508,29 @@
 		color: var(--newspack-ui-color-neutral-60, colors.$newspack-ui-color-neutral-60);
 	}
 
+	// Terms and Conditions section
+	.woocommerce-terms-and-conditions {
+		background: var(--newspack-ui-color-neutral-5, #f7f7f7);
+		border-color: var(--newspack-ui-color-border, #ddd);
+		box-shadow: none;
+		margin-top: var(--newspack-ui-spacer-5, 24px);
+		padding: var(--newspack-ui-spacer-5, 24px);
+
+		+ p.form-row {
+			margin-top: var(--newspack-ui-spacer-5, 24px);
+
+			label {
+				display: flex;
+				gap: 0; // We can't use the default label gap because there are multiple elements.
+				margin: 0;
+			}
+
+			input {
+				margin: 2px var(--newspack-ui-spacer-base, 8px) 0 0;
+			}
+		}
+	}
+
 	// Buttons - adjust spacing
 	#place-order {
 		margin-bottom: 0;
