@@ -334,7 +334,6 @@ domReady(
 						},
 					} );
 				}
-
 				if ( $coupon.length ) {
 					$coupon.on( 'submit', handleCouponSubmit );
 					$( document.body ).on( 'removed_coupon_in_checkout', () => {
@@ -388,7 +387,6 @@ domReady(
 								$nyp.find( 'h3, input[name="price"]' ).addClass( 'newspack-ui__field-error' );
 							}
 							$( document.body ).trigger( 'update_checkout', { update_shipping_method: false } );
-
 						},
 						complete: () => {
 							unblockForm( $nyp );
