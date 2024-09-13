@@ -444,11 +444,37 @@
 		}
 	}
 
-	// Woo Payments inputs
+	// WooPayments inputs
 	#wcpay-upe-element,
 	.wcpay-upe-element {
 		margin: 0 0 var(--newspack-ui-spacer-3, 16px);
 		padding: 0;
+	}
+
+	.payment_method_woocommerce_payments {
+		// WooPayments test credit card number
+		.js-woopayments-copy-test-number {
+			font-size: inherit;
+			font-weight: normal;
+			line-height: var(--newspack-ui-line-height-xs, 1.4286);
+			padding: 0;
+			vertical-align: unset;
+
+			&:hover,
+			&:focus {
+				color: inherit;
+				filter: none;
+			}
+
+			i {
+				height: 1em;
+				width: 1em;
+			}
+		}
+
+		.testmode-info a {
+			text-decoration: underline;
+		}
 	}
 
 	// Order review table.
@@ -506,6 +532,32 @@
 	// Privacy Policy
 	.woocommerce-privacy-policy-text {
 		color: var(--newspack-ui-color-neutral-60, colors.$newspack-ui-color-neutral-60);
+	}
+
+	// Terms and Conditions section
+	.woocommerce-terms-and-conditions {
+		background: var(--newspack-ui-color-neutral-5, #f7f7f7);
+		border-color: var(--newspack-ui-color-border, #ddd);
+		box-shadow: none;
+		margin-top: var(--newspack-ui-spacer-5, 24px);
+		padding: var(--newspack-ui-spacer-5, 24px);
+
+		+ p.form-row {
+			margin-top: var(--newspack-ui-spacer-5, 24px);
+
+			label {
+				display: block;
+				margin: 0;
+				padding: 0 0 0 calc(var(--newspack-ui-spacer-4, 20px) + var(--newspack-ui-spacer-base, 8px)); // This is hacky but lets us pair the checkbox width + gap of normal checkboxes.
+				position: relative;
+			}
+
+			input {
+				inset: 0 auto auto 0;
+				margin: 2px var(--newspack-ui-spacer-base, 8px) 0 0;
+				position: absolute;
+			}
+		}
 	}
 
 	// Buttons - adjust spacing
