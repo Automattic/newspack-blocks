@@ -534,6 +534,32 @@
 		color: var(--newspack-ui-color-neutral-60, colors.$newspack-ui-color-neutral-60);
 	}
 
+	// Terms and Conditions section
+	.woocommerce-terms-and-conditions {
+		background: var(--newspack-ui-color-neutral-5, #f7f7f7);
+		border-color: var(--newspack-ui-color-border, #ddd);
+		box-shadow: none;
+		margin-top: var(--newspack-ui-spacer-5, 24px);
+		padding: var(--newspack-ui-spacer-5, 24px);
+
+		+ p.form-row {
+			margin-top: var(--newspack-ui-spacer-5, 24px);
+
+			label {
+				display: block;
+				margin: 0;
+				padding: 0 0 0 calc(var(--newspack-ui-spacer-4, 20px) + var(--newspack-ui-spacer-base, 8px)); // This is hacky but lets us pair the checkbox width + gap of normal checkboxes.
+				position: relative;
+			}
+
+			input {
+				inset: 0 auto auto 0;
+				margin: 2px var(--newspack-ui-spacer-base, 8px) 0 0;
+				position: absolute;
+			}
+		}
+	}
+
 	// Buttons - adjust spacing
 	#place-order {
 		margin-bottom: 0;
