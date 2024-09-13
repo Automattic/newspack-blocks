@@ -129,6 +129,48 @@ domReady(
 				} );
 
 				/**
+				 * Get updated cart total to update the "Place Order" button.
+				 */
+				function returnUpdatedCartTotal() {
+					let cartTotal;
+					$.ajax({
+						url: newspackBlocksModalCheckout.ajax_url,
+						method: 'POST',
+						async: false,
+						data: {
+							action: 'get_cart_total',
+						},
+						success: (response)=>{
+							cartTotal = response;
+						}
+					});
+					if ( cartTotal ) {
+						return cartTotal;
+					}
+				}
+
+				$( document ).on( 'updated_checkout', function() {
+					// Update "Place Order" button to include current price.
+					let processOrderText = newspackBlocksModalCheckout.labels.complete_button;
+					if ( ! processOrderText ) {
+						return;
+					}
+					if ( $( '#place_order' ).hasClass( 'button-label-updated' ) ) {
+						// Modify button text to include updated price.
+						const tree = $( '<div>' + processOrderText + '</div>' );
+						// Update the HTML in the .cart-price span with the new price, and return.
+						tree.find('.cart-price').html( returnUpdatedCartTotal, function() {
+							return this.childNodes;
+						} );
+						processOrderText = tree.html();
+						$( '#place_order' ).html( processOrderText );
+					} else {
+						// Set default button label passed from PHP.
+						$( '#place_order' ).addClass( 'button-label-updated' ).html( processOrderText );
+					}
+				} );
+
+				/**
 				 * Handle gift options.
 				 */
 				if ( $gift_options.length ) {
@@ -292,6 +334,7 @@ domReady(
 						},
 					} );
 				}
+
 				if ( $coupon.length ) {
 					$coupon.on( 'submit', handleCouponSubmit );
 					$( document.body ).on( 'removed_coupon_in_checkout', () => {
@@ -345,6 +388,7 @@ domReady(
 								$nyp.find( 'h3, input[name="price"]' ).addClass( 'newspack-ui__field-error' );
 							}
 							$( document.body ).trigger( 'update_checkout', { update_shipping_method: false } );
+
 						},
 						complete: () => {
 							unblockForm( $nyp );

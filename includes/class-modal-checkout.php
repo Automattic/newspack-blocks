@@ -100,6 +100,10 @@ final class Modal_Checkout {
 		add_filter( 'jetpack_active_modules', [ __CLASS__, 'jetpack_active_modules' ] );
 		add_filter( 'woocommerce_checkout_update_order_review_expired', [ __CLASS__, 'is_not_modal_checkout_filter' ] );
 
+		// Make the current cart price available to the JavaScript.
+		add_action( 'wp_ajax_get_cart_total', [ __CLASS__, 'get_cart_total_js' ] );
+		add_action( 'wp_ajax_nopriv_get_cart_total', [ __CLASS__, 'get_cart_total_js' ] );
+
 		/**
 		 * Ensure that options to limit the number of subscriptions per product are respected.
 		 * Note: This is normally called only for regular checkout pages and REST API requests,
@@ -591,6 +595,7 @@ final class Modal_Checkout {
 					'billing_details'  => self::get_modal_checkout_labels( 'billing_details' ),
 					'shipping_details' => self::get_modal_checkout_labels( 'shipping_details' ),
 					'gift_recipient'   => self::get_modal_checkout_labels( 'gift_recipient' ),
+					'complete_button'  => self::order_button_text_with_price(),
 				],
 			]
 		);
@@ -1169,14 +1174,43 @@ final class Modal_Checkout {
 		if ( ! $cart || $cart->is_empty() ) {
 			return $text;
 		}
+
+		return self::get_modal_checkout_labels( 'checkout_confirm' );
+	}
+
+	/**
+	 * Get the updated "Place order" button text for JS updates.
+	 */
+	public static function order_button_text_with_price() {
+		$cart = \WC()->cart;
+		$is_donation = method_exists( 'Newspack\Donations', 'is_donation_cart' ) && \Newspack\Donations::is_donation_cart();
+
+		// If this isn't a cart, if the cart is empty, or if this is a donation product, bail.
+		if ( ! $cart || $cart->is_empty() || $is_donation ) {
+			return;
+		}
+
 		$total = \wp_strip_all_tags( \wc_price( $cart->total ) );
 
 		return sprintf(
 			/* translators: 1: Checkout button confirmation text. 2: Order total. */
 			__( '%1$s: %2$s', 'newspack-blocks' ),
 			self::get_modal_checkout_labels( 'checkout_confirm' ),
-			$total
+			'<span class="cart-price">' . html_entity_decode( $total ) . '</span>'
 		);
+	}
+
+	/**
+	 * Get the updated price for updating the "Place order" button.
+	 */
+	public static function get_cart_total_js() {
+		$cart = \WC()->cart;
+		if ( ! $cart || $cart->is_empty() ) {
+			return;
+		}
+		$total = \wp_strip_all_tags( \wc_price( $cart->total ) );
+		echo esc_html( html_entity_decode( $total ) );
+		wp_die();
 	}
 
 	/**
