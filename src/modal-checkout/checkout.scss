@@ -444,11 +444,37 @@
 		}
 	}
 
-	// Woo Payments inputs
+	// WooPayments inputs
 	#wcpay-upe-element,
 	.wcpay-upe-element {
 		margin: 0 0 var(--newspack-ui-spacer-3, 16px);
 		padding: 0;
+	}
+
+	.payment_method_woocommerce_payments {
+		// WooPayments test credit card number
+		.js-woopayments-copy-test-number {
+			font-size: inherit;
+			font-weight: normal;
+			line-height: var(--newspack-ui-line-height-xs, 1.4286);
+			padding: 0;
+			vertical-align: unset;
+
+			&:hover,
+			&:focus {
+				color: inherit;
+				filter: none;
+			}
+
+			i {
+				height: 1em;
+				width: 1em;
+			}
+		}
+
+		.testmode-info a {
+			text-decoration: underline;
+		}
 	}
 
 	// Order review table.
