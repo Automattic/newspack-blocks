@@ -1,3 +1,10 @@
+## [4.1.1](https://github.com/Automattic/newspack-blocks/compare/v4.1.0...v4.1.1) (2024-09-16)
+
+
+### Bug Fixes
+
+* support new is_my_account() method from main plugin ([#1869](https://github.com/Automattic/newspack-blocks/issues/1869)) ([b9a3aba](https://github.com/Automattic/newspack-blocks/commit/b9a3aba064073f97bca5e08dd96ff450fe287faf))
+
 # [4.1.0](https://github.com/Automattic/newspack-blocks/compare/v4.0.1...v4.1.0) (2024-08-26)
 
 
