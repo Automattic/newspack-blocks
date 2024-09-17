@@ -1,3 +1,10 @@
+## [4.1.2](https://github.com/Automattic/newspack-blocks/compare/v4.1.1...v4.1.2) (2024-09-17)
+
+
+### Bug Fixes
+
+* **modal-checkout:** tweak HTML to satisfy Woo Payments field validation ([#1883](https://github.com/Automattic/newspack-blocks/issues/1883)) ([16b5e9d](https://github.com/Automattic/newspack-blocks/commit/16b5e9db840d7dfccd064776285221c66d92e7f2))
+
 ## [4.1.1](https://github.com/Automattic/newspack-blocks/compare/v4.1.0...v4.1.1) (2024-09-16)
 
 
