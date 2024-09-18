@@ -1133,6 +1133,10 @@ final class Modal_Checkout {
 	 * Is this request using the modal checkout?
 	 */
 	public static function is_modal_checkout() {
+		// Until we use the modal checkout flow from My Account, we don't want to show the modal checkout thank you template for checkouts originating from My Account.
+		if ( method_exists( 'Newspack\WooCommerce_My_Account', 'is_from_my_account' ) && \Newspack\WooCommerce_My_Account::is_from_my_account() ) {
+			return false;
+		}
 
 		$is_modal_checkout = isset( $_REQUEST['modal_checkout'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! $is_modal_checkout && isset( $_REQUEST['post_data'] ) && is_string( $_REQUEST['post_data'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
