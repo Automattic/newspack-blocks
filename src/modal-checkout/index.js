@@ -131,7 +131,7 @@ domReady(
 				/**
 				 * Get updated cart total to update the "Place Order" button.
 				 */
-				function returnUpdatedCartTotal() {
+				function getUpdatedCartTotal() {
 					let cartTotal;
 					$.ajax({
 						url: newspackBlocksModalCheckout.ajax_url,
@@ -159,7 +159,7 @@ domReady(
 						// Modify button text to include updated price.
 						const tree = $( '<div>' + processOrderText + '</div>' );
 						// Update the HTML in the .cart-price span with the new price, and return.
-						tree.find('.cart-price').html( returnUpdatedCartTotal, function() {
+						tree.find('.cart-price').html( getUpdatedCartTotal, function() {
 							return this.childNodes;
 						} );
 						processOrderText = tree.html();
