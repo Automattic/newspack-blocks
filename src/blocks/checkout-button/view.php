@@ -176,6 +176,7 @@ function render_callback( $attributes ) {
 		'checkout-button',
 		$attributes,
 		[
+			'wp-block-button',
 			( $font_size || isset( $style['typography']['fontSize'] ) ) ? 'has-custom-font-size' : '',
 			$width ? ' has-custom-width wp-block-button__width-' . esc_attr( $width ) : '',
 		]
