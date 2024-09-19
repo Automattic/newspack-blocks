@@ -280,6 +280,7 @@ class Edit extends Component< HomepageArticlesProps > {
 			mobileStack,
 			minHeight,
 			moreButton,
+			infiniteScroll,
 			showExcerpt,
 			showReadMore,
 			readMoreLabel,
@@ -434,11 +435,20 @@ class Edit extends Component< HomepageArticlesProps > {
 						</i>
 					) : (
 						! specificMode && (
-							<ToggleControl
-								label={ __( 'Show "Load more posts" Button', 'newspack-blocks' ) }
-								checked={ moreButton }
-								onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
-							/>
+							<>
+								<ToggleControl
+									label={ __( 'Show "Load more posts" Button', 'newspack-blocks' ) }
+									checked={ moreButton }
+									onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
+								/>
+								{ moreButton && (
+									<ToggleControl
+										label={ __( 'Infinite Scroll', 'newspack-blocks' ) }
+										checked={ infiniteScroll }
+										onChange={ () => setAttributes( { infiniteScroll: ! infiniteScroll } ) }
+									/>
+								) }
+							</>
 						)
 					) }
 					<ToggleControl

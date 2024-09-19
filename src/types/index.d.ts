@@ -125,6 +125,7 @@ declare global {
 		imageShape: string;
 		minHeight: integer;
 		moreButton: boolean;
+		infiniteScroll: boolean;
 		moreButtonText: string;
 		showAuthor: boolean;
 		showAvatar: boolean;
