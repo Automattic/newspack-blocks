@@ -10,6 +10,10 @@
 			"type": "boolean",
 			"default": true
 		},
+		"showFullContent": {
+			"type": "boolean",
+			"default": false
+		},
 		"excerptLength": {
 			"type": "number",
 			"default": 55
@@ -214,9 +218,7 @@
 		},
 		"postType": {
 			"type": "array",
-			"default": [
-				"post"
-			],
+			"default": ["post"],
 			"items": {
 				"type": "string"
 			}
@@ -227,9 +229,7 @@
 		},
 		"includedPostStatuses": {
 			"type": "array",
-			"default": [
-				"publish"
-			],
+			"default": ["publish"],
 			"items": {
 				"type": "string"
 			}
