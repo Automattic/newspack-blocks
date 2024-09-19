@@ -356,8 +356,16 @@ final class Modal_Checkout {
 			}
 		}
 
+		$coupons = \WC()->cart->get_applied_coupons();
+
 		\WC()->cart->empty_cart();
 		\WC()->cart->add_to_cart( $product_id, 1, 0, [], $cart_item_data );
+
+		if ( ! empty( $coupons ) ) {
+			foreach ( $coupons as $coupon ) {
+				\WC()->cart->apply_coupon( $coupon );
+			}
+		}
 
 		wp_send_json_success(
 			[

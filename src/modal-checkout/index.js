@@ -380,7 +380,6 @@ domReady(
 									'</p>'
 							);
 							if ( success ) {
-								$( '.woocommerce-Price-amount' ).replaceWith( res.price );
 								$nyp.find( 'h3, input[name="price"]' ).removeClass( 'newspack-ui__field-error' );
 							} else {
 								$nyp.find( 'input[name="price"]' ).focus();
