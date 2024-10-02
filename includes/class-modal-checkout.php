@@ -702,16 +702,16 @@ final class Modal_Checkout {
 		<body class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal__content" ); ?>" id="newspack_modal_checkout_container">
 			<?php
 			echo do_shortcode( '[woocommerce_checkout]' );
-			wp_footer();
-			// Trigger checkout error event if there are cart errors.
 			if ( is_cart() && ! empty( $wc_errors ) ) :
 				?>
 				<button class="newspack-ui__button newspack-ui__button--primary newspack-ui__button--wide" id="checkout_error_back" type="submit"><?php esc_html_e( 'Go back', 'newspack-blocks' ); ?></button>
 				<script>
+					// Trigger checkout error event if there are cart errors.
 					jQuery( document.body ).trigger( 'checkout_error' );
 				</script>
 				<?php
 			endif;
+			wp_footer();
 			?>
 		</body>
 		</html>
