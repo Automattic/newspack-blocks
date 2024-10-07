@@ -179,12 +179,9 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 								const id = `newspack-tier-${ frequencySlug }-${ uid }-${
 									isOtherTier ? 'other' : index
 								}`;
-								let tierLabel = isOtherTier
+								const tierLabel = isOtherTier
 									? __( 'Other', 'newspack-blocks' )
 									: `${settings.currencySymbol}${displayAmount( suggestedAmount )}` 
-								if (rendersSingleFrequency) {
-									tierLabel = `${tierLabel} ${getFrequencyLabel( frequencySlug, true )}`
-								}
 								return (
 									<div
 										className={ classNames(
@@ -221,6 +218,11 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 									</div>
 								);
 							} ) }
+							{ rendersSingleFrequency ? (
+								<div className='wp-block-newspack-blocks-donate__frequency-label'>
+									{getFrequencyLabel( frequencySlug, true )}
+								</div>
+							) : null }
 						</div>
 					</div>
 				) ) }
