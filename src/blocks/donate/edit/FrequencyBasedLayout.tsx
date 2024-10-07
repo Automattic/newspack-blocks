@@ -14,7 +14,7 @@ import { RichText } from '@wordpress/block-editor';
  * Internal dependencies
  */
 import { AmountValueInput } from './components';
-import { getColorForContrast, getFrequencyLabel } from '../utils';
+import { getColorForContrast, getFrequencyLabel, getFrequencyLabelWithAmount } from '../utils';
 import { FREQUENCIES } from '../consts';
 import type { ComponentProps, DonationFrequencySlug } from '../types';
 
@@ -93,10 +93,11 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 	const displayAmount = ( amount: number ) => amount.toFixed( 2 ).replace( /\.?0*$/, '' );
 
 	const renderFormHeader = () => {
-		return availableFrequencies.length > 1 && (
+		return ! rendersSingleFrequency && (
 			<div className="tab-container">{ availableFrequencies.map( renderTab ) }</div>
 		)
 	}
+	const rendersSingleFrequency = availableFrequencies.length === 1
 
 	const renderUntieredForm = () => (
 		<div className="wp-block-newspack-blocks-donate__options">
@@ -118,6 +119,7 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 											htmlFor={ 'newspack-' + frequencySlug + '-' + uid + '-untiered-input' }
 										>
 											{ __( 'Donation amount', 'newspack-blocks' ) }
+											{ getFrequencyLabel( frequencySlug, true ) }
 										</label>
 										<div className="wp-block-newspack-blocks-donate__money-input money-input">
 											<span className="currency">{ settings.currencySymbol }</span>
@@ -146,7 +148,7 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 										>
 											<div
 												dangerouslySetInnerHTML={ {
-													__html: getFrequencyLabel( untieredAmount, frequencySlug ),
+													__html: getFrequencyLabelWithAmount( untieredAmount, frequencySlug ),
 												} }
 											/>
 										</label>
@@ -177,6 +179,12 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 								const id = `newspack-tier-${ frequencySlug }-${ uid }-${
 									isOtherTier ? 'other' : index
 								}`;
+								let tierLabel = isOtherTier
+									? __( 'Other', 'newspack-blocks' )
+									: `${settings.currencySymbol}${displayAmount( suggestedAmount )}` 
+								if (rendersSingleFrequency) {
+									tierLabel = `${tierLabel} ${getFrequencyLabel( frequencySlug, true )}`
+								}
 								return (
 									<div
 										className={ classNames(
@@ -196,14 +204,13 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 											defaultChecked={ index === 1 }
 										/>
 										<label className="tier-select-label tier-label" htmlFor={ id }>
-											{ isOtherTier
-												? __( 'Other', 'newspack-blocks' )
-												: settings.currencySymbol + displayAmount( suggestedAmount ) }
+											{ tierLabel }
 										</label>
 										{ isOtherTier ? (
 											<>
 												<label className="odl" htmlFor={ id + '-other-input' }>
 													{ __( 'Donation amount', 'newspack-blocks' ) }
+													{ getFrequencyLabel( frequencySlug, true ) }
 												</label>
 												<div className="wp-block-newspack-blocks-donate__money-input money-input">
 													<span className="currency">{ settings.currencySymbol }</span>

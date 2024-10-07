@@ -10,7 +10,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import type { ComponentProps, DonateBlockAttributes, TierBasedOptionValue } from '../types';
-import { getColorForContrast, getFrequencyLabel } from '../utils';
+import { getColorForContrast, getFrequencyLabelWithAmount } from '../utils';
 import { FREQUENCIES, DISABLED_IN_TIERS_BASED_LAYOUT_TIER_INDEX } from '../consts';
 
 const TierBasedLayout = ( props: ComponentProps ) => {
@@ -96,7 +96,7 @@ const TierBasedLayout = ( props: ComponentProps ) => {
 							<div className="wpbnbd__tiers__amount">
 								<div
 									dangerouslySetInnerHTML={ {
-										__html: getFrequencyLabel( amount, currentFrequency ),
+										__html: getFrequencyLabelWithAmount( amount, currentFrequency ),
 									} }
 								/>
 							</div>

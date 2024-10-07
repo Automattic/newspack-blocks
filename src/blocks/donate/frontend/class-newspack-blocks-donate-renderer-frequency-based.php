@@ -109,7 +109,7 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 	 */
 	private static function render_form_header( $configuration, $uid ) {
 		?>
-			<?php if ( count( $configuration['frequencies'] ) > 1 ) : ?>
+			<?php if ( ! self::renders_single_frequency( $configuration ) ) : ?>
 				<div role='tablist' class='tab-container'>
 					<?php foreach ( $configuration['frequencies'] as $frequency_slug => $frequency_name ) : ?>
 						<?php echo self::render_frequency_tab( $frequency_slug, $frequency_name, $uid, $configuration ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -117,6 +117,15 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 				</div>
 			<?php endif; ?>
 		<?php
+	}
+
+	/**
+	 * Does the block render just a single frequency?
+	 *
+	 * @param array $configuration The donations settings.
+	 */
+	private static function renders_single_frequency( $configuration ) {
+		return count( $configuration['frequencies'] ) === 1;
 	}
 
 	/**
@@ -167,6 +176,7 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 										for='newspack-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-untiered-input'
 									>
 										<?php echo esc_html__( 'Donation amount', 'newspack-blocks' ); ?>
+										<?php echo esc_html( trim( self::get_frequency_label( $frequency_slug, true ) ) ); ?>
 									</label>
 									<div class='wp-block-newspack-blocks-donate__money-input money-input'>
 										<span class='currency'>
@@ -253,6 +263,7 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 													for='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-other-input'
 												>
 												<?php echo esc_html__( 'Donation amount', 'newspack-blocks' ); ?>
+												<?php echo esc_html( trim( self::get_frequency_label( $frequency_slug, true ) ) ); ?>
 												</label>
 												<div class='wp-block-newspack-blocks-donate__money-input money-input'>
 													<span class='currency'>
@@ -280,6 +291,9 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 													for='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-<?php echo (int) $index; ?>'
 												>
 													<?php echo esc_html( $configuration['currencySymbol'] . $amount ); ?>
+													<?php if ( self::renders_single_frequency( $configuration ) ) : ?>
+														<?php echo esc_html( trim( self::get_frequency_label( $frequency_slug, true ) ) ); ?>
+													<?php endif; ?>
 												</label>
 													<?php
 												endif;
