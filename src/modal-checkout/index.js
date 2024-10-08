@@ -588,6 +588,7 @@ domReady(
 				function validateForm( silent = false, cb = () => {} ) {
 					const blocked = blockForm( $form );
 					if ( ! blocked ) {
+						console.warn( 'Unable to block the form' ); // eslint-disable-line no-console
 						cb();
 						return false;
 					}
