@@ -13,6 +13,7 @@ import { domReady } from './utils';
 domReady(
 	( $ => {
 		if ( ! $ ) {
+			console.warn( 'jQuery is not available.' ); // eslint-disable-line no-console
 			return;
 		}
 
@@ -587,6 +588,7 @@ domReady(
 				function validateForm( silent = false, cb = () => {} ) {
 					const blocked = blockForm( $form );
 					if ( ! blocked ) {
+						cb();
 						return false;
 					}
 					clearNotices();
