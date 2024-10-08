@@ -627,6 +627,7 @@ final class Modal_Checkout {
 			// WP.
 			'jquery',
 			// Newspack.
+			'newspack-newsletters-',
 			'newspack-blocks-modal',
 			'newspack-blocks-modal-checkout',
 			'newspack-wc',
