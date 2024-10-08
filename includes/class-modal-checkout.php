@@ -574,7 +574,7 @@ final class Modal_Checkout {
 			return;
 		}
 
-		$dependencies = [ 'jquery' ];
+		$dependencies = [ 'jquery', 'wc-checkout' ];
 		// Add support reCAPTCHA dependencies, if connected.
 		if ( class_exists( 'Newspack\Recaptcha' ) && \Newspack\Recaptcha::can_use_captcha() ) {
 			$dependencies[] = \Newspack\Recaptcha::SCRIPT_HANDLE;
