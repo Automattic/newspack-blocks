@@ -40,13 +40,15 @@ domReady( () => {
 	iframe.style.visibility = 'hidden';
 
 	function iframeReady( cb ) {
-		let timer;
+		if ( iframe._readyTimer ) {
+			clearTimeout( iframe._readyTimer );
+		}
 		let fired = false;
 
 		function ready() {
 			if ( ! fired ) {
 				fired = true;
-				clearTimeout( timer );
+				clearTimeout( iframe._readyTimer );
 				cb.call( this );
 			}
 		}
@@ -73,7 +75,7 @@ domReady( () => {
 					addEvent( doc, 'readystatechange', readyState );
 				}
 			} else {
-				timer = setTimeout( checkLoaded, 10 );
+				iframe._readyTimer = setTimeout( checkLoaded, 10 );
 			}
 		}
 		checkLoaded();
