@@ -88,7 +88,7 @@ final class Modal_Checkout {
 		add_action( 'woocommerce_checkout_create_order', [ __CLASS__, 'maybe_add_checkout_registration_order_meta' ], 10, 1 );
 
 		// Remove some stuff from the modal checkout page. It's displayed in an iframe, so it should not be treated as a separate page.
-		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'dequeue_scripts' ], 11 );
+		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'dequeue_scripts' ], PHP_INT_MAX );
 		add_filter( 'newspack_reader_activation_should_render_auth', [ __CLASS__, 'is_not_modal_checkout_filter' ] );
 		add_filter( 'newspack_enqueue_reader_activation_block', [ __CLASS__, 'is_not_modal_checkout_filter' ] );
 		add_filter( 'newspack_enqueue_memberships_block_patterns', [ __CLASS__, 'is_not_modal_checkout_filter' ] );
@@ -622,9 +622,53 @@ final class Modal_Checkout {
 		if ( ! self::is_modal_checkout() ) {
 			return;
 		}
-		wp_dequeue_style( 'cmplz-general' );
-		wp_deregister_script( 'wp-mediaelement' );
-		wp_deregister_style( 'wp-mediaelement' );
+
+		$allowed_assets = [
+			// WP.
+			'jquery',
+			// Newspack.
+			'newspack-blocks-modal',
+			'newspack-blocks-modal-checkout',
+			'newspack-wc',
+			'newspack-ui',
+			'newspack-style',
+			'newspack-recaptcha',
+			// Woo.
+			'woocommerce',
+			'WCPAY',
+			'Woo',
+			'wc-',
+			'wc_',
+			'wcs-',
+			'stripe',
+		];
+
+		global $wp_scripts, $wp_styles;
+
+		foreach ( $wp_scripts->queue as $handle ) {
+			$allowed = false;
+			foreach ( $allowed_assets as $allowed_asset ) {
+				if ( false !== strpos( $handle, $allowed_asset ) ) {
+					$allowed = true;
+					break;
+				}
+			}
+			if ( ! $allowed ) {
+				wp_dequeue_script( $handle );
+			}
+		}
+		foreach ( $wp_styles->queue as $handle ) {
+			$allowed = false;
+			foreach ( $allowed_assets as $allowed_asset ) {
+				if ( false !== strpos( $handle, $allowed_asset ) ) {
+					$allowed = true;
+					break;
+				}
+			}
+			if ( ! $allowed ) {
+				wp_dequeue_style( $handle );
+			}
+		}
 	}
 
 	/**

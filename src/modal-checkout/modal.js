@@ -39,6 +39,107 @@ domReady( () => {
 	iframe.style.height = initialHeight;
 	iframe.style.visibility = 'hidden';
 
+	function iframeReady( cb ) {
+		let timer;
+		let fired = false;
+
+		function ready() {
+			if ( ! fired ) {
+				fired = true;
+				clearTimeout( timer );
+				cb.call( this );
+			}
+		}
+		function readyState() {
+			if ( this.readyState === "complete" ) {
+				ready.call( this );
+			}
+		}
+		function addEvent( elem, event, fn ) {
+			if ( elem.addEventListener ) {
+				return elem.addEventListener( event, fn );
+			}
+			return elem.attachEvent( 'on' + event, function () {
+				return fn.call( elem, window.event );
+			} );
+		}
+		function checkLoaded() {
+			const doc = iframe.contentDocument || iframe.contentWindow?.document;
+			if ( doc && doc.URL.indexOf('about:') !== 0 ) {
+				if ( doc?.readyState === 'complete' ) {
+					ready.call( doc );
+				} else {
+					addEvent( doc, 'DOMContentLoaded', ready );
+					addEvent( doc, 'readystatechange', readyState );
+				}
+			} else {
+				timer = setTimeout( checkLoaded, 10 );
+			}
+		}
+		checkLoaded();
+	}
+
+	/**
+	 * Handle iframe load state.
+	 */
+	function handleIframeReady() {
+		if ( iframe._ready ) {
+			return;
+		}
+		const location = iframe.contentWindow.location;
+		// If RAS is available, set the front-end authentication.
+		if ( window.newspackReaderActivation && location.href.indexOf( 'order-received' ) > -1 ) {
+			const ras = window.newspackReaderActivation;
+			const params = new Proxy( new URLSearchParams( location.search ), {
+				get: ( searchParams, prop ) => searchParams.get( prop ),
+			} );
+			if ( params.email ) {
+				ras.setReaderEmail( params.email );
+				ras.setAuthenticated( true );
+			}
+		}
+		const container = iframe?.contentDocument?.querySelector( `#${ IFRAME_CONTAINER_ID }` );
+		const setModalReady = () => {
+			if ( iframe._ready ) {
+				return;
+			}
+			iframeResizeObserver.observe( container );
+			if ( spinner.style.display !== 'none' ) {
+				spinner.style.display = 'none';
+			}
+			if ( iframe.style.visibility !== 'visible' ) {
+				iframe.style.visibility = 'visible';
+			}
+			iframe._ready = true;
+		}
+		if ( container ) {
+			if ( container.checkoutComplete ) {
+				// Update the modal title and width to reflect successful transaction.
+				setModalSize( 'small' );
+				setModalTitle( newspackBlocksModal.labels.thankyou_modal_title );
+				setModalReady();
+				a11y.trapFocus( modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }` ) );
+			} else {
+				// Revert modal title and width default value.
+				setModalSize();
+				setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
+			}
+			if ( container.checkoutReady ) {
+				setModalReady();
+			} else {
+				container.addEventListener( 'checkout-ready', setModalReady );
+			}
+		// Make sure the iframe has actually loaded something, even if not the expected container.
+		// This check prevents an issue in Chrome where the 'load' event fired twice and the spinner was hidden too soon.
+		} else if ( 'about:blank' !== location.href ) {
+			setModalReady();
+		}
+	}
+
+	iframe.addEventListener( 'load', () => {
+		handleIframeReady();
+ } );
+
 	const iframeResizeObserver = new ResizeObserver( entries => {
 		if ( ! entries || ! entries.length ) {
 			return;
@@ -125,6 +226,7 @@ domReady( () => {
 			manageDismissed();
 			document.getElementById( 'newspack_modal_checkout' ).removeAttribute( 'data-order-details' );
 		}
+		iframe._ready = false;
 	};
 
 	const openCheckout = () => {
@@ -138,6 +240,8 @@ domReady( () => {
 		} );
 
 		a11y.trapFocus( modalCheckout, iframe );
+
+		iframeReady( handleIframeReady );
 	};
 
 	const closeModal = el => {
@@ -504,56 +608,6 @@ domReady( () => {
 				} );
 			} );
 		} );
-
-	/**
-	 * Handle iframe load state.
-	 */
-	iframe.addEventListener( 'load', () => {
-		const location = iframe.contentWindow.location;
-		// If RAS is available, set the front-end authentication.
-		if ( window.newspackReaderActivation && location.href.indexOf( 'order-received' ) > -1 ) {
-			const ras = window.newspackReaderActivation;
-			const params = new Proxy( new URLSearchParams( location.search ), {
-				get: ( searchParams, prop ) => searchParams.get( prop ),
-			} );
-			if ( params.email ) {
-				ras.setReaderEmail( params.email );
-				ras.setAuthenticated( true );
-			}
-		}
-		const container = iframe?.contentDocument?.querySelector( `#${ IFRAME_CONTAINER_ID }` );
-		const setModalReady = () => {
-			iframeResizeObserver.observe( container );
-			if ( spinner.style.display !== 'none' ) {
-				spinner.style.display = 'none';
-			}
-			if ( iframe.style.visibility !== 'visible' ) {
-				iframe.style.visibility = 'visible';
-			}
-		}
-		if ( container ) {
-			if ( container.checkoutComplete ) {
-				// Update the modal title and width to reflect successful transaction.
-				setModalSize( 'small' );
-				setModalTitle( newspackBlocksModal.labels.thankyou_modal_title );
-				setModalReady();
-				a11y.trapFocus( modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }` ) );
-			} else {
-				// Revert modal title and width default value.
-				setModalSize();
-				setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
-			}
-			if ( container.checkoutReady ) {
-				setModalReady();
-			} else {
-				container.addEventListener( 'checkout-ready', () => setModalReady() );
-			}
-		// Make sure the iframe has actually loaded something, even if not the expected container.
-		// This check prevents an issue in Chrome where the 'load' event fired twice and the spinner was hidden too soon.
-		} else if ( 'about:blank' !== location.href ) {
-			setModalReady();
-		}
-	} );
 
 	/**
 	 * Triggers checkout form submit.
