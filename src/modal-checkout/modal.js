@@ -56,23 +56,18 @@ domReady( () => {
 			if ( this.readyState === "complete" ) {
 				ready.call( this );
 			}
-		}
-		function addEvent( elem, event, fn ) {
-			if ( elem.addEventListener ) {
-				return elem.addEventListener( event, fn );
+		}		function checkLoaded() {
+			if ( iframe._ready ) {
+				clearTimeout( iframe._readyTimer );
+				return;
 			}
-			return elem.attachEvent( 'on' + event, function () {
-				return fn.call( elem, window.event );
-			} );
-		}
-		function checkLoaded() {
 			const doc = iframe.contentDocument || iframe.contentWindow?.document;
 			if ( doc && doc.URL.indexOf('about:') !== 0 ) {
 				if ( doc?.readyState === 'complete' ) {
 					ready.call( doc );
 				} else {
-					addEvent( doc, 'DOMContentLoaded', ready );
-					addEvent( doc, 'readystatechange', readyState );
+					doc.addEventListener( 'DOMContentLoaded', ready );
+					doc.addEventListener( 'readystatechange', readyState );
 				}
 			} else {
 				iframe._readyTimer = setTimeout( checkLoaded, 10 );
@@ -85,9 +80,6 @@ domReady( () => {
 	 * Handle iframe load state.
 	 */
 	function handleIframeReady() {
-		if ( iframe._ready ) {
-			return;
-		}
 		const location = iframe.contentWindow.location;
 		// If RAS is available, set the front-end authentication.
 		if ( window.newspackReaderActivation && location.href.indexOf( 'order-received' ) > -1 ) {
@@ -102,9 +94,6 @@ domReady( () => {
 		}
 		const container = iframe?.contentDocument?.querySelector( `#${ IFRAME_CONTAINER_ID }` );
 		const setModalReady = () => {
-			if ( iframe._ready ) {
-				return;
-			}
 			iframeResizeObserver.observe( container );
 			if ( spinner.style.display !== 'none' ) {
 				spinner.style.display = 'none';
@@ -138,9 +127,7 @@ domReady( () => {
 		}
 	}
 
-	iframe.addEventListener( 'load', () => {
-		handleIframeReady();
- } );
+	iframe.addEventListener( 'load', handleIframeReady );
 
 	const iframeResizeObserver = new ResizeObserver( entries => {
 		if ( ! entries || ! entries.length ) {
@@ -174,6 +161,7 @@ domReady( () => {
 			spinner.style.display = 'flex';
 			if ( iframe && modalContent.contains( iframe ) ) {
 				// Reset iframe and modal content heights.
+				iframe._ready = false;
 				iframe.src = 'about:blank';
 				iframe.style.height = initialHeight;
 				iframe.style.visibility = 'hidden';
@@ -228,7 +216,6 @@ domReady( () => {
 			manageDismissed();
 			document.getElementById( 'newspack_modal_checkout' ).removeAttribute( 'data-order-details' );
 		}
-		iframe._ready = false;
 	};
 
 	const openCheckout = () => {
