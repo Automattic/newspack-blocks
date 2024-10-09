@@ -10,8 +10,8 @@ import './checkout.scss';
 import { manageCheckoutAttempt, manageLoaded, managePagination } from './analytics';
 import { domReady } from './utils';
 
-domReady(
-	( $ => {
+( $ => {
+	domReady( () => {
 		if ( ! $ ) {
 			console.warn( 'jQuery is not available.' ); // eslint-disable-line no-console
 			return;
@@ -748,5 +748,5 @@ domReady(
 				parent.newspackCloseModalCheckout();
 			}
 		} );
-	} )( jQuery )
-);
+	} )
+} )( jQuery );
