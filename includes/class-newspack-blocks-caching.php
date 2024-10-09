@@ -13,10 +13,18 @@ class Newspack_Blocks_Caching {
 	const CACHE_GROUP = 'newspack_blocks';
 
 	/**
+	 * Store the cache status for all blocks for this request.
+	 *
+	 * @var bool
+	 */
+	private static $can_serve_all_blocks_from_cache = true;
+
+	/**
 	 * Add hooks and filters.
 	 */
 	public static function init() {
 		if ( defined( 'NEWSPACK_BLOCKS_CACHE_BLOCKS' ) && NEWSPACK_BLOCKS_CACHE_BLOCKS ) {
+			add_action( 'template_redirect', [ __CLASS__, 'check_all_blocks_cache_status' ] );
 			add_filter( 'pre_render_block', [ __CLASS__, 'maybe_serve_cached_block' ], 10, 2 );
 			add_filter( 'render_block', [ __CLASS__, 'maybe_cache_block' ], 9999, 2 );
 
@@ -27,18 +35,55 @@ class Newspack_Blocks_Caching {
 	}
 
 	/**
+	 * Traverse all blocks on a page to check their cache status.
+	 */
+	public static function check_all_blocks_cache_status() {
+		if ( is_singular() ) {
+			$post = get_post();
+			if ( $post && property_exists( $post, 'post_content' ) ) {
+				self::check_block_cache_status( parse_blocks( $post->post_content ) );
+			}
+		}
+	}
+
+	/**
+	 * Check if a block can be cached, recursively.
+	 *
+	 * @param array $blocks Array of block data.
+	 */
+	private static function check_block_cache_status( $blocks ) {
+		$target_block_names = self::get_cacheable_blocks_names();
+		foreach ( $blocks as $block_data ) {
+			if ( in_array( $block_data['blockName'], $target_block_names, true ) ) {
+				if ( ! self::get_cached_block_data( $block_data ) ) {
+					self::$can_serve_all_blocks_from_cache = false;
+				}
+			}
+			if ( ! empty( $block_data['innerBlocks'] ) ) {
+				self::check_block_cache_status( $block_data['innerBlocks'] );
+			}
+		}
+	}
+
+	/**
+	 * Get cacheable blocks' names.
+	 */
+	public static function get_cacheable_blocks_names() {
+		$cacheable_blocks = [
+			'newspack-blocks/homepage-articles',
+			'newspack-blocks/carousel',
+		];
+		return apply_filters( 'newspack_blocks_cacheable_blocks', $cacheable_blocks );
+	}
+
+	/**
 	 * Determine whether a block should be cached.
 	 *
 	 * @param array $block_data Parsed block data.
 	 * @return bool True if block should be cached. False otherwise.
 	 */
 	protected static function should_cache_block( $block_data ) {
-		$cacheable_blocks = [
-			'newspack-blocks/homepage-articles',
-			'newspack-blocks/carousel',
-		];
-		$cacheable_blocks = apply_filters( 'newspack_blocks_cacheable_blocks', $cacheable_blocks );
-		return in_array( $block_data['blockName'], $cacheable_blocks, true );
+		return in_array( $block_data['blockName'], self::get_cacheable_blocks_names(), true );
 	}
 
 	/**
@@ -92,15 +137,13 @@ class Newspack_Blocks_Caching {
 	}
 
 	/**
-	 * Serve a cached block if a valid one exists.
+	 * Is the block available in the cache?
 	 *
-	 * @param string|null $block_html Block HTML. If you return something non-null here it will short-circuit block rendering.
-	 * @param array       $block_data Parsed block data.
-	 * @return string|null Block markup if served from cache. Default (usually null), otherwise.
+	 * @param array $block_data Parsed block data.
 	 */
-	public static function maybe_serve_cached_block( $block_html, $block_data ) {
+	public static function get_cached_block_data( $block_data ) {
 		if ( ! self::should_cache_block( $block_data ) ) {
-			return $block_html;
+			return false;
 		}
 
 		$cache_key   = self::get_cache_key( $block_data );
@@ -110,7 +153,7 @@ class Newspack_Blocks_Caching {
 		$cached_data = wp_cache_get( $cache_key, $cache_group );
 		if ( ! is_array( $cached_data ) || ! isset( $cached_data['timestamp_generated'], $cached_data['cached_content'] ) || empty( $cached_data['cached_content'] ) ) {
 			self::debug_log( sprintf( 'Cached data not found for item %s in group %s', $cache_key, $cache_group ) );
-			return $block_html;
+			return false;
 		}
 
 		// Double-check to make sure cached data is still valid.
@@ -119,10 +162,27 @@ class Newspack_Blocks_Caching {
 				Newspack\Logger::log( sprintf( 'Flushing cache for item %s in group %s because it expired', $cache_key, $cache_group ) );
 			}
 			wp_cache_delete( $cache_key, $cache_group );
+			return false;
+		}
+		self::debug_log( sprintf( 'Found cached block: item %s in group %s', $cache_key, $cache_group ) );
+		return $cached_data;
+	}
+
+	/**
+	 * Serve a cached block if a valid one exists.
+	 *
+	 * @param string|null $block_html Block HTML. If you return something non-null here it will short-circuit block rendering.
+	 * @param array       $block_data Parsed block data.
+	 * @return string|null Block markup if served from cache. Default (usually null), otherwise.
+	 */
+	public static function maybe_serve_cached_block( $block_html, $block_data ) {
+		if ( ! self::$can_serve_all_blocks_from_cache ) {
 			return $block_html;
 		}
-
-		self::debug_log( sprintf( 'Serving cached block: item %s in group %s', $cache_key, $cache_group ) );
+		$cached_data = self::get_cached_block_data( $block_data );
+		if ( ! $cached_data ) {
+			return $block_html;
+		}
 
 		Newspack_Blocks::enqueue_view_assets( 'homepage-articles' );
 
