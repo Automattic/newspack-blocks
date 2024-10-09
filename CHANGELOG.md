@@ -1,3 +1,10 @@
+## [4.2.1](https://github.com/Automattic/newspack-blocks/compare/v4.2.0...v4.2.1) (2024-10-09)
+
+
+### Bug Fixes
+
+* re-add block caching ([937ca53](https://github.com/Automattic/newspack-blocks/commit/937ca530fa46e3e404425eb0b8e1e40dea672a69))
+
 # [4.2.0](https://github.com/Automattic/newspack-blocks/compare/v4.1.2...v4.2.0) (2024-10-08)
 
 
