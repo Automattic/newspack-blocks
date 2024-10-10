@@ -678,13 +678,11 @@ final class Modal_Checkout {
 	 * @return string
 	 */
 	public static function get_checkout_template( $template ) {
-		if ( ! function_exists( 'is_checkout' ) || ! function_exists( 'is_order_received_page' ) || ! function_exists( 'is_cart' ) ) {
-			return $template;
-		}
-		if ( ! is_checkout() && ! is_order_received_page() && ! is_cart() ) {
-			return $template;
-		}
 		if ( ! self::is_modal_checkout() ) {
+			return $template;
+		}
+		// Ensure we are on a wc endpoint.
+		if ( ! function_exists( 'is_wc_endpoint_url' ) && ! is_wc_endpoint_url() ) {
 			return $template;
 		}
 		$class_prefix = self::get_class_prefix();
@@ -701,17 +699,36 @@ final class Modal_Checkout {
 		</head>
 		<body class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal__content" ); ?>" id="newspack_modal_checkout_container">
 			<?php
-			echo do_shortcode( '[woocommerce_checkout]' );
-			if ( is_cart() && ! empty( $wc_errors ) ) :
+			if ( is_checkout() || is_order_received_page() ) {
+				echo do_shortcode( '[woocommerce_checkout]' );
+			} else {
+				// If template is not checkout or order received we want to render an error and back button in modal checkout context.
 				?>
+				<div class="newspack-ui__notice newspack-ui__notice--error">
+					<div>
+						<p>
+							<?php
+							$message = __( "We're sorry, there was an unexpected error. Please try again in a few minutes.", 'newspack-blocks' );
+							if ( ! empty( $wc_errors ) ) {
+								$error = $wc_errors[0];
+								if ( is_array( $error ) ) {
+									$message = $error['notice'];
+								}
+							}
+							echo esc_html( $message );
+							?>
+						</p>
+					</div>
+				</div>
 				<button class="newspack-ui__button newspack-ui__button--primary newspack-ui__button--wide" id="checkout_error_back" type="submit"><?php esc_html_e( 'Go back', 'newspack-blocks' ); ?></button>
 				<script>
-					// Trigger checkout error event if there are cart errors.
-					jQuery( document.body ).trigger( 'checkout_error' );
+					document.addEventListener( 'DOMContentLoaded', function() {
+						jQuery( document.body ).trigger( 'checkout_error' );
+					});
 				</script>
 				<?php
-			endif;
-			wp_footer();
+			}
+				wp_footer();
 			?>
 		</body>
 		</html>
