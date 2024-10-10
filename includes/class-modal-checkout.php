@@ -711,7 +711,7 @@ final class Modal_Checkout {
 							$message = __( "We're sorry, there was an unexpected error. Please try again in a few minutes.", 'newspack-blocks' );
 							if ( ! empty( $wc_errors ) ) {
 								$error = $wc_errors[0];
-								if ( is_array( $error ) ) {
+								if ( is_array( $error ) && isset( $error['notice'] ) ) {
 									$message = $error['notice'];
 								}
 							}
