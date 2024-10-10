@@ -723,15 +723,17 @@ import { domReady } from './utils';
 		}
 
 		/**
-		 * Apply newspack styling to default Woo checkout errors.
+		 * Handle modal checkout error events.
 		 */
 		$( document.body ).on( 'checkout_error', function () {
+			// Apply newspack styling to default Woo checkout errors.
 			const $errors = $( '.woocommerce-NoticeGroup-checkout, .woocommerce-notices-wrapper' );
 			if ( $errors.length ) {
 				$errors.each(
 					( _, error ) => $( error ).addClass(`${ CLASS_PREFIX }__notice ${ CLASS_PREFIX }__notice--error` )
 				);
 			}
+			// Handle "Back" button click.
 			const $checkout_error_back = $( '#checkout_error_back' );
 			if ( $checkout_error_back.length ) {
 				$checkout_error_back.on( 'click', ev => {
@@ -739,6 +741,7 @@ import { domReady } from './utils';
 					parent.newspackCloseModalCheckout()
 				} );
 			}
+			// Trigger ready state.
 			setReady( false );
 		} );
 
