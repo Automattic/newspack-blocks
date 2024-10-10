@@ -682,7 +682,7 @@ final class Modal_Checkout {
 			return $template;
 		}
 		// Ensure we are on a wc endpoint.
-		if ( ! function_exists( 'is_wc_endpoint_url' ) && ! is_wc_endpoint_url() ) {
+		if ( ! function_exists( 'is_wc_endpoint_url' ) || ! is_wc_endpoint_url() ) {
 			return $template;
 		}
 		$class_prefix = self::get_class_prefix();
