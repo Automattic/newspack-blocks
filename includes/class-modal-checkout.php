@@ -163,7 +163,6 @@ final class Modal_Checkout {
 		}
 	}
 
-
 	/**
 	 * Process checkout request for modal.
 	 */
