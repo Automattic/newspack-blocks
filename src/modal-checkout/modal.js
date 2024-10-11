@@ -374,13 +374,11 @@ domReady( () => {
 				title: newspackBlocksModal.labels.auth_modal_title,
 				callback: ( message, authData ) => {
 					cartReq.then( url => {
-						const checkoutForm = generateCheckoutPageForm( url );
-						// Signal checkout registration.
+						// If registered, append the registration flag query param to the url.
 						if ( authData?.registered ) {
-							checkoutForm.appendChild(
-								createHiddenInput( newspackBlocksModal.checkout_registration_flag, '1' )
-							);
+							url += `&${ newspackBlocksModal.checkout_registration_flag }=1`;
 						}
+						const checkoutForm = generateCheckoutPageForm( url );
 						triggerCheckout( checkoutForm );
 					} )
 					.catch( error => {
