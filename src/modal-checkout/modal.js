@@ -654,6 +654,99 @@ domReady( () => {
 	}
 
 	/**
+	 * Handle donation form triggers.
+	 *
+	 * @param {string}      layout    The donation layout.
+	 * @param {string}      frequency The donation frequency.
+	 * @param {string}      amount    The donation amount.
+	 * @param {string|null} other     Optional. The custom amount when other is selected.
+	 */
+	const triggerDonationForm = ( layout, frequency, amount, other = null ) => {
+		let form;
+		document.querySelectorAll( '.wpbnbd.wpbnbd--platform-wc form' )
+			.forEach( donationForm => {
+				const frequencyInput = donationForm.querySelector( `input[name="donation_frequency"][value="${ frequency }"]` );
+				if ( ! frequencyInput ) {
+					return;
+				}
+				if ( layout === 'tiered' ) {
+					const frequencyButton = document.querySelector( `button[data-frequency-slug="${ frequency }"]` );
+					if ( ! frequencyButton ) {
+						return;
+					}
+					frequencyButton.click();
+					const submitButton = donationForm.querySelector( `button[type="submit"][name="donation_value_${ frequency }"][value="${ amount }"]` );
+					if ( ! submitButton ) {
+						return;
+					}
+					submitButton.click();
+				} else {
+					const amountInput = ( layout === 'untiered' ) ?
+						donationForm.querySelector( `input[name="donation_value_${ frequency }_untiered"]` ) :
+						donationForm.querySelector( `input[name="donation_value_${ frequency }"][value="${ amount }"]` );
+					if ( frequencyInput && amountInput ) {
+						frequencyInput.checked = true;
+						if ( layout === 'untiered' ) {
+							amountInput.value = amount;
+						} else if ( amount === 'other' ) {
+							amountInput.click();
+							const otherInput = donationForm.querySelector( `input[name="donation_value_${ frequency }_other"]` );
+							if ( otherInput && other ) {
+								otherInput.value = other;
+							}
+						} else {
+							amountInput.checked = true;
+						}
+						form = donationForm;
+					}
+				}
+			} );
+		if ( form ) {
+			triggerCheckout( form );
+		}
+	}
+
+	/**
+	 * Handle checkout button form triggers.
+	 *
+	 * @param {number}      productId   The product ID.
+	 * @param {number|null} variationId Optional. The variation ID.
+	 */
+	const triggerCheckoutButtonForm = ( productId, variationId = null ) => {
+		let form;
+		if ( variationId && variationId !== productId ) {
+			const variationModals = document.querySelectorAll( `.${ VARIATON_MODAL_CLASS_PREFIX }` );
+			const variationModal = [ ...variationModals ].find(
+				modal => modal.dataset.productId === productId
+			);
+			if ( variationModal ) {
+				const forms = variationModal.querySelectorAll( `form[target="${ IFRAME_NAME }"]` );
+				forms.forEach( variationForm => {
+					const productData = JSON.parse( variationForm.dataset.product );
+					if ( productData?.variation_id === Number( variationId ) ) {
+						form = variationForm;
+					}
+				} );
+			}
+		} else {
+			const checkoutButtons = document.querySelectorAll( '.wp-block-newspack-blocks-checkout-button' );
+			checkoutButtons.forEach( button => {
+				const checkoutButtonForm = button.querySelector( 'form' );
+				if ( ! checkoutButtonForm ) {
+					return;
+				}
+				const productData = JSON.parse( checkoutButtonForm.dataset.product );
+				if ( productData?.product_id === productId ) {
+					form = checkoutButtonForm;
+				}
+			} );
+		}
+		if ( form ) {
+			triggerCheckout( form );
+		}
+	}
+
+	/**
 	 * Handle modal checkout url param triggers.
 	 */
 	const handleModalCheckoutUrlParams = () => {
@@ -661,10 +754,27 @@ domReady( () => {
 		if ( ! urlParams.has( 'checkout' ) ) {
 			return;
 		}
-		const url = window.newspackReaderActivation?.getPendingCheckout?.();
-		if ( url ) {
-			const form = generateCheckoutPageForm( url );
-			triggerCheckout( form );
+		const type = urlParams.get( 'type' );
+		if ( type === 'donate' ) {
+			const layout = urlParams.get( 'layout' );
+			const frequency = urlParams.get( 'frequency' );
+			const amount = urlParams.get( 'amount' );
+			const other = urlParams.get( 'other' );
+			if ( layout && frequency && amount ) {
+				triggerDonationForm( layout, frequency, amount, other );
+			}
+		} else if ( type === 'checkout_button' ) {
+			const productId = urlParams.get( 'product_id' );
+			const variationId = urlParams.get( 'variation_id' );
+			if ( productId ) {
+				triggerCheckoutButtonForm( productId, variationId );
+			}
+		} else {
+			const url = window.newspackReaderActivation?.getPendingCheckout?.();
+			if ( url ) {
+				const form = generateCheckoutPageForm( url );
+				triggerCheckout( form );
+			}
 		}
 		// Remove the URL param to prevent re-triggering.
 		window.history.replaceState( null, null, window.location.pathname );
