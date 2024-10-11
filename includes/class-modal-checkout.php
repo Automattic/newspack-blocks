@@ -57,6 +57,7 @@ final class Modal_Checkout {
 		add_action( 'wp_ajax_nopriv_modal_checkout_request', [ __CLASS__, 'process_checkout_request' ] );
 		add_action( 'wp', [ __CLASS__, 'process_checkout_request' ] );
 
+		add_action( 'wp_loaded', [ __CLASS__, 'set_checkout_registration_flag' ] );
 		add_filter( 'wp_redirect', [ __CLASS__, 'pass_url_param_on_redirect' ] );
 		add_filter( 'woocommerce_cart_product_cannot_be_purchased_message', [ __CLASS__, 'woocommerce_cart_product_cannot_be_purchased_message' ], 10, 2 );
 		add_filter( 'woocommerce_add_error', [ __CLASS__, 'hide_expiry_message_shop_link' ] );
@@ -152,6 +153,18 @@ final class Modal_Checkout {
 	}
 
 	/**
+	 * Set the checkout registration flag to WC session.
+	 */
+	public static function set_checkout_registration_flag() {
+		// Flag the checkout as a registration.
+		$is_checkout_registration = filter_input( INPUT_GET, self::CHECKOUT_REGISTRATION_FLAG, FILTER_SANITIZE_NUMBER_INT );
+		if ( $is_checkout_registration ) {
+			\WC()->session->set( self::CHECKOUT_REGISTRATION_FLAG, true );
+		}
+	}
+
+
+	/**
 	 * Process checkout request for modal.
 	 */
 	public static function process_checkout_request() {
@@ -160,17 +173,6 @@ final class Modal_Checkout {
 		}
 
 		$is_newspack_checkout = filter_input( INPUT_GET, 'newspack_checkout', FILTER_SANITIZE_NUMBER_INT );
-		$is_newspack_donate   = filter_input( INPUT_GET, 'newspack_donate', FILTER_SANITIZE_NUMBER_INT );
-
-		if ( ! $is_newspack_checkout && ! $is_newspack_donate ) {
-			return;
-		}
-
-		// Flag the checkout as a registration for both newspack checkout and donate flows.
-		$is_checkout_registration = filter_input( INPUT_GET, self::CHECKOUT_REGISTRATION_FLAG, FILTER_SANITIZE_NUMBER_INT );
-		if ( $is_checkout_registration ) {
-			\WC()->session->set( self::CHECKOUT_REGISTRATION_FLAG, true );
-		}
 
 		if ( ! $is_newspack_checkout ) {
 			return;
