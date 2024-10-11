@@ -655,6 +655,13 @@ final class Modal_Checkout {
 			'stripe',
 		];
 
+		/**
+		 * Filters the allowed assets to render in the modal checkout
+		 *
+		 * @param string[] $allowed_assets Array of allowed assets handles.
+		 */
+		$allowed_assets = apply_filters( 'newspack_blocks_modal_checkout_allowed_assets', $allowed_assets );
+
 		global $wp_scripts, $wp_styles;
 
 		foreach ( $wp_scripts->queue as $handle ) {
