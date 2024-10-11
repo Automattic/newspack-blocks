@@ -1,3 +1,10 @@
+## [4.2.2](https://github.com/Automattic/newspack-blocks/compare/v4.2.1...v4.2.2) (2024-10-11)
+
+
+### Bug Fixes
+
+* **block-caching:** only serve from cache if all blocks are cached ([#1899](https://github.com/Automattic/newspack-blocks/issues/1899)) ([fb64d0c](https://github.com/Automattic/newspack-blocks/commit/fb64d0ca4ffc2f16870bcc51db83f090054a5d26))
+
 ## [4.2.1](https://github.com/Automattic/newspack-blocks/compare/v4.2.0...v4.2.1) (2024-10-09)
 
 
