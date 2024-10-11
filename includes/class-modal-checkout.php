@@ -681,8 +681,12 @@ final class Modal_Checkout {
 		if ( ! self::is_modal_checkout() ) {
 			return $template;
 		}
-		// Ensure we are on a wc endpoint.
-		if ( ! function_exists( 'is_wc_endpoint_url' ) && ! is_wc_endpoint_url() ) {
+		// Ensure we are on a wc page or endpoint.
+		if (
+			( ! function_exists( 'is_checkout' ) && ! is_checkout() ) &&
+			( ! function_exists( 'is_cart' ) && ! is_cart() ) &&
+			( ! function_exists( 'is_wc_endpoint_url' ) && ! is_wc_endpoint_url() )
+		) {
 			return $template;
 		}
 		$class_prefix = self::get_class_prefix();
@@ -711,7 +715,7 @@ final class Modal_Checkout {
 							$message = __( "We're sorry, there was an unexpected error. Please try again in a few minutes.", 'newspack-blocks' );
 							if ( ! empty( $wc_errors ) ) {
 								$error = $wc_errors[0];
-								if ( is_array( $error ) ) {
+								if ( is_array( $error ) && isset( $error['notice'] ) ) {
 									$message = $error['notice'];
 								}
 							}
