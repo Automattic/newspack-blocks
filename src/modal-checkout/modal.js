@@ -498,7 +498,7 @@ domReady( () => {
 						window.history.back();
 					}
 				}
-				window?.newspackReaderActivation?.resetCheckoutData?.();
+				window?.newspackReaderActivation?.setPendingCheckout?.();
 			};
 
 			if ( window?.newspackReaderActivation?.openNewslettersSignupModal ) {
@@ -516,7 +516,7 @@ domReady( () => {
 				setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
 			}
 		} else {
-			window?.newspackReaderActivation?.resetCheckoutData?.();
+			window?.newspackReaderActivation?.setPendingCheckout?.();
 
 			// Track a dismissal event (modal has been manually closed without completing the checkout).
 			manageDismissed();
