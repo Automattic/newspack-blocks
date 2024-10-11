@@ -703,7 +703,7 @@ final class Modal_Checkout {
 			'newspack-blocks-modal',
 			'newspackBlocksModal',
 			[
-				'ajax_url'									 => admin_url( 'admin-ajax.php' ),
+				'ajax_url'                   => admin_url( 'admin-ajax.php' ),
 				'checkout_registration_flag' => self::CHECKOUT_REGISTRATION_FLAG,
 				'newspack_class_prefix'      => self::get_class_prefix(),
 				'labels'                     => [
