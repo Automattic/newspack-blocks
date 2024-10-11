@@ -167,6 +167,7 @@ final class Modal_Checkout {
 		}
 
 		// Flag the checkout as a registration for both newspack checkout and donate flows.
+		$is_checkout_registration = filter_input( INPUT_GET, self::CHECKOUT_REGISTRATION_FLAG, FILTER_SANITIZE_NUMBER_INT );
 		if ( $is_checkout_registration ) {
 			\WC()->session->set( self::CHECKOUT_REGISTRATION_FLAG, true );
 		}
@@ -180,7 +181,6 @@ final class Modal_Checkout {
 		$after_success_behavior     = filter_input( INPUT_GET, 'after_success_behavior', FILTER_SANITIZE_SPECIAL_CHARS );
 		$after_success_url          = filter_input( INPUT_GET, 'after_success_url', FILTER_SANITIZE_URL );
 		$after_success_button_label = filter_input( INPUT_GET, 'after_success_button_label', FILTER_SANITIZE_SPECIAL_CHARS );
-		$is_checkout_registration   = filter_input( INPUT_GET, self::CHECKOUT_REGISTRATION_FLAG, FILTER_SANITIZE_NUMBER_INT );
 
 		if ( ! $product_id ) {
 			return;
