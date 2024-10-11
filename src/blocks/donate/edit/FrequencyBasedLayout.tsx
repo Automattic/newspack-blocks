@@ -17,6 +17,7 @@ import { AmountValueInput } from './components';
 import { getColorForContrast, getFrequencyLabel, getFrequencyLabelWithAmount } from '../utils';
 import { FREQUENCIES } from '../consts';
 import type { ComponentProps, DonationFrequencySlug } from '../types';
+import { updateBlockClassName, getFormData } from '../view'
 
 const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) => {
 	// Unique identifier to prevent collisions with other Donate blocks' labels.
@@ -26,10 +27,25 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 
 	const formRef = useRef< HTMLFormElement >( null );
 
+	// Add event listeners to the form.
+	useEffect( () => {
+		if ( formRef.current !== null ) {
+			const parentElement = formRef.current.closest('.wpbnbd');
+			if ( parentElement ) {
+				updateBlockClassName( parentElement, getFormData( formRef.current ));
+			}
+			formRef.current.addEventListener('change', () => {
+				if ( formRef.current !== null && parentElement ) {
+					updateBlockClassName( parentElement, getFormData( formRef.current ));
+				}
+			})
+		}
+	}, [] );
+
 	// Update selected frequency when available frequencies change.
 	useEffect( () => {
 		if ( formRef.current ) {
-			const formValues = Object.fromEntries( new FormData( formRef.current ) );
+			const formValues = getFormData( formRef.current );
 			if ( ! formValues.donation_frequency && formRef.current.elements ) {
 				const frequencyRadioInput = formRef.current.elements[ 0 ];
 				if ( frequencyRadioInput instanceof HTMLInputElement ) {
