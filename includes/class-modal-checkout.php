@@ -160,9 +160,8 @@ final class Modal_Checkout {
 		}
 
 		$is_newspack_checkout = filter_input( INPUT_GET, 'newspack_checkout', FILTER_SANITIZE_NUMBER_INT );
-		$is_newspack_donate   = filter_input( INPUT_GET, 'newspack_donate', FILTER_SANITIZE_NUMBER_INT );
 
-		if ( ! $is_newspack_checkout && ! $is_newspack_donate ) {
+		if ( ! $is_newspack_checkout ) {
 			return;
 		}
 
@@ -292,9 +291,14 @@ final class Modal_Checkout {
 			 */
 			\do_action( 'newspack_blocks_checkout_button_modal', $checkout_button_metadata );
 
-			if ( ! defined( 'DOING_AJAX' ) ) {
+			$checkout_url = apply_filters( 'newspack_blocks_checkout_url', $checkout_url );
+
+			if ( defined( 'DOING_AJAX' ) ) {
+				echo wp_json_encode( [ 'url' => $checkout_url ] );
+				exit;
+			} else {
 				// Redirect to checkout.
-			\wp_safe_redirect( apply_filters( 'newspack_blocks_checkout_url', $checkout_url ) );
+				\wp_safe_redirect( $checkout_url );
 				exit;
 			}
 		}
