@@ -10,9 +10,10 @@ import './checkout.scss';
 import { manageCheckoutAttempt, manageLoaded, managePagination } from './analytics';
 import { domReady } from './utils';
 
-domReady(
-	( $ => {
+( $ => {
+	domReady( () => {
 		if ( ! $ ) {
+			console.warn( 'jQuery is not available.' ); // eslint-disable-line no-console
 			return;
 		}
 
@@ -58,8 +59,7 @@ domReady(
 				container.checkoutComplete = true;
 			}
 		} else {
-			$( document.body ).on( 'init_checkout', function () {
-
+			function init() {
 				// If present, update the markup used for the WooPayments express checkout divider.
 				$( '#wcpay-express-checkout-button-separator, #wc-stripe-payment-request-button-separator' ).after(
 					'<div class="newspack-ui__word-divider">' + newspackBlocksModalCheckout.divider_text + '</div>'
@@ -70,6 +70,7 @@ domReady(
 				const $form = $( 'form.checkout' );
 
 				if ( ! $form.length ) {
+					console.warn( 'Form is not available' ); // eslint-disable-line no-console
 					return;
 				}
 				const $coupon = $( 'form.modal_checkout_coupon' );
@@ -587,6 +588,8 @@ domReady(
 				function validateForm( silent = false, cb = () => {} ) {
 					const blocked = blockForm( $form );
 					if ( ! blocked ) {
+						console.warn( 'Unable to block the form' ); // eslint-disable-line no-console
+						cb();
 						return false;
 					}
 					clearNotices();
@@ -715,7 +718,8 @@ domReady(
 					form.removeClass( 'modal-processing' );
 					return true;
 				}
-			} );
+			}
+			init();
 		}
 
 		/**
@@ -747,5 +751,5 @@ domReady(
 				parent.newspackCloseModalCheckout();
 			}
 		} );
-	} )( jQuery )
-);
+	} )
+} )( jQuery );
