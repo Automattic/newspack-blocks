@@ -562,6 +562,13 @@ domReady( () => {
 						}
 						window.newspackReaderActivation?.setCheckoutData?.( data );
 
+						// Add to cart asynchroneously.
+						const urlParams = new URLSearchParams( formData );
+						urlParams.append( 'action', 'modal_checkout_request' );
+						fetch( newspackBlocksModal.ajax_url + '?' + urlParams.toString() ).catch( error => {
+							console.warn( 'Unable to generate cart:', error ); // eslint-disable-line no-console
+						} );
+
 						// Initialize auth flow if reader is not authenticated.
 						window.newspackReaderActivation.openAuthModal( {
 							title: newspackBlocksModal.labels.auth_modal_title,

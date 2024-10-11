@@ -52,7 +52,11 @@ final class Modal_Checkout {
 	 * Initialize hooks.
 	 */
 	public static function init() {
-		add_action( 'wp_loaded', [ __CLASS__, 'process_checkout_request' ], 5 );
+		// Process checkout request.
+		add_action( 'wp_ajax_modal_checkout_request', [ __CLASS__, 'process_checkout_request' ] );
+		add_action( 'wp_ajax_nopriv_modal_checkout_request', [ __CLASS__, 'process_checkout_request' ] );
+		add_action( 'wp', [ __CLASS__, 'process_checkout_request' ] );
+
 		add_filter( 'wp_redirect', [ __CLASS__, 'pass_url_param_on_redirect' ] );
 		add_filter( 'woocommerce_cart_product_cannot_be_purchased_message', [ __CLASS__, 'woocommerce_cart_product_cannot_be_purchased_message' ], 10, 2 );
 		add_filter( 'woocommerce_add_error', [ __CLASS__, 'hide_expiry_message_shop_link' ] );
@@ -151,22 +155,23 @@ final class Modal_Checkout {
 	 * Process checkout request for modal.
 	 */
 	public static function process_checkout_request() {
-		if ( is_admin() ) {
+		if ( is_admin() && ! defined( 'DOING_AJAX' ) ) {
 			return;
 		}
 
-		$is_newspack_checkout       = filter_input( INPUT_GET, 'newspack_checkout', FILTER_SANITIZE_NUMBER_INT );
-		$is_newspack_donate         = filter_input( INPUT_GET, 'newspack_donate', FILTER_SANITIZE_NUMBER_INT );
+		$is_newspack_checkout = filter_input( INPUT_GET, 'newspack_checkout', FILTER_SANITIZE_NUMBER_INT );
+		$is_newspack_donate   = filter_input( INPUT_GET, 'newspack_donate', FILTER_SANITIZE_NUMBER_INT );
+
+		if ( ! $is_newspack_checkout && ! $is_newspack_donate ) {
+			return;
+		}
+
 		$product_id                 = filter_input( INPUT_GET, 'product_id', FILTER_SANITIZE_NUMBER_INT );
 		$variation_id               = filter_input( INPUT_GET, 'variation_id', FILTER_SANITIZE_NUMBER_INT );
 		$after_success_behavior     = filter_input( INPUT_GET, 'after_success_behavior', FILTER_SANITIZE_SPECIAL_CHARS );
 		$after_success_url          = filter_input( INPUT_GET, 'after_success_url', FILTER_SANITIZE_URL );
 		$after_success_button_label = filter_input( INPUT_GET, 'after_success_button_label', FILTER_SANITIZE_SPECIAL_CHARS );
 		$is_checkout_registration   = filter_input( INPUT_GET, self::CHECKOUT_REGISTRATION_FLAG, FILTER_SANITIZE_NUMBER_INT );
-
-		if ( ! $is_newspack_checkout && ! $is_newspack_donate ) {
-			return;
-		}
 
 		// Flag the checkout as a registration.
 		if ( $is_checkout_registration ) {
@@ -287,9 +292,11 @@ final class Modal_Checkout {
 			 */
 			\do_action( 'newspack_blocks_checkout_button_modal', $checkout_button_metadata );
 
-			// Redirect to checkout.
+			if ( ! defined( 'DOING_AJAX' ) ) {
+				// Redirect to checkout.
 			\wp_safe_redirect( apply_filters( 'newspack_blocks_checkout_url', $checkout_url ) );
-			exit;
+				exit;
+			}
 		}
 	}
 
@@ -696,6 +703,7 @@ final class Modal_Checkout {
 			'newspack-blocks-modal',
 			'newspackBlocksModal',
 			[
+				'ajax_url'									 => admin_url( 'admin-ajax.php' ),
 				'checkout_registration_flag' => self::CHECKOUT_REGISTRATION_FLAG,
 				'newspack_class_prefix'      => self::get_class_prefix(),
 				'labels'                     => [
