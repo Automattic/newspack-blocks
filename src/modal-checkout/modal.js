@@ -130,7 +130,11 @@ domReady( () => {
 	iframe.addEventListener( 'load', handleIframeReady );
 
 	/**
-	 * Generate cart.
+	 * Generate cart via ajax.
+	 *
+	 * This strategy, used for anonymous users, addresses an edge case in which
+	 * the session for a newly registered reader fails to carry the cart over to
+	 * the checkout.
 	 *
 	 * @return {Promise} The promise that resolves with the checkout URL.
 	 */
