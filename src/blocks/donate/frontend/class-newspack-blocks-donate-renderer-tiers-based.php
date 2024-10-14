@@ -136,16 +136,22 @@ class Newspack_Blocks_Donate_Renderer_Tiers_Based extends Newspack_Blocks_Donate
 					<?php echo self::render_hidden_form_inputs( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					<input type="hidden" name="<?php echo esc_attr( self::FREQUENCY_PARAM ); ?>" value="<?php echo esc_attr( $intial_selected_frequency ); ?>">
 					<div class="wpbnbd__tiers">
-						<div class="wpbnbd__tiers__selection">
-							<?php foreach ( $configuration['frequencies'] as $frequency_slug => $frequency_name ) : ?>
-								<button
-									type="button"
-									data-frequency-slug="<?php echo esc_attr( $frequency_slug ); ?>"
-									data-frequency-label="<?php echo esc_attr( self::get_frequency_label( $frequency_slug ) ); ?>"
-									class="wpbnbd__button <?php echo $intial_selected_frequency === $frequency_slug ? 'wpbnbd__button--active' : ''; ?>"
-								><?php echo esc_html( $frequency_name ); ?></button>
-							<?php endforeach; ?>
-						</div>
+						<?php if ( count( $configuration['frequencies'] ) > 1 ) : ?>
+							<div class="wpbnbd__tiers__selection">
+								<?php foreach ( $configuration['frequencies'] as $frequency_slug => $frequency_name ) : ?>
+									<button
+										type="button"
+										data-frequency-slug="<?php echo esc_attr( $frequency_slug ); ?>"
+										data-frequency-label="<?php echo esc_attr( self::get_frequency_label( $frequency_slug ) ); ?>"
+										class="wpbnbd__button <?php echo $intial_selected_frequency === $frequency_slug ? 'wpbnbd__button--active' : ''; ?>"
+									><?php echo esc_html( $frequency_name ); ?></button>
+								<?php endforeach; ?>
+							</div>
+						<?php endif; ?>
+						<?php
+							$keys = array_keys( $configuration['frequencies'] );
+							$frequency_slug = reset( $keys );
+						?>
 						<div class="wpbnbd__tiers__options">
 							<?php foreach ( $displayed_amounts as $index => $amount ) : ?>
 								<?php

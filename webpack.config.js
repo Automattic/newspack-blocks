@@ -33,8 +33,15 @@ const blocks = fs
 
 // Helps split up each block into its own folder view script
 const viewBlocksScripts = blocks.reduce( ( viewBlocks, block ) => {
-	const viewScriptPath = path.join( __dirname, 'src', 'blocks', block, 'view.js' );
-	if ( fs.existsSync( viewScriptPath ) ) {
+	const pathToBlock = [__dirname, 'src', 'blocks', block]
+	let viewScriptPath = path.join( ...pathToBlock, 'view.js' );
+	let fileExists = fs.existsSync( viewScriptPath )
+	if (!fileExists) {
+		// Try TS.
+		viewScriptPath = path.join( ...pathToBlock, 'view.ts' );
+		fileExists = fs.existsSync( viewScriptPath )
+	}
+	if ( fileExists ) {
 		viewBlocks[ block + '/view' ] = viewScriptPath;
 	}
 	return viewBlocks;
