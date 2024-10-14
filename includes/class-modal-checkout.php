@@ -614,6 +614,7 @@ final class Modal_Checkout {
 				'newspack_class_prefix' => self::get_class_prefix(),
 				'is_checkout_complete'  => function_exists( 'is_order_received_page' ) && is_order_received_page(),
 				'divider_text'          => esc_html__( 'Or', 'newspack-blocks' ),
+				'is_error'              => ! is_checkout() && ! is_order_received_page(),
 				'labels'                => [
 					'billing_details'  => self::get_modal_checkout_labels( 'billing_details' ),
 					'shipping_details' => self::get_modal_checkout_labels( 'shipping_details' ),
@@ -793,11 +794,6 @@ final class Modal_Checkout {
 					</div>
 				</div>
 				<button class="newspack-ui__button newspack-ui__button--primary newspack-ui__button--wide" id="checkout_error_back" type="submit"><?php esc_html_e( 'Go back', 'newspack-blocks' ); ?></button>
-				<script>
-					document.addEventListener( 'DOMContentLoaded', function() {
-						jQuery( document.body ).trigger( 'checkout_error' );
-					});
-				</script>
 				<?php
 			}
 				wp_footer();

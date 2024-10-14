@@ -751,5 +751,9 @@ import { domReady } from './utils';
 				parent.newspackCloseModalCheckout();
 			}
 		} );
+
+		if ( newspackBlocksModalCheckout.is_error ) {
+			$( document.body ).trigger( 'checkout_error' );
+		}
 	} )
 } )( jQuery );
