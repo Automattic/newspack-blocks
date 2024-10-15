@@ -602,7 +602,13 @@ import { domReady } from './utils';
 						$genericErrors.remove();
 					}
 
-					const serializedForm = $form.serializeArray();
+					const removeFromValidation = [
+						'save_user_in_woopay',
+					];
+					// Serialize form and remove fields that shouldn't be included for validation.
+					const serializedForm = $form.serializeArray().filter(
+						item => ! removeFromValidation.includes( item.name )
+					);
 					// Add 'update totals' parameter so it just performs validation.
 					serializedForm.push( { name: 'woocommerce_checkout_update_totals', value: '1' } );
 					// Ajax request.
