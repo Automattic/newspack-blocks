@@ -86,6 +86,8 @@ final class Modal_Checkout {
 		add_action( 'option_woocommerce_default_customer_address', [ __CLASS__, 'ensure_base_default_customer_address' ] );
 		add_action( 'default_option_woocommerce_default_customer_address', [ __CLASS__, 'ensure_base_default_customer_address' ] );
 		add_action( 'wp_ajax_process_name_your_price_request', [ __CLASS__, 'process_name_your_price_request' ] );
+		add_filter( 'option_woocommerce_woocommerce_payments_settings', [ __CLASS__, 'filter_woocommerce_payments_settings' ] );
+		add_action( 'init', [ __CLASS__, 'unhook_woocommerce_payments_update_billing_fields' ] );
 
 		/** Custom handling for registered users. */
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
@@ -307,6 +309,53 @@ final class Modal_Checkout {
 			exit;
 		}
 	}
+
+	/**
+	 * Filter unsupported Woo Payments features.
+	 *
+	 * @param array $settings WooCommerce Payments settings.
+	 *
+	 * @return array Filtered WooCommerce Payments settings.
+	 */
+	public static function filter_woocommerce_payments_settings( $settings ) {
+		if ( ! self::is_modal_checkout() ) {
+			return $settings;
+		}
+		if ( isset( $settings['platform_checkout'] ) ) {
+			$settings['platform_checkout'] = 'no';
+		}
+		return $settings;
+	}
+
+	/**
+	 * Unhook WooCommerce Payments billing fields update.
+	 *
+	 * The WC_Payment_Gateway_WCPay->checkout_update_email_field_priority() hook
+	 * changes the position of the email address field in the checkout form and
+	 * appends a broken Stripelink button to the email input.
+	 */
+	public static function unhook_woocommerce_payments_update_billing_fields() {
+		if ( ! self::is_modal_checkout() ) {
+			return;
+		}
+		if ( ! class_exists( 'WC_Payments' ) ) {
+			return;
+		}
+		$gateway = \WC_Payments::get_gateway();
+		if ( ! $gateway ) {
+			return;
+		}
+		$filters = $GLOBALS['wp_filter']['woocommerce_billing_fields'];
+		foreach ( $filters as $index => $filter ) {
+			$keys = array_keys( $filter );
+			foreach ( $keys as $key ) {
+				if ( strpos( $key, 'checkout_update_email_field_priority' ) !== false ) {
+					remove_filter( 'woocommerce_billing_fields', $key, $index );
+				}
+			}
+		}
+	}
+
 
 	/**
 	 * Process name your price request for modal.
