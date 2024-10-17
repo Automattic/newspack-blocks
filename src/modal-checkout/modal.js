@@ -384,6 +384,7 @@ domReady( () => {
 					} )
 					.catch( error => {
 						console.warn( 'Unable to generate cart:', error ); // eslint-disable-line no-console
+						closeCheckout();
 					} );
 				},
 				skipSuccess: true,
