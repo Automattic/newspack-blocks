@@ -718,8 +718,6 @@ final class Modal_Checkout {
 
 		global $wp_scripts, $wp_styles;
 
-		error_log( 'Dequeueing scripts and styles not needed for modal checkout.' );
-
 		foreach ( $wp_scripts->queue as $handle ) {
 			$allowed = false;
 			foreach ( $allowed_assets as $allowed_asset ) {
@@ -729,7 +727,6 @@ final class Modal_Checkout {
 				}
 			}
 			if ( ! $allowed ) {
-				error_log( 'Dequeueing script: ' . $handle );
 				wp_dequeue_script( $handle );
 			}
 		}
