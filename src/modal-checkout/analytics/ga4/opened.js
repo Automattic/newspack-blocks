@@ -3,9 +3,9 @@ import { getEventPayload, sendEvent } from './utils';
 /**
  * Execute a callback function to send a GA event when a prompt is dismissed.
  *
- * @param {Object} getProductDataModal Information about the purchase being made.
+ * @param {Object} data Information about the purchase being made.
  */
-export const manageOpened = ( getProductDataModal = '' ) => {
+export const manageOpened = ( data ) => {
 	if ( 'function' !== typeof window.gtag ) {
 		return;
 	}
@@ -23,7 +23,7 @@ export const manageOpened = ( getProductDataModal = '' ) => {
 		recurrence,
 		referrer,
 		variation_id = '',
-	} = getProductDataModal;
+	} = data;
 
 	const params = {
 		action_type,
