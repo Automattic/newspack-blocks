@@ -2,13 +2,17 @@ import { getEventPayload, getProductDetails, sendEvent } from './utils';
 
 /**
  * Event fired when a checkout modal is dismissed (not when closed automatically due to a completed checkout).
+ *
+ * @param {Object} data The data to send with the event.
  */
-export const manageDismissed = () => {
+export const manageDismissed = ( data ) => {
 	if ( 'function' !== typeof window.gtag ) {
 		return;
 	}
 
-	const { action_type, amount = '', currency, price = '', product_id, product_type, recurrence, referrer, variation_id = '' } = getProductDetails( 'newspack_modal_checkout' );
+	data = data || getProductDetails( 'newspack_modal_checkout' );
+
+	const { action_type, amount = '', currency, price = '', product_id, product_type, recurrence, referrer, variation_id = '' } = data;
 
 	const params = {
 		action_type,

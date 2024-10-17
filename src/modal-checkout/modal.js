@@ -19,7 +19,9 @@ const MODAL_CHECKOUT_ID = 'newspack_modal_checkout';
 const MODAL_CLASS_PREFIX = `${ CLASS_PREFIX }__modal`;
 const VARIATON_MODAL_CLASS_PREFIX = 'newspack-blocks__modal-variation';
 
-let getProductDataModal = {};
+// Track the checkout state for analytics.
+let analyticsData = {};
+let checkoutOpen = false;
 
 domReady( () => {
 	const modalCheckout = document.querySelector( `#${ MODAL_CHECKOUT_ID }` );
@@ -228,14 +230,20 @@ domReady( () => {
 				a11y.trapFocus( variationModal, false );
 
 				// Set up some GA4 information.
-				const getDataProduct = form.getAttribute( 'data-product' );
-				getProductDataModal = getDataProduct ? JSON.parse( getDataProduct ) : {};
-				manageOpened( getProductDataModal );
+				const formAnalyticsData = form.getAttribute( 'data-product' );
+				analyticsData = formAnalyticsData ? JSON.parse( formAnalyticsData ) : {};
+
+				// For the variation modal we will not set `checkoutOpen = true` and
+				// let the `opened` event get triggered once the user selects a
+				// variation so we track the selection.
+				if ( ! checkoutOpen ) {
+					manageOpened( analyticsData );
+				}
 
 				// Append product data info to the modal itself, so we can grab it for manageDismissed:
 				document
 					.getElementById( 'newspack_modal_checkout' )
-					.setAttribute( 'data-order-details', JSON.stringify( getProductDataModal ) );
+					.setAttribute( 'data-order-details', JSON.stringify( analyticsData ) );
 				return;
 			}
 		}
@@ -247,8 +255,8 @@ domReady( () => {
 
 		// Set up some GA4 information.
 		if ( isCheckoutButtonBlock ) { // this fires on the second in-modal variations screen, too
-			const getDataProduct = form.getAttribute( 'data-product' );
-			getProductDataModal = getDataProduct ? JSON.parse( getDataProduct ) : {};
+			const formAnalyticsData = form.getAttribute( 'data-product' );
+			analyticsData = formAnalyticsData ? JSON.parse( formAnalyticsData ) : {};
 		} else if ( isDonateBlock ) {
 			// Get donation information and append to the modal checkout for GA4:
 			const donationFreq = formData.get( 'donation_frequency' );
@@ -275,7 +283,7 @@ domReady( () => {
 			}
 
 			// Get product information together to be appended to the modal for GA4 events outside of the iframe.
-			getProductDataModal = {
+			analyticsData = {
 				amount: donationValue,
 				action_type: 'donation',
 				currency: formData.get( 'donation_currency' ),
@@ -285,6 +293,12 @@ domReady( () => {
 				referrer: formData.get( '_wp_http_referer' ),
 			};
 		}
+
+		// Analytics.
+		if ( ! checkoutOpen ) {
+			manageOpened( analyticsData );
+		}
+		checkoutOpen = true;
 
 		if (
 			typeof newspack_ras_config !== 'undefined' &&
@@ -387,6 +401,12 @@ domReady( () => {
 						closeCheckout();
 					} );
 				},
+				onClose: () => {
+					// Analytics: Track a dismissal event (modal has been manually closed without completing the checkout).
+					manageDismissed( analyticsData );
+					checkoutOpen = false;
+					document.getElementById( 'newspack_modal_checkout' ).removeAttribute( 'data-order-details' );
+				},
 				skipSuccess: true,
 				skipNewslettersSignup: true,
 				labels: {
@@ -403,11 +423,10 @@ domReady( () => {
 		} else {
 			// Otherwise initialize checkout.
 			openCheckout();
-			manageOpened( getProductDataModal );
 			// Append product data info to the modal, so we can grab it for GA4 events outside of the iframe.
 			document
 				.getElementById( 'newspack_modal_checkout' )
-				.setAttribute( 'data-order-details', JSON.stringify( getProductDataModal ) );
+				.setAttribute( 'data-order-details', JSON.stringify( analyticsData ) );
 		}
 	};
 
@@ -499,6 +518,7 @@ domReady( () => {
 					}
 				}
 				window?.newspackReaderActivation?.setPendingCheckout?.();
+				checkoutOpen = false;
 			};
 
 			if ( window?.newspackReaderActivation?.openNewslettersSignupModal ) {
@@ -518,8 +538,9 @@ domReady( () => {
 		} else {
 			window?.newspackReaderActivation?.setPendingCheckout?.();
 
-			// Track a dismissal event (modal has been manually closed without completing the checkout).
+			// Analytics: Track a dismissal event (modal has been manually closed without completing the checkout).
 			manageDismissed();
+			checkoutOpen = false;
 			document.getElementById( 'newspack_modal_checkout' ).removeAttribute( 'data-order-details' );
 		}
 	};
