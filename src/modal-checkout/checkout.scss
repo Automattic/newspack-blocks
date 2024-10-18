@@ -2,6 +2,7 @@
 
 // stylelint-disable-next-line selector-id-pattern
 #newspack_modal_checkout_container {
+	background: var(--newspack-ui-color-neutral-0, #fff);
 	padding: var(--newspack-ui-spacer-5, 24px);
 
 	form p {
@@ -309,12 +310,13 @@
 
 				li {
 					display: flex;
+					line-height: var(--newspack-ui-line-height-xs, 1.4286);
 					margin-bottom: var(--newspack-ui-spacer-3, 16px);
 
 					label {
 						font-size: var(--newspack-ui-font-size-xs, 14px);
 						font-weight: normal;
-						line-height: var(--newspack-ui-line-height-xs, 1.4286);
+						line-height: inherit;
 					}
 
 					input {
@@ -454,6 +456,7 @@
 	.payment_method_woocommerce_payments {
 		// WooPayments test credit card number
 		.js-woopayments-copy-test-number {
+			font-family: var(--newspack-ui-font-family, system-ui);
 			font-size: inherit;
 			font-weight: normal;
 			line-height: var(--newspack-ui-line-height-xs, 1.4286);
@@ -507,9 +510,12 @@
 
 	// Override checkout form terms and condition text.
 	.woocommerce-terms-and-conditions-wrapper {
-		font-size: var(--newspack-ui-font-size-xs, 14px);
-		line-height: var(--newspack-ui-line-height-xs, 1.4286);
 		margin-bottom: 0;
+
+		p {
+			font-size: var(--newspack-ui-font-size-xs, 14px);
+			line-height: var(--newspack-ui-line-height-xs, 1.4286);
+		}
 	}
 
 	// Errors
