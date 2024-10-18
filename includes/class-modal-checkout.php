@@ -707,6 +707,7 @@ final class Modal_Checkout {
 			'wc_',
 			'wcs-',
 			'stripe',
+			'select2',
 		];
 
 		/**
