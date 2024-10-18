@@ -100,7 +100,10 @@ function ProductControl( props ) {
 			.then( products => {
 				const _suggestions = {};
 				products.forEach( product => {
-					_suggestions[ product.id ] = `${ product.id }: ${ product.name }`;
+					// Skip any products that don't have prices set.
+					if ( '' !== product.price ) {
+						_suggestions[ product.id ] = `${ product.id }: ${ product.name }`;
+					}
 				} );
 				setSuggestions( _suggestions );
 			} )
