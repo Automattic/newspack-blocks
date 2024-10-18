@@ -691,6 +691,7 @@ final class Modal_Checkout {
 		$allowed_assets = [
 			'jquery',
 			'google_gtagjs',
+			'select2',
 			// Newspack.
 			'newspack-newsletters-',
 			'newspack-blocks-modal',
