@@ -388,7 +388,7 @@ domReady( () => {
 			// Initialize auth flow if reader is not authenticated.
 			window.newspackReaderActivation.openAuthModal( {
 				title: newspackBlocksModal.labels.auth_modal_title,
-				callback: ( message, authData ) => {
+				onSuccess: ( message, authData ) => {
 					cartReq.then( url => {
 						// If registered, append the registration flag query param to the url.
 						if ( authData?.registered ) {
@@ -402,7 +402,10 @@ domReady( () => {
 						closeCheckout();
 					} );
 				},
-				onClose: () => {
+				onError: () => {
+					closeCheckout();
+				},
+				onDismiss: () => {
 					// Analytics: Track a dismissal event (modal has been manually closed without completing the checkout).
 					manageDismissed( analyticsData );
 					inCheckoutIntent = false;
@@ -524,7 +527,8 @@ domReady( () => {
 
 			if ( window?.newspackReaderActivation?.openNewslettersSignupModal ) {
 				window.newspackReaderActivation.openNewslettersSignupModal( {
-					callback: handleCheckoutComplete,
+					onSuccess: handleCheckoutComplete,
+					onError: handleCheckoutComplete,
 					closeOnSuccess: shouldCloseModal,
 				} );
 			} else {
