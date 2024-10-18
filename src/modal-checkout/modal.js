@@ -58,7 +58,8 @@ domReady( () => {
 			if ( this.readyState === "complete" ) {
 				ready.call( this );
 			}
-		}		function checkLoaded() {
+		}
+		function checkLoaded() {
 			if ( iframe._ready ) {
 				clearTimeout( iframe._readyTimer );
 				return;
@@ -122,10 +123,6 @@ domReady( () => {
 			} else {
 				container.addEventListener( 'checkout-ready', setModalReady );
 			}
-		// Make sure the iframe has actually loaded something, even if not the expected container.
-		// This check prevents an issue in Chrome where the 'load' event fired twice and the spinner was hidden too soon.
-		} else if ( 'about:blank' !== location.href ) {
-			setModalReady();
 		}
 	}
 
@@ -401,6 +398,7 @@ domReady( () => {
 					} )
 					.catch( error => {
 						console.warn( 'Unable to generate cart:', error ); // eslint-disable-line no-console
+						closeCheckout();
 					} );
 				},
 				onClose: () => {
