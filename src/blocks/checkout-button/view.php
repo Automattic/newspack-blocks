@@ -129,6 +129,11 @@ function render_callback( $attributes ) {
 		$variation_id          = $attributes['variation'];
 		$product_price_summary = Modal_Checkout::get_summary_card_price_string( $name, $price, $frequency );
 
+		// If the product is not a variable product and doesn't have a price available, bail.
+		if ( ! $is_variable && ! $price ) {
+			return;
+		}
+
 		// If this is a variable product without a variation picked, we're not sure about the frequency.
 		$recurrence = ! empty( $frequency ) ? $frequency : 'once';
 		if ( $is_variable && empty( $variation_id ) ) {
