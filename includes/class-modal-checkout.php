@@ -689,8 +689,8 @@ final class Modal_Checkout {
 		}
 
 		$allowed_assets = [
-			// WP.
 			'jquery',
+			'google_gtagjs',
 			// Newspack.
 			'newspack-newsletters-',
 			'newspack-blocks-modal',
