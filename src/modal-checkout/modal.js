@@ -21,7 +21,8 @@ const VARIATON_MODAL_CLASS_PREFIX = 'newspack-blocks__modal-variation';
 
 // Track the checkout state for analytics.
 let analyticsData = {};
-let checkoutOpen = false;
+// Track the checkout intent to avoid multiple analytics events.
+let inCheckoutIntent = false;
 
 domReady( () => {
 	const modalCheckout = document.querySelector( `#${ MODAL_CHECKOUT_ID }` );
@@ -233,10 +234,10 @@ domReady( () => {
 				const formAnalyticsData = form.getAttribute( 'data-product' );
 				analyticsData = formAnalyticsData ? JSON.parse( formAnalyticsData ) : {};
 
-				// For the variation modal we will not set `checkoutOpen = true` and
+				// For the variation modal we will not set `inCheckoutIntent = true` and
 				// let the `opened` event get triggered once the user selects a
 				// variation so we track the selection.
-				if ( ! checkoutOpen ) {
+				if ( ! inCheckoutIntent ) {
 					manageOpened( analyticsData );
 				}
 
@@ -295,10 +296,10 @@ domReady( () => {
 		}
 
 		// Analytics.
-		if ( ! checkoutOpen ) {
+		if ( ! inCheckoutIntent ) {
 			manageOpened( analyticsData );
 		}
-		checkoutOpen = true;
+		inCheckoutIntent = true;
 
 		if (
 			typeof newspack_ras_config !== 'undefined' &&
@@ -404,7 +405,7 @@ domReady( () => {
 				onClose: () => {
 					// Analytics: Track a dismissal event (modal has been manually closed without completing the checkout).
 					manageDismissed( analyticsData );
-					checkoutOpen = false;
+					inCheckoutIntent = false;
 					document.getElementById( 'newspack_modal_checkout' ).removeAttribute( 'data-order-details' );
 				},
 				skipSuccess: true,
@@ -518,7 +519,7 @@ domReady( () => {
 					}
 				}
 				window?.newspackReaderActivation?.setPendingCheckout?.();
-				checkoutOpen = false;
+				inCheckoutIntent = false;
 			};
 
 			if ( window?.newspackReaderActivation?.openNewslettersSignupModal ) {
@@ -540,7 +541,7 @@ domReady( () => {
 
 			// Analytics: Track a dismissal event (modal has been manually closed without completing the checkout).
 			manageDismissed();
-			checkoutOpen = false;
+			inCheckoutIntent = false;
 			document.getElementById( 'newspack_modal_checkout' ).removeAttribute( 'data-order-details' );
 		}
 	};
