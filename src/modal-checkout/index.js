@@ -207,7 +207,6 @@ import { domReady } from './utils';
 				 * @param {string} error_message
 				 */
 				function handleFormError( error_message ) {
-					unblockForm( $form );
 					$form
 						.find( '.input-text, select, input:checkbox' )
 						.trigger( 'validate' )
@@ -247,6 +246,8 @@ import { domReady } from './utils';
 						}
 					};
 
+					clearNotices();
+
 					/**
 					 * The new "wc-block-components-notice-banner" does not provide a <li />
 					 * of errors when only one field failed validation.
@@ -264,8 +265,6 @@ import { domReady } from './utils';
 						} );
 					}
 
-					clearNotices();
-
 					// Handle generic errors.
 					if ( genericErrors.length ) {
 						$fieldToFocus = false; // Don't focus a field if validation returned generic errors.
@@ -280,6 +279,8 @@ import { domReady } from './utils';
 						window.scroll( { top: $fieldToFocus.offset().top - 100, left: 0, behavior: 'smooth' } );
 						$fieldToFocus.find( 'input.input-text, select, input:checkbox' ).trigger( 'focus' );
 					}
+
+					unblockForm( $form );
 
 					$( document.body ).trigger( 'update_checkout' );
 					$( document.body ).trigger( 'checkout_error', [ error_message ] );
@@ -455,11 +456,12 @@ import { domReady } from './utils';
 						// Initiate reCAPTCHA, if available.
 						if ( newspack_grecaptcha?.render ) {
 							$form.data( 'newspack-recaptcha', 'newspack_modal_checkout' );
-							newspack_grecaptcha.render(
-								$form.get(),
-								() => window.scroll( { top: 0, left: 0, behavior: 'smooth' } ),
-								( error ) => handleFormError( error )
-							);
+							const onSuccess = () => $form.get( 0 ).scrollIntoView( true, { behavior: 'smooth' } );
+							const onError = ( error ) => handleFormError( error );
+							newspack_grecaptcha.render( $form.get(), onSuccess, onError );
+							// Refresh reCAPTCHAs on Woo checkout update and error.
+							$( document ).on( 'updated_checkout', () => newspack_grecaptcha.render( $form.get(), onSuccess, onError ) );
+							$( document.body ).on( 'checkout_error', () => newspack_grecaptcha.render( $form.get(), onSuccess, onError ) );
 						}
 						if ( $coupon.length ) {
 							$coupon.show();
