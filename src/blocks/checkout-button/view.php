@@ -33,9 +33,19 @@ function render_callback( $attributes, $content ) {
 		return '';
 	}
 	$product_id = $attributes['product'];
+
+	// Check if product can actually be purchased before rendering.
+	if ( function_exists( 'wc_get_product' ) ) {
+		$product = wc_get_product( $product_id );
+		if ( ! $product || ! $product->is_purchasable() ) {
+			return '';
+		}
+	}
+
 	if ( $attributes['is_variable'] && ! empty( $attributes['variation'] ) ) {
 		$product_id = $attributes['variation'];
 	}
+
 	\Newspack_Blocks\Modal_Checkout::enqueue_modal( $product_id );
 	\Newspack_Blocks::enqueue_view_assets( 'checkout-button' );
 	return $content;
