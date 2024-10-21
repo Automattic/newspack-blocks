@@ -252,7 +252,11 @@ import { domReady } from './utils';
 					 * of errors when only one field failed validation.
 					 */
 					if ( ! error_message.includes( '<li' ) ) {
-						handleErrorItem( $( error_message ) );
+						try {
+							handleErrorItem( $( error_message ) );
+						} catch {
+							handleErrorItem( $( '<p />' ).append( error_message ) );
+						}
 					} else {
 						const $errors = $( error_message );
 						$errors.find( 'li' ).each( function () {
@@ -260,15 +264,16 @@ import { domReady } from './utils';
 						} );
 					}
 
+					clearNotices();
+
 					// Handle generic errors.
 					if ( genericErrors.length ) {
 						$fieldToFocus = false; // Don't focus a field if validation returned generic errors.
-						$form.prepend(
-							$( '<div class="woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout"/>' ).append(
-								$( '<ul class="woocommerce-error" role="alert" />' ).append( genericErrors )
-							)
+						const $notices = $( '<div class="woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout"/>' ).append(
+							$( '<ul class="woocommerce-error" role="alert" />' ).append( genericErrors )
 						);
-						window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
+						$form.prepend( $notices );
+						$notices.get( 0 ).scrollIntoView( { behavior: 'smooth' } );
 					}
 
 					if ( $fieldToFocus?.length ) {
@@ -450,7 +455,11 @@ import { domReady } from './utils';
 						// Initiate reCAPTCHA, if available.
 						if ( newspack_grecaptcha?.render ) {
 							$form.data( 'newspack-recaptcha', 'newspack_modal_checkout' );
-							newspack_grecaptcha.render( $form.get(), ( error ) => handleFormError( error ) );
+							newspack_grecaptcha.render(
+								$form.get(),
+								() => window.scroll( { top: 0, left: 0, behavior: 'smooth' } ),
+								( error ) => handleFormError( error )
+							);
 						}
 						if ( $coupon.length ) {
 							$coupon.show();

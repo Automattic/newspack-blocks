@@ -596,6 +596,8 @@
 
 	form.checkout .woocommerce-NoticeGroup,
 	.woocommerce .woocommerce-notices-wrapper {
+		scroll-margin-top: var(--newspack-ui-spacer-10, 64px);
+
 		li div {
 			display: block; // Overrides display: flex from theme with listed errors.
 		}
