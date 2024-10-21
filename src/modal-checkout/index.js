@@ -456,7 +456,10 @@ import { domReady } from './utils';
 						// Initiate reCAPTCHA, if available.
 						if ( newspack_grecaptcha?.render ) {
 							$form.data( 'newspack-recaptcha', 'newspack_modal_checkout' );
-							const onSuccess = () => $form.get( 0 ).scrollIntoView( true, { behavior: 'smooth' } );
+							const onSuccess = () => {
+								clearNotices();
+								$form.get( 0 ).scrollIntoView( { behavior: 'smooth' } );
+							}
 							const onError = ( error ) => handleFormError( error );
 							newspack_grecaptcha.render( $form.get(), onSuccess, onError );
 							// Refresh reCAPTCHAs on Woo checkout update and error.
