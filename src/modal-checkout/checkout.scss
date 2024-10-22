@@ -183,6 +183,14 @@
 		}
 	}
 
+	// Create an account
+	.woocommerce-account-fields .create-account label:has(input[type="checkbox"]) {
+		display: grid;
+		gap: 0 var(--newspack-ui-spacer-base, 8px);
+		grid-template-columns: var(--newspack-ui-spacer-4, 20px) 1fr;
+		margin: var(--newspack-ui-spacer-5, 24px) 0 0;
+	}
+
 	// Name Your Price styles
 	.name-your-price {
 		margin-bottom: var(--newspack-ui-spacer-5, 24px);
