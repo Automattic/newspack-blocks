@@ -103,7 +103,8 @@ function render_callback( $attributes ) {
 	// Generate the form.
 	if ( function_exists( 'wc_get_product' ) ) {
 		$product = wc_get_product( $product_id );
-		if ( ! $product ) {
+		// Check if product can actually be purchased before rendering.
+		if ( ! $product || ! $product->is_purchasable() ) {
 			return '';
 		}
 
