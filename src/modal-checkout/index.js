@@ -207,7 +207,6 @@ import { domReady } from './utils';
 				 * @param {string} error_message
 				 */
 				function handleFormError( error_message ) {
-					unblockForm( $form );
 					$form
 						.find( '.input-text, select, input:checkbox' )
 						.trigger( 'validate' )
@@ -247,13 +246,16 @@ import { domReady } from './utils';
 						}
 					};
 
-					/**
-					 * The new "wc-block-components-notice-banner" does not provide a <li />
-					 * of errors when only one field failed validation.
-					 */
-					if ( ! error_message.includes( '<li' ) ) {
+					clearNotices();
+
+					if ( error_message.indexOf( '<' ) !== 0 ) {
+						// If error_message is not an HTML string, wrap it in a <li />.
+						handleErrorItem( $( '<li />' ).append( error_message ) );
+					} else if ( ! error_message.includes( '<li' ) ) {
+						// If not a list, handle as a single error.
 						handleErrorItem( $( error_message ) );
 					} else {
+						// Handle multiple errors.
 						const $errors = $( error_message );
 						$errors.find( 'li' ).each( function () {
 							handleErrorItem( $( this ) );
@@ -263,18 +265,19 @@ import { domReady } from './utils';
 					// Handle generic errors.
 					if ( genericErrors.length ) {
 						$fieldToFocus = false; // Don't focus a field if validation returned generic errors.
-						$form.prepend(
-							$( '<div class="woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout"/>' ).append(
-								$( '<ul class="woocommerce-error" role="alert" />' ).append( genericErrors )
-							)
+						const $notices = $( '<div class="woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout"/>' ).append(
+							$( '<ul class="woocommerce-error" role="alert" />' ).append( genericErrors )
 						);
-						window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
+						$form.prepend( $notices );
+						$notices.get( 0 ).scrollIntoView( { behavior: 'smooth' } );
 					}
 
 					if ( $fieldToFocus?.length ) {
 						window.scroll( { top: $fieldToFocus.offset().top - 100, left: 0, behavior: 'smooth' } );
 						$fieldToFocus.find( 'input.input-text, select, input:checkbox' ).trigger( 'focus' );
 					}
+
+					unblockForm( $form );
 
 					$( document.body ).trigger( 'update_checkout' );
 					$( document.body ).trigger( 'checkout_error', [ error_message ] );
@@ -450,7 +453,15 @@ import { domReady } from './utils';
 						// Initiate reCAPTCHA, if available.
 						if ( newspack_grecaptcha?.render ) {
 							$form.data( 'newspack-recaptcha', 'newspack_modal_checkout' );
-							newspack_grecaptcha.render( $form.get(), ( error ) => handleFormError( error ) );
+							const onSuccess = () => {
+								clearNotices();
+								$form.get( 0 ).scrollIntoView( { behavior: 'smooth' } );
+							}
+							const onError = ( error ) => handleFormError( error );
+							newspack_grecaptcha.render( $form.get(), onSuccess, onError );
+							// Refresh reCAPTCHAs on Woo checkout update and error.
+							$( document ).on( 'updated_checkout', () => newspack_grecaptcha.render( $form.get(), onSuccess, onError ) );
+							$( document.body ).on( 'checkout_error', () => newspack_grecaptcha.render( $form.get(), onSuccess, onError ) );
 						}
 						if ( $coupon.length ) {
 							$coupon.show();
