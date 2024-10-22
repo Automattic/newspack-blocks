@@ -248,17 +248,14 @@ import { domReady } from './utils';
 
 					clearNotices();
 
-					/**
-					 * The new "wc-block-components-notice-banner" does not provide a <li />
-					 * of errors when only one field failed validation.
-					 */
-					if ( ! error_message.includes( '<li' ) ) {
-						try {
-							handleErrorItem( $( error_message ) );
-						} catch {
-							handleErrorItem( $( '<p />' ).append( error_message ) );
-						}
+					if ( error_message.indexOf( '<' ) !== 0 ) {
+						// If error_message is not an HTML string, wrap it in a <li />.
+						handleErrorItem( $( '<li />' ).append( error_message ) );
+					} else if ( ! error_message.includes( '<li' ) ) {
+						// If not a list, handle as a single error.
+						handleErrorItem( $( error_message ) );
 					} else {
+						// Handle multiple errors.
 						const $errors = $( error_message );
 						$errors.find( 'li' ).each( function () {
 							handleErrorItem( $( this ) );
