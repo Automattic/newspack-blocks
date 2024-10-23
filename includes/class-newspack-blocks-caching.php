@@ -210,7 +210,11 @@ class Newspack_Blocks_Caching {
 			return $block_html;
 		}
 
-		Newspack_Blocks::enqueue_view_assets( 'homepage-articles' );
+		if ( 'newspack-blocks/homepage-articles' === $block_data['blockName'] ) {
+			Newspack_Blocks::enqueue_view_assets( 'homepage-articles' );
+		} elseif ( 'newspack-blocks/carousel' === $block_data['blockName'] ) {
+			Newspack_Blocks::enqueue_view_assets( 'carousel' );
+		}
 
 		return $cached_data['cached_content'];
 	}
