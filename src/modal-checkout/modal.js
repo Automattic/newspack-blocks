@@ -158,6 +158,23 @@ domReady( () => {
 	}
 
 	/**
+	 * Empty cart via ajax.
+	 */
+	const emptyCart = () => {
+		const body = new FormData();
+		body.append( 'modal_checkout', '1' );
+		body.append( 'action', 'abandon_modal_checkout' );
+		body.append( '_wpnonce', iframe?.contentWindow?.newspackBlocksModalCheckout?.checkout_nonce );
+		fetch(
+			newspackBlocksModal.ajax_url,
+			{
+				method: 'POST',
+				body,
+			}
+		);
+	}
+
+	/**
 	 * Handle checkout form submit.
 	 *
 	 * @param {Event} ev
@@ -483,9 +500,15 @@ domReady( () => {
 		);
 		const hasNewsletterPopup = document?.querySelector( '.newspack-newsletters-signup-modal' );
 
+		// Empty cart if checkout is not complete.
+		// We grab the nonce from the iframe content window to ensure the nonce was generated for a logged in session
+		// so we need to call this before closing and resetting the iframe.
+		if ( ! container?.checkoutComplete && iframe?.contentWindow?.newspackBlocksModalCheckout ) {
+			emptyCart();
+		}
+
 		// We want to block closing the modal if redirecting elsewhere:
 		const shouldCloseModal = ! afterSuccessUrlInput || ! afterSuccessBehaviorInput || ! container?.checkoutComplete;
-
 		if ( shouldCloseModal || hasNewsletterPopup ) {
 			spinner.style.display = 'flex';
 			if ( iframe && modalContent.contains( iframe ) ) {
@@ -542,7 +565,6 @@ domReady( () => {
 			}
 		} else {
 			window?.newspackReaderActivation?.setPendingCheckout?.();
-
 			// Analytics: Track a dismissal event (modal has been manually closed without completing the checkout).
 			manageDismissed();
 			inCheckoutIntent = false;
