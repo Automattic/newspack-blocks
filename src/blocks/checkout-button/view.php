@@ -103,15 +103,20 @@ function render_callback( $attributes ) {
 	// Generate the form.
 	if ( function_exists( 'wc_get_product' ) ) {
 		$product = wc_get_product( $product_id );
-		$frequency = '';
+		$is_subscription = false;
 		if ( class_exists( '\WC_Subscriptions_Product' ) && \WC_Subscriptions_Product::is_subscription( $product ) ) {
-			$frequency = \WC_Subscriptions_Product::get_period( $product );
+			$is_subscription = true;
 		}
 
 		// Check if product can actually be purchased before rendering.
 		// Exclude subscriptions since we want to show the button for readers who have purchased them still & the modal will show an error if needed.
-		if ( ! $product || ( ! $product->is_purchasable() && empty( $frequency ) ) ) {
+		if ( ! $product || ( ! $product->is_purchasable() && ! $is_subscription ) ) {
 			return '';
+		}
+
+		$frequency = '';
+		if ( $is_subscription ) {
+			$frequency = \WC_Subscriptions_Product::get_period( $product );
 		}
 
 		$name  = $product->get_name();
