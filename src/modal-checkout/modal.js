@@ -158,6 +158,23 @@ domReady( () => {
 	}
 
 	/**
+	 * Empty cart via ajax.
+	 */
+	const emptyCart = () => {
+		const body = new FormData();
+		body.append( 'modal_checkout', '1' );
+		body.append( 'action', 'abandon_modal_checkout' );
+		body.append( 'security', newspackBlocksModal.checkout_nonce );
+		fetch(
+			newspackBlocksModal.ajax_url,
+			{
+				method: 'POST',
+				body,
+			}
+		);
+	}
+
+	/**
 	 * Handle checkout form submit.
 	 *
 	 * @param {Event} ev
@@ -542,7 +559,8 @@ domReady( () => {
 			}
 		} else {
 			window?.newspackReaderActivation?.setPendingCheckout?.();
-
+			// Empty the cart if the checkout was not completed.
+			emptyCart();
 			// Analytics: Track a dismissal event (modal has been manually closed without completing the checkout).
 			manageDismissed();
 			inCheckoutIntent = false;
