@@ -100,9 +100,7 @@ function ProductControl( props ) {
 			.then( products => {
 				const _suggestions = {};
 				products.forEach( product => {
-					if ( product.purchasable ) {
-						_suggestions[ product.id ] = `${ product.id }: ${ product.name }`;
-					}
+					_suggestions[ product.id ] = `${ product.id }: ${ product.name }`;
 				} );
 				setSuggestions( _suggestions );
 			} )
