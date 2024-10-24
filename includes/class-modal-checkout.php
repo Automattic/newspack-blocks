@@ -688,6 +688,7 @@ final class Modal_Checkout {
 			[
 				'ajax_url'              => admin_url( 'admin-ajax.php' ),
 				'nyp_nonce'             => wp_create_nonce( 'newspack_checkout_name_your_price' ),
+				'checkout_nonce'        => wp_create_nonce( 'newspack_modal_checkout_nonce' ),
 				'newspack_class_prefix' => self::get_class_prefix(),
 				'is_checkout_complete'  => function_exists( 'is_order_received_page' ) && is_order_received_page(),
 				'divider_text'          => esc_html__( 'Or', 'newspack-blocks' ),
@@ -798,7 +799,6 @@ final class Modal_Checkout {
 			'newspackBlocksModal',
 			[
 				'ajax_url'                   => admin_url( 'admin-ajax.php' ),
-				'checkout_nonce'             => wp_create_nonce( 'newspack_modal_checkout_nonce' ),
 				'checkout_registration_flag' => self::CHECKOUT_REGISTRATION_FLAG,
 				'newspack_class_prefix'      => self::get_class_prefix(),
 				'labels'                     => [
