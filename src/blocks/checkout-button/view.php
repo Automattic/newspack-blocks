@@ -103,18 +103,16 @@ function render_callback( $attributes ) {
 	// Generate the form.
 	if ( function_exists( 'wc_get_product' ) ) {
 		$product = wc_get_product( $product_id );
-		// Check if product can actually be purchased before rendering.
-		if ( ! $product || ! $product->is_purchasable() ) {
-			return '';
-		}
-
 		$frequency = '';
 		if ( class_exists( '\WC_Subscriptions_Product' ) && \WC_Subscriptions_Product::is_subscription( $product ) ) {
 			$frequency = \WC_Subscriptions_Product::get_period( $product );
 		}
 
-		// Get the product type.
-		$product_type = \Newspack_Blocks\Tracking\Data_Events::get_product_type( $product_id );
+		// Check if product can actually be purchased before rendering.
+		// Exclude subscriptions since we want to show the button for readers who have purchased them still & the modal will show an error if needed.
+		if ( ! $product || ( ! $product->is_purchasable() && empty( $frequency ) ) ) {
+			return '';
+		}
 
 		$name  = $product->get_name();
 		$price = $product->get_price();
@@ -128,6 +126,7 @@ function render_callback( $attributes ) {
 
 		$is_variable           = $attributes['is_variable'];
 		$variation_id          = $attributes['variation'];
+		$product_type          = \Newspack_Blocks\Tracking\Data_Events::get_product_type( $product_id );
 		$product_price_summary = Modal_Checkout::get_summary_card_price_string( $name, $price, $frequency );
 
 		// If this is a variable product without a variation picked, we're not sure about the frequency.
