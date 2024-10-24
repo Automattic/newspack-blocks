@@ -164,7 +164,7 @@ domReady( () => {
 		const body = new FormData();
 		body.append( 'modal_checkout', '1' );
 		body.append( 'action', 'abandon_modal_checkout' );
-		body.append( 'security', newspackBlocksModal.checkout_nonce );
+		body.append( '_wpnonce', newspackBlocksModal.checkout_nonce );
 		fetch(
 			newspackBlocksModal.ajax_url,
 			{

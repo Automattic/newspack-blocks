@@ -316,7 +316,7 @@ final class Modal_Checkout {
 	 * Process abandon checkout for modal.
 	 */
 	public static function process_abandon_checkout() {
-		if ( is_admin() || ! defined( 'DOING_AJAX' ) ) {
+		if ( ! defined( 'DOING_AJAX' ) ) {
 			return;
 		}
 
@@ -324,7 +324,7 @@ final class Modal_Checkout {
 			return;
 		}
 
-		if ( ! check_ajax_referer( 'newspack_modal_checkout_nonce', 'security', false ) ) {
+		if ( ! check_ajax_referer( 'newspack_modal_checkout_nonce' ) ) {
 			wp_send_json_error( [ 'message' => __( 'Invalid nonce.', 'newspack-blocks' ) ] );
 			wp_die();
 		}
