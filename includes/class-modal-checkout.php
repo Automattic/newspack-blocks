@@ -56,6 +56,8 @@ final class Modal_Checkout {
 		add_action( 'wp_ajax_modal_checkout_request', [ __CLASS__, 'process_checkout_request' ] );
 		add_action( 'wp_ajax_nopriv_modal_checkout_request', [ __CLASS__, 'process_checkout_request' ] );
 		add_action( 'wp', [ __CLASS__, 'process_checkout_request' ] );
+		add_action( 'wp_ajax_abandon_modal_checkout', [ __CLASS__, 'process_abandon_checkout' ] );
+		add_action( 'wp_ajax_nopriv_abandon_modal_checkout', [ __CLASS__, 'process_abandon_checkout' ] );
 
 		add_action( 'wp_loaded', [ __CLASS__, 'set_checkout_registration_flag' ] );
 		add_filter( 'wp_redirect', [ __CLASS__, 'pass_url_param_on_redirect' ] );
@@ -308,6 +310,32 @@ final class Modal_Checkout {
 			\wp_safe_redirect( $checkout_url );
 			exit;
 		}
+	}
+
+	/**
+	 * Process abandon checkout for modal.
+	 */
+	public static function process_abandon_checkout() {
+		if ( ! defined( 'DOING_AJAX' ) ) {
+			return;
+		}
+
+		if ( ! self::is_modal_checkout() ) {
+			return;
+		}
+
+		if ( ! check_ajax_referer( 'newspack_modal_checkout_nonce' ) ) {
+			wp_send_json_error( [ 'message' => __( 'Invalid nonce.', 'newspack-blocks' ) ] );
+			wp_die();
+		}
+
+		$cart = \WC()->cart;
+		if ( $cart && ! $cart->is_empty() ) {
+			$cart->empty_cart();
+		}
+
+		wp_send_json_success( [ 'message' => __( 'Cart has been emptied.', 'newspack-blocks' ) ] );
+		wp_die();
 	}
 
 	/**
@@ -660,6 +688,7 @@ final class Modal_Checkout {
 			[
 				'ajax_url'              => admin_url( 'admin-ajax.php' ),
 				'nyp_nonce'             => wp_create_nonce( 'newspack_checkout_name_your_price' ),
+				'checkout_nonce'        => wp_create_nonce( 'newspack_modal_checkout_nonce' ),
 				'newspack_class_prefix' => self::get_class_prefix(),
 				'is_checkout_complete'  => function_exists( 'is_order_received_page' ) && is_order_received_page(),
 				'divider_text'          => esc_html__( 'Or', 'newspack-blocks' ),
