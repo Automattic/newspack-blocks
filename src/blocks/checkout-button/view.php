@@ -103,8 +103,7 @@ function render_callback( $attributes ) {
 	// Generate the form.
 	if ( function_exists( 'wc_get_product' ) ) {
 		$product = wc_get_product( $product_id );
-		// Check if product can actually be purchased before rendering.
-		if ( ! $product || ! $product->is_purchasable() ) {
+		if ( ! $product ) {
 			return '';
 		}
 
@@ -143,7 +142,7 @@ function render_callback( $attributes ) {
 			'product_id'   => $product_id,
 			'product_type' => $product_type,
 			'recurrence'   => $recurrence,
-			'referrer'     => substr( \get_permalink(), strlen( home_url() ) ), // TODO: Is this OK?
+			'referrer'     => substr( \get_permalink(), strlen( home_url() ) ),
 		];
 
 		if ( ! $is_variable || $variation_id ) {
@@ -156,7 +155,11 @@ function render_callback( $attributes ) {
 			$product_data['product_id']   = $product->get_parent_id(); // Reset Product ID as parent ID.
 			$product_data['product_type'] = \Newspack_Blocks\Tracking\Data_Events::get_product_type( $product->get_parent_id() );
 			$product_data['variation_id'] = $product_id; // Overwrite us setting the product ID as the variation ID.
+		}
 
+		// Check if the button should be output: it needs a price, or needs to be a product with variations to pick.
+		if ( ( ! $is_variable && ! $variation_id && ! $price ) || ( $variation_id && ! $price ) ) {
+			return '';
 		}
 
 		$form = sprintf(
