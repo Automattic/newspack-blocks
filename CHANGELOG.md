@@ -1,3 +1,10 @@
+## [4.2.3](https://github.com/Automattic/newspack-blocks/compare/v4.2.2...v4.2.3) (2024-10-22)
+
+
+### Bug Fixes
+
+* carousel style when caching ([afb7f57](https://github.com/Automattic/newspack-blocks/commit/afb7f57c5aa115d7bcc626c120d34a93a46dec6e))
+
 ## [4.2.2](https://github.com/Automattic/newspack-blocks/compare/v4.2.1...v4.2.2) (2024-10-11)
 
 
