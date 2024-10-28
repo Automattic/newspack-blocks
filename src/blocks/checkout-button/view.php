@@ -103,8 +103,7 @@ function render_callback( $attributes ) {
 	// Generate the form.
 	if ( function_exists( 'wc_get_product' ) ) {
 		$product = wc_get_product( $product_id );
-		// Check if product can actually be purchased before rendering.
-		if ( ! $product || ! $product->is_purchasable() ) {
+		if ( ! $product ) {
 			return '';
 		}
 
@@ -116,14 +115,16 @@ function render_callback( $attributes ) {
 		// Get the product type.
 		$product_type = \Newspack_Blocks\Tracking\Data_Events::get_product_type( $product_id );
 
-		$name  = $product->get_name();
-		$price = $product->get_price();
+		$name   = $product->get_name();
+		$price  = $product->get_price();
+		$is_nyp = false;
 		if ( ! empty( $attributes['price'] ) ) {
 			// Default to the price set in the block attributes.
 			$price = $attributes['price'];
 		} elseif ( class_exists( '\WC_Name_Your_Price_Helpers' ) && \WC_Name_Your_Price_Helpers::is_nyp( $product_id ) ) {
 			// Use suggested price if NYP is active and set for variation.
-			$price = \WC_Name_Your_Price_Helpers::get_suggested_price( $product_id );
+			$price  = \WC_Name_Your_Price_Helpers::get_suggested_price( $product_id );
+			$is_nyp = true;
 		}
 
 		$is_variable           = $attributes['is_variable'];
@@ -143,7 +144,7 @@ function render_callback( $attributes ) {
 			'product_id'   => $product_id,
 			'product_type' => $product_type,
 			'recurrence'   => $recurrence,
-			'referrer'     => substr( \get_permalink(), strlen( home_url() ) ), // TODO: Is this OK?
+			'referrer'     => substr( \get_permalink(), strlen( home_url() ) ),
 		];
 
 		if ( ! $is_variable || $variation_id ) {
@@ -156,7 +157,11 @@ function render_callback( $attributes ) {
 			$product_data['product_id']   = $product->get_parent_id(); // Reset Product ID as parent ID.
 			$product_data['product_type'] = \Newspack_Blocks\Tracking\Data_Events::get_product_type( $product->get_parent_id() );
 			$product_data['variation_id'] = $product_id; // Overwrite us setting the product ID as the variation ID.
+		}
 
+		// Check if the button should be output: it needs a price, or needs to be a product with variations to pick.
+		if ( ( ! $is_variable && ! $variation_id && ! $price && ! $is_nyp ) || ( $variation_id && ! $price && ! $is_nyp ) ) {
+			return '';
 		}
 
 		$form = sprintf(
