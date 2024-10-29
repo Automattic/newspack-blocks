@@ -115,16 +115,16 @@ function render_callback( $attributes ) {
 		// Get the product type.
 		$product_type = \Newspack_Blocks\Tracking\Data_Events::get_product_type( $product_id );
 
-		$name   = $product->get_name();
-		$price  = $product->get_price();
-		$is_nyp = false;
+		$name      = $product->get_name();
+		$price     = $product->get_price();
+		$min_price = '';
 		if ( ! empty( $attributes['price'] ) ) {
 			// Default to the price set in the block attributes.
 			$price = $attributes['price'];
 		} elseif ( class_exists( '\WC_Name_Your_Price_Helpers' ) && \WC_Name_Your_Price_Helpers::is_nyp( $product_id ) ) {
 			// Use suggested price if NYP is active and set for variation.
-			$price  = \WC_Name_Your_Price_Helpers::get_suggested_price( $product_id );
-			$is_nyp = true;
+			$price     = \WC_Name_Your_Price_Helpers::get_suggested_price( $product_id );
+			$min_price = \WC_Name_Your_Price_Helpers::get_minimum_price( $product_id );
 		}
 
 		$is_variable           = $attributes['is_variable'];
@@ -160,7 +160,10 @@ function render_callback( $attributes ) {
 		}
 
 		// Check if the button should be output: it needs a price, or needs to be a product with variations to pick.
-		if ( ( ! $is_variable && ! $variation_id && ! $price && ! $is_nyp ) || ( $variation_id && ! $price && ! $is_nyp ) ) {
+		if ( $min_price && ! $price ) {
+			$price = $min_price;
+		}
+		if ( ( ! $is_variable && ! $variation_id && ! $price ) || ( $variation_id && ! $price ) ) {
 			return '';
 		}
 

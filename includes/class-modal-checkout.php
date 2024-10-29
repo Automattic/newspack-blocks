@@ -596,6 +596,10 @@ final class Modal_Checkout {
 									// Use suggested price if NYP is active and set for variation.
 									if ( \Newspack_Blocks::can_use_name_your_price() && \WC_Name_Your_Price_Helpers::is_nyp( $variation_id ) ) {
 										$price = \WC_Name_Your_Price_Helpers::get_suggested_price( $variation_id );
+										$min_price = \WC_Name_Your_Price_Helpers::get_minimum_price( $variation_id );
+										if ( ! $price && ! $min_price ) {
+											continue;
+										}
 									}
 
 									if ( class_exists( '\WC_Subscriptions_Product' ) && \WC_Subscriptions_Product::is_subscription( $variation ) ) {
