@@ -137,10 +137,11 @@ class Newspack_Blocks_Caching {
 	 */
 	protected static function get_cache_group() {
 		if ( is_singular() || is_front_page() ) {
-			$post_type        = get_post_type();
+			$post_type = get_post_type();
+			$last_modified = get_post_modified_time( 'U', true );
 			$post_type_object = get_post_type_object( $post_type );
 			if ( ! $post_type_object->publicly_queryable ) {
-				return sprintf( self::CACHE_GROUP . '-post-%d', get_the_ID() );
+				return sprintf( self::CACHE_GROUP . '-post-%d-%d', get_the_ID(), $last_modified );
 			}
 			return self::CACHE_GROUP;
 		} else {
