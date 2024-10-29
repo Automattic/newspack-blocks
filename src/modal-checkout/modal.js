@@ -181,7 +181,7 @@ domReady( () => {
 		typeof newspack_ras_config !== 'undefined' &&
 		! newspack_ras_config?.is_logged_in &&
 		! window?.newspackReaderActivation?.getReader?.()?.authenticated &&
-		! newspackBlocksModal?.is_registration_required &&
+		newspackBlocksModal?.is_registration_required &&
 		window?.newspackReaderActivation?.openAuthModal
 	);
 
