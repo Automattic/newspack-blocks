@@ -175,6 +175,17 @@ domReady( () => {
 	}
 
 	/**
+	 * Whether reader should be prompted with registration.
+	 */
+	const shouldPromptRegistration = () => (
+		typeof newspack_ras_config !== 'undefined' &&
+		! newspack_ras_config?.is_logged_in &&
+		! window?.newspackReaderActivation?.getReader?.()?.authenticated &&
+		! newspackBlocksModal?.is_registration_required &&
+		window?.newspackReaderActivation?.openAuthModal
+	);
+
+	/**
 	 * Handle checkout form submit.
 	 *
 	 * @param {Event} ev
@@ -318,12 +329,7 @@ domReady( () => {
 		}
 		inCheckoutIntent = true;
 
-		if (
-			typeof newspack_ras_config !== 'undefined' &&
-			! newspack_ras_config?.is_logged_in &&
-			! window?.newspackReaderActivation?.getReader?.()?.authenticated &&
-			window?.newspackReaderActivation?.openAuthModal
-		) {
+		if ( shouldPromptRegistration() ) {
 			ev.preventDefault();
 			let content = '';
 			let price = '0';

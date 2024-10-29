@@ -801,6 +801,7 @@ final class Modal_Checkout {
 				'ajax_url'                   => admin_url( 'admin-ajax.php' ),
 				'checkout_registration_flag' => self::CHECKOUT_REGISTRATION_FLAG,
 				'newspack_class_prefix'      => self::get_class_prefix(),
+				'is_registration_required'   => self::is_registration_required(),
 				'labels'                     => [
 					'auth_modal_title'     => self::get_modal_checkout_labels( 'auth_modal_title' ),
 					'checkout_modal_title' => self::get_modal_checkout_labels( 'checkout_modal_title' ),
@@ -1811,6 +1812,19 @@ final class Modal_Checkout {
 			}
 		}
 		return $is_limited_for_user;
+	}
+
+	/**
+	 * Whether modal checkout requires registration.
+	 *
+	 * @return bool
+	 */
+	public static function is_registration_required() {
+		if ( ! class_exists( '\Newspack\Reader_Activation' ) ) {
+			return false;
+		}
+
+		return \Newspack\Reader_Activation::is_woocommerce_registration_required();
 	}
 }
 Modal_Checkout::init();
