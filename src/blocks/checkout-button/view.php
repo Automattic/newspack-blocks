@@ -38,7 +38,10 @@ function render_callback( $attributes ) {
 	if ( ( ! $product_id && ! $variation_id ) || ! $text ) {
 		return '';
 	}
-
+	$product_id = $attributes['product'];
+	if ( $attributes['is_variable'] && ! empty( $attributes['variation'] ) ) {
+		$product_id = $attributes['variation'];
+	}
 	\Newspack_Blocks\Modal_Checkout::enqueue_modal( $product_id );
 	\Newspack_Blocks::enqueue_view_assets( 'checkout-button' );
 

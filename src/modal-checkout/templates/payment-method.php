@@ -1,6 +1,6 @@
 <?php
 /**
- * Checkout Form
+ * Payment method fields
  *
  * @see https://woo.com/document/template-structure/
  * @package Newspack_Blocks
@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<?php if ( $gateway->has_fields() || $gateway->get_description() ) : ?>
 				<div class="payment_box payment_method_<?php echo esc_attr( $gateway->id ); ?>" <?php if ( ! $gateway->chosen ) : /* phpcs:ignore Squiz.ControlStructures.ControlSignature.NewlineAfterOpenBrace */ ?>style="display:none;"<?php endif; /* phpcs:ignore Squiz.ControlStructures.ControlSignature.NewlineAfterOpenBrace */ ?>>
 					<?php $gateway->payment_fields(); ?>
+					<?php do_action( 'newspack_blocks_after_payment_fields', $gateway->id ); ?>
 				</div>
 			<?php endif; ?>
 		</span>
