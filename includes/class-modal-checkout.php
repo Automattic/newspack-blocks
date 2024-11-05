@@ -551,12 +551,13 @@ final class Modal_Checkout {
 		}
 
 		$custom_templates = [
-			'checkout/form-checkout.php' => 'src/modal-checkout/templates/checkout-form.php',
-			'checkout/form-billing.php'  => 'src/modal-checkout/templates/billing-form.php',
-			'checkout/thankyou.php'      => 'src/modal-checkout/templates/thankyou.php',
+			'checkout/form-checkout.php'  => 'src/modal-checkout/templates/checkout-form.php',
+			'checkout/form-billing.php'   => 'src/modal-checkout/templates/billing-form.php',
+			'checkout/payment-method.php' => 'src/modal-checkout/templates/payment-method.php',
+			'checkout/thankyou.php'       => 'src/modal-checkout/templates/thankyou.php',
 			// Replace the login form with the order summary if using the modal checkout. This is
 			// for the case where the reader used an existing email address.
-			'global/form-login.php'      => 'src/modal-checkout/templates/thankyou.php',
+			'global/form-login.php'       => 'src/modal-checkout/templates/thankyou.php',
 		];
 
 		foreach ( $custom_templates as $original_template => $custom_template ) {

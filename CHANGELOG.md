@@ -1,3 +1,55 @@
+## [4.3.4](https://github.com/Automattic/newspack-blocks/compare/v4.3.3...v4.3.4) (2024-10-30)
+
+
+### Bug Fixes
+
+* name branch correctly ([a6fffd6](https://github.com/Automattic/newspack-blocks/commit/a6fffd620945666bcb6e10427309ea9b94baecb9))
+
+## [4.3.3](https://github.com/Automattic/newspack-blocks/compare/v4.3.2...v4.3.3) (2024-10-29)
+
+
+### Bug Fixes
+
+* remove expensive query before registering video playlist block ([#1930](https://github.com/Automattic/newspack-blocks/issues/1930)) ([9d967e0](https://github.com/Automattic/newspack-blocks/commit/9d967e0e415ca78018540c2c033c06fd2fe64fab))
+
+## [4.3.2](https://github.com/Automattic/newspack-blocks/compare/v4.3.1...v4.3.2) (2024-10-29)
+
+
+### Bug Fixes
+
+* dont cache blocks for staff ([2d30450](https://github.com/Automattic/newspack-blocks/commit/2d30450aa4047e92275e5d78c8ccb31ca96b345e))
+
+## [4.3.1](https://github.com/Automattic/newspack-blocks/compare/v4.3.0...v4.3.1) (2024-10-28)
+
+
+### Bug Fixes
+
+* articles block fail to get all inner blocks ([#1878](https://github.com/Automattic/newspack-blocks/issues/1878)) ([c699724](https://github.com/Automattic/newspack-blocks/commit/c699724443ea916379c280fbc6208ecb9a3f5599))
+* deprecate video playlist block ([#1903](https://github.com/Automattic/newspack-blocks/issues/1903)) ([4876de6](https://github.com/Automattic/newspack-blocks/commit/4876de65f2ad2d689ba93507a7a8d041fcc030ba))
+* potential fatal with invalid attribute combo ([#1900](https://github.com/Automattic/newspack-blocks/issues/1900)) ([adf2e9d](https://github.com/Automattic/newspack-blocks/commit/adf2e9d82f90c8b9839f107bd2b4c249ff3045e8))
+* update block classes for the site editor ([#1920](https://github.com/Automattic/newspack-blocks/issues/1920)) ([1a07ad0](https://github.com/Automattic/newspack-blocks/commit/1a07ad0dd88b68122b76f5f86c80d52d842e3c20))
+
+# [4.3.0](https://github.com/Automattic/newspack-blocks/compare/v4.2.4...v4.3.0) (2024-10-28)
+
+
+### Features
+
+* **hpb:** remove blocks caching feature flag ([1d749de](https://github.com/Automattic/newspack-blocks/commit/1d749dedae9c48c1a3a38c4c13dad77528c7ea4e))
+
+## [4.2.4](https://github.com/Automattic/newspack-blocks/compare/v4.2.3...v4.2.4) (2024-10-28)
+
+
+### Bug Fixes
+
+* let "Cover fees" checkbox work with any payment method ([#1915](https://github.com/Automattic/newspack-blocks/issues/1915)) ([0a3da2e](https://github.com/Automattic/newspack-blocks/commit/0a3da2eb38a9cd69bcd2a3348954b1fa3f9c9f59))
+
+## [4.2.3](https://github.com/Automattic/newspack-blocks/compare/v4.2.2...v4.2.3) (2024-10-22)
+
+
+### Bug Fixes
+
+* carousel style when caching ([afb7f57](https://github.com/Automattic/newspack-blocks/commit/afb7f57c5aa115d7bcc626c120d34a93a46dec6e))
+
 ## [4.2.2](https://github.com/Automattic/newspack-blocks/compare/v4.2.1...v4.2.2) (2024-10-11)
 
 
