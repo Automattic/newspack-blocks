@@ -128,6 +128,7 @@ final class Modal_Checkout {
 			add_filter( 'woocommerce_valid_order_statuses_for_order_again', [ 'WCS_Limiter', 'filter_order_again_statuses_for_limited_subscriptions' ] );
 		}
 		add_filter( 'woocommerce_subscriptions_product_limited_for_user', [ __CLASS__, 'subscriptions_product_limited_for_user' ], 10, 3 );
+		add_filter( 'woocommerce_get_privacy_policy_text', [ __CLASS__, 'woocommerce_get_privacy_policy_text' ], 10, 2 );
 	}
 
 	/**
@@ -1829,6 +1830,22 @@ final class Modal_Checkout {
 		}
 
 		return \Newspack\Reader_Activation::is_woocommerce_registration_required();
+	}
+
+	/**
+	 * Filters the WooCommerce registration privacy policy text.
+	 *
+	 * @param string $text Privacy policy text.
+	 * @param string $type Privacy policy text type.
+	 *
+	 * @return string Privacy policy text.
+	 */
+	public static function woocommerce_get_privacy_policy_text( $text, $type ) {
+		if ( ! self::is_modal_checkout() || ! class_exists( '\Newspack\Reader_Activation' ) ) {
+			return $text;
+		}
+
+		return \Newspack\Reader_Activation::get_checkout_privacy_policy_text();
 	}
 }
 Modal_Checkout::init();
