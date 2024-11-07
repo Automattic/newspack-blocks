@@ -13,6 +13,7 @@ class HomepagePostsBlockTest extends WP_UnitTestCase_Blocks { // phpcs:ignore
 	 * HPB query from attributes.
 	 */
 	public function test_hpb_build_articles_query() {
+		$cap_author = self::create_guest_author();
 		$cases = [
 			[
 				'block_attributes'        => [
@@ -37,6 +38,20 @@ class HomepagePostsBlockTest extends WP_UnitTestCase_Blocks { // phpcs:ignore
 					'author__in'     => [ 1 ],
 				],
 				'description'             => 'With custom post type and author',
+				'ignore_tax_query'        => true,
+			],
+			[
+				'block_attributes'        => [
+					'postsToShow' => 1,
+					'postType'    => 'some-type',
+					'authors'     => [ 1, $cap_author['id'] ],
+				],
+				'resulting_query_partial' => [
+					'posts_per_page' => 1,
+					'post_type'      => 'some-type',
+					// no authors params, query will be filtered.
+				],
+				'description'             => 'With custom post type, author and guest author',
 				'ignore_tax_query'        => true,
 			],
 		];

@@ -680,6 +680,7 @@ class Newspack_Blocks {
 				$co_authors_names = [];
 				$author_names     = [];
 				$author_emails    = [];
+				$has_guest_in_query = false;
 
 				if ( $is_co_authors_plus_active ) {
 					$co_authors_guest_authors = new CoAuthors_Guest_Authors();
@@ -688,6 +689,7 @@ class Newspack_Blocks {
 						// If the given ID is a guest author.
 						$co_author = $co_authors_guest_authors->get_guest_author_by( 'id', $author_id );
 						if ( $co_author ) {
+							$has_guest_in_query = true;
 							if ( ! empty( $co_author->linked_account ) ) {
 								$linked_account = get_user_by( 'login', $co_author->linked_account );
 								if ( $linked_account ) {
@@ -697,9 +699,10 @@ class Newspack_Blocks {
 							$co_authors_names[] = $co_author->user_nicename;
 							unset( $authors[ $index ] );
 						} else {
+							$author_data = get_userdata( $author_id );
+							$co_authors_names[] = $author_data->user_nicename;
 							// If the given ID is linked to a guest author.
 							$authors_controller = new WP_REST_Newspack_Authors_Controller();
-							$author_data        = get_userdata( $author_id );
 							if ( $author_data ) {
 								$linked_guest_author = $authors_controller->get_linked_guest_author( $author_data->user_login );
 								if ( $linked_guest_author ) {
@@ -719,46 +722,54 @@ class Newspack_Blocks {
 
 				// Reset numeric indexes.
 				$authors = array_values( $authors );
-				if ( empty( $authors ) && count( $co_authors_names ) ) {
-					// Look for co-authors posts.
-					$args['tax_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
-						[
-							'field'    => 'name',
-							'taxonomy' => 'author',
-							'terms'    => $co_authors_names,
-						],
-					];
-				} elseif ( empty( $co_authors_names ) && count( $authors ) ) {
-					$args['author__in'] = $authors;
 
-					if ( $is_co_authors_plus_active ) {
-						// Don't get any posts that are attributed to other CAP guest authors.
-						$args['tax_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
-							[
-								'relation' => 'OR',
-								[
-									'taxonomy' => 'author',
-									'operator' => 'NOT EXISTS',
-								],
-								[
-									'field'    => 'name',
-									'taxonomy' => 'author',
-									'terms'    => $author_names,
-								],
-								[
-									'field'    => 'name',
-									'taxonomy' => 'author',
-									'terms'    => $author_emails,
-								],
-							],
-						];
-					}
-				} else {
+				if ( ! empty( $authors ) && ! empty( $co_authors_names ) && $has_guest_in_query ) {
+					// Queries that contain Guest Authors mixed with other authors need to be filtered.
 					// The query contains both WP users and CAP guest authors. We need to filter the SQL query.
 					self::$filter_clauses = [
 						'authors'   => $authors,
 						'coauthors' => $co_authors_names,
 					];
+				} else {
+					// Other queries can be handled by the standard WP_Query arguments.
+
+					if ( count( $co_authors_names ) ) {
+						// Look for co-authors posts.
+						$args['tax_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+							[
+								'field'    => 'name',
+								'taxonomy' => 'author',
+								'terms'    => $co_authors_names,
+							],
+						];
+					}
+
+					if ( count( $authors ) ) {
+						$args['author__in'] = $authors;
+
+						if ( $is_co_authors_plus_active ) {
+							// Don't get any posts that are attributed to other CAP guest authors.
+							$args['tax_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+								[
+									'relation' => 'OR',
+									[
+										'taxonomy' => 'author',
+										'operator' => 'NOT EXISTS',
+									],
+									[
+										'field'    => 'name',
+										'taxonomy' => 'author',
+										'terms'    => $author_names,
+									],
+									[
+										'field'    => 'name',
+										'taxonomy' => 'author',
+										'terms'    => $author_emails,
+									],
+								],
+							];
+						}
+					}
 				}
 			}
 		}
