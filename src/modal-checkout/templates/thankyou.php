@@ -51,17 +51,10 @@ function newspack_blocks_replace_login_with_order_summary() {
 					<path d="M16.7 7.1l-6.3 8.5-3.3-2.5-.9 1.2 4.5 3.4L17.9 8z"></path>
 				</svg>
 			</span>
-			<p id="checkout_success">
+			<p>
 				<strong>
 					<?php
 						echo esc_html( Modal_Checkout::get_post_checkout_success_text() );
-					?>
-				</strong>
-			</p>
-			<p id="checkout_registration_success">
-				<strong>
-					<?php
-						echo esc_html( Modal_Checkout::get_post_checkout_success_text( true ) );
 					?>
 				</strong>
 			</p>
@@ -89,6 +82,7 @@ function newspack_blocks_replace_login_with_order_summary() {
 		<?php endif; ?>
 		<?php
 	endif;
+	do_action( 'newpack_blocks_thankyou' );
 }
 
 newspack_blocks_replace_login_with_order_summary();

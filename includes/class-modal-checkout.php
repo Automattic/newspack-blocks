@@ -95,6 +95,7 @@ final class Modal_Checkout {
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
 		add_filter( 'woocommerce_checkout_posted_data', [ __CLASS__, 'skip_account_creation' ], 11 );
 		add_action( 'woocommerce_checkout_create_order', [ __CLASS__, 'maybe_add_checkout_registration_order_meta' ], 10, 1 );
+		add_action( 'newpack_blocks_thankyou', [ __CLASS__, 'maybe_reset_checkout_registration_flag' ] );
 
 		// Remove some stuff from the modal checkout page. It's displayed in an iframe, so it should not be treated as a separate page.
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'dequeue_scripts' ], PHP_INT_MAX );
@@ -155,17 +156,6 @@ final class Modal_Checkout {
 		unset( $enqueue_styles['woocommerce-general'] );
 		unset( $enqueue_styles['woocommerce-smallscreen'] );
 		return $enqueue_styles;
-	}
-
-	/**
-	 * Set the checkout registration flag to WC session.
-	 */
-	public static function set_checkout_registration_flag() {
-		// Flag the checkout as a registration.
-		$is_checkout_registration = filter_input( INPUT_GET, self::CHECKOUT_REGISTRATION_FLAG, FILTER_SANITIZE_NUMBER_INT );
-		if ( $is_checkout_registration ) {
-			\WC()->session->set( self::CHECKOUT_REGISTRATION_FLAG, true );
-		}
 	}
 
 	/**
@@ -1775,6 +1765,33 @@ final class Modal_Checkout {
 	}
 
 	/**
+	 * Set the checkout registration flag to WC session.
+	 */
+	public static function set_checkout_registration_flag() {
+		// Flag the checkout as a registration.
+		$is_checkout_registration = filter_input( INPUT_GET, self::CHECKOUT_REGISTRATION_FLAG, FILTER_SANITIZE_NUMBER_INT );
+		if ( $is_checkout_registration ) {
+			\WC()->session->set( self::CHECKOUT_REGISTRATION_FLAG, true );
+		}
+	}
+
+	/**
+	 * Conditionally reset the checkout registration flag from WC session.
+	 */
+	public static function maybe_reset_checkout_registration_flag() {
+		if ( self::is_checkout_registration() ) {
+			\WC()->session->set( self::CHECKOUT_REGISTRATION_FLAG, null );
+		}
+	}
+
+	/**
+	 * Whether the WC session is for checkout registration.
+	 */
+	public static function is_checkout_registration() {
+		return \WC()->session->get( self::CHECKOUT_REGISTRATION_FLAG, false );
+	}
+
+	/**
 	 * Conditionally adds the checkout registration order meta flag.
 	 *
 	 * @param WC_Order $order    The order object.
@@ -1786,10 +1803,8 @@ final class Modal_Checkout {
 			return;
 		}
 
-		$is_checkout_registration = \WC()->session->get( self::CHECKOUT_REGISTRATION_FLAG );
-		if ( $is_checkout_registration ) {
+		if ( self::is_checkout_registration() ) {
 			$order->add_meta_data( self::CHECKOUT_REGISTRATION_ORDER_META_KEY, true, true );
-			\WC()->session->set( self::CHECKOUT_REGISTRATION_FLAG, null );
 		}
 	}
 
@@ -1846,11 +1861,9 @@ final class Modal_Checkout {
 	/**
 	 * Get post checkout success message text.
 	 *
-	 * @param bool $is_registration Whether the text is for checkout registration.
-	 *
 	 * @return string Post checkout success message text.
 	 */
-	public static function get_post_checkout_success_text( $is_registration = false ) {
+	public static function get_post_checkout_success_text() {
 		if ( ! class_exists( '\Newspack\Reader_Activation' ) ) {
 			return sprintf(
 				// Translators: %s is the site name.
@@ -1858,7 +1871,7 @@ final class Modal_Checkout {
 				get_option( 'blogname' )
 			);
 		}
-		if ( $is_registration ) {
+		if ( self::is_checkout_registration() ) {
 			return \Newspack\Reader_Activation::get_post_checkout_registration_success_text();
 		} else {
 			return \Newspack\Reader_Activation::get_post_checkout_success_text();
