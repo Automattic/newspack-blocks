@@ -1716,11 +1716,6 @@ final class Modal_Checkout {
 				'checkout_confirm_variation' => __( 'Purchase', 'newspack-blocks' ),
 				'checkout_back'              => __( 'Back', 'newspack-blocks' ),
 				'checkout_success'           => __( 'Transaction successful', 'newspack-blocks' ),
-				'thankyou'                   => sprintf(
-					// Translators: %s is the site name.
-					__( 'Thank you for supporting %s. Your transaction was successful.', 'newspack-blocks' ),
-					get_option( 'blogname' )
-				),
 				'checkout_nyp'               => __( "Your contribution directly funds our work. If you're moved to do so, you can opt to pay more than the standard rate.", 'newspack-blocks' ),
 				'checkout_nyp_thankyou'      => __( "Thank you for your generosity! We couldn't do this without you!", 'newspack-blocks' ),
 				'checkout_nyp_title'         => __( 'Increase your support', 'newspack-blocks' ),
@@ -1846,6 +1841,28 @@ final class Modal_Checkout {
 		}
 
 		return \Newspack\Reader_Activation::get_checkout_privacy_policy_text();
+	}
+
+	/**
+	 * Get post checkout success message text.
+	 *
+	 * @param bool $is_registration Whether the text is for checkout registration.
+	 *
+	 * @return string Post checkout success message text.
+	 */
+	public static function get_post_checkout_success_text( $is_registration = false ) {
+		if ( ! class_exists( '\Newspack\Reader_Activation' ) ) {
+			return sprintf(
+				// Translators: %s is the site name.
+				__( 'Thank you for supporting %s. Your transaction was successful.', 'newspack-blocks' ),
+				get_option( 'blogname' )
+			);
+		}
+		if ( $is_registration ) {
+			return \Newspack\Reader_Activation::get_post_checkout_registration_success_text();
+		} else {
+			return \Newspack\Reader_Activation::get_post_checkout_success_text();
+		}
 	}
 }
 Modal_Checkout::init();

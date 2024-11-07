@@ -51,6 +51,11 @@ import { domReady } from './utils';
 		}
 
 		if ( newspackBlocksModalCheckout.is_checkout_complete ) {
+			if ( parent?.window?.newspackReaderActivation?.getPendingCheckout?.() ) {
+				$( '#checkout_success' ).hide();
+			} else {
+				$( '#checkout_registration_success' ).hide();
+			}
 			/**
 			 * Set the checkout as complete so the modal can resolve post checkout flows.
 			 */
