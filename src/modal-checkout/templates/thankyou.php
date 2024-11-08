@@ -54,7 +54,7 @@ function newspack_blocks_replace_login_with_order_summary() {
 			<p>
 				<strong>
 					<?php
-						echo esc_html( Modal_Checkout::get_modal_checkout_labels( 'thankyou' ) );
+						echo esc_html( Modal_Checkout::get_post_checkout_success_text() );
 					?>
 				</strong>
 			</p>
@@ -82,6 +82,7 @@ function newspack_blocks_replace_login_with_order_summary() {
 		<?php endif; ?>
 		<?php
 	endif;
+	do_action( 'newpack_blocks_modal_checkout_thankyou' );
 }
 
 newspack_blocks_replace_login_with_order_summary();

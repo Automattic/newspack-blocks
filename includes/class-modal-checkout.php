@@ -59,7 +59,6 @@ final class Modal_Checkout {
 		add_action( 'wp_ajax_abandon_modal_checkout', [ __CLASS__, 'process_abandon_checkout' ] );
 		add_action( 'wp_ajax_nopriv_abandon_modal_checkout', [ __CLASS__, 'process_abandon_checkout' ] );
 
-		add_action( 'wp_loaded', [ __CLASS__, 'set_checkout_registration_flag' ] );
 		add_filter( 'wp_redirect', [ __CLASS__, 'pass_url_param_on_redirect' ] );
 		add_filter( 'woocommerce_cart_product_cannot_be_purchased_message', [ __CLASS__, 'woocommerce_cart_product_cannot_be_purchased_message' ], 10, 2 );
 		add_filter( 'woocommerce_add_error', [ __CLASS__, 'hide_expiry_message_shop_link' ] );
@@ -93,8 +92,10 @@ final class Modal_Checkout {
 
 		/** Custom handling for registered users. */
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
+		add_action( 'woocommerce_after_checkout_validation', [ __CLASS__, 'maybe_reset_checkout_registration_flag' ], 10, 2 );
 		add_filter( 'woocommerce_checkout_posted_data', [ __CLASS__, 'skip_account_creation' ], 11 );
 		add_action( 'woocommerce_checkout_create_order', [ __CLASS__, 'maybe_add_checkout_registration_order_meta' ], 10, 1 );
+		add_action( 'newpack_blocks_modal_checkout_thankyou', [ __CLASS__, 'reset_checkout_registration_flag' ] );
 
 		// Remove some stuff from the modal checkout page. It's displayed in an iframe, so it should not be treated as a separate page.
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'dequeue_scripts' ], PHP_INT_MAX );
@@ -155,17 +156,6 @@ final class Modal_Checkout {
 		unset( $enqueue_styles['woocommerce-general'] );
 		unset( $enqueue_styles['woocommerce-smallscreen'] );
 		return $enqueue_styles;
-	}
-
-	/**
-	 * Set the checkout registration flag to WC session.
-	 */
-	public static function set_checkout_registration_flag() {
-		// Flag the checkout as a registration.
-		$is_checkout_registration = filter_input( INPUT_GET, self::CHECKOUT_REGISTRATION_FLAG, FILTER_SANITIZE_NUMBER_INT );
-		if ( $is_checkout_registration ) {
-			\WC()->session->set( self::CHECKOUT_REGISTRATION_FLAG, true );
-		}
 	}
 
 	/**
@@ -266,6 +256,11 @@ final class Modal_Checkout {
 		\WC()->cart->empty_cart();
 		\WC()->cart->add_to_cart( $product_id, 1, 0, [], $cart_item_data );
 
+		// Set checkout registration flag if user is logged not logged in.
+		if ( ! is_user_logged_in() ) {
+			self::set_checkout_registration_flag();
+		}
+
 		$query_args = [];
 		if ( ! empty( $referer_tags ) ) {
 			$query_args['referer_tags'] = implode( ',', $referer_tags );
@@ -334,6 +329,7 @@ final class Modal_Checkout {
 		if ( $cart && ! $cart->is_empty() ) {
 			$cart->empty_cart();
 		}
+		self::reset_checkout_registration_flag();
 
 		wp_send_json_success( [ 'message' => __( 'Cart has been emptied.', 'newspack-blocks' ) ] );
 		wp_die();
@@ -1716,11 +1712,6 @@ final class Modal_Checkout {
 				'checkout_confirm_variation' => __( 'Purchase', 'newspack-blocks' ),
 				'checkout_back'              => __( 'Back', 'newspack-blocks' ),
 				'checkout_success'           => __( 'Transaction successful', 'newspack-blocks' ),
-				'thankyou'                   => sprintf(
-					// Translators: %s is the site name.
-					__( 'Thank you for supporting %s. Your transaction was successful.', 'newspack-blocks' ),
-					get_option( 'blogname' )
-				),
 				'checkout_nyp'               => __( "Your contribution directly funds our work. If you're moved to do so, you can opt to pay more than the standard rate.", 'newspack-blocks' ),
 				'checkout_nyp_thankyou'      => __( "Thank you for your generosity! We couldn't do this without you!", 'newspack-blocks' ),
 				'checkout_nyp_title'         => __( 'Increase your support', 'newspack-blocks' ),
@@ -1780,6 +1771,45 @@ final class Modal_Checkout {
 	}
 
 	/**
+	 * Set the checkout registration flag to WC session.
+	 */
+	public static function set_checkout_registration_flag() {
+		\WC()->session->set( self::CHECKOUT_REGISTRATION_FLAG, true );
+	}
+
+	/**
+	 * Reset the checkout registration flag from WC session.
+	 */
+	public static function reset_checkout_registration_flag() {
+		if ( self::is_checkout_registration() ) {
+			\WC()->session->set( self::CHECKOUT_REGISTRATION_FLAG, null );
+		}
+	}
+
+	/**
+	 * Conditionally reset the checkout registration flag from WC session if user exists.
+	 *
+	 * @param array    $data  Checkout data.
+	 * @param WP_Error $error Checkout errors.
+	 */
+	public static function maybe_reset_checkout_registration_flag( $data, $error ) {
+		if ( ! self::is_checkout_registration() || ! isset( $data['billing_email'] ) ) {
+			return;
+		}
+
+		if ( get_user_by( 'email', $data['billing_email'] ) ) {
+			self::reset_checkout_registration_flag();
+		}
+	}
+
+	/**
+	 * Whether the WC session is for checkout registration.
+	 */
+	public static function is_checkout_registration() {
+		return \WC()->session->get( self::CHECKOUT_REGISTRATION_FLAG, false );
+	}
+
+	/**
 	 * Conditionally adds the checkout registration order meta flag.
 	 *
 	 * @param WC_Order $order    The order object.
@@ -1791,10 +1821,8 @@ final class Modal_Checkout {
 			return;
 		}
 
-		$is_checkout_registration = \WC()->session->get( self::CHECKOUT_REGISTRATION_FLAG );
-		if ( $is_checkout_registration ) {
+		if ( self::is_checkout_registration() ) {
 			$order->add_meta_data( self::CHECKOUT_REGISTRATION_ORDER_META_KEY, true, true );
-			\WC()->session->set( self::CHECKOUT_REGISTRATION_FLAG, null );
 		}
 	}
 
@@ -1846,6 +1874,26 @@ final class Modal_Checkout {
 		}
 
 		return \Newspack\Reader_Activation::get_checkout_privacy_policy_text();
+	}
+
+	/**
+	 * Get post checkout success message text.
+	 *
+	 * @return string Post checkout success message text.
+	 */
+	public static function get_post_checkout_success_text() {
+		if ( ! class_exists( '\Newspack\Reader_Activation' ) || ! \Newspack\Reader_Activation::is_enabled() ) {
+			return sprintf(
+				// Translators: %s is the site name.
+				__( 'Thank you for supporting %s. Your transaction was completed successfully.', 'newspack-blocks' ),
+				get_option( 'blogname' )
+			);
+		}
+		if ( ! self::is_registration_required() && self::is_checkout_registration() ) {
+			return \Newspack\Reader_Activation::get_post_checkout_registration_success_text();
+		} else {
+			return \Newspack\Reader_Activation::get_post_checkout_success_text();
+		}
 	}
 }
 Modal_Checkout::init();
