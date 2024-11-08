@@ -59,6 +59,7 @@ import {
 	postFeaturedImage,
 	pullLeft,
 	pullRight,
+	textColor as typeScaleIcon,
 } from '@wordpress/icons';
 
 let IS_SUBTITLE_SUPPORTED_IN_THEME: boolean;
@@ -99,6 +100,12 @@ const squareIcon = (
 		/>
 	</SVG>
 );
+
+const typeScaleIconSmall = (
+	<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+		<Path d="M13 8H11.6667L9 15.3333H10.2667L11 13.3333H13.8L14.5333 15.3333H15.8L13 8ZM11.3333 12.3333L12.3333 9.06667L13.4667 12.3333H11.3333Z"	/>
+	</SVG>
+)
 
 class Edit extends Component< HomepageArticlesProps > {
 	renderPost = ( post: Post ) => {
@@ -267,7 +274,7 @@ class Edit extends Component< HomepageArticlesProps > {
 	};
 
 	renderInspectorControls = () => {
-		const { attributes, setAttributes, textColor, setTextColor } = this.props;
+		const { attributes, setAttributes } = this.props;
 
 		const {
 			authors,
@@ -277,7 +284,6 @@ class Edit extends Component< HomepageArticlesProps > {
 			includeSubcategories,
 			customTaxonomies,
 			columns,
-			colGap,
 			postType,
 			showImage,
 			showCaption,
@@ -293,7 +299,6 @@ class Edit extends Component< HomepageArticlesProps > {
 			readMoreLabel,
 			excerptLength,
 			showSubtitle,
-			typeScale,
 			showDate,
 			showAuthor,
 			showAvatar,
@@ -336,30 +341,12 @@ class Edit extends Component< HomepageArticlesProps > {
 			},
 		];
 
-		const colGapOptions = [
-			{
-				value: 1,
-				label: /* translators: label for small size option */ __( 'Small', 'newspack-blocks' ),
-				shortName: /* translators: abbreviation for small size */ __( 'S', 'newspack-blocks' ),
-			},
-			{
-				value: 2,
-				label: /* translators: label for medium size option */ __( 'Medium', 'newspack-blocks' ),
-				shortName: /* translators: abbreviation for medium size */ __( 'M', 'newspack-blocks' ),
-			},
-			{
-				value: 3,
-				label: /* translators: label for large size option */ __( 'Large', 'newspack-blocks' ),
-				shortName: /* translators: abbreviation for large size */ __( 'L', 'newspack-blocks' ),
-			},
-		];
-
 		const handleAttributeChange = ( key: HomepageArticlesAttributesKey ) => ( value: any ) =>
 			setAttributes( { [ key ]: value } );
 
 		return (
 			<Fragment>
-				<PanelBody title={ __( 'Display Settings', 'newspack-blocks' ) } initialOpen={ true }>
+				<PanelBody title={ __( 'Settings', 'newspack-blocks' ) } initialOpen={ true }>
 					<QueryControls
 						numberOfItems={ postsToShow }
 						onNumberOfItemsChange={ ( _postsToShow: number ) =>
@@ -387,45 +374,6 @@ class Edit extends Component< HomepageArticlesProps > {
 						onCustomTaxonomyExclusionsChange={ handleAttributeChange( 'customTaxonomyExclusions' ) }
 						postType={ postType }
 					/>
-					{ postLayout === 'grid' && (
-						<Fragment>
-							<RangeControl
-								label={ __( 'Columns', 'newspack-blocks' ) }
-								value={ columns }
-								onChange={ handleAttributeChange( 'columns' ) }
-								min={ 2 }
-								max={ 6 }
-								required
-							/>
-
-							<BaseControl
-								label={ __( 'Columns Gap', 'newspack-blocks' ) }
-								id="newspackcolumns-col-gap"
-							>
-								<PanelRow>
-									<ButtonGroup
-										id="newspackcolumns-col-gap"
-										aria-label={ __( 'Columns Gap', 'newspack-blocks' ) }
-									>
-										{ colGapOptions.map( option => {
-											const isCurrent = colGap === option.value;
-											return (
-												<Button
-													isPrimary={ isCurrent }
-													aria-pressed={ isCurrent }
-													aria-label={ option.label }
-													key={ option.value }
-													onClick={ () => setAttributes( { colGap: option.value } ) }
-												>
-													{ option.shortName }
-												</Button>
-											);
-										} ) }
-									</ButtonGroup>
-								</PanelRow>
-							</BaseControl>
-						</Fragment>
-					) }
 					{ ! specificMode && isBlogPrivate() ? (
 						/*
 						 * Hide the "Load more posts" button option on private sites.
@@ -468,8 +416,79 @@ class Edit extends Component< HomepageArticlesProps > {
 						onChange={ ( value: boolean ) => setAttributes( { deduplicate: ! value } ) }
 						className="newspack-blocks-deduplication-toggle"
 					/>
+					{ postLayout === 'grid' && (
+						<RangeControl
+							label={ __( 'Columns', 'newspack-blocks' ) }
+							value={ columns }
+							onChange={ handleAttributeChange( 'columns' ) }
+							min={ 2 }
+							max={ 6 }
+							required
+						/>
+					) }
 				</PanelBody>
-				<PanelBody title={ __( 'Featured Image Settings', 'newspack-blocks' ) }>
+				<PanelBody title={ __( 'Post Control', 'newspack-blocks' ) }>
+					{ IS_SUBTITLE_SUPPORTED_IN_THEME && (
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Show Subtitle', 'newspack-blocks' ) }
+								checked={ showSubtitle }
+								onChange={ () => setAttributes( { showSubtitle: ! showSubtitle } ) }
+							/>
+						</PanelRow>
+					) }
+					<PanelRow>
+						<ToggleControl
+							label={ __( 'Show Excerpt', 'newspack-blocks' ) }
+							checked={ showExcerpt }
+							onChange={ () => {
+								setAttributes({
+									showExcerpt: !showExcerpt,
+									showFullContent: showFullContent ? false : showFullContent
+								})
+							} }
+						/>
+					</PanelRow>
+					{ showExcerpt && (
+						<PanelRow>
+							<RangeControl
+								label={ __( 'Max number of words in excerpt', 'newspack-blocks' ) }
+								value={ excerptLength }
+								onChange={ ( value: number ) => setAttributes( { excerptLength: value } ) }
+								min={ 10 }
+								max={ 100 }
+							/>
+						</PanelRow>
+					) }
+					<PanelRow>
+						<ToggleControl
+							label={ __( 'Show Full Content', 'newspack-blocks' ) }
+							checked={ showFullContent }
+							onChange={ () => {
+								setAttributes({
+									showFullContent: !showFullContent,
+									showExcerpt: showExcerpt ? false : showExcerpt
+								})
+							} }
+						/>
+					</PanelRow>
+					<PanelRow>
+						<ToggleControl
+							label={ __( 'Add a "Read More" link', 'newspack-blocks' ) }
+							checked={ showReadMore }
+							onChange={ () => setAttributes( { showReadMore: ! showReadMore } ) }
+						/>
+					</PanelRow>
+					{ showReadMore && (
+						<TextControl
+							label={ __( '"Read More" link text', 'newspack-blocks' ) }
+							value={ readMoreLabel }
+							placeholder={ readMoreLabel }
+							onChange={ ( value: string ) => setAttributes( { readMoreLabel: value } ) }
+						/>
+					) }
+				</PanelBody>
+				<PanelBody title={ __( 'Featured Image', 'newspack-blocks' ) } initialOpen={ false }>
 					<PanelRow>
 						<ToggleControl
 							label={ __( 'Show Featured Image', 'newspack-blocks' ) }
@@ -550,88 +569,7 @@ class Edit extends Component< HomepageArticlesProps > {
 						/>
 					) }
 				</PanelBody>
-				<PanelBody title={ __( 'Post Control Settings', 'newspack-blocks' ) }>
-					{ IS_SUBTITLE_SUPPORTED_IN_THEME && (
-						<PanelRow>
-							<ToggleControl
-								label={ __( 'Show Subtitle', 'newspack-blocks' ) }
-								checked={ showSubtitle }
-								onChange={ () => setAttributes( { showSubtitle: ! showSubtitle } ) }
-							/>
-						</PanelRow>
-					) }
-					<PanelRow>
-						<ToggleControl
-							label={ __( 'Show Excerpt', 'newspack-blocks' ) }
-							checked={ showExcerpt }
-							onChange={ () => {
-								setAttributes({
-									showExcerpt: !showExcerpt,
-									showFullContent: showFullContent ? false : showFullContent
-								})
-							} }
-						/>
-					</PanelRow>
-					{ showExcerpt && (
-						<PanelRow>
-							<RangeControl
-								label={ __( 'Max number of words in excerpt', 'newspack-blocks' ) }
-								value={ excerptLength }
-								onChange={ ( value: number ) => setAttributes( { excerptLength: value } ) }
-								min={ 10 }
-								max={ 100 }
-							/>
-						</PanelRow>
-					) }
-					<PanelRow>
-						<ToggleControl
-							label={ __( 'Show Full Content', 'newspack-blocks' ) }
-							checked={ showFullContent }
-							onChange={ () => {
-								setAttributes({
-									showFullContent: !showFullContent,
-									showExcerpt: showExcerpt ? false : showExcerpt
-								})
-							} }
-						/>
-					</PanelRow>
-					<PanelRow>
-						<ToggleControl
-							label={ __( 'Add a "Read More" link', 'newspack-blocks' ) }
-							checked={ showReadMore }
-							onChange={ () => setAttributes( { showReadMore: ! showReadMore } ) }
-						/>
-					</PanelRow>
-					{ showReadMore && (
-						<TextControl
-							label={ __( '"Read More" link text', 'newspack-blocks' ) }
-							value={ readMoreLabel }
-							placeholder={ readMoreLabel }
-							onChange={ ( value: string ) => setAttributes( { readMoreLabel: value } ) }
-						/>
-					) }
-					<RangeControl
-						className="type-scale-slider"
-						label={ __( 'Type Scale', 'newspack-blocks' ) }
-						value={ typeScale }
-						onChange={ ( _typeScale: number ) => setAttributes( { typeScale: _typeScale } ) }
-						min={ 1 }
-						max={ 10 }
-						required
-					/>
-				</PanelBody>
-				<PanelColorSettings
-					title={ __( 'Color Settings', 'newspack-blocks' ) }
-					initialOpen={ true }
-					colorSettings={ [
-						{
-							value: textColor.color,
-							onChange: setTextColor,
-							label: __( 'Text Color', 'newspack-blocks' ),
-						},
-					] }
-				/>
-				<PanelBody title={ __( 'Post Meta Settings', 'newspack-blocks' ) }>
+				<PanelBody title={ __( 'Post Meta', 'newspack-blocks' ) } initialOpen={ false }>
 					<PanelRow>
 						<ToggleControl
 							label={ __( 'Show Date', 'newspack-blocks' ) }
@@ -665,6 +603,65 @@ class Edit extends Component< HomepageArticlesProps > {
 				</PanelBody>
 				<PostTypesPanel attributes={ attributes } setAttributes={ setAttributes } />
 				<PostStatusesPanel attributes={ attributes } setAttributes={ setAttributes } />
+			</Fragment>
+		);
+	};
+
+	renderStylesInspectorControls = () => {
+		const { attributes, setAttributes, textColor, setTextColor } = this.props;
+
+		const { colGap, postLayout, typeScale } = attributes;
+
+		return (
+			<Fragment>
+				<PanelColorSettings
+					title={ __( 'Color', 'newspack-blocks' ) }
+					colorSettings={ [
+						{
+							value: textColor.color,
+							onChange: setTextColor,
+							label: __( 'Text', 'newspack-blocks' ),
+						},
+					] }
+				/>
+				<PanelBody
+					title={ __( 'Typography', 'newspack-blocks' ) }
+					className="newspack-block__panel"
+				>
+					<RangeControl
+						label={ __( 'Type Scale', 'newspack-blocks' ) }
+						beforeIcon={ typeScaleIconSmall }
+						afterIcon={ typeScaleIcon }
+						className="spacing-sizes-control"
+						value={ typeScale }
+						onChange={ ( _typeScale: number ) => setAttributes( { typeScale: _typeScale } ) }
+						min={ 1 }
+						max={ 10 }
+						marks={ true }
+						withInputField={ false }
+						__nextHasNoMarginBottom={ true }
+						required
+					/>
+				</PanelBody>
+				{ postLayout === 'grid' && (
+					<PanelBody
+						title={ __( 'Dimensions', 'newspack-blocks' ) }
+						initialOpen={ false }
+					>
+						<RangeControl
+							label={ __( 'Grid Spacing', 'newspack-blocks' ) }
+							className="spacing-sizes-control"
+							value={ colGap }
+							onChange={ ( _colGap: number ) => setAttributes( { colGap: _colGap } ) }
+							min={ 1 }
+							max={ 3 }
+							marks={ true }
+							withInputField={ false }
+							__nextHasNoMarginBottom={ true }
+							required
+						/>
+					</PanelBody>
+				) }
 			</Fragment>
 		);
 	};
@@ -860,6 +857,7 @@ class Edit extends Component< HomepageArticlesProps > {
 					{ showImage && <Toolbar controls={ blockControlsImageShape } /> }
 				</BlockControls>
 				<InspectorControls>{ this.renderInspectorControls() }</InspectorControls>
+				<InspectorControls group="styles">{ this.renderStylesInspectorControls() }</InspectorControls>
 			</Fragment>
 		);
 	}

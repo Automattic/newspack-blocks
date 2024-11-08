@@ -61,4 +61,12 @@
 			opacity: 0.6;
 		}
 	}
+
+	&__panel .spacing-sizes-control {
+		.components-range-control__root {
+			> span {
+				margin-top: 0;
+			}
+		}
+	}
 }

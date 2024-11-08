@@ -50,7 +50,7 @@ export const PostTypesPanel = ( { attributes, setAttributes } ) => {
 	} );
 
 	return (
-		<PanelBody title={ __( 'Post Types', 'newspack-blocks' ) }>
+		<PanelBody title={ __( 'Post Types', 'newspack-blocks' ) } initialOpen={ false }>
 			<CheckboxesGroup
 				options={ availablePostTypes }
 				values={ attributes.postType }
@@ -62,7 +62,7 @@ export const PostTypesPanel = ( { attributes, setAttributes } ) => {
 
 export const PostStatusesPanel = ( { attributes, setAttributes } ) => {
 	return (
-		<PanelBody title={ __( 'Additional Post Statuses', 'newspack-blocks' ) }>
+		<PanelBody title={ __( 'Additional Post Statuses', 'newspack-blocks' ) } initialOpen={ false }>
 			<PanelRow>
 				<i>
 					{ __(
