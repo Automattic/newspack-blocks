@@ -82,7 +82,7 @@ function newspack_blocks_replace_login_with_order_summary() {
 		<?php endif; ?>
 		<?php
 	endif;
-	do_action( 'newpack_blocks_thankyou' );
+	do_action( 'newpack_blocks_modal_checkout_thankyou' );
 }
 
 newspack_blocks_replace_login_with_order_summary();
