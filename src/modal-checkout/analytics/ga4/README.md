@@ -4,7 +4,7 @@ The Newspack Modal Checkout uses <a href="https://github.com/Automattic/newspack
 
 ## Actions
 
-Each sequence will include the following actions:
+Each checkout will include the following actions:
 
 | `action`                   | When it's used                                                                                                     |
 | ---------------------------| ------------------------------------------------------------------------------------------------------------------ |
@@ -12,33 +12,34 @@ Each sequence will include the following actions:
 | `opened_variations`        | When a variation picker is opened from a Checkout button block                                                     |
 | `loaded`                   | When the modal finishes loading                                                                                    |
 | `continue`                 | When the 'Continue' button is clicked                                                                              |
-|`back`                      | When the 'Back' button is clicked                                                                                  |
-|`dismissed`                 | When the modal is closed before completion                                                                         |
-|`form_submission`           | When a submission attempt is made                                                                                  |
-|`form_submission_success`   | When a submission attempt is completed (back-end event)
+| `back`                     | When the 'Back' button is clicked                                                                                  |
+| `dismissed`                | When the modal is closed before completion                                                                         |
+| `form_submission`          | When a submission attempt is made                                                                                  |
+| `form_submission_success`  | When a submission attempt is completed (back-end event)
 
-## Action Types
+## Action types
 
-The action types used are:
+Each checkout will include the following action types:
 
-| `action_type`     | When it's used      |
-| ------------- | ------------- |
-| `checkout_button` | When the modal trigger is the Checkout Button block |
-| `donation`       | When the modal trigger is the Donation block |
+| `action_type`     | When it's used                                                    |
+| ----------------- | ----------------------------------------------------------------- |
+| `checkout_button` | When the modal checkout is triggered by the Checkout Button block |
+| `donation`        | When the modal checkout is triggered by the Donation block        |
 
 ## What's captured
 
-We're capturing the following information on most steps:
+Each checkout will capture the following information on most actions.
 
-| What's captured     | When it's captured      |
-| -------------------- | --------------------- |
-| `amount` | For each step, except when opening a variation picker since the price isn't known |
-| `currency` | For each step |
-| `is_variable` | Only the initial `open_variations` step when opening a variation picker |
-| `product_id` | For each step |
-| `product_type`*** | For each step |
-| `recurrence` | For each step, except when opening a variation picker for a variable subscription product |
-| `referer` | For each step |
-| `variation_id` | For steps after picking a product variation |
+| What's captured      | When it's captured                                                                                                               |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `amount`             | For each action, except when opening a variation picker since the price isn't yet known                                          |
+| `currency`           | For each action                                                                                                                  |
+| `is_variable`        | Only the initial `open_variations` action when opening a variation picker                                                        |
+| `product_id`         | For each action                                                                                                                  |
+| `product_type`***    | For each action                                                                                                                  |
+| `recurrence`         | For each action, except when opening a variation picker for a variable subscription product since the recurrence isn't yet known |
+| `referer`            | For each action                                                                                                                  |
+| `variation_id`       | For each action after picking a product variation when purchasing a variable product                                             |
 
-*** The product types have yet to be finalized, but currently are: `product`, `subscription`, `membership`, and `donation`.
+
+*** Note: The product types have yet to be finalized, but currently are: `product`, `subscription`, `membership`, and `donation`.
