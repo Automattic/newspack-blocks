@@ -30,16 +30,16 @@ Each checkout will include the following action types:
 
 Each checkout will capture the following information on most actions.
 
-| What's captured      | When it's captured                                                                                                               |
-| -------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `amount`             | For each action, except when opening a variation picker since the price isn't yet known                                          |
-| `currency`           | For each action                                                                                                                  |
-| `is_variable`        | Only the initial `open_variations` action when opening a variation picker                                                        |
-| `product_id`         | For each action                                                                                                                  |
-| `product_type`***    | For each action                                                                                                                  |
-| `recurrence`         | For each action, except when opening a variation picker for a variable subscription product since the recurrence isn't yet known |
-| `referer`            | For each action                                                                                                                  |
-| `variation_id`       | For each action after picking a product variation when purchasing a variable product                                             |
+| What's captured    | When it's captured                                                                                                  |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| `amount`           | For each action, except when opening a variation picker since the price isn't known                                 |
+| `currency`         | For each action                                                                                                     |
+| `is_variable`      | Only the initial `open_variations` action when opening a variation picker                                           |
+| `product_id`       | For each action                                                                                                     |
+| `product_type`***  | For each action                                                                                                     |
+| `recurrence`       | For each action, except when opening a variation picker for a subscription product since the recurrence isn't known |
+| `referer`          | For each action                                                                                                     |
+| `variation_id`     | For each action after picking a product variation when purchasing a variable product                                |
 
 
 *** Note: The product types have yet to be finalized, but currently are: `product`, `subscription`, `membership`, and `donation`.
