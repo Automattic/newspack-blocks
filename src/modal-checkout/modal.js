@@ -342,49 +342,51 @@ domReady( () => {
 				);
 
 				if ( donationTiers?.length ) {
-					const frequencyInputs = form.querySelectorAll(
-						`input[name="donation_value_${ frequency }"], input[name="donation_value_${ frequency }_untiered"]`
-					);
+					const donationTierIndex = formData.get( 'donation_tier_index' );
 
-					if ( frequencyInputs?.length ) {
-						// Handle frequency based donation tiers.
-						frequencyInputs.forEach( input => {
-							if ( input.checked && input.value !== 'other' ) {
-								price = input.value;
-							}
-						} );
+					if ( ! donationTierIndex ) {
+						// Handle untiered and frequency donations.
 
-						donationTiers.forEach( el => {
-							const donationData = JSON.parse( el.dataset.product );
-							if (
-								donationData.hasOwnProperty( `donation_price_summary_${ frequency }` ) &&
-								donationData?.[ `donation_price_summary_${ frequency }` ].includes( price )
-							) {
-								priceSummary = donationData[ `donation_price_summary_${ frequency }` ];
-							}
+						const frequencyInputs = form.querySelectorAll(
+							`input[name="donation_value_${ frequency }"], input[name="donation_value_${ frequency }_untiered"]`
+						);
 
-							if ( price === '0' && priceSummary ) {
-								// Replace placeholder price with price input for other.
-								let otherPrice = formData.get( `donation_value_${ frequency }_other` );
+						if ( frequencyInputs?.length ) {
+							// Handle frequency based donation tiers.
+							frequencyInputs.forEach( input => {
+								if ( input.checked && input.value !== 'other' ) {
+									price = input.value;
+								}
+							} );
 
-								// Fallback to untiered price if other price is not set.
-								if ( ! otherPrice ) {
-									otherPrice = formData.get( `donation_value_${ frequency }_untiered` );
+							donationTiers.forEach( el => {
+								const donationData = JSON.parse( el.dataset.product );
+								if (
+									donationData.hasOwnProperty( `donation_price_summary_${ frequency }` ) &&
+									donationData?.[ `donation_price_summary_${ frequency }` ].includes( price )
+								) {
+									priceSummary = donationData[ `donation_price_summary_${ frequency }` ];
 								}
 
-								if ( otherPrice ) {
-									priceSummary = priceSummary.replace( '0', otherPrice );
+								if ( price === '0' && priceSummary ) {
+									// Replace placeholder price with price input for other.
+									let otherPrice = formData.get( `donation_value_${ frequency }_other` );
+
+									// Fallback to untiered price if other price is not set.
+									if ( ! otherPrice ) {
+										otherPrice = formData.get( `donation_value_${ frequency }_untiered` );
+									}
+
+									if ( otherPrice ) {
+										priceSummary = priceSummary.replace( '0', otherPrice );
+									}
 								}
-							}
-						} );
+							} );
+						}
 					} else {
-						// Handle tiers based donation tiers.
-						const index = formData.get( 'donation_tier_index' );
-						if ( index ) {
-							const donationData = JSON.parse( donationTiers?.[ index ].dataset.product );
-							if ( donationData.hasOwnProperty( `donation_price_summary_${ frequency }` ) ) {
-								priceSummary = donationData[ `donation_price_summary_${ frequency }` ];
-							}
+						const donationData = JSON.parse( donationTiers?.[ donationTierIndex ].dataset.product );
+						if ( donationData.hasOwnProperty( `donation_price_summary_${ frequency }` ) ) {
+							priceSummary = donationData[ `donation_price_summary_${ frequency }` ];
 						}
 					}
 				}
