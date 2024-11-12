@@ -69,4 +69,32 @@
 			}
 		}
 	}
+
+	&__button-group {
+		flex: 0 0 100%;
+
+		.components-base-control__label {
+			width: 100%;
+		}
+
+		.components-button-group {
+			display: grid;
+
+			&__3 {
+				grid-template-columns: repeat(3, 1fr);
+			}
+
+			button {
+				justify-content: center;
+			}
+		}
+	}
+}
+
+.components-base-control__field:empty {
+	display: none;
+
+	+ .components-base-control__help {
+		margin: 0;
+	}
 }

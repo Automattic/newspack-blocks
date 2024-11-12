@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Spinner, CheckboxControl, PanelBody, PanelRow } from '@wordpress/components';
+import { BaseControl, CheckboxControl, PanelBody, PanelRow, Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 
 const CheckboxesGroup = ( { options, values, onChange } ) => {
@@ -64,12 +64,7 @@ export const PostStatusesPanel = ( { attributes, setAttributes } ) => {
 	return (
 		<PanelBody title={ __( 'Additional Post Statuses', 'newspack-blocks' ) } initialOpen={ false }>
 			<PanelRow>
-				<i>
-					{ __(
-						'Selection here has effect only for editors, regular users will only see published posts.',
-						'newspack-blocks'
-					) }
-				</i>
+				<BaseControl help={ __( 'Selection here has effect only for editors, regular users will only see published posts.', 'newspack-blocks' ) } />
 			</PanelRow>
 			<CheckboxesGroup
 				values={ attributes.includedPostStatuses }

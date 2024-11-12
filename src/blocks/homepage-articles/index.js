@@ -49,6 +49,7 @@ export const settings = {
 		__( 'articles', 'newspack-blocks' ),
 		__( 'latest', 'newspack-blocks' ),
 		__( 'homepage', 'newspack-blocks' ),
+		__( 'query', 'newspack-blocks' ),
 	],
 	description: __(
 		'An advanced block that allows displaying content based on different parameters and visual configurations.',

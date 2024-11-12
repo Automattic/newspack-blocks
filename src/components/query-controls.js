@@ -3,7 +3,7 @@
  */
 import { __, sprintf } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
-import { Button, QueryControls as BasicQueryControls, ToggleControl } from '@wordpress/components';
+import { Button, QueryControls as BasicQueryControls, PanelRow, ToggleControl } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -255,60 +255,74 @@ class QueryControls extends Component {
 		return (
 			<>
 				{ enableSpecific && (
-					<ToggleControl
-						checked={ specificMode }
-						onChange={ onSpecificModeChange }
-						label={ __( 'Choose Specific Posts', 'newspack-blocks' ) }
-					/>
+					<PanelRow>
+						<ToggleControl
+							checked={ specificMode }
+							onChange={ onSpecificModeChange }
+							label={ __( 'Choose specific posts', 'newspack-blocks' ) }
+						/>
+					</PanelRow>
 				) }
 				{ specificMode ? (
-					<AutocompleteTokenField
-						tokens={ specificPosts || [] }
-						onChange={ onSpecificPostsChange }
-						fetchSuggestions={ this.fetchPostSuggestions }
-						fetchSavedInfo={ this.fetchSavedPosts }
-						label={ __( 'Posts', 'newspack-blocks' ) }
-						help={ __(
-							'Begin typing post title, click autocomplete result to select.',
-							'newspack-blocks'
-						) }
-					/>
+					<PanelRow>
+						<AutocompleteTokenField
+							tokens={ specificPosts || [] }
+							onChange={ onSpecificPostsChange }
+							fetchSuggestions={ this.fetchPostSuggestions }
+							fetchSavedInfo={ this.fetchSavedPosts }
+							label={ __( 'Posts', 'newspack-blocks' ) }
+							help={ __(
+								'Begin typing post title, click autocomplete result to select.',
+								'newspack-blocks'
+							) }
+						/>
+					</PanelRow>
 				) : (
 					<>
-						<BasicQueryControls { ...this.props } />
+						<PanelRow>
+							<BasicQueryControls { ...this.props } />
+						</PanelRow>
 						{ onAuthorsChange && (
-							<AutocompleteTokenField
-								tokens={ authors || [] }
-								onChange={ onAuthorsChange }
-								fetchSuggestions={ this.fetchAuthorSuggestions }
-								fetchSavedInfo={ this.fetchSavedAuthors }
-								label={ __( 'Authors', 'newspack-blocks' ) }
-							/>
+							<PanelRow>
+								<AutocompleteTokenField
+									tokens={ authors || [] }
+									onChange={ onAuthorsChange }
+									fetchSuggestions={ this.fetchAuthorSuggestions }
+									fetchSavedInfo={ this.fetchSavedAuthors }
+									label={ __( 'Authors', 'newspack-blocks' ) }
+								/>
+							</PanelRow>
 						) }
 						{ onCategoriesChange && (
-							<AutocompleteTokenField
-								tokens={ categories || [] }
-								onChange={ onCategoriesChange }
-								fetchSuggestions={ this.fetchCategorySuggestions }
-								fetchSavedInfo={ this.fetchSavedCategories }
-								label={ __( 'Categories', 'newspack-blocks' ) }
-							/>
+							<PanelRow>
+								<AutocompleteTokenField
+									tokens={ categories || [] }
+									onChange={ onCategoriesChange }
+									fetchSuggestions={ this.fetchCategorySuggestions }
+									fetchSavedInfo={ this.fetchSavedCategories }
+									label={ __( 'Categories', 'newspack-blocks' ) }
+								/>
+							</PanelRow>
 						) }
 						{ onIncludeSubcategoriesChange && (
-							<ToggleControl
-								checked={ includeSubcategories }
-								onChange={ onIncludeSubcategoriesChange }
-								label={ __( 'Include subcategories ', 'newspack-blocks' ) }
-							/>
+							<PanelRow>
+								<ToggleControl
+									checked={ includeSubcategories }
+									onChange={ onIncludeSubcategoriesChange }
+									label={ __( 'Include subcategories ', 'newspack-blocks' ) }
+								/>
+							</PanelRow>
 						) }
 						{ onTagsChange && (
-							<AutocompleteTokenField
-								tokens={ tags || [] }
-								onChange={ onTagsChange }
-								fetchSuggestions={ this.fetchTagSuggestions }
-								fetchSavedInfo={ this.fetchSavedTags }
-								label={ __( 'Tags', 'newspack-blocks' ) }
-							/>
+							<PanelRow>
+								<AutocompleteTokenField
+									tokens={ tags || [] }
+									onChange={ onTagsChange }
+									fetchSuggestions={ this.fetchTagSuggestions }
+									fetchSavedInfo={ this.fetchSavedTags }
+									label={ __( 'Tags', 'newspack-blocks' ) }
+								/>
+							</PanelRow>
 						) }
 						{ onCustomTaxonomiesChange &&
 							registeredCustomTaxonomies.map( tax => (
@@ -331,16 +345,16 @@ class QueryControls extends Component {
 								/>
 							) ) }
 						{ onTagExclusionsChange && (
-							<p>
+							<PanelRow>
 								<Button
-									isLink
+									variant="secondary"
 									onClick={ () => this.setState( { showAdvancedFilters: ! showAdvancedFilters } ) }
 								>
 									{ showAdvancedFilters
-										? __( 'Hide Advanced Filters', 'newspack-blocks' )
-										: __( 'Show Advanced Filters', 'newspack-blocks' ) }
+										? __( 'Hide advanced filters', 'newspack-blocks' )
+										: __( 'Show advanced filters', 'newspack-blocks' ) }
 								</Button>
-							</p>
+							</PanelRow>
 						) }
 						{ showAdvancedFilters && (
 							<>
@@ -350,7 +364,7 @@ class QueryControls extends Component {
 										onChange={ onTagExclusionsChange }
 										fetchSuggestions={ this.fetchTagSuggestions }
 										fetchSavedInfo={ this.fetchSavedTags }
-										label={ __( 'Excluded Tags', 'newspack-blocks' ) }
+										label={ __( 'Excluded tags', 'newspack-blocks' ) }
 									/>
 								) }
 								{ onCategoryExclusionsChange && (
@@ -359,7 +373,7 @@ class QueryControls extends Component {
 										onChange={ onCategoryExclusionsChange }
 										fetchSuggestions={ this.fetchCategorySuggestions }
 										fetchSavedInfo={ this.fetchSavedCategories }
-										label={ __( 'Excluded Categories', 'newspack-blocks' ) }
+										label={ __( 'Excluded categories', 'newspack-blocks' ) }
 									/>
 								) }
 								{ registeredCustomTaxonomies &&
