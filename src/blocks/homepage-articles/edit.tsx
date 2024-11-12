@@ -36,7 +36,6 @@ import {
 	BaseControl,
 	Button,
 	ButtonGroup,
-	Notice,
 	PanelBody,
 	PanelRow,
 	Path,
@@ -349,7 +348,11 @@ class Edit extends Component< HomepageArticlesProps > {
 			<Fragment>
 				<PanelBody title={ __( 'Settings', 'newspack-blocks' ) }>
 					<PanelRow>
-						<BaseControl label={ __( 'Content display', 'newspack-blocks' ) } className="newspack-block__button-group">
+						<BaseControl
+							label={ __( 'Content display', 'newspack-blocks' ) }
+							id="newspack-block__content-display"
+							className="newspack-block__button-group"
+						>
 							<ButtonGroup className="components-button-group__3">
 								<Button
 									isPrimary={ ! showExcerpt && ! showFullContent }
@@ -407,7 +410,7 @@ class Edit extends Component< HomepageArticlesProps > {
 					{ ! showFullContent && (
 					<PanelRow>
 						<ToggleControl
-							label={ __( 'Add a "Read more" link', 'newspack-blocks' ) }
+							label={ __( 'Show "Read more" link', 'newspack-blocks' ) }
 							checked={ showReadMore }
 							onChange={ () => setAttributes( { showReadMore: ! showReadMore } ) }
 						/>
