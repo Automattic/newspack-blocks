@@ -1,4 +1,7 @@
+@use "~@wordpress/base-styles/colors" as wp-colors;
+
 .autocomplete-tokenfield {
+	max-width: 100%;
 	position: relative;
 
 	.components-spinner {
@@ -13,6 +16,8 @@
 	}
 
 	.autocomplete-tokenfield__help {
-		font-style: italic;
+		color: wp-colors.$gray-700;
+		font-size: 12px;
+		margin: 8px 0;
 	}
 }

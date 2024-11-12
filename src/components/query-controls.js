@@ -3,7 +3,7 @@
  */
 import { __, sprintf } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
-import { Button, QueryControls as BasicQueryControls, PanelRow, ToggleControl } from '@wordpress/components';
+import { BaseControl, Button, ButtonGroup, QueryControls as BasicQueryControls, PanelRow, ToggleControl } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -217,6 +217,7 @@ class QueryControls extends Component {
 		const {
 			specificMode,
 			onSpecificModeChange,
+			onLoopModeChange,
 			specificPosts,
 			onSpecificPostsChange,
 			authors,
@@ -256,11 +257,28 @@ class QueryControls extends Component {
 			<>
 				{ enableSpecific && (
 					<PanelRow>
-						<ToggleControl
-							checked={ specificMode }
-							onChange={ onSpecificModeChange }
-							label={ __( 'Choose specific posts', 'newspack-blocks' ) }
-						/>
+						<BaseControl
+							label={ __( 'Query type', 'newspack-blocks' ) }
+							id="newspack-block__query-type"
+							className="newspack-block__button-group"
+						>
+							<ButtonGroup className="components-button-group__2">
+								<Button
+									variant={ ! specificMode && 'primary' }
+									aria-pressed={ ! specificMode }
+									onClick={ onLoopModeChange }
+								>
+									{ __( 'Loop', 'newspack-blocks' ) }
+								</Button>
+								<Button
+									variant={ specificMode && 'primary' }
+									aria-pressed={ specificMode }
+									onClick={ onSpecificModeChange }
+								>
+									{ __( 'Specific', 'newspack-blocks' ) }
+								</Button>
+							</ButtonGroup>
+						</BaseControl>
 					</PanelRow>
 				) }
 				{ specificMode ? (

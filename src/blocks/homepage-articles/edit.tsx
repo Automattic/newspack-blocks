@@ -355,9 +355,8 @@ class Edit extends Component< HomepageArticlesProps > {
 						>
 							<ButtonGroup className="components-button-group__3">
 								<Button
-									isPrimary={ ! showExcerpt && ! showFullContent }
+									variant={ ! showExcerpt && ! showFullContent && 'primary' }
 									aria-pressed={ ! showExcerpt && ! showFullContent }
-									aria-label={ __( 'None', 'newspack-blocks' ) }
 									onClick={ () => {
 										setAttributes( {
 											showExcerpt: false,
@@ -368,9 +367,8 @@ class Edit extends Component< HomepageArticlesProps > {
 									{ __( 'None', 'newspack-blocks' ) }
 								</Button>
 								<Button
-									isPrimary={ showExcerpt && ! showFullContent }
+									variant={ showExcerpt && ! showFullContent && 'primary' }
 									aria-pressed={ showExcerpt && ! showFullContent }
-									aria-label={ __( 'Excerpt', 'newspack-blocks' ) }
 									onClick={ () => {
 										setAttributes( {
 											showExcerpt: ! showExcerpt,
@@ -381,9 +379,8 @@ class Edit extends Component< HomepageArticlesProps > {
 									{ __( 'Excerpt', 'newspack-blocks' ) }
 								</Button>
 								<Button
-									isPrimary={ ! showExcerpt && showFullContent }
+									variant={ ! showExcerpt && showFullContent && 'primary' }
 									aria-pressed={ ! showExcerpt && showFullContent }
-									aria-label={ __( 'Full Post', 'newspack-blocks' ) }
 									onClick={ () => {
 										setAttributes( {
 											showFullContent: ! showFullContent,
@@ -416,7 +413,7 @@ class Edit extends Component< HomepageArticlesProps > {
 						/>
 					</PanelRow>
 					) }
-					{ showReadMore && (
+					{ ! showFullContent && showReadMore && (
 						<PanelRow>
 							<TextControl
 								label={ __( '"Read more" link text', 'newspack-blocks' ) }
@@ -483,7 +480,8 @@ class Edit extends Component< HomepageArticlesProps > {
 							setAttributes( { postsToShow: _postsToShow || 1 } )
 						}
 						specificMode={ specificMode }
-						onSpecificModeChange={ handleAttributeChange( 'specificMode' ) }
+						onSpecificModeChange={ () => setAttributes( { specificMode: true } ) }
+						onLoopModeChange={ () => setAttributes( { specificMode: false } ) }
 						specificPosts={ specificPosts }
 						onSpecificPostsChange={ handleAttributeChange( 'specificPosts' ) }
 						authors={ authors }

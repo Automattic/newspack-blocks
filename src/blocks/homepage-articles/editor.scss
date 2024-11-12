@@ -80,6 +80,10 @@
 		.components-button-group {
 			display: grid;
 
+			&__2 {
+				grid-template-columns: repeat(2, 1fr);
+			}
+
 			&__3 {
 				grid-template-columns: repeat(3, 1fr);
 			}
