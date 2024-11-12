@@ -349,7 +349,7 @@ class Edit extends Component< HomepageArticlesProps > {
 				<PanelBody title={ __( 'Settings', 'newspack-blocks' ) }>
 					<PanelRow>
 						<BaseControl
-							label={ __( 'Content display', 'newspack-blocks' ) }
+							label={ __( 'Content', 'newspack-blocks' ) }
 							id="newspack-block__content-display"
 							className="newspack-block__button-group"
 						>
@@ -473,7 +473,7 @@ class Edit extends Component< HomepageArticlesProps > {
 						/>
 					</PanelBody>
 				) }
-				<PanelBody title={ __( 'Filters', 'newspack-blocks' ) } initialOpen={ false }>
+				<PanelBody title={ __( 'Loop', 'newspack-blocks' ) } initialOpen={ false } className="newspack-block__loop-panel">
 					<QueryControls
 						numberOfItems={ postsToShow }
 						onNumberOfItemsChange={ ( _postsToShow: number ) =>
@@ -502,18 +502,16 @@ class Edit extends Component< HomepageArticlesProps > {
 						onCustomTaxonomyExclusionsChange={ handleAttributeChange( 'customTaxonomyExclusions' ) }
 						postType={ postType }
 					/>
-					<PanelRow>
-						<ToggleControl
-							label={ __( 'Allow duplicate stories', 'newspack-blocks' ) }
-							help={ __(
-								"If checked, this block will be excluded from the page's de-duplication logic. Duplicate stories may appear.",
-								'newspack-blocks'
-							) }
-							checked={ ! attributes.deduplicate }
-							onChange={ ( value: boolean ) => setAttributes( { deduplicate: ! value } ) }
-							className="newspack-blocks-deduplication-toggle"
-						/>
-					</PanelRow>
+					<ToggleControl
+						label={ __( 'Allow duplicate stories', 'newspack-blocks' ) }
+						help={ __(
+							"If checked, this block will be excluded from the page's de-duplication logic. Duplicate stories may appear.",
+							'newspack-blocks'
+						) }
+						checked={ ! attributes.deduplicate }
+						onChange={ ( value: boolean ) => setAttributes( { deduplicate: ! value } ) }
+						className="newspack-blocks-deduplication-toggle"
+					/>
 				</PanelBody>
 				<PanelBody title={ __( 'Featured Image', 'newspack-blocks' ) } initialOpen={ false }>
 					<PanelRow>

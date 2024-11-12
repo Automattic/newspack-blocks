@@ -3,10 +3,11 @@
  */
 import { __, sprintf } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
-import { BaseControl, Button, ButtonGroup, QueryControls as BasicQueryControls, PanelRow, ToggleControl } from '@wordpress/components';
+import { BaseControl, Button, ButtonGroup, QueryControls as BasicQueryControls, ToggleControl } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
+import { chevronDown, chevronUp } from '@wordpress/icons';
 
 /**
  * Internal dependencies.
@@ -256,91 +257,77 @@ class QueryControls extends Component {
 		return (
 			<>
 				{ enableSpecific && (
-					<PanelRow>
-						<BaseControl
-							label={ __( 'Query type', 'newspack-blocks' ) }
-							id="newspack-block__query-type"
-							className="newspack-block__button-group"
-						>
-							<ButtonGroup className="components-button-group__2">
-								<Button
-									variant={ ! specificMode && 'primary' }
-									aria-pressed={ ! specificMode }
-									onClick={ onLoopModeChange }
-								>
-									{ __( 'Loop', 'newspack-blocks' ) }
-								</Button>
-								<Button
-									variant={ specificMode && 'primary' }
-									aria-pressed={ specificMode }
-									onClick={ onSpecificModeChange }
-								>
-									{ __( 'Specific', 'newspack-blocks' ) }
-								</Button>
-							</ButtonGroup>
-						</BaseControl>
-					</PanelRow>
+					<BaseControl
+						label={ __( 'Type', 'newspack-blocks' ) }
+						id="newspack-block__loop-type"
+						className="newspack-block__button-group"
+					>
+						<ButtonGroup className="components-button-group__2">
+							<Button
+								variant={ ! specificMode && 'primary' }
+								aria-pressed={ ! specificMode }
+								onClick={ onLoopModeChange }
+							>
+								{ __( 'Query', 'newspack-blocks' ) }
+							</Button>
+							<Button
+								variant={ specificMode && 'primary' }
+								aria-pressed={ specificMode }
+								onClick={ onSpecificModeChange }
+							>
+								{ __( 'Specific', 'newspack-blocks' ) }
+							</Button>
+						</ButtonGroup>
+					</BaseControl>
 				) }
 				{ specificMode ? (
-					<PanelRow>
-						<AutocompleteTokenField
-							tokens={ specificPosts || [] }
-							onChange={ onSpecificPostsChange }
-							fetchSuggestions={ this.fetchPostSuggestions }
-							fetchSavedInfo={ this.fetchSavedPosts }
-							label={ __( 'Posts', 'newspack-blocks' ) }
-							help={ __(
-								'Begin typing post title, click autocomplete result to select.',
-								'newspack-blocks'
-							) }
-						/>
-					</PanelRow>
+					<AutocompleteTokenField
+						tokens={ specificPosts || [] }
+						onChange={ onSpecificPostsChange }
+						fetchSuggestions={ this.fetchPostSuggestions }
+						fetchSavedInfo={ this.fetchSavedPosts }
+						label={ __( 'Posts', 'newspack-blocks' ) }
+						help={ __(
+							'Begin typing post title, click autocomplete result to select.',
+							'newspack-blocks'
+						) }
+					/>
 				) : (
 					<>
-						<PanelRow>
-							<BasicQueryControls { ...this.props } />
-						</PanelRow>
+						<BasicQueryControls { ...this.props } />
 						{ onAuthorsChange && (
-							<PanelRow>
-								<AutocompleteTokenField
-									tokens={ authors || [] }
-									onChange={ onAuthorsChange }
-									fetchSuggestions={ this.fetchAuthorSuggestions }
-									fetchSavedInfo={ this.fetchSavedAuthors }
-									label={ __( 'Authors', 'newspack-blocks' ) }
-								/>
-							</PanelRow>
+							<AutocompleteTokenField
+								tokens={ authors || [] }
+								onChange={ onAuthorsChange }
+								fetchSuggestions={ this.fetchAuthorSuggestions }
+								fetchSavedInfo={ this.fetchSavedAuthors }
+								label={ __( 'Authors', 'newspack-blocks' ) }
+							/>
 						) }
 						{ onCategoriesChange && (
-							<PanelRow>
-								<AutocompleteTokenField
-									tokens={ categories || [] }
-									onChange={ onCategoriesChange }
-									fetchSuggestions={ this.fetchCategorySuggestions }
-									fetchSavedInfo={ this.fetchSavedCategories }
-									label={ __( 'Categories', 'newspack-blocks' ) }
-								/>
-							</PanelRow>
+							<AutocompleteTokenField
+								tokens={ categories || [] }
+								onChange={ onCategoriesChange }
+								fetchSuggestions={ this.fetchCategorySuggestions }
+								fetchSavedInfo={ this.fetchSavedCategories }
+								label={ __( 'Categories', 'newspack-blocks' ) }
+							/>
 						) }
 						{ onIncludeSubcategoriesChange && (
-							<PanelRow>
-								<ToggleControl
-									checked={ includeSubcategories }
-									onChange={ onIncludeSubcategoriesChange }
-									label={ __( 'Include subcategories ', 'newspack-blocks' ) }
-								/>
-							</PanelRow>
+							<ToggleControl
+								checked={ includeSubcategories }
+								onChange={ onIncludeSubcategoriesChange }
+								label={ __( 'Include subcategories ', 'newspack-blocks' ) }
+							/>
 						) }
 						{ onTagsChange && (
-							<PanelRow>
-								<AutocompleteTokenField
-									tokens={ tags || [] }
-									onChange={ onTagsChange }
-									fetchSuggestions={ this.fetchTagSuggestions }
-									fetchSavedInfo={ this.fetchSavedTags }
-									label={ __( 'Tags', 'newspack-blocks' ) }
-								/>
-							</PanelRow>
+							<AutocompleteTokenField
+								tokens={ tags || [] }
+								onChange={ onTagsChange }
+								fetchSuggestions={ this.fetchTagSuggestions }
+								fetchSavedInfo={ this.fetchSavedTags }
+								label={ __( 'Tags', 'newspack-blocks' ) }
+							/>
 						) }
 						{ onCustomTaxonomiesChange &&
 							registeredCustomTaxonomies.map( tax => (
@@ -363,28 +350,18 @@ class QueryControls extends Component {
 								/>
 							) ) }
 						{ onTagExclusionsChange && (
-							<PanelRow>
-								<Button
-									variant="secondary"
-									onClick={ () => this.setState( { showAdvancedFilters: ! showAdvancedFilters } ) }
-								>
-									{ showAdvancedFilters
-										? __( 'Hide advanced filters', 'newspack-blocks' )
-										: __( 'Show advanced filters', 'newspack-blocks' ) }
-								</Button>
-							</PanelRow>
+							<Button
+								variant="secondary"
+								icon={ showAdvancedFilters ? chevronUp : chevronDown }
+								iconPosition="right"
+								iconSize={ 16 }
+								onClick={ () => this.setState( { showAdvancedFilters: ! showAdvancedFilters } ) }
+							>
+								{ __( 'Advanced filters', 'newspack-blocks' ) }
+							</Button>
 						) }
 						{ showAdvancedFilters && (
 							<>
-								{ onTagExclusionsChange && (
-									<AutocompleteTokenField
-										tokens={ tagExclusions || [] }
-										onChange={ onTagExclusionsChange }
-										fetchSuggestions={ this.fetchTagSuggestions }
-										fetchSavedInfo={ this.fetchSavedTags }
-										label={ __( 'Excluded tags', 'newspack-blocks' ) }
-									/>
-								) }
 								{ onCategoryExclusionsChange && (
 									<AutocompleteTokenField
 										tokens={ categoryExclusions || [] }
@@ -392,6 +369,15 @@ class QueryControls extends Component {
 										fetchSuggestions={ this.fetchCategorySuggestions }
 										fetchSavedInfo={ this.fetchSavedCategories }
 										label={ __( 'Excluded categories', 'newspack-blocks' ) }
+									/>
+								) }
+								{ onTagExclusionsChange && (
+									<AutocompleteTokenField
+										tokens={ tagExclusions || [] }
+										onChange={ onTagExclusionsChange }
+										fetchSuggestions={ this.fetchTagSuggestions }
+										fetchSavedInfo={ this.fetchSavedTags }
+										label={ __( 'Excluded tags', 'newspack-blocks' ) }
 									/>
 								) }
 								{ registeredCustomTaxonomies &&
