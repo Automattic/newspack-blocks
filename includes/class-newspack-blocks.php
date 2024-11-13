@@ -710,6 +710,7 @@ class Newspack_Blocks {
 									}
 								} else {
 									$author_names[]  = $author_data->user_login;
+									$author_names[]  = $author_data->user_nicename;
 									$author_emails[] = $author_data->user_email;
 								}
 							}
@@ -719,6 +720,13 @@ class Newspack_Blocks {
 
 				// Reset numeric indexes.
 				$authors = array_values( $authors );
+
+				// Prepare slugs for search.
+				$__author_names = $author_names;
+				foreach ( $__author_names as $an ) {
+					$author_names[] = 'cap-' . $an;
+				}
+
 				if ( empty( $authors ) && count( $co_authors_names ) ) {
 					// Look for co-authors posts.
 					$args['tax_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
@@ -742,6 +750,11 @@ class Newspack_Blocks {
 								],
 								[
 									'field'    => 'name',
+									'taxonomy' => 'author',
+									'terms'    => $author_names,
+								],
+								[
+									'field'    => 'slug',
 									'taxonomy' => 'author',
 									'terms'    => $author_names,
 								],
