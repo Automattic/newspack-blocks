@@ -5,9 +5,13 @@
 	position: relative;
 
 	.components-spinner {
+		bottom: 12px;
 		position: absolute;
-		top: 2em;
 		right: 0;
+	}
+
+	&:has(.autocomplete-tokenfield__help) .components-spinner {
+		bottom: calc(36px + 8px + 12px);
 	}
 
 	/* Workaround for hard-coded help text in FormTokenField. */

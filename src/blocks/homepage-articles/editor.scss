@@ -76,10 +76,15 @@
 		> *:not(.components-panel__body-title) {
 			margin-bottom: 24px;
 			margin-top: 0;
+
+			&:last-of-type {
+				margin-bottom: 8px;
+			}
 		}
 
 		.components-button.is-secondary {
 			justify-content: center;
+			margin-bottom: 24px;
 			width: 100%;
 
 			&:has(svg) {
@@ -87,7 +92,7 @@
 			}
 		}
 
-		.autocomplete-tokenfield + .components-toggle-control:not(.newspack-blocks-deduplication-toggle) {
+		.autocomplete-tokenfield + .components-checkbox-control {
 			margin-top: -16px;
 		}
 	}

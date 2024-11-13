@@ -401,6 +401,7 @@ class Edit extends Component< HomepageArticlesProps > {
 								onChange={ ( value: number ) => setAttributes( { excerptLength: value } ) }
 								min={ 10 }
 								max={ 100 }
+								__next40pxDefaultSize
 							/>
 						</PanelRow>
 					) }
@@ -470,6 +471,7 @@ class Edit extends Component< HomepageArticlesProps > {
 							min={ 2 }
 							max={ 6 }
 							required
+							__next40pxDefaultSize
 						/>
 					</PanelBody>
 				) }

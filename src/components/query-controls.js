@@ -3,7 +3,13 @@
  */
 import { __, sprintf } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
-import { BaseControl, Button, ButtonGroup, QueryControls as BasicQueryControls, ToggleControl } from '@wordpress/components';
+import {
+	BaseControl,
+	Button,
+	ButtonGroup,
+	CheckboxControl,
+	QueryControls as BasicQueryControls
+} from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -261,6 +267,11 @@ class QueryControls extends Component {
 						label={ __( 'Type', 'newspack-blocks' ) }
 						id="newspack-block__loop-type"
 						className="newspack-block__button-group"
+						help={ specificMode ? (
+							__( 'The block will display only the specifically selected post(s).', 'newspack-blocks' )
+						) : (
+							__( 'The block will display content based on the filtering settings below.', 'newspack-blocks' )
+						) }
 					>
 						<ButtonGroup className="components-button-group__2">
 							<Button
@@ -314,7 +325,7 @@ class QueryControls extends Component {
 							/>
 						) }
 						{ onIncludeSubcategoriesChange && (
-							<ToggleControl
+							<CheckboxControl
 								checked={ includeSubcategories }
 								onChange={ onIncludeSubcategoriesChange }
 								label={ __( 'Include subcategories ', 'newspack-blocks' ) }
