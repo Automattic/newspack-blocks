@@ -409,6 +409,7 @@ import { domReady } from './utils';
 				 */
 				function handleFormSubmit( ev ) {
 					ev.preventDefault();
+					ev.stopImmediatePropagation();
 					validateForm();
 					managePagination( 'continue' ); // TODOGA4: this is firing whether or not the form validates.
 				}
