@@ -563,7 +563,7 @@
 			padding: var(--newspack-ui-spacer-5, 24px);
 
 			label {
-				display: flex;
+				display: flex !important; // to override grid on more generic labels with checkboxes.
 				justify-content: flex-start;
 				align-items: center;
 				height: 20px;
