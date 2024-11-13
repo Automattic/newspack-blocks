@@ -678,8 +678,6 @@ class Newspack_Blocks {
 
 			if ( $authors && count( $authors ) ) {
 				$co_authors_names = [];
-				$author_names     = [];
-				$author_emails    = [];
 
 				if ( $is_co_authors_plus_active ) {
 					$co_authors_guest_authors = new CoAuthors_Guest_Authors();
@@ -697,21 +695,23 @@ class Newspack_Blocks {
 							$co_authors_names[] = $co_author->user_nicename;
 							unset( $authors[ $index ] );
 						} else {
-							// If the given ID is linked to a guest author.
 							$authors_controller = new WP_REST_Newspack_Authors_Controller();
 							$author_data        = get_userdata( $author_id );
 							if ( $author_data ) {
 								$linked_guest_author = $authors_controller->get_linked_guest_author( $author_data->user_login );
+								// If the given ID is linked to a guest author.
 								if ( $linked_guest_author ) {
 									$guest_author_name = sanitize_title( $linked_guest_author->post_title );
 									if ( ! in_array( $guest_author_name, $co_authors_names, true ) ) {
 										$co_authors_names[] = $guest_author_name;
+										$co_authors_names[] = $linked_guest_author->post_name;
 										unset( $authors[ $index ] );
 									}
 								} else {
-									$author_names[]  = $author_data->user_login;
-									$author_names[]  = $author_data->user_nicename;
-									$author_emails[] = $author_data->user_email;
+									$co_authors_names[]  = $author_data->user_login;
+									$co_authors_names[]  = $author_data->user_nicename;
+									$co_authors_names[]  = 'cap-' . $author_data->user_nicename;
+									$co_authors_names[] = $author_data->user_email;
 								}
 							}
 						}
@@ -721,15 +721,15 @@ class Newspack_Blocks {
 				// Reset numeric indexes.
 				$authors = array_values( $authors );
 
-				// Prepare slugs for search.
-				$__author_names = $author_names;
-				foreach ( $__author_names as $an ) {
-					$author_names[] = 'cap-' . $an;
-				}
-
 				if ( empty( $authors ) && count( $co_authors_names ) ) {
-					// Look for co-authors posts.
+					// We are only looking for Guest Authors post. So we need to only search by taxonomy.
 					$args['tax_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+						'relation' => 'OR',
+						[
+							'field'    => 'slug',
+							'taxonomy' => 'author',
+							'terms'    => $co_authors_names,
+						],
 						[
 							'field'    => 'name',
 							'taxonomy' => 'author',
@@ -737,37 +737,11 @@ class Newspack_Blocks {
 						],
 					];
 				} elseif ( empty( $co_authors_names ) && count( $authors ) ) {
+					// Simple search by author. Co-Authors plus is not active.
 					$args['author__in'] = $authors;
-
-					if ( $is_co_authors_plus_active ) {
-						// Don't get any posts that are attributed to other CAP guest authors.
-						$args['tax_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
-							[
-								'relation' => 'OR',
-								[
-									'taxonomy' => 'author',
-									'operator' => 'NOT EXISTS',
-								],
-								[
-									'field'    => 'name',
-									'taxonomy' => 'author',
-									'terms'    => $author_names,
-								],
-								[
-									'field'    => 'slug',
-									'taxonomy' => 'author',
-									'terms'    => $author_names,
-								],
-								[
-									'field'    => 'name',
-									'taxonomy' => 'author',
-									'terms'    => $author_emails,
-								],
-							],
-						];
-					}
 				} else {
 					// The query contains both WP users and CAP guest authors. We need to filter the SQL query.
+					// That's because author__in and tax_query would be combined with AND, not OR.
 					self::$filter_clauses = [
 						'authors'   => $authors,
 						'coauthors' => $co_authors_names,
@@ -1267,9 +1241,15 @@ class Newspack_Blocks {
 
 		// co-author tax query.
 		$tax_query = [
+			'relation' => 'OR',
 			[
 				'taxonomy' => 'author',
 				'field'    => 'name',
+				'terms'    => $co_authors_names,
+			],
+			[
+				'taxonomy' => 'author',
+				'field'    => 'slug',
 				'terms'    => $co_authors_names,
 			],
 		];
