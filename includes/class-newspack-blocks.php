@@ -674,17 +674,16 @@ class Newspack_Blocks {
 				}
 			}
 
-			$is_co_authors_plus_active = class_exists( 'CoAuthors_Guest_Authors' );
+			$is_co_authors_plus_active = class_exists( 'CoAuthors_Plus' );
+			$co_authors_guest_authors = class_exists( 'CoAuthors_Guest_Authors' ) ? new CoAuthors_Guest_Authors() : null;
 
 			if ( $authors && count( $authors ) ) {
 				$co_authors_names = [];
 
 				if ( $is_co_authors_plus_active ) {
-					$co_authors_guest_authors = new CoAuthors_Guest_Authors();
-
 					foreach ( $authors as $index => $author_id ) {
 						// If the given ID is a guest author.
-						$co_author = $co_authors_guest_authors->get_guest_author_by( 'id', $author_id );
+						$co_author = $co_authors_guest_authors ? $co_authors_guest_authors->get_guest_author_by( 'id', $author_id ) : null;
 						if ( $co_author ) {
 							if ( ! empty( $co_author->linked_account ) ) {
 								$linked_account = get_user_by( 'login', $co_author->linked_account );
