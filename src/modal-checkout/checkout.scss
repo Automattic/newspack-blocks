@@ -80,6 +80,10 @@
 			}
 
 		}
+
+		.woocommerce-billing-fields__field-wrapper ~ .form-row {
+			margin: var(--newspack-ui-spacer-5, 24px) 0 0;
+		}
 	}
 
 	// Override billing details spacing.
