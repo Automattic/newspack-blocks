@@ -346,83 +346,76 @@ class Edit extends Component< HomepageArticlesProps > {
 
 		return (
 			<Fragment>
-				<PanelBody title={ __( 'Settings', 'newspack-blocks' ) }>
-					<PanelRow>
-						<BaseControl
-							label={ __( 'Content', 'newspack-blocks' ) }
-							id="newspack-block__content-display"
-							className="newspack-block__button-group"
-						>
-							<ButtonGroup className="components-button-group__3">
-								<Button
-									variant={ ! showExcerpt && ! showFullContent && 'primary' }
-									aria-pressed={ ! showExcerpt && ! showFullContent }
-									onClick={ () => {
-										setAttributes( {
-											showExcerpt: false,
-											showFullContent: false
-										} )
-									} }
-								>
-									{ __( 'None', 'newspack-blocks' ) }
-								</Button>
-								<Button
-									variant={ showExcerpt && ! showFullContent && 'primary' }
-									aria-pressed={ showExcerpt && ! showFullContent }
-									onClick={ () => {
-										setAttributes( {
-											showExcerpt: ! showExcerpt,
-											showFullContent: showFullContent ? false : showFullContent
-										} )
-									} }
-								>
-									{ __( 'Excerpt', 'newspack-blocks' ) }
-								</Button>
-								<Button
-									variant={ ! showExcerpt && showFullContent && 'primary' }
-									aria-pressed={ ! showExcerpt && showFullContent }
-									onClick={ () => {
-										setAttributes( {
-											showFullContent: ! showFullContent,
-											showExcerpt: showExcerpt ? false : showExcerpt
-										} )
-									} }
-								>
-									{ __( 'Full Post', 'newspack-blocks' ) }
-								</Button>
-							</ButtonGroup>
-						</BaseControl>
-					</PanelRow>
+				<PanelBody title={ __( 'Settings', 'newspack-blocks' ) } className="newspack-block__panel">
+					<BaseControl
+						label={ __( 'Content', 'newspack-blocks' ) }
+						id="newspack-block__content-display"
+						className="newspack-block__button-group"
+					>
+						<ButtonGroup className="components-button-group__3">
+							<Button
+								variant={ ! showExcerpt && ! showFullContent && 'primary' }
+								aria-pressed={ ! showExcerpt && ! showFullContent }
+								onClick={ () => {
+									setAttributes( {
+										showExcerpt: false,
+										showFullContent: false
+									} )
+								} }
+							>
+								{ __( 'None', 'newspack-blocks' ) }
+							</Button>
+							<Button
+								variant={ showExcerpt && ! showFullContent && 'primary' }
+								aria-pressed={ showExcerpt && ! showFullContent }
+								onClick={ () => {
+									setAttributes( {
+										showExcerpt: ! showExcerpt,
+										showFullContent: showFullContent ? false : showFullContent
+									} )
+								} }
+							>
+								{ __( 'Excerpt', 'newspack-blocks' ) }
+							</Button>
+							<Button
+								variant={ ! showExcerpt && showFullContent && 'primary' }
+								aria-pressed={ ! showExcerpt && showFullContent }
+								onClick={ () => {
+									setAttributes( {
+										showFullContent: ! showFullContent,
+										showExcerpt: showExcerpt ? false : showExcerpt
+									} )
+								} }
+							>
+								{ __( 'Full Post', 'newspack-blocks' ) }
+							</Button>
+						</ButtonGroup>
+					</BaseControl>
 					{ showExcerpt && (
-						<PanelRow>
-							<RangeControl
-								label={ __( 'Max number of words in excerpt', 'newspack-blocks' ) }
-								value={ excerptLength }
-								onChange={ ( value: number ) => setAttributes( { excerptLength: value } ) }
-								min={ 10 }
-								max={ 100 }
-								__next40pxDefaultSize
-							/>
-						</PanelRow>
+						<RangeControl
+							label={ __( 'Max number of words in excerpt', 'newspack-blocks' ) }
+							value={ excerptLength }
+							onChange={ ( value: number ) => setAttributes( { excerptLength: value } ) }
+							min={ 10 }
+							max={ 100 }
+							__next40pxDefaultSize
+						/>
 					) }
 					{ ! showFullContent && (
-					<PanelRow>
 						<ToggleControl
 							label={ __( 'Show "Read more" link', 'newspack-blocks' ) }
 							checked={ showReadMore }
 							onChange={ () => setAttributes( { showReadMore: ! showReadMore } ) }
 						/>
-					</PanelRow>
 					) }
 					{ ! showFullContent && showReadMore && (
-						<PanelRow>
-							<TextControl
-								label={ __( '"Read more" link text', 'newspack-blocks' ) }
-								value={ readMoreLabel }
-								placeholder={ readMoreLabel }
-								onChange={ ( value: string ) => setAttributes( { readMoreLabel: value } ) }
-							/>
-						</PanelRow>
+						<TextControl
+							label={ __( '"Read more" link text', 'newspack-blocks' ) }
+							value={ readMoreLabel }
+							placeholder={ readMoreLabel }
+							onChange={ ( value: string ) => setAttributes( { readMoreLabel: value } ) }
+							__next40pxDefaultSize
+						/>
 					) }
 					{ ! specificMode && isBlogPrivate() ? (
 						/*
@@ -432,31 +425,25 @@ class Edit extends Component< HomepageArticlesProps > {
 						 * which is not provided in the current implementation.
 						 * See https://github.com/Automattic/newspack-blocks/issues/306.
 						 */
-						<PanelRow>
-							<ToggleControl
-								label={ __( 'Show "Load more posts" button', 'newspack-blocks' ) }
-								help={ __( 'This site is private, therefore this feature is not active.', 'newspack-blocks' ) }
-								disabled={ true }
-							/>
-						</PanelRow>
+						<ToggleControl
+							label={ __( 'Show "Load more posts" button', 'newspack-blocks' ) }
+							help={ __( 'This site is private, therefore this feature is not active.', 'newspack-blocks' ) }
+							disabled={ true }
+						/>
 					) : (
 						! specificMode && (
 							<>
-								<PanelRow>
-									<ToggleControl
-										label={ __( 'Show "Load more posts" button', 'newspack-blocks' ) }
-										checked={ moreButton }
-										onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
-									/>
-								</PanelRow>
+								<ToggleControl
+									label={ __( 'Show "Load more posts" button', 'newspack-blocks' ) }
+									checked={ moreButton }
+									onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
+								/>
 								{ moreButton && (
-									<PanelRow>
-										<ToggleControl
-											label={ __( 'Infinite scroll', 'newspack-blocks' ) }
-											checked={ infiniteScroll }
-											onChange={ () => setAttributes( { infiniteScroll: ! infiniteScroll } ) }
-										/>
-									</PanelRow>
+									<ToggleControl
+										label={ __( 'Infinite scroll', 'newspack-blocks' ) }
+										checked={ infiniteScroll }
+										onChange={ () => setAttributes( { infiniteScroll: ! infiniteScroll } ) }
+									/>
 								) }
 							</>
 						)
@@ -475,7 +462,7 @@ class Edit extends Component< HomepageArticlesProps > {
 						/>
 					</PanelBody>
 				) }
-				<PanelBody title={ __( 'Loop', 'newspack-blocks' ) } initialOpen={ false } className="newspack-block__loop-panel">
+				<PanelBody title={ __( 'Loop', 'newspack-blocks' ) } initialOpen={ false } className="newspack-block__panel is-loop">
 					<QueryControls
 						numberOfItems={ postsToShow }
 						onNumberOfItemsChange={ ( _postsToShow: number ) =>
@@ -512,7 +499,6 @@ class Edit extends Component< HomepageArticlesProps > {
 						) }
 						checked={ ! attributes.deduplicate }
 						onChange={ ( value: boolean ) => setAttributes( { deduplicate: ! value } ) }
-						className="newspack-blocks-deduplication-toggle"
 					/>
 				</PanelBody>
 				<PanelBody title={ __( 'Featured Image', 'newspack-blocks' ) } initialOpen={ false }>

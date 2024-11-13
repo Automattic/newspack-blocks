@@ -70,9 +70,7 @@
 				}
 			}
 		}
-	}
 
-	&__loop-panel {
 		> *:not(.components-panel__body-title) {
 			margin-bottom: 24px;
 			margin-top: 0;
@@ -82,18 +80,20 @@
 			}
 		}
 
-		.components-button.is-secondary {
-			justify-content: center;
-			margin-bottom: 24px;
-			width: 100%;
+		&.is-loop {
+			.components-button.is-secondary {
+				justify-content: center;
+				margin-bottom: 24px;
+				width: 100%;
 
-			&:has(svg) {
-				justify-content: space-between;
+				&:has(svg) {
+					justify-content: space-between;
+				}
 			}
-		}
 
-		.autocomplete-tokenfield + .components-checkbox-control {
-			margin-top: -16px;
+			.autocomplete-tokenfield + .components-checkbox-control {
+				margin-top: -16px;
+			}
 		}
 	}
 
