@@ -291,6 +291,7 @@
 		}
 	}
 
+
 	.wc_payment_method {
 		+ .wc_payment_method {
 			margin-top: var(--newspack-ui-spacer-2, 12px);
@@ -455,6 +456,10 @@
 				}
 			}
 		}
+	}
+
+	#stripe-payment-data ~ fieldset {
+		margin: var(--newspack-ui-spacer-3, 16px) 0 0;
 	}
 
 	// WooPayments inputs
