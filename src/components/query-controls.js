@@ -13,7 +13,6 @@ import {
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
-import { chevronDown, chevronUp } from '@wordpress/icons';
 
 /**
  * Internal dependencies.
@@ -26,10 +25,6 @@ const getCategoryTitle = category =>
 const getTermTitle = term => decodeEntities( term.name ) || __( '(no title)', 'newspack-blocks' );
 
 class QueryControls extends Component {
-	state = {
-		showAdvancedFilters: false,
-	};
-
 	fetchPostSuggestions = search => {
 		const { postType } = this.props;
 		const restUrl = window.newspack_blocks_data.specific_posts_rest_url;
@@ -245,7 +240,6 @@ class QueryControls extends Component {
 			onCustomTaxonomyExclusionsChange,
 			enableSpecific,
 		} = this.props;
-		const { showAdvancedFilters } = this.state;
 
 		const registeredCustomTaxonomies = window.newspack_blocks_data?.custom_taxonomies;
 
@@ -273,7 +267,7 @@ class QueryControls extends Component {
 							__( 'The block will display content based on the filtering settings below.', 'newspack-blocks' )
 						) }
 					>
-						<ButtonGroup className="components-button-group__2">
+						<ButtonGroup>
 							<Button
 								variant={ ! specificMode && 'primary' }
 								aria-pressed={ ! specificMode }
@@ -360,64 +354,49 @@ class QueryControls extends Component {
 									label={ tax.label }
 								/>
 							) ) }
+						{ onCategoryExclusionsChange && (
+							<AutocompleteTokenField
+								tokens={ categoryExclusions || [] }
+								onChange={ onCategoryExclusionsChange }
+								fetchSuggestions={ this.fetchCategorySuggestions }
+								fetchSavedInfo={ this.fetchSavedCategories }
+								label={ __( 'Excluded categories', 'newspack-blocks' ) }
+							/>
+						) }
 						{ onTagExclusionsChange && (
-							<Button
-								variant="secondary"
-								icon={ showAdvancedFilters ? chevronUp : chevronDown }
-								iconPosition="right"
-								iconSize={ 16 }
-								onClick={ () => this.setState( { showAdvancedFilters: ! showAdvancedFilters } ) }
-							>
-								{ __( 'Advanced filters', 'newspack-blocks' ) }
-							</Button>
+							<AutocompleteTokenField
+								tokens={ tagExclusions || [] }
+								onChange={ onTagExclusionsChange }
+								fetchSuggestions={ this.fetchTagSuggestions }
+								fetchSavedInfo={ this.fetchSavedTags }
+								label={ __( 'Excluded tags', 'newspack-blocks' ) }
+							/>
 						) }
-						{ showAdvancedFilters && (
-							<>
-								{ onCategoryExclusionsChange && (
-									<AutocompleteTokenField
-										tokens={ categoryExclusions || [] }
-										onChange={ onCategoryExclusionsChange }
-										fetchSuggestions={ this.fetchCategorySuggestions }
-										fetchSavedInfo={ this.fetchSavedCategories }
-										label={ __( 'Excluded categories', 'newspack-blocks' ) }
-									/>
-								) }
-								{ onTagExclusionsChange && (
-									<AutocompleteTokenField
-										tokens={ tagExclusions || [] }
-										onChange={ onTagExclusionsChange }
-										fetchSuggestions={ this.fetchTagSuggestions }
-										fetchSavedInfo={ this.fetchSavedTags }
-										label={ __( 'Excluded tags', 'newspack-blocks' ) }
-									/>
-								) }
-								{ registeredCustomTaxonomies &&
-									onCustomTaxonomyExclusionsChange &&
-									registeredCustomTaxonomies.map( ( { label, slug } ) => (
-										<AutocompleteTokenField
-											fetchSavedInfo={ termIds => this.fetchSavedCustomTaxonomies( slug, termIds ) }
-											fetchSuggestions={ search =>
-												this.fetchCustomTaxonomiesSuggestions( slug, search )
-											}
-											key={ `${ slug }-exclusions-selector` }
-											label={ sprintf(
-												// translators: %s is the custom taxonomy label.
-												__( 'Excluded %s', 'newspack-blocks' ),
-												label
-											) }
-											onChange={ value =>
-												customTaxonomiesPrepareChange(
-													customTaxonomyExclusions,
-													onCustomTaxonomyExclusionsChange,
-													slug,
-													value
-												)
-											}
-											tokens={ getTermsOfCustomTaxonomy( customTaxonomyExclusions, slug ) }
-										/>
-									) ) }
-							</>
-						) }
+						{ registeredCustomTaxonomies &&
+							onCustomTaxonomyExclusionsChange &&
+							registeredCustomTaxonomies.map( ( { label, slug } ) => (
+								<AutocompleteTokenField
+									fetchSavedInfo={ termIds => this.fetchSavedCustomTaxonomies( slug, termIds ) }
+									fetchSuggestions={ search =>
+										this.fetchCustomTaxonomiesSuggestions( slug, search )
+									}
+									key={ `${ slug }-exclusions-selector` }
+									label={ sprintf(
+										// translators: %s is the custom taxonomy label.
+										__( 'Excluded %s', 'newspack-blocks' ),
+										label
+									) }
+									onChange={ value =>
+										customTaxonomiesPrepareChange(
+											customTaxonomyExclusions,
+											onCustomTaxonomyExclusionsChange,
+											slug,
+											value
+										)
+									}
+									tokens={ getTermsOfCustomTaxonomy( customTaxonomyExclusions, slug ) }
+								/>
+							) ) }
 					</>
 				) }
 			</>

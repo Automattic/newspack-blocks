@@ -72,7 +72,7 @@
 		}
 
 		> *:not(.components-panel__body-title) {
-			margin-bottom: 24px;
+			margin-bottom: 16px;
 			margin-top: 0;
 
 			&:last-of-type {
@@ -81,18 +81,8 @@
 		}
 
 		&.is-loop {
-			.components-button.is-secondary {
-				justify-content: center;
-				margin-bottom: 24px;
-				width: 100%;
-
-				&:has(svg) {
-					justify-content: space-between;
-				}
-			}
-
 			.autocomplete-tokenfield + .components-checkbox-control {
-				margin-top: -16px;
+				margin-top: -8px;
 			}
 		}
 	}
@@ -106,14 +96,7 @@
 
 		.components-button-group {
 			display: grid;
-
-			&__2 {
-				grid-template-columns: repeat(2, 1fr);
-			}
-
-			&__3 {
-				grid-template-columns: repeat(3, 1fr);
-			}
+			grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
 
 			button {
 				justify-content: center;

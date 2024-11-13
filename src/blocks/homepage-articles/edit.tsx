@@ -37,7 +37,6 @@ import {
 	Button,
 	ButtonGroup,
 	PanelBody,
-	PanelRow,
 	Path,
 	Placeholder,
 	RangeControl,
@@ -352,7 +351,7 @@ class Edit extends Component< HomepageArticlesProps > {
 						id="newspack-block__content-display"
 						className="newspack-block__button-group"
 					>
-						<ButtonGroup className="components-button-group__3">
+						<ButtonGroup>
 							<Button
 								variant={ ! showExcerpt && ! showFullContent && 'primary' }
 								aria-pressed={ ! showExcerpt && ! showFullContent }
@@ -494,131 +493,107 @@ class Edit extends Component< HomepageArticlesProps > {
 					<ToggleControl
 						label={ __( 'Allow duplicate stories', 'newspack-blocks' ) }
 						help={ __(
-							"If checked, this block will be excluded from the page's de-duplication logic. Duplicate stories may appear.",
+							"Exclude this block from the page's deduplication logic.",
 							'newspack-blocks'
 						) }
 						checked={ ! attributes.deduplicate }
 						onChange={ ( value: boolean ) => setAttributes( { deduplicate: ! value } ) }
 					/>
 				</PanelBody>
-				<PanelBody title={ __( 'Featured Image', 'newspack-blocks' ) } initialOpen={ false }>
-					<PanelRow>
-						<ToggleControl
-							label={ __( 'Show Featured Image', 'newspack-blocks' ) }
-							checked={ showImage }
-							onChange={ () => setAttributes( { showImage: ! showImage } ) }
-						/>
-					</PanelRow>
-					<PanelRow>
-						<ToggleControl
-							label={ __( 'Show Featured Image Caption', 'newspack-blocks' ) }
-							checked={ showCaption }
-							onChange={ () => setAttributes( { showCaption: ! showCaption } ) }
-							disabled={ ! showImage }
-						/>
-					</PanelRow>
-					<PanelRow>
-						<ToggleControl
-							label={ __( 'Show Featured Image Credit', 'newspack-blocks' ) }
-							checked={ showCredit }
-							onChange={ () => setAttributes( { showCredit: ! showCredit } ) }
-							disabled={ ! showImage }
-						/>
-					</PanelRow>
+				<PanelBody title={ __( 'Featured Image', 'newspack-blocks' ) } initialOpen={ false } className="newspack-block__panel">
+					<ToggleControl
+						label={ __( 'Show featured image', 'newspack-blocks' ) }
+						checked={ showImage }
+						onChange={ () => setAttributes( { showImage: ! showImage } ) }
+					/>
+					<ToggleControl
+						label={ __( 'Show caption', 'newspack-blocks' ) }
+						checked={ showCaption }
+						onChange={ () => setAttributes( { showCaption: ! showCaption } ) }
+						disabled={ ! showImage }
+					/>
+					<ToggleControl
+						label={ __( 'Show credit', 'newspack-blocks' ) }
+						checked={ showCredit }
+						onChange={ () => setAttributes( { showCredit: ! showCredit } ) }
+						disabled={ ! showImage }
+					/>
 					{ showImage && mediaPosition !== 'top' && mediaPosition !== 'behind' && (
 						<Fragment>
-							<PanelRow>
-								<ToggleControl
-									label={ __( 'Stack on mobile', 'newspack-blocks' ) }
-									checked={ mobileStack }
-									onChange={ () => setAttributes( { mobileStack: ! mobileStack } ) }
-								/>
-							</PanelRow>
+							<ToggleControl
+								label={ __( 'Stack on mobile', 'newspack-blocks' ) }
+								checked={ mobileStack }
+								onChange={ () => setAttributes( { mobileStack: ! mobileStack } ) }
+							/>
 							<BaseControl
-								label={ __( 'Featured Image Size', 'newspack-blocks' ) }
-								id="newspackfeatured-image-size"
+								label={ __( 'Size', 'newspack-blocks' ) }
+								id="newspack-block__featured-image-size"
+								className="newspack-block__button-group"
 							>
-								<PanelRow>
-									<ButtonGroup
-										id="newspackfeatured-image-size"
-										aria-label={ __( 'Featured Image Size', 'newspack-blocks' ) }
-									>
-										{ imageSizeOptions.map( option => {
-											const isCurrent = imageScale === option.value;
-											return (
-												<Button
-													isPrimary={ isCurrent }
-													aria-pressed={ isCurrent }
-													aria-label={ option.label }
-													key={ option.value }
-													onClick={ () => setAttributes( { imageScale: option.value } ) }
-												>
-													{ option.shortName }
-												</Button>
-											);
-										} ) }
-									</ButtonGroup>
-								</PanelRow>
+								<ButtonGroup>
+									{ imageSizeOptions.map( option => {
+										const isCurrent = imageScale === option.value;
+										return (
+											<Button
+												variant={ isCurrent && 'primary' }
+												aria-pressed={ isCurrent }
+												aria-label={ option.label }
+												key={ option.value }
+												onClick={ () => setAttributes( { imageScale: option.value } ) }
+											>
+												{ option.shortName }
+											</Button>
+										);
+									} ) }
+								</ButtonGroup>
 							</BaseControl>
 						</Fragment>
 					) }
-
 					{ showImage && mediaPosition === 'behind' && (
-						<PanelRow>
-							<RangeControl
-								label={ __( 'Minimum height', 'newspack-blocks' ) }
-								help={ __(
-									"Sets a minimum height for the block, using a percentage of the screen's current height.",
-									'newspack-blocks'
-								) }
-								value={ minHeight }
-								onChange={ ( _minHeight: number ) => setAttributes( { minHeight: _minHeight } ) }
-								min={ 0 }
-								max={ 100 }
-								required
-							/>
-						</PanelRow>
+						<RangeControl
+							label={ __( 'Minimum height', 'newspack-blocks' ) }
+							help={ __(
+								"Sets a minimum height for the block, using a percentage of the screen's current height.",
+								'newspack-blocks'
+							) }
+							value={ minHeight }
+							onChange={ ( _minHeight: number ) => setAttributes( { minHeight: _minHeight } ) }
+							min={ 0 }
+							max={ 100 }
+							required
+							__next40pxDefaultSize
+						/>
 					) }
 				</PanelBody>
 				<PanelBody title={ __( 'Post Meta', 'newspack-blocks' ) } initialOpen={ false }>
 					{ IS_SUBTITLE_SUPPORTED_IN_THEME && (
-						<PanelRow>
-							<ToggleControl
-								label={ __( 'Show Subtitle', 'newspack-blocks' ) }
-								checked={ showSubtitle }
-								onChange={ () => setAttributes( { showSubtitle: ! showSubtitle } ) }
-							/>
-						</PanelRow>
+						<ToggleControl
+							label={ __( 'Show subtitle', 'newspack-blocks' ) }
+							checked={ showSubtitle }
+							onChange={ () => setAttributes( { showSubtitle: ! showSubtitle } ) }
+						/>
 					) }
-					<PanelRow>
-						<ToggleControl
-							label={ __( 'Show Date', 'newspack-blocks' ) }
-							checked={ showDate }
-							onChange={ () => setAttributes( { showDate: ! showDate } ) }
-						/>
-					</PanelRow>
-					<PanelRow>
-						<ToggleControl
-							label={ __( 'Show Category', 'newspack-blocks' ) }
-							checked={ showCategory }
-							onChange={ () => setAttributes( { showCategory: ! showCategory } ) }
-						/>
-					</PanelRow>
-					<PanelRow>
-						<ToggleControl
-							label={ __( 'Show Author', 'newspack-blocks' ) }
-							checked={ showAuthor }
-							onChange={ () => setAttributes( { showAuthor: ! showAuthor } ) }
-						/>
-					</PanelRow>
-					<PanelRow>
-						<ToggleControl
-							label={ __( 'Show Author Avatar', 'newspack-blocks' ) }
-							checked={ showAvatar }
-							onChange={ () => setAttributes( { showAvatar: ! showAvatar } ) }
-							disabled={ ! showAuthor }
-						/>
-					</PanelRow>
+					<ToggleControl
+						label={ __( 'Show date', 'newspack-blocks' ) }
+						checked={ showDate }
+						onChange={ () => setAttributes( { showDate: ! showDate } ) }
+					/>
+					<ToggleControl
+						label={ __( 'Show category', 'newspack-blocks' ) }
+						checked={ showCategory }
+						onChange={ () => setAttributes( { showCategory: ! showCategory } ) }
+					/>
+					<ToggleControl
+						label={ __( 'Show author', 'newspack-blocks' ) }
+						checked={ showAuthor }
+						onChange={ () => setAttributes( { showAuthor: ! showAuthor } ) }
+					/>
+					<ToggleControl
+						label={ __( 'Show avatar', 'newspack-blocks' ) }
+						checked={ showAvatar }
+						onChange={ () => setAttributes( { showAvatar: ! showAvatar } ) }
+						disabled={ ! showAuthor }
+					/>
 				</PanelBody>
 				<PostTypesPanel attributes={ attributes } setAttributes={ setAttributes } />
 				<PostStatusesPanel attributes={ attributes } setAttributes={ setAttributes } />
