@@ -361,11 +361,12 @@ domReady( () => {
 
 							donationTiers.forEach( el => {
 								const donationData = JSON.parse( el.dataset.product );
-								if (
-									donationData.hasOwnProperty( `donation_price_summary_${ frequency }` ) &&
-									donationData?.[ `donation_price_summary_${ frequency }` ].includes( price )
-								) {
-									priceSummary = donationData[ `donation_price_summary_${ frequency }` ];
+								if ( donationData.hasOwnProperty( `donation_price_summary_${ frequency }` ) ) {
+									const priceData = donationData[ `donation_price_summary_${ frequency }` ];
+									const priceRegex = new RegExp( `(?<=\\D)${ price }(?=\\D)` );
+									if ( priceRegex.test( priceData ) ) {
+										priceSummary = priceData;
+									}
 								}
 
 								if ( price === '0' && priceSummary ) {
