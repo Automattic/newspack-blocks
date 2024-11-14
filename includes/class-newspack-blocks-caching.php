@@ -48,7 +48,7 @@ class Newspack_Blocks_Caching {
 			add_filter( 'render_block', [ __CLASS__, 'maybe_cache_block' ], 9999, 2 );
 
 			if ( ! defined( 'NEWSPACK_BLOCKS_CACHE_BLOCKS_TIME' ) ) {
-				define( 'NEWSPACK_BLOCKS_CACHE_BLOCKS_TIME', 120 );
+				define( 'NEWSPACK_BLOCKS_CACHE_BLOCKS_TIME', 120 ); // Two minutes.
 			}
 		}
 	}

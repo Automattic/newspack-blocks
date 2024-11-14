@@ -1,3 +1,20 @@
+## [4.3.5](https://github.com/Automattic/newspack-blocks/compare/v4.3.4...v4.3.5) (2024-11-11)
+
+
+### Bug Fixes
+
+* add check if product can be purchased ([#1916](https://github.com/Automattic/newspack-blocks/issues/1916)) ([cbe0cdb](https://github.com/Automattic/newspack-blocks/commit/cbe0cdb805354ae9dea6c0c35659d401198a30c2))
+* **modal-checkout:** disable Continue button until JS is loaded ([d616ca3](https://github.com/Automattic/newspack-blocks/commit/d616ca38503d3c425332d8724c03109c985e26d4))
+* revert check for is product purchaseable ([#1924](https://github.com/Automattic/newspack-blocks/issues/1924)) ([bcbe089](https://github.com/Automattic/newspack-blocks/commit/bcbe089711e4b7e8a9e88edddb245866b5e32bdb))
+* update block classes for the site editor ([#1920](https://github.com/Automattic/newspack-blocks/issues/1920)) ([26136e1](https://github.com/Automattic/newspack-blocks/commit/26136e11527cd196db7a81735f57f73512f66950))
+
+## [4.3.4](https://github.com/Automattic/newspack-blocks/compare/v4.3.3...v4.3.4) (2024-10-30)
+
+
+### Bug Fixes
+
+* name branch correctly ([a6fffd6](https://github.com/Automattic/newspack-blocks/commit/a6fffd620945666bcb6e10427309ea9b94baecb9))
+
 ## [4.3.3](https://github.com/Automattic/newspack-blocks/compare/v4.3.2...v4.3.3) (2024-10-29)
 
 
