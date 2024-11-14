@@ -73,23 +73,20 @@ import { domReady } from './utils';
 					console.warn( 'Form is not available' ); // eslint-disable-line no-console
 					return;
 				}
+
+				// Trigger form submission on "Enter" key press.
+				$form.on( 'keydown', function ( ev ) {
+					if ( ev.key === 'Enter' ) {
+						$form.submit();
+					}
+				} );
+
 				const $coupon = $( 'form.modal_checkout_coupon' );
 				const $nyp = $( 'form.modal_checkout_nyp' );
 				const $checkout_continue = $( '#checkout_continue' );
 				const $customer_details = $( '#customer_details' );
 				const $after_customer_details = $( '#after_customer_details' );
 				const $gift_options = $( '.newspack-wcsg--wrapper' );
-
-				// Trigger form submission on "Enter" key press.
-				$form.on( 'keydown', function ( ev ) {
-					if ( ev.key === 'Enter' ) {
-						if ( $form.data( 'is-editing-details' ) ) {
-							$checkout_continue.trigger( 'click' );
-						} else {
-							$form.trigger( 'submit' );
-						}
-					}
-				} );
 
 				/**
 				 * Handle styling update for selected payment method.
@@ -436,7 +433,6 @@ import { domReady } from './utils';
 					// Clear checkout details.
 					$( '#checkout_details' ).remove();
 					if ( isEditingDetails ) {
-						$form.data( 'is-editing-details', true );
 						$form.append( '<input name="is_validation_only" type="hidden" value="1" />' );
 						// Destroy reCAPTCHA inputs so we don't trigger validation between checkout steps.
 						if ( 'v3' === newspack_grecaptcha?.version ) {
@@ -458,7 +454,6 @@ import { domReady } from './utils';
 						} );
 						$form.on( 'submit', handleFormSubmit );
 					} else {
-						$form.data( 'is-editing-details', false );
 						const $validationOnlyField = $form.find( '[name="is_validation_only"]' );
 						if ( $validationOnlyField.length ) {
 							$validationOnlyField.remove();
