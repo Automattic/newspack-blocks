@@ -721,7 +721,7 @@ class Newspack_Blocks {
 				$authors = array_values( $authors );
 
 				if ( empty( $authors ) && count( $co_authors_names ) ) {
-					// We are only looking for Guest Authors post. So we need to only search by taxonomy.
+					// We are only looking for Guest Authors posts. So we need to only search by taxonomy.
 					$args['tax_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 						'relation' => 'OR',
 						[
