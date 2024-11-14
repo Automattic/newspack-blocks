@@ -457,6 +457,10 @@
 		}
 	}
 
+	#stripe-payment-data ~ fieldset {
+		margin: var(--newspack-ui-spacer-3, 16px) 0 0;
+	}
+
 	// WooPayments inputs
 	#wcpay-upe-element,
 	.wcpay-upe-element {
