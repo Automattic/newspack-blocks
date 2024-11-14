@@ -248,7 +248,7 @@ import { domReady } from './utils';
 
 					clearNotices();
 
-					if ( error_message.indexOf( '<' ) !== 0 ) {
+					if ( error_message.trimStart().indexOf( '<' ) !== 0 ) {
 						// If error_message is not an HTML string, wrap it in a <li />.
 						handleErrorItem( $( '<li />' ).append( error_message ) );
 					} else if ( ! error_message.includes( '<li' ) ) {
