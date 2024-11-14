@@ -386,7 +386,7 @@
 
 		// If the only payment option, we're hiding the radio selection so we don't need a grid.
 		&:first-child:last-child .newspack-ui__input-card {
-			grid-template-columns: 1fr;
+			grid-template-columns: 0;
 			gap: 0;
 
 			input.input-radio[name="payment_method"] {
