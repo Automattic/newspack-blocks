@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Spinner, CheckboxControl, PanelBody, PanelRow } from '@wordpress/components';
+import { BaseControl, CheckboxControl, PanelBody, Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 
 const CheckboxesGroup = ( { options, values, onChange } ) => {
@@ -10,21 +10,20 @@ const CheckboxesGroup = ( { options, values, onChange } ) => {
 		return <Spinner />;
 	}
 	return options.map( ( { name, slug } ) => (
-		<PanelRow key={ slug }>
-			<CheckboxControl
-				label={ name }
-				checked={ values.indexOf( slug ) > -1 }
-				onChange={ value => {
-					const cleanPostType = [ ...new Set( values ) ];
-					if ( value && cleanPostType.indexOf( slug ) === -1 ) {
-						cleanPostType.push( slug );
-					} else if ( ! value && cleanPostType.indexOf( slug ) > -1 ) {
-						cleanPostType.splice( cleanPostType.indexOf( slug ), 1 );
-					}
-					onChange( cleanPostType );
-				} }
-			/>
-		</PanelRow>
+		<CheckboxControl
+			label={ name }
+			checked={ values.indexOf( slug ) > -1 }
+			onChange={ value => {
+				const cleanPostType = [ ...new Set( values ) ];
+				if ( value && cleanPostType.indexOf( slug ) === -1 ) {
+					cleanPostType.push( slug );
+				} else if ( ! value && cleanPostType.indexOf( slug ) > -1 ) {
+					cleanPostType.splice( cleanPostType.indexOf( slug ), 1 );
+				}
+				onChange( cleanPostType );
+			} }
+			key={ slug }
+		/>
 	) );
 };
 
@@ -50,7 +49,7 @@ export const PostTypesPanel = ( { attributes, setAttributes } ) => {
 	} );
 
 	return (
-		<PanelBody title={ __( 'Post Types', 'newspack-blocks' ) }>
+		<PanelBody title={ __( 'Post Types', 'newspack-blocks' ) } initialOpen={ false }>
 			<CheckboxesGroup
 				options={ availablePostTypes }
 				values={ attributes.postType }
@@ -62,15 +61,8 @@ export const PostTypesPanel = ( { attributes, setAttributes } ) => {
 
 export const PostStatusesPanel = ( { attributes, setAttributes } ) => {
 	return (
-		<PanelBody title={ __( 'Additional Post Statuses', 'newspack-blocks' ) }>
-			<PanelRow>
-				<i>
-					{ __(
-						'Selection here has effect only for editors, regular users will only see published posts.',
-						'newspack-blocks'
-					) }
-				</i>
-			</PanelRow>
+		<PanelBody title={ __( 'Additional Post Statuses', 'newspack-blocks' ) } initialOpen={ false }>
+			<BaseControl help={ __( 'Selection here has effect only for editors, regular users will only see published posts.', 'newspack-blocks' ) } />
 			<CheckboxesGroup
 				values={ attributes.includedPostStatuses }
 				options={ [
