@@ -16,7 +16,7 @@ import './view.scss';
 import './editor.scss';
 
 export const name = 'carousel';
-export const title = __( 'Post Carousel' );
+export const title = __( 'Content Carousel', 'newspack-blocks' );
 
 export const icon = (
 	<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -36,8 +36,16 @@ export const settings = {
 		foreground: '#36f',
 	},
 	category: 'newspack',
-	keywords: [ __( 'posts' ), __( 'slideshow' ), __( 'carousel' ) ],
-	description: __( 'A carousel of posts.' ),
+	keywords: [
+		__( 'posts', 'newspack-blocks' ),
+		__( 'articles', 'newspack-blocks' ),
+		__( 'latest', 'newspack-blocks' ),
+		__( 'query', 'newspack-blocks' ),
+	],
+	description: __(
+		'An advanced block that displays content in a carousel format with customizable parameters and visual configurations.',
+		'newspack-blocks'
+	),
 	attributes: {
 		className: {
 			type: 'string',

@@ -19,7 +19,6 @@ import {
 	Button,
 	ButtonGroup,
 	PanelBody,
-	PanelRow,
 	Placeholder,
 	RangeControl,
 	Spinner,
@@ -362,7 +361,55 @@ class Edit extends Component {
 				</div>
 
 				<InspectorControls>
-					<PanelBody title={ __( 'Display Settings' ) } initialOpen={ true }>
+					<PanelBody title={ __( 'Settings', 'newspack-blocks' ) }>
+						<ToggleControl
+							label={ __( 'Hide Controls', 'newspack-blocks' ) }
+							help={ __( 'Remove navigation indicators from view.', 'newspack-blocks' ) }
+							checked={ hideControls }
+							onChange={ _hideControls => {
+								setAttributes( { hideControls: _hideControls } );
+							} }
+						/>
+						<ToggleControl
+							label={ __( 'Autoplay', 'newspack-blocks' ) }
+							help={ __( 'Automatically advance through slides.', 'newspack-blocks' ) }
+							checked={ autoplay }
+							onChange={ _autoplay => {
+								setAttributes( { autoplay: _autoplay } );
+							} }
+						/>
+						{ autoplay && (
+							<RangeControl
+								label={ __( 'Transition delay', 'newspack-blocks' ) }
+								value={ delay }
+								onChange={ _delay => {
+									setAttributes( { delay: _delay } );
+								} }
+								min={ 1 }
+								max={ 20 }
+								help={ __( 'Set the waiting time between automatic slide transitions in seconds.', 'newspack-blocks' ) }
+								__next40pxDefaultSize
+							/>
+						) }
+						{ latestPosts && 1 < latestPosts.length && (
+							<RangeControl
+								label={ __( 'Slides per view', 'newspack-blocks' ) }
+								value={ slidesPerView <= latestPosts.length ? slidesPerView : latestPosts.length }
+								onChange={ _slidesPerView => {
+									setAttributes( { slidesPerView: _slidesPerView } );
+								} }
+								min={ 1 }
+								max={
+									specificMode
+										? Math.min( MAX_NUMBER_OF_SLIDES, latestPosts.length )
+										: Math.min( MAX_NUMBER_OF_SLIDES, maxPosts )
+								}
+								help={ __( 'Choose how many slides appear on screen simultaneously.', 'newspack-blocks' ) }
+								__next40pxDefaultSize
+							/>
+						) }
+					</PanelBody>
+					<PanelBody title={ __( 'Loop', 'newspack-blocks' ) } initialOpen={ false }>
 						{ postsToShow && (
 							<QueryControls
 								numberOfItems={ postsToShow }
@@ -382,9 +429,8 @@ class Edit extends Component {
 								onCustomTaxonomiesChange={ value => setAttributes( { customTaxonomies: value } ) }
 								customTaxonomies={ customTaxonomies }
 								specificMode={ specificMode }
-								onSpecificModeChange={ _specificMode =>
-									setAttributes( { specificMode: _specificMode } )
-								}
+								onSpecificModeChange={ () => setAttributes( { specificMode: true } ) }
+								onLoopModeChange={ () => setAttributes( { specificMode: false } ) }
 								specificPosts={ specificPosts }
 								onSpecificPostsChange={ _specificPosts =>
 									setAttributes( { specificPosts: _specificPosts } )
@@ -393,170 +439,105 @@ class Edit extends Component {
 							/>
 						) }
 					</PanelBody>
-					<PanelBody title={ __( 'Slideshow Settings' ) } initialOpen={ true }>
-						<BaseControl
-							label={ __( 'Slide Aspect Ratio', 'newspack-blocks' ) }
+					<PanelBody title={ __( 'Featured Image', 'newspack-blocks' ) } initialOpen={ false } className="newspack-block__panel">
+					<BaseControl
+							label={ __( 'Aspect ratio', 'newspack-blocks' ) }
 							help={ __(
 								'All slides will share the same aspect ratio, for consistency.',
-								'newspack-popups'
+								'newspack-blocks'
 							) }
 							id="newspack-blocks__aspect-ratio-control"
+							className="newspack-block__button-group"
 						>
-							<PanelRow>
-								<ButtonGroup
-									id="newspack-blocks__aspect-ratio-control-buttons"
-									aria-label={ __( 'Slide Aspect Ratio', 'newspack-blocks' ) }
-								>
-									{ aspectRatioOptions.map( option => {
-										const isCurrent = aspectRatio === option.value;
-										return (
-											<Button
-												isPrimary={ isCurrent }
-												aria-pressed={ isCurrent }
-												aria-label={ option.label }
-												key={ option.value }
-												onClick={ () => setAttributes( { aspectRatio: option.value } ) }
-											>
-												{ option.shortName }
-											</Button>
-										);
-									} ) }
-								</ButtonGroup>
-							</PanelRow>
+							<ButtonGroup>
+								{ aspectRatioOptions.map( option => {
+									const isCurrent = aspectRatio === option.value;
+									return (
+										<Button
+											isPrimary={ isCurrent }
+											aria-pressed={ isCurrent }
+											aria-label={ option.label }
+											key={ option.value }
+											onClick={ () => setAttributes( { aspectRatio: option.value } ) }
+										>
+											{ option.shortName }
+										</Button>
+									);
+								} ) }
+							</ButtonGroup>
 						</BaseControl>
 						<BaseControl
-							label={ __( 'Image Fit', 'newspack-blocks' ) }
+							label={ __( 'Fit', 'newspack-blocks' ) }
 							help={
 								'cover' === imageFit
 									? __(
 										'The image will fill the entire slide and will be cropped if necessary.',
-										'newspack-popups'
+										'newspack-blocks'
 									) : __(
 										'The image will be resized to fit inside the slide without being cropped.',
-										'newspack-popups'
+										'newspack-blocks'
 									)
 							}
 							id="newspack-blocks__blocks__image-fit-control"
+							className="newspack-block__button-group"
 						>
-							<PanelRow>
-								<ButtonGroup
-									id="newspack-blocks__image-fit-buttons"
-									aria-label={ __( 'Image Fit', 'newspack-blocks' ) }
+							<ButtonGroup>
+								<Button
+									isPrimary={ 'cover' === imageFit }
+									aria-pressed={ 'cover' === imageFit }
+									aria-label={ __( 'Cover', 'newspack-blocks' ) }
+									onClick={ () => setAttributes( { imageFit: 'cover' } ) }
 								>
-									<Button
-										isPrimary={ 'cover' === imageFit }
-										aria-pressed={ 'cover' === imageFit }
-										aria-label={ __( 'Cover', 'newspack-blocks' ) }
-										onClick={ () => setAttributes( { imageFit: 'cover' } ) }
-									>
-										{ __( 'Cover', 'newspack-blocks' ) }
-									</Button>
-									<Button
-										isPrimary={ 'contain' === imageFit }
-										aria-pressed={ 'contain' === imageFit }
-										aria-label={ __( 'Contain', 'newspack-blocks' ) }
-										onClick={ () => setAttributes( { imageFit: 'contain' } ) }
-									>
-										{ __( 'Contain', 'newspack-blocks' ) }
-									</Button>
-								</ButtonGroup>
-							</PanelRow>
+									{ __( 'Cover', 'newspack-blocks' ) }
+								</Button>
+								<Button
+									isPrimary={ 'contain' === imageFit }
+									aria-pressed={ 'contain' === imageFit }
+									aria-label={ __( 'Contain', 'newspack-blocks' ) }
+									onClick={ () => setAttributes( { imageFit: 'contain' } ) }
+								>
+									{ __( 'Contain', 'newspack-blocks' ) }
+								</Button>
+							</ButtonGroup>
 						</BaseControl>
 						<ToggleControl
-							label={ __( 'Hide Controls' ) }
-							help={ __( 'Hide the slideshow UI. Useful when used with Autoplay.' ) }
-							checked={ hideControls }
-							onChange={ _hideControls => {
-								setAttributes( { hideControls: _hideControls } );
-							} }
+							label={ __( 'Show caption', 'newspack-blocks' ) }
+							checked={ showCaption }
+							onChange={ () => setAttributes( { showCaption: ! showCaption } ) }
 						/>
 						<ToggleControl
-							label={ __( 'Autoplay' ) }
-							help={ __( 'Autoplay between slides' ) }
-							checked={ autoplay }
-							onChange={ _autoplay => {
-								setAttributes( { autoplay: _autoplay } );
-							} }
+							label={ __( 'Show credit', 'newspack-blocks' ) }
+							checked={ showCredit }
+							onChange={ () => setAttributes( { showCredit: ! showCredit } ) }
 						/>
-						{ autoplay && (
-							<RangeControl
-								label={ __( 'Delay between transitions (in seconds)' ) }
-								value={ delay }
-								onChange={ _delay => {
-									setAttributes( { delay: _delay } );
-								} }
-								min={ 1 }
-								max={ 20 }
-							/>
-						) }
-						{ latestPosts && 1 < latestPosts.length && (
-							<RangeControl
-								label={ __( 'Number of slides to show at once' ) }
-								value={ slidesPerView <= latestPosts.length ? slidesPerView : latestPosts.length }
-								onChange={ _slidesPerView => {
-									setAttributes( { slidesPerView: _slidesPerView } );
-								} }
-								min={ 1 }
-								max={
-									specificMode
-										? Math.min( MAX_NUMBER_OF_SLIDES, latestPosts.length )
-										: Math.min( MAX_NUMBER_OF_SLIDES, maxPosts )
-								}
-							/>
-						) }
 					</PanelBody>
-					<PanelBody title={ __( 'Article Meta Settings', 'newspack-blocks' ) }>
-						<PanelRow>
-							<ToggleControl
-								label={ __( 'Show Title', 'newspack-blocks' ) }
-								checked={ showTitle }
-								onChange={ () => setAttributes( { showTitle: ! showTitle } ) }
-							/>
-						</PanelRow>
-						<PanelRow>
-							<ToggleControl
-								label={ __( 'Show Date', 'newspack-blocks' ) }
-								checked={ showDate }
-								onChange={ () => setAttributes( { showDate: ! showDate } ) }
-							/>
-						</PanelRow>
-						<PanelRow>
-							<ToggleControl
-								label={ __( 'Show Category', 'newspack-blocks' ) }
-								checked={ showCategory }
-								onChange={ () => setAttributes( { showCategory: ! showCategory } ) }
-							/>
-						</PanelRow>
-						<PanelRow>
-							<ToggleControl
-								label={ __( 'Show Author', 'newspack-blocks' ) }
-								checked={ showAuthor }
-								onChange={ () => setAttributes( { showAuthor: ! showAuthor } ) }
-							/>
-						</PanelRow>
-						{ showAuthor && (
-							<PanelRow>
-								<ToggleControl
-									label={ __( 'Show Author Avatar', 'newspack-blocks' ) }
-									checked={ showAvatar }
-									onChange={ () => setAttributes( { showAvatar: ! showAvatar } ) }
-								/>
-							</PanelRow>
-						) }
-						<PanelRow>
-							<ToggleControl
-								label={ __( 'Show Featured Image Caption', 'newspack-blocks' ) }
-								checked={ showCaption }
-								onChange={ () => setAttributes( { showCaption: ! showCaption } ) }
-							/>
-						</PanelRow>
-						<PanelRow>
-							<ToggleControl
-								label={ __( 'Show Featured Image Credit', 'newspack-blocks' ) }
-								checked={ showCredit }
-								onChange={ () => setAttributes( { showCredit: ! showCredit } ) }
-							/>
-						</PanelRow>
+					<PanelBody title={ __( 'Post Meta', 'newspack-blocks' ) } initialOpen={ false }>
+						<ToggleControl
+							label={ __( 'Show title', 'newspack-blocks' ) }
+							checked={ showTitle }
+							onChange={ () => setAttributes( { showTitle: ! showTitle } ) }
+						/>
+						<ToggleControl
+							label={ __( 'Show date', 'newspack-blocks' ) }
+							checked={ showDate }
+							onChange={ () => setAttributes( { showDate: ! showDate } ) }
+						/>
+						<ToggleControl
+							label={ __( 'Show category', 'newspack-blocks' ) }
+							checked={ showCategory }
+							onChange={ () => setAttributes( { showCategory: ! showCategory } ) }
+						/>
+						<ToggleControl
+							label={ __( 'Show author', 'newspack-blocks' ) }
+							checked={ showAuthor }
+							onChange={ () => setAttributes( { showAuthor: ! showAuthor } ) }
+						/>
+						<ToggleControl
+							label={ __( 'Show avatar', 'newspack-blocks' ) }
+							checked={ showAvatar }
+							onChange={ () => setAttributes( { showAvatar: ! showAvatar } ) }
+							disabled={ ! showAuthor }
+						/>
 					</PanelBody>
 					<PostTypesPanel attributes={ attributes } setAttributes={ setAttributes } />
 					<PostStatusesPanel attributes={ attributes } setAttributes={ setAttributes } />
