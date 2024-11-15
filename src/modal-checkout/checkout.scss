@@ -189,11 +189,29 @@
 	}
 
 	// Create an account
-	.woocommerce-account-fields .create-account label:has(input[type="checkbox"]) {
-		display: grid;
-		gap: 0 var(--newspack-ui-spacer-base, 8px);
-		grid-template-columns: var(--newspack-ui-spacer-4, 20px) 1fr;
+	.woocommerce-account-fields {
 		margin: var(--newspack-ui-spacer-5, 24px) 0 0;
+
+		h3:has(+ .create-account) {
+			display: none;
+		}
+
+		.create-account {
+			label:has(input[type="checkbox"]) {
+				display: grid;
+				gap: 0 var(--newspack-ui-spacer-base, 8px);
+				grid-template-columns: var(--newspack-ui-spacer-4, 20px) 1fr;
+				margin: var(--newspack-ui-spacer-5, 24px) 0 0;
+			}
+
+			.woocommerce-password-strength {
+				font-size: var(--newspack-ui-font-size-xs, 14px);
+			}
+
+			> p.form-row:last-of-type {
+				margin-bottom: 0;
+			}
+		}
 	}
 
 	// Name Your Price styles
