@@ -73,6 +73,7 @@ import { domReady } from './utils';
 					console.warn( 'Form is not available' ); // eslint-disable-line no-console
 					return;
 				}
+
 				const $coupon = $( 'form.modal_checkout_coupon' );
 				const $nyp = $( 'form.modal_checkout_nyp' );
 				const $checkout_continue = $( '#checkout_continue' );
@@ -736,6 +737,13 @@ import { domReady } from './utils';
 					form.removeClass( 'modal-processing' );
 					return true;
 				}
+
+				// Trigger form submission on "Enter" key press.
+				$form.on( 'keydown', function ( ev ) {
+					if ( ev.key === 'Enter' ) {
+						$form.submit();
+					}
+				} );
 			}
 			init();
 		}
