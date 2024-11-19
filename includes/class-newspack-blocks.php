@@ -1290,8 +1290,17 @@ class Newspack_Blocks {
 		$exclude = $exclude['where'];
 		$authors = " ( {$wpdb->posts}.post_author IN ( $csv ) $exclude ) ";
 
-		// Make sure the authors are set, the tax query is valid (doesn't contain 0 = 1).
-		if ( false === strpos( $tax_query['where'], ' 0 = 1' ) ) {
+		/**
+		 * Make sure the authors are set, the tax query is valid (doesn't contain 0 = 1).
+		 *
+		 * Since we have two clauses (one searching on name, and one on slug), it's ok to have a "0 = 1" clause for
+		 * one of them, but not for both.
+		 *
+		 * The reason we might have invalid queries is because we do a broad search with many possibles term slugs and names.
+		 * There is not one consistent way terms are created, so the slug/name can have different values. We try to search for all of them, and
+		 * if none of the options we are searching for exist as a term, it will create an invalid query.
+		 */
+		if ( substr_count( $tax_query['where'], ' 0 = 1' ) <= 1 ) {
 			// Append to the current join parts. The JOIN statment only needs to exist in the clause once.
 			if ( false === strpos( $clauses['join'], $tax_query['join'] ) ) {
 				$clauses['join'] .= '/* newspack-blocks */ ' . $tax_query['join'] . ' /* /newspack-blocks */';
