@@ -6,6 +6,11 @@
  */
 
 /**
+ * Mock CoAuthors_Plus class to pretend the plugin is active.
+ */
+class CoAuthors_Plus {} // phpcs:ignore
+
+/**
  * Mock CoAuthors_Guest_Authors class.
  */
 class CoAuthors_Guest_Authors { // phpcs:ignore
