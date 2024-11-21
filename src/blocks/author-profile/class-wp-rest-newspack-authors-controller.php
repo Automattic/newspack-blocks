@@ -418,6 +418,7 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 			'tumblr',
 			'youtube',
 			'wikipedia',
+			'bluesky',
 			'website', // This is the only "social media" link for CAP guest authors.
 		];
 
