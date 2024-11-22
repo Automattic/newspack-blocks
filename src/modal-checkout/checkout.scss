@@ -22,6 +22,10 @@
 		tfoot > tr.recurring-totals > th {
 			font-weight: var(--newspack-ui-font-weight-strong, 600);
 		}
+
+		td.product-name {
+			padding-right: 1em;
+		}
 	}
 
 	.order-review-wrapper.hidden {
@@ -79,6 +83,10 @@
 				line-height: var(--newspack-ui-line-height-s, 1.5);
 			}
 
+			// Hide if empty - :empty doesn't work for this since there's space between the opening/closing tags.
+			&:not(:has(*)) {
+				display: none;
+			}
 		}
 
 		.woocommerce-billing-fields__field-wrapper ~ .form-row {
@@ -339,6 +347,10 @@
 			fieldset {
 				margin: 0 0 var(--newspack-ui-spacer-2, 12px);
 				padding: 0 !important; // To override inline styles.
+
+				&.wc-payment-form {
+					margin-top: var(--newspack-ui-spacer-3, 16px);
+				}
 
 				&:last-child {
 					margin-bottom: 0;
