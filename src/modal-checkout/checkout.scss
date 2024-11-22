@@ -306,6 +306,10 @@
 
 		> label:first-of-type {
 			margin: unset;
+
+			img {
+				float: right;
+			}
 		}
 
 		.payment_box {
