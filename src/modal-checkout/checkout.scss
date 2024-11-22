@@ -8,7 +8,8 @@
 	form p {
 		margin: 0 0 var(--newspack-ui-spacer-5, 24px);
 
-		&:last-child {
+		&:last-child,
+		&.form-row-first:has(+ .form-row-last:last-child) {
 			margin-bottom: 0;
 		}
 	}
@@ -81,11 +82,6 @@
 			label {
 				font-size: var(--newspack-ui-font-size-s, 16px);
 				line-height: var(--newspack-ui-line-height-s, 1.5);
-			}
-
-			// Hide if empty - :empty doesn't work for this since there's space between the opening/closing tags.
-			&:not(:has(*)) {
-				display: none;
 			}
 		}
 
