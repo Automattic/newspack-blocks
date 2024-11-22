@@ -419,6 +419,25 @@
 			#wc-woocommerce_payments-upe-form {
 				margin-top: var(--newspack-ui-spacer-3, 16px);
 			}
+
+			// Fix icon alignment and display.
+			label:has(.woopayments-rich-payment-method-label) {
+				align-items: unset;
+
+				.woopayments-rich-payment-method-label {
+					img {
+						margin: 0;
+					}
+
+					.payment-method-title {
+						vertical-align: unset;
+					}
+				}
+
+				span > img {
+					display: none;
+				}
+			}
 		}
 	}
 
