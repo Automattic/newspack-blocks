@@ -430,6 +430,7 @@
 					}
 
 					.payment-method-title {
+						margin-left: -0.25em; // Fix space in label string.
 						vertical-align: unset;
 					}
 				}
