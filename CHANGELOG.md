@@ -1,3 +1,17 @@
+## [4.3.7](https://github.com/Automattic/newspack-blocks/compare/v4.3.6...v4.3.7) (2024-11-21)
+
+
+### Bug Fixes
+
+* do not invalidate tax queries ([#1968](https://github.com/Automattic/newspack-blocks/issues/1968)) ([a0c1915](https://github.com/Automattic/newspack-blocks/commit/a0c191561e3bd6f16135590e66e5d695f2c3b3d3))
+
+## [4.3.6](https://github.com/Automattic/newspack-blocks/compare/v4.3.5...v4.3.6) (2024-11-18)
+
+
+### Bug Fixes
+
+* trigger release with HPP fix ([2c8c1e6](https://github.com/Automattic/newspack-blocks/commit/2c8c1e6030e6a2b0777ee2756bb2d7196f74fca9))
+
 ## [4.3.5](https://github.com/Automattic/newspack-blocks/compare/v4.3.4...v4.3.5) (2024-11-11)
 
 
