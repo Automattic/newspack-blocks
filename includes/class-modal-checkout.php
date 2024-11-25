@@ -89,6 +89,8 @@ final class Modal_Checkout {
 		add_action( 'wp_ajax_process_name_your_price_request', [ __CLASS__, 'process_name_your_price_request' ] );
 		add_filter( 'option_woocommerce_woocommerce_payments_settings', [ __CLASS__, 'filter_woocommerce_payments_settings' ] );
 		add_action( 'init', [ __CLASS__, 'unhook_woocommerce_payments_update_billing_fields' ] );
+		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'update_password_strength_message' ], 9999 );
+
 
 		/** Custom handling for registered users. */
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
@@ -944,6 +946,23 @@ final class Modal_Checkout {
 		return add_query_arg(
 			$args,
 			$url
+		);
+	}
+
+	/**
+	 * Update the text used for the Password Strength message from WooCommerce.
+	 */
+	public static function update_password_strength_message() {
+		wp_localize_script(
+			'wc-password-strength-meter',
+			'pwsL10n',
+			array(
+				'mismatch' => __( 'Password mismatch', 'newspack-blocks' ),
+				'short'    => __( 'Password strength: Very weak', 'newspack-blocks' ),
+				'bad'      => __( 'Password strength: Weak', 'newspack-blocks' ),
+				'good'     => __( 'Password strength: Medium', 'newspack-blocks' ),
+				'strong'   => __( 'Password strength: Strong', 'newspack-blocks' ),
+			)
 		);
 	}
 
