@@ -745,6 +745,9 @@ class Newspack_Blocks {
 						'authors'   => $authors,
 						'coauthors' => $co_authors_names,
 					];
+
+					// Also, in these cases, never offload the query to Elastic Search.
+					$args['newspack_no_es_query'] = true;
 				}
 			}
 		}
