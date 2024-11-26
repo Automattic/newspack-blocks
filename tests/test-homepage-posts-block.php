@@ -32,8 +32,9 @@ class HomepagePostsBlockTest extends WP_UnitTestCase_Blocks { // phpcs:ignore
 					'authors'     => [ 1 ],
 				],
 				'resulting_query_partial' => [
-					'posts_per_page' => 1,
-					'post_type'      => 'some-type',
+					'posts_per_page'       => 1,
+					'post_type'            => 'some-type',
+					'newspack_no_es_query' => true,
 				],
 				'description'             => 'With custom post type and author',
 				'ignore_tax_query'        => true,
