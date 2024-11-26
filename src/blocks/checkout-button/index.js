@@ -7,8 +7,8 @@ import { Icon, button } from '@wordpress/icons';
  * Internal dependencies
  */
 import edit from './edit';
-import save from './save';
 import metadata from './block.json';
+import deprecated from './deprecated';
 
 const { name } = metadata;
 
@@ -17,12 +17,11 @@ export { name };
 
 export const settings = {
 	...metadata,
-
-	deprecated: [ { ...metadata, save } ],
 	icon: {
 		src: <Icon icon={ button } />,
 		foreground: '#36f',
 	},
 	edit,
+	deprecated,
 	save: () => null, // to use view.php.
 };
