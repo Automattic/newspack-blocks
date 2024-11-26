@@ -18,11 +18,11 @@ export { name };
 export const settings = {
 	...metadata,
 
+	deprecated: [ { ...metadata, save } ],
 	icon: {
 		src: <Icon icon={ button } />,
 		foreground: '#36f',
 	},
 	edit,
 	save: () => null, // to use view.php.
-	deprecated: [ { ...metadata, save } ],
 };

@@ -3,6 +3,7 @@
  * External dependencies
  */
 import classnames from 'classnames';
+import { __ } from '@wordpress/i18n';
 
 /**
  * WordPress dependencies
@@ -56,7 +57,6 @@ export default function save( { attributes, className } ) {
 					className={ buttonClasses }
 					style={ buttonStyle }
 					value={ text }
-					type="submit"
 				/>
 				<input type="hidden" name="product_id" value={ product } />
 				<input type="hidden" name="newspack_checkout" value="1" />
@@ -76,7 +76,7 @@ export default function save( { attributes, className } ) {
 					<input
 						type="hidden"
 						name="after_success_button_label"
-						value={ attributes.afterSuccessButtonLabel }
+						value={ __( 'Continue browsing', 'newspack-blocks' ) }
 					/>
 				) }
 				{ attributes.afterSuccessBehavior && (
