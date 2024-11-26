@@ -3,7 +3,6 @@
  * External dependencies
  */
 import classnames from 'classnames';
-import { __ } from '@wordpress/i18n';
 
 /**
  * WordPress dependencies
@@ -76,7 +75,7 @@ export default function save( { attributes, className } ) {
 					<input
 						type="hidden"
 						name="after_success_button_label"
-						value={ __( 'Continue browsing', 'newspack-blocks' ) }
+						value={ attributes.afterSuccessButtonLabel }
 					/>
 				) }
 				{ attributes.afterSuccessBehavior && (
