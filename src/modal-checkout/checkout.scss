@@ -8,7 +8,8 @@
 	form p {
 		margin: 0 0 var(--newspack-ui-spacer-5, 24px);
 
-		&:last-child {
+		&:last-child,
+		&.form-row-first:has(+ .form-row-last:last-child) {
 			margin-bottom: 0;
 		}
 	}
@@ -21,6 +22,10 @@
 		tfoot > tr.order-total > th,
 		tfoot > tr.recurring-totals > th {
 			font-weight: var(--newspack-ui-font-weight-strong, 600);
+		}
+
+		td.product-name {
+			padding-right: 1em;
 		}
 	}
 
@@ -78,7 +83,6 @@
 				font-size: var(--newspack-ui-font-size-s, 16px);
 				line-height: var(--newspack-ui-line-height-s, 1.5);
 			}
-
 		}
 
 		.woocommerce-billing-fields__field-wrapper ~ .form-row {
@@ -341,6 +345,10 @@
 
 		> label:first-of-type {
 			margin: unset;
+
+			img {
+				float: right;
+			}
 		}
 
 		.payment_box {
@@ -361,7 +369,10 @@
 
 				li {
 					display: flex;
-					margin-bottom: var(--newspack-ui-spacer-3, 16px);
+
+					&:not(:last-child) {
+						margin-bottom: var(--newspack-ui-spacer-3, 16px);
+					}
 
 					label {
 						font-size: var(--newspack-ui-font-size-xs, 14px);
@@ -378,6 +389,10 @@
 			fieldset {
 				margin: 0 0 var(--newspack-ui-spacer-2, 12px);
 				padding: 0 !important; // To override inline styles.
+
+				&.wc-payment-form {
+					margin-top: var(--newspack-ui-spacer-3, 16px);
+				}
 
 				&:last-child {
 					margin-bottom: 0;
@@ -445,6 +460,26 @@
 			// stylelint-disable-next-line selector-id-pattern
 			#wc-woocommerce_payments-upe-form {
 				margin-top: var(--newspack-ui-spacer-3, 16px);
+			}
+
+			// Fix icon alignment and display.
+			label:has(.woopayments-rich-payment-method-label) {
+				align-items: unset;
+
+				.woopayments-rich-payment-method-label {
+					img {
+						margin: 0;
+					}
+
+					.payment-method-title {
+						margin-left: -0.25em; // Fix space in label string.
+						vertical-align: unset;
+					}
+				}
+
+				span > img {
+					display: none;
+				}
 			}
 		}
 	}
