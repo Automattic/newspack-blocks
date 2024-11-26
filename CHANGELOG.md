@@ -1,3 +1,24 @@
+# [4.4.0](https://github.com/Automattic/newspack-blocks/compare/v4.3.7...v4.4.0) (2024-11-25)
+
+
+### Bug Fixes
+
+* revert "feat(homepage-articles): rename block and reorganise settings ([#1943](https://github.com/Automattic/newspack-blocks/issues/1943))" ([#1971](https://github.com/Automattic/newspack-blocks/issues/1971)) ([fb161b9](https://github.com/Automattic/newspack-blocks/commit/fb161b983b799c2cfa745e8714bbef883ee38b62))
+
+
+### Features
+
+* add Bluesky support to the Author Profile, List blocks ([#1969](https://github.com/Automattic/newspack-blocks/issues/1969)) ([f1c29ab](https://github.com/Automattic/newspack-blocks/commit/f1c29ab43a6800db284719ef42cbe3a542d8ed6a))
+* **donate-block:** hide buttons if only one frequency is available ([#1853](https://github.com/Automattic/newspack-blocks/issues/1853)) ([043591e](https://github.com/Automattic/newspack-blocks/commit/043591efef1278575fabeac1bc99000db7a63ed6))
+* **homepage-articles:** rename block and reorganise settings ([#1943](https://github.com/Automattic/newspack-blocks/issues/1943)) ([1af11a4](https://github.com/Automattic/newspack-blocks/commit/1af11a45742dd313c2cbe35c9af8da479c9cb569))
+
+## [4.3.7](https://github.com/Automattic/newspack-blocks/compare/v4.3.6...v4.3.7) (2024-11-21)
+
+
+### Bug Fixes
+
+* do not invalidate tax queries ([#1968](https://github.com/Automattic/newspack-blocks/issues/1968)) ([a0c1915](https://github.com/Automattic/newspack-blocks/commit/a0c191561e3bd6f16135590e66e5d695f2c3b3d3))
+
 ## [4.3.6](https://github.com/Automattic/newspack-blocks/compare/v4.3.5...v4.3.6) (2024-11-18)
 
 
