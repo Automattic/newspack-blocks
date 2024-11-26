@@ -18,14 +18,14 @@ import {
 import metadata from './block.json';
 
 const v1 = {
+	...metadata,
 	attributes: {
+		...metadata.attributes,
 		afterSuccessButtonLabel: {
 			type: "string",
 			default: "Continue browsing"
 		},
 	},
-
-	...metadata,
 
 	save( { attributes, className } ) {
 		const { textAlign, fontSize, style, text, product, price, variation, is_variable, width } =
