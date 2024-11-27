@@ -740,6 +740,8 @@ final class Modal_Checkout {
 			'wcs-',
 			'stripe',
 			'select2',
+			// Metorik.
+			'metorik',
 		];
 
 		/**
