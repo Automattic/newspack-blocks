@@ -672,6 +672,12 @@
 		}
 	}
 
+
+	// Automate Woo Opt in
+	form .automatewoo-optin {
+		margin: var(--newspack-ui-spacer-5, 24px) 0 0;
+	}
+
 	// Buttons - adjust spacing
 	#place-order {
 		margin-bottom: 0;
