@@ -46,6 +46,7 @@ function render_callback( $attributes ) {
 	\Newspack_Blocks::enqueue_view_assets( 'checkout-button' );
 
 	$background_color           = $attributes['backgroundColor'] ?? '';
+	$gradient                   = $attributes['gradient'] ?? '';
 	$font_size                  = $attributes['fontSize'] ?? '';
 	$style                      = $attributes['style'] ?? [];
 	$text_align                 = $attributes['textAlign'] ?? '';
@@ -78,12 +79,14 @@ function render_callback( $attributes ) {
 			$button_color ? 'color:' . esc_attr( $button_color ) . ';' : '',
 		]
 	);
+
 	$button_classes = Newspack_Blocks::block_classes(
 		'button',
 		$attributes,
 		[
 			'wp-block-button__link',
 			$background_color ? 'has-background has-' . esc_attr( $background_color ) . '-background-color' : '',
+			$gradient ? 'has-background has-' . esc_attr( $gradient ) . '-gradient-background' : '',
 			$text_align ? 'has-text-align-' . esc_attr( $text_align ) : '',
 			isset( $style['border']['radius'] ) && $style['border']['radius'] === 0 ? 'no-border-radius' : '',
 			$button_color ? 'has-text-color has-' . esc_attr( $button_color ) . '-color' : '',
