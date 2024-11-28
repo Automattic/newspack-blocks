@@ -83,10 +83,27 @@
 				font-size: var(--newspack-ui-font-size-s, 16px);
 				line-height: var(--newspack-ui-line-height-s, 1.5);
 			}
+
+			// Work around for hiding empty divs when they contain a line break, since that causes :empty not to work.
+			&:not(:has(> *)) {
+				display: none;
+			}
 		}
 
 		.woocommerce-billing-fields__field-wrapper ~ .form-row {
 			margin: var(--newspack-ui-spacer-5, 24px) 0 0;
+		}
+
+		// Hide 'Additional Information' header
+		.woocommerce-additional-fields {
+
+			> h3 {
+				display: none;
+			}
+
+			.woocommerce-additional-fields__field-wrapper {
+				margin: var(--newspack-ui-spacer-5, 24px) 0 0;
+			}
 		}
 	}
 
