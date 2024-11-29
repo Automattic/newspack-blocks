@@ -83,6 +83,11 @@
 				font-size: var(--newspack-ui-font-size-s, 16px);
 				line-height: var(--newspack-ui-line-height-s, 1.5);
 			}
+
+			// A hacky way to hide these fields if they have no children; :empty is not working since they contain line breaks when empty.
+			&:not(:has(> *)) {
+				display: none;
+			}
 		}
 
 		.woocommerce-billing-fields__field-wrapper ~ .form-row {
