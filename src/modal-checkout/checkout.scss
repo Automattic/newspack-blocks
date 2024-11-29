@@ -364,7 +364,7 @@
 			}
 
 			ul.wc-saved-payment-methods {
-				margin-top: var(--newspack-ui-spacer-3, 16px);
+				margin: var(--newspack-ui-spacer-3, 16px) 0 0;
 				padding: 0;
 
 				li {
@@ -378,6 +378,7 @@
 						font-size: var(--newspack-ui-font-size-xs, 14px);
 						font-weight: normal;
 						line-height: inherit;
+						margin: 0;
 					}
 
 					input {
@@ -387,15 +388,11 @@
 			}
 
 			fieldset {
-				margin: 0 0 var(--newspack-ui-spacer-2, 12px);
+				margin: var(--newspack-ui-spacer-3, 16px) 0 0;
 				padding: 0 !important; // To override inline styles.
 
 				&.wc-payment-form {
 					margin-top: var(--newspack-ui-spacer-3, 16px);
-				}
-
-				&:last-child {
-					margin-bottom: 0;
 				}
 
 				p {
@@ -535,11 +532,20 @@
 		margin: var(--newspack-ui-spacer-3, 16px) 0 0;
 	}
 
+	// Hide 'Save New' checkbox container if the credit card form is hidden -- this means the checkbox is also hidden and gets rid of extra space.
+	fieldset:has(.woocommerce-SavedPaymentMethods-saveNew[style*="display: none"]) {
+		display: none;
+	}
+
 	// WooPayments inputs
 	#wcpay-upe-element,
 	.wcpay-upe-element {
-		margin: 0 0 var(--newspack-ui-spacer-3, 16px);
+		margin: 0;
 		padding: 0;
+
+		+ div:has(.woocommerce-SavedPaymentMethods-saveNew) {
+			margin-top: var(--newspack-ui-spacer-3, 16px);
+		}
 	}
 
 	.payment_method_woocommerce_payments {
