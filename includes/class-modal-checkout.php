@@ -132,6 +132,11 @@ final class Modal_Checkout {
 		}
 		add_filter( 'woocommerce_subscriptions_product_limited_for_user', [ __CLASS__, 'subscriptions_product_limited_for_user' ], 10, 3 );
 		add_filter( 'woocommerce_get_privacy_policy_text', [ __CLASS__, 'woocommerce_get_privacy_policy_text' ], 10, 2 );
+
+		// Remove any hooks related to reCAPTCHA for WooCommerce.
+		if ( self::is_modal_checkout() ) {
+			add_action( 'plugins_loaded', [ __CLASS__, 'remove_recaptcha_hooks' ] );
+		}
 	}
 
 	/**
@@ -744,19 +749,26 @@ final class Modal_Checkout {
 			'metorik',
 		];
 
+		$skip_assets = [
+			// reCAPTCHA for Woo.
+			'recaptcha',
+			'rcfwc-js',
+		];
+
 		/**
 		 * Filters the allowed assets to render in the modal checkout
 		 *
 		 * @param string[] $allowed_assets Array of allowed assets handles.
 		 */
 		$allowed_assets = apply_filters( 'newspack_blocks_modal_checkout_allowed_assets', $allowed_assets );
+		$skip_assets    = apply_filters( 'newspack_blocks_modal_checkout_skip_assets', $skip_assets );
 
 		global $wp_scripts, $wp_styles;
 
 		foreach ( $wp_scripts->queue as $handle ) {
 			$allowed = false;
 			foreach ( $allowed_assets as $allowed_asset ) {
-				if ( false !== strpos( $handle, $allowed_asset ) ) {
+				if ( false !== strpos( $handle, $allowed_asset ) && ! in_array( $handle, $skip_assets ) ) {
 					$allowed = true;
 					break;
 				}
@@ -768,7 +780,7 @@ final class Modal_Checkout {
 		foreach ( $wp_styles->queue as $handle ) {
 			$allowed = false;
 			foreach ( $allowed_assets as $allowed_asset ) {
-				if ( false !== strpos( $handle, $allowed_asset ) ) {
+				if ( false !== strpos( $handle, $allowed_asset ) && ! in_array( $handle, $skip_assets ) ) {
 					$allowed = true;
 					break;
 				}
@@ -777,6 +789,19 @@ final class Modal_Checkout {
 				wp_dequeue_style( $handle );
 			}
 		}
+	}
+
+	/**
+	 * Remove hooks related to reCAPTCHA for WooCommerce
+	 */
+	public static function remove_recaptcha_hooks() {
+		remove_action( 'woocommerce_review_order_before_payment', 'rcfwc_field_checkout', 10 );
+		remove_action( 'woocommerce_review_order_before_payment', 'rcfwc_field_checkout', 10 );
+		remove_action( 'woocommerce_review_order_after_payment', 'rcfwc_field_checkout', 10 );
+		remove_action( 'woocommerce_before_checkout_billing_form', 'rcfwc_field_checkout', 10 );
+		remove_action( 'woocommerce_after_checkout_billing_form', 'rcfwc_field_checkout', 10 );
+		remove_action( 'woocommerce_review_order_before_submit', 'rcfwc_field_checkout', 10 );
+		remove_action( 'woocommerce_checkout_process', 'rcfwc_checkout_check', 10 );
 	}
 
 	/**

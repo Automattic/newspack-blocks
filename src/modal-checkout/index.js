@@ -226,6 +226,7 @@ import { domReady } from './utils';
 					const handleErrorItem = $error => {
 						// Add errors to known fields.
 						const $field = $( '#' + $error.data( 'id' ) + '_field' );
+
 						if ( $field?.length ) {
 							if ( ! $fieldToFocus ) {
 								$fieldToFocus = $field;
