@@ -749,25 +749,19 @@ final class Modal_Checkout {
 			'metorik',
 		];
 
-		$skip_assets = [
-			// reCAPTCHA for Woo.
-			'rcfwc-js',
-		];
-
 		/**
 		 * Filters the allowed assets to render in the modal checkout
 		 *
 		 * @param string[] $allowed_assets Array of allowed assets handles.
 		 */
 		$allowed_assets = apply_filters( 'newspack_blocks_modal_checkout_allowed_assets', $allowed_assets );
-		$skip_assets    = apply_filters( 'newspack_blocks_modal_checkout_skip_assets', $skip_assets );
 
 		global $wp_scripts, $wp_styles;
 
 		foreach ( $wp_scripts->queue as $handle ) {
 			$allowed = false;
 			foreach ( $allowed_assets as $allowed_asset ) {
-				if ( false !== strpos( $handle, $allowed_asset ) && ! in_array( $handle, $skip_assets ) ) {
+				if ( false !== strpos( $handle, $allowed_asset, 0 ) ) {
 					$allowed = true;
 					break;
 				}
@@ -779,7 +773,7 @@ final class Modal_Checkout {
 		foreach ( $wp_styles->queue as $handle ) {
 			$allowed = false;
 			foreach ( $allowed_assets as $allowed_asset ) {
-				if ( false !== strpos( $handle, $allowed_asset ) && ! in_array( $handle, $skip_assets ) ) {
+				if ( false !== strpos( $handle, $allowed_asset, 0 ) ) {
 					$allowed = true;
 					break;
 				}
