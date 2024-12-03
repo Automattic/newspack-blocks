@@ -759,7 +759,7 @@ final class Modal_Checkout {
 		foreach ( $wp_scripts->queue as $handle ) {
 			$allowed = false;
 			foreach ( $allowed_assets as $allowed_asset ) {
-				if ( 0 === strpos( $handle, $allowed_asset, 0 ) ) {
+				if ( 0 === strpos( $handle, $allowed_asset ) ) {
 					$allowed = true;
 					break;
 				}
@@ -771,7 +771,7 @@ final class Modal_Checkout {
 		foreach ( $wp_styles->queue as $handle ) {
 			$allowed = false;
 			foreach ( $allowed_assets as $allowed_asset ) {
-				if ( 0 === strpos( $handle, $allowed_asset, 0 ) ) {
+				if ( 0 === strpos( $handle, $allowed_asset ) ) {
 					$allowed = true;
 					break;
 				}
