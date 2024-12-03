@@ -133,10 +133,8 @@ final class Modal_Checkout {
 		add_filter( 'woocommerce_subscriptions_product_limited_for_user', [ __CLASS__, 'subscriptions_product_limited_for_user' ], 10, 3 );
 		add_filter( 'woocommerce_get_privacy_policy_text', [ __CLASS__, 'woocommerce_get_privacy_policy_text' ], 10, 2 );
 
-		// Remove any hooks related to reCAPTCHA for WooCommerce.
-		if ( self::is_modal_checkout() ) {
-			add_action( 'plugins_loaded', [ __CLASS__, 'remove_recaptcha_hooks' ] );
-		}
+		// Remove any hooks that aren't supported by the modal checkout.
+		add_action( 'plugins_loaded', [ __CLASS__, 'remove_hooks' ] );
 	}
 
 	/**
@@ -761,7 +759,7 @@ final class Modal_Checkout {
 		foreach ( $wp_scripts->queue as $handle ) {
 			$allowed = false;
 			foreach ( $allowed_assets as $allowed_asset ) {
-				if ( false !== strpos( $handle, $allowed_asset, 0 ) ) {
+				if ( 0 === strpos( $handle, $allowed_asset, 0 ) ) {
 					$allowed = true;
 					break;
 				}
@@ -773,7 +771,7 @@ final class Modal_Checkout {
 		foreach ( $wp_styles->queue as $handle ) {
 			$allowed = false;
 			foreach ( $allowed_assets as $allowed_asset ) {
-				if ( false !== strpos( $handle, $allowed_asset, 0 ) ) {
+				if ( 0 === strpos( $handle, $allowed_asset, 0 ) ) {
 					$allowed = true;
 					break;
 				}
@@ -785,16 +783,46 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Remove hooks related to reCAPTCHA for WooCommerce
+	 * Remove any hooks that may not work nicely with the modal checkout.
 	 */
-	public static function remove_recaptcha_hooks() {
-		remove_action( 'woocommerce_review_order_before_payment', 'rcfwc_field_checkout', 10 );
-		remove_action( 'woocommerce_review_order_before_payment', 'rcfwc_field_checkout', 10 );
-		remove_action( 'woocommerce_review_order_after_payment', 'rcfwc_field_checkout', 10 );
-		remove_action( 'woocommerce_before_checkout_billing_form', 'rcfwc_field_checkout', 10 );
-		remove_action( 'woocommerce_after_checkout_billing_form', 'rcfwc_field_checkout', 10 );
-		remove_action( 'woocommerce_review_order_before_submit', 'rcfwc_field_checkout', 10 );
-		remove_action( 'woocommerce_checkout_process', 'rcfwc_checkout_check', 10 );
+	public static function remove_hooks() {
+		if ( ! self::is_modal_checkout() ) {
+			return;
+		}
+		$remove_list = [
+			// reCAPTCHA for WooCommerce.
+			[
+				'hooks'    => [
+					'woocommerce_review_order_before_payment',
+					'woocommerce_review_order_after_payment',
+					'woocommerce_before_checkout_billing_form',
+					'woocommerce_after_checkout_billing_form',
+					'woocommerce_review_order_before_submit',
+				],
+				'callback' => 'rcfwc_field_checkout',
+			],
+			[
+
+				'hooks'    => [
+					'woocommerce_checkout_process',
+				],
+				'callback' => 'rcfwc_checkout_check',
+			],
+		];
+
+		/**
+		 * Filters the hooks to remove from the modal checkout.
+		 *
+		 * @param string[] $remove_list Array of hooks to remove.
+		 */
+		$remove_list = apply_filters( 'newspack_blocks_modal_checkout_remove_hooks', $remove_list );
+
+		foreach ( $remove_list as $remove ) {
+			foreach ( $remove['hooks'] as $hook ) {
+				$priority = has_action( $hook, 'callback' );
+				remove_action( $hook, $remove['callback'], $priority );
+			}
+		}
 	}
 
 	/**
