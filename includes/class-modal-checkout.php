@@ -751,7 +751,6 @@ final class Modal_Checkout {
 
 		$skip_assets = [
 			// reCAPTCHA for Woo.
-			'recaptcha',
 			'rcfwc-js',
 		];
 
