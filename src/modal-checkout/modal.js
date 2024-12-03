@@ -84,9 +84,9 @@ domReady( () => {
 	 * Handle iframe load state.
 	 */
 	function handleIframeReady() {
-		const location = iframe.contentWindow.location;
+		const location = iframe.contentWindow?.location;
 		// If RAS is available, set the front-end authentication.
-		if ( window.newspackReaderActivation && location.href.indexOf( 'order-received' ) > -1 ) {
+		if ( window.newspackReaderActivation && location?.href?.includes( 'order-received' ) ) {
 			const ras = window.newspackReaderActivation;
 			const params = new Proxy( new URLSearchParams( location.search ), {
 				get: ( searchParams, prop ) => searchParams.get( prop ),
@@ -118,6 +118,11 @@ domReady( () => {
 				// Revert modal title and width default value.
 				setModalSize();
 				setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
+				if ( iframe.contentWindow?.newspackBlocksModalCheckout?.checkout_nonce ) {
+					// Store the checkout nonce for later use.
+					// We store the nonce from the iframe content window to ensure the nonce was generated for a logged in session
+					modalCheckout.checkout_nonce = iframe.contentWindow.newspackBlocksModalCheckout.checkout_nonce;
+				}
 			}
 			if ( container.checkoutReady ) {
 				setModalReady();
@@ -164,7 +169,8 @@ domReady( () => {
 		const body = new FormData();
 		body.append( 'modal_checkout', '1' );
 		body.append( 'action', 'abandon_modal_checkout' );
-		body.append( '_wpnonce', iframe?.contentWindow?.newspackBlocksModalCheckout?.checkout_nonce );
+		body.append( '_wpnonce', modalCheckout.checkout_nonce );
+		modalCheckout.checkout_nonce = null;
 		fetch(
 			newspackBlocksModal.ajax_url,
 			{
@@ -488,6 +494,10 @@ domReady( () => {
 		if ( ! entries || ! entries.length ) {
 			return;
 		}
+		iframe.scrollIntoView( { behavior: 'smooth', block: 'start' } );
+		if ( ! iframe.contentDocument ) {
+			return;
+		}
 		const contentRect = entries[ 0 ].contentRect;
 		if ( contentRect ) {
 			const iframeHeight = contentRect.top + contentRect.bottom;
@@ -510,14 +520,12 @@ domReady( () => {
 		const hasNewsletterPopup = document?.querySelector( '.newspack-newsletters-signup-modal' );
 
 		// Empty cart if checkout is not complete.
-		// We grab the nonce from the iframe content window to ensure the nonce was generated for a logged in session
-		// so we need to call this before closing and resetting the iframe.
-		if ( ! container?.checkoutComplete && iframe?.contentWindow?.newspackBlocksModalCheckout ) {
+		if ( ! container?.checkoutComplete ) {
 			emptyCart();
 		}
 
-		// We want to block closing the modal if redirecting elsewhere:
-		const shouldCloseModal = ! afterSuccessUrlInput || ! afterSuccessBehaviorInput || ! container?.checkoutComplete;
+		// Only close the modal if the iframe contentDocument is null, the checkout is not complete, or we are not redirecting.
+		const shouldCloseModal = ! iframe.contentDocument || ! afterSuccessUrlInput || ! afterSuccessBehaviorInput || ! container?.checkoutComplete;
 		if ( shouldCloseModal || hasNewsletterPopup ) {
 			spinner.style.display = 'flex';
 			if ( iframe && modalContent.contains( iframe ) ) {
