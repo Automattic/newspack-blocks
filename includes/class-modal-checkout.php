@@ -734,6 +734,7 @@ final class Modal_Checkout {
 			'newspack-ui',
 			'newspack-style',
 			'newspack-recaptcha',
+			'newspack-woocommerce-style',
 			// Woo.
 			'woocommerce',
 			'WCPAY',
@@ -792,20 +793,27 @@ final class Modal_Checkout {
 		$remove_list = [
 			// reCAPTCHA for WooCommerce.
 			[
-				'hooks'    => [
-					'woocommerce_review_order_before_payment',
-					'woocommerce_review_order_after_payment',
-					'woocommerce_before_checkout_billing_form',
-					'woocommerce_after_checkout_billing_form',
-					'woocommerce_review_order_before_submit',
-				],
+				'hook'     => 'woocommerce_review_order_before_payment',
 				'callback' => 'rcfwc_field_checkout',
 			],
 			[
-
-				'hooks'    => [
-					'woocommerce_checkout_process',
-				],
+				'hook'     => 'woocommerce_review_order_after_payment',
+				'callback' => 'rcfwc_field_checkout',
+			],
+			[
+				'hook'     => 'woocommerce_before_checkout_billing_form',
+				'callback' => 'rcfwc_field_checkout',
+			],
+			[
+				'hook'     => 'woocommerce_after_checkout_billing_form',
+				'callback' => 'rcfwc_field_checkout',
+			],
+			[
+				'hook'     => 'woocommerce_review_order_before_submit',
+				'callback' => 'rcfwc_field_checkout',
+			],
+			[
+				'hook'     => 'woocommerce_checkout_process',
 				'callback' => 'rcfwc_checkout_check',
 			],
 		];
@@ -818,10 +826,8 @@ final class Modal_Checkout {
 		$remove_list = apply_filters( 'newspack_blocks_modal_checkout_remove_hooks', $remove_list );
 
 		foreach ( $remove_list as $remove ) {
-			foreach ( $remove['hooks'] as $hook ) {
-				$priority = has_action( $hook, 'callback' );
-				remove_action( $hook, $remove['callback'], $priority );
-			}
+			$priority = has_action( $remove['hook'], $remove['callback'] );
+			remove_action( $remove['hook'], $remove['callback'], $priority );
 		}
 	}
 
