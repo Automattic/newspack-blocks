@@ -822,6 +822,10 @@ final class Modal_Checkout {
 				[
 					'hook'     => 'woocommerce_proceed_to_checkout',
 					'callback' => array( $i13_woo_recpatcha, 'i13_woocommerce_payment_request_btn_captcha' ),
+				],
+				[
+					'hook'     => 'wp_head',
+					'callback' => array( $i13_woo_recpatcha, 'i13_add_header_metadata' ),
 				]
 			);
 		}
