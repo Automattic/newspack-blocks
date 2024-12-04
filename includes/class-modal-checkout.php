@@ -791,34 +791,40 @@ final class Modal_Checkout {
 		if ( ! self::is_modal_checkout() ) {
 			return;
 		}
-		$remove_list = [
-			// reCAPTCHA for WooCommerce.
-			[
-				'hook'     => 'woocommerce_review_order_before_payment',
-				'callback' => 'rcfwc_field_checkout',
-			],
-			[
-				'hook'     => 'woocommerce_review_order_after_payment',
-				'callback' => 'rcfwc_field_checkout',
-			],
-			[
-				'hook'     => 'woocommerce_before_checkout_billing_form',
-				'callback' => 'rcfwc_field_checkout',
-			],
-			[
-				'hook'     => 'woocommerce_after_checkout_billing_form',
-				'callback' => 'rcfwc_field_checkout',
-			],
-			[
-				'hook'     => 'woocommerce_review_order_before_submit',
-				'callback' => 'rcfwc_field_checkout',
-			],
-			[
-				'hook'     => 'woocommerce_checkout_process',
-				'callback' => 'rcfwc_checkout_check',
-			],
-		];
 
+		$remove_list = [];
+
+		// reCaptcha for WooCommerce.
+		if ( method_exists( 'I13_Woo_Recpatcha', '__construct' ) ) {
+			global $i13_woo_recpatcha;
+			array_push(
+				$remove_list,
+				[
+					'hook'     => 'woocommerce_review_order_before_payment',
+					'callback' => array( $i13_woo_recpatcha, 'i13woo_extra_checkout_fields' ),
+				],
+				[
+					'hook'     => 'woocommerce_after_checkout_validation',
+					'callback' => array( $i13_woo_recpatcha, 'i13_woocomm_validate_checkout_captcha' ),
+				],
+				[
+					'hook'     => 'woocommerce_pay_order_before_submit',
+					'callback' => array( $i13_woo_recpatcha, 'i13woo_extra_checkout_fields' ),
+				],
+				[
+					'hook'     => 'woocommerce_review_order_before_submit',
+					'callback' => array( $i13_woo_recpatcha, 'i13woo_extra_checkout_fields' ),
+				],
+				[
+					'hook'     => 'woocommerce_pay_order_before_submit',
+					'callback' => array( $i13_woo_recpatcha, 'i13woo_extra_checkout_fields_pay_order' ),
+				],
+				[
+					'hook'     => 'woocommerce_proceed_to_checkout',
+					'callback' => array( $i13_woo_recpatcha, 'i13_woocommerce_payment_request_btn_captcha' ),
+				]
+			);
+		}
 		/**
 		 * Filters the hooks to remove from the modal checkout.
 		 *
