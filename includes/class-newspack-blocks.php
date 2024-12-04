@@ -712,8 +712,26 @@ class Newspack_Blocks {
 						$maybe_user = get_user_by( 'id', $author_id );
 
 						if ( $maybe_user ) {
-							if ( ! array_key_exists( 'edit_posts', $maybe_user->allcaps ) || false === $maybe_user->allcaps['edit_posts'] || ! str_contains( $co_author->user_nicename, $maybe_user->user_nicename ) ) {
-								return $args;
+							if ( ! array_key_exists( 'edit_posts', $maybe_user->allcaps ) || false === $maybe_user->allcaps['edit_posts'] || false !== $co_author ) {
+								if ( ! str_contains( $co_author->user_nicename, $maybe_user->user_nicename ) ) {
+									// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+									$args['tax_query']    = [
+										'relation' => 'AND',
+										[
+											'field'    => 'slug',
+											'taxonomy' => 'author',
+											'terms'    => [ 'cap-' ],
+										],
+										[
+											'field'    => 'slug',
+											'taxonomy' => 'category',
+											'terms'    => [ 'news' ],
+										],
+									];
+									$args['category__in'] = [ 1 ];
+
+									return $args;
+								}
 							}
 						}
 
