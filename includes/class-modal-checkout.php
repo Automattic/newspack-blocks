@@ -795,7 +795,7 @@ final class Modal_Checkout {
 		$remove_list = [];
 
 		// reCaptcha for WooCommerce.
-		if ( method_exists( 'I13_Woo_Recpatcha', '__construct' ) ) {
+		if ( class_exists( 'I13_Woo_Recpatcha' ) ) {
 			global $i13_woo_recpatcha;
 			array_push(
 				$remove_list,
