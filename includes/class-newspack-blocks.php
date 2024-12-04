@@ -708,6 +708,15 @@ class Newspack_Blocks {
 					foreach ( $authors as $index => $author_id ) {
 						// If the given ID is a guest author.
 						$co_author = $co_authors_guest_authors ? $co_authors_guest_authors->get_guest_author_by( 'id', $author_id ) : null;
+
+						$maybe_user = get_user_by( 'id', $author_id );
+
+						if ( $maybe_user ) {
+							if ( ! array_key_exists( 'edit_posts', $maybe_user->allcaps ) || false === $maybe_user->allcaps['edit_posts'] || ! str_contains( $co_author->user_nicename, $maybe_user->user_nicename ) ) {
+								return $args;
+							}
+						}
+
 						if ( $co_author ) {
 							if ( ! empty( $co_author->linked_account ) ) {
 								$linked_account = get_user_by( 'login', $co_author->linked_account );
