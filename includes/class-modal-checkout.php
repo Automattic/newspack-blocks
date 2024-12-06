@@ -747,6 +747,9 @@ final class Modal_Checkout {
 			'selectWoo',
 			// Metorik.
 			'metorik',
+			// Authorize.net.
+			'wc-authorize-net',
+			'sv-wc-payment-gateway-payment-form',
 		];
 
 		/**

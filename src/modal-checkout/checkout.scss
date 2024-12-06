@@ -714,6 +714,61 @@
 		}
 	}
 
+	// Authorize.net Payment Gateway
+	.payment_method_authorize_net_cim_credit_card {
+		.sv-wc-payment-gateway-card-icons {
+			float: right;
+		}
+
+		.sv-wc-payment-gateway-payment-form-manage-payment-methods {
+			display: none;
+		}
+
+		& > p.form-row {
+			margin-top: var(--newspack-ui-spacer-3, 16px);
+		}
+
+		p.form-row {
+			&::before,
+			&::after {
+				display: none;
+			}
+
+			input[type="radio"] + label {
+				display: inline-block;
+			}
+		}
+
+		#wc-authorize-net-cim-credit-card-credit-card-form {
+			p.form-row {
+				display: block;
+				margin: var(--newspack-ui-spacer-base, 8px) 0;
+
+				label {
+					font-size: var(--newspack-ui-font-size-s, 16px);
+					font-weight: 600;
+					line-height: var(--newspack-ui-line-height-s, 1.5);
+					margin: 0 0 var(--newspack-ui-spacer-base, 8px);
+				}
+
+				&:has(input#wc-authorize-net-cim-credit-card-tokenize-payment-method) {
+					display: grid !important;
+					gap: 0 var(--newspack-ui-spacer-base, 8px);
+					grid-template-columns: var(--newspack-ui-spacer-4, 20px) 1fr;
+
+					label {
+						margin: 0;
+					}
+				}
+
+				&:last-child label {
+					margin: 0;
+				}
+			}
+		}
+	}
+
+
 	// stylelint-disable-next-line selector-id-pattern
 	#checkout_back {
 		margin-top: 0;
