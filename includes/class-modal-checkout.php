@@ -782,21 +782,27 @@ final class Modal_Checkout {
 		if ( ! self::is_modal_checkout() ) {
 			return;
 		}
-		/**
-		 * Filters the allowed scripts to render in the modal checkout
-		 *
-		 * @param string[] $allowed_scripts Array of allowed assets handles.
-		 */
-		$allowed_scripts = apply_filters( 'newspack_blocks_modal_checkout_allowed_scripts', self::$allowed_scripts );
+
+		global $wp_scripts, $wp_styles;
+
+		$payment_gateways       = \WC()->payment_gateways->get_available_payment_gateways();
+		$allowed_gateway_assets = [];
+		if ( ! empty( $payment_gateways ) ) {
+			foreach ( array_keys( $payment_gateways ) as $gateway ) {
+				$class                    = get_class( $payment_gateways[ $gateway ] );
+				$plugin_file              = ( new \ReflectionClass( $class ) )->getFileName();
+				$plugin_base              = \plugin_basename( $plugin_file );
+				$plugin_slug              = explode( '/', $plugin_base )[0];
+				$allowed_gateway_assets[] = $plugin_slug;
+			}
+		}
+
 		/**
 		 * Filters the allowed styles to render in the modal checkout
 		 *
 		 * @param string[] $allowed_styles Array of allowed assets handles.
 		 */
-		$allowed_styles   = apply_filters( 'newspack_blocks_modal_checkout_allowed_styles', self::$allowed_styles );
-		$payment_gateways = \WC()->payment_gateways->get_available_payment_gateways();
-
-		global $wp_scripts, $wp_styles;
+		$allowed_styles = apply_filters( 'newspack_blocks_modal_checkout_allowed_styles', self::$allowed_styles );
 		foreach ( $wp_styles->registered as $handle => $wp_style ) {
 			$allowed = false;
 			foreach ( $allowed_styles as $allowed_style ) {
@@ -806,8 +812,8 @@ final class Modal_Checkout {
 				}
 			}
 			if ( ! empty( $payment_gateways ) ) {
-				foreach ( array_keys( $payment_gateways ) as $gateway ) {
-					if ( false !== strpos( $wp_style->src, $gateway->id ) ) {
+				foreach ( $allowed_gateway_assets as $gateway ) {
+					if ( false !== strpos( $wp_style->src, $gateway ) ) {
 						$allowed = true;
 						break;
 					}
@@ -817,6 +823,13 @@ final class Modal_Checkout {
 				wp_dequeue_style( $handle );
 			}
 		}
+
+		/**
+		 * Filters the allowed scripts to render in the modal checkout
+		 *
+		 * @param string[] $allowed_scripts Array of allowed assets handles.
+		 */
+		$allowed_scripts = apply_filters( 'newspack_blocks_modal_checkout_allowed_scripts', self::$allowed_scripts );
 		foreach ( $wp_scripts->registered as $handle => $wp_script ) {
 			$allowed = false;
 			foreach ( $allowed_scripts as $allowed_script ) {
@@ -825,12 +838,10 @@ final class Modal_Checkout {
 					break;
 				}
 			}
-			if ( ! empty( $payment_gateways ) ) {
-				foreach ( array_keys( $payment_gateways ) as $gateway ) {
-					if ( false !== strpos( $wp_script->src, $gateway ) ) {
-						$allowed = true;
-						break;
-					}
+			foreach ( $allowed_gateway_assets as $gateway ) {
+				if ( false !== strpos( $wp_script->src, $gateway ) ) {
+					$allowed = true;
+					break;
 				}
 			}
 			if ( ! $allowed ) {
