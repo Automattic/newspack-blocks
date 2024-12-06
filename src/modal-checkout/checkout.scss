@@ -72,6 +72,16 @@
 			h3 {
 				margin-bottom: var(--newspack-ui-spacer-2, 12px);
 			}
+
+			// PayPal Payments buttons.
+			#ppc-button-ppcp-gateway {
+				margin-top: var(--newspack-ui-spacer-5, 24px);
+			}
+			#ppc-button-ppcp-gateway,
+			#ppc-button-applepay-container,
+			#ppc-button-googlepay-container {
+				margin-bottom: var(--newspack-ui-spacer-2, 12px);
+			}
 		}
 
 		// Override label styles from theme
