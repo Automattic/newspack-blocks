@@ -49,6 +49,72 @@ final class Modal_Checkout {
 	private static $modal_checkout_labels = [];
 
 	/**
+	 * Allowed assets for modal checkout.
+	 *
+	 * @var string[]
+	 */
+	private static $allowed_scripts = [
+		'jquery',
+		'google_gtagjs',
+		// Newspack.
+		'newspack-newsletters-',
+		'newspack-blocks-modal',
+		'newspack-blocks-modal-checkout',
+		'newspack-wc',
+		'newspack-ui',
+		'newspack-style',
+		'newspack-recaptcha',
+		'newspack-woocommerce-style',
+		// Woo.
+		'woocommerce',
+		'WCPAY',
+		'Woo',
+		'wc-',
+		'wc_',
+		'wcs-',
+		'stripe',
+		'select2',
+		'selectWoo',
+		// Metorik.
+		'metorik',
+		// Authorize.net.
+		'wc-authorize-net',
+		'sv-wc-payment-gateway-payment-form',
+	];
+
+	/**
+	 * Allowed styles for modal checkout.
+	 *
+	 * @var string[]
+	 */
+	private static $allowed_styles = [
+		// Newspack.
+		'newspack-newsletters-',
+		'newspack-blocks-modal',
+		'newspack-blocks-modal-checkout',
+		'newspack-wc',
+		'newspack-ui',
+		'newspack-style',
+		'newspack-recaptcha',
+		'newspack-woocommerce-style',
+		// Woo.
+		'woocommerce',
+		'WCPAY',
+		'Woo',
+		'wc-',
+		'wc_',
+		'wcs-',
+		'stripe',
+		'select2',
+		'selectWoo',
+		// Metorik.
+		'metorik',
+		// Authorize.net.
+		'wc-authorize-net',
+		'sv-wc-payment-gateway-payment-form',
+	];
+
+	/**
 	 * Initialize hooks.
 	 */
 	public static function init() {
@@ -723,66 +789,69 @@ final class Modal_Checkout {
 			return;
 		}
 
-		$allowed_assets = [
-			'jquery',
-			'google_gtagjs',
-			// Newspack.
-			'newspack-newsletters-',
-			'newspack-blocks-modal',
-			'newspack-blocks-modal-checkout',
-			'newspack-wc',
-			'newspack-ui',
-			'newspack-style',
-			'newspack-recaptcha',
-			'newspack-woocommerce-style',
-			// Woo.
-			'woocommerce',
-			'WCPAY',
-			'Woo',
-			'wc-',
-			'wc_',
-			'wcs-',
-			'stripe',
-			'select2',
-			'selectWoo',
-			'metorik', // Metorik.
-			'ppcp', // PayPal Payments.
-			'gateway',  // PayPal Payments.
-			'wc-authorize-net', // Authorize.net.
-			'sv-wc-payment-gateway-payment-form', // Authorize.net.
-		];
-
-		/**
-		 * Filters the allowed assets to render in the modal checkout
-		 *
-		 * @param string[] $allowed_assets Array of allowed assets handles.
-		 */
-		$allowed_assets = apply_filters( 'newspack_blocks_modal_checkout_allowed_assets', $allowed_assets );
-
 		global $wp_scripts, $wp_styles;
 
-		foreach ( $wp_scripts->queue as $handle ) {
+		$payment_gateways       = \WC()->payment_gateways->get_available_payment_gateways();
+		$allowed_gateway_assets = [];
+		if ( ! empty( $payment_gateways ) ) {
+			foreach ( array_keys( $payment_gateways ) as $gateway ) {
+				$class                    = get_class( $payment_gateways[ $gateway ] );
+				$plugin_file              = ( new \ReflectionClass( $class ) )->getFileName();
+				$plugin_base              = \plugin_basename( $plugin_file );
+				$plugin_slug              = explode( '/', $plugin_base )[0];
+				$allowed_gateway_assets[] = $plugin_slug;
+			}
+		}
+
+		/**
+		 * Filters the allowed styles to render in the modal checkout
+		 *
+		 * @param string[] $allowed_styles Array of allowed assets handles.
+		 */
+		$allowed_styles = apply_filters( 'newspack_blocks_modal_checkout_allowed_styles', self::$allowed_styles );
+		foreach ( $wp_styles->registered as $handle => $wp_style ) {
 			$allowed = false;
-			foreach ( $allowed_assets as $allowed_asset ) {
-				if ( 0 === strpos( $handle, $allowed_asset ) ) {
+			foreach ( $allowed_styles as $allowed_style ) {
+				if ( 0 === strpos( $handle, $allowed_style ) ) {
+					$allowed = true;
+					break;
+				}
+			}
+			if ( ! empty( $payment_gateways ) ) {
+				foreach ( $allowed_gateway_assets as $gateway ) {
+					if ( false !== strpos( $wp_style->src, $gateway ) ) {
+						$allowed = true;
+						break;
+					}
+				}
+			}
+			if ( ! $allowed ) {
+				wp_dequeue_style( $handle );
+			}
+		}
+
+		/**
+		 * Filters the allowed scripts to render in the modal checkout
+		 *
+		 * @param string[] $allowed_scripts Array of allowed assets handles.
+		 */
+		$allowed_scripts = apply_filters( 'newspack_blocks_modal_checkout_allowed_scripts', self::$allowed_scripts );
+		foreach ( $wp_scripts->registered as $handle => $wp_script ) {
+			$allowed = false;
+			foreach ( $allowed_scripts as $allowed_script ) {
+				if ( 0 === strpos( $handle, $allowed_script ) ) {
+					$allowed = true;
+					break;
+				}
+			}
+			foreach ( $allowed_gateway_assets as $gateway ) {
+				if ( false !== strpos( $wp_script->src, $gateway ) ) {
 					$allowed = true;
 					break;
 				}
 			}
 			if ( ! $allowed ) {
 				wp_dequeue_script( $handle );
-			}
-		}
-		foreach ( $wp_styles->queue as $handle ) {
-			$allowed = false;
-			foreach ( $allowed_assets as $allowed_asset ) {
-				if ( 0 === strpos( $handle, $allowed_asset ) ) {
-					$allowed = true;
-					break;
-				}
-			}
-			if ( ! $allowed ) {
-				wp_dequeue_style( $handle );
 			}
 		}
 	}
