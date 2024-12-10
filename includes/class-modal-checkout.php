@@ -77,6 +77,8 @@ final class Modal_Checkout {
 		'selectWoo',
 		// Metorik.
 		'metorik',
+		// Braintree.
+		'braintree',
 	];
 
 	/**
@@ -786,14 +788,17 @@ final class Modal_Checkout {
 		global $wp_scripts, $wp_styles;
 
 		$payment_gateways       = \WC()->payment_gateways->get_available_payment_gateways();
-		$allowed_gateway_assets = [];
+		$allowed_gateway_assets = array_keys( $payment_gateways );
 		if ( ! empty( $payment_gateways ) ) {
+			// Payment gateway id doesn't always match the plugin slug, so account for these cases.
 			foreach ( array_keys( $payment_gateways ) as $gateway ) {
-				$class                    = get_class( $payment_gateways[ $gateway ] );
-				$plugin_file              = ( new \ReflectionClass( $class ) )->getFileName();
-				$plugin_base              = \plugin_basename( $plugin_file );
-				$plugin_slug              = explode( '/', $plugin_base )[0];
-				$allowed_gateway_assets[] = $plugin_slug;
+				$class       = get_class( $payment_gateways[ $gateway ] );
+				$plugin_file = ( new \ReflectionClass( $class ) )->getFileName();
+				$plugin_base = \plugin_basename( $plugin_file );
+				$plugin_slug = explode( '/', $plugin_base )[0];
+				if ( ! in_array( $plugin_slug, $allowed_gateway_assets, true ) ) {
+					$allowed_gateway_assets[] = $plugin_slug;
+				}
 			}
 		}
 
