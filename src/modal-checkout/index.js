@@ -617,6 +617,8 @@ import { domReady } from './utils';
 
 					const removeFromValidation = [
 						'save_user_in_woopay',
+						'woocommerce_checkout_place_order',
+						'woocommerce-process-checkout-nonce',
 					];
 					// Serialize form and remove fields that shouldn't be included for validation.
 					const serializedForm = $form.serializeArray().filter(
@@ -624,10 +626,12 @@ import { domReady } from './utils';
 					);
 					// Add 'update totals' parameter so it just performs validation.
 					serializedForm.push( { name: 'woocommerce_checkout_update_totals', value: '1' } );
+					serializedForm.push( { name: 'action', value: 'validate_modal_checkout' } );
+					serializedForm.push( { name: '_wpnonce', value: newspackBlocksModalCheckout.checkout_nonce } );
 					// Ajax request.
 					$.ajax( {
 						type: 'POST',
-						url: wc_checkout_params.checkout_url,
+						url: newspackBlocksModalCheckout.ajax_url,
 						data: serializedForm,
 						dataType: 'html',
 						success: response => {

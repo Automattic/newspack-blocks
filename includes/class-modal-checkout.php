@@ -79,6 +79,8 @@ final class Modal_Checkout {
 		'metorik',
 		// Braintree.
 		'braintree',
+		'paypal',
+		'jetpack',
 	];
 
 	/**
@@ -108,6 +110,8 @@ final class Modal_Checkout {
 		'selectWoo',
 		// Metorik.
 		'metorik',
+		// Braintree.
+		'braintree',
 	];
 
 	/**
@@ -120,6 +124,8 @@ final class Modal_Checkout {
 		add_action( 'wp', [ __CLASS__, 'process_checkout_request' ] );
 		add_action( 'wp_ajax_abandon_modal_checkout', [ __CLASS__, 'process_abandon_checkout' ] );
 		add_action( 'wp_ajax_nopriv_abandon_modal_checkout', [ __CLASS__, 'process_abandon_checkout' ] );
+		add_action( 'wp_ajax_validate_modal_checkout', [ __CLASS__, 'validate_checkout_request' ] );
+		add_action( 'wp_ajax_nopriv_validate_modal_checkout', [ __CLASS__, 'validate_checkout_request' ] );
 
 		add_filter( 'wp_redirect', [ __CLASS__, 'pass_url_param_on_redirect' ] );
 		add_filter( 'woocommerce_cart_product_cannot_be_purchased_message', [ __CLASS__, 'woocommerce_cart_product_cannot_be_purchased_message' ], 10, 2 );
@@ -379,27 +385,52 @@ final class Modal_Checkout {
 	 * Process abandon checkout for modal.
 	 */
 	public static function process_abandon_checkout() {
-		if ( ! defined( 'DOING_AJAX' ) ) {
+		if ( ! defined( 'DOING_AJAX' ) || ! self::is_modal_checkout() ) {
 			return;
 		}
-
-		if ( ! self::is_modal_checkout() ) {
-			return;
-		}
-
 		if ( ! check_ajax_referer( 'newspack_modal_checkout_nonce' ) ) {
 			wp_send_json_error( [ 'message' => __( 'Invalid nonce.', 'newspack-blocks' ) ] );
 			wp_die();
 		}
-
 		$cart = \WC()->cart;
 		if ( $cart && ! $cart->is_empty() ) {
 			$cart->empty_cart();
 		}
 		self::reset_checkout_registration_flag();
-
 		wp_send_json_success( [ 'message' => __( 'Cart has been emptied.', 'newspack-blocks' ) ] );
 		wp_die();
+	}
+
+	/**
+	 * Validate modal checkout.
+	 */
+	public static function validate_checkout_request() {
+		if ( ! defined( 'DOING_AJAX' ) || ! self::is_modal_checkout() ) {
+			return;
+		}
+		if ( ! check_ajax_referer( 'newspack_modal_checkout_nonce' ) ) {
+			wp_send_json_error( [ 'message' => __( 'Invalid nonce.', 'newspack-blocks' ) ] );
+			wp_die();
+		}
+		// We don't want to validate payment methods at this point, so we temporarily set the cart to not need payment.
+		add_filter( 'woocommerce_cart_needs_payment', '__return_false' );
+		$checkout    = \WC()->checkout();
+		$errors      = new WP_Error();
+		$posted_data = $checkout->get_posted_data();
+		$checkout->update_session( $posted_data );
+		$checkout->validate_checkout( $posted_data, $errors );
+		remove_filter( 'woocommerce_cart_needs_payment', '__return_false' );
+		if ( $errors->get_error_codes() ) {
+			$error_messages = [];
+			foreach ( $errors->get_error_messages() as $error_message ) {
+				$error_messages[] = $error_message;
+			}
+			wp_send_json_error( [ 'messages' => $error_messages ] );
+			wp_die();
+		} else {
+			wp_send_json_success();
+			wp_die();
+		}
 	}
 
 	/**
@@ -844,7 +875,7 @@ final class Modal_Checkout {
 				}
 			}
 			foreach ( $allowed_gateway_assets as $gateway ) {
-				if ( false !== strpos( $wp_script->src, $gateway ) ) {
+				if ( false !== strpos( $handle, $gateway ) || false !== strpos( $wp_script->src, $gateway ) ) {
 					$allowed = true;
 					break;
 				}
