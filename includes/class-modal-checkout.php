@@ -77,6 +77,11 @@ final class Modal_Checkout {
 		'selectWoo',
 		// Metorik.
 		'metorik',
+		// Braintree.
+		'wc-braintree',
+		'braintree-js',
+		'sv-wc-payment-gateway',
+		'sv-wc-external-checkout',
 	];
 
 	/**
@@ -106,6 +111,10 @@ final class Modal_Checkout {
 		'selectWoo',
 		// Metorik.
 		'metorik',
+		// Braintree.
+		'wc-braintree',
+		'sv-wc-payment-gateway',
+		'sv-wc-external-checkout',
 	];
 
 	/**
