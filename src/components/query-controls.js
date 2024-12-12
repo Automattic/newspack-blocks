@@ -273,14 +273,14 @@ class QueryControls extends Component {
 								aria-pressed={ ! specificMode }
 								onClick={ onLoopModeChange }
 							>
-								{ __( 'Query', 'newspack-blocks' ) }
+								{ __( 'Dynamic', 'newspack-blocks' ) }
 							</Button>
 							<Button
 								variant={ specificMode && 'primary' }
 								aria-pressed={ specificMode }
 								onClick={ onSpecificModeChange }
 							>
-								{ __( 'Specific', 'newspack-blocks' ) }
+								{ __( 'Static', 'newspack-blocks' ) }
 							</Button>
 						</ButtonGroup>
 					</BaseControl>
@@ -293,22 +293,13 @@ class QueryControls extends Component {
 						fetchSavedInfo={ this.fetchSavedPosts }
 						label={ __( 'Posts', 'newspack-blocks' ) }
 						help={ __(
-							'Begin typing post title, click autocomplete result to select.',
+							'Begin typing any word in a post title. Click on an autocomplete result to select it.',
 							'newspack-blocks'
 						) }
 					/>
 				) : (
 					<>
-						<BasicQueryControls { ...this.props } />
-						{ onAuthorsChange && (
-							<AutocompleteTokenField
-								tokens={ authors || [] }
-								onChange={ onAuthorsChange }
-								fetchSuggestions={ this.fetchAuthorSuggestions }
-								fetchSavedInfo={ this.fetchSavedAuthors }
-								label={ __( 'Authors', 'newspack-blocks' ) }
-							/>
-						) }
+						<BasicQueryControls { ...this.props } maxItems={ 30 } />
 						{ onCategoriesChange && (
 							<AutocompleteTokenField
 								tokens={ categories || [] }
@@ -332,6 +323,15 @@ class QueryControls extends Component {
 								fetchSuggestions={ this.fetchTagSuggestions }
 								fetchSavedInfo={ this.fetchSavedTags }
 								label={ __( 'Tags', 'newspack-blocks' ) }
+							/>
+						) }
+						{ onAuthorsChange && (
+							<AutocompleteTokenField
+								tokens={ authors || [] }
+								onChange={ onAuthorsChange }
+								fetchSuggestions={ this.fetchAuthorSuggestions }
+								fetchSavedInfo={ this.fetchSavedAuthors }
+								label={ __( 'Authors', 'newspack-blocks' ) }
 							/>
 						) }
 						{ onCustomTaxonomiesChange &&
