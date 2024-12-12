@@ -703,10 +703,24 @@
 		}
 	}
 
-
 	// Automate Woo Opt in
 	form .automatewoo-optin {
 		margin: var(--newspack-ui-spacer-5, 24px) 0 0;
+	}
+
+	// Flutterwave
+	.payment_method_tbz_rave {
+		// stylelint-disable-next-line selector-id-pattern
+		.form-row:has(#wc-tbz_rave-new-payment-method) {
+			display: grid !important;
+			gap: 0 var(--newspack-ui-spacer-base, 8px);
+			grid-template-columns: var(--newspack-ui-spacer-4, 20px) 1fr;
+
+			label {
+				font-size: var(--newspack-ui-font-size-s);
+				line-height: var(--newspack-ui-line-height-s);
+			}
+		}
 	}
 
 	// Buttons - adjust spacing
