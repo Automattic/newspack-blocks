@@ -22,7 +22,7 @@ import classNames from 'classnames';
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Component, Fragment, RawHTML } from '@wordpress/element';
 import {
 	BlockControls,
@@ -50,14 +50,14 @@ import { withDispatch, withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 import { decodeEntities } from '@wordpress/html-entities';
 import {
-	Icon,
-	formatListBullets,
 	fullscreen,
 	grid,
 	image,
+	list,
 	postFeaturedImage,
 	pullLeft,
 	pullRight,
+	sidesAll,
 	textColor as typeScaleIcon,
 } from '@wordpress/icons';
 
@@ -99,12 +99,6 @@ const squareIcon = (
 		/>
 	</SVG>
 );
-
-const typeScaleIconSmall = (
-	<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-		<Path d="M13 8H11.6667L9 15.3333H10.2667L11 13.3333H13.8L14.5333 15.3333H15.8L13 8ZM11.3333 12.3333L12.3333 9.06667L13.4667 12.3333H11.3333Z"	/>
-	</SVG>
-)
 
 class Edit extends Component< HomepageArticlesProps > {
 	renderPost = ( post: Post ) => {
@@ -345,9 +339,91 @@ class Edit extends Component< HomepageArticlesProps > {
 
 		return (
 			<Fragment>
-				<PanelBody title={ __( 'Settings', 'newspack-blocks' ) } className="newspack-block__panel">
+				{ postLayout === 'grid' && (
+					<PanelBody title={ __( 'Grid', 'newspack-blocks' ) }>
+						<RangeControl
+							label={ __( 'Columns', 'newspack-blocks' ) }
+							value={ columns }
+							onChange={ handleAttributeChange( 'columns' ) }
+							min={ 2 }
+							max={ 6 }
+							required
+							__next40pxDefaultSize
+						/>
+					</PanelBody>
+				) }
+				<PanelBody title={ __( 'Content', 'newspack-blocks' ) } className="newspack-block__panel is-content">
+					<QueryControls
+						numberOfItems={ postsToShow }
+						onNumberOfItemsChange={ ( _postsToShow: number ) =>
+							setAttributes( { postsToShow: _postsToShow || 1 } )
+						}
+						specificMode={ specificMode }
+						onSpecificModeChange={ () => setAttributes( { specificMode: true } ) }
+						onLoopModeChange={ () => setAttributes( { specificMode: false } ) }
+						specificPosts={ specificPosts }
+						onSpecificPostsChange={ handleAttributeChange( 'specificPosts' ) }
+						authors={ authors }
+						onAuthorsChange={ handleAttributeChange( 'authors' ) }
+						categories={ categories }
+						onCategoriesChange={ handleAttributeChange( 'categories' ) }
+						includeSubcategories={ includeSubcategories }
+						onIncludeSubcategoriesChange={ handleAttributeChange( 'includeSubcategories' ) }
+						tags={ tags }
+						onTagsChange={ handleAttributeChange( 'tags' ) }
+						onCustomTaxonomiesChange={ handleAttributeChange( 'customTaxonomies' ) }
+						customTaxonomies={ customTaxonomies }
+						tagExclusions={ tagExclusions }
+						onTagExclusionsChange={ handleAttributeChange( 'tagExclusions' ) }
+						categoryExclusions={ categoryExclusions }
+						onCategoryExclusionsChange={ handleAttributeChange( 'categoryExclusions' ) }
+						customTaxonomyExclusions={ customTaxonomyExclusions }
+						onCustomTaxonomyExclusionsChange={ handleAttributeChange( 'customTaxonomyExclusions' ) }
+						postType={ postType }
+					/>
+					<ToggleControl
+						label={ __( 'Allow duplicate stories', 'newspack-blocks' ) }
+						help={ __(
+							"Exclude this block from the page's deduplication logic.",
+							'newspack-blocks'
+						) }
+						checked={ ! attributes.deduplicate }
+						onChange={ ( value: boolean ) => setAttributes( { deduplicate: ! value } ) }
+					/>
+					{ ! specificMode && isBlogPrivate() ? (
+						/*
+						 * Hide the "Load more posts" button option on private sites.
+						 *
+						 * Client-side fetching from a private WP.com blog requires authentication,
+						 * which is not provided in the current implementation.
+						 * See https://github.com/Automattic/newspack-blocks/issues/306.
+						 */
+						<ToggleControl
+							label={ __( 'Show "Load more posts" button', 'newspack-blocks' ) }
+							help={ __( 'This site is private, therefore this feature is not active.', 'newspack-blocks' ) }
+							disabled={ true }
+						/>
+					) : (
+						! specificMode && (
+							<>
+								<ToggleControl
+									label={ __( 'Show "Load more posts" button', 'newspack-blocks' ) }
+									checked={ moreButton }
+									onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
+								/>
+								<ToggleControl
+									label={ __( 'Infinite scroll', 'newspack-blocks' ) }
+									checked={ infiniteScroll }
+									disabled={ ! moreButton }
+									onChange={ () => setAttributes( { infiniteScroll: ! infiniteScroll } ) }
+								/>
+							</>
+						)
+					) }
+				</PanelBody>
+				<PanelBody title={ __( 'Display', 'newspack-blocks' ) } className="newspack-block__panel">
 					<BaseControl
-						label={ __( 'Content', 'newspack-blocks' ) }
+						label={ __( 'Text', 'newspack-blocks' ) }
 						id="newspack-block__content-display"
 						className="newspack-block__button-group"
 					>
@@ -402,105 +478,35 @@ class Edit extends Component< HomepageArticlesProps > {
 					) }
 					{ ! showFullContent && (
 						<ToggleControl
-							label={ __( 'Show "Read more" link', 'newspack-blocks' ) }
+							label={
+								sprintf(
+									// translators: %s is the read more label'.
+									__( 'Show "%s" link', 'newspack-block' ),
+									readMoreLabel ? readMoreLabel : __( 'Keep reading', 'newspack-blocks' )
+								)
+							}
 							checked={ showReadMore }
 							onChange={ () => setAttributes( { showReadMore: ! showReadMore } ) }
 						/>
 					) }
 					{ ! showFullContent && showReadMore && (
 						<TextControl
-							label={ __( '"Read more" link text', 'newspack-blocks' ) }
+							label={
+								sprintf(
+									// translators: %s is the read more label'.
+									__( '"%s" link text', 'newspack-block' ),
+									readMoreLabel ? readMoreLabel : __( 'Keep reading', 'newspack-blocks' )
+								)
+							}
+							hideLabelFromVision={ true }
 							value={ readMoreLabel }
 							placeholder={ readMoreLabel }
 							onChange={ ( value: string ) => setAttributes( { readMoreLabel: value } ) }
 							__next40pxDefaultSize
 						/>
 					) }
-					{ ! specificMode && isBlogPrivate() ? (
-						/*
-						 * Hide the "Load more posts" button option on private sites.
-						 *
-						 * Client-side fetching from a private WP.com blog requires authentication,
-						 * which is not provided in the current implementation.
-						 * See https://github.com/Automattic/newspack-blocks/issues/306.
-						 */
-						<ToggleControl
-							label={ __( 'Show "Load more posts" button', 'newspack-blocks' ) }
-							help={ __( 'This site is private, therefore this feature is not active.', 'newspack-blocks' ) }
-							disabled={ true }
-						/>
-					) : (
-						! specificMode && (
-							<>
-								<ToggleControl
-									label={ __( 'Show "Load more posts" button', 'newspack-blocks' ) }
-									checked={ moreButton }
-									onChange={ () => setAttributes( { moreButton: ! moreButton } ) }
-								/>
-								{ moreButton && (
-									<ToggleControl
-										label={ __( 'Infinite scroll', 'newspack-blocks' ) }
-										checked={ infiniteScroll }
-										onChange={ () => setAttributes( { infiniteScroll: ! infiniteScroll } ) }
-									/>
-								) }
-							</>
-						)
-					) }
 				</PanelBody>
-				{ postLayout === 'grid' && (
-					<PanelBody title={ __( 'Grid', 'newspack-blocks' ) }>
-						<RangeControl
-							label={ __( 'Columns', 'newspack-blocks' ) }
-							value={ columns }
-							onChange={ handleAttributeChange( 'columns' ) }
-							min={ 2 }
-							max={ 6 }
-							required
-							__next40pxDefaultSize
-						/>
-					</PanelBody>
-				) }
-				<PanelBody title={ __( 'Loop', 'newspack-blocks' ) } initialOpen={ false } className="newspack-block__panel is-loop">
-					<QueryControls
-						numberOfItems={ postsToShow }
-						onNumberOfItemsChange={ ( _postsToShow: number ) =>
-							setAttributes( { postsToShow: _postsToShow || 1 } )
-						}
-						specificMode={ specificMode }
-						onSpecificModeChange={ () => setAttributes( { specificMode: true } ) }
-						onLoopModeChange={ () => setAttributes( { specificMode: false } ) }
-						specificPosts={ specificPosts }
-						onSpecificPostsChange={ handleAttributeChange( 'specificPosts' ) }
-						authors={ authors }
-						onAuthorsChange={ handleAttributeChange( 'authors' ) }
-						categories={ categories }
-						onCategoriesChange={ handleAttributeChange( 'categories' ) }
-						includeSubcategories={ includeSubcategories }
-						onIncludeSubcategoriesChange={ handleAttributeChange( 'includeSubcategories' ) }
-						tags={ tags }
-						onTagsChange={ handleAttributeChange( 'tags' ) }
-						onCustomTaxonomiesChange={ handleAttributeChange( 'customTaxonomies' ) }
-						customTaxonomies={ customTaxonomies }
-						tagExclusions={ tagExclusions }
-						onTagExclusionsChange={ handleAttributeChange( 'tagExclusions' ) }
-						categoryExclusions={ categoryExclusions }
-						onCategoryExclusionsChange={ handleAttributeChange( 'categoryExclusions' ) }
-						customTaxonomyExclusions={ customTaxonomyExclusions }
-						onCustomTaxonomyExclusionsChange={ handleAttributeChange( 'customTaxonomyExclusions' ) }
-						postType={ postType }
-					/>
-					<ToggleControl
-						label={ __( 'Allow duplicate stories', 'newspack-blocks' ) }
-						help={ __(
-							"Exclude this block from the page's deduplication logic.",
-							'newspack-blocks'
-						) }
-						checked={ ! attributes.deduplicate }
-						onChange={ ( value: boolean ) => setAttributes( { deduplicate: ! value } ) }
-					/>
-				</PanelBody>
-				<PanelBody title={ __( 'Featured Image', 'newspack-blocks' ) } initialOpen={ false } className="newspack-block__panel">
+				<PanelBody title={ __( 'Featured Image', 'newspack-blocks' ) } className="newspack-block__panel">
 					<ToggleControl
 						label={ __( 'Show featured image', 'newspack-blocks' ) }
 						checked={ showImage }
@@ -519,7 +525,7 @@ class Edit extends Component< HomepageArticlesProps > {
 						disabled={ ! showImage }
 					/>
 					{ showImage && mediaPosition !== 'top' && mediaPosition !== 'behind' && (
-						<Fragment>
+						<>
 							<ToggleControl
 								label={ __( 'Stack on mobile', 'newspack-blocks' ) }
 								checked={ mobileStack }
@@ -547,7 +553,7 @@ class Edit extends Component< HomepageArticlesProps > {
 									} ) }
 								</ButtonGroup>
 							</BaseControl>
-						</Fragment>
+						</>
 					) }
 					{ showImage && mediaPosition === 'behind' && (
 						<RangeControl
@@ -565,7 +571,12 @@ class Edit extends Component< HomepageArticlesProps > {
 						/>
 					) }
 				</PanelBody>
-				<PanelBody title={ __( 'Post Meta', 'newspack-blocks' ) } initialOpen={ false }>
+				<PanelBody title={ __( 'Post Meta', 'newspack-blocks' ) }>
+					<ToggleControl
+						label={ __( 'Show category', 'newspack-blocks' ) }
+						checked={ showCategory }
+						onChange={ () => setAttributes( { showCategory: ! showCategory } ) }
+					/>
 					{ IS_SUBTITLE_SUPPORTED_IN_THEME && (
 						<ToggleControl
 							label={ __( 'Show subtitle', 'newspack-blocks' ) }
@@ -573,16 +584,6 @@ class Edit extends Component< HomepageArticlesProps > {
 							onChange={ () => setAttributes( { showSubtitle: ! showSubtitle } ) }
 						/>
 					) }
-					<ToggleControl
-						label={ __( 'Show date', 'newspack-blocks' ) }
-						checked={ showDate }
-						onChange={ () => setAttributes( { showDate: ! showDate } ) }
-					/>
-					<ToggleControl
-						label={ __( 'Show category', 'newspack-blocks' ) }
-						checked={ showCategory }
-						onChange={ () => setAttributes( { showCategory: ! showCategory } ) }
-					/>
 					<ToggleControl
 						label={ __( 'Show author', 'newspack-blocks' ) }
 						checked={ showAuthor }
@@ -593,6 +594,11 @@ class Edit extends Component< HomepageArticlesProps > {
 						checked={ showAvatar }
 						onChange={ () => setAttributes( { showAvatar: ! showAvatar } ) }
 						disabled={ ! showAuthor }
+					/>
+					<ToggleControl
+						label={ __( 'Show date', 'newspack-blocks' ) }
+						checked={ showDate }
+						onChange={ () => setAttributes( { showDate: ! showDate } ) }
 					/>
 				</PanelBody>
 				<PostTypesPanel attributes={ attributes } setAttributes={ setAttributes } />
@@ -624,8 +630,7 @@ class Edit extends Component< HomepageArticlesProps > {
 				>
 					<RangeControl
 						label={ __( 'Type Scale', 'newspack-blocks' ) }
-						beforeIcon={ typeScaleIconSmall }
-						afterIcon={ typeScaleIcon }
+						beforeIcon={ typeScaleIcon }
 						className="spacing-sizes-control"
 						value={ typeScale }
 						onChange={ ( _typeScale: number ) => setAttributes( { typeScale: _typeScale } ) }
@@ -638,12 +643,10 @@ class Edit extends Component< HomepageArticlesProps > {
 					/>
 				</PanelBody>
 				{ postLayout === 'grid' && (
-					<PanelBody
-						title={ __( 'Dimensions', 'newspack-blocks' ) }
-						initialOpen={ false }
-					>
+					<PanelBody title={ __( 'Dimensions', 'newspack-blocks' ) }>
 						<RangeControl
 							label={ __( 'Grid Spacing', 'newspack-blocks' ) }
+							beforeIcon={ sidesAll }
 							className="spacing-sizes-control"
 							value={ colGap }
 							onChange={ ( _colGap: number ) => setAttributes( { colGap: _colGap } ) }
@@ -718,14 +721,14 @@ class Edit extends Component< HomepageArticlesProps > {
 
 		const blockControls = [
 			{
-				icon: <Icon icon={ formatListBullets } />,
-				title: __( 'List View', 'newspack-blocks' ),
+				icon: list,
+				title: __( 'List view', 'newspack-blocks' ),
 				onClick: () => setAttributes( { postLayout: 'list' } ),
 				isActive: postLayout === 'list',
 			},
 			{
-				icon: <Icon icon={ grid } />,
-				title: __( 'Grid View', 'newspack-blocks' ),
+				icon: grid,
+				title: __( 'Grid view', 'newspack-blocks' ),
 				onClick: () => setAttributes( { postLayout: 'grid' } ),
 				isActive: postLayout === 'grid',
 			},
@@ -733,25 +736,25 @@ class Edit extends Component< HomepageArticlesProps > {
 
 		const blockControlsImages = [
 			{
-				icon: <Icon icon={ postFeaturedImage } />,
+				icon: postFeaturedImage,
 				title: __( 'Show media on top', 'newspack-blocks' ),
 				isActive: mediaPosition === 'top',
 				onClick: () => setAttributes( { mediaPosition: 'top' } ),
 			},
 			{
-				icon: <Icon icon={ pullLeft } />,
+				icon: pullLeft,
 				title: __( 'Show media on left', 'newspack-blocks' ),
 				isActive: mediaPosition === 'left',
 				onClick: () => setAttributes( { mediaPosition: 'left' } ),
 			},
 			{
-				icon: <Icon icon={ pullRight } />,
+				icon: pullRight,
 				title: __( 'Show media on right', 'newspack-blocks' ),
 				isActive: mediaPosition === 'right',
 				onClick: () => setAttributes( { mediaPosition: 'right' } ),
 			},
 			{
-				icon: <Icon icon={ image } />,
+				icon: image,
 				title: __( 'Show media behind', 'newspack-blocks' ),
 				isActive: mediaPosition === 'behind',
 				onClick: () => setAttributes( { mediaPosition: 'behind' } ),
@@ -761,24 +764,24 @@ class Edit extends Component< HomepageArticlesProps > {
 		const blockControlsImageShape = [
 			{
 				icon: landscapeIcon,
-				title: __( 'Landscape Image Shape', 'newspack-blocks' ),
+				title: __( 'Landscape image shape', 'newspack-blocks' ),
 				isActive: imageShape === 'landscape',
 				onClick: () => setAttributes( { imageShape: 'landscape' } ),
 			},
 			{
 				icon: portraitIcon,
-				title: __( 'portrait Image Shape', 'newspack-blocks' ),
+				title: __( 'portrait image shape', 'newspack-blocks' ),
 				isActive: imageShape === 'portrait',
 				onClick: () => setAttributes( { imageShape: 'portrait' } ),
 			},
 			{
 				icon: squareIcon,
-				title: __( 'Square Image Shape', 'newspack-blocks' ),
+				title: __( 'Square image shape', 'newspack-blocks' ),
 				isActive: imageShape === 'square',
 				onClick: () => setAttributes( { imageShape: 'square' } ),
 			},
 			{
-				icon: <Icon icon={ fullscreen } />,
+				icon: fullscreen,
 				title: __( 'Uncropped', 'newspack-blocks' ),
 				isActive: imageShape === 'uncropped',
 				onClick: () => setAttributes( { imageShape: 'uncropped' } ),
