@@ -708,7 +708,7 @@
 		margin: var(--newspack-ui-spacer-5, 24px) 0 0;
 	}
 
-	// Flutterwave
+	// Flutterwave Payment Gateway
 	.payment_method_tbz_rave {
 		// stylelint-disable-next-line selector-id-pattern
 		.form-row:has(#wc-tbz_rave-new-payment-method) {
@@ -721,6 +721,22 @@
 				line-height: var(--newspack-ui-line-height-s);
 			}
 		}
+	}
+
+	iframe[src*="flutterwave.com"] {
+		border: var(--newspack-ui-spacer-6, 32px) solid #fff !important;
+	}
+
+	// stylelint-disable-next-line selector-id-pattern
+	.order_details:has(+ #tbz_wc_flutterwave_form) {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	// stylelint-disable-next-line selector-id-pattern
+	#tbz_wc_flutterwave_form {
+		display: none;
 	}
 
 	// Buttons - adjust spacing

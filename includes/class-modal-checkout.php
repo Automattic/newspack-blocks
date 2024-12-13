@@ -129,6 +129,7 @@ final class Modal_Checkout {
 		add_action( 'template_include', [ __CLASS__, 'get_checkout_template' ] );
 		add_filter( 'woocommerce_get_return_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
 		add_filter( 'woocommerce_get_checkout_order_received_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
+		add_filter( 'woocommerce_get_checkout_payment_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
 		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 2 );
 		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'woocommerce_checkout_fields' ] );
 		add_filter( 'woocommerce_update_order_review_fragments', [ __CLASS__, 'order_review_fragments' ] );
