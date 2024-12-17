@@ -494,8 +494,8 @@ domReady( () => {
 		if ( ! entries || ! entries.length ) {
 			return;
 		}
-		iframe.scrollIntoView( { behavior: 'smooth', block: 'start' } );
 		if ( ! iframe.contentDocument ) {
+			iframe.scrollIntoView( { behavior: 'smooth', block: 'start' } );
 			return;
 		}
 		const contentRect = entries[ 0 ].contentRect;
