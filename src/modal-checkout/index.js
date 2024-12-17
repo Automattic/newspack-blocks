@@ -640,7 +640,6 @@ import { domReady } from './utils';
 						url: newspackBlocksModalCheckout.ajax_url,
 						data: serializedForm,
 						success: response => {
-							console.info( 'Success', response ); // eslint-disable-line no-console
 							let result;
 							if ( typeof response === 'object' ) {
 								result = response;
@@ -696,7 +695,6 @@ import { domReady } from './utils';
 							cb( result );
 						},
 						error: ( jqXHR, textStatus, errorThrown ) => {
-							console.info( 'Error', jqXHR, textStatus, errorThrown ); // eslint-disable-line no-console
 							let messages = '';
 							if ( ! silent ) {
 								messages =
