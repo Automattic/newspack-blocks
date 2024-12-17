@@ -171,6 +171,7 @@ final class Modal_Checkout {
 		add_filter( 'googlesitekit_adsense_tag_blocked', [ __CLASS__, 'is_modal_checkout' ] );
 		add_filter( 'jetpack_active_modules', [ __CLASS__, 'jetpack_active_modules' ] );
 		add_filter( 'woocommerce_checkout_update_order_review_expired', [ __CLASS__, 'is_not_modal_checkout_filter' ] );
+		add_filter( 'woocommerce_checkout_registration_enabled', [ __CLASS__, 'is_modal_checkout_filter' ] );
 
 		// Make the current cart price available to the JavaScript.
 		add_action( 'wp_ajax_get_cart_total', [ __CLASS__, 'get_cart_total_js' ] );
@@ -1782,7 +1783,19 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Filter the a value dependent on the page not being modal checkout.
+	 * Filter a value to true dependent on the page not being modal checkout.
+	 *
+	 * @param bool $value The value.
+	 */
+	public static function is_modal_checkout_filter( $value ) {
+		if ( self::is_modal_checkout() ) {
+			return true;
+		}
+		return $value;
+	}
+
+	/**
+	 * Filter a value to false dependent on the page not being modal checkout.
 	 *
 	 * @param bool $value The value.
 	 */
