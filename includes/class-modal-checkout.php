@@ -118,6 +118,8 @@ final class Modal_Checkout {
 		add_action( 'wp', [ __CLASS__, 'process_checkout_request' ] );
 		add_action( 'wp_ajax_abandon_modal_checkout', [ __CLASS__, 'process_abandon_checkout' ] );
 		add_action( 'wp_ajax_nopriv_abandon_modal_checkout', [ __CLASS__, 'process_abandon_checkout' ] );
+		add_action( 'wp_ajax_validate_modal_checkout', [ __CLASS__, 'validate_checkout_request' ] );
+		add_action( 'wp_ajax_nopriv_validate_modal_checkout', [ __CLASS__, 'validate_checkout_request' ] );
 
 		add_filter( 'wp_redirect', [ __CLASS__, 'pass_url_param_on_redirect' ] );
 		add_filter( 'woocommerce_cart_product_cannot_be_purchased_message', [ __CLASS__, 'woocommerce_cart_product_cannot_be_purchased_message' ], 10, 2 );
@@ -378,11 +380,7 @@ final class Modal_Checkout {
 	 * Process abandon checkout for modal.
 	 */
 	public static function process_abandon_checkout() {
-		if ( ! defined( 'DOING_AJAX' ) ) {
-			return;
-		}
-
-		if ( ! self::is_modal_checkout() ) {
+		if ( ! defined( 'DOING_AJAX' ) || ! self::is_modal_checkout() ) {
 			return;
 		}
 
@@ -399,6 +397,26 @@ final class Modal_Checkout {
 
 		wp_send_json_success( [ 'message' => __( 'Cart has been emptied.', 'newspack-blocks' ) ] );
 		wp_die();
+	}
+
+	/**
+	 * Process modal checkout validation.
+	 */
+	public static function validate_checkout_request() {
+		if ( ! defined( 'DOING_AJAX' ) || ! self::is_modal_checkout() ) {
+			return;
+		}
+		if ( ! check_ajax_referer( 'newspack_modal_checkout_nonce' ) ) {
+			wp_send_json_error( [ 'message' => __( 'Invalid nonce.', 'newspack-blocks' ) ] );
+			wp_die();
+		}
+		// WC process_checkout expects checkout nonce to be in REQUEST and update totals flag to be in POST.
+		$_REQUEST['woocommerce-process-checkout-nonce'] = filter_input( INPUT_POST, 'newspack-process-checkout-nonce', FILTER_SANITIZE_STRING );
+		$_POST['woocommerce_checkout_update_totals']    = 1;
+		// We don't want to validate payment methods at this point, so we temporarily override needs payment flag.
+		add_filter( 'woocommerce_cart_needs_payment', '__return_false' );
+		\WC()->checkout()->process_checkout();
+		remove_filter( 'woocommerce_cart_needs_payment', '__return_false' );
 	}
 
 	/**

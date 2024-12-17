@@ -615,32 +615,46 @@ import { domReady } from './utils';
 						$genericErrors.remove();
 					}
 
+					const checkoutNonce        = $form.find( 'input[name="woocommerce-process-checkout-nonce"]' );
 					const removeFromValidation = [
 						'save_user_in_woopay',
+						// Remove these fields to avoid triggering Woo's validation.
+						'woocommerce_checkout_place_order',
+						'woocommerce-process-checkout-nonce',
 					];
 					// Serialize form and remove fields that shouldn't be included for validation.
 					const serializedForm = $form.serializeArray().filter(
 						item => ! removeFromValidation.includes( item.name )
 					);
-					// Add 'update totals' parameter so it just performs validation.
-					serializedForm.push( { name: 'woocommerce_checkout_update_totals', value: '1' } );
+					if ( checkoutNonce.length ) {
+						serializedForm.push( {
+							name: 'newspack-process-checkout-nonce',
+							value: checkoutNonce.val(),
+						} );
+					}
+					serializedForm.push( { name: 'action', value: 'validate_modal_checkout' } );
+					serializedForm.push( { name: '_wpnonce', value: newspackBlocksModalCheckout.checkout_nonce } );
 					// Ajax request.
 					$.ajax( {
 						type: 'POST',
-						url: wc_checkout_params.checkout_url,
+						url: newspackBlocksModalCheckout.ajax_url,
 						data: serializedForm,
-						dataType: 'html',
 						success: response => {
+							console.info( 'Success', response ); // eslint-disable-line no-console
 							let result;
-							try {
-								result = JSON.parse( response );
-							} catch ( e ) {
-								result = {
-									messages:
-										'<div class="woocommerce-error">' +
-										wc_checkout_params.i18n_checkout_error +
-										'</div>',
-								};
+							if ( typeof response === 'object' ) {
+								result = response;
+							} else {
+								try {
+									result = JSON.parse( response );
+								} catch ( e ) {
+									result = {
+										messages:
+											'<div class="woocommerce-error">' +
+											wc_checkout_params.i18n_checkout_error +
+											'</div>',
+									};
+								}
 							}
 
 							// Reload page
@@ -682,6 +696,7 @@ import { domReady } from './utils';
 							cb( result );
 						},
 						error: ( jqXHR, textStatus, errorThrown ) => {
+							console.info( 'Error', jqXHR, textStatus, errorThrown ); // eslint-disable-line no-console
 							let messages = '';
 							if ( ! silent ) {
 								messages =
