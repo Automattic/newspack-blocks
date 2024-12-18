@@ -190,7 +190,6 @@ final class Modal_Checkout {
 		add_action( 'wp_ajax_get_cart_total', [ __CLASS__, 'get_cart_total_js' ] );
 		add_action( 'wp_ajax_nopriv_get_cart_total', [ __CLASS__, 'get_cart_total_js' ] );
 
-
 		/**
 		 * Ensure that options to limit the number of subscriptions per product are respected.
 		 * Note: This is normally called only for regular checkout pages and REST API requests,
@@ -571,7 +570,6 @@ final class Modal_Checkout {
 		if ( ! self::$has_modal ) {
 			return;
 		}
-
 		/**
 		* Filters the header title for the modal checkout.
 		*
@@ -821,7 +819,6 @@ final class Modal_Checkout {
 
 		$payment_gateways       = \WC()->payment_gateways->get_available_payment_gateways();
 		$allowed_gateway_assets = [];
-
 		if ( ! empty( $payment_gateways ) ) {
 			foreach ( array_keys( $payment_gateways ) as $gateway ) {
 				$class                    = get_class( $payment_gateways[ $gateway ] );
@@ -1504,7 +1501,6 @@ final class Modal_Checkout {
 		}
 
 		$is_modal_checkout = isset( $_REQUEST['modal_checkout'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-
 		if ( ! $is_modal_checkout && isset( $_REQUEST['post_data'] ) && is_string( $_REQUEST['post_data'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$is_modal_checkout = strpos( $_REQUEST['post_data'], 'modal_checkout=1' ) !== false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		}

@@ -820,7 +820,6 @@ domReady( () => {
 			return;
 		}
 		const type = urlParams.get( 'type' );
-
 		if ( type === 'donate' ) {
 			const layout = urlParams.get( 'layout' );
 			const frequency = urlParams.get( 'frequency' );
