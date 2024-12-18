@@ -115,7 +115,7 @@ final class Modal_Checkout {
 	 */
 	private static $supported_gateways = [
 		'bacs', // Direct bank transfer.
-		'check',
+		'cheque',
 		'cod', // Cash on delivery.
 		'ppcp-gateway', // PayPal Payments.
 		'stripe',
@@ -238,21 +238,35 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Disable the Modal Checkout if a payment gateway that's not supported is enabled.
+	 * Get list of supported payment gateways for Modal Checkout.
+	 *
+	 * @return string[] Supported payment gateways.
 	 */
-	public static function supported_payment_gateways() {
-		$supported_gateways     = apply_filters( 'newspack_blocks_modal_checkout_supported_gateways', self::$supported_gateways );
-		$available_gateways     = \WC()->payment_gateways->get_available_payment_gateways();
-		$modal_checkout_enabled = true;
+	public static function get_supported_payment_gateways() {
+		/**
+		 * Filters the list of supported gateways in modal checkout.
+		 *
+		 * @param array $supported_gateways
+		 */
+		return apply_filters( 'newspack_blocks_modal_checkout_supported_gateways', self::$supported_gateways );
+	}
 
+	/**
+	 * Whether any available payment gateways are not suppored in modal checkout.
+	 *
+	 * @return boolean
+	 */
+	public static function has_unsupported_payment_gateway() {
+		$supported_gateways          = self::get_supported_payment_gateways();
+		$available_gateways          = \WC()->payment_gateways->get_available_payment_gateways();
+		$unsupported_payment_gateway = false;
 		foreach ( $available_gateways as $id => $gateway ) {
-			// Check if the enabled gateway is supported.
-			if ( ! in_array( $gateway->id, $supported_gateways ) ) {
-				$modal_checkout_enabled = false;
+			if ( ! in_array( $id, $supported_gateways, true ) ) {
+				$unsupported_payment_gateway = true;
 				break;
 			}
 		}
-		return $modal_checkout_enabled;
+		return $unsupported_payment_gateway;
 	}
 
 	/**
@@ -964,12 +978,12 @@ final class Modal_Checkout {
 			'newspack-blocks-modal',
 			'newspackBlocksModal',
 			[
-				'ajax_url'                   => admin_url( 'admin-ajax.php' ),
-				'checkout_registration_flag' => self::CHECKOUT_REGISTRATION_FLAG,
-				'newspack_class_prefix'      => self::get_class_prefix(),
-				'is_registration_required'   => self::is_registration_required(),
-				'is_gateway_supported'       => self::supported_payment_gateways(),
-				'labels'                     => [
+				'ajax_url'                        => admin_url( 'admin-ajax.php' ),
+				'checkout_registration_flag'      => self::CHECKOUT_REGISTRATION_FLAG,
+				'newspack_class_prefix'           => self::get_class_prefix(),
+				'is_registration_required'        => self::is_registration_required(),
+				'has_unsupported_payment_gateway' => self::has_unsupported_payment_gateway(),
+				'labels'                          => [
 					'auth_modal_title'     => self::get_modal_checkout_labels( 'auth_modal_title' ),
 					'checkout_modal_title' => self::get_modal_checkout_labels( 'checkout_modal_title' ),
 					'register_modal_title' => self::get_modal_checkout_labels( 'register_modal_title' ),

@@ -700,7 +700,7 @@ domReady( () => {
 		.forEach( element => {
 			const forms = element.querySelectorAll( 'form' );
 			forms.forEach( form => {
-				if ( newspackBlocksModal.is_gateway_supported ) {
+				if ( ! newspackBlocksModal.has_unsupported_payment_gateway ) {
 					form.appendChild( modalCheckoutHiddenInput.cloneNode() );
 					form.target = IFRAME_NAME;
 					form.addEventListener( 'submit', handleCheckoutFormSubmit );
