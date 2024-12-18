@@ -109,6 +109,21 @@ final class Modal_Checkout {
 	];
 
 	/**
+	 * Supported Payment Gateways
+	 *
+	 * @var string[]
+	 */
+	private static $supported_gateways = [
+		'bacs', // Direct bank transfer.
+		'check',
+		'cod', // Cash on delivery.
+		'ppcp-gateway', // PayPal Payments.
+		'stripe',
+		'stripe-link',
+		'woocommerce_payments',
+	];
+
+	/**
 	 * Initialize hooks.
 	 */
 	public static function init() {
@@ -151,7 +166,6 @@ final class Modal_Checkout {
 		add_action( 'init', [ __CLASS__, 'unhook_woocommerce_payments_update_billing_fields' ] );
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'update_password_strength_message' ], 9999 );
 
-
 		/** Custom handling for registered users. */
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
 		add_action( 'woocommerce_after_checkout_validation', [ __CLASS__, 'maybe_reset_checkout_registration_flag' ], 10, 2 );
@@ -175,6 +189,7 @@ final class Modal_Checkout {
 		// Make the current cart price available to the JavaScript.
 		add_action( 'wp_ajax_get_cart_total', [ __CLASS__, 'get_cart_total_js' ] );
 		add_action( 'wp_ajax_nopriv_get_cart_total', [ __CLASS__, 'get_cart_total_js' ] );
+
 
 		/**
 		 * Ensure that options to limit the number of subscriptions per product are respected.
@@ -221,6 +236,24 @@ final class Modal_Checkout {
 		unset( $enqueue_styles['woocommerce-general'] );
 		unset( $enqueue_styles['woocommerce-smallscreen'] );
 		return $enqueue_styles;
+	}
+
+	/**
+	 * Disable the Modal Checkout if a payment gateway that's not supported is enabled.
+	 */
+	public static function supported_payment_gateways() {
+		$supported_gateways     = apply_filters( 'newspack_blocks_modal_checkout_supported_gateways', self::$supported_gateways );
+		$available_gateways     = \WC()->payment_gateways->get_available_payment_gateways();
+		$modal_checkout_enabled = true;
+
+		foreach ( $available_gateways as $id => $gateway ) {
+			// Check if the enabled gateway is supported.
+			if ( ! in_array( $gateway->id, $supported_gateways ) ) {
+				$modal_checkout_enabled = false;
+				break;
+			}
+		}
+		return $modal_checkout_enabled;
 	}
 
 	/**
@@ -538,6 +571,7 @@ final class Modal_Checkout {
 		if ( ! self::$has_modal ) {
 			return;
 		}
+
 		/**
 		* Filters the header title for the modal checkout.
 		*
@@ -787,6 +821,7 @@ final class Modal_Checkout {
 
 		$payment_gateways       = \WC()->payment_gateways->get_available_payment_gateways();
 		$allowed_gateway_assets = [];
+
 		if ( ! empty( $payment_gateways ) ) {
 			foreach ( array_keys( $payment_gateways ) as $gateway ) {
 				$class                    = get_class( $payment_gateways[ $gateway ] );
@@ -936,6 +971,7 @@ final class Modal_Checkout {
 				'checkout_registration_flag' => self::CHECKOUT_REGISTRATION_FLAG,
 				'newspack_class_prefix'      => self::get_class_prefix(),
 				'is_registration_required'   => self::is_registration_required(),
+				'is_gateway_supported'       => self::supported_payment_gateways(),
 				'labels'                     => [
 					'auth_modal_title'     => self::get_modal_checkout_labels( 'auth_modal_title' ),
 					'checkout_modal_title' => self::get_modal_checkout_labels( 'checkout_modal_title' ),
@@ -1468,6 +1504,7 @@ final class Modal_Checkout {
 		}
 
 		$is_modal_checkout = isset( $_REQUEST['modal_checkout'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
 		if ( ! $is_modal_checkout && isset( $_REQUEST['post_data'] ) && is_string( $_REQUEST['post_data'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$is_modal_checkout = strpos( $_REQUEST['post_data'], 'modal_checkout=1' ) !== false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		}

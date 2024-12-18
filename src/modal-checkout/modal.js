@@ -700,9 +700,11 @@ domReady( () => {
 		.forEach( element => {
 			const forms = element.querySelectorAll( 'form' );
 			forms.forEach( form => {
-				form.appendChild( modalCheckoutHiddenInput.cloneNode() );
-				form.target = IFRAME_NAME;
-				form.addEventListener( 'submit', handleCheckoutFormSubmit );
+				if ( newspackBlocksModal.is_gateway_supported ) {
+					form.appendChild( modalCheckoutHiddenInput.cloneNode() );
+					form.target = IFRAME_NAME;
+					form.addEventListener( 'submit', handleCheckoutFormSubmit );
+				}
 			} );
 		} );
 
@@ -818,6 +820,7 @@ domReady( () => {
 			return;
 		}
 		const type = urlParams.get( 'type' );
+
 		if ( type === 'donate' ) {
 			const layout = urlParams.get( 'layout' );
 			const frequency = urlParams.get( 'frequency' );
