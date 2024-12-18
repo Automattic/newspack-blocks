@@ -197,12 +197,13 @@ domReady( () => {
 	 * @param {Event} ev
 	 */
 	const handleCheckoutFormSubmit = ev => {
+		const isModalCheckout = ! newspackBlocksModal.has_unsupported_payment_gateway;
+		if ( ! isModalCheckout ) {
+			ev.preventDefault();
+		}
 		const form = ev.target;
-
 		form.classList.add( 'modal-processing' );
-
 		const productData = form.dataset.product;
-
 		if ( productData ) {
 			const data = JSON.parse( productData );
 			Object.keys( data ).forEach( key => {
@@ -213,14 +214,12 @@ domReady( () => {
 			} );
 		}
 		const formData = new FormData( form );
-
 		// If we're not going from variation picker to checkout, set the modal trigger:
 		if ( ! formData.get( 'variation_id' ) ) {
 			modalTrigger = ev.submitter;
 		}
-
-		const variationModals = document.querySelectorAll( `.${ VARIATON_MODAL_CLASS_PREFIX }` );
 		// Clear any open variation modal.
+		const variationModals = document.querySelectorAll( `.${ VARIATON_MODAL_CLASS_PREFIX }` );
 		variationModals.forEach( variationModal => {
 			closeModal( variationModal );
 		} );
@@ -282,12 +281,16 @@ domReady( () => {
 				return;
 			}
 		}
-
+		// Populate cart and redirect to checkout if there is an unsupported payment gateway.
+		if ( ! isModalCheckout ) {
+			generateCart( formData ).then( url => {
+				window.location.href = url.replace( /&?modal_checkout=1/, '' );
+			} );
+			return;
+		}
 		form.classList.remove( 'modal-processing' );
-
 		const isDonateBlock = formData.get( 'newspack_donate' );
 		const isCheckoutButtonBlock = formData.get( 'newspack_checkout' );
-
 		// Set up some GA4 information.
 		if ( isCheckoutButtonBlock ) { // this fires on the second in-modal variations screen, too
 			const formAnalyticsData = form.getAttribute( 'data-product' );
@@ -700,11 +703,9 @@ domReady( () => {
 		.forEach( element => {
 			const forms = element.querySelectorAll( 'form' );
 			forms.forEach( form => {
-				if ( ! newspackBlocksModal.has_unsupported_payment_gateway ) {
-					form.appendChild( modalCheckoutHiddenInput.cloneNode() );
-					form.target = IFRAME_NAME;
-					form.addEventListener( 'submit', handleCheckoutFormSubmit );
-				}
+				form.appendChild( modalCheckoutHiddenInput.cloneNode() );
+				form.target = IFRAME_NAME;
+				form.addEventListener( 'submit', handleCheckoutFormSubmit );
 			} );
 		} );
 
