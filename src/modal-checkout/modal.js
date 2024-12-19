@@ -282,7 +282,7 @@ domReady( () => {
 			}
 		}
 		// Populate cart and redirect to checkout if there is an unsupported payment gateway.
-		if ( ! isModalCheckout ) {
+		if ( ! isModalCheckout && ! shouldPromptRegistration() ) {
 			generateCart( formData ).then( url => {
 				window.location.href = url.replace( /&?modal_checkout=1/, '' );
 			} );
@@ -429,8 +429,13 @@ domReady( () => {
 						if ( authData?.registered ) {
 							url += `&${ newspackBlocksModal.checkout_registration_flag }=1`;
 						}
-						const checkoutForm = generateCheckoutPageForm( url );
-						triggerCheckout( checkoutForm );
+						// Populate cart and redirect to checkout if there is an unsupported payment gateway.
+						if ( ! isModalCheckout ) {
+							generateCart( formData ).then( window.location.href = url.replace( /&?modal_checkout=1/, '' ) );
+						} else {
+							const checkoutForm = generateCheckoutPageForm( url );
+							triggerCheckout( checkoutForm );
+						}
 					} )
 					.catch( error => {
 						console.warn( 'Unable to generate cart:', error ); // eslint-disable-line no-console
