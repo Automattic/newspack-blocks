@@ -827,18 +827,10 @@ final class Modal_Checkout {
 		$allowed_styles = apply_filters( 'newspack_blocks_modal_checkout_allowed_styles', self::$allowed_styles );
 		foreach ( $wp_styles->registered as $handle => $wp_style ) {
 			$allowed = false;
-			foreach ( $allowed_styles as $allowed_style ) {
-				if ( 0 === strpos( $handle, $allowed_style ) ) {
+			foreach ( array_merge( $allowed_styles, $allowed_gateway_assets ) as $allowed_style ) {
+				if ( 0 === strpos( $handle, $allowed_style ) || false !== strpos( $wp_style->src, $allowed_style ) ) {
 					$allowed = true;
 					break;
-				}
-			}
-			if ( ! empty( $payment_gateways ) ) {
-				foreach ( $allowed_gateway_assets as $gateway ) {
-					if ( false !== strpos( $handle, $gateway ) || false !== strpos( $wp_script->src, $gateway ) ) {
-						$allowed = true;
-						break;
-					}
 				}
 			}
 			if ( ! $allowed ) {
@@ -854,14 +846,8 @@ final class Modal_Checkout {
 		$allowed_scripts = apply_filters( 'newspack_blocks_modal_checkout_allowed_scripts', self::$allowed_scripts );
 		foreach ( $wp_scripts->registered as $handle => $wp_script ) {
 			$allowed = false;
-			foreach ( $allowed_scripts as $allowed_script ) {
-				if ( 0 === strpos( $handle, $allowed_script ) ) {
-					$allowed = true;
-					break;
-				}
-			}
-			foreach ( $allowed_gateway_assets as $gateway ) {
-				if ( false !== strpos( $wp_script->src, $gateway ) ) {
+			foreach ( array_merge( $allowed_scripts, $allowed_gateway_assets ) as $allowed_script ) {
+				if ( 0 === strpos( $handle, $allowed_script ) || false !== strpos( $wp_script->src, $allowed_script ) ) {
 					$allowed = true;
 					break;
 				}
