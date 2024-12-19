@@ -203,6 +203,7 @@ domReady( () => {
 		}
 		const form = ev.target;
 		form.classList.add( 'modal-processing' );
+
 		const productData = form.dataset.product;
 		if ( productData ) {
 			const data = JSON.parse( productData );
@@ -282,10 +283,22 @@ domReady( () => {
 			}
 		}
 		// Populate cart and redirect to checkout if there is an unsupported payment gateway.
-		if ( ! isModalCheckout && ! shouldPromptRegistration() ) {
-			generateCart( formData ).then( url => {
-				window.location.href = url.replace( /&?modal_checkout=1/, '' );
-			} );
+		if ( ! isModalCheckout ) {
+			if ( ! shouldPromptRegistration() ) {
+				generateCart( formData ).then( url => {
+					window.location.href = url.replace( /&?modal_checkout=1/, '' );
+				} );
+			}
+			// Add some animation to the Checkout Button and Donate block while the non-modal checkout is loading.
+			// For now, don't do it when any popup opens, just when we go right to the checkout page.
+			if ( ! ( formData.get( 'is_variable' ) && ! formData.get( 'variation_id' ) ) && ! shouldPromptRegistration() ) {
+				const buttons = form.querySelectorAll( 'button[type=submit]' );
+				buttons.forEach( button => {
+					button.classList.add( 'non-modal-checkout-loading' );
+					const buttonText = button.innerHTML;
+					button.innerHTML = '<span>' + buttonText + '</span>';
+				} );
+			}
 			return;
 		}
 		form.classList.remove( 'modal-processing' );
