@@ -222,7 +222,10 @@ domReady( () => {
 		// Clear any open variation modal.
 		const variationModals = document.querySelectorAll( `.${ VARIATON_MODAL_CLASS_PREFIX }` );
 		variationModals.forEach( variationModal => {
-			closeModal( variationModal );
+			// Only close the variation picker if is the modal checkout.
+			if ( isModalCheckout ) {
+				closeModal( variationModal );
+			}
 		} );
 		// Trigger variation modal if variation is not selected.
 		if ( formData.get( 'is_variable' ) && ! formData.get( 'variation_id' ) ) {
