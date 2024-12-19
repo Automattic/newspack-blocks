@@ -7,6 +7,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+use Newspack_Blocks\Modal_Checkout;
+
 /**
  * Handles the Donate block rendering functionality.
  */
@@ -202,6 +204,8 @@ abstract class Newspack_Blocks_Donate_Renderer_Base {
 			<input type='hidden' name='donation_currency' value='<?php echo esc_attr( $currency ); ?>' />
 			<input type='hidden' name='frequency_ids' value='<?php echo esc_attr( wp_json_encode( $donate_child_ids ) ); ?>' />
 		<?php
+		// Add nonce for the donation form.
+		wp_nonce_field( Modal_Checkout::CHECKOUT_NONCE );
 
 		foreach ( [ [ 'afterSuccessBehavior', 'after_success_behavior' ], [ 'afterSuccessButtonLabel', 'after_success_button_label' ], [ 'afterSuccessURL', 'after_success_url' ] ] as $attribute ) {
 			$attribute_name = $attribute[0];

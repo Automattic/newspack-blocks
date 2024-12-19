@@ -18,7 +18,7 @@ final class Modal_Checkout {
 	 *
 	 * @var string
 	 */
-	const CHECKOUT_NONCE = 'newspack_modal_checkout_nonce';
+	const CHECKOUT_NONCE = 'newspack_checkout_nonce';
 
 	/**
 	 * Checkout registration flag.
