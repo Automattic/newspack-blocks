@@ -1525,7 +1525,7 @@ final class Modal_Checkout {
 			/* translators: 1: Checkout button confirmation text. 2: Order total. */
 			__( '%1$s: %2$s', 'newspack-blocks' ),
 			self::get_modal_checkout_labels( 'checkout_confirm' ),
-			'<span class="cart-price">' . html_entity_decode( $total ) . '</span>'
+			'<span class="cart-price">' . html_entity_decode( $total, ENT_COMPAT ) . '</span>'
 		);
 	}
 
@@ -1538,7 +1538,7 @@ final class Modal_Checkout {
 			return;
 		}
 		$total = \wp_strip_all_tags( \wc_price( $cart->total ) );
-		echo esc_html( html_entity_decode( $total ) );
+		echo esc_html( html_entity_decode( $total, ENT_COMPAT ) );
 		wp_die();
 	}
 
