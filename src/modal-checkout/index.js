@@ -362,7 +362,7 @@ import { domReady } from './utils';
 					const input = $nyp.find( 'input[name="price"]' );
 					input.attr( 'disabled', true );
 					const data = {
-						_ajax_nonce: newspackBlocksModalCheckout.nyp_nonce,
+						_wpnonce: newspackBlocksModalCheckout.nyp_nonce,
 						action: 'process_name_your_price_request',
 						price: $nyp.find( 'input[name="price"]' ).val(),
 						product_id: $nyp.find( 'input[name="product_id"]' ).val(),

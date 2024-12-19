@@ -14,6 +14,13 @@ defined( 'ABSPATH' ) || exit;
  */
 final class Modal_Checkout {
 	/**
+	 * Checkout nonce value.
+	 *
+	 * @var string
+	 */
+	const CHECKOUT_NONCE = 'newspack_modal_checkout_nonce';
+
+	/**
 	 * Checkout registration flag.
 	 *
 	 * @var string
@@ -231,10 +238,13 @@ final class Modal_Checkout {
 			return;
 		}
 
-		$is_newspack_checkout = filter_input( INPUT_GET, 'newspack_checkout', FILTER_SANITIZE_NUMBER_INT );
-
-		if ( ! $is_newspack_checkout ) {
+		if ( ! filter_input( INPUT_GET, 'newspack_checkout', FILTER_SANITIZE_NUMBER_INT ) ) {
 			return;
+		}
+
+		if ( ! check_ajax_referer( self::CHECKOUT_NONCE ) ) {
+			wp_send_json_error( [ 'message' => __( 'Invalid nonce.', 'newspack-blocks' ) ] );
+			wp_die();
 		}
 
 		$product_id                 = filter_input( INPUT_GET, 'product_id', FILTER_SANITIZE_NUMBER_INT );
@@ -385,7 +395,7 @@ final class Modal_Checkout {
 			return;
 		}
 
-		if ( ! check_ajax_referer( 'newspack_modal_checkout_nonce' ) ) {
+		if ( ! check_ajax_referer( self::CHECKOUT_NONCE ) ) {
 			wp_send_json_error( [ 'message' => __( 'Invalid nonce.', 'newspack-blocks' ) ] );
 			wp_die();
 		}
@@ -754,7 +764,7 @@ final class Modal_Checkout {
 			[
 				'ajax_url'              => admin_url( 'admin-ajax.php' ),
 				'nyp_nonce'             => wp_create_nonce( 'newspack_checkout_name_your_price' ),
-				'checkout_nonce'        => wp_create_nonce( 'newspack_modal_checkout_nonce' ),
+				'checkout_nonce'        => wp_create_nonce( self::CHECKOUT_NONCE ),
 				'newspack_class_prefix' => self::get_class_prefix(),
 				'is_checkout_complete'  => function_exists( 'is_order_received_page' ) && is_order_received_page(),
 				'divider_text'          => esc_html__( 'Or', 'newspack-blocks' ),
@@ -933,6 +943,7 @@ final class Modal_Checkout {
 			'newspackBlocksModal',
 			[
 				'ajax_url'                   => admin_url( 'admin-ajax.php' ),
+				'checkout_nonce'             => wp_create_nonce( self::CHECKOUT_NONCE ),
 				'checkout_registration_flag' => self::CHECKOUT_REGISTRATION_FLAG,
 				'newspack_class_prefix'      => self::get_class_prefix(),
 				'is_registration_required'   => self::is_registration_required(),

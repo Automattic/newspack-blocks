@@ -42,8 +42,8 @@ function render_callback( $attributes ) {
 	if ( $attributes['is_variable'] && ! empty( $attributes['variation'] ) ) {
 		$product_id = $attributes['variation'];
 	}
-	\Newspack_Blocks\Modal_Checkout::enqueue_modal( $product_id );
-	\Newspack_Blocks::enqueue_view_assets( 'checkout-button' );
+	Modal_Checkout::enqueue_modal( $product_id );
+	Newspack_Blocks::enqueue_view_assets( 'checkout-button' );
 
 	$background_color           = $attributes['backgroundColor'] ?? '';
 	$gradient                   = $attributes['gradient'] ?? '';
@@ -105,6 +105,7 @@ function render_callback( $attributes ) {
 	$hidden_fields .= $after_success_behavior ? '<input type="hidden" name="after_success_behavior" value="' . esc_attr( $after_success_behavior ) . '" />' : '';
 	$hidden_fields .= $after_success_button_label ? '<input type="hidden" name="after_success_button_label" value="' . esc_attr( $after_success_button_label ) . '" />' : '';
 	$hidden_fields .= $after_success_url ? '<input type="hidden" name="after_success_url" value="' . esc_attr( $after_success_url ) . '" />' : '';
+	$hidden_fields .= wp_nonce_field( Modal_Checkout::CHECKOUT_NONCE );
 
 	// Generate the form.
 	if ( function_exists( 'wc_get_product' ) ) {

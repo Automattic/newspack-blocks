@@ -31,6 +31,8 @@ domReady( () => {
 		return;
 	}
 
+	modalCheckout.checkout_nonce = newspackBlocksModal.checkout_nonce;
+
 	const modalContent = modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }__content` );
 	const modalCheckoutHiddenInput = createHiddenInput( 'modal_checkout', '1' );
 	const spinner = modalContent.querySelector( `.${ CLASS_PREFIX }__spinner` );
@@ -119,8 +121,7 @@ domReady( () => {
 				setModalSize();
 				setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
 				if ( iframe.contentWindow?.newspackBlocksModalCheckout?.checkout_nonce ) {
-					// Store the checkout nonce for later use.
-					// We store the nonce from the iframe content window to ensure the nonce was generated for a logged in session
+					// Update to iframe's checkout nonce to ensure nonce is always generated for a logged in session.
 					modalCheckout.checkout_nonce = iframe.contentWindow.newspackBlocksModalCheckout.checkout_nonce;
 				}
 			}
@@ -170,7 +171,6 @@ domReady( () => {
 		body.append( 'modal_checkout', '1' );
 		body.append( 'action', 'abandon_modal_checkout' );
 		body.append( '_wpnonce', modalCheckout.checkout_nonce );
-		modalCheckout.checkout_nonce = null;
 		fetch(
 			newspackBlocksModal.ajax_url,
 			{
@@ -233,6 +233,7 @@ domReady( () => {
 				variationModal
 					.querySelectorAll( `form[target="${ IFRAME_NAME }"]` )
 					.forEach( singleVariationForm => {
+						singleVariationForm.appendChild( createHiddenInput( '_wpnonce', modalCheckout.checkout_nonce ) );
 						// Fill in the after success variables in the variation modal.
 						[
 							'after_success_behavior',
