@@ -477,6 +477,7 @@ domReady( () => {
 				},
 				content,
 				trigger: ev.submitter,
+				closeOnSuccess: isModalCheckout,
 			} );
 		} else {
 			// Otherwise initialize checkout.
