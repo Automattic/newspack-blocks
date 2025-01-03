@@ -229,11 +229,12 @@ domReady( () => {
 		} );
 
 		// Generate URL for non-modal checkout
-		const nonModalCheckout = ( url ) => {
-			// Remove success params, and modal_checkout from URL.
-			const remove_from_url = /(after_success|&after_success)[^&]*?(?=&|$)/gi;
-			const updatedUrl = url.replace( /&?modal_checkout=1/, '' ).replaceAll(remove_from_url, '').replace( /\?$/, '' ); // remove question mark only if last character.
-			return updatedUrl;
+		const generateNonModalCheckoutUrl = ( url ) => {
+			// Regex for after_success URL params used by the modal checkout.
+			const successParams = /(after_success|&after_success)[^&]*?(?=&|$)/gi;
+			// Remove modal_checkout, success params, and any trailing ? from the URL.
+			const nonModalUrl = url.replace( /&?modal_checkout=1/, '' ).replaceAll(successParams, '').replace( /\?$/, '' ); // remove question mark only if last character.
+			return nonModalUrl;
 		}
 
 		// Trigger variation modal if variation is not selected.
@@ -297,7 +298,7 @@ domReady( () => {
 		// Populate cart and redirect to checkout if there is an unsupported payment gateway.
 		if ( ! isModalCheckout && ! shouldPromptRegistration() ) {
 				generateCart( formData ).then( url => {
-					window.location.href = nonModalCheckout( url );
+					window.location.href = generateNonModalCheckoutUrl( url );
 				} );
 				// Add some animation to the Checkout Button and Donate block while the non-modal checkout is loading.
 				// For now, don't do it when any popup opens, just when we go right to the checkout page.
@@ -453,7 +454,7 @@ domReady( () => {
 						}
 						// Populate cart and redirect to checkout if there is an unsupported payment gateway.
 						if ( ! isModalCheckout ) {
-							generateCart( formData ).then( window.location.href = nonModalCheckout( url ) );
+							generateCart( formData ).then( window.location.href = generateNonModalCheckoutUrl( url ) );
 						} else {
 							const checkoutForm = generateCheckoutPageForm( url );
 							triggerCheckout( checkoutForm );
