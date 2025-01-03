@@ -227,6 +227,15 @@ domReady( () => {
 				closeModal( variationModal );
 			}
 		} );
+
+		// Generate URL for non-modal checkout
+		const nonModalCheckout = ( url ) => {
+			// Remove success params, and modal_checkout from URL.
+			const remove_from_url = /(after_success|&after_success)[^&]*?(?=&|$)/gi;
+			const updatedUrl = url.replace( /&?modal_checkout=1/, '' ).replaceAll(remove_from_url, '').replace( /\?$/, '' ); // remove question mark only if last character.
+			return updatedUrl;
+		}
+
 		// Trigger variation modal if variation is not selected.
 		if ( formData.get( 'is_variable' ) && ! formData.get( 'variation_id' ) ) {
 			const variationModal = [ ...variationModals ].find(
@@ -288,7 +297,7 @@ domReady( () => {
 		// Populate cart and redirect to checkout if there is an unsupported payment gateway.
 		if ( ! isModalCheckout && ! shouldPromptRegistration() ) {
 				generateCart( formData ).then( url => {
-					window.location.href = url.replace( /&?modal_checkout=1/, '' );
+					window.location.href = nonModalCheckout( url );
 				} );
 				// Add some animation to the Checkout Button and Donate block while the non-modal checkout is loading.
 				// For now, don't do it when any popup opens, just when we go right to the checkout page.
@@ -433,7 +442,6 @@ domReady( () => {
 			cartReq.then( url => {
 				window.newspackReaderActivation?.setPendingCheckout?.( url );
 			} );
-
 			// Initialize auth flow if reader is not authenticated.
 			window.newspackReaderActivation.openAuthModal( {
 				title: newspackBlocksModal.labels.auth_modal_title,
@@ -445,7 +453,7 @@ domReady( () => {
 						}
 						// Populate cart and redirect to checkout if there is an unsupported payment gateway.
 						if ( ! isModalCheckout ) {
-							generateCart( formData ).then( window.location.href = url.replace( /&?modal_checkout=1/, '' ) );
+							generateCart( formData ).then( window.location.href = nonModalCheckout( url ) );
 						} else {
 							const checkoutForm = generateCheckoutPageForm( url );
 							triggerCheckout( checkoutForm );
