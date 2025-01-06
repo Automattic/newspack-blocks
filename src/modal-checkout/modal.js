@@ -222,8 +222,8 @@ domReady( () => {
 		// Clear any open variation modal.
 		const variationModals = document.querySelectorAll( `.${ VARIATON_MODAL_CLASS_PREFIX }` );
 		variationModals.forEach( variationModal => {
-			// Only close the variation picker if is the modal checkout.
-			if ( isModalCheckout ) {
+			// Only close the variation picker if is the modal checkout, or if registration is required.
+			if ( shouldPromptRegistration() || isModalCheckout ) {
 				closeModal( variationModal );
 			}
 		} );
