@@ -1,0 +1,23 @@
+{
+  "name": "section-heading",
+  "category": "suraj",
+  "apiVersion": 3,
+  "attributes": {
+    "heading": {
+      "type": "string",
+      "default": ""
+    },
+    "linkType": {
+      "type": "string",
+      "default": "category"
+    },
+    "selectedTaxonomy": {
+      "type": "object",
+      "default": null
+    },
+    "link": {
+      "type": "string",
+      "default": ""
+    }
+  }
+}
