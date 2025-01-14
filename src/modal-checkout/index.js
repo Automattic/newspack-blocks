@@ -739,13 +739,6 @@ import { domReady } from './utils';
 					form.removeClass( 'modal-processing' );
 					return true;
 				}
-
-				// Trigger form submission on "Enter" key press.
-				$form.on( 'keydown', function ( ev ) {
-					if ( ev.key === 'Enter' ) {
-						$form.submit();
-					}
-				} );
 			}
 			init();
 		}
