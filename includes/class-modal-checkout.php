@@ -1380,7 +1380,7 @@ final class Modal_Checkout {
 	 * @param string $url The URL from which the verification request originated.
 	 * @param string $context The context that triggered the verification request.
 	 */
-	public static function recaptcha_verify_captcha( $should_verify, $url, $context ) {
+	public static function recaptcha_verify_captcha( $should_verify, $url, $context = 'unknown' ) {
 		if ( 'checkout' !== $context ) {
 			return $should_verify;
 		}
