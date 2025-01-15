@@ -1,3 +1,10 @@
+## [4.5.3](https://github.com/Automattic/newspack-blocks/compare/v4.5.2...v4.5.3) (2025-01-14)
+
+
+### Bug Fixes
+
+* **recaptcha:** support reCAPTCHA v2 on form submit, not button click ([#2021](https://github.com/Automattic/newspack-blocks/issues/2021)) ([1e483a5](https://github.com/Automattic/newspack-blocks/commit/1e483a5412bbf38962700c09e4fa59fabc29f170))
+
 ## [4.5.2](https://github.com/Automattic/newspack-blocks/compare/v4.5.1...v4.5.2) (2024-12-16)
 
 
