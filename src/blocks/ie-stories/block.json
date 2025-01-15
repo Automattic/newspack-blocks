@@ -1,0 +1,442 @@
+{
+  "name": "ie-stories",
+  "category": "ie-network-blocks",
+  "attributes": {
+    "currentPostType": {
+		"type": "string",
+		"default": ""
+    },
+    "className": {
+      "type": "string",
+      "default": ""
+    },
+    "imageResizeClasses": {
+      "type": "string",
+      "default": ""
+    },
+    "showExcerpt": {
+      "type": "boolean",
+      "default": false
+	},
+	"excerptNumberWorlds": {
+      "type": "integer",
+      "default": 20
+    },
+	"hideExcerptOnMobile": {
+      "type": "boolean",
+      "default": false
+    },
+    "truncateTitle" : {
+      "type": "boolean",
+      "default": false
+    },
+    "titleCharLimit" : {
+      "type": "integer",
+      "default": 10
+    },
+    "showDate": {
+      "type": "boolean",
+      "default": true
+	},
+	"showFullDate": {
+      "type": "boolean",
+      "default": false
+	},
+	"showSocialShare": {
+		"type": "boolean",
+		"default": false
+	},
+	"socialShareForMobileOnly": {
+		"type": "boolean",
+		"default": false
+	},
+    "showImage": {
+      "type": "boolean",
+      "default": true
+	},
+	"imageRadius": {
+      "type": "integer",
+      "default": 0
+    },
+    "hideImageOnDesktop": {
+      "type": "boolean",
+      "default": false
+    },
+    "hideImageOnMobile": {
+      "type": "boolean",
+      "default": false
+    },
+    "showCaption": {
+      "type": "boolean",
+      "default": false
+    },
+    "imageShape": {
+      "type": "string",
+      "default": "landscape"
+    },
+    "moreButton": {
+      "type": "boolean",
+      "default": false
+    },
+    "moreButtonText": {
+      "type": "string",
+      "default": ""
+	},
+	"viewAll": {
+      "type": "boolean",
+      "default": false
+    },
+    "eagerLoad": {
+      "type": "boolean",
+      "default": false
+    },
+    "detailPageUrl": {
+      "type": "boolean",
+      "default": false
+    },
+    "viewAllButtonText": {
+      "type": "string",
+      "default": "View All"
+    },
+    "showAuthor": {
+      "type": "boolean",
+      "default": false
+    },
+    "showAvatar": {
+      "type": "boolean",
+      "default": false
+    },
+    "showCategory": {
+      "type": "boolean",
+      "default": false
+    },
+    "showPrimaryCat": {
+      "type": "boolean",
+      "default": false
+    },
+    "showCategoryOnTop": {
+      "type": "boolean",
+      "default": false
+    },
+    "postLayout": {
+      "type": "string",
+      "default": "list"
+    },
+    "columns": {
+      "type": "integer",
+      "default": 3
+	},
+	"singleColumnsOnTablet": {
+      "type": "boolean",
+      "default": false
+    },
+    "postsToShow": {
+      "type": "integer",
+      "default": 1
+    },
+    "mediaPosition": {
+      "type": "string",
+      "default": "top"
+    },
+    "authors": {
+      "type": "array",
+      "default": [],
+      "items": { "type": "integer" }
+    },
+    "categories": {
+      "type": "array",
+      "default": [],
+      "items": { "type": "integer" }
+    },
+    "tags": {
+      "type": "array",
+      "default": [],
+      "items": { "type": "integer" }
+    },
+    "tagExclusions": {
+      "type": "array",
+      "default": [],
+      "items": { "type": "integer" }
+    },
+    "specificPosts": {
+      "type": "array",
+      "default": [],
+      "items": { "type": "integer" }
+    },
+    "typeScale": {
+      "type": "integer",
+      "default": 2
+    },
+    "imageScale": {
+      "type": "integer",
+      "default": 3
+    },
+    "fullImageOnMobile": {
+      "type": "boolean",
+      "default": false
+    },
+    "imageAlignBehindMobile": {
+      "type": "boolean",
+      "default": false
+    },
+    "imageAlignRightMobile": {
+      "type": "boolean",
+      "default": false
+    },
+    "mobileStack": {
+      "type": "boolean",
+      "default": false
+    },
+    "sectionHeader": {
+      "type": "string",
+      "default": ""
+    },
+    "specificMode": {
+      "type": "boolean",
+      "default": false
+	},
+	"globalQuery": {
+      "type": "boolean",
+      "default": false
+	},
+	"popularMode": {
+      "type": "boolean",
+      "default": false
+	},
+	"popularModeTimeframe": {
+      "type": "integer",
+      "default": 2
+    },
+    "textColor": {
+      "type": "string",
+      "default": ""
+    },
+    "customTextColor": {
+      "type": "string",
+      "default": ""
+    },
+    "singleMode": {
+      "type": "boolean",
+      "default": false
+    },
+    "showSubtitle": {
+      "type": "boolean",
+      "default": false
+	},
+	"postType": {
+		"type": "string",
+		"default": "post"
+	},
+	"taxonomies": {
+		"type": "object",
+		"default": {}
+	},
+    "showHeader": {
+      "type": "boolean",
+      "default": true
+    },
+    "enablePopup": {
+      "type": "boolean",
+      "default": false
+    },
+    "repeatedPost": {
+      "type": "boolean",
+      "default": true
+    },
+    "showgalleryEmbed": {
+      "type": "boolean",
+      "default": false
+    },
+    "hideIeStories": {
+      "type": "boolean",
+      "default": false
+    },
+    "hideDays": {
+      "type": "array",
+      "default":[]
+    },
+    "eventCategory": {
+      "type": "text",
+      "default": ""
+    },
+    "showTopic": {
+      "type": "boolean",
+      "default": false
+    },
+    "alternativeTopics": {
+      "type": "boolean",
+      "default": false
+    },
+    "alternativeImage": {
+      "type": "boolean",
+      "default": false
+    },
+    "showLiveIndicator": {
+      "type": "boolean",
+      "default": false
+    },
+    "showMovieReview": {
+      "type": "boolean",
+      "default": false
+    },
+    "showTitleTop": {
+      "type": "boolean",
+      "default": false
+    },
+    "showPostContent": {
+      "type": "boolean",
+      "default": false
+    },
+    "addH1Tag": {
+      "type": "boolean",
+      "default": false
+    },
+    "addH2Tag": {
+      "type": "boolean",
+      "default": false
+    },
+    "storyOffset": {
+      "type": "text",
+      "default": ""
+    },
+    "startDate": {
+      "type": "text",
+      "default": ""
+    },
+    "endDate": {
+      "type": "text",
+      "default": ""
+    },
+    "enableMpt": {
+      "type": "boolean",
+      "default": false
+    },
+    "mptPostType": {
+      "type": "array",
+      "default": [ "post" ],
+      "items": { "type": "string" }
+    },
+    "specificMptPosts": {
+      "type": "array",
+      "default": [],
+      "items": { "type": "integer" }
+    },
+    "specificMptMode": {
+       "type": "boolean",
+       "default": false
+    },
+    "enableIdentifier": {
+      "type": "boolean",
+      "deafult": false
+    },
+    "IeUtmSource": {
+      "type": "text",
+      "default": ""
+    },
+    "breakingTemplate3": {
+      "type": "boolean",
+      "default": false
+	},
+	"breakingTemplate3SpecificPostsId": {
+		"type": "array",
+		"default": [],
+		"items": { "type": "integer" }
+    },
+    "specificFallback": {
+      "type": "boolean",
+      "default": false
+    },
+    "currentTimestamp": {
+      "type": "text",
+      "default": ""
+    },
+    "openNewTab": {
+      "type": "boolean",
+      "default": false
+    },
+    "openNewTabDesktop": {
+      "type": "boolean",
+      "default": true
+    },
+    "openNewTabMobile": {
+      "type": "boolean",
+      "default": true
+    },
+    "addH3Title": {
+      "type": "boolean",
+      "default": false
+    },
+    "addH2Title": {
+      "type": "boolean",
+      "default": false
+    },
+	"enableGA": {
+		"type": "boolean",
+		"default": false
+	},
+	"gaEventCategory": {
+		"type":"string",
+		"default":""
+	},
+	"gaEventAction": {
+		"type":"string",
+		"default":""
+	},
+	"gaEventLabel": {
+		"type":"string",
+		"default":""
+	},
+	"enableCurrentPostLinkAsEventLabel": {
+		"type":"boolean",
+		"default":false
+	},
+	"enablePagination": {
+		"type":"boolean",
+		"default":false
+	},
+    "enableFELeisure": {
+      "type": "boolean",
+      "default":false
+    },
+    "leisureStyle": {
+      "type": "string",
+      "default":"small"
+    },
+    "showLiveVideoWidget": {
+      "type":"boolean",
+      "default":false
+    },
+    "liveVideoTitle": {
+      "type": "string",
+      "default":""
+    },
+    "liveVideoTitleURL": {
+      "type": "string",
+      "default":""
+    },
+    "liveVideoDesktopWidthHeight": {
+      "type": "string",
+      "default":"100%,400"
+    },
+    "liveVideoMobileWidthHeight": {
+      "type": "string",
+      "default":"100%,250"
+    },
+    "liveVideoEmbedURL": {
+      "type": "string",
+      "default":""
+    },
+    "liveVideoAutoPlay": {
+      "type":"boolean",
+      "default":false
+    },
+    "liveVideoFullScreen": {
+      "type":"boolean",
+      "default":false
+    },
+    "enableJSVideoStyle": {
+      "type":"boolean",
+      "default":false
+    }
+  }
+}
