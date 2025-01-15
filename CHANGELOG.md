@@ -1,3 +1,10 @@
+## [4.5.4](https://github.com/Automattic/newspack-blocks/compare/v4.5.3...v4.5.4) (2025-01-15)
+
+
+### Bug Fixes
+
+* make new debugging arg optional to avoid potential fatals ([#2022](https://github.com/Automattic/newspack-blocks/issues/2022)) ([54df06a](https://github.com/Automattic/newspack-blocks/commit/54df06a30d2221aa39a8eb2c8ca2705dd7b79b43))
+
 ## [4.5.3](https://github.com/Automattic/newspack-blocks/compare/v4.5.2...v4.5.3) (2025-01-14)
 
 
