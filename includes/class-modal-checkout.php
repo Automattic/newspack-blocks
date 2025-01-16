@@ -385,8 +385,10 @@ final class Modal_Checkout {
 		// Pass through UTM and after_success params so they can be forwarded to the WooCommerce checkout flow.
 		foreach ( $params as $param => $value ) {
 			if ( 'utm' === substr( $param, 0, 3 ) || 'after_success' === substr( $param, 0, 13 ) ) {
-				$param                = sanitize_text_field( $param );
-				$query_args[ $param ] = sanitize_text_field( $value );
+				if ( ! empty( $value ) ) {
+					$param                = sanitize_text_field( $param );
+					$query_args[ $param ] = sanitize_text_field( $value );
+				}
 			}
 		}
 

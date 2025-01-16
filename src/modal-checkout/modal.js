@@ -26,7 +26,6 @@ let inCheckoutIntent = false;
 
 domReady( () => {
 	const modalCheckout = document.querySelector( `#${ MODAL_CHECKOUT_ID }` );
-
 	if ( ! modalCheckout ) {
 		return;
 	}
@@ -203,7 +202,6 @@ domReady( () => {
 		}
 		const form = ev.target;
 		form.classList.add( 'modal-processing' );
-
 		const productData = form.dataset.product;
 		if ( productData ) {
 			const data = JSON.parse( productData );
@@ -227,15 +225,6 @@ domReady( () => {
 				closeModal( variationModal );
 			}
 		} );
-
-		// Generate URL for non-modal checkout
-		const generateNonModalCheckoutUrl = ( url ) => {
-			// Regex for after_success URL params used by the modal checkout.
-			const successParams = /(after_success|&after_success)[^&]*?(?=&|$)/gi;
-			// Remove modal_checkout, success params, and any trailing ? from the URL.
-			const nonModalUrl = url.replace( /&?modal_checkout=1/, '' ).replaceAll(successParams, '').replace( /\?$/, '' ); // remove question mark only if last character.
-			return nonModalUrl;
-		}
 
 		// Trigger variation modal if variation is not selected.
 		if ( formData.get( 'is_variable' ) && ! formData.get( 'variation_id' ) ) {
@@ -295,22 +284,23 @@ domReady( () => {
 				return;
 			}
 		}
+
 		// Populate cart and redirect to checkout if there is an unsupported payment gateway.
 		if ( ! isModalCheckout && ! shouldPromptRegistration() ) {
-				generateCart( formData ).then( url => {
-					window.location.href = generateNonModalCheckoutUrl( url );
+			generateCart( formData ).then( url => {
+				// Remove modal checkout query string and trailing question mark (if any).
+				window.location.href = url.replace( /&?modal_checkout=1/, '' ).replace( /\?$/, '' );
+			} );
+			// Add some animation to the Checkout Button while the non-modal checkout is loading.
+			// For now, don't do it when any popup opens, just when we go right to the checkout page.
+			if ( ! ( formData.get( 'is_variable' ) && ! formData.get( 'variation_id' ) ) ) {
+				const buttons = form.querySelectorAll( 'button[type=submit]:focus' );
+				buttons.forEach( button => {
+					button.classList.add( 'non-modal-checkout-loading' );
+					const buttonText = button.innerHTML;
+					button.innerHTML = '<span>' + buttonText + '</span>';
 				} );
-				// Add some animation to the Checkout Button and Donate block while the non-modal checkout is loading.
-				// For now, don't do it when any popup opens, just when we go right to the checkout page.
-				if ( ! ( formData.get( 'is_variable' ) && ! formData.get( 'variation_id' ) ) ) {
-					// Use :focus to try to limit submit buttons in tiered donate button block.
-					const buttons = form.querySelectorAll( 'button[type=submit]:focus' );
-					buttons.forEach( button => {
-						button.classList.add( 'non-modal-checkout-loading' );
-						const buttonText = button.innerHTML;
-						button.innerHTML = '<span>' + buttonText + '</span>';
-					} );
-				}
+			}
 			return;
 		}
 		form.classList.remove( 'modal-processing' );
@@ -450,12 +440,14 @@ domReady( () => {
 				onSuccess: ( message, authData ) => {
 					cartReq.then( url => {
 						// If registered, append the registration flag query param to the url.
+						// if ( authData?.registered && ! isModalCheckout ) {
 						if ( authData?.registered ) {
 							url += `&${ newspackBlocksModal.checkout_registration_flag }=1`;
 						}
 						// Populate cart and redirect to checkout if there is an unsupported payment gateway.
 						if ( ! isModalCheckout ) {
-							generateCart( formData ).then( window.location.href = generateNonModalCheckoutUrl( url ) );
+							// Remove modal checkout query string, and trailing question mark (if any).
+							generateCart( formData ).then( window.location.href = url.replace( /&?modal_checkout=1/, '' ).replace( /\?$/, '' ) );
 						} else {
 							const checkoutForm = generateCheckoutPageForm( url );
 							triggerCheckout( checkoutForm );

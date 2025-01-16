@@ -100,7 +100,7 @@ class Newspack_Blocks_Donate_Renderer {
 		Newspack_Blocks::enqueue_view_assets( 'donate' );
 		wp_script_add_data( 'newspack-blocks-donate', 'async', true );
 
-		if ( true === $attributes['useModalCheckout'] && ! Newspack_Blocks\Modal_Checkout::has_unsupported_payment_gateway() ) {
+		if ( true === $attributes['useModalCheckout'] ) {
 			\Newspack_Blocks\Modal_Checkout::enqueue_modal();
 		}
 
