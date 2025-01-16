@@ -24,6 +24,15 @@ let analyticsData = {};
 // Track the checkout intent to avoid multiple analytics events.
 let inCheckoutIntent = false;
 
+// Close the modal.
+const closeModal = el => {
+	if ( el.overlayId && window.newspackReaderActivation?.overlays ) {
+		window.newspackReaderActivation?.overlays.remove( el.overlayId );
+	}
+	el.setAttribute( 'data-state', 'closed' );
+	document.body.style.overflow = 'auto';
+};
+
 domReady( () => {
 	const modalCheckout = document.querySelector( `#${ MODAL_CHECKOUT_ID }` );
 	if ( ! modalCheckout ) {
@@ -629,14 +638,6 @@ domReady( () => {
 		iframeReady( handleIframeReady );
 	};
 
-	const closeModal = el => {
-		if ( el.overlayId && window.newspackReaderActivation?.overlays ) {
-			window.newspackReaderActivation?.overlays.remove( el.overlayId );
-		}
-		el.setAttribute( 'data-state', 'closed' );
-		document.body.style.overflow = 'auto';
-	};
-
 	const openModal = el => {
 		if ( window.newspackReaderActivation?.overlays ) {
 			modalCheckout.overlayId = window.newspackReaderActivation?.overlays.add();
@@ -869,3 +870,13 @@ domReady( () => {
 	};
 	handleModalCheckoutUrlParams();
 } );
+
+// Cleanup if page is loaded via back button
+window.onpageshow = event => {
+	if ( event.persisted ) {
+		// If the page is loaded from the back button, find and remove any loading-related classes and modals:
+		document.querySelectorAll( '.modal-processing' ).forEach( el => el.classList.remove( 'modal-processing' ) );
+		document.querySelectorAll( '.non-modal-checkout-loading' ).forEach( el => el.classList.remove( 'non-modal-checkout-loading' ) );
+		document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-container` ).forEach( el => closeModal( el ) );
+	}
+}
