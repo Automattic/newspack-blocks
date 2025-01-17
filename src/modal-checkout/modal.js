@@ -33,6 +33,16 @@ const closeModal = el => {
 	document.body.style.overflow = 'auto';
 };
 
+// Cleanup if page is loaded via back button.
+window.onpageshow = event => {
+	if ( event.persisted ) {
+		// If the page is loaded from the back button, find and remove any loading-related classes and modals:
+		document.querySelectorAll( '.modal-processing' ).forEach( el => el.classList.remove( 'modal-processing' ) );
+		document.querySelectorAll( '.non-modal-checkout-loading' ).forEach( el => el.classList.remove( 'non-modal-checkout-loading' ) );
+		document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-container` ).forEach( el => closeModal( el ) );
+	}
+}
+
 domReady( () => {
 	const modalCheckout = document.querySelector( `#${ MODAL_CHECKOUT_ID }` );
 	if ( ! modalCheckout ) {
@@ -175,7 +185,9 @@ domReady( () => {
 	 */
 	const emptyCart = () => {
 		const body = new FormData();
-		body.append( 'modal_checkout', '1' );
+		if ( ! newspackBlocksModal.has_unsupported_payment_gateway ) {
+			body.append( 'modal_checkout', '1' );
+		}
 		body.append( 'action', 'abandon_modal_checkout' );
 		body.append( '_wpnonce', modalCheckout.checkout_nonce );
 		modalCheckout.checkout_nonce = null;
@@ -298,7 +310,7 @@ domReady( () => {
 		if ( ! isModalCheckout && ! shouldPromptRegistration() ) {
 			generateCart( formData ).then( url => {
 				// Remove modal checkout query string and trailing question mark (if any).
-				window.location.href = url.replace( /&?modal_checkout=1/, '' ).replace( /\?$/, '' );
+				window.location.href = url;
 			} );
 			// Add some animation to the Checkout Button while the non-modal checkout is loading.
 			// For now, don't do it when any popup opens, just when we go right to the checkout page.
@@ -448,15 +460,14 @@ domReady( () => {
 				title: newspackBlocksModal.labels.auth_modal_title,
 				onSuccess: ( message, authData ) => {
 					cartReq.then( url => {
-						// If registered, append the registration flag query param to the url.
-						// if ( authData?.registered && ! isModalCheckout ) {
-						if ( authData?.registered ) {
+						// If registered and in a modal checkout, append the registration flag query param to the url.
+						if ( authData?.registered && isModalCheckout ) {
 							url += `&${ newspackBlocksModal.checkout_registration_flag }=1`;
 						}
 						// Populate cart and redirect to checkout if there is an unsupported payment gateway.
 						if ( ! isModalCheckout ) {
 							// Remove modal checkout query string, and trailing question mark (if any).
-							generateCart( formData ).then( window.location.href = url.replace( /&?modal_checkout=1/, '' ).replace( /\?$/, '' ) );
+							generateCart( formData ).then( window.location.href = url );
 						} else {
 							const checkoutForm = generateCheckoutPageForm( url );
 							triggerCheckout( checkoutForm );
@@ -726,7 +737,9 @@ domReady( () => {
 		.forEach( element => {
 			const forms = element.querySelectorAll( 'form' );
 			forms.forEach( form => {
-				form.appendChild( modalCheckoutHiddenInput.cloneNode() );
+				if ( ! newspackBlocksModal.has_unsupported_payment_gateway ) {
+					form.appendChild( modalCheckoutHiddenInput.cloneNode() );
+				}
 				form.target = IFRAME_NAME;
 				form.addEventListener( 'submit', handleCheckoutFormSubmit );
 			} );
@@ -870,13 +883,3 @@ domReady( () => {
 	};
 	handleModalCheckoutUrlParams();
 } );
-
-// Cleanup if page is loaded via back button
-window.onpageshow = event => {
-	if ( event.persisted ) {
-		// If the page is loaded from the back button, find and remove any loading-related classes and modals:
-		document.querySelectorAll( '.modal-processing' ).forEach( el => el.classList.remove( 'modal-processing' ) );
-		document.querySelectorAll( '.non-modal-checkout-loading' ).forEach( el => el.classList.remove( 'non-modal-checkout-loading' ) );
-		document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-container` ).forEach( el => closeModal( el ) );
-	}
-}

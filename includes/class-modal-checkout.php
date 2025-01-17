@@ -380,7 +380,10 @@ final class Modal_Checkout {
 		if ( ! empty( $referer_categories ) ) {
 			$query_args['referer_categories'] = implode( ',', $referer_categories );
 		}
-		$query_args['modal_checkout'] = 1;
+
+		if ( ! self::has_unsupported_payment_gateway() ) {
+			$query_args['modal_checkout'] = 1;
+		}
 
 		// Pass through UTM and after_success params so they can be forwarded to the WooCommerce checkout flow.
 		foreach ( $params as $param => $value ) {
@@ -1101,7 +1104,7 @@ final class Modal_Checkout {
 	 * @return string
 	 */
 	public static function woocommerce_get_return_url( $url, $order ) {
-		if ( ! self::is_modal_checkout() ) {
+		if ( ! self::is_modal_checkout() || self::has_unsupported_payment_gateway() ) {
 			return $url;
 		}
 
