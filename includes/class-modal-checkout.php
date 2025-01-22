@@ -947,6 +947,16 @@ final class Modal_Checkout {
 				]
 			);
 		}
+		if ( is_plugin_active( 'onesignal-free-web-push-notifications/onesignal.php' ) ) {
+			array_push(
+				$remove_list,
+				[
+					'hook'     => 'wp_head',
+					'callback' => 'onesignal_init',
+				]
+			);
+		}
+
 		/**
 		 * Filters the hooks to remove from the modal checkout.
 		 *
