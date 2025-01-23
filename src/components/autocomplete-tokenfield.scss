@@ -1,17 +1,10 @@
-@use "~@wordpress/base-styles/colors" as wp-colors;
-
 .autocomplete-tokenfield {
-	max-width: 100%;
 	position: relative;
 
 	.components-spinner {
-		bottom: 12px;
 		position: absolute;
+		top: 2em;
 		right: 0;
-	}
-
-	&:has(.autocomplete-tokenfield__help) .components-spinner {
-		bottom: calc(36px + 8px + 12px);
 	}
 
 	/* Workaround for hard-coded help text in FormTokenField. */
@@ -20,8 +13,6 @@
 	}
 
 	.autocomplete-tokenfield__help {
-		color: wp-colors.$gray-700;
-		font-size: 12px;
-		margin: 8px 0;
+		font-style: italic;
 	}
 }

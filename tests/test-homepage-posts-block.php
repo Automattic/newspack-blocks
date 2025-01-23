@@ -22,6 +22,7 @@ class HomepagePostsBlockTest extends WP_UnitTestCase_Blocks { // phpcs:ignore
 					'posts_per_page' => 5,
 					'post_status'    => [ 'publish' ],
 					'post_type'      => [ 'post' ],
+					'tax_query'      => [],
 				],
 				'description'             => 'Default attributes',
 			],
@@ -61,6 +62,9 @@ class HomepagePostsBlockTest extends WP_UnitTestCase_Blocks { // phpcs:ignore
 	public function test_hpb_wp_query() {
 		$cap_author = self::create_guest_author();
 		$post_id    = self::create_post( $cap_author['term_id'] );
+
+		global $coauthors_plus;
+		$coauthors_plus = new CoAuthors_Plus_Mock(); // phpcs:ignore
 
 		// Create another post.
 		self::create_post();

@@ -142,8 +142,14 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 				}
 			}
 		} else {
+			$role_in = [ 'Administrator', 'Editor', 'Author', 'Contributor' ];
+			// Support for Newspack's Guest Contributor Role.
+			if ( class_exists( 'Newspack\Guest_Contributor_Role' ) ) {
+				$role_in[] = Newspack\Guest_Contributor_Role::CONTRIBUTOR_NO_EDIT_ROLE_NAME;
+			}
+
 			$user_args = [
-				'role__in' => [ 'Administrator', 'Editor', 'Author', 'Contributor' ],
+				'role__in' => $role_in,
 				'offset'   => $offset,
 				'orderby'  => 'registered',
 				'order'    => 'DESC',
@@ -418,6 +424,7 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 			'tumblr',
 			'youtube',
 			'wikipedia',
+			'bluesky',
 			'website', // This is the only "social media" link for CAP guest authors.
 		];
 
@@ -428,7 +435,7 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 				$handle     = $is_website ? get_post_meta( $author_id, 'cap-website', true ) : get_the_author_meta( $profile, $author_id );
 
 				if ( $handle ) {
-					$url             = 'twitter' === $profile ? esc_url( 'https://twitter.com/' . $handle ) : esc_url( $handle );
+					$url             = 'twitter' === $profile ? esc_url( 'https://x.com/' . $handle ) : esc_url( $handle );
 					$acc[ $profile ] = [ 'url' => $url ];
 
 					if ( class_exists( 'Newspack_SVG_Icons' ) ) {

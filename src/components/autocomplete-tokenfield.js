@@ -181,7 +181,6 @@ class AutocompleteTokenField extends Component {
 					onChange={ tokens => this.handleOnChange( tokens ) }
 					onInputChange={ input => this.debouncedUpdateSuggestions( input ) }
 					label={ label }
-					__next40pxDefaultSize
 				/>
 				{ loading && <Spinner /> }
 				{ help && <p className="autocomplete-tokenfield__help">{ help }</p> }
