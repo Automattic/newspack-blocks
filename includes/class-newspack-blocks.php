@@ -213,6 +213,7 @@ class Newspack_Blocks {
 				'custom_taxonomies'          => self::get_custom_taxonomies(),
 				'can_use_name_your_price'    => self::can_use_name_your_price(),
 				'tier_amounts_template'      => self::get_formatted_amount(),
+				'currency'                   => function_exists( 'get_woocommerce_currency' ) ? \get_woocommerce_currency() : 'USD',
 			];
 
 			if ( class_exists( 'WP_REST_Newspack_Author_List_Controller' ) ) {
@@ -1414,13 +1415,13 @@ class Newspack_Blocks {
 	/**
 	 * Get a formatted HTML string containing amount and frequency of a donation.
 	 *
-	 * @param float  $amount Amount.
-	 * @param string $frequency Frequency.
-	 * @param bool   $hide_once_label Whether to hide the "once" label.
+	 * @param float|string $amount Amount.
+	 * @param string       $frequency Frequency.
+	 * @param bool         $hide_once_label Whether to hide the "once" label.
 	 *
 	 * @return string
 	 */
-	public static function get_formatted_amount( $amount = 0, $frequency = 'day', $hide_once_label = false ) {
+	public static function get_formatted_amount( $amount = 'AMOUNT_PLACEHOLDER', $frequency = 'day', $hide_once_label = false ) {
 		if ( ! function_exists( 'wc_price' ) || ( method_exists( 'Newspack\Donations', 'is_platform_wc' ) && ! \Newspack\Donations::is_platform_wc() ) ) {
 			if ( 0 === $amount ) {
 				return false;
@@ -1432,22 +1433,21 @@ class Newspack_Blocks {
 			$formatted_price  = '<span class="price-amount">' . $formatter->formatCurrency( $amount, 'USD' ) . '</span> <span class="tier-frequency">' . $frequency_string . '</span>';
 			return str_replace( '.00', '', $formatted_price );
 		}
+
+		// Format the amount with currency symbol and separators.
+		$amount_string = \wc_price(
+			$amount,
+			[ 'decimals' => is_int( $amount ) ? 0 : 2 ]
+		);
+
 		if ( ! function_exists( 'wcs_price_string' ) ) {
-			return \wc_price( $amount );
+			return $amount_string;
 		}
 		$price_args          = [
-			'recurring_amount'    => $amount,
+			'recurring_amount'    => $amount_string,
 			'subscription_period' => 'once' === $frequency ? 'day' : $frequency,
 		];
 		$wc_formatted_amount = \wcs_price_string( $price_args );
-
-		// A '0' value means we want a placeholder string to replace in the editor.
-		if ( 0 === $amount ) {
-			preg_match( '/<\/span>(.*)<\/bdi>/', $wc_formatted_amount, $matches );
-			if ( ! empty( $matches[1] ) ) {
-				$wc_formatted_amount = str_replace( $matches[1], 'AMOUNT_PLACEHOLDER', $wc_formatted_amount );
-			}
-		}
 
 		// A 'day' frequency means we want a placeholder string to replace in the editor.
 		if ( 'day' === $frequency ) {
