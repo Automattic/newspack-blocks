@@ -618,6 +618,84 @@
 		}
 	}
 
+	// Braintree styles
+	li.payment_method_braintree_credit_card,
+	li.payment_method_braintree_paypal {
+		.sv-wc-payment-gateway-card-icons {
+			float: right;
+		}
+
+		.sv-wc-payment-gateway-payment-form-manage-payment-methods {
+			display: none;
+		}
+
+		& > p.form-row {
+			margin-top: var(--newspack-ui-spacer-3, 16px);
+		}
+
+		.form-row {
+			&::before,
+			&::after {
+				display: none;
+			}
+
+			input[type="radio"] + label {
+				display: inline-block;
+			}
+		}
+
+		.payment_method_braintree_credit_card,
+		.payment_method_braintree_paypal {
+			.form-row {
+				display: block;
+				margin: var(--newspack-ui-spacer-base, 8px) 0;
+				padding: 0 !important;
+
+				label {
+					font-size: var(--newspack-ui-font-size-s, 16px);
+					font-weight: 600;
+					line-height: var(--newspack-ui-line-height-s, 1.5);
+					margin: 0 0 var(--newspack-ui-spacer-base, 8px);
+				}
+
+				.wc-braintree-hosted-field-card-number {
+					margin-bottom: var(--newspack-ui-spacer-base, 8px);
+				}
+
+				&:has(label[for="wc-braintree-credit-card-context-hosted"]) {
+					margin: 0;
+				}
+
+				// Hiding the test input, since it's distracted and unneeded.
+				&:has(label[for="wc-braintree-credit-card-test-amount"]),
+				&:has(label[for="wc-braintree-paypal-test-amount"]) {
+					display: none;
+				}
+
+				// This can be done via My Account, removing the link for consistency.
+				.sv-wc-payment-gateway-payment-form-manage-payment-methods {
+					display: none;
+				}
+
+				&:has(#wc-braintree-credit-card-tokenize-payment-method),
+				&:has(#wc-braintree-paypal-tokenize-payment-method) {
+					display: grid !important;
+					gap: 0 var(--newspack-ui-spacer-base, 8px);
+					grid-template-columns: var(--newspack-ui-spacer-4, 20px) 1fr;
+
+					label {
+						font-weight: 600;
+						margin: 0;
+					}
+				}
+
+				&:last-child label {
+					margin: 0;
+				}
+			}
+		}
+	}
+
 	// Order review table.
 	.woocommerce-checkout-review-order-table {
 		th,
