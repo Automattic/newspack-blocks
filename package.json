@@ -5,7 +5,7 @@
 	"devDependencies": {
 		"@rushstack/eslint-patch": "^1.10.5",
 		"@testing-library/dom": "^10.4.0",
-		"@testing-library/user-event": "^14.6.0",
+		"@testing-library/user-event": "^14.6.1",
 		"@types/lodash": "^4.17.14",
 		"@wordpress/browserslist-config": "^6.16.0",
 		"eslint": "^8.57.0",
