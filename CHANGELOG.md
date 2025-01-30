@@ -1,3 +1,10 @@
+## [4.5.6](https://github.com/Automattic/newspack-blocks/compare/v4.5.5...v4.5.6) (2025-01-23)
+
+
+### Bug Fixes
+
+* make sure fields after floated inputs clear floats in the modal checkout ([#2030](https://github.com/Automattic/newspack-blocks/issues/2030)) ([274b4d4](https://github.com/Automattic/newspack-blocks/commit/274b4d41aa63dc818a3da49a7fc8315dbdf08757))
+
 ## [4.5.5](https://github.com/Automattic/newspack-blocks/compare/v4.5.4...v4.5.5) (2025-01-20)
 
 
