@@ -951,6 +951,15 @@ final class Modal_Checkout {
 				]
 			);
 		}
+		// OneSignal.
+		array_push(
+			$remove_list,
+			[
+				'hook'     => 'wp_head',
+				'callback' => 'onesignal_init',
+			]
+		);
+
 		/**
 		 * Filters the hooks to remove from the modal checkout.
 		 *
