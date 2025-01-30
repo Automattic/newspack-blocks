@@ -1415,13 +1415,13 @@ class Newspack_Blocks {
 	/**
 	 * Get a formatted HTML string containing amount and frequency of a donation.
 	 *
-	 * @param float|string $amount Amount.
-	 * @param string       $frequency Frequency.
-	 * @param bool         $hide_once_label Whether to hide the "once" label.
+	 * @param float  $amount Amount.
+	 * @param string $frequency Frequency.
+	 * @param bool   $hide_once_label Whether to hide the "once" label.
 	 *
 	 * @return string
 	 */
-	public static function get_formatted_amount( $amount = 'AMOUNT_PLACEHOLDER', $frequency = 'day', $hide_once_label = false ) {
+	public static function get_formatted_amount( $amount = null, $frequency = null, $hide_once_label = false ) {
 		if ( ! function_exists( 'wc_price' ) || ( method_exists( 'Newspack\Donations', 'is_platform_wc' ) && ! \Newspack\Donations::is_platform_wc() ) ) {
 			if ( 0 === $amount ) {
 				return false;
@@ -1434,29 +1434,32 @@ class Newspack_Blocks {
 			return str_replace( '.00', '', $formatted_price );
 		}
 
-		// Format the amount with currency symbol and separators.
-		$amount_string = \wc_price(
-			$amount,
-			[ 'decimals' => is_int( $amount ) ? 0 : 2 ]
-		);
+		$wc_formatted_amount = '';
+		if ( null === $amount && null === $frequency ) {
+			$currency_symbol     = function_exists( 'get_woocommerce_currency_symbol' ) ? \get_woocommerce_currency_symbol() : '&#36;';
+			$wc_formatted_amount = '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">' . $currency_symbol . '</span>AMOUNT_PLACEHOLDER</bdi></span> FREQUENCY_PLACEHOLDER';
+		} else {
+			// Format the amount with currency symbol and separators.
+			$amount_string = \wc_price(
+				$amount,
+				[ 'decimals' => is_int( $amount ) ? 0 : 2 ]
+			);
 
-		if ( ! function_exists( 'wcs_price_string' ) ) {
-			return $amount_string;
-		}
-		$price_args          = [
-			'recurring_amount'    => $amount_string,
-			'subscription_period' => 'once' === $frequency ? 'day' : $frequency,
-		];
-		$wc_formatted_amount = \wcs_price_string( $price_args );
+			if ( ! function_exists( 'wcs_price_string' ) ) {
+				return $amount_string;
+			}
+			$price_args          = [
+				'recurring_amount'    => $amount_string,
+				'subscription_period' => 'once' === $frequency ? 'day' : $frequency,
+			];
+			$wc_formatted_amount = \wcs_price_string( $price_args );
 
-		// A 'day' frequency means we want a placeholder string to replace in the editor.
-		if ( 'day' === $frequency ) {
-			$wc_formatted_amount = preg_replace( '/ \/ ?.*/', 'FREQUENCY_PLACEHOLDER', $wc_formatted_amount );
-		} elseif ( 'once' === $frequency ) {
-			$once_label          = $hide_once_label ? '' : __( ' once', 'newspack-blocks' );
-			$wc_formatted_amount = preg_replace( '/ \/ ?.*/', $once_label, $wc_formatted_amount );
+			if ( 'once' === $frequency ) {
+				$once_label          = $hide_once_label ? '' : __( ' once', 'newspack-blocks' );
+				$wc_formatted_amount = preg_replace( '/ \/ ?.*/', $once_label, $wc_formatted_amount );
+			}
+			$wc_formatted_amount = str_replace( ' / ', __( ' per ', 'newspack-blocks' ), $wc_formatted_amount );
 		}
-		$wc_formatted_amount = str_replace( ' / ', __( ' per ', 'newspack-blocks' ), $wc_formatted_amount );
 
 		return '<span class="wpbnbd__tiers__amount__value">' . $wc_formatted_amount . '</span>';
 	}
