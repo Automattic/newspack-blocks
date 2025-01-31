@@ -1,3 +1,10 @@
+## [4.5.7](https://github.com/Automattic/newspack-blocks/compare/v4.5.6...v4.5.7) (2025-01-31)
+
+
+### Bug Fixes
+
+* improve formatting of donation amount options ([#2032](https://github.com/Automattic/newspack-blocks/issues/2032)) ([a86472c](https://github.com/Automattic/newspack-blocks/commit/a86472c8068d873c31cb6bb37e08bcfd9d487be3))
+
 ## [4.5.6](https://github.com/Automattic/newspack-blocks/compare/v4.5.5...v4.5.6) (2025-01-23)
 
 
