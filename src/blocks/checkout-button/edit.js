@@ -97,6 +97,8 @@ function ProductControl( props ) {
 	function fetchSuggestions( search ) {
 		setInFlight( true );
 		return apiFetch( {
+			// The search query is wrapped in quotes to ensure that the search is for
+			// the exact phrase, matching the behavior of the FormTokenField component.
 			path: `/wc/v2/products?search=${ encodeURIComponent( '"' + search + '"' ) }`,
 		} )
 			.then( products => {
