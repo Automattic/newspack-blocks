@@ -97,7 +97,7 @@ function ProductControl( props ) {
 	function fetchSuggestions( search ) {
 		setInFlight( true );
 		return apiFetch( {
-			path: `/wc/v2/products?search=${ encodeURIComponent( search ) }`,
+			path: `/wc/v2/products?search=${ encodeURIComponent( '"' + search + '"' ) }`,
 		} )
 			.then( products => {
 				const _suggestions = {};
