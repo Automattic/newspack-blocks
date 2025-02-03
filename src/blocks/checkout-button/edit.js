@@ -126,7 +126,7 @@ function ProductControl( props ) {
 				setProductError(
 					sprintf(
 						// translators: %s: product ID.
-						__( 'Product with ID %s was not found. Select a different product.', 'newspack-blocks' ),
+						__( 'Could not find a product with ID %s. Please select a different product.', 'newspack-blocks' ),
 						props.value
 					)
 				);
