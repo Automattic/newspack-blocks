@@ -10,7 +10,7 @@ import { debounce, invert } from 'lodash';
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import {
 	InspectorControls,
 	RichText,
@@ -92,6 +92,7 @@ function ProductControl( props ) {
 	const [ suggestions, setSuggestions ] = useState( {} );
 	const [ selected, setSelected ] = useState( false );
 	const [ isChanging, setIsChanging ] = useState( false );
+	const [ productError, setProductError ] = useState( '' );
 
 	function fetchSuggestions( search ) {
 		setInFlight( true );
@@ -117,7 +118,18 @@ function ProductControl( props ) {
 			.then( product => {
 				setSuggestions( { [ product.id ]: `${ product.id }: ${ product.name }` } );
 				setSelected( product );
+				setProductError( '' );
 				props.onProduct( product );
+			} )
+			.catch( () => {
+				props.onChange( '' );
+				setProductError(
+					sprintf(
+						// translators: %s: product ID.
+						__( 'Product with ID %s was not found. Select a different product.', 'newspack-blocks' ),
+						props.value
+					)
+				);
 			} )
 			.finally( () => setInFlight( false ) );
 	}
@@ -187,6 +199,7 @@ function ProductControl( props ) {
 					) }
 				</>
 			) }
+			{ productError && <p className="newspack-checkout-button__product-field__error">{ productError }</p> }
 		</div>
 	);
 }
