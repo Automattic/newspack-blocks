@@ -122,7 +122,6 @@ function ProductControl( props ) {
 				props.onProduct( product );
 			} )
 			.catch( () => {
-				props.onChange( '' );
 				setProductError(
 					sprintf(
 						// translators: %s: product ID.
@@ -156,7 +155,7 @@ function ProductControl( props ) {
 			setInFlight( false );
 		}
 	};
-	if ( props.value && ! selected && inFlight ) {
+	if ( props.value && ! productError && ! selected && inFlight ) {
 		return <Spinner />;
 	}
 	return (
