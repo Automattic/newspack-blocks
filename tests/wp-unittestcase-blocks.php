@@ -40,6 +40,60 @@ class CoAuthors_Guest_Authors { // phpcs:ignore
 }
 register_taxonomy( 'author', 'post' );
 
+
+/**
+ * Mock CoAuthors Plus class
+ */
+class CoAuthors_Plus_Mock { // phpcs:ignore
+
+	/**
+	 * Get coauthor by field mock
+	 *
+	 * @param string $field Only 'id' supported.
+	 * @param string $value The value to search for.
+	 * @return object|false
+	 */
+	public function get_coauthor_by( $field, $value ) {
+		// search for guest authors first.
+		$guest_author = get_post( $value );
+		if ( $guest_author ) {
+			$guest_author->type = 'guest-author';
+			$guest_author->user_nicename = $guest_author->post_name;
+			return $guest_author;
+		}
+
+		// search for users.
+		$user = get_user_by( $field, $value );
+		if ( $user ) {
+			$user->type = 'wpuser';
+			return $user;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get the author term for a given co-author
+	 *
+	 * @param object $coauthor The co-author object.
+	 * @return object|false $author_term The author term on success
+	 */
+	public function get_author_term( $coauthor ) {
+
+		if ( ! is_object( $coauthor ) ) {
+			return;
+		}
+
+		// See if the prefixed term is available, otherwise default to just the nicename.
+		$term = get_term_by( 'slug', 'cap-' . $coauthor->user_nicename, 'author' );
+		if ( ! $term ) {
+			$term = get_term_by( 'slug', $coauthor->user_nicename, 'author' );
+		}
+
+		return $term;
+	}
+}
+
 /**
  * WP_UnitTestCase which renders a page with popups.
  */

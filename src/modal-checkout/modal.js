@@ -24,9 +24,27 @@ let analyticsData = {};
 // Track the checkout intent to avoid multiple analytics events.
 let inCheckoutIntent = false;
 
+// Close the modal.
+const closeModal = el => {
+	if ( el.overlayId && window.newspackReaderActivation?.overlays ) {
+		window.newspackReaderActivation?.overlays.remove( el.overlayId );
+	}
+	el.setAttribute( 'data-state', 'closed' );
+	document.body.style.overflow = 'auto';
+};
+
+// Cleanup if page is loaded via back button.
+window.onpageshow = event => {
+	if ( event.persisted ) {
+		// If the page is loaded from the back button, find and remove any loading-related classes and modals:
+		document.querySelectorAll( '.modal-processing' ).forEach( el => el.classList.remove( 'modal-processing' ) );
+		document.querySelectorAll( '.non-modal-checkout-loading' ).forEach( el => el.classList.remove( 'non-modal-checkout-loading' ) );
+		document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-container` ).forEach( el => closeModal( el ) );
+	}
+}
+
 domReady( () => {
 	const modalCheckout = document.querySelector( `#${ MODAL_CHECKOUT_ID }` );
-
 	if ( ! modalCheckout ) {
 		return;
 	}
@@ -84,9 +102,9 @@ domReady( () => {
 	 * Handle iframe load state.
 	 */
 	function handleIframeReady() {
-		const location = iframe.contentWindow.location;
+		const location = iframe.contentWindow?.location;
 		// If RAS is available, set the front-end authentication.
-		if ( window.newspackReaderActivation && location.href.indexOf( 'order-received' ) > -1 ) {
+		if ( window.newspackReaderActivation && location?.href?.includes( 'order-received' ) ) {
 			const ras = window.newspackReaderActivation;
 			const params = new Proxy( new URLSearchParams( location.search ), {
 				get: ( searchParams, prop ) => searchParams.get( prop ),
@@ -118,6 +136,11 @@ domReady( () => {
 				// Revert modal title and width default value.
 				setModalSize();
 				setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
+				if ( iframe.contentWindow?.newspackBlocksModalCheckout?.checkout_nonce ) {
+					// Store the checkout nonce for later use.
+					// We store the nonce from the iframe content window to ensure the nonce was generated for a logged in session
+					modalCheckout.checkout_nonce = iframe.contentWindow.newspackBlocksModalCheckout.checkout_nonce;
+				}
 			}
 			if ( container.checkoutReady ) {
 				setModalReady();
@@ -162,9 +185,12 @@ domReady( () => {
 	 */
 	const emptyCart = () => {
 		const body = new FormData();
-		body.append( 'modal_checkout', '1' );
+		if ( ! newspackBlocksModal.has_unsupported_payment_gateway ) {
+			body.append( 'modal_checkout', '1' );
+		}
 		body.append( 'action', 'abandon_modal_checkout' );
-		body.append( '_wpnonce', iframe?.contentWindow?.newspackBlocksModalCheckout?.checkout_nonce );
+		body.append( '_wpnonce', modalCheckout.checkout_nonce );
+		modalCheckout.checkout_nonce = null;
 		fetch(
 			newspackBlocksModal.ajax_url,
 			{
@@ -191,12 +217,13 @@ domReady( () => {
 	 * @param {Event} ev
 	 */
 	const handleCheckoutFormSubmit = ev => {
+		const isModalCheckout = ! newspackBlocksModal.has_unsupported_payment_gateway;
+		if ( ! isModalCheckout ) {
+			ev.preventDefault();
+		}
 		const form = ev.target;
-
 		form.classList.add( 'modal-processing' );
-
 		const productData = form.dataset.product;
-
 		if ( productData ) {
 			const data = JSON.parse( productData );
 			Object.keys( data ).forEach( key => {
@@ -207,17 +234,19 @@ domReady( () => {
 			} );
 		}
 		const formData = new FormData( form );
-
 		// If we're not going from variation picker to checkout, set the modal trigger:
 		if ( ! formData.get( 'variation_id' ) ) {
 			modalTrigger = ev.submitter;
 		}
-
-		const variationModals = document.querySelectorAll( `.${ VARIATON_MODAL_CLASS_PREFIX }` );
 		// Clear any open variation modal.
+		const variationModals = document.querySelectorAll( `.${ VARIATON_MODAL_CLASS_PREFIX }` );
 		variationModals.forEach( variationModal => {
-			closeModal( variationModal );
+			// Only close the variation picker if is the modal checkout, or if registration is required.
+			if ( shouldPromptRegistration() || isModalCheckout ) {
+				closeModal( variationModal );
+			}
 		} );
+
 		// Trigger variation modal if variation is not selected.
 		if ( formData.get( 'is_variable' ) && ! formData.get( 'variation_id' ) ) {
 			const variationModal = [ ...variationModals ].find(
@@ -277,11 +306,27 @@ domReady( () => {
 			}
 		}
 
+		// Populate cart and redirect to checkout if there is an unsupported payment gateway.
+		if ( ! isModalCheckout && ! shouldPromptRegistration() ) {
+			generateCart( formData ).then( url => {
+				// Remove modal checkout query string and trailing question mark (if any).
+				window.location.href = url;
+			} );
+			// Add some animation to the Checkout Button while the non-modal checkout is loading.
+			// For now, don't do it when any popup opens, just when we go right to the checkout page.
+			if ( ! ( formData.get( 'is_variable' ) && ! formData.get( 'variation_id' ) ) ) {
+				const buttons = form.querySelectorAll( 'button[type=submit]:focus' );
+				buttons.forEach( button => {
+					button.classList.add( 'non-modal-checkout-loading' );
+					const buttonText = button.innerHTML;
+					button.innerHTML = '<span>' + buttonText + '</span>';
+				} );
+			}
+			return;
+		}
 		form.classList.remove( 'modal-processing' );
-
 		const isDonateBlock = formData.get( 'newspack_donate' );
 		const isCheckoutButtonBlock = formData.get( 'newspack_checkout' );
-
 		// Set up some GA4 information.
 		if ( isCheckoutButtonBlock ) { // this fires on the second in-modal variations screen, too
 			const formAnalyticsData = form.getAttribute( 'data-product' );
@@ -410,18 +455,23 @@ domReady( () => {
 			cartReq.then( url => {
 				window.newspackReaderActivation?.setPendingCheckout?.( url );
 			} );
-
 			// Initialize auth flow if reader is not authenticated.
 			window.newspackReaderActivation.openAuthModal( {
 				title: newspackBlocksModal.labels.auth_modal_title,
 				onSuccess: ( message, authData ) => {
 					cartReq.then( url => {
-						// If registered, append the registration flag query param to the url.
-						if ( authData?.registered ) {
+						// If registered and in a modal checkout, append the registration flag query param to the url.
+						if ( authData?.registered && isModalCheckout ) {
 							url += `&${ newspackBlocksModal.checkout_registration_flag }=1`;
 						}
-						const checkoutForm = generateCheckoutPageForm( url );
-						triggerCheckout( checkoutForm );
+						// Populate cart and redirect to checkout if there is an unsupported payment gateway.
+						if ( ! isModalCheckout ) {
+							// Remove modal checkout query string, and trailing question mark (if any).
+							generateCart( formData ).then( window.location.href = url );
+						} else {
+							const checkoutForm = generateCheckoutPageForm( url );
+							triggerCheckout( checkoutForm );
+						}
 					} )
 					.catch( error => {
 						console.warn( 'Unable to generate cart:', error ); // eslint-disable-line no-console
@@ -449,6 +499,7 @@ domReady( () => {
 				},
 				content,
 				trigger: ev.submitter,
+				closeOnSuccess: isModalCheckout,
 			} );
 		} else {
 			// Otherwise initialize checkout.
@@ -488,6 +539,10 @@ domReady( () => {
 		if ( ! entries || ! entries.length ) {
 			return;
 		}
+		iframe.scrollIntoView( { behavior: 'smooth', block: 'start' } );
+		if ( ! iframe.contentDocument ) {
+			return;
+		}
 		const contentRect = entries[ 0 ].contentRect;
 		if ( contentRect ) {
 			const iframeHeight = contentRect.top + contentRect.bottom;
@@ -510,14 +565,12 @@ domReady( () => {
 		const hasNewsletterPopup = document?.querySelector( '.newspack-newsletters-signup-modal' );
 
 		// Empty cart if checkout is not complete.
-		// We grab the nonce from the iframe content window to ensure the nonce was generated for a logged in session
-		// so we need to call this before closing and resetting the iframe.
-		if ( ! container?.checkoutComplete && iframe?.contentWindow?.newspackBlocksModalCheckout ) {
+		if ( ! container?.checkoutComplete ) {
 			emptyCart();
 		}
 
-		// We want to block closing the modal if redirecting elsewhere:
-		const shouldCloseModal = ! afterSuccessUrlInput || ! afterSuccessBehaviorInput || ! container?.checkoutComplete;
+		// Only close the modal if the iframe contentDocument is null, the checkout is not complete, or we are not redirecting.
+		const shouldCloseModal = ! iframe.contentDocument || ! afterSuccessUrlInput || ! afterSuccessBehaviorInput || ! container?.checkoutComplete;
 		if ( shouldCloseModal || hasNewsletterPopup ) {
 			spinner.style.display = 'flex';
 			if ( iframe && modalContent.contains( iframe ) ) {
@@ -594,14 +647,6 @@ domReady( () => {
 		a11y.trapFocus( modalCheckout, iframe );
 
 		iframeReady( handleIframeReady );
-	};
-
-	const closeModal = el => {
-		if ( el.overlayId && window.newspackReaderActivation?.overlays ) {
-			window.newspackReaderActivation?.overlays.remove( el.overlayId );
-		}
-		el.setAttribute( 'data-state', 'closed' );
-		document.body.style.overflow = 'auto';
 	};
 
 	const openModal = el => {
@@ -692,7 +737,9 @@ domReady( () => {
 		.forEach( element => {
 			const forms = element.querySelectorAll( 'form' );
 			forms.forEach( form => {
-				form.appendChild( modalCheckoutHiddenInput.cloneNode() );
+				if ( ! newspackBlocksModal.has_unsupported_payment_gateway ) {
+					form.appendChild( modalCheckoutHiddenInput.cloneNode() );
+				}
 				form.target = IFRAME_NAME;
 				form.addEventListener( 'submit', handleCheckoutFormSubmit );
 			} );

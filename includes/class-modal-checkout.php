@@ -49,6 +49,81 @@ final class Modal_Checkout {
 	private static $modal_checkout_labels = [];
 
 	/**
+	 * Allowed assets for modal checkout.
+	 *
+	 * @var string[]
+	 */
+	private static $allowed_scripts = [
+		'jquery',
+		'google_gtagjs',
+		// Newspack.
+		'newspack-newsletters-',
+		'newspack-blocks-modal',
+		'newspack-blocks-modal-checkout',
+		'newspack-wc',
+		'newspack-ui',
+		'newspack-style',
+		'newspack-recaptcha',
+		'newspack-woocommerce-style',
+		// Woo.
+		'woocommerce',
+		'WCPAY',
+		'Woo',
+		'wc-',
+		'wc_',
+		'wcs-',
+		'stripe',
+		'select2',
+		'selectWoo',
+		// Metorik.
+		'metorik',
+	];
+
+	/**
+	 * Allowed styles for modal checkout.
+	 *
+	 * @var string[]
+	 */
+	private static $allowed_styles = [
+		// Newspack.
+		'newspack-newsletters-',
+		'newspack-blocks-modal',
+		'newspack-blocks-modal-checkout',
+		'newspack-wc',
+		'newspack-ui',
+		'newspack-style',
+		'newspack-recaptcha',
+		'newspack-woocommerce-style',
+		// Woo.
+		'woocommerce',
+		'WCPAY',
+		'Woo',
+		'wc-',
+		'wc_',
+		'wcs-',
+		'stripe',
+		'select2',
+		'selectWoo',
+		// Metorik.
+		'metorik',
+	];
+
+	/**
+	 * Supported Payment Gateways
+	 *
+	 * @var string[]
+	 */
+	private static $supported_gateways = [
+		'bacs', // Direct bank transfer.
+		'cheque',
+		'cod', // Cash on delivery.
+		'ppcp-gateway', // PayPal Payments.
+		'stripe',
+		'stripe-link',
+		'woocommerce_payments',
+	];
+
+	/**
 	 * Initialize hooks.
 	 */
 	public static function init() {
@@ -72,7 +147,7 @@ final class Modal_Checkout {
 		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 2 );
 		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'woocommerce_checkout_fields' ] );
 		add_filter( 'woocommerce_update_order_review_fragments', [ __CLASS__, 'order_review_fragments' ] );
-		add_filter( 'newspack_recaptcha_verify_captcha', [ __CLASS__, 'recaptcha_verify_captcha' ], 10, 2 );
+		add_filter( 'newspack_recaptcha_verify_captcha', [ __CLASS__, 'recaptcha_verify_captcha' ], 10, 3 );
 		add_filter( 'woocommerce_enqueue_styles', [ __CLASS__, 'dequeue_woocommerce_styles' ] );
 		add_filter( 'wcs_place_subscription_order_text', [ __CLASS__, 'order_button_text' ], 5 );
 		add_filter( 'woocommerce_order_button_text', [ __CLASS__, 'order_button_text' ], 5 );
@@ -90,7 +165,6 @@ final class Modal_Checkout {
 		add_filter( 'option_woocommerce_woocommerce_payments_settings', [ __CLASS__, 'filter_woocommerce_payments_settings' ] );
 		add_action( 'init', [ __CLASS__, 'unhook_woocommerce_payments_update_billing_fields' ] );
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'update_password_strength_message' ], 9999 );
-
 
 		/** Custom handling for registered users. */
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
@@ -111,6 +185,7 @@ final class Modal_Checkout {
 		add_filter( 'googlesitekit_adsense_tag_blocked', [ __CLASS__, 'is_modal_checkout' ] );
 		add_filter( 'jetpack_active_modules', [ __CLASS__, 'jetpack_active_modules' ] );
 		add_filter( 'woocommerce_checkout_update_order_review_expired', [ __CLASS__, 'is_not_modal_checkout_filter' ] );
+		add_filter( 'woocommerce_checkout_registration_enabled', [ __CLASS__, 'is_modal_checkout_filter' ] );
 
 		// Make the current cart price available to the JavaScript.
 		add_action( 'wp_ajax_get_cart_total', [ __CLASS__, 'get_cart_total_js' ] );
@@ -161,6 +236,38 @@ final class Modal_Checkout {
 		unset( $enqueue_styles['woocommerce-general'] );
 		unset( $enqueue_styles['woocommerce-smallscreen'] );
 		return $enqueue_styles;
+	}
+
+	/**
+	 * Get list of supported payment gateways for Modal Checkout.
+	 *
+	 * @return string[] Supported payment gateways.
+	 */
+	public static function get_supported_payment_gateways() {
+		/**
+		 * Filters the list of supported gateways in modal checkout.
+		 *
+		 * @param array $supported_gateways
+		 */
+		return apply_filters( 'newspack_blocks_modal_checkout_supported_gateways', self::$supported_gateways );
+	}
+
+	/**
+	 * Whether any available payment gateways are not suppored in modal checkout.
+	 *
+	 * @return boolean
+	 */
+	public static function has_unsupported_payment_gateway() {
+		$supported_gateways          = self::get_supported_payment_gateways();
+		$available_gateways          = \WC()->payment_gateways->get_available_payment_gateways();
+		$unsupported_payment_gateway = false;
+		foreach ( $available_gateways as $id => $gateway ) {
+			if ( ! in_array( $id, $supported_gateways, true ) ) {
+				$unsupported_payment_gateway = true;
+				break;
+			}
+		}
+		return $unsupported_payment_gateway;
 	}
 
 	/**
@@ -273,13 +380,18 @@ final class Modal_Checkout {
 		if ( ! empty( $referer_categories ) ) {
 			$query_args['referer_categories'] = implode( ',', $referer_categories );
 		}
-		$query_args['modal_checkout'] = 1;
+
+		if ( ! self::has_unsupported_payment_gateway() ) {
+			$query_args['modal_checkout'] = 1;
+		}
 
 		// Pass through UTM and after_success params so they can be forwarded to the WooCommerce checkout flow.
 		foreach ( $params as $param => $value ) {
 			if ( 'utm' === substr( $param, 0, 3 ) || 'after_success' === substr( $param, 0, 13 ) ) {
-				$param                = sanitize_text_field( $param );
-				$query_args[ $param ] = sanitize_text_field( $value );
+				if ( ! empty( $value ) ) {
+					$param                = sanitize_text_field( $param );
+					$query_args[ $param ] = sanitize_text_field( $value );
+				}
 			}
 		}
 
@@ -641,7 +753,7 @@ final class Modal_Checkout {
 										<div class="variation"><?php echo esc_html( $variation_name ); ?></div>
 										<form data-product="<?php echo esc_attr( wp_json_encode( $product_data ) ); ?>">
 											<input type="hidden" name="newspack_checkout" value="1" />
-											<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--primary" ); ?>"><?php echo esc_html( self::get_modal_checkout_labels( 'checkout_confirm_variation' ) ); ?></button>
+											<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--primary" ); ?> newspack-modal-checkout-variation-selection"><?php echo esc_html( self::get_modal_checkout_labels( 'checkout_confirm_variation' ) ); ?></button>
 										</form>
 									</li>
 								<?php endforeach; ?>
@@ -723,63 +835,69 @@ final class Modal_Checkout {
 			return;
 		}
 
-		$allowed_assets = [
-			'jquery',
-			'google_gtagjs',
-			// Newspack.
-			'newspack-newsletters-',
-			'newspack-blocks-modal',
-			'newspack-blocks-modal-checkout',
-			'newspack-wc',
-			'newspack-ui',
-			'newspack-style',
-			'newspack-recaptcha',
-			'newspack-woocommerce-style',
-			// Woo.
-			'woocommerce',
-			'WCPAY',
-			'Woo',
-			'wc-',
-			'wc_',
-			'wcs-',
-			'stripe',
-			'select2',
-			'selectWoo',
-			// Metorik.
-			'metorik',
-		];
-
-		/**
-		 * Filters the allowed assets to render in the modal checkout
-		 *
-		 * @param string[] $allowed_assets Array of allowed assets handles.
-		 */
-		$allowed_assets = apply_filters( 'newspack_blocks_modal_checkout_allowed_assets', $allowed_assets );
-
 		global $wp_scripts, $wp_styles;
 
-		foreach ( $wp_scripts->queue as $handle ) {
+		$payment_gateways       = \WC()->payment_gateways->get_available_payment_gateways();
+		$allowed_gateway_assets = [];
+		if ( ! empty( $payment_gateways ) ) {
+			foreach ( array_keys( $payment_gateways ) as $gateway ) {
+				$class                    = get_class( $payment_gateways[ $gateway ] );
+				$plugin_file              = ( new \ReflectionClass( $class ) )->getFileName();
+				$plugin_base              = \plugin_basename( $plugin_file );
+				$plugin_slug              = explode( '/', $plugin_base )[0];
+				$allowed_gateway_assets[] = $plugin_slug;
+			}
+		}
+
+		/**
+		 * Filters the allowed styles to render in the modal checkout
+		 *
+		 * @param string[] $allowed_styles Array of allowed assets handles.
+		 */
+		$allowed_styles = apply_filters( 'newspack_blocks_modal_checkout_allowed_styles', self::$allowed_styles );
+		foreach ( $wp_styles->registered as $handle => $wp_style ) {
 			$allowed = false;
-			foreach ( $allowed_assets as $allowed_asset ) {
-				if ( 0 === strpos( $handle, $allowed_asset ) ) {
+			foreach ( $allowed_styles as $allowed_style ) {
+				if ( 0 === strpos( $handle, $allowed_style ) ) {
+					$allowed = true;
+					break;
+				}
+			}
+			if ( ! empty( $payment_gateways ) ) {
+				foreach ( $allowed_gateway_assets as $gateway ) {
+					if ( false !== strpos( $wp_style->src, $gateway ) ) {
+						$allowed = true;
+						break;
+					}
+				}
+			}
+			if ( ! $allowed ) {
+				wp_dequeue_style( $handle );
+			}
+		}
+
+		/**
+		 * Filters the allowed scripts to render in the modal checkout
+		 *
+		 * @param string[] $allowed_scripts Array of allowed assets handles.
+		 */
+		$allowed_scripts = apply_filters( 'newspack_blocks_modal_checkout_allowed_scripts', self::$allowed_scripts );
+		foreach ( $wp_scripts->registered as $handle => $wp_script ) {
+			$allowed = false;
+			foreach ( $allowed_scripts as $allowed_script ) {
+				if ( 0 === strpos( $handle, $allowed_script ) ) {
+					$allowed = true;
+					break;
+				}
+			}
+			foreach ( $allowed_gateway_assets as $gateway ) {
+				if ( false !== strpos( $wp_script->src, $gateway ) ) {
 					$allowed = true;
 					break;
 				}
 			}
 			if ( ! $allowed ) {
 				wp_dequeue_script( $handle );
-			}
-		}
-		foreach ( $wp_styles->queue as $handle ) {
-			$allowed = false;
-			foreach ( $allowed_assets as $allowed_asset ) {
-				if ( 0 === strpos( $handle, $allowed_asset ) ) {
-					$allowed = true;
-					break;
-				}
-			}
-			if ( ! $allowed ) {
-				wp_dequeue_style( $handle );
 			}
 		}
 	}
@@ -829,6 +947,15 @@ final class Modal_Checkout {
 				]
 			);
 		}
+		// OneSignal.
+		array_push(
+			$remove_list,
+			[
+				'hook'     => 'wp_head',
+				'callback' => 'onesignal_init',
+			]
+		);
+
 		/**
 		 * Filters the hooks to remove from the modal checkout.
 		 *
@@ -866,11 +993,12 @@ final class Modal_Checkout {
 			'newspack-blocks-modal',
 			'newspackBlocksModal',
 			[
-				'ajax_url'                   => admin_url( 'admin-ajax.php' ),
-				'checkout_registration_flag' => self::CHECKOUT_REGISTRATION_FLAG,
-				'newspack_class_prefix'      => self::get_class_prefix(),
-				'is_registration_required'   => self::is_registration_required(),
-				'labels'                     => [
+				'ajax_url'                        => admin_url( 'admin-ajax.php' ),
+				'checkout_registration_flag'      => self::CHECKOUT_REGISTRATION_FLAG,
+				'newspack_class_prefix'           => self::get_class_prefix(),
+				'is_registration_required'        => self::is_registration_required(),
+				'has_unsupported_payment_gateway' => self::has_unsupported_payment_gateway(),
+				'labels'                          => [
 					'auth_modal_title'     => self::get_modal_checkout_labels( 'auth_modal_title' ),
 					'checkout_modal_title' => self::get_modal_checkout_labels( 'checkout_modal_title' ),
 					'register_modal_title' => self::get_modal_checkout_labels( 'register_modal_title' ),
@@ -985,7 +1113,7 @@ final class Modal_Checkout {
 	 * @return string
 	 */
 	public static function woocommerce_get_return_url( $url, $order ) {
-		if ( ! self::is_modal_checkout() ) {
+		if ( ! self::is_modal_checkout() || self::has_unsupported_payment_gateway() ) {
 			return $url;
 		}
 
@@ -1308,12 +1436,17 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Prevent reCaptcha from being verified for AJAX checkout (e.g. Apple Pay).
+	 * Prevent reCAPTCHA from being verified for AJAX checkout (e.g. Apple Pay).
 	 *
 	 * @param bool   $should_verify Whether to verify the captcha.
-	 * @param string $url The URL from which the checkout originated.
+	 * @param string $url The URL from which the verification request originated.
+	 * @param string $context The context that triggered the verification request.
 	 */
-	public static function recaptcha_verify_captcha( $should_verify, $url ) {
+	public static function recaptcha_verify_captcha( $should_verify, $url, $context = 'unknown' ) {
+		if ( 'checkout' !== $context ) {
+			return $should_verify;
+		}
+
 		$is_validation_only = boolval( filter_input( INPUT_POST, 'is_validation_only', FILTER_SANITIZE_NUMBER_INT ) );
 		parse_str( \wp_parse_url( $url, PHP_URL_QUERY ), $query );
 		if (
@@ -1458,7 +1591,7 @@ final class Modal_Checkout {
 			/* translators: 1: Checkout button confirmation text. 2: Order total. */
 			__( '%1$s: %2$s', 'newspack-blocks' ),
 			self::get_modal_checkout_labels( 'checkout_confirm' ),
-			'<span class="cart-price">' . html_entity_decode( $total ) . '</span>'
+			'<span class="cart-price">' . html_entity_decode( $total, ENT_COMPAT ) . '</span>'
 		);
 	}
 
@@ -1471,7 +1604,7 @@ final class Modal_Checkout {
 			return;
 		}
 		$total = \wp_strip_all_tags( \wc_price( $cart->total ) );
-		echo esc_html( html_entity_decode( $total ) );
+		echo esc_html( html_entity_decode( $total, ENT_COMPAT ) );
 		wp_die();
 	}
 
@@ -1716,7 +1849,19 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Filter the a value dependent on the page not being modal checkout.
+	 * Filter a value to true dependent on the page not being modal checkout.
+	 *
+	 * @param bool $value The value.
+	 */
+	public static function is_modal_checkout_filter( $value ) {
+		if ( self::is_modal_checkout() ) {
+			return true;
+		}
+		return $value;
+	}
+
+	/**
+	 * Filter a value to false dependent on the page not being modal checkout.
 	 *
 	 * @param bool $value The value.
 	 */

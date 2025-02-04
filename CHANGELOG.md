@@ -1,3 +1,91 @@
+## [4.5.9](https://github.com/Automattic/newspack-blocks/compare/v4.5.8...v4.5.9) (2025-02-03)
+
+
+### Bug Fixes
+
+* add supported gateways check ([#2009](https://github.com/Automattic/newspack-blocks/issues/2009)) ([1462233](https://github.com/Automattic/newspack-blocks/commit/1462233821b4f41ef6b80f6929243dc1b805cdb1))
+* return no posts for authors without term ([#2033](https://github.com/Automattic/newspack-blocks/issues/2033)) ([3b72633](https://github.com/Automattic/newspack-blocks/commit/3b7263349707326bf988ff6a815cf92ffb061972))
+
+## [4.5.8](https://github.com/Automattic/newspack-blocks/compare/v4.5.7...v4.5.8) (2025-02-03)
+
+
+### Bug Fixes
+
+* **checkout-button:** handle missing saved product ([#2038](https://github.com/Automattic/newspack-blocks/issues/2038)) ([b251f99](https://github.com/Automattic/newspack-blocks/commit/b251f999a2dd71a5c6aedfeb3bf9d03bef24e3f4))
+
+## [4.5.7](https://github.com/Automattic/newspack-blocks/compare/v4.5.6...v4.5.7) (2025-01-31)
+
+
+### Bug Fixes
+
+* improve formatting of donation amount options ([#2032](https://github.com/Automattic/newspack-blocks/issues/2032)) ([a86472c](https://github.com/Automattic/newspack-blocks/commit/a86472c8068d873c31cb6bb37e08bcfd9d487be3))
+
+## [4.5.6](https://github.com/Automattic/newspack-blocks/compare/v4.5.5...v4.5.6) (2025-01-23)
+
+
+### Bug Fixes
+
+* make sure fields after floated inputs clear floats in the modal checkout ([#2030](https://github.com/Automattic/newspack-blocks/issues/2030)) ([274b4d4](https://github.com/Automattic/newspack-blocks/commit/274b4d41aa63dc818a3da49a7fc8315dbdf08757))
+
+## [4.5.5](https://github.com/Automattic/newspack-blocks/compare/v4.5.4...v4.5.5) (2025-01-20)
+
+
+### Bug Fixes
+
+* **modal-checkout:** force checkout registration option ([#2007](https://github.com/Automattic/newspack-blocks/issues/2007)) ([acad91c](https://github.com/Automattic/newspack-blocks/commit/acad91c18a3bef5be22387a09af0207f87df3023))
+* tweak modal iframe size ([#2006](https://github.com/Automattic/newspack-blocks/issues/2006)) ([fef66e1](https://github.com/Automattic/newspack-blocks/commit/fef66e1b34345cc0634741367bb2ae0879d8099c))
+
+## [4.5.4](https://github.com/Automattic/newspack-blocks/compare/v4.5.3...v4.5.4) (2025-01-15)
+
+
+### Bug Fixes
+
+* make new debugging arg optional to avoid potential fatals ([#2022](https://github.com/Automattic/newspack-blocks/issues/2022)) ([54df06a](https://github.com/Automattic/newspack-blocks/commit/54df06a30d2221aa39a8eb2c8ca2705dd7b79b43))
+
+## [4.5.3](https://github.com/Automattic/newspack-blocks/compare/v4.5.2...v4.5.3) (2025-01-14)
+
+
+### Bug Fixes
+
+* **recaptcha:** support reCAPTCHA v2 on form submit, not button click ([#2021](https://github.com/Automattic/newspack-blocks/issues/2021)) ([1e483a5](https://github.com/Automattic/newspack-blocks/commit/1e483a5412bbf38962700c09e4fa59fabc29f170))
+
+## [4.5.2](https://github.com/Automattic/newspack-blocks/compare/v4.5.1...v4.5.2) (2024-12-16)
+
+
+### Bug Fixes
+
+* remove CAP compatibility mode ([414691d](https://github.com/Automattic/newspack-blocks/commit/414691d048a59a2c72ddcb1689289f07ab2102d8))
+* removed another unused constant ([298cf88](https://github.com/Automattic/newspack-blocks/commit/298cf884228522a6d93e328d10391f5d7cfbac88))
+* show x.com URLs and icons instead of Twitter in Author blocks ([036517b](https://github.com/Automattic/newspack-blocks/commit/036517b5a80342711f4dd571ae5de02c2d588c69))
+
+## [4.5.1](https://github.com/Automattic/newspack-blocks/compare/v4.5.0...v4.5.1) (2024-12-09)
+
+
+### Bug Fixes
+
+* **modal-checkout:** remove any body outline ([#1994](https://github.com/Automattic/newspack-blocks/issues/1994)) ([75d5ad1](https://github.com/Automattic/newspack-blocks/commit/75d5ad1c651ab1218863b9443f02130d07ca3dae))
+
+# [4.5.0](https://github.com/Automattic/newspack-blocks/compare/v4.4.0...v4.5.0) (2024-12-09)
+
+
+### Bug Fixes
+
+* also search for coauthor posts by term slug ([#1954](https://github.com/Automattic/newspack-blocks/issues/1954)) ([49357ff](https://github.com/Automattic/newspack-blocks/commit/49357ffa12bd2197d08379db0cd084f1cc5deb2a))
+* **modal-checkout:** allow all gateway assets ([#1988](https://github.com/Automattic/newspack-blocks/issues/1988)) ([e371e30](https://github.com/Automattic/newspack-blocks/commit/e371e309a41dd0239088e5fc8914093073f0e23a))
+* **modal-checkout:** handle paypal ([#1985](https://github.com/Automattic/newspack-blocks/issues/1985)) ([9bb2b8c](https://github.com/Automattic/newspack-blocks/commit/9bb2b8c9d82dbb9e5e110845c2a2f2d077aa7ee7))
+* **ras-acc:** correct spacing issue around saved credit cards ([#1980](https://github.com/Automattic/newspack-blocks/issues/1980)) ([52a5c57](https://github.com/Automattic/newspack-blocks/commit/52a5c57ffe037b3de9471c9a4587a2c62c917712))
+* **ras-acc:** fix display issues with Additional Fields ([#1979](https://github.com/Automattic/newspack-blocks/issues/1979)) ([b9390ef](https://github.com/Automattic/newspack-blocks/commit/b9390effc8096fc9faea48b49e90efdeabbe1513))
+* **ras-acc:** remove space caused by empty divs ([#1978](https://github.com/Automattic/newspack-blocks/issues/1978)) ([8cb6ead](https://github.com/Automattic/newspack-blocks/commit/8cb6ead13aaa86743bb83ba9afb859277394d1df))
+* remove reCaptcha for WooCommere code from modal checkout ([#1984](https://github.com/Automattic/newspack-blocks/issues/1984)) ([8e250eb](https://github.com/Automattic/newspack-blocks/commit/8e250eb8ef95ca960509beba9dcd6e7526aa9dc6))
+
+
+### Features
+
+* add Bluesky support to the Author Profile, List blocks ([#1969](https://github.com/Automattic/newspack-blocks/issues/1969)) ([d26a7e4](https://github.com/Automattic/newspack-blocks/commit/d26a7e4001e0645cba031143e2fbb18d4749def6))
+* add CSS class to variation buttons for tracking ([#1989](https://github.com/Automattic/newspack-blocks/issues/1989)) ([910e6b1](https://github.com/Automattic/newspack-blocks/commit/910e6b157fd6412b37c7b0ffb56589412a0058a2))
+* add support for Newspack Guest Contributor in HPP blocks ([#1934](https://github.com/Automattic/newspack-blocks/issues/1934)) ([c16849e](https://github.com/Automattic/newspack-blocks/commit/c16849e2cf62236b55a99fe63c72f68d727b3437))
+* merge RAS-ACC work into trunk ([#1977](https://github.com/Automattic/newspack-blocks/issues/1977)) ([2eeaa89](https://github.com/Automattic/newspack-blocks/commit/2eeaa8933cd4ac877389362aa0815e36d50bc729))
+
 # [4.4.0](https://github.com/Automattic/newspack-blocks/compare/v4.3.7...v4.4.0) (2024-11-25)
 
 

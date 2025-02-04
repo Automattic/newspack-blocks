@@ -22,6 +22,7 @@ class HomepagePostsBlockTest extends WP_UnitTestCase_Blocks { // phpcs:ignore
 					'posts_per_page' => 5,
 					'post_status'    => [ 'publish' ],
 					'post_type'      => [ 'post' ],
+					'tax_query'      => [],
 				],
 				'description'             => 'Default attributes',
 			],
@@ -32,9 +33,9 @@ class HomepagePostsBlockTest extends WP_UnitTestCase_Blocks { // phpcs:ignore
 					'authors'     => [ 1 ],
 				],
 				'resulting_query_partial' => [
-					'posts_per_page'       => 1,
-					'post_type'            => 'some-type',
-					'newspack_no_es_query' => true,
+					'posts_per_page' => 1,
+					'post_type'      => 'some-type',
+					'author__in'     => [ 1 ],
 				],
 				'description'             => 'With custom post type and author',
 				'ignore_tax_query'        => true,
@@ -61,6 +62,9 @@ class HomepagePostsBlockTest extends WP_UnitTestCase_Blocks { // phpcs:ignore
 	public function test_hpb_wp_query() {
 		$cap_author = self::create_guest_author();
 		$post_id    = self::create_post( $cap_author['term_id'] );
+
+		global $coauthors_plus;
+		$coauthors_plus = new CoAuthors_Plus_Mock(); // phpcs:ignore
 
 		// Create another post.
 		self::create_post();
