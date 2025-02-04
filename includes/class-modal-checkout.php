@@ -259,7 +259,7 @@ final class Modal_Checkout {
 	 */
 	public static function has_unsupported_payment_gateway() {
 		$supported_gateways          = self::get_supported_payment_gateways();
-		$available_gateways          = \WC()->payment_gateways->get_available_payment_gateways();
+		$available_gateways          = function_exists( 'WC' ) ? \WC()->payment_gateways->get_available_payment_gateways() : [];
 		$unsupported_payment_gateway = false;
 		foreach ( $available_gateways as $id => $gateway ) {
 			if ( ! in_array( $id, $supported_gateways, true ) ) {
@@ -966,6 +966,11 @@ final class Modal_Checkout {
 	 * @param int $product_id Product ID (optional).
 	 */
 	public static function enqueue_modal( $product_id = null ) {
+		// Don't enqueue the modal if WooCommerce is not available.
+		if ( ! function_exists( 'WC' ) ) {
+			return;
+		}
+
 		self::$has_modal = true;
 		if ( ! empty( $product_id ) ) {
 			self::$products[ $product_id ] = true;
