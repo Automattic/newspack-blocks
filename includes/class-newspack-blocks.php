@@ -209,7 +209,7 @@ class Newspack_Blocks {
 				'iframe_can_upload_archives' => WP_REST_Newspack_Iframe_Controller::can_upload_archives(),
 				'supports_recaptcha'         => class_exists( 'Newspack\Recaptcha' ),
 				'has_recaptcha'              => class_exists( 'Newspack\Recaptcha' ) && \Newspack\Recaptcha::can_use_captcha(),
-				'recaptcha_url'              => admin_url( 'admin.php?page=newspack-connections-wizard' ),
+				'recaptcha_url'              => admin_url( 'admin.php?page=newspack-settings' ),
 				'custom_taxonomies'          => self::get_custom_taxonomies(),
 				'can_use_name_your_price'    => self::can_use_name_your_price(),
 				'tier_amounts_template'      => self::get_formatted_amount(),
