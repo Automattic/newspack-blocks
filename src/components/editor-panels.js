@@ -10,9 +10,9 @@ const CheckboxesGroup = ( { options, values, onChange, defaultRequiredSlug = nul
 		return <Spinner />;
 	}
 	return options.map( ( { name, slug } ) => {
-		const isDefaultType = slug === defaultRequiredSlug;
-		const otherTypesSelected = values.length > 1 || ( values.length === 1 && values[0] !== defaultRequiredSlug );
-		const isDisabled = isDefaultType && !otherTypesSelected;
+		const isDefault = defaultRequiredSlug && slug === defaultRequiredSlug;
+		const otherOptionsSelected = defaultRequiredSlug && values.some( value => value !== defaultRequiredSlug );
+		const isDisabled = isDefault && ! otherOptionsSelected;
 
 		return (
 			<CheckboxControl
