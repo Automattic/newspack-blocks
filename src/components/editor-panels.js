@@ -5,26 +5,37 @@ import { __ } from '@wordpress/i18n';
 import { BaseControl, CheckboxControl, PanelBody, Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 
-const CheckboxesGroup = ( { options, values, onChange } ) => {
+const CheckboxesGroup = ( { options, values, onChange, defaultRequiredSlug } ) => {
 	if ( ! Array.isArray( options ) ) {
 		return <Spinner />;
 	}
-	return options.map( ( { name, slug } ) => (
-		<CheckboxControl
-			label={ name }
-			checked={ values.indexOf( slug ) > -1 }
-			onChange={ value => {
-				const cleanPostType = [ ...new Set( values ) ];
-				if ( value && cleanPostType.indexOf( slug ) === -1 ) {
-					cleanPostType.push( slug );
-				} else if ( ! value && cleanPostType.indexOf( slug ) > -1 ) {
-					cleanPostType.splice( cleanPostType.indexOf( slug ), 1 );
-				}
-				onChange( cleanPostType );
-			} }
-			key={ slug }
-		/>
-	) );
+	return options.map( ( { name, slug } ) => {
+		const isDefaultType = slug === defaultRequiredSlug;
+		const otherTypesSelected = values.length > 1 || ( values.length === 1 && values[0] !== defaultRequiredSlug );
+		const isDisabled = isDefaultType && !otherTypesSelected;
+
+		return (
+			<CheckboxControl
+				label={ name }
+				checked={ values.indexOf( slug ) > -1 }
+				disabled={ isDisabled }
+				onChange={ value => {
+					const cleanPostType = [ ...new Set( values ) ];
+					if ( value && cleanPostType.indexOf( slug ) === -1 ) {
+						cleanPostType.push( slug );
+					} else if ( ! value && cleanPostType.indexOf( slug ) > -1 ) {
+						cleanPostType.splice( cleanPostType.indexOf( slug ), 1 );
+					}
+					// If no post types would be selected, force the default required one
+					if ( cleanPostType.length === 0 ) {
+						cleanPostType.push( defaultRequiredSlug );
+					}
+					onChange( cleanPostType );
+				} }
+				key={ slug }
+			/>
+		);
+	} );
 };
 
 export const PostTypesPanel = ( { attributes, setAttributes } ) => {
@@ -54,6 +65,7 @@ export const PostTypesPanel = ( { attributes, setAttributes } ) => {
 				options={ availablePostTypes }
 				values={ attributes.postType }
 				onChange={ postType => setAttributes( { postType } ) }
+				defaultRequiredSlug="post"
 			/>
 		</PanelBody>
 	);
