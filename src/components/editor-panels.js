@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { BaseControl, CheckboxControl, PanelBody, Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 
-const CheckboxesGroup = ( { options, values, onChange, defaultRequiredSlug } ) => {
+const CheckboxesGroup = ( { options, values, onChange, defaultRequiredSlug = null } ) => {
 	if ( ! Array.isArray( options ) ) {
 		return <Spinner />;
 	}
