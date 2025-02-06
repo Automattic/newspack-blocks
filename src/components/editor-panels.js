@@ -20,17 +20,17 @@ const CheckboxesGroup = ( { options, values, onChange, defaultRequiredSlug = nul
 				checked={ values.indexOf( slug ) > -1 }
 				disabled={ isDisabled }
 				onChange={ value => {
-					const cleanPostType = [ ...new Set( values ) ];
-					if ( value && cleanPostType.indexOf( slug ) === -1 ) {
-						cleanPostType.push( slug );
-					} else if ( ! value && cleanPostType.indexOf( slug ) > -1 ) {
-						cleanPostType.splice( cleanPostType.indexOf( slug ), 1 );
+					const cleanOptions = [ ...new Set( values ) ];
+					if ( value && cleanOptions.indexOf( slug ) === -1 ) {
+						cleanOptions.push( slug );
+					} else if ( ! value && cleanOptions.indexOf( slug ) > -1 ) {
+						cleanOptions.splice( cleanOptions.indexOf( slug ), 1 );
 					}
-					// If no post types would be selected, force the default required one
-					if ( cleanPostType.length === 0 ) {
-						cleanPostType.push( defaultRequiredSlug );
+					// If no options would be selected, force the default required one
+					if ( defaultRequiredSlug && cleanOptions.length === 0 ) {
+						cleanOptions.push( defaultRequiredSlug );
 					}
-					onChange( cleanPostType );
+					onChange( cleanOptions );
 				} }
 				key={ slug }
 			/>
