@@ -258,7 +258,7 @@ class QueryControls extends Component {
 			<>
 				{ enableSpecific && (
 					<BaseControl
-						label={ __( 'Type', 'newspack-blocks' ) }
+						label={ __( 'Mode', 'newspack-blocks' ) }
 						id="newspack-block__loop-type"
 						className="newspack-block__button-group"
 						help={ specificMode ? (
