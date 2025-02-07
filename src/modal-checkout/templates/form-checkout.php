@@ -36,12 +36,21 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 		<div id="after_customer_details">
 			<div class="order-review-wrapper hidden">
 				<?php do_action( 'woocommerce_checkout_before_order_review_heading' ); ?>
-				<h3 id="order_review_heading"><?php esc_html_e( 'Transaction details', 'newspack-blocks' ); ?></h3>
-				<?php do_action( 'woocommerce_checkout_before_order_review' ); ?>
-				<div id="order_review" class="woocommerce-checkout-review-order newspack-ui__box">
-					<?php do_action( 'woocommerce_checkout_order_review' ); ?>
+				<div class="newspack-ui__toggle-section">
+					<h3 id="order_review_heading" class="newspack-ui__toggle-section__header">
+						<?php esc_html_e( 'Transaction details', 'newspack-blocks' ); ?>
+						<?php \Newspack\Newspack_UI_Icons::print_svg( 'chevron' ); ?>
+					</h3>
+					<div class="newspack-ui__toggle-section__content">
+						<div class="newspack-ui__toggle-section__content__inner">
+							<?php do_action( 'woocommerce_checkout_before_order_review' ); ?>
+							<div id="order_review" class="woocommerce-checkout-review-order newspack-ui__box">
+								<?php do_action( 'woocommerce_checkout_order_review' ); ?>
+							</div>
+							<?php do_action( 'woocommerce_checkout_after_order_review' ); ?>
+						</div>
+					</div>
 				</div>
-				<?php do_action( 'woocommerce_checkout_after_order_review' ); ?>
 			</div>
 			<?php do_action( 'woocommerce_checkout_after_customer_details' ); ?>
 			<button class="newspack-ui__button newspack-ui__button--ghost newspack-ui__button--wide" id="checkout_back" type="button"><?php echo esc_html( Modal_Checkout::get_modal_checkout_labels( 'checkout_back' ) ); ?></button>
