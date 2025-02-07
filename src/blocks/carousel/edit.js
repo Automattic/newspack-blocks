@@ -361,7 +361,37 @@ class Edit extends Component {
 				</div>
 
 				<InspectorControls>
-					<PanelBody title={ __( 'Settings', 'newspack-blocks' ) }>
+					<PanelBody title={ __( 'Content', 'newspack-blocks' ) }>
+						{ postsToShow && (
+							<QueryControls
+								numberOfItems={ postsToShow }
+								onNumberOfItemsChange={ value =>
+									setAttributes( { postsToShow: value ? value : 1 } )
+								}
+								authors={ authors }
+								onAuthorsChange={ value => setAttributes( { authors: value } ) }
+								categories={ categories }
+								onCategoriesChange={ value => setAttributes( { categories: value } ) }
+								includeSubcategories={ includeSubcategories }
+								onIncludeSubcategoriesChange={ value =>
+									setAttributes( { includeSubcategories: value } )
+								}
+								tags={ tags }
+								onTagsChange={ value => setAttributes( { tags: value } ) }
+								onCustomTaxonomiesChange={ value => setAttributes( { customTaxonomies: value } ) }
+								customTaxonomies={ customTaxonomies }
+								specificMode={ specificMode }
+								onSpecificModeChange={ () => setAttributes( { specificMode: true } ) }
+								onLoopModeChange={ () => setAttributes( { specificMode: false } ) }
+								specificPosts={ specificPosts }
+								onSpecificPostsChange={ _specificPosts =>
+									setAttributes( { specificPosts: _specificPosts } )
+								}
+								postType={ postType }
+							/>
+						) }
+					</PanelBody>
+					<PanelBody title={ __( 'Display', 'newspack-blocks' ) }>
 						<ToggleControl
 							label={ __( 'Hide Controls', 'newspack-blocks' ) }
 							help={ __( 'Remove navigation indicators from view.', 'newspack-blocks' ) }
@@ -409,37 +439,7 @@ class Edit extends Component {
 							/>
 						) }
 					</PanelBody>
-					<PanelBody title={ __( 'Loop', 'newspack-blocks' ) } initialOpen={ false }>
-						{ postsToShow && (
-							<QueryControls
-								numberOfItems={ postsToShow }
-								onNumberOfItemsChange={ value =>
-									setAttributes( { postsToShow: value ? value : 1 } )
-								}
-								authors={ authors }
-								onAuthorsChange={ value => setAttributes( { authors: value } ) }
-								categories={ categories }
-								onCategoriesChange={ value => setAttributes( { categories: value } ) }
-								includeSubcategories={ includeSubcategories }
-								onIncludeSubcategoriesChange={ value =>
-									setAttributes( { includeSubcategories: value } )
-								}
-								tags={ tags }
-								onTagsChange={ value => setAttributes( { tags: value } ) }
-								onCustomTaxonomiesChange={ value => setAttributes( { customTaxonomies: value } ) }
-								customTaxonomies={ customTaxonomies }
-								specificMode={ specificMode }
-								onSpecificModeChange={ () => setAttributes( { specificMode: true } ) }
-								onLoopModeChange={ () => setAttributes( { specificMode: false } ) }
-								specificPosts={ specificPosts }
-								onSpecificPostsChange={ _specificPosts =>
-									setAttributes( { specificPosts: _specificPosts } )
-								}
-								postType={ postType }
-							/>
-						) }
-					</PanelBody>
-					<PanelBody title={ __( 'Featured Image', 'newspack-blocks' ) } initialOpen={ false } className="newspack-block__panel">
+					<PanelBody title={ __( 'Featured Image', 'newspack-blocks' ) } className="newspack-block__panel">
 					<BaseControl
 							label={ __( 'Aspect ratio', 'newspack-blocks' ) }
 							help={ __(
@@ -511,7 +511,7 @@ class Edit extends Component {
 							onChange={ () => setAttributes( { showCredit: ! showCredit } ) }
 						/>
 					</PanelBody>
-					<PanelBody title={ __( 'Post Meta', 'newspack-blocks' ) } initialOpen={ false }>
+					<PanelBody title={ __( 'Post Meta', 'newspack-blocks' ) }>
 						<ToggleControl
 							label={ __( 'Show title', 'newspack-blocks' ) }
 							checked={ showTitle }
