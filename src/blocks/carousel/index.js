@@ -14,8 +14,12 @@ import edit from './edit';
  */
 import './view.scss';
 import './editor.scss';
+import metadata from './block.json';
+const { name, attributes, category } = metadata;
 
-export const name = 'carousel';
+// Name must be exported separately.
+export { name };
+
 export const title = __( 'Content Carousel', 'newspack-blocks' );
 
 export const icon = (
@@ -35,7 +39,8 @@ export const settings = {
 		src: icon,
 		foreground: '#36f',
 	},
-	category: 'newspack',
+	attributes,
+	category,
 	keywords: [
 		__( 'posts', 'newspack-blocks' ),
 		__( 'articles', 'newspack-blocks' ),
@@ -46,104 +51,6 @@ export const settings = {
 		'An advanced block that displays content in a carousel format with customizable parameters and visual configurations.',
 		'newspack-blocks'
 	),
-	attributes: {
-		className: {
-			type: 'string',
-		},
-		imageFit: {
-			type: 'string',
-			default: 'cover',
-		},
-		autoplay: {
-			type: 'boolean',
-			default: false,
-		},
-		delay: {
-			type: 'number',
-			default: 5,
-		},
-		postsToShow: {
-			type: 'integer',
-			default: 3,
-		},
-		authors: {
-			type: 'array',
-		},
-		categories: {
-			type: 'array',
-		},
-		includeSubcategories: {
-			type: 'boolean',
-			default: true,
-		},
-		tags: {
-			type: 'array',
-		},
-		customTaxonomies: {
-			type: 'array',
-		},
-		showDate: {
-			type: 'boolean',
-			default: true,
-		},
-		showAuthor: {
-			type: 'boolean',
-			default: true,
-		},
-		showAvatar: {
-			type: 'boolean',
-			default: true,
-		},
-		showCaption: {
-			type: 'boolean',
-			default: false,
-		},
-		showCredit: {
-			type: 'boolean',
-			default: false,
-		},
-		showCategory: {
-			type: 'boolean',
-			default: false,
-		},
-		showTitle: {
-			type: 'boolean',
-			default: true,
-		},
-		postType: {
-			type: 'array',
-			default: [ 'post' ],
-			items: {
-				type: 'string',
-			},
-		},
-		specificMode: {
-			type: 'boolean',
-			default: false,
-		},
-		specificPosts: {
-			type: 'array',
-			default: [],
-			items: { type: 'integer' },
-		},
-		slidesPerView: {
-			type: 'number',
-			default: 1,
-		},
-		hideControls: {
-			type: 'boolean',
-			default: false,
-		},
-		aspectRatio: {
-			type: 'number',
-			default: 0.75,
-		},
-		includedPostStatuses: {
-			type: 'array',
-			default: [ 'publish' ],
-			items: { type: 'string' },
-		},
-	},
 	supports: {
 		html: false,
 		align: [ 'center', 'wide', 'full' ],
