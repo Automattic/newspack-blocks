@@ -165,6 +165,7 @@ final class Modal_Checkout {
 		add_filter( 'option_woocommerce_woocommerce_payments_settings', [ __CLASS__, 'filter_woocommerce_payments_settings' ] );
 		add_action( 'init', [ __CLASS__, 'unhook_woocommerce_payments_update_billing_fields' ] );
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'update_password_strength_message' ], 9999 );
+		add_filter( 'woocommerce_enforce_password_strength_meter_on_checkout', '__return_true' );
 
 		/** Custom handling for registered users. */
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
@@ -259,7 +260,7 @@ final class Modal_Checkout {
 	 */
 	public static function has_unsupported_payment_gateway() {
 		$supported_gateways          = self::get_supported_payment_gateways();
-		$available_gateways          = \WC()->payment_gateways->get_available_payment_gateways();
+		$available_gateways          = function_exists( 'WC' ) ? \WC()->payment_gateways->get_available_payment_gateways() : [];
 		$unsupported_payment_gateway = false;
 		foreach ( $available_gateways as $id => $gateway ) {
 			if ( ! in_array( $id, $supported_gateways, true ) ) {
@@ -975,6 +976,11 @@ final class Modal_Checkout {
 	 * @param int $product_id Product ID (optional).
 	 */
 	public static function enqueue_modal( $product_id = null ) {
+		// Don't enqueue the modal if WooCommerce is not available.
+		if ( ! function_exists( 'WC' ) ) {
+			return;
+		}
+
 		self::$has_modal = true;
 		if ( ! empty( $product_id ) ) {
 			self::$products[ $product_id ] = true;
