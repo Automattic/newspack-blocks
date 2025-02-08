@@ -35,11 +35,15 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 		</div>
 		<div id="after_customer_details">
 			<div class="order-review-wrapper hidden">
-				<?php do_action( 'woocommerce_checkout_before_order_review_heading' ); ?>
 				<div class="newspack-ui__toggle-section">
+					<?php do_action( 'woocommerce_checkout_before_order_review_heading' ); ?>
 					<h3 id="order_review_heading" class="newspack-ui__toggle-section__header">
-						<?php esc_html_e( 'Transaction details', 'newspack-blocks' ); ?>
-						<?php \Newspack\Newspack_UI_Icons::print_svg( 'chevron' ); ?>
+						<?php
+						esc_html_e( 'Transaction details', 'newspack-blocks' );
+						if ( class_exists( '\Newspack\Newspack_UI_Icons' ) ) {
+							\Newspack\Newspack_UI_Icons::print_svg( 'chevron' );
+						}
+						?>
 					</h3>
 					<div class="newspack-ui__toggle-section__content">
 						<div class="newspack-ui__toggle-section__content__inner">
