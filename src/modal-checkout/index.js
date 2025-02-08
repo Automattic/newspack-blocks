@@ -113,6 +113,7 @@ import { domReady } from './utils';
 					if ( ! $wrapper.length ) {
 						return;
 					}
+
 					const $el = $wrapper.clone();
 					// Remove existing table from inside the payment methods.
 					$( '#payment .order-review-wrapper' ).remove();
@@ -126,8 +127,16 @@ import { domReady } from './utils';
 						$table.unblock();
 						$el.removeClass( 'hidden' );
 					}
+
 					// Move new order review table to the payment methods.
 					$( '.payment_methods' ).after( $el );
+				} );
+
+				/**
+				 * Toggle Transaction Details
+				 */
+				$( document ).on( 'click', '#order_review_heading', function(){
+					$( '#after_customer_details').toggleClass( 'transaction-details-expanded' );
 				} );
 
 				/**
