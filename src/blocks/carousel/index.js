@@ -37,7 +37,7 @@ export const settings = {
 	title,
 	icon: {
 		src: icon,
-		foreground: '#36f',
+		foreground: '#406ebc',
 	},
 	attributes,
 	category,

@@ -28,7 +28,7 @@ export const settings = {
 	title,
 	icon: {
 		src: payment,
-		foreground: '#36f',
+		foreground: '#406ebc',
 	},
 	category,
 	keywords: [
