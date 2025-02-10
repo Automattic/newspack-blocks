@@ -122,8 +122,8 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 	if ( error.length ) {
 		return (
 			<Placeholder icon="warning" label={ __( 'Error', 'newspack-blocks' ) } instructions={ error }>
-				<ExternalLink href="/wp-admin/admin.php?page=newspack-audience-donations">
-					{ __( 'Go to donation settings to troubleshoot.', 'newspack-blocks' ) }
+				<ExternalLink href="/wp-admin/admin.php?page=newspack-audience#/payment">
+					{ __( 'Go to checkout & payment settings to troubleshoot.', 'newspack-blocks' ) }
 				</ExternalLink>
 			</Placeholder>
 		);
