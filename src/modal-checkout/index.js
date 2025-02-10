@@ -115,9 +115,10 @@ import { domReady } from './utils';
 					}
 
 					const $el = $wrapper.clone();
-					// Make sure Transaction Details aria-expanded value is correct in cloned version.
+
+					// Make sure Transaction Details toggle's aria-expanded value is correct in cloned version.
 					if ( $( '#after_customer_details').hasClass( 'transaction-details-expanded' ) ) {
-						$el.querySelectorAll('[id="order_review_heading"]')[0].attr( 'aria-expanded', 'true' );
+						$('[id="order_review_heading"]', $el).attr( 'aria-expanded', 'true' );
 					}
 
 					// Remove existing table from inside the payment methods.
