@@ -115,6 +115,11 @@ import { domReady } from './utils';
 					}
 
 					const $el = $wrapper.clone();
+					// Make sure Transaction Details aria-expanded value is correct in cloned version.
+					if ( $( '#after_customer_details').hasClass( 'transaction-details-expanded' ) ) {
+						$el.querySelectorAll('[id="order_review_heading"]')[0].attr( 'aria-expanded', 'true' );
+					}
+
 					// Remove existing table from inside the payment methods.
 					$( '#payment .order-review-wrapper' ).remove();
 					const $table = $el.find( 'table' );
@@ -127,7 +132,6 @@ import { domReady } from './utils';
 						$table.unblock();
 						$el.removeClass( 'hidden' );
 					}
-
 					// Move new order review table to the payment methods.
 					$( '.payment_methods' ).after( $el );
 				} );
