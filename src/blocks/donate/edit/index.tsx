@@ -136,8 +136,8 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 				label={ __( 'The Donate block will not be rendered.', 'newspack-blocks' ) }
 				instructions={ __( 'The Reader Revenue platform is set to "other".', 'newspack-blocks' ) }
 			>
-				<ExternalLink href="/wp-admin/admin.php?page=newspack-audience-donations">
-					{ __( 'Go to donation settings to update the platform.', 'newspack-blocks' ) }
+				<ExternalLink href="/wp-admin/admin.php?page=newspack-audience#/payment">
+					{ __( 'Go to checkout & payment settings to update the platform.', 'newspack-blocks' ) }
 				</ExternalLink>
 			</Placeholder>
 		);
