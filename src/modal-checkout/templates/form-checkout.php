@@ -36,12 +36,12 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 		<div id="after_customer_details">
 			<div class="order-review-wrapper hidden">
 				<?php do_action( 'woocommerce_checkout_before_order_review_heading' ); ?>
-				<h3 id="order_review_heading">
+				<button id="order_review_heading" aria-expanded="false" aria-controls="order_review" class="newspack-ui__button newspack-ui__button--ghost" type="button">
 					<?php esc_html_e( 'Transaction details', 'newspack-blocks' ); ?>
 					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path d="M15.9899 10.8888L12.0018 14.3071L8.01368 10.8888L8.98986 9.74988L12.0018 12.3315L15.0137 9.74988L15.9899 10.8888Z"/>
 					</svg>
-				</h3>
+				</button>
 				<div class="transaction-details-content">
 					<div class="transaction-details-content-inner">
 						<?php do_action( 'woocommerce_checkout_before_order_review' ); ?>

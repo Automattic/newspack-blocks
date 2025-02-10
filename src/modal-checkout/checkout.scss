@@ -88,12 +88,18 @@
 				// Collapse and expand Transaction Details.
 				// stylelint-disable-next-line selector-id-pattern
 				#order_review_heading {
-					align-items: center;
-					cursor: pointer;
-					display: flex;
+					border-radius: 0;
+					min-height: 0;
+					padding: 0;
 
 					&:hover {
+						background: transparent;
 						color: var(--newspack-ui-color-neutral-60);
+					}
+
+					&:focus-visible {
+						outline: 0;
+						text-decoration: underline;
 					}
 
 					svg {

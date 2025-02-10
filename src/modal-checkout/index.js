@@ -135,7 +135,12 @@ import { domReady } from './utils';
 				/**
 				 * Toggle Transaction Details
 				 */
-				$( document ).on( 'click', '#order_review_heading', function(){
+				$( document ).on( 'click', '#order_review_heading', function() {
+					// Toggle the aria-expanded attribute.
+					$( this ).attr( 'aria-expanded', function( index, attr ) {
+						return attr === 'false' ? 'true' : 'false';
+					} );
+					// Toggle the CSS class to show/hide the Transaction Details.
 					$( '#after_customer_details').toggleClass( 'transaction-details-expanded' );
 				} );
 
