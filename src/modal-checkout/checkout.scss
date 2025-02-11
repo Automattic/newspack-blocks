@@ -103,7 +103,7 @@
 					}
 
 					svg {
-						transition: rotate 150ms ease-in-out;
+						transition: rotate 125ms ease-in-out;
 					}
 				}
 
@@ -116,7 +116,7 @@
 					display: grid;
 					grid-template-rows: 0fr;
 					margin-bottom: var(--newspack-ui-spacer-2, 12px);
-					transition: grid-template-rows 150ms ease-in-out;
+					transition: grid-template-rows 250ms ease-in-out;
 				}
 
 				.transaction-details-content-inner {
