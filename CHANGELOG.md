@@ -1,3 +1,10 @@
+## [4.5.10](https://github.com/Automattic/newspack-blocks/compare/v4.5.9...v4.5.10) (2025-02-04)
+
+
+### Bug Fixes
+
+* **modal-checkout:** check WC before enqueue the modal ([#2043](https://github.com/Automattic/newspack-blocks/issues/2043)) ([7a13d37](https://github.com/Automattic/newspack-blocks/commit/7a13d3799c70a926a30518e0a943170b0100394d))
+
 ## [4.5.9](https://github.com/Automattic/newspack-blocks/compare/v4.5.8...v4.5.9) (2025-02-03)
 
 

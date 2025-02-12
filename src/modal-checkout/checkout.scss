@@ -776,4 +776,10 @@
 	.modal-processing {
 		opacity: 0.5;
 	}
+
+	// Hide address-validation-and-auto-complete field.
+	/* stylelint-disable-next-line selector-id-pattern */
+	#address_rdi_field {
+		display: none;
+	}
 }

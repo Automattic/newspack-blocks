@@ -166,9 +166,11 @@ import { domReady } from './utils';
 						} );
 						processOrderText = tree.html();
 						$( '#place_order' ).html( processOrderText );
+						$( '#place_order_clone' ).html( processOrderText );
 					} else {
 						// Set default button label passed from PHP.
 						$( '#place_order' ).addClass( 'button-label-updated' ).html( processOrderText );
+						$( '#place_order_clone' ).addClass( 'button-label-updated' ).html( processOrderText );
 					}
 				} );
 
