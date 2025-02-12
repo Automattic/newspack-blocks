@@ -1976,7 +1976,12 @@ final class Modal_Checkout {
 				),
 				'after_success'              => __( 'Continue browsing', 'newspack-blocks' ),
 				'donation_gift_details'      => __( 'This donation is a gift', 'newspack-blocks' ),
-				'purchase_gift_details'      => __( 'This purchase is a gift', 'newspack-blocks' ),
+				'purchase_gift_details'      => get_option(
+					'woocommerce_subscriptions_gifting_gifting_checkbox_text',
+					method_exists( 'Newspack\WooCommerce_Subscriptions_Gifting', 'default_gifting_checkbox_text' ) ?
+						\Newspack\WooCommerce_Subscriptions_Gifting::default_gifting_checkbox_text() :
+						__( 'This purchase is a gift', 'newspack-blocks' )
+				),
 				'checkout_confirm'           => __( 'Complete transaction', 'newspack-blocks' ),
 				'checkout_confirm_variation' => __( 'Purchase', 'newspack-blocks' ),
 				'checkout_back'              => __( 'Back', 'newspack-blocks' ),
