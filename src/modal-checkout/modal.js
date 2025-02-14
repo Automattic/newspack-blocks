@@ -539,13 +539,16 @@ domReady( () => {
 		if ( ! entries || ! entries.length ) {
 			return;
 		}
-		iframe.scrollIntoView( { behavior: 'smooth', block: 'start' } );
 		if ( ! iframe.contentDocument ) {
 			return;
 		}
 		const contentRect = entries[ 0 ].contentRect;
 		if ( contentRect ) {
-			const iframeHeight = contentRect.top + contentRect.bottom;
+			const vh = 0.01 * Math.max( document.documentElement.clientHeight, window.innerHeight || 0 );
+			const headerHeight = modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }__header` )?.offsetHeight || 0;
+			const maxHeight = 90 * vh - headerHeight;
+			const contentHeight = contentRect.top + contentRect.bottom;
+			const iframeHeight = Math.min( contentHeight, maxHeight );
 			if ( iframeHeight === 0 ) {
 				// If height is 0, hide iframe content instead of resizing to avoid layout shift.
 				iframe.style.visibility = 'hidden';
