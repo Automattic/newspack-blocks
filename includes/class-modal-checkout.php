@@ -147,6 +147,7 @@ final class Modal_Checkout {
 		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 2 );
 		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'woocommerce_checkout_fields' ] );
 		add_filter( 'woocommerce_update_order_review_fragments', [ __CLASS__, 'order_review_fragments' ] );
+		add_filter( 'woocommerce_cart_needs_payment', [ __CLASS__, 'cart_needs_payment' ] );
 		add_filter( 'newspack_recaptcha_verify_captcha', [ __CLASS__, 'recaptcha_verify_captcha' ], 10, 3 );
 		add_filter( 'woocommerce_enqueue_styles', [ __CLASS__, 'dequeue_woocommerce_styles' ] );
 		add_filter( 'wcs_place_subscription_order_text', [ __CLASS__, 'order_button_text' ], 5 );
@@ -165,6 +166,7 @@ final class Modal_Checkout {
 		add_filter( 'option_woocommerce_woocommerce_payments_settings', [ __CLASS__, 'filter_woocommerce_payments_settings' ] );
 		add_action( 'init', [ __CLASS__, 'unhook_woocommerce_payments_update_billing_fields' ] );
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'update_password_strength_message' ], 9999 );
+		add_filter( 'woocommerce_enforce_password_strength_meter_on_checkout', '__return_true' );
 
 		/** Custom handling for registered users. */
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
@@ -259,7 +261,7 @@ final class Modal_Checkout {
 	 */
 	public static function has_unsupported_payment_gateway() {
 		$supported_gateways          = self::get_supported_payment_gateways();
-		$available_gateways          = \WC()->payment_gateways->get_available_payment_gateways();
+		$available_gateways          = function_exists( 'WC' ) ? \WC()->payment_gateways->get_available_payment_gateways() : [];
 		$unsupported_payment_gateway = false;
 		foreach ( $available_gateways as $id => $gateway ) {
 			if ( ! in_array( $id, $supported_gateways, true ) ) {
@@ -831,7 +833,10 @@ final class Modal_Checkout {
 	 * Dequeue scripts not needed in the modal checkout.
 	 */
 	public static function dequeue_scripts() {
-		if ( ! self::is_modal_checkout() ) {
+		if (
+			! self::is_modal_checkout() ||
+			( defined( 'NEWSPACK_ALLOW_ALL_CHECKOUT_SCRIPTS' ) && NEWSPACK_ALLOW_ALL_CHECKOUT_SCRIPTS )
+		) {
 			return;
 		}
 
@@ -947,6 +952,15 @@ final class Modal_Checkout {
 				]
 			);
 		}
+		// OneSignal.
+		array_push(
+			$remove_list,
+			[
+				'hook'     => 'wp_head',
+				'callback' => 'onesignal_init',
+			]
+		);
+
 		/**
 		 * Filters the hooks to remove from the modal checkout.
 		 *
@@ -966,6 +980,11 @@ final class Modal_Checkout {
 	 * @param int $product_id Product ID (optional).
 	 */
 	public static function enqueue_modal( $product_id = null ) {
+		// Don't enqueue the modal if WooCommerce is not available.
+		if ( ! function_exists( 'WC' ) ) {
+			return;
+		}
+
 		self::$has_modal = true;
 		if ( ! empty( $product_id ) ) {
 			self::$products[ $product_id ] = true;
@@ -1427,6 +1446,30 @@ final class Modal_Checkout {
 	}
 
 	/**
+	 * Is the current request only to validate billing field inputs on the first modal screen?
+	 *
+	 * @return bool True if the request is for validation only.
+	 */
+	private static function is_validation_only() {
+		return boolval( filter_input( INPUT_POST, 'is_validation_only', FILTER_SANITIZE_NUMBER_INT ) );
+	}
+
+	/**
+	 * Determine if the request needs payment.
+	 * If we're just validating billing fields at the first modal screen, this should always be false.
+	 *
+	 * @param bool $needs_payment Whether the cart needs payment.
+	 *
+	 * @return bool False if we're in modal checkout and validating billing fields.
+	 */
+	public static function cart_needs_payment( $needs_payment ) {
+		if ( self::is_modal_checkout() && self::is_validation_only() ) {
+			return false;
+		}
+		return $needs_payment;
+	}
+
+	/**
 	 * Prevent reCAPTCHA from being verified for AJAX checkout (e.g. Apple Pay).
 	 *
 	 * @param bool   $should_verify Whether to verify the captcha.
@@ -1438,11 +1481,10 @@ final class Modal_Checkout {
 			return $should_verify;
 		}
 
-		$is_validation_only = boolval( filter_input( INPUT_POST, 'is_validation_only', FILTER_SANITIZE_NUMBER_INT ) );
 		parse_str( \wp_parse_url( $url, PHP_URL_QUERY ), $query );
 		if (
 			// Only in the context of a true checkout request.
-			$is_validation_only ||
+			self::is_validation_only() ||
 			(
 				defined( 'WOOCOMMERCE_CHECKOUT' )
 				&& isset( $query['wc-ajax'] )
@@ -1895,6 +1937,13 @@ final class Modal_Checkout {
 		$class_prefix = self::get_class_prefix();
 
 		$newspack_ui_html = preg_replace( '/class=".*?"/', "class='{$class_prefix}__button {$class_prefix}__button--primary {$class_prefix}__button--wide'", $html );
+
+		if ( class_exists( 'Newspack\Recaptcha' ) && \Newspack\Recaptcha::can_use_captcha( 'v2' ) ) {
+			$cloned_button    = preg_replace( '/type="submit"/', 'type="button"', $newspack_ui_html );
+			$cloned_button    = preg_replace( '/id="place_order"/', '', $newspack_ui_html );
+			$cloned_button    = preg_replace( '/name=".*?"/', 'id="place_order_clone"', $newspack_ui_html );
+			$newspack_ui_html = $cloned_button . $newspack_ui_html;
+		}
 
 		return $newspack_ui_html;
 	}
