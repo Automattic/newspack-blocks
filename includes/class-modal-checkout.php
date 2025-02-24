@@ -211,7 +211,7 @@ final class Modal_Checkout {
 		add_filter( 'woocommerce_get_privacy_policy_text', [ __CLASS__, 'woocommerce_get_privacy_policy_text' ], 10, 2 );
 
 		// Remove any hooks that aren't supported by the modal checkout.
-		add_action( 'plugins_loaded', [ __CLASS__, 'remove_hooks' ] );
+		add_action( 'wp_loaded', [ __CLASS__, 'remove_hooks' ] );
 	}
 
 	/**
@@ -953,13 +953,19 @@ final class Modal_Checkout {
 			);
 		}
 		// OneSignal.
-		array_push(
-			$remove_list,
-			[
-				'hook'     => 'wp_head',
-				'callback' => 'onesignal_init',
-			]
-		);
+		if ( class_exists( 'OneSignal_Public' ) ) {
+			array_push(
+				$remove_list,
+				[
+					'hook'     => 'wp_head',
+					'callback' => 'onesignal_init', // V3.
+				],
+				[
+					'hook'     => 'wp_head',
+					'callback' => array( 'OneSignal_Public', 'onesignal_header' ), // V2.
+				]
+			);
+		}
 
 		/**
 		 * Filters the hooks to remove from the modal checkout.
