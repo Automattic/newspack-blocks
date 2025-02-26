@@ -26,6 +26,7 @@
 	/* Article meta */
 	.entry-meta {
 		display: flex;
+		font-size: 0.8em;
 		flex-wrap: wrap;
 		align-items: center;
 		margin-top: 0.5em;
@@ -50,19 +51,14 @@
 
 	/* Typescale */
 	// Default typescale:
-	article {
-		.entry-title {
-			font-size: 1.2em;
-			margin: 0 0 0.25em;
-		}
-		.entry-meta {
-			font-size: 0.8em;
-		}
+	.entry-title {
+		font-size: 1.2em;
+		margin: 0 0 0.25em;
+	}
 
-		.avatar {
-			height: 25px;
-			width: 25px;
-		}
+	.avatar {
+		height: 25px;
+		width: 25px;
 	}
 
 	@include mixins.media( tablet ) {
@@ -119,24 +115,22 @@
 			".newspack-post-subtitle": "0.8em",
 			".entry-wrapper p": "0.8em",
 			".entry-wrapper .more-link": "0.8em",
-			".entry-meta" : "0.8em",
 		),
 		"ts-2" (
 			".entry-title": "0.9em",
-			".newspack-post-subtitle": "0.8em",
-			".entry-wrapper p": "0.8em",
-			".entry-wrapper .more-link": "0.8em",
-			".entry-meta" : "0.8em",
+			"article .newspack-post-subtitle": "0.8em",
+			"article .entry-wrapper p": "0.8em",
+			"article .entry-wrapper .more-link": "0.8em",
 		),
 		"ts-1" (
 			".entry-title": "0.9em",
-			".newspack-post-subtitle": "0.8em",
-			".entry-wrapper p": "0.8em",
-			".entry-wrapper .more-link": "0.8em",
-			".entry-meta" : "0.8em",
+			"article .newspack-post-subtitle": "0.8em",
+			"article .entry-wrapper p": "0.8em",
+			"article .entry-wrapper .more-link": "0.8em",
 		),
 	);
 
+	// Loop through all our $typescales and generate font size CSS:
 	@each $type, $selectors in $typescales {
 		@each $selector, $values in $selectors {
 			@each $value in $values {
