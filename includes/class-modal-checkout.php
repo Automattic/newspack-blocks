@@ -212,6 +212,9 @@ final class Modal_Checkout {
 
 		// Remove any hooks that aren't supported by the modal checkout.
 		add_action( 'wp_loaded', [ __CLASS__, 'remove_hooks' ] );
+
+		// Exclude the modal checkout from 'Coming Soon' mode.
+		add_action( 'plugins_loaded', [ __CLASS__, 'disable_coming_soon' ] );
 	}
 
 	/**
@@ -978,6 +981,22 @@ final class Modal_Checkout {
 			$priority = has_action( $remove['hook'], $remove['callback'] );
 			remove_action( $remove['hook'], $remove['callback'], $priority );
 		}
+	}
+
+	/**
+	 * Exclude the Modal Checkout from 'Coming Soon' mode.
+	 */
+	public static function disable_coming_soon() {
+		if ( ! self::is_modal_checkout() ) {
+			return;
+		}
+		add_filter(
+			'woocommerce_coming_soon_exclude',
+			function() {
+				return true;
+			},
+			10
+		);
 	}
 
 	/**
