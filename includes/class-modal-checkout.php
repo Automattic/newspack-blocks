@@ -215,6 +215,7 @@ final class Modal_Checkout {
 
 		// Exclude the modal checkout from 'Coming Soon' mode.
 		add_action( 'plugins_loaded', [ __CLASS__, 'disable_coming_soon' ] );
+		add_filter( 'woocommerce_coming_soon_exclude', [ __CLASS__, 'disable_coming_soon' ] );
 	}
 
 	/**
@@ -987,16 +988,7 @@ final class Modal_Checkout {
 	 * Exclude the Modal Checkout from 'Coming Soon' mode.
 	 */
 	public static function disable_coming_soon() {
-		if ( ! self::is_modal_checkout() ) {
-			return;
-		}
-		add_filter(
-			'woocommerce_coming_soon_exclude',
-			function() {
-				return true;
-			},
-			10
-		);
+		return self::is_modal_checkout();
 	}
 
 	/**
