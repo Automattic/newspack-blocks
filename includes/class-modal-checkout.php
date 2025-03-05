@@ -896,7 +896,7 @@ final class Modal_Checkout {
 				}
 			}
 			foreach ( $allowed_gateway_assets as $gateway ) {
-				if ( false !== strpos( $wp_script->src, $gateway ) ) {
+				if ( $wp_script->src !== null && false !== strpos( $wp_script->src, $gateway ) ) {
 					$allowed = true;
 					break;
 				}
