@@ -1,3 +1,20 @@
+# [4.7.0](https://github.com/Automattic/newspack-blocks/compare/v4.6.1...v4.7.0) (2025-03-04)
+
+
+### Bug Fixes
+
+* **carousel:** avoid editor crash on empty ([#2058](https://github.com/Automattic/newspack-blocks/issues/2058)) ([c316801](https://github.com/Automattic/newspack-blocks/commit/c316801b54059dcac79fa463dc0df7a8e78bdc01))
+* **modal-checkout:** better iframe sizing ([#2052](https://github.com/Automattic/newspack-blocks/issues/2052)) ([aa308f2](https://github.com/Automattic/newspack-blocks/commit/aa308f2acd956e5f0e5282493f9b33e83ae8e391))
+* **recaptcha:** use clone of #place_order button to trigger checkout ([#2028](https://github.com/Automattic/newspack-blocks/issues/2028)) ([46eb8b5](https://github.com/Automattic/newspack-blocks/commit/46eb8b5b2a99e907eabbfab9cfed1fd4a44687da)), closes [#2030](https://github.com/Automattic/newspack-blocks/issues/2030) [#2030](https://github.com/Automattic/newspack-blocks/issues/2030)
+
+
+### Features
+
+* add styles to fix Braintree modal appearance ([#2036](https://github.com/Automattic/newspack-blocks/issues/2036)) ([9ab2c62](https://github.com/Automattic/newspack-blocks/commit/9ab2c62d705879cc6164fc179093d37e562dfbac))
+* add toggle for transaction details ([#2049](https://github.com/Automattic/newspack-blocks/issues/2049)) ([d254aca](https://github.com/Automattic/newspack-blocks/commit/d254aca605a6e90b6e6b4b586527376cda1f86f8))
+* **carousel:** rename block and reorganise settings ([#1962](https://github.com/Automattic/newspack-blocks/issues/1962)) ([9905717](https://github.com/Automattic/newspack-blocks/commit/9905717a90b660ff3136871aaf3f97a915a48f23))
+* update blocks with new brand ([#2050](https://github.com/Automattic/newspack-blocks/issues/2050)) ([2711302](https://github.com/Automattic/newspack-blocks/commit/27113027329484675efce2d009c4c59f56074ee3))
+
 ## [4.6.1](https://github.com/Automattic/newspack-blocks/compare/v4.6.0...v4.6.1) (2025-02-27)
 
 
