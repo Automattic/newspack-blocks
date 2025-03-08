@@ -1,3 +1,61 @@
+## [4.5.10](https://github.com/Automattic/newspack-blocks/compare/v4.5.9...v4.5.10) (2025-02-04)
+
+
+### Bug Fixes
+
+* **modal-checkout:** check WC before enqueue the modal ([#2043](https://github.com/Automattic/newspack-blocks/issues/2043)) ([7a13d37](https://github.com/Automattic/newspack-blocks/commit/7a13d3799c70a926a30518e0a943170b0100394d))
+
+## [4.5.9](https://github.com/Automattic/newspack-blocks/compare/v4.5.8...v4.5.9) (2025-02-03)
+
+
+### Bug Fixes
+
+* add supported gateways check ([#2009](https://github.com/Automattic/newspack-blocks/issues/2009)) ([1462233](https://github.com/Automattic/newspack-blocks/commit/1462233821b4f41ef6b80f6929243dc1b805cdb1))
+* return no posts for authors without term ([#2033](https://github.com/Automattic/newspack-blocks/issues/2033)) ([3b72633](https://github.com/Automattic/newspack-blocks/commit/3b7263349707326bf988ff6a815cf92ffb061972))
+
+## [4.5.8](https://github.com/Automattic/newspack-blocks/compare/v4.5.7...v4.5.8) (2025-02-03)
+
+
+### Bug Fixes
+
+* **checkout-button:** handle missing saved product ([#2038](https://github.com/Automattic/newspack-blocks/issues/2038)) ([b251f99](https://github.com/Automattic/newspack-blocks/commit/b251f999a2dd71a5c6aedfeb3bf9d03bef24e3f4))
+
+## [4.5.7](https://github.com/Automattic/newspack-blocks/compare/v4.5.6...v4.5.7) (2025-01-31)
+
+
+### Bug Fixes
+
+* improve formatting of donation amount options ([#2032](https://github.com/Automattic/newspack-blocks/issues/2032)) ([a86472c](https://github.com/Automattic/newspack-blocks/commit/a86472c8068d873c31cb6bb37e08bcfd9d487be3))
+
+## [4.5.6](https://github.com/Automattic/newspack-blocks/compare/v4.5.5...v4.5.6) (2025-01-23)
+
+
+### Bug Fixes
+
+* make sure fields after floated inputs clear floats in the modal checkout ([#2030](https://github.com/Automattic/newspack-blocks/issues/2030)) ([274b4d4](https://github.com/Automattic/newspack-blocks/commit/274b4d41aa63dc818a3da49a7fc8315dbdf08757))
+
+## [4.5.5](https://github.com/Automattic/newspack-blocks/compare/v4.5.4...v4.5.5) (2025-01-20)
+
+
+### Bug Fixes
+
+* **modal-checkout:** force checkout registration option ([#2007](https://github.com/Automattic/newspack-blocks/issues/2007)) ([acad91c](https://github.com/Automattic/newspack-blocks/commit/acad91c18a3bef5be22387a09af0207f87df3023))
+* tweak modal iframe size ([#2006](https://github.com/Automattic/newspack-blocks/issues/2006)) ([fef66e1](https://github.com/Automattic/newspack-blocks/commit/fef66e1b34345cc0634741367bb2ae0879d8099c))
+
+## [4.5.4](https://github.com/Automattic/newspack-blocks/compare/v4.5.3...v4.5.4) (2025-01-15)
+
+
+### Bug Fixes
+
+* make new debugging arg optional to avoid potential fatals ([#2022](https://github.com/Automattic/newspack-blocks/issues/2022)) ([54df06a](https://github.com/Automattic/newspack-blocks/commit/54df06a30d2221aa39a8eb2c8ca2705dd7b79b43))
+
+## [4.5.3](https://github.com/Automattic/newspack-blocks/compare/v4.5.2...v4.5.3) (2025-01-14)
+
+
+### Bug Fixes
+
+* **recaptcha:** support reCAPTCHA v2 on form submit, not button click ([#2021](https://github.com/Automattic/newspack-blocks/issues/2021)) ([1e483a5](https://github.com/Automattic/newspack-blocks/commit/1e483a5412bbf38962700c09e4fa59fabc29f170))
+
 ## [4.5.2](https://github.com/Automattic/newspack-blocks/compare/v4.5.1...v4.5.2) (2024-12-16)
 
 
