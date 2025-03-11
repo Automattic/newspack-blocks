@@ -113,7 +113,14 @@ import { domReady } from './utils';
 					if ( ! $wrapper.length ) {
 						return;
 					}
+
 					const $el = $wrapper.clone();
+
+					// Make sure Transaction Details toggle's aria-expanded value is correct in cloned version.
+					if ( $( '#after_customer_details').hasClass( 'transaction-details-expanded' ) ) {
+						$('[id="order_review_heading"]', $el).attr( 'aria-expanded', 'true' );
+					}
+
 					// Remove existing table from inside the payment methods.
 					$( '#payment .order-review-wrapper' ).remove();
 					const $table = $el.find( 'table' );
@@ -128,6 +135,18 @@ import { domReady } from './utils';
 					}
 					// Move new order review table to the payment methods.
 					$( '.payment_methods' ).after( $el );
+				} );
+
+				/**
+				 * Toggle Transaction Details
+				 */
+				$( document ).on( 'click', '#order_review_heading', function() {
+					// Toggle the aria-expanded attribute.
+					$( this ).attr( 'aria-expanded', function( index, attr ) {
+						return attr === 'false' ? 'true' : 'false';
+					} );
+					// Toggle the CSS class to show/hide the Transaction Details.
+					$( '#after_customer_details').toggleClass( 'transaction-details-expanded' );
 				} );
 
 				/**
