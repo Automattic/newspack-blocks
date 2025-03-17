@@ -614,10 +614,12 @@ domReady( () => {
 			};
 
 			if ( window?.newspackReaderActivation?.openNewslettersSignupModal ) {
+				const productId = modalCheckout.dataset.orderDetails ? JSON.parse( modalCheckout.dataset.orderDetails ).product_id : null;
 				window.newspackReaderActivation.openNewslettersSignupModal( {
 					onSuccess: handleCheckoutComplete,
 					onError: handleCheckoutComplete,
 					closeOnSuccess: shouldCloseModal,
+					productId,
 				} );
 			} else {
 				handleCheckoutComplete();
