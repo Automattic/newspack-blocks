@@ -132,6 +132,11 @@ domReady( () => {
 				setModalTitle( newspackBlocksModal.labels.thankyou_modal_title );
 				setModalReady();
 				a11y.trapFocus( modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }` ) );
+
+				// Update the newsletters signup modal if it exists.
+				if ( window?.newspackReaderActivation?.refreshNewslettersSignupModal ) {
+					window.newspackReaderActivation.refreshNewslettersSignupModal();
+				}
 			} else {
 				// Revert modal title and width default value.
 				setModalSize();
