@@ -141,8 +141,11 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 		$configuration = self::get_configuration( $attributes );
 
 		// Calculate the value for the "step" property of the custom amount donation value `input` element.
-		$decimals = get_option( 'woocommerce_price_num_decimals', 2 );
-		$input_element_step = '0.' . str_repeat( '0', $decimals - 1 ) . '1';
+		$thousand_separator = get_option( 'woocommerce_price_thousand_sep', false );
+		if ( $thousand_separator !== '.' ) {
+			$decimals = get_option( 'woocommerce_price_num_decimals', 2 );
+			$input_element_step = '0.' . str_repeat( '0', $decimals - 1 ) . '1';
+		}
 
 		ob_start();
 
