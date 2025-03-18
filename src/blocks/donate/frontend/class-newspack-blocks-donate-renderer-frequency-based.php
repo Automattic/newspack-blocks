@@ -146,6 +146,7 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 			$decimals = get_option( 'woocommerce_price_num_decimals', 2 );
 			$input_element_step = '0.' . str_repeat( '0', $decimals - 1 ) . '1';
 		}
+		$input_element_step = '1';
 
 		ob_start();
 
