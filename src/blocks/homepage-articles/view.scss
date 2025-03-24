@@ -744,7 +744,7 @@
 		&.columns-5 article:nth-of-type(5n),
 		&.columns-6 article:nth-of-type(6n) {
 			border: 0;
-			padding-right: 0;
+			padding-right: 0 !important; // to overide the :not(:last-of-type) for .columns-5.
 		}
 	}
 }
