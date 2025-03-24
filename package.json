@@ -10,7 +10,7 @@
 		"@wordpress/browserslist-config": "^6.20.0",
 		"eslint": "^8.57.0",
 		"fetch-mock-jest": "^1.5.1",
-		"html-entities": "^2.5.2",
+		"html-entities": "^2.5.3",
 		"identity-obj-proxy": "^3.0.0",
 		"lint-staged": "^15.5.0",
 		"newspack-components": "^3.1.0",
