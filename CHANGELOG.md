@@ -1,3 +1,13 @@
+## [4.7.1](https://github.com/Automattic/newspack-blocks/compare/v4.7.0...v4.7.1) (2025-03-18)
+
+
+### Bug Fixes
+
+* **modal-checkout:** trigger REST API endpoint to refresh post-checko… ([#2080](https://github.com/Automattic/newspack-blocks/issues/2080)) ([8258e52](https://github.com/Automattic/newspack-blocks/commit/8258e52f31edff73ff9a676a34df7bf200cb98e5))
+* prevent php notice when filtering scripts ([77408f3](https://github.com/Automattic/newspack-blocks/commit/77408f36f654a74e390d4b8c88c5d110198239ae))
+* remove coming soon mode message from the modal checkout ([#2067](https://github.com/Automattic/newspack-blocks/issues/2067)) ([c27937d](https://github.com/Automattic/newspack-blocks/commit/c27937d6ec51a9f0235b9aeee6d8111d6efe1574))
+* remove OneSignal v2 from modal checkout ([#2061](https://github.com/Automattic/newspack-blocks/issues/2061)) ([9727e02](https://github.com/Automattic/newspack-blocks/commit/9727e0247eb5f3599cdf44eefbbe40fc3516d86f))
+
 # [4.7.0](https://github.com/Automattic/newspack-blocks/compare/v4.6.1...v4.7.0) (2025-03-04)
 
 

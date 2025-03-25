@@ -127,6 +127,10 @@ domReady( () => {
 		}
 		if ( container ) {
 			if ( container.checkoutComplete ) {
+				// Update the newsletters signup modal if it exists.
+				if ( window?.newspackReaderActivation?.refreshNewslettersSignupModal && window?.newspackReaderActivation?.getReader()?.email ) {
+					window.newspackReaderActivation.refreshNewslettersSignupModal( window.newspackReaderActivation.getReader().email );
+				}
 				// Update the modal title and width to reflect successful transaction.
 				setModalSize( 'small' );
 				setModalTitle( newspackBlocksModal.labels.thankyou_modal_title );
