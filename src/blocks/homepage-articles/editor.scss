@@ -144,6 +144,11 @@
 	}
 }
 
+/* Load More button */
+[data-type="newspack-blocks/homepage-articles"] .wp-block-button__link {
+	width: auto;
+}
+
 .editor-styles-wrapper.wpnbha__wp-block-button__wrapper {
 	background-color: transparent;
 }
