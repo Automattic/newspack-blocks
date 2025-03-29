@@ -634,7 +634,7 @@ class Newspack_Blocks {
 						}
 					}
 				}
-				$args['category__in'] = $categories;
+				$args['category__and'] = $categories;
 			}
 			if ( $tags && count( $tags ) ) {
 				$args['tag__in'] = $tags;
