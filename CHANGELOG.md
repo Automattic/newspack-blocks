@@ -1,3 +1,20 @@
+# [4.8.0](https://github.com/Automattic/newspack-blocks/compare/v4.7.1...v4.8.0) (2025-03-31)
+
+
+### Bug Fixes
+
+* **api:** avoid warning newspack blocks api accessing attachment images ([#2069](https://github.com/Automattic/newspack-blocks/issues/2069)) ([93ffebf](https://github.com/Automattic/newspack-blocks/commit/93ffebf19ae195aa23fd175635c16644d67a33bf))
+* better handle deleted terms ([#2076](https://github.com/Automattic/newspack-blocks/issues/2076)) ([7d7a639](https://github.com/Automattic/newspack-blocks/commit/7d7a6396e1e5e388c178e0ce58bcfa8962565075))
+* correct checkout button block width in WP 6.8 ([#2087](https://github.com/Automattic/newspack-blocks/issues/2087)) ([a9def73](https://github.com/Automattic/newspack-blocks/commit/a9def73c86aac2eb8c71b5e75890b2c09732c54b))
+* **donate-block:** handle decimals in custom amount input ([#2074](https://github.com/Automattic/newspack-blocks/issues/2074)) ([9db74fe](https://github.com/Automattic/newspack-blocks/commit/9db74fe6f703e104b5703065ce86ac17e1abad07))
+* make sure five column border layout works ([#2072](https://github.com/Automattic/newspack-blocks/issues/2072)) ([a1dbfbc](https://github.com/Automattic/newspack-blocks/commit/a1dbfbce9091072e64b763c9a13316a7d1bf8943))
+* **modal-checkout:** trigger REST API endpoint to refresh post-checko… ([#2080](https://github.com/Automattic/newspack-blocks/issues/2080)) ([e534446](https://github.com/Automattic/newspack-blocks/commit/e5344463fc07207e7406f7a4b9d0a7d4708a6359))
+
+
+### Features
+
+* information architecture ([#2083](https://github.com/Automattic/newspack-blocks/issues/2083)) ([2d75fd1](https://github.com/Automattic/newspack-blocks/commit/2d75fd165ea26b4e2f4febebfb7ee28cb9f749ea))
+
 ## [4.7.1](https://github.com/Automattic/newspack-blocks/compare/v4.7.0...v4.7.1) (2025-03-18)
 
 
