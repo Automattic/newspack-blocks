@@ -217,3 +217,21 @@
 		margin: 0;
 	}
 }
+
+.components-base-control__label-dropdown {
+	align-items: center;
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 4px;
+
+	.components-base-control__label {
+		margin: 0 !important;
+	}
+
+	.components-select-control__input {
+		font-size: 11px !important;
+		font-weight: 500;
+		line-height: 1.4;
+		text-transform: uppercase;
+	}
+}

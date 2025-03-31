@@ -333,15 +333,16 @@ class QueryControls extends Component {
 							<BaseControl
 								id="newspack-block__category-control"
 							>
-								<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
+								<div className="components-base-control__label-dropdown">
 									<BaseControl.VisualLabel>
-										{ __( 'Categories', 'newspack-blocks' ) }
+										{ __( 'Category', 'newspack-blocks' ) }
 									</BaseControl.VisualLabel>
 									<SelectControl
+										size="small"
 										value={ categoryJoinType }
 										options={ [
-											{ label: __( 'IS ONE OF', 'newspack-blocks' ), value: 'or' },
-											{ label: __( 'IS ALL OF', 'newspack-blocks' ), value: 'all' },
+											{ label: __( 'is one of', 'newspack-blocks' ), value: 'or' },
+											{ label: __( 'is all of', 'newspack-blocks' ), value: 'all' },
 										] }
 										onChange={ ( value ) => {
 											if ( 'all' === value ) {
@@ -349,6 +350,7 @@ class QueryControls extends Component {
 											}
 											onCategoryJoinTypeChange( value );
 										} }
+										__nextHasNoMarginBottom
 									/>
 								</div>
 								<AutocompleteTokenField
