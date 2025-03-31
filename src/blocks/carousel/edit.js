@@ -362,7 +362,7 @@ class Edit extends Component {
 				</div>
 
 				<InspectorControls>
-					<PanelBody title={ __( 'Content', 'newspack-blocks' ) }>
+					<PanelBody title={ __( 'Content', 'newspack-blocks' ) } className='newspack-block__panel is-content'>
 						{ postsToShow && (
 							<QueryControls
 								numberOfItems={ postsToShow }
