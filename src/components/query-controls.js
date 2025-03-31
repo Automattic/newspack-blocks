@@ -8,6 +8,7 @@ import {
 	Button,
 	ButtonGroup,
 	CheckboxControl,
+	SelectControl,
 	QueryControls as BasicQueryControls
 } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
@@ -252,6 +253,8 @@ class QueryControls extends Component {
 			onAuthorsChange,
 			categories,
 			onCategoriesChange,
+			categoryJoinType,
+			onCategoryJoinTypeChange,
 			includeSubcategories,
 			onIncludeSubcategoriesChange,
 			tags,
@@ -327,15 +330,36 @@ class QueryControls extends Component {
 					<>
 						<BasicQueryControls { ...this.props } maxItems={ 30 } />
 						{ onCategoriesChange && (
-							<AutocompleteTokenField
-								tokens={ categories || [] }
-								onChange={ onCategoriesChange }
-								fetchSuggestions={ this.fetchCategorySuggestions }
-								fetchSavedInfo={ this.fetchSavedCategories }
-								label={ __( 'Categories', 'newspack-blocks' ) }
-							/>
+							<BaseControl
+								id="newspack-block__category-control"
+							>
+								<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
+									<BaseControl.VisualLabel>
+										{ __( 'Categories', 'newspack-blocks' ) }
+									</BaseControl.VisualLabel>
+									<SelectControl
+										value={ categoryJoinType }
+										options={ [
+											{ label: __( 'IS ONE OF', 'newspack-blocks' ), value: 'or' },
+											{ label: __( 'IS ALL OF', 'newspack-blocks' ), value: 'all' },
+										] }
+										onChange={ ( value ) => {
+											if ( 'all' === value ) {
+												onIncludeSubcategoriesChange( false );
+											}
+											onCategoryJoinTypeChange( value );
+										} }
+									/>
+								</div>
+								<AutocompleteTokenField
+									tokens={ categories || [] }
+									onChange={ onCategoriesChange }
+									fetchSuggestions={ this.fetchCategorySuggestions }
+									fetchSavedInfo={ this.fetchSavedCategories }
+								/>
+							</BaseControl>
 						) }
-						{ onIncludeSubcategoriesChange && (
+						{ 'all' !== categoryJoinType && onIncludeSubcategoriesChange && (
 							<CheckboxControl
 								checked={ includeSubcategories }
 								onChange={ onIncludeSubcategoriesChange }

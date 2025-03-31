@@ -588,6 +588,7 @@ class Newspack_Blocks {
 		$authors                    = isset( $attributes['authors'] ) ? $attributes['authors'] : array();
 		$categories                 = isset( $attributes['categories'] ) ? $attributes['categories'] : array();
 		$include_subcategories      = isset( $attributes['includeSubcategories'] ) ? intval( $attributes['includeSubcategories'] ) : false;
+		$category_join              = isset( $attributes['categoryJoinType'] ) ? $attributes['categoryJoinType'] : 'or';
 		$tags                       = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
 		$custom_taxonomies          = isset( $attributes['customTaxonomies'] ) ? $attributes['customTaxonomies'] : array();
 		$tag_exclusions             = isset( $attributes['tagExclusions'] ) ? $attributes['tagExclusions'] : array();
@@ -634,7 +635,11 @@ class Newspack_Blocks {
 						}
 					}
 				}
-				$args['category__in'] = $categories;
+				if ( 'or' === $category_join ) {
+					$args['category__in'] = $categories;
+				} else {
+					$args['category__and'] = $categories;
+				}
 			}
 			if ( $tags && count( $tags ) ) {
 				$args['tag__in'] = $tags;
