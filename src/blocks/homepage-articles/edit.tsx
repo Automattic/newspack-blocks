@@ -275,6 +275,7 @@ class Edit extends Component< HomepageArticlesProps > {
 			postsToShow,
 			categories,
 			includeSubcategories,
+			categoryJoinType,
 			customTaxonomies,
 			columns,
 			postType,
@@ -369,6 +370,8 @@ class Edit extends Component< HomepageArticlesProps > {
 						onCategoriesChange={ handleAttributeChange( 'categories' ) }
 						includeSubcategories={ includeSubcategories }
 						onIncludeSubcategoriesChange={ handleAttributeChange( 'includeSubcategories' ) }
+						categoryJoinType={ categoryJoinType }
+						onCategoryJoinTypeChange={ handleAttributeChange( 'categoryJoinType' ) }
 						tags={ tags }
 						onTagsChange={ handleAttributeChange( 'tags' ) }
 						onCustomTaxonomiesChange={ handleAttributeChange( 'customTaxonomies' ) }
