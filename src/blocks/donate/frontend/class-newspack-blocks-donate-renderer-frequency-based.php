@@ -140,14 +140,6 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 
 		$configuration = self::get_configuration( $attributes );
 
-		// Calculate the value for the "step" property of the custom amount donation value `input` element.
-		$thousand_separator = get_option( 'woocommerce_price_thousand_sep', false );
-		if ( $thousand_separator !== '.' ) {
-			$decimals = get_option( 'woocommerce_price_num_decimals', 2 );
-			$input_element_step = '0.' . str_repeat( '0', $decimals - 1 ) . '1';
-		}
-		$input_element_step = '1';
-
 		ob_start();
 
 		/**
@@ -208,7 +200,6 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 											name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>_untiered'
 											value='<?php echo esc_attr( $amount ); ?>'
 											id='newspack-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-untiered-input'
-											step='<?php echo esc_attr( $input_element_step ); ?>'
 										/>
 									</div>
 									<?php else : ?>
@@ -314,7 +305,6 @@ class Newspack_Blocks_Donate_Renderer_Frequency_Based extends Newspack_Blocks_Do
 														min='<?php echo esc_attr( $configuration['minimumDonation'] ); ?>'
 														name='donation_value_<?php echo esc_attr( $frequency_slug ); ?>_other'
 														id='newspack-tier-<?php echo esc_attr( $frequency_slug . '-' . $uid ); ?>-other-input'
-														step='<?php echo esc_attr( $input_element_step ); ?>'
 													/>
 												</div>
 												<?php
