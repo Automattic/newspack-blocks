@@ -1,3 +1,10 @@
+## [4.8.1](https://github.com/Automattic/newspack-blocks/compare/v4.8.0...v4.8.1) (2025-03-31)
+
+
+### Reverts
+
+* Revert "fix(donate-block): handle decimals in custom amount input (#2074)" (#2094) ([bc4efc2](https://github.com/Automattic/newspack-blocks/commit/bc4efc2a4d6af25ae177ebd5902f69c42495df67)), closes [#2074](https://github.com/Automattic/newspack-blocks/issues/2074) [#2094](https://github.com/Automattic/newspack-blocks/issues/2094)
+
 # [4.8.0](https://github.com/Automattic/newspack-blocks/compare/v4.7.1...v4.8.0) (2025-03-31)
 
 
