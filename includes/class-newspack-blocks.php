@@ -626,7 +626,7 @@ class Newspack_Blocks {
 				);
 			}
 			if ( $categories && count( $categories ) ) {
-				if ( 1 === $include_subcategories ) {
+				if ( 'or' === $category_join && 1 === $include_subcategories ) {
 					$children = [];
 					foreach ( $categories as $parent ) {
 						$children = array_merge( $children, get_categories( [ 'child_of' => $parent ] ) );
