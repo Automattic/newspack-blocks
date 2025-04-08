@@ -1432,7 +1432,7 @@ class Newspack_Blocks {
 	 */
 	public static function get_formatted_amount( $amount = null, $frequency = null, $hide_once_label = false ) {
 		if ( ! function_exists( 'wc_price' ) || ( method_exists( 'Newspack\Donations', 'is_platform_wc' ) && ! \Newspack\Donations::is_platform_wc() ) ) {
-			if ( 0 === $amount ) {
+			if ( empty( $amount ) ) {
 				return false;
 			}
 
