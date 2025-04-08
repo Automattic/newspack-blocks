@@ -154,6 +154,10 @@ final class Data_Events {
 			'recurrence'   => self::get_purchase_recurrence( $product_id ),
 			'variation_id' => strval( $variation_id ),
 		];
+		$gate_id = filter_input( INPUT_GET, 'memberships_content_gate', FILTER_SANITIZE_NUMBER_INT );
+		if ( $gate_id ) {
+			$data_order_details['gate_id'] = $gate_id;
+		}
 		return $data_order_details;
 	}
 

@@ -12,7 +12,18 @@ export const manageDismissed = ( data ) => {
 
 	data = data || getProductDetails( 'newspack_modal_checkout' );
 
-	const { action_type, amount = '', currency, price = '', product_id, product_type, recurrence, referrer, variation_id = '' } = data;
+	const {
+		action_type,
+		amount,
+		price = '',
+		currency,
+		product_id,
+		product_type,
+		recurrence,
+		referrer,
+		variation_id = '',
+		gate_id = '',
+	} = data;
 
 	const params = {
 		action_type,
@@ -31,6 +42,11 @@ export const manageDismissed = ( data ) => {
 	// There's only a variation ID for variable products, after you've selected one.
 	if ( variation_id ) {
 		params.variation_id = variation_id;
+	}
+
+	// If this checkout started from a content gate, add the gate ID to the payload.
+	if ( gate_id ) {
+		params.gate_id = gate_id;
 	}
 
 	const payload = getEventPayload( 'dismissed', params );

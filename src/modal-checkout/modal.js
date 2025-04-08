@@ -372,6 +372,12 @@ domReady( () => {
 			};
 		}
 
+		// If the checkout started from a content gate, add the gate ID to the payload.
+		const gateId = formData.get( 'memberships_content_gate' );
+		if ( gateId ) {
+			analyticsData.gate_id = gateId;
+		}
+
 		// Analytics.
 		if ( ! inCheckoutIntent ) {
 			manageOpened( analyticsData );

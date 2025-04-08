@@ -1523,7 +1523,12 @@ final class Modal_Checkout {
 	 */
 	public static function pass_url_param_on_redirect( $location ) {
 		if ( self::is_modal_checkout() ) {
-			$location = \add_query_arg( [ 'modal_checkout' => 1 ], $location );
+			$params = [ 'modal_checkout' => 1 ];
+			$gate_id = filter_input( INPUT_GET, 'memberships_content_gate', FILTER_SANITIZE_NUMBER_INT );
+			if ( $gate_id ) {
+				$params['memberships_content_gate'] = $gate_id;
+			}
+			$location = \add_query_arg( $params, $location );
 		}
 		return $location;
 	}

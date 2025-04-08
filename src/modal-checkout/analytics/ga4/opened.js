@@ -23,6 +23,7 @@ export const manageOpened = ( data ) => {
 		recurrence,
 		referrer,
 		variation_id = '',
+		gate_id = '',
 	} = data;
 
 	const params = {
@@ -56,6 +57,11 @@ export const manageOpened = ( data ) => {
 	// Change the action when opening the initial variation modal.
 	if ( is_variable && ! variation_id ) {
 		action = 'opened_variations';
+	}
+
+	// If this checkout started from a content gate, add the gate ID to the payload.
+	if ( gate_id ) {
+		params.gate_id = gate_id;
 	}
 
 	const payload = getEventPayload( action, params );

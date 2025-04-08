@@ -18,7 +18,8 @@ export const manageLoaded = () => {
 			product_type,
 			recurrence,
 			referrer,
-			variation_id = ''
+			variation_id = '',
+			gate_id = '',
 		} = getProductDetails( 'modal-checkout-product-details' );
 
 		const params = {
@@ -34,6 +35,11 @@ export const manageLoaded = () => {
 		// There's only a variation ID for variable products, after you've selected one.
 		if ( variation_id ) {
 			params.variation_id = variation_id;
+		}
+
+		// If this checkout started from a content gate, add the gate ID to the payload.
+		if ( gate_id ) {
+			params.gate_id = gate_id;
 		}
 
 		const payload = getEventPayload( 'loaded', params );
