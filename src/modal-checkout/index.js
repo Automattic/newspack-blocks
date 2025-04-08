@@ -170,13 +170,16 @@ import { domReady } from './utils';
 					}
 				}
 
+				/**
+				 * Update Place Order button text.
+				 */
 				$( document ).on( 'updated_checkout', function() {
 					// Update "Place Order" button to include current price.
 					let processOrderText = newspackBlocksModalCheckout.labels.complete_button;
 					if ( ! processOrderText ) {
 						return;
 					}
-					if ( $( '#place_order' ).hasClass( 'button-label-updated' ) ) {
+					if ( $( '#place_order' ).has( $( 'span.cart-price' ) ) ) {
 						// Modify button text to include updated price.
 						const tree = $( '<div>' + processOrderText + '</div>' );
 						// Update the HTML in the .cart-price span with the new price, and return.
@@ -184,13 +187,9 @@ import { domReady } from './utils';
 							return this.childNodes;
 						} );
 						processOrderText = tree.html();
-						$( '#place_order' ).html( processOrderText );
-						$( '#place_order_clone' ).html( processOrderText );
-					} else {
-						// Set default button label passed from PHP.
-						$( '#place_order' ).addClass( 'button-label-updated' ).html( processOrderText );
-						$( '#place_order_clone' ).addClass( 'button-label-updated' ).html( processOrderText );
 					}
+					$( '#place_order' ).html( processOrderText );
+					$( '#place_order_clone' ).html( processOrderText );
 				} );
 
 				/**
