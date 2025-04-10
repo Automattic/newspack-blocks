@@ -158,6 +158,10 @@ final class Data_Events {
 		if ( $gate_post_id ) {
 			$data_order_details['gate_post_id'] = $gate_post_id;
 		}
+		$newspack_popup_id = filter_input( INPUT_GET, 'newspack_popup_id', FILTER_SANITIZE_NUMBER_INT );
+		if ( $newspack_popup_id ) {
+			$data_order_details['newspack_popup_id'] = $newspack_popup_id;
+		}
 		return $data_order_details;
 	}
 

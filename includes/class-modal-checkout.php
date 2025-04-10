@@ -345,11 +345,6 @@ final class Modal_Checkout {
 
 		$cart_item_data = self::amend_cart_item_data( [ 'referer' => $referer ] );
 
-		$newspack_popup_id = filter_input( INPUT_GET, 'newspack_popup_id', FILTER_SANITIZE_NUMBER_INT );
-		if ( $newspack_popup_id ) {
-			$cart_item_data['newspack_popup_id'] = $newspack_popup_id;
-		}
-
 		/** Apply NYP custom price */
 		$price = filter_input( INPUT_GET, 'price', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		if ( \Newspack_Blocks::can_use_name_your_price() ? \WC_Name_Your_Price_Helpers::is_nyp( $product_id ) : false ) {
@@ -1524,7 +1519,11 @@ final class Modal_Checkout {
 	public static function pass_url_param_on_redirect( $location ) {
 		if ( self::is_modal_checkout() ) {
 			$params = [ 'modal_checkout' => 1 ];
+			$newspack_popup_id = filter_input( INPUT_GET, 'newspack_popup_id', FILTER_SANITIZE_NUMBER_INT );
 			$gate_post_id = filter_input( INPUT_GET, 'memberships_content_gate', FILTER_SANITIZE_NUMBER_INT );
+			if ( $newspack_popup_id ) {
+				$params['newspack_popup_id'] = $newspack_popup_id;
+			}
 			if ( $gate_post_id ) {
 				$params['memberships_content_gate'] = $gate_post_id;
 			}

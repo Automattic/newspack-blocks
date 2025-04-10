@@ -377,6 +377,10 @@ domReady( () => {
 		if ( gateId ) {
 			analyticsData.gate_post_id = gateId;
 		}
+		const popupId = formData.get( 'newspack_popup_id' );
+		if ( popupId ) {
+			analyticsData.newspack_popup_id = popupId;
+		}
 
 		// Analytics.
 		if ( ! inCheckoutIntent ) {
