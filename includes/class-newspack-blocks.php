@@ -775,14 +775,21 @@ class Newspack_Blocks {
 	 * @return array Array of WP_User objects.
 	 */
 	public static function prepare_authors() {
-		if ( function_exists( 'coauthors_posts_links' ) && ! empty( get_coauthors() ) ) {
+		$authors = [];
+		if ( class_exists( 'Newspack\Bylines' ) && Newspack\Bylines::is_enabled() ) {
+			$authors = Newspack\Bylines::get_post_byline_authors();
+		}
+		if ( empty( $authors ) && function_exists( 'coauthors_posts_links' ) && ! empty( get_coauthors() ) ) {
 			$authors = get_coauthors();
+		}
+		if ( ! empty( $authors ) ) {
 			foreach ( $authors as $author ) {
 				$author->avatar = coauthors_get_avatar( $author, 48 );
 				$author->url    = get_author_posts_url( $author->ID, $author->user_nicename );
 			}
 			return $authors;
 		}
+
 		$id = get_the_author_meta( 'ID' );
 		return array(
 			(object) array(

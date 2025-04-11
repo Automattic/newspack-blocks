@@ -472,6 +472,13 @@ function newspack_blocks_format_avatars( $author_info ) {
  * @return string Returns byline markup.
  */
 function newspack_blocks_format_byline( $author_info ) {
+	if ( class_exists( 'Newspack\Bylines' ) && Newspack\Bylines::is_enabled() ) {
+		$custom_byline = Newspack\Bylines::output_byline_on_post( false );
+		if ( $custom_byline ) {
+			return $custom_byline;
+		}
+	}
+
 	$index    = -1;
 	$elements = array_merge(
 		[
