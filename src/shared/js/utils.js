@@ -13,25 +13,31 @@ export const formatAvatars = authorInfo =>
 		</span>
 	) );
 
-export const formatByline = authorInfo => (
-	<span className="byline">
-		<span className="author-prefix">{ _x( 'by', 'post author', 'newspack-blocks' ) }</span>{ ' ' }
-		{ authorInfo.reduce( ( accumulator, author, index ) => {
-			return [
-				...accumulator,
-				<span className="author vcard" key={ author.id }>
-					<a className="url fn n" href={ author.author_link }>
-						{ author.display_name }
-					</a>
-				</span>,
-				index < authorInfo.length - 2 && ', ',
-				authorInfo.length > 1 &&
-					index === authorInfo.length - 2 &&
-					_x( ' and ', 'post author', 'newspack-blocks' ),
-			];
-		}, [] ) }
-	</span>
-);
+export const formatByline = post => {
+	if ( post.newspack_byline ) {
+		return <RawHTML>{ post.newspack_byline }</RawHTML>;
+	}
+	const authorInfo = post.newspack_author_info;
+	return (
+		<span className="byline">
+			<span className="author-prefix">{ _x( 'by', 'post author', 'newspack-blocks' ) }</span>{ ' ' }
+			{ authorInfo.reduce( ( accumulator, author, index ) => {
+				return [
+					...accumulator,
+					<span className="author vcard" key={ author.id }>
+						<a className="url fn n" href={ author.author_link }>
+							{ author.display_name }
+						</a>
+					</span>,
+					index < authorInfo.length - 2 && ', ',
+					authorInfo.length > 1 &&
+						index === authorInfo.length - 2 &&
+						_x( ' and ', 'post author', 'newspack-blocks' ),
+				];
+			}, [] ) }
+		</span>
+	);
+};
 
 export const formatSponsorLogos = sponsorInfo => (
 	<span className="sponsor-logos">

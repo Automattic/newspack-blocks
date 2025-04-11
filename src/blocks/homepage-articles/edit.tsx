@@ -243,7 +243,7 @@ class Edit extends Component< HomepageArticlesProps > {
 						{ showAuthor &&
 							! post.newspack_listings_hide_author &&
 							( ! post.newspack_post_sponsors || post.newspack_sponsors_show_author ) &&
-							formatByline( post.newspack_author_info ) }
+							formatByline( post ) }
 
 						{ showDate && ! post.newspack_listings_hide_publish_date && (
 							<time className="entry-date published" key="pub-date">

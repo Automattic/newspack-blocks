@@ -80,30 +80,36 @@ class Newspack_Blocks_API {
 	 * @return array Author data.
 	 */
 	public static function newspack_blocks_get_author_info( $object_info ) {
-		$author_data = [];
+		$authors = [];
+		if ( class_exists( 'Newspack\Bylines' ) && Newspack\Bylines::is_enabled() ) {
+			$authors = Newspack\Bylines::get_post_byline_authors();
+		}
 
-		if ( function_exists( 'coauthors_posts_links' ) && ! empty( get_coauthors() ) ) :
+		if ( empty( $authors ) && function_exists( 'get_coauthors' ) ) {
 			$authors = get_coauthors();
+		}
 
-			foreach ( $authors as $author ) {
-				$author_avatar = coauthors_get_avatar( $author, 48 );
-				$author_link   = null;
+		$author_data = [];
+		foreach ( $authors as $author ) {
+			$author_avatar = coauthors_get_avatar( $author, 48 );
+			$author_link   = null;
 
-				if ( function_exists( 'coauthors_posts_links' ) ) {
-					$author_link = get_author_posts_url( $author->ID, $author->user_nicename );
-				}
-				$author_data[] = array(
-					/* Get the author name */
-					'display_name' => esc_html( $author->display_name ),
-					/* Get the author avatar */
-					'avatar'       => wp_kses_post( $author_avatar ),
-					/* Get the author ID */
-					'id'           => $author->ID,
-					/* Get the author Link */
-					'author_link'  => $author_link,
-				);
+			if ( function_exists( 'coauthors_posts_links' ) ) {
+				$author_link = get_author_posts_url( $author->ID, $author->user_nicename );
 			}
-		else :
+			$author_data[] = array(
+				/* Get the author name */
+				'display_name' => esc_html( $author->display_name ),
+				/* Get the author avatar */
+				'avatar'       => wp_kses_post( $author_avatar ),
+				/* Get the author ID */
+				'id'           => $author->ID,
+				/* Get the author Link */
+				'author_link'  => $author_link,
+			);
+		}
+
+		if ( empty( $author_data ) ) {
 			$author_data[] = array(
 				/* Get the author name */
 				'display_name' => get_the_author_meta( 'display_name', $object_info['author'] ),
@@ -114,9 +120,7 @@ class Newspack_Blocks_API {
 				/* Get the author Link */
 				'author_link'  => get_author_posts_url( $object_info['author'] ),
 			);
-		endif;
-
-		/* Return the author data */
+		}
 		return $author_data;
 	}
 
@@ -320,6 +324,11 @@ class Newspack_Blocks_API {
 				'post_type'                         => $post->post_type,
 				'post_link'                         => Newspack_Blocks::get_post_link( $post->ID ),
 			];
+
+			if ( class_exists( 'Newspack\Bylines' ) && Newspack\Bylines::is_enabled() ) {
+				$add_ons['newspack_byline_authors'] = Newspack\Bylines::get_post_byline_authors();
+				$add_ons['newspack_byline'] = Newspack\Bylines::output_byline_on_post( false );
+			}
 
 			// Support Newspack Listings hide author/publish date options.
 			if ( class_exists( 'Newspack_Listings\Core' ) ) {
