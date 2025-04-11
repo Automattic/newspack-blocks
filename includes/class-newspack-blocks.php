@@ -85,16 +85,17 @@ class Newspack_Blocks {
 	/**
 	 * Body class.
 	 *
-	 * @param array $classes Array of body class names.
-	 * @return array Modified array of body class names.
+	 * @param string|array $classes Array or string of body class names.
+	 * @return string|array Modified array or string of body class names.
 	 */
 	public static function add_body_classes( $classes ) {
-		$block_theme = 'is-block-theme';
-
-		if ( wp_is_block_theme() && is_admin() ) {
-			$classes .= $block_theme;
-		} elseif ( wp_is_block_theme() ) {
-			$classes[] = $block_theme;
+		if ( wp_is_block_theme() ) {
+			// Handle string (admin) vs array (frontend) cases.
+			if ( is_string( $classes ) ) {
+				$classes .= ' is-block-theme ';
+			} else {
+				$classes[] = 'is-block-theme';
+			}
 		}
 
 		return $classes;
