@@ -173,11 +173,11 @@ final class Data_Events {
 			'recurrence'   => self::get_purchase_recurrence( $product_id ),
 			'variation_id' => strval( $variation_id ),
 		];
-		$gate_post_id = filter_input( INPUT_GET, 'memberships_content_gate', FILTER_SANITIZE_NUMBER_INT );
+		$gate_post_id = ! empty( $order ) ? $order->get_meta( '_memberships_content_gate' ) : filter_input( INPUT_GET, 'memberships_content_gate', FILTER_SANITIZE_NUMBER_INT );
 		if ( $gate_post_id ) {
 			$data_order_details['gate_post_id'] = $gate_post_id;
 		}
-		$newspack_popup_id = filter_input( INPUT_GET, 'newspack_popup_id', FILTER_SANITIZE_NUMBER_INT );
+		$newspack_popup_id = ! empty( $order ) ? $order->get_meta( '_newspack_popup_id' ) : filter_input( INPUT_GET, 'newspack_popup_id', FILTER_SANITIZE_NUMBER_INT );
 		if ( $newspack_popup_id ) {
 			$data_order_details['newspack_popup_id'] = $newspack_popup_id;
 		}
