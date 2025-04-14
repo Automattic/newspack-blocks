@@ -123,7 +123,6 @@ final class Modal_Checkout {
 		'stripe',
 		'stripe-link',
 		'woocommerce_payments',
-		'braintree_credit_card',
 	];
 
 	/**
