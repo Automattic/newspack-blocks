@@ -52,6 +52,7 @@ import { domReady } from './utils';
 
 		if ( newspackBlocksModalCheckout.is_checkout_complete ) {
 			manageCheckoutSuccess();
+
 			/**
 			 * Set the checkout as complete so the modal can resolve post checkout flows.
 			 */

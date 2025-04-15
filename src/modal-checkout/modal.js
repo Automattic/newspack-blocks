@@ -10,6 +10,7 @@ import * as a11y from './accessibility.js';
  * Internal dependencies
  */
 import { manageDismissed, manageOpened } from './analytics';
+import { getProductDetails } from './analytics/ga4/utils';
 import { createHiddenInput, domReady } from './utils';
 
 const CLASS_PREFIX = newspackBlocksModal.newspack_class_prefix;
@@ -127,10 +128,18 @@ domReady( () => {
 		}
 		if ( container ) {
 			if ( container.checkoutComplete ) {
+				// Dispatch a checkout_completed event to RAS.
+				const params = getProductDetails( MODAL_CHECKOUT_ID );
+				window.newspackRAS = window.newspackRAS || [];
+				window.newspackRAS.push( function( ras ) {
+					ras.dispatchActivity( 'checkout_completed', params );
+				} );
+
 				// Update the newsletters signup modal if it exists.
 				if ( window?.newspackReaderActivation?.refreshNewslettersSignupModal && window?.newspackReaderActivation?.getReader()?.email ) {
 					window.newspackReaderActivation.refreshNewslettersSignupModal( window.newspackReaderActivation.getReader().email );
 				}
+
 				// Update the modal title and width to reflect successful transaction.
 				setModalSize( 'small' );
 				setModalTitle( newspackBlocksModal.labels.thankyou_modal_title );
