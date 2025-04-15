@@ -793,27 +793,38 @@ class Newspack_Blocks {
 	/**
 	 * Prepare an array of authors, taking presence of CoAuthors Plus into account.
 	 *
-	 * @return array Array of WP_User objects.
+	 * @return object[] Array of user objects.
 	 */
 	public static function prepare_authors() {
-		if ( function_exists( 'coauthors_posts_links' ) && ! empty( get_coauthors() ) ) {
+		$authors = [];
+
+		if ( function_exists( 'get_coauthors' ) ) {
 			$authors = get_coauthors();
 			foreach ( $authors as $author ) {
 				$author->avatar = coauthors_get_avatar( $author, 48 );
 				$author->url    = get_author_posts_url( $author->ID, $author->user_nicename );
 			}
-			return $authors;
 		}
-		$id = get_the_author_meta( 'ID' );
-		return array(
-			(object) array(
-				'ID'            => $id,
-				'avatar'        => get_avatar( $id, 48 ),
-				'url'           => get_author_posts_url( $id ),
-				'user_nicename' => get_the_author(),
-				'display_name'  => get_the_author_meta( 'display_name' ),
-			),
-		);
+
+		if ( empty( $authors ) ) {
+			$id = get_the_author_meta( 'ID' );
+			$authors = array(
+				(object) array(
+					'ID'            => $id,
+					'avatar'        => get_avatar( $id, 48 ),
+					'url'           => get_author_posts_url( $id ),
+					'user_nicename' => get_the_author(),
+					'display_name'  => get_the_author_meta( 'display_name' ),
+				),
+			);
+		}
+
+		/**
+		 * Filters the authors array.
+		 *
+		 * @param object[] $authors Array of user objects.
+		 */
+		return apply_filters( 'newspack_blocks_post_authors', $authors );
 	}
 
 	/**
