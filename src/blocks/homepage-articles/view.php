@@ -467,18 +467,11 @@ function newspack_blocks_format_avatars( $author_info ) {
 /**
  * Renders byline markup.
  *
- * @param array $author_info Author info array.
+ * @param object[] $author_info Author info array.
  *
  * @return string Returns byline markup.
  */
 function newspack_blocks_format_byline( $author_info ) {
-	if ( class_exists( 'Newspack\Bylines' ) && Newspack\Bylines::is_enabled() ) {
-		$custom_byline = Newspack\Bylines::output_byline_on_post( false );
-		if ( $custom_byline ) {
-			return $custom_byline;
-		}
-	}
-
 	$index    = -1;
 	$elements = array_merge(
 		[
@@ -507,7 +500,15 @@ function newspack_blocks_format_byline( $author_info ) {
 		)
 	);
 
-	return implode( '', $elements );
+	$byline = implode( '', $elements );
+
+	/**
+	 * Filters the byline markup.
+	 *
+	 * @param string   $byline      Byline markup.
+	 * @param objcet[] $author_info Author info array.
+	 */
+	return apply_filters( 'newspack_blocks_post_byline', $byline, $author_info );
 }
 
 /**
