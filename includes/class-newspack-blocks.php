@@ -29,6 +29,8 @@ class Newspack_Blocks {
 		add_post_type_support( 'page', 'newspack_blocks' );
 		add_action( 'jetpack_register_gutenberg_extensions', [ __CLASS__, 'disable_jetpack_donate' ], 99 );
 		add_filter( 'the_content', [ __CLASS__, 'hide_post_content_when_iframe_block_is_fullscreen' ] );
+		add_filter( 'body_class', [ __CLASS__, 'add_body_classes' ] );
+		add_filter( 'admin_body_class', [ __CLASS__, 'add_body_classes' ] );
 
 		/**
 		 * Disable NextGEN's `C_NextGen_Shortcode_Manager`.
@@ -78,6 +80,25 @@ class Newspack_Blocks {
 		}
 
 		return $content;
+	}
+
+	/**
+	 * Body class.
+	 *
+	 * @param string|array $classes Array or string of body class names.
+	 * @return string|array Modified array or string of body class names.
+	 */
+	public static function add_body_classes( $classes ) {
+		if ( wp_is_block_theme() ) {
+			// Handle string (admin) vs array (frontend) cases.
+			if ( is_string( $classes ) ) {
+				$classes .= ' is-block-theme ';
+			} else {
+				$classes[] = 'is-block-theme';
+			}
+		}
+
+		return $classes;
 	}
 
 	/**

@@ -1,3 +1,16 @@
+# [4.10.0](https://github.com/Automattic/newspack-blocks/compare/v4.9.2...v4.10.0) (2025-04-14)
+
+
+### Bug Fixes
+
+* correct Content Loop button width in WP 6.8 ([#2090](https://github.com/Automattic/newspack-blocks/issues/2090)) ([c39a46c](https://github.com/Automattic/newspack-blocks/commit/c39a46c74a0aee7334c0d7bb824ba0b02f00d7f4))
+* remove unneeded editor-style-wrapper class ([#2089](https://github.com/Automattic/newspack-blocks/issues/2089)) ([e13ea9e](https://github.com/Automattic/newspack-blocks/commit/e13ea9ebecd68305f80a820c573e8ed805ad214c))
+
+
+### Features
+
+* **content-loop:** Allow for AND (inter-join) logic ([#2092](https://github.com/Automattic/newspack-blocks/issues/2092)) ([02053aa](https://github.com/Automattic/newspack-blocks/commit/02053aa2d9029cf5a4f91cff8612af38f849e77b))
+
 ## [4.9.2](https://github.com/Automattic/newspack-blocks/compare/v4.9.1...v4.9.2) (2025-04-10)
 
 
