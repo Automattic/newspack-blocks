@@ -1111,13 +1111,29 @@ final class Modal_Checkout {
 	 * Get after success button params.
 	 */
 	private static function get_after_success_params() {
-		return array_filter(
-			[
-				'after_success_behavior'     => isset( $_REQUEST['after_success_behavior'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['after_success_behavior'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				'after_success_url'          => isset( $_REQUEST['after_success_url'] ) ? sanitize_url( wp_unslash( $_REQUEST['after_success_url'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				'after_success_button_label' => isset( $_REQUEST['after_success_button_label'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['after_success_button_label'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			]
-		);
+		// Express checkout payment requests are separate requests, so they won't have the after_success attributes. We'll have to check the HTTP_REFERER instead.
+		if ( self::is_express_checkout() ) {
+			$referrer = isset( $_SERVER['HTTP_REFERER'] ) ? \esc_url_raw( \wp_unslash( $_SERVER['HTTP_REFERER'] ) ) : false; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			if ( $referrer ) {
+				$referrer_query = \wp_parse_url( $referrer, PHP_URL_QUERY );
+				\wp_parse_str( $referrer_query, $referrer_query_params );
+				return array_filter(
+					[
+						'after_success_behavior'     => isset( $referrer_query_params['after_success_behavior'] ) ? sanitize_text_field( wp_unslash( $referrer_query_params['after_success_behavior'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+						'after_success_url'          => isset( $referrer_query_params['after_success_url'] ) ? sanitize_url( wp_unslash( $referrer_query_params['after_success_url'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+						'after_success_button_label' => isset( $referrer_query_params['after_success_button_label'] ) ? sanitize_text_field( wp_unslash( $referrer_query_params['after_success_button_label'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+					]
+				);
+			}
+		} else {
+			return array_filter(
+				[
+					'after_success_behavior'     => isset( $_REQUEST['after_success_behavior'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['after_success_behavior'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+					'after_success_url'          => isset( $_REQUEST['after_success_url'] ) ? sanitize_url( wp_unslash( $_REQUEST['after_success_url'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+					'after_success_button_label' => isset( $_REQUEST['after_success_button_label'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['after_success_button_label'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				]
+			);
+		}
 	}
 
 	/**
@@ -1162,7 +1178,6 @@ final class Modal_Checkout {
 		if ( isset( $_REQUEST[ self::CHECKOUT_REGISTRATION_FLAG ] ) && $_REQUEST[ self::CHECKOUT_REGISTRATION_FLAG ] ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 			$args[ self::CHECKOUT_REGISTRATION_FLAG ] = '1';
 		}
-
 		return add_query_arg(
 			$args,
 			$url
@@ -1589,6 +1604,17 @@ final class Modal_Checkout {
 			$is_modal_checkout = strpos( $_REQUEST['post_data'], 'modal_checkout=1' ) !== false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		}
 
+		if ( self::is_express_checkout() ) {
+			$is_modal_checkout = true;
+		}
+
+		return $is_modal_checkout;
+	}
+
+	/**
+	 * Is this transaction using an express checkout method?
+	 */
+	public static function is_express_checkout() {
 		// Express checkout payment requests are separate requests, so they won't have the modal checkout flag. We'll have to check the HTTP_REFERER instead.
 		$express_payment_info = filter_input( INPUT_POST, 'express_payment_type', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		$is_express_checkout = ! empty( $express_payment_info ) && in_array( $express_payment_info, [ 'apple_pay', 'google_pay', 'payment_request_api' ], true ); // Validate payment request types: https://github.com/woocommerce/woocommerce-gateway-stripe/blob/develop/includes/payment-methods/class-wc-stripe-payment-request.php#L557-L586.
@@ -1599,12 +1625,11 @@ final class Modal_Checkout {
 				$referrer_query = \wp_parse_url( $referrer, PHP_URL_QUERY );
 				\wp_parse_str( $referrer_query, $referrer_query_params );
 				if ( isset( $referrer_query_params['modal_checkout'] ) && $referrer_query_params['modal_checkout'] ) {
-					$is_modal_checkout = true;
+					return true;
 				}
 			}
 		}
-
-		return $is_modal_checkout;
+		return false;
 	}
 
 	/**
