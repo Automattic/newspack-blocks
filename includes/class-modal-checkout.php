@@ -1615,9 +1615,10 @@ final class Modal_Checkout {
 	 * Is this transaction using an express checkout method?
 	 */
 	public static function is_express_checkout() {
-		// Express checkout payment requests are separate requests, so they won't have the modal checkout flag. We'll have to check the HTTP_REFERER instead.
-		$express_payment_info = filter_input( INPUT_POST, 'express_payment_type', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		$is_express_checkout = ! empty( $express_payment_info ) && in_array( $express_payment_info, [ 'apple_pay', 'google_pay', 'payment_request_api' ], true ); // Validate payment request types: https://github.com/woocommerce/woocommerce-gateway-stripe/blob/develop/includes/payment-methods/class-wc-stripe-payment-request.php#L557-L586.
+		// Get express_payment_type in a way that works for both Stripe and WooPayments.
+		$express_payment_info = isset( $_POST['express_payment_type'] ) ? sanitize_text_field( wp_unslash( $_POST['express_payment_type'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+
+		$is_express_checkout = ! empty( $express_payment_info ) && in_array( $express_payment_info, [ 'apple_pay', 'google_pay', 'payment_request_api' ], true );  // Validate payment request types: https://github.com/woocommerce/woocommerce-gateway-stripe/blob/develop/includes/payment-methods/class-wc-stripe-payment-request.php#L557-L586.
 
 		if ( $is_express_checkout ) {
 			$referrer = isset( $_SERVER['HTTP_REFERER'] ) ? \esc_url_raw( \wp_unslash( $_SERVER['HTTP_REFERER'] ) ) : false; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
