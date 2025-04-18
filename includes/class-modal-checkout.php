@@ -1945,22 +1945,16 @@ final class Modal_Checkout {
 	 * Add newspack ui classes to the "Place order" button html.
 	 *
 	 * @param string $html The button html.
+	 *
+	 * @return string The modified button html.
 	 */
 	public static function order_button_html( $html ) {
 		if ( ! self::is_modal_checkout() ) {
 			return $html;
 		}
 
-		$class_prefix = self::get_class_prefix();
-
+		$class_prefix      = self::get_class_prefix();
 		$newspack_ui_html = preg_replace( '/class=".*?"/', "class='{$class_prefix}__button {$class_prefix}__button--primary {$class_prefix}__button--wide'", $html );
-
-		if ( class_exists( 'Newspack\Recaptcha' ) && \Newspack\Recaptcha::can_use_captcha( 'v2' ) ) {
-			$cloned_button    = preg_replace( '/type="submit"/', 'type="button"', $newspack_ui_html );
-			$cloned_button    = preg_replace( '/id="place_order"/', '', $newspack_ui_html );
-			$cloned_button    = preg_replace( '/name=".*?"/', 'id="place_order_clone"', $newspack_ui_html );
-			$newspack_ui_html = $cloned_button . $newspack_ui_html;
-		}
 
 		return $newspack_ui_html;
 	}
