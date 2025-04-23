@@ -1386,7 +1386,9 @@ class Newspack_Blocks {
 		if ( $post === null ) {
 			$post = get_post();
 		}
-		return apply_filters( 'newspack_blocks_displayed_post_date', mysql_to_rfc3339( $post->post_date ), $post );
+		$date           = new DateTime( $post->post_date );
+		$date_formatted = date_i18n( 'c', $date->getTimestamp() );
+		return apply_filters( 'newspack_blocks_displayed_post_date', $date_formatted, $post );
 	}
 
 	/**
