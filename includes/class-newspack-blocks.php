@@ -1399,10 +1399,12 @@ class Newspack_Blocks {
 		if ( $post === null ) {
 			$post = get_post();
 		}
-		$date  = self::get_displayed_post_date( $post );
-		$date  = new DateTime( $date );
-		$date_formatted = date_i18n( 'c', $date->getTimestamp() );
-		return apply_filters( 'newspack_blocks_displayed_post_date', $date_formatted, $post );
+		/**
+		 * Filters the post date used for the datetime attribute.
+		 *
+		 * @param string Date string in a format appropriate for datetime attributes.
+		 */
+		return apply_filters( 'newspack_blocks_displayed_post_date', get_post_datetime( $post )->format( 'c' ), $post );
 	}
 
 	/**
