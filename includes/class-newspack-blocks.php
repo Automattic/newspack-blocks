@@ -1386,7 +1386,21 @@ class Newspack_Blocks {
 		if ( $post === null ) {
 			$post = get_post();
 		}
-		$date           = new DateTime( $post->post_date );
+		return apply_filters( 'newspack_blocks_displayed_post_date', mysql_to_rfc3339( $post->post_date ), $post );
+	}
+
+	/**
+	 * Get post date in ISO-8601 format to be used in the datetime attribute.
+	 *
+	 * @param WP_Post $post Post object.
+	 * @return string Date string in ISO-8601 format.
+	 */
+	public static function get_datetime_post_date( $post = null ) {
+		if ( $post === null ) {
+			$post = get_post();
+		}
+		$date  = self::get_displayed_post_date( $post );
+		$date  = new DateTime( $date );
 		$date_formatted = date_i18n( 'c', $date->getTimestamp() );
 		return apply_filters( 'newspack_blocks_displayed_post_date', $date_formatted, $post );
 	}
