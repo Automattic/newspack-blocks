@@ -501,6 +501,9 @@ import { domReady } from './utils';
 						originalFormHandlers.forEach( handler => {
 							$form.on( 'submit', handler.handler );
 						} );
+
+						// Disable 'Place Order' button if Subscription Confirmation is required.
+						handleSubscriptionConfirmation();
 					}
 					$form.triggerHandler( 'editing_details', [ isEditingDetails ] );
 					// Scroll to top.
@@ -797,7 +800,6 @@ import { domReady } from './utils';
 				} );
 			}
 		}
-
 		// Listen to various WooCommerce events.
 		$( document.body ).on( 'updated_checkout payment_method_selected checkout_error', handleSubscriptionConfirmation );
 		// Also handle initial load.
