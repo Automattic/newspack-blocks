@@ -1025,6 +1025,7 @@ final class Modal_Checkout {
 				'newspack_class_prefix'           => self::get_class_prefix(),
 				'is_registration_required'        => self::is_registration_required(),
 				'has_unsupported_payment_gateway' => self::has_unsupported_payment_gateway(),
+				'checkout_url'                    => add_query_arg( 'modal_checkout', '1', wc_get_checkout_url() ),
 				'labels'                          => [
 					'auth_modal_title'     => self::get_modal_checkout_labels( 'auth_modal_title' ),
 					'checkout_modal_title' => self::get_modal_checkout_labels( 'checkout_modal_title' ),
@@ -1604,7 +1605,12 @@ final class Modal_Checkout {
 	 */
 	public static function is_modal_checkout() {
 		// Until we use the modal checkout flow from My Account, we don't want to show the modal checkout thank you template for checkouts originating from My Account.
-		if ( method_exists( 'Newspack\WooCommerce_My_Account', 'is_from_my_account' ) && \Newspack\WooCommerce_My_Account::is_from_my_account() ) {
+		if (
+			method_exists( 'Newspack\WooCommerce_My_Account', 'get_version' ) &&
+			version_compare( \Newspack\WooCommerce_My_Account::get_version(), '1.0.0', '<' ) &&
+			method_exists( 'Newspack\WooCommerce_My_Account', 'is_from_my_account' ) &&
+			\Newspack\WooCommerce_My_Account::is_from_my_account()
+		) {
 			return false;
 		}
 

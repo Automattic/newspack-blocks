@@ -541,6 +541,9 @@ domReady( () => {
 	 * created.
 	 */
 	const generateCheckoutPageForm = checkoutUrl => {
+		if ( ! checkoutUrl ) {
+			checkoutUrl = newspackBlocksModal?.checkout_url;
+		}
 		const checkoutForm = document.createElement( 'form' );
 		checkoutForm.method = 'POST';
 		checkoutForm.action = checkoutUrl;
@@ -908,4 +911,9 @@ domReady( () => {
 		window.history.replaceState( null, null, window.location.pathname );
 	};
 	handleModalCheckoutUrlParams();
+
+	// Expose a function to open the modal checkout from a URL.
+	window.newspackOpenModalCheckout = checkoutUrl => {
+		triggerCheckout( generateCheckoutPageForm( checkoutUrl ) );
+	};
 } );
