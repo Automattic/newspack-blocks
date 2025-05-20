@@ -25,6 +25,9 @@ let analyticsData = {};
 // Track the checkout intent to avoid multiple analytics events.
 let inCheckoutIntent = false;
 
+// Checkout title.
+let checkoutTitle = newspackBlocksModal.labels.checkout_modal_title;
+
 // Close the modal.
 const closeModal = el => {
 	if ( el.overlayId && window.newspackReaderActivation?.overlays ) {
@@ -148,7 +151,7 @@ domReady( () => {
 			} else {
 				// Revert modal title and width default value.
 				setModalSize();
-				setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
+				setModalTitle( checkoutTitle );
 				if ( iframe.contentWindow?.newspackBlocksModalCheckout?.checkout_nonce ) {
 					// Store the checkout nonce for later use.
 					// We store the nonce from the iframe content window to ensure the nonce was generated for a logged in session
@@ -541,9 +544,6 @@ domReady( () => {
 	 * created.
 	 */
 	const generateCheckoutPageForm = checkoutUrl => {
-		if ( ! checkoutUrl ) {
-			checkoutUrl = newspackBlocksModal?.checkout_url;
-		}
 		const checkoutForm = document.createElement( 'form' );
 		checkoutForm.method = 'POST';
 		checkoutForm.action = checkoutUrl;
@@ -585,6 +585,7 @@ domReady( () => {
 			iframe.style.height = iframeHeight + 'px';
 		}
 	} );
+
 	const closeCheckout = () => {
 		const container = iframe?.contentDocument?.querySelector( `#${ IFRAME_CONTAINER_ID }` );
 		const afterSuccessUrlInput = container?.querySelector( 'input[name="after_success_url"]' );
@@ -651,8 +652,9 @@ domReady( () => {
 
 			// Ensure we always reset the modal title and width once the modal closes.
 			if ( shouldCloseModal ) {
+				checkoutTitle = newspackBlocksModal.labels.checkout_modal_title;
 				setModalSize();
-				setModalTitle( newspackBlocksModal.labels.checkout_modal_title );
+				setModalTitle( checkoutTitle );
 			}
 		} else {
 			window?.newspackReaderActivation?.setPendingCheckout?.();
@@ -663,7 +665,7 @@ domReady( () => {
 		}
 	};
 
-	const openCheckout = () => {
+	const openCheckout = ( url ) => {
 		spinner.style.display = 'flex';
 		openModal( modalCheckout );
 		modalContent.appendChild( iframe );
@@ -672,6 +674,10 @@ domReady( () => {
 				closeCheckout();
 			}
 		} );
+
+		if ( url ) {
+			iframe.src = url;
+		}
 
 		a11y.trapFocus( modalCheckout, iframe );
 
@@ -912,8 +918,30 @@ domReady( () => {
 	};
 	handleModalCheckoutUrlParams();
 
-	// Expose a function to open the modal checkout from a URL.
-	window.newspackOpenModalCheckout = checkoutUrl => {
-		triggerCheckout( generateCheckoutPageForm( checkoutUrl ) );
+	/**
+	 * Open the modal checkout.
+	 *
+	 * @param {string} title                    The title to set for the modal.
+	 * @param {Object} afterSuccess             The after success configuration object.
+	 * @param {string} afterSuccess.url         The URL to redirect to after the checkout is complete.
+	 * @param {string} afterSuccess.behavior    The behavior to use after the checkout is complete.
+	 * @param {string} afterSuccess.buttonLabel The label to use for the after success button.
+	 */
+	window.newspackOpenModalCheckout = (
+		title = null,
+		afterSuccess = {},
+	) => {
+		checkoutTitle = title || newspackBlocksModal.labels.checkout_modal_title;
+		const url = new URL( newspackBlocksModal.checkout_url );
+		if ( afterSuccess?.url ) {
+			url.searchParams.set( 'after_success_url', afterSuccess.url );
+		}
+		if ( afterSuccess?.behavior || afterSuccess?.url ) {
+			url.searchParams.set( 'after_success_behavior', afterSuccess.behavior || 'custom' );
+		}
+		if ( afterSuccess?.buttonLabel ) {
+			url.searchParams.set( 'after_success_button_label', afterSuccess.buttonLabel );
+		}
+		openCheckout( url.toString() );
 	};
 } );
