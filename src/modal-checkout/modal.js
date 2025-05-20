@@ -10,12 +10,12 @@ import * as a11y from './accessibility.js';
  * Internal dependencies
  */
 import { manageDismissed, manageOpened } from './analytics';
-import { getProductDetails } from './analytics/ga4/utils';
 import {
 	domReady,
 	iframeReady,
 	createHiddenInput,
-	triggerFormSubmit
+	triggerFormSubmit,
+	getOrderDetails
 } from './utils';
 
 const CLASS_PREFIX = newspackBlocksModal.newspack_class_prefix;
@@ -51,6 +51,11 @@ window.onpageshow = event => {
 		document.querySelectorAll( `.${ MODAL_CLASS_PREFIX }-container` ).forEach( el => closeModal( el ) );
 	}
 }
+
+// Register the "checkout closed" event.
+const checkoutClosedEvent = new CustomEvent( 'checkout-closed' );
+
+window.newspackRAS = window.newspackRAS || [];
 
 domReady( () => {
 	const modalCheckout = document.querySelector( `#${ MODAL_CHECKOUT_ID }` );
@@ -98,12 +103,9 @@ domReady( () => {
 		}
 		if ( container ) {
 			if ( container.checkoutComplete ) {
-				// Dispatch a checkout_completed event to RAS.
-				const params = getProductDetails( MODAL_CHECKOUT_ID );
-				window.newspackRAS = window.newspackRAS || [];
-				window.newspackRAS.push( function( ras ) {
-					ras.dispatchActivity( 'checkout_completed', params );
-				} );
+				// Dispatch a `checkout_completed` activity to RAS.
+				const params = getOrderDetails( container.querySelector( '#modal-checkout-product-details' ) );
+				window.newspackRAS.push( [ 'checkout_completed', params ] );
 
 				// Update the newsletters signup modal if it exists.
 				if ( window?.newspackReaderActivation?.refreshNewslettersSignupModal && window?.newspackReaderActivation?.getReader()?.email ) {
@@ -589,6 +591,8 @@ domReady( () => {
 			if ( modalTrigger ) {
 				modalTrigger.focus();
 			}
+
+			document.dispatchEvent( checkoutClosedEvent );
 		}
 
 		if ( container?.checkoutComplete ) {
@@ -878,6 +882,7 @@ domReady( () => {
 	 * Open the modal checkout.
 	 *
 	 * @param {string} title                    The title to set for the modal.
+	 * @param {string} actionType               The action type to set for the modal.
 	 * @param {Object} afterSuccess             The after success configuration object.
 	 * @param {string} afterSuccess.url         The URL to redirect to after the checkout is complete.
 	 * @param {string} afterSuccess.behavior    The behavior to use after the checkout is complete.
@@ -885,10 +890,14 @@ domReady( () => {
 	 */
 	window.newspackOpenModalCheckout = (
 		title = null,
+		actionType = null,
 		afterSuccess = {},
 	) => {
 		checkoutTitle = title || newspackBlocksModal.labels.checkout_modal_title;
 		const url = new URL( newspackBlocksModal.checkout_url );
+		if ( actionType ) {
+			url.searchParams.set( 'action_type', actionType );
+		}
 		if ( afterSuccess?.url ) {
 			url.searchParams.set( 'after_success_url', afterSuccess.url );
 		}

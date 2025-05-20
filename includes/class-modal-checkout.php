@@ -1025,7 +1025,7 @@ final class Modal_Checkout {
 				'newspack_class_prefix'           => self::get_class_prefix(),
 				'is_registration_required'        => self::is_registration_required(),
 				'has_unsupported_payment_gateway' => self::has_unsupported_payment_gateway(),
-				'checkout_url'                    => add_query_arg( 'modal_checkout', '1', wc_get_checkout_url() ),
+				'checkout_url'                    => remove_query_arg( 'my_account_checkout', add_query_arg( 'modal_checkout', '1', wc_get_checkout_url() ) ),
 				'labels'                          => [
 					'auth_modal_title'     => self::get_modal_checkout_labels( 'auth_modal_title' ),
 					'checkout_modal_title' => self::get_modal_checkout_labels( 'checkout_modal_title' ),
@@ -1112,29 +1112,23 @@ final class Modal_Checkout {
 	 * Get after success button params.
 	 */
 	private static function get_after_success_params() {
-		// Express checkout payment requests are separate requests, so they won't have the after_success attributes. We'll have to check the HTTP_REFERER instead.
+		$request_params = $_REQUEST; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( self::is_express_checkout() ) {
+			$request_params = [];
 			$referrer = isset( $_SERVER['HTTP_REFERER'] ) ? \esc_url_raw( \wp_unslash( $_SERVER['HTTP_REFERER'] ) ) : false; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			if ( $referrer ) {
 				$referrer_query = \wp_parse_url( $referrer, PHP_URL_QUERY );
-				\wp_parse_str( $referrer_query, $referrer_query_params );
-				return array_filter(
-					[
-						'after_success_behavior'     => isset( $referrer_query_params['after_success_behavior'] ) ? sanitize_text_field( wp_unslash( $referrer_query_params['after_success_behavior'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-						'after_success_url'          => isset( $referrer_query_params['after_success_url'] ) ? sanitize_url( wp_unslash( $referrer_query_params['after_success_url'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-						'after_success_button_label' => isset( $referrer_query_params['after_success_button_label'] ) ? sanitize_text_field( wp_unslash( $referrer_query_params['after_success_button_label'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-					]
-				);
+				\wp_parse_str( $referrer_query, $request_params );
 			}
-		} else {
-			return array_filter(
-				[
-					'after_success_behavior'     => isset( $_REQUEST['after_success_behavior'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['after_success_behavior'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-					'after_success_url'          => isset( $_REQUEST['after_success_url'] ) ? sanitize_url( wp_unslash( $_REQUEST['after_success_url'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-					'after_success_button_label' => isset( $_REQUEST['after_success_button_label'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['after_success_button_label'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				]
-			);
 		}
+		return array_filter(
+			[
+				'after_success_behavior'     => isset( $request_params['after_success_behavior'] ) ? sanitize_text_field( wp_unslash( $request_params['after_success_behavior'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				'after_success_url'          => isset( $request_params['after_success_url'] ) ? sanitize_url( wp_unslash( $request_params['after_success_url'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				'after_success_button_label' => isset( $request_params['after_success_button_label'] ) ? sanitize_text_field( wp_unslash( $request_params['after_success_button_label'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				'action_type'                => isset( $request_params['action_type'] ) ? sanitize_text_field( wp_unslash( $request_params['action_type'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			]
+		);
 	}
 
 	/**
@@ -1605,12 +1599,7 @@ final class Modal_Checkout {
 	 */
 	public static function is_modal_checkout() {
 		// Until we use the modal checkout flow from My Account, we don't want to show the modal checkout thank you template for checkouts originating from My Account.
-		if (
-			method_exists( 'Newspack\WooCommerce_My_Account', 'get_version' ) &&
-			version_compare( \Newspack\WooCommerce_My_Account::get_version(), '1.0.0', '<' ) &&
-			method_exists( 'Newspack\WooCommerce_My_Account', 'is_from_my_account' ) &&
-			\Newspack\WooCommerce_My_Account::is_from_my_account()
-		) {
+		if ( method_exists( 'Newspack\WooCommerce_My_Account', 'is_from_my_account' ) && \Newspack\WooCommerce_My_Account::is_from_my_account() ) {
 			return false;
 		}
 

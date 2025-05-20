@@ -163,16 +163,31 @@ final class Data_Events {
 			$referrer = $cart_item['referer'];
 		}
 
+		$product_type = self::get_product_type( $product_id );
+
 		$data_order_details = [
 			'amount'       => $amount,
 			'action_type'  => self::get_action_type( $product_id ),
 			'currency'     => function_exists( 'get_woocommerce_currency' ) ? \get_woocommerce_currency() : 'USD',
 			'product_id'   => strval( $product_id ),
-			'product_type' => self::get_product_type( $product_id ),
+			'product_type' => $product_type,
 			'referrer'     => str_replace( home_url(), '', $referrer ), // Keeps format consistent for Homepage with Donate and Checkout Button blocks.
 			'recurrence'   => self::get_purchase_recurrence( $product_id ),
 			'variation_id' => strval( $variation_id ),
 		];
+		if ( $order && 'subscription' === $product_type && function_exists( 'wcs_get_subscriptions_for_order' ) ) {
+			$subscriptions = wcs_get_subscriptions_for_order( $order );
+			if ( ! empty( $subscriptions ) ) {
+				$data_order_details['subscription_ids'] = array_values(
+					array_map(
+						function( $subscription ) {
+							return $subscription->get_id();
+						},
+						$subscriptions
+					)
+				);
+			}
+		}
 		$gate_post_id = ! empty( $order ) ? $order->get_meta( '_memberships_content_gate' ) : filter_input( INPUT_GET, 'memberships_content_gate', FILTER_SANITIZE_NUMBER_INT );
 		if ( $gate_post_id ) {
 			$data_order_details['gate_post_id'] = $gate_post_id;

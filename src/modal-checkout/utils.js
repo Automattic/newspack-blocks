@@ -98,3 +98,39 @@ export function triggerFormSubmit( form ) {
 	// form.submit does not trigger submit event listener, so we use requestSubmit.
 	form.requestSubmit( form.querySelector( 'button[type="submit"]' ) );
 }
+
+/**
+ * Get details from the data-order-details attribute given an element Node or ID.
+ *
+ * @param {Node|string} element HTML element or its ID to get order details from.
+ *
+ * @return {Object} Order details.
+ */
+export function getOrderDetails( element ) {
+	const container = typeof element === 'string' ? document.getElementById( element ) : element;
+	if ( ! container ) {
+		console.warn( 'No container found for order details' ); // eslint-disable-line no-console
+		return {};
+	}
+
+	const json = container.getAttribute( 'data-order-details' );
+	if ( ! json ) {
+		console.warn( 'No order details found' ); // eslint-disable-line no-console
+		return {};
+	}
+
+	let details = {};
+	try {
+		details = JSON.parse( json );
+	} catch ( error ) {
+		console.warn( 'Error parsing order details' ); // eslint-disable-line no-console
+	}
+
+	// Overwrite the action type with the value from the URL.
+	const url = new URL( container.ownerDocument.defaultView.location.href );
+	if ( url.searchParams.get( 'action_type' ) ) {
+		details.action_type = url.searchParams.get( 'action_type' );
+	}
+
+	return details;
+}
