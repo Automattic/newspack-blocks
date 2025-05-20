@@ -40,3 +40,61 @@ export function createHiddenInput( name, value = null ) {
 
 	return input;
 }
+
+/**
+ * Check if an iframe is ready.
+ *
+ * @param {HTMLIFrameElement} iframe The iframe element.
+ * @param {Function}          cb     The callback to execute when the iframe is ready.
+ *
+ * @return {void}
+ */
+export function iframeReady( iframe, cb ) {
+	if ( iframe._readyTimer ) {
+		clearTimeout( iframe._readyTimer );
+	}
+	let fired = false;
+
+	function ready() {
+		if ( ! fired ) {
+			fired = true;
+			clearTimeout( iframe._readyTimer );
+			cb.call( this );
+		}
+	}
+	function readyState() {
+		if ( this.readyState === "complete" ) {
+			ready.call( this );
+		}
+	}
+	function checkLoaded() {
+		if ( iframe._ready ) {
+			clearTimeout( iframe._readyTimer );
+			return;
+		}
+		const doc = iframe.contentDocument || iframe.contentWindow?.document;
+		if ( doc && doc.URL.indexOf('about:') !== 0 ) {
+			if ( doc?.readyState === 'complete' ) {
+				ready.call( doc );
+			} else {
+				doc.addEventListener( 'DOMContentLoaded', ready );
+				doc.addEventListener( 'readystatechange', readyState );
+			}
+		} else {
+			iframe._readyTimer = setTimeout( checkLoaded, 10 );
+		}
+	}
+	checkLoaded();
+}
+
+/**
+ * Trigger a form submit.
+ *
+ * @param {HTMLFormElement} form The form element.
+ *
+ * @return {void}
+ */
+export function triggerFormSubmit( form ) {
+	// form.submit does not trigger submit event listener, so we use requestSubmit.
+	form.requestSubmit( form.querySelector( 'button[type="submit"]' ) );
+}

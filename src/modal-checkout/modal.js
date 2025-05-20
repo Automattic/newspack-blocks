@@ -11,7 +11,12 @@ import * as a11y from './accessibility.js';
  */
 import { manageDismissed, manageOpened } from './analytics';
 import { getProductDetails } from './analytics/ga4/utils';
-import { createHiddenInput, domReady } from './utils';
+import {
+	domReady,
+	iframeReady,
+	createHiddenInput,
+	triggerFormSubmit
+} from './utils';
 
 const CLASS_PREFIX = newspackBlocksModal.newspack_class_prefix;
 const IFRAME_NAME = 'newspack_modal_checkout_iframe';
@@ -63,44 +68,6 @@ domReady( () => {
 	iframe.name = IFRAME_NAME;
 	iframe.style.height = initialHeight;
 	iframe.style.visibility = 'hidden';
-
-	function iframeReady( cb ) {
-		if ( iframe._readyTimer ) {
-			clearTimeout( iframe._readyTimer );
-		}
-		let fired = false;
-
-		function ready() {
-			if ( ! fired ) {
-				fired = true;
-				clearTimeout( iframe._readyTimer );
-				cb.call( this );
-			}
-		}
-		function readyState() {
-			if ( this.readyState === "complete" ) {
-				ready.call( this );
-			}
-		}
-		function checkLoaded() {
-			if ( iframe._ready ) {
-				clearTimeout( iframe._readyTimer );
-				return;
-			}
-			const doc = iframe.contentDocument || iframe.contentWindow?.document;
-			if ( doc && doc.URL.indexOf('about:') !== 0 ) {
-				if ( doc?.readyState === 'complete' ) {
-					ready.call( doc );
-				} else {
-					doc.addEventListener( 'DOMContentLoaded', ready );
-					doc.addEventListener( 'readystatechange', readyState );
-				}
-			} else {
-				iframe._readyTimer = setTimeout( checkLoaded, 10 );
-			}
-		}
-		checkLoaded();
-	}
 
 	/**
 	 * Handle iframe load state.
@@ -496,7 +463,7 @@ domReady( () => {
 							generateCart( formData ).then( window.location.href = url );
 						} else {
 							const checkoutForm = generateCheckoutPageForm( url );
-							triggerCheckout( checkoutForm );
+							triggerFormSubmit( checkoutForm );
 						}
 					} )
 					.catch( error => {
@@ -666,6 +633,10 @@ domReady( () => {
 	};
 
 	const openCheckout = ( url ) => {
+		if ( url ) {
+			iframe.src = url;
+		}
+
 		spinner.style.display = 'flex';
 		openModal( modalCheckout );
 		modalContent.appendChild( iframe );
@@ -674,10 +645,6 @@ domReady( () => {
 				closeCheckout();
 			}
 		} );
-
-		if ( url ) {
-			iframe.src = url;
-		}
 
 		a11y.trapFocus( modalCheckout, iframe );
 
@@ -723,8 +690,6 @@ domReady( () => {
 			modal.classList.remove( `${ MODAL_CLASS_PREFIX }--small` );
 		}
 	};
-
-	window.newspackCloseModalCheckout = closeCheckout;
 
 	/**
 	 * Handle modal checkout close button.
@@ -780,15 +745,6 @@ domReady( () => {
 			} );
 		} );
 
-	/**
-	 * Triggers checkout form submit.
-	 *
-	 * @param {HTMLFormElement} form The form element.
-	 */
-	const triggerCheckout = form => {
-		// form.submit does not trigger submit event listener, so we use requestSubmit.
-		form.requestSubmit( form.querySelector( 'button[type="submit"]' ) );
-	}
 
 	/**
 	 * Handle donation form triggers.
@@ -839,7 +795,7 @@ domReady( () => {
 				}
 			} );
 		if ( form ) {
-			triggerCheckout( form );
+			triggerFormSubmit( form );
 		}
 	}
 
@@ -879,7 +835,7 @@ domReady( () => {
 			} );
 		}
 		if ( form ) {
-			triggerCheckout( form );
+			triggerFormSubmit( form );
 		}
 	}
 
@@ -910,7 +866,7 @@ domReady( () => {
 			const url = window.newspackReaderActivation?.getPendingCheckout?.();
 			if ( url ) {
 				const form = generateCheckoutPageForm( url );
-				triggerCheckout( form );
+				triggerFormSubmit( form );
 			}
 		}
 		// Remove the URL param to prevent re-triggering.
@@ -944,4 +900,9 @@ domReady( () => {
 		}
 		openCheckout( url.toString() );
 	};
+
+	/**
+	 * Close the modal checkout.
+	 */
+	window.newspackCloseModalCheckout = closeCheckout;
 } );
