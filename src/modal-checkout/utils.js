@@ -42,7 +42,7 @@ export function createHiddenInput( name, value = null ) {
 }
 
 /**
- * Check if an iframe is ready.
+ * Run a callback when an iframe is ready.
  *
  * @param {HTMLIFrameElement} iframe The iframe element.
  * @param {Function}          cb     The callback to execute when the iframe is ready.
