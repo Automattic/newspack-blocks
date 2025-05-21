@@ -168,7 +168,7 @@ domReady( () => {
 	/**
 	 * Empty cart via ajax.
 	 */
-	const emptyCart = () => {
+	const emptyCart = async () => {
 		const body = new FormData();
 		if ( ! newspackBlocksModal.has_unsupported_payment_gateway ) {
 			body.append( 'modal_checkout', '1' );
@@ -177,7 +177,7 @@ domReady( () => {
 		body.append( '_wpnonce', modalCheckout.checkout_nonce );
 		modalCheckout.checkout_nonce = null;
 		try {
-			fetch(
+			await fetch(
 				newspackBlocksModal.ajax_url,
 				{
 					method: 'POST',
