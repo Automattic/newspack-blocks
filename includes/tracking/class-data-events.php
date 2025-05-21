@@ -175,6 +175,9 @@ final class Data_Events {
 			'recurrence'   => self::get_purchase_recurrence( $product_id ),
 			'variation_id' => strval( $variation_id ),
 		];
+		if ( $order ) {
+			$data_order_details['order_id'] = $order->get_id();
+		}
 		if ( $order && 'subscription' === $product_type && function_exists( 'wcs_get_subscriptions_for_order' ) ) {
 			$subscriptions = wcs_get_subscriptions_for_order( $order );
 			if ( ! empty( $subscriptions ) ) {
