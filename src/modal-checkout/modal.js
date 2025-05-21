@@ -176,14 +176,18 @@ domReady( () => {
 		body.append( 'action', 'abandon_modal_checkout' );
 		body.append( '_wpnonce', modalCheckout.checkout_nonce );
 		modalCheckout.checkout_nonce = null;
-		fetch(
-			newspackBlocksModal.ajax_url,
-			{
-				method: 'POST',
-				body,
-			}
-		);
-	}
+		try {
+			fetch(
+				newspackBlocksModal.ajax_url,
+				{
+					method: 'POST',
+					body,
+				}
+			);
+		} catch ( error ) {
+			console.warn( 'Unable to empty cart:', error ); // eslint-disable-line no-console
+		}
+	};
 
 	/**
 	 * Whether reader should be prompted with registration.
