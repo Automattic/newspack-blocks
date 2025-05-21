@@ -943,6 +943,7 @@ domReady( () => {
 			};
 			window.newspackRAS.push( ras => {
 				ras.on( 'activity', handleCheckoutComplete );
+				// Unsubscribe from the checkout complete event when the modal is closed.
 				document.addEventListener( 'checkout-closed', () => {
 					ras.off( 'activity', handleCheckoutComplete );
 				} );
