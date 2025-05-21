@@ -935,7 +935,7 @@ domReady( () => {
 		 * On checkout complete callback.
 		 */
 		if ( onCheckoutComplete ) {
-			const handleCheckoutComplete = ( { details: { action, data } } ) => {
+			const handleCheckoutComplete = ( { detail: { action, data } } ) => {
 				if ( action !== 'checkout_completed' ) {
 					return;
 				}
