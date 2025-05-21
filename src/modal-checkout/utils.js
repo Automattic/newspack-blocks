@@ -102,7 +102,7 @@ export function triggerFormSubmit( form ) {
 /**
  * Get details from the data-order-details attribute given an element Node or ID.
  *
- * @param {Node|string} element HTML element or its ID to get order details from.
+ * @param {HTMLElement|string} element HTML element or its ID to get order details from.
  *
  * @return {Object} Order details.
  */
