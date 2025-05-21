@@ -953,7 +953,11 @@ domReady( () => {
 		 * On close callback.
 		 */
 		if ( onClose ) {
-			document.addEventListener( 'checkout-closed', onClose );
+			const closeHandler = () => {
+				onClose();
+				document.removeEventListener( 'checkout-closed', closeHandler );
+			};
+			document.addEventListener( 'checkout-closed', closeHandler );
 		}
 
 		/**
