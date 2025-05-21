@@ -178,17 +178,23 @@ final class Data_Events {
 		if ( $order ) {
 			$data_order_details['order_id'] = $order->get_id();
 		}
-		if ( $order && 'subscription' === $product_type && function_exists( 'wcs_get_subscriptions_for_order' ) ) {
-			$subscriptions = wcs_get_subscriptions_for_order( $order );
-			if ( ! empty( $subscriptions ) ) {
-				$data_order_details['subscription_ids'] = array_values(
-					array_map(
-						function( $subscription ) {
-							return $subscription->get_id();
-						},
-						$subscriptions
-					)
-				);
+		if ( $order && 'subscription' === $product_type ) {
+			$subscription_renewal = $order->get_meta( '_subscription_renewal' );
+			if ( $subscription_renewal ) {
+				$data_order_details['subscription_renewal'] = $subscription_renewal;
+			}
+			if ( function_exists( 'wcs_get_subscriptions_for_order' ) ) {
+				$subscriptions = wcs_get_subscriptions_for_order( $order );
+				if ( ! empty( $subscriptions ) ) {
+					$data_order_details['subscription_ids'] = array_values(
+						array_map(
+							function( $subscription ) {
+								return $subscription->get_id();
+							},
+							$subscriptions
+						)
+					);
+				}
 			}
 		}
 		$gate_post_id = ! empty( $order ) ? $order->get_meta( '_memberships_content_gate' ) : filter_input( INPUT_GET, 'memberships_content_gate', FILTER_SANITIZE_NUMBER_INT );
