@@ -885,26 +885,42 @@ domReady( () => {
 	/**
 	 * Open the modal checkout.
 	 *
-	 * @param {string} title                    The title to set for the modal.
-	 * @param {string} actionType               The action type to set for the modal.
-	 * @param {Object} afterSuccess             The after success configuration object.
-	 * @param {string} afterSuccess.url         The URL to redirect to after the checkout is complete.
-	 * @param {string} afterSuccess.behavior    The behavior to use after the checkout is complete.
-	 * @param {string} afterSuccess.buttonLabel The label to use for the after success button.
+	 * @param {Object}   options                    Modal checkout options object.
+	 * @param {string}   options.title              The title to set for the modal.
+	 * @param {string}   options.actionType         The action type to set for the modal.
+	 * @param {Object}   options.afterSuccess       The after success configuration object.
+	 * @param {Function} options.onCheckoutComplete The callback to call when the checkout is complete.
+	 * @param {Function} options.onClose            The callback to call when the modal is closed.
 	 */
-	window.newspackOpenModalCheckout = (
+	window.newspackOpenModalCheckout = ( {
 		title = null,
 		actionType = null,
 		afterSuccess = {},
-	) => {
+		onCheckoutComplete = null,
+		onClose = null,
+	} ) => {
+		/**
+		 * Title configuration.
+		 */
 		checkoutTitle = title || newspackBlocksModal.labels.checkout_modal_title;
 		// Set the modal title early, even though it may be overridden by the modal content.
 		setModalTitle( checkoutTitle );
 
+		/**
+		 * Start with the default checkout URL.
+		 */
 		const url = new URL( newspackBlocksModal.checkout_url );
+
+		/**
+		 * Custom action type configuration.
+		 */
 		if ( actionType ) {
 			url.searchParams.set( 'action_type', actionType );
 		}
+
+		/**
+		 * After success parameters.
+		 */
 		if ( afterSuccess?.url ) {
 			url.searchParams.set( 'after_success_url', afterSuccess.url );
 		}
@@ -915,6 +931,34 @@ domReady( () => {
 			url.searchParams.set( 'after_success_button_label', afterSuccess.buttonLabel );
 		}
 
+		/**
+		 * On checkout complete callback.
+		 */
+		if ( onCheckoutComplete ) {
+			const handleCheckoutComplete = ( { details: { action, data } } ) => {
+				if ( action !== 'checkout_completed' ) {
+					return;
+				}
+				onCheckoutComplete( data );
+			};
+			window.newspackRAS.push( ras => {
+				ras.on( 'activity', handleCheckoutComplete );
+				document.addEventListener( 'checkout-closed', () => {
+					ras.off( 'activity', handleCheckoutComplete );
+				} );
+			} );
+		}
+
+		/**
+		 * On close callback.
+		 */
+		if ( onClose ) {
+			document.addEventListener( 'checkout-closed', onClose );
+		}
+
+		/**
+		 * Open the modal checkout.
+		 */
 		openCheckout( url.toString() );
 	};
 
