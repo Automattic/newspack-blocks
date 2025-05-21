@@ -894,6 +894,9 @@ domReady( () => {
 		afterSuccess = {},
 	) => {
 		checkoutTitle = title || newspackBlocksModal.labels.checkout_modal_title;
+		// Set the modal title early, even though it may be overridden by the modal content.
+		setModalTitle( checkoutTitle );
+
 		const url = new URL( newspackBlocksModal.checkout_url );
 		if ( actionType ) {
 			url.searchParams.set( 'action_type', actionType );
@@ -907,6 +910,7 @@ domReady( () => {
 		if ( afterSuccess?.buttonLabel ) {
 			url.searchParams.set( 'after_success_button_label', afterSuccess.buttonLabel );
 		}
+
 		openCheckout( url.toString() );
 	};
 
