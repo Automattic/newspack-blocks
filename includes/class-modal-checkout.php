@@ -7,7 +7,7 @@
 
 namespace Newspack_Blocks;
 
-use Newspack_Blocks\Tracking\Data_Events;
+use Newspack_Blocks\Modal_Checkout\Checkout_Data;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -720,10 +720,6 @@ final class Modal_Checkout {
 										}
 									}
 
-									$checkout_data = Data_Events::get_checkout_data( $variation );
-									// Set the referrer as we're at the starting point of the checkout process.
-									$checkout_data['referrer'] = substr( \get_permalink(), strlen( home_url() ) );
-
 									// Replace nyp price html for variations.
 									if ( class_exists( '\WC_Name_Your_Price_Helpers' ) && \WC_Name_Your_Price_Helpers::is_nyp( $variation->get_id() ) ) {
 										$price_html = str_replace( ':', '', $price_html );
@@ -736,7 +732,7 @@ final class Modal_Checkout {
 											<span class="price"><?php echo $price_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 										</div>
 										<div class="variation"><?php echo esc_html( $variation_name ); ?></div>
-										<form data-product="<?php echo esc_attr( wp_json_encode( $checkout_data ) ); ?>">
+										<form data-checkout="<?php echo esc_attr( wp_json_encode( Checkout_Data::get_checkout_data( $variation ) ) ); ?>">
 											<input type="hidden" name="newspack_checkout" value="1" />
 											<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--primary" ); ?> newspack-modal-checkout-variation-selection"><?php echo esc_html( self::get_modal_checkout_labels( 'checkout_confirm_variation' ) ); ?></button>
 										</form>
@@ -1681,7 +1677,7 @@ final class Modal_Checkout {
 		if ( 1 !== $cart->get_cart_contents_count() ) {
 			return;
 		}
-		$cart_item_key = key( $cart->get_cart() );
+		$cart_item_key = array_key_first( $cart->get_cart() );
 		$cart_item = $cart->get_cart_item( $cart_item_key );
 		$product_id = $cart_item['variation_id'] ? $cart_item['variation_id'] : $cart_item['product_id'];
 		$class_prefix = self::get_class_prefix();
@@ -1691,10 +1687,8 @@ final class Modal_Checkout {
 			// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce hooks.
 			$_product = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
 			if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters( 'woocommerce_checkout_cart_item_visible', true, $cart_item, $cart_item_key ) ) :
-				// Create an array of order information to pass to GA4 via JavaScript.
-				$data_order_details = Data_Events::get_checkout_data( $cart );
 				?>
-				<p id="modal-checkout-product-details" data-order-details='<?php echo wp_json_encode( $data_order_details ); ?>'>
+				<p id="modal-checkout-product-details" data-checkout='<?php echo wp_json_encode( Checkout_Data::get_checkout_data( $cart ) ); ?>'>
 					<strong>
 						<?php
 						echo apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key ) . ': '; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -2053,40 +2047,6 @@ final class Modal_Checkout {
 		}
 
 		return self::$modal_checkout_labels[ $key ] ?? '';
-	}
-
-	/**
-	 * Get price string for the price summary card to render in auth flow.
-	 *
-	 * @param string $name      The name.
-	 * @param string $price     The price. Optional. If not provided, the price string will contain 0.
-	 * @param string $frequency The frequency. Optional. If not provided, the price will be treated as a one-time payment.
-	 *
-	 * @return string The price string.
-	 */
-	public static function get_summary_card_price_string( $name, $price = '', $frequency = '' ) {
-		if ( ! $price ) {
-			$price = '0';
-		}
-
-		if ( function_exists( 'wcs_price_string' ) && function_exists( 'wc_price' ) ) {
-			if ( $frequency && $frequency !== 'once' ) {
-				$price = wp_strip_all_tags(
-					wcs_price_string(
-						[
-							'recurring_amount'    => $price,
-							'subscription_period' => $frequency,
-							'use_per_slash'       => true,
-						]
-					)
-				);
-			} else {
-				$price = wp_strip_all_tags( wc_price( $price ) );
-			}
-		}
-
-		// translators: 1 is the name of the item. 2 is the price of the item.
-		return sprintf( __( '%1$s: %2$s', 'newspack-blocks' ), $name, $price );
 	}
 
 	/**
