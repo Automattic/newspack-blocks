@@ -546,6 +546,7 @@ domReady( () => {
 			inCheckoutIntent = false;
 			document.getElementById( 'newspack_modal_checkout' ).removeAttribute( 'data-checkout' );
 		}
+		document.removeEventListener( 'keydown', handleKeydown );
 	};
 
 	const openCheckout = ( url ) => {
@@ -565,6 +566,8 @@ domReady( () => {
 		a11y.trapFocus( modalCheckout, iframe );
 
 		iframeReady( handleIframeReady );
+
+		document.addEventListener( 'keydown', handleKeydown );
 	};
 
 	const openModal = el => {
@@ -635,13 +638,13 @@ domReady( () => {
 	} );
 
 	/**
-	 * Close the modal with the escape key.
+	 * Escape key handler to close the modal checkout.
 	 */
-	document.addEventListener( 'keydown', function ( ev ) {
+	const handleKeydown = ev => {
 		if ( ev.key === 'Escape' ) {
 			closeCheckout();
 		}
-	} );
+	};
 
 	/**
 	 * Handle modal checkout triggers.
@@ -852,9 +855,11 @@ domReady( () => {
 			window.newspackRAS.push( ras => {
 				ras.on( 'activity', handleCheckoutComplete );
 				// Unsubscribe from the checkout complete event when the modal is closed.
-				document.addEventListener( 'checkout-closed', () => {
+				const closeHandler = () => {
 					ras.off( 'activity', handleCheckoutComplete );
-				} );
+					document.removeEventListener( 'checkout-closed', closeHandler );
+				};
+				document.addEventListener( 'checkout-closed', closeHandler );
 			} );
 		}
 
