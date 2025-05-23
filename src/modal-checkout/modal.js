@@ -99,11 +99,12 @@ domReady( () => {
 			}
 			iframe._ready = true;
 		}
+		const productDetails = container.querySelector( '#modal-checkout-product-details' );
+		const checkoutData = getCheckoutData( productDetails );
 		if ( container ) {
 			if ( container.checkoutComplete ) {
 				// Dispatch a `checkout_completed` activity to RAS.
-				const params = getCheckoutData( container.querySelector( '#modal-checkout-product-details' ) );
-				window.newspackRAS.push( [ 'checkout_completed', params ] );
+				window.newspackRAS.push( [ 'checkout_completed', checkoutData ] );
 
 				// Update the newsletters signup modal if it exists.
 				if ( window?.newspackReaderActivation?.refreshNewslettersSignupModal && window?.newspackReaderActivation?.getReader()?.email ) {
@@ -116,6 +117,9 @@ domReady( () => {
 				setModalReady();
 				a11y.trapFocus( modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }` ) );
 			} else {
+				// Make sure the order summary renders the correct text.
+				productDetails.querySelector( 'strong' ).textContent = checkoutData.price_summary;
+
 				// Revert modal title and width default value.
 				setModalSize();
 				setModalTitle( checkoutTitle );
@@ -237,6 +241,7 @@ domReady( () => {
 
 		if ( customAmount ) {
 			checkoutData.amount = customAmount;
+			// TODO: Update the product price summary with the custom amount.
 		}
 
 		if ( checkoutData ) {
@@ -347,7 +352,7 @@ domReady( () => {
 		if ( shouldPromptRegistration() ) {
 			ev.preventDefault();
 
-			const priceSummary = formData.get( 'product_price_summary' );
+			const priceSummary = formData.get( 'price_summary' );
 			const content = priceSummary ? `<div class="order-details-summary ${ CLASS_PREFIX }__box ${ CLASS_PREFIX }__box--text-center"><p><strong>${ priceSummary }</strong></p></div>` : '';
 
 			// Generate cart asynchroneously.
