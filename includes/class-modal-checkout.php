@@ -710,8 +710,6 @@ final class Modal_Checkout {
 									$variation_name = wc_get_formatted_variation( $variation, true );
 									$price          = $variation->get_price();
 									$price_html     = $variation->get_price_html();
-									$frequency      = '';
-									$product_type = Data_Events::get_product_type( $product_id );
 
 									// Use suggested price if NYP is active and set for variation.
 									if ( \Newspack_Blocks::can_use_name_your_price() && \WC_Name_Your_Price_Helpers::is_nyp( $variation_id ) ) {
@@ -722,28 +720,9 @@ final class Modal_Checkout {
 										}
 									}
 
-									if ( class_exists( '\WC_Subscriptions_Product' ) && \WC_Subscriptions_Product::is_subscription( $variation ) ) {
-										$frequency = \WC_Subscriptions_Product::get_period( $variation );
-									}
-
-									$name = sprintf(
-										/* translators: 1: variable product name, 2: product variation name */
-										__( '%1$s - %2$s', 'newspack-blocks' ),
-										$product_name,
-										$variation_name
-									);
-									$product_price_summary = self::get_summary_card_price_string( $name, $price, $frequency );
-									$product_data          = [
-										'amount'       => $price,
-										'action_type'  => 'checkout_button',
-										'currency'     => function_exists( 'get_woocommerce_currency' ) ? \get_woocommerce_currency() : 'USD',
-										'product_price_summary' => $product_price_summary,
-										'product_id'   => (string) $product_id,
-										'product_type' => $product_type,
-										'recurrence'   => ! empty( $frequency ) ? $frequency : 'once',
-										'referrer'     => substr( \get_permalink(), strlen( home_url() ) ), // TODO: Is this OK?
-										'variation_id' => (string) $variation_id,
-									];
+									$checkout_data = Data_Events::get_checkout_data( $variation );
+									// Set the referrer as we're at the starting point of the checkout process.
+									$checkout_data['referrer'] = substr( \get_permalink(), strlen( home_url() ) );
 
 									// Replace nyp price html for variations.
 									if ( class_exists( '\WC_Name_Your_Price_Helpers' ) && \WC_Name_Your_Price_Helpers::is_nyp( $variation->get_id() ) ) {
@@ -757,7 +736,7 @@ final class Modal_Checkout {
 											<span class="price"><?php echo $price_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 										</div>
 										<div class="variation"><?php echo esc_html( $variation_name ); ?></div>
-										<form data-product="<?php echo esc_attr( wp_json_encode( $product_data ) ); ?>">
+										<form data-product="<?php echo esc_attr( wp_json_encode( $checkout_data ) ); ?>">
 											<input type="hidden" name="newspack_checkout" value="1" />
 											<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--primary" ); ?> newspack-modal-checkout-variation-selection"><?php echo esc_html( self::get_modal_checkout_labels( 'checkout_confirm_variation' ) ); ?></button>
 										</form>
@@ -1702,29 +1681,30 @@ final class Modal_Checkout {
 		if ( 1 !== $cart->get_cart_contents_count() ) {
 			return;
 		}
+		$cart_item_key = key( $cart->get_cart() );
+		$cart_item = $cart->get_cart_item( $cart_item_key );
+		$product_id = $cart_item['variation_id'] ? $cart_item['variation_id'] : $cart_item['product_id'];
 		$class_prefix = self::get_class_prefix();
 		?>
 			<div class="<?php echo esc_attr( "order-details-summary {$class_prefix}__box {$class_prefix}__box--text-center" ); ?>">
 			<?php
 			// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce hooks.
-			foreach ( $cart->get_cart() as $cart_item_key => $cart_item ) :
-				$_product = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
-				if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters( 'woocommerce_checkout_cart_item_visible', true, $cart_item, $cart_item_key ) ) :
-					// Create an array of order information to pass to GA4 via JavaScript.
-					$data_order_details = Data_Events::build_js_data_events( $_product->get_id(), $cart_item );
-					?>
-					<p id="modal-checkout-product-details" data-order-details='<?php echo wp_json_encode( $data_order_details ); ?>'>
-						<strong>
-							<?php
-							echo apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key ) . ': '; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-							echo wc_get_formatted_cart_item_data( $cart_item ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-							?>
-							<?php echo apply_filters( 'woocommerce_cart_item_subtotal', $cart->get_product_subtotal( $_product, $cart_item['quantity'] ), $cart_item, $cart_item_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-						</strong>
-					</p>
-					<?php
-				endif;
-			endforeach;
+			$_product = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
+			if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters( 'woocommerce_checkout_cart_item_visible', true, $cart_item, $cart_item_key ) ) :
+				// Create an array of order information to pass to GA4 via JavaScript.
+				$data_order_details = Data_Events::get_checkout_data( $cart );
+				?>
+				<p id="modal-checkout-product-details" data-order-details='<?php echo wp_json_encode( $data_order_details ); ?>'>
+					<strong>
+						<?php
+						echo apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key ) . ': '; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						echo wc_get_formatted_cart_item_data( $cart_item ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						?>
+						<?php echo apply_filters( 'woocommerce_cart_item_subtotal', $cart->get_product_subtotal( $_product, $cart_item['quantity'] ), $cart_item, $cart_item_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					</strong>
+				</p>
+				<?php
+			endif;
 			// phpcs:enable
 			?>
 			</div>

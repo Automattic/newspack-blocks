@@ -43,10 +43,7 @@ function newspack_blocks_replace_login_with_order_summary() {
 	$after_success_behavior = isset( $_GET['after_success_behavior'] ) ? \sanitize_text_field( \wp_unslash( $_GET['after_success_behavior'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$after_success_url      = isset( $_GET['after_success_url'] ) ? esc_url( \sanitize_url( \wp_unslash( $_GET['after_success_url'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$after_success_label    = isset( $_GET['after_success_button_label'] ) ? \sanitize_text_field( \wp_unslash( $_GET['after_success_button_label'] ) ) : \Newspack_Blocks\Modal_Checkout::get_modal_checkout_labels( 'after_success' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-	$order_items            = $order->get_items();
-	$item                   = reset( $order_items );
-	$product_id             = $item ? $item->get_product_id() : null;
-	$data_order_details     = Data_Events::build_js_data_events( $product_id, null, $order );
+	$data_order_details     = Data_Events::get_checkout_data( $order );
 	?>
 	<div class="woocommerce-order">
 	<?php if ( $is_success ) : ?>
