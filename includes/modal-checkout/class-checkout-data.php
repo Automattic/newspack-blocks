@@ -20,7 +20,7 @@ final class Checkout_Data {
 	 *
 	 * @return string The price string.
 	 */
-	public static function get_summary_card_price_string( $name, $price = '', $frequency = '' ) {
+	public static function get_price_summary( $name, $price = '', $frequency = '' ) {
 		if ( ! $price ) {
 			$price = '0';
 		}
@@ -205,40 +205,32 @@ final class Checkout_Data {
 			$referrer = $wp->request;
 		}
 
-		$product = wc_get_product( $product_id );
-		if ( $variation_id ) {
-			$variation_name = wc_get_formatted_variation( $source, true );
-		}
-
 		$product_type = self::get_product_type( $product_id );
 		$recurrence   = self::get_purchase_recurrence( $product_id );
 
 		/**
-		 * Price summary.
+		 * Price summary name.
 		 */
 		if ( 'donation' === $product_type ) {
 			$name = __( 'Donate', 'newspack-blocks' );
 		} elseif ( $variation_id ) {
-			$name = sprintf(
-				/* translators: 1: variable product name, 2: product variation name */
-				__( '%1$s - %2$s', 'newspack-blocks' ),
-				$product->get_name(),
-				$variation_name
-			);
+			$variation = wc_get_product( $variation_id );
+			$name = $variation->get_name();
 		} else {
+			$product = wc_get_product( $product_id );
 			$name = $product->get_name();
 		}
 
 		$data = [
-			'amount'                => $amount,
-			'action_type'           => self::get_action_type( $product_id ),
-			'currency'              => function_exists( 'get_woocommerce_currency' ) ? \get_woocommerce_currency() : 'USD',
-			'product_id'            => strval( $product_id ? $product_id : '' ),
-			'product_type'          => $product_type,
-			'product_price_summary' => self::get_summary_card_price_string( $name, $amount, $recurrence ),
-			'referrer'              => $referrer ? str_replace( home_url(), '', $referrer ) : '', // Keeps format consistent for Homepage with Donate and Checkout Button blocks.
-			'recurrence'            => $recurrence,
-			'variation_id'          => strval( $variation_id ? $variation_id : '' ),
+			'amount'        => $amount,
+			'action_type'   => self::get_action_type( $product_id ),
+			'currency'      => function_exists( 'get_woocommerce_currency' ) ? \get_woocommerce_currency() : 'USD',
+			'product_id'    => strval( $product_id ? $product_id : '' ),
+			'product_type'  => $product_type,
+			'price_summary' => self::get_price_summary( $name, $amount, $recurrence ),
+			'referrer'      => $referrer ? str_replace( home_url(), '', $referrer ) : '', // Keeps format consistent for Homepage with Donate and Checkout Button blocks.
+			'recurrence'    => $recurrence,
+			'variation_id'  => strval( $variation_id ? $variation_id : '' ),
 		];
 
 		/**
