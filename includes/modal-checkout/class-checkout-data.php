@@ -239,7 +239,7 @@ final class Checkout_Data {
 		 */
 		if ( $order ) {
 			$data['order_id'] = $order->get_id();
-			if ( 'subscription' === $product_type ) {
+			if ( in_array( $product_type, [ 'subscription', 'membership' ], true ) ) {
 				$subscription_renewal = $order->get_meta( '_subscription_renewal' );
 				if ( $subscription_renewal ) {
 					$data['subscription_renewal'] = $subscription_renewal;
