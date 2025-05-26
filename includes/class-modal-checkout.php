@@ -1515,7 +1515,7 @@ final class Modal_Checkout {
 				$params['newspack_popup_id'] = $newspack_popup_id;
 			}
 			if ( $gate_post_id ) {
-				$params['memberships_content_gate'] = $gate_post_id;
+				$params['gate_post_id'] = $gate_post_id;
 			}
 			$location = \add_query_arg( $params, $location );
 		}

@@ -113,15 +113,24 @@ export function getCheckoutData( element ) {
 		return {};
 	}
 
+	let data = {};
+	// If the element is a form, get the form data.
+	if ( container.tagName === 'FORM' ) {
+		const formData = new FormData( container );
+		data = Object.fromEntries( formData );
+	}
+
 	const json = container.dataset.checkout;
 	if ( ! json ) {
 		console.warn( 'No checkout data found' ); // eslint-disable-line no-console
-		return {};
+		return data;
 	}
 
-	let data = {};
 	try {
-		data = JSON.parse( json );
+		data = {
+			...data,
+			...JSON.parse( json ),
+		};
 	} catch ( error ) {
 		console.warn( 'Error parsing checkout data' ); // eslint-disable-line no-console
 	}
@@ -132,18 +141,28 @@ export function getCheckoutData( element ) {
 		data.action_type = url.searchParams.get( 'action_type' );
 	}
 
-	// If the element is a form, pull gate and popup data from it.
-	if ( container.tagName === 'FORM' ) {
-		const formData = new FormData( container );
-		const gateId = formData.get( 'memberships_content_gate' );
-		if ( gateId ) {
-			data.gate_post_id = gateId;
-		}
-		const popupId = formData.get( 'newspack_popup_id' );
-		if ( popupId ) {
-			data.newspack_popup_id = popupId;
-		}
+	// Replace 'memberships_content_gate' with 'gate_post_id'.
+	if ( data.memberships_content_gate ) {
+		data.gate_post_id = data.memberships_content_gate;
+		delete data.memberships_content_gate;
 	}
 
 	return data;
+}
+
+
+/**
+ * Get formatted amount for price summary display.
+ *
+ * @param {number} amount   The amount to format.
+ * @param {string} currency The currency to format the amount in.
+ *
+ * @return {string} The formatted amount.
+ */
+export function getFormattedAmount( amount, currency = 'USD' ) {
+	return parseFloat( amount ).toLocaleString( document.documentElement.lang, {
+		style: 'currency',
+		currency,
+		currencyDisplay: 'narrowSymbol',
+	} );
 }

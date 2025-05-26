@@ -222,15 +222,16 @@ final class Checkout_Data {
 		}
 
 		$data = [
-			'amount'        => $amount,
-			'action_type'   => self::get_action_type( $product_id ),
-			'currency'      => function_exists( 'get_woocommerce_currency' ) ? \get_woocommerce_currency() : 'USD',
-			'product_id'    => strval( $product_id ? $product_id : '' ),
-			'product_type'  => $product_type,
-			'price_summary' => self::get_price_summary( $name, $amount, $recurrence ),
-			'referrer'      => $referrer ? str_replace( home_url(), '', $referrer ) : '', // Keeps format consistent for Homepage with Donate and Checkout Button blocks.
-			'recurrence'    => $recurrence,
-			'variation_id'  => strval( $variation_id ? $variation_id : '' ),
+			'amount'           => $amount,
+			'action_type'      => self::get_action_type( $product_id ),
+			'currency'         => function_exists( 'get_woocommerce_currency' ) ? \get_woocommerce_currency() : 'USD',
+			'product_id'       => strval( $product_id ? $product_id : '' ),
+			'product_type'     => $product_type,
+			'price_summary'    => self::get_price_summary( $name, $amount, $recurrence ),
+			'summary_template' => self::get_price_summary( $name, '{{PRICE}}', $recurrence ),
+			'referrer'         => $referrer ? str_replace( home_url(), '', $referrer ) : '', // Keeps format consistent for Homepage with Donate and Checkout Button blocks.
+			'recurrence'       => $recurrence,
+			'variation_id'     => strval( $variation_id ? $variation_id : '' ),
 		];
 
 		/**

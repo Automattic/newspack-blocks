@@ -16,6 +16,7 @@ import {
 	createHiddenInput,
 	triggerFormSubmit,
 	getCheckoutData,
+	getFormattedAmount,
 } from './utils';
 
 const CLASS_PREFIX = newspackBlocksModal.newspack_class_prefix;
@@ -146,11 +147,13 @@ domReady( () => {
 	 * the session for a newly registered reader fails to carry the cart over to
 	 * the checkout.
 	 *
+	 * @param {Object} checkoutData The checkout data.
+	 *
 	 * @return {Promise} The promise that resolves with the checkout URL.
 	 */
-	const generateCart = ( formData ) => {
+	const generateCart = ( checkoutData ) => {
 		return new Promise( ( resolve, reject ) => {
-			const urlParams = new URLSearchParams( formData );
+			const urlParams = new URLSearchParams( checkoutData );
 			urlParams.append( 'action', 'modal_checkout_request' );
 			fetch( newspackBlocksModal.ajax_url + '?' + urlParams.toString() )
 				.then( res => {
@@ -215,33 +218,31 @@ domReady( () => {
 		const form = ev.target;
 		form.classList.add( 'modal-processing' );
 
-		let formData = new FormData( form );
-		let checkoutDataContainer = form;
-		let customAmount = null;
+		const checkoutData = getCheckoutData( form );
 
-		const isDonateBlock = formData.get( 'newspack_donate' );
+		const isDonateBlock = checkoutData.newspack_donate;
 		if ( isDonateBlock ) {
-			const frequency = formData.get( 'donation_frequency' );
+			const frequency = checkoutData.donation_frequency;
 			const donationTiers = [
 				...form.querySelectorAll(
 					`.donation-tier__${ frequency }, .donation-frequency__${ frequency }`
 				)
 			];
-			const donationTierIndex = formData.get( 'donation_tier_index' );
+			const donationTierIndex = checkoutData.donation_tier_index;
+			let donationContainer, customAmount;
 			if ( donationTierIndex ) {
-				checkoutDataContainer = donationTiers[ donationTierIndex ];
-				customAmount = formData.get( `donation_value_${ frequency }` );
+				donationContainer = donationTiers[ donationTierIndex ];
+				customAmount = checkoutData[ `donation_value_${ frequency }` ];
 			} else {
-				checkoutDataContainer = donationTiers[ 0 ];
-				customAmount = formData.get( `donation_value_${ frequency }_untiered` );
+				donationContainer = donationTiers[ 0 ];
+				customAmount = checkoutData[ `donation_value_${ frequency }_untiered` ];
 			}
-		}
-
-		const checkoutData = getCheckoutData( checkoutDataContainer );
-
-		if ( customAmount ) {
+			const donationData = getCheckoutData( donationContainer );
+			for( const key in donationData ) {
+				checkoutData[ key ] = donationData[ key ];
+			}
 			checkoutData.amount = customAmount;
-			// TODO: Update the product price summary with the custom amount.
+			checkoutData.price_summary = checkoutData.summary_template.replace( '{{PRICE}}', getFormattedAmount( checkoutData.amount, checkoutData.currency ) );
 		}
 
 		if ( checkoutData ) {
@@ -251,12 +252,10 @@ domReady( () => {
 					form.appendChild( createHiddenInput( key, checkoutData[ key ] ) );
 				}
 			} );
-			// Refresh form data.
-			formData = new FormData( form );
 		}
 
 		// If we're not going from variation picker to checkout, set the modal trigger:
-		if ( ! formData.get( 'variation_id' ) ) {
+		if ( ! checkoutData.variation_id ) {
 			modalTrigger = ev.submitter;
 		}
 		// Clear any open variation modal.
@@ -269,9 +268,9 @@ domReady( () => {
 		} );
 
 		// Trigger variation modal if variation is not selected.
-		if ( formData.get( 'is_variable' ) && ! formData.get( 'variation_id' ) ) {
+		if ( checkoutData.is_variable && ! checkoutData.variation_id ) {
 			const variationModal = [ ...variationModals ].find(
-				modal => modal.dataset.productId === formData.get( 'product_id' )
+				modal => modal.dataset.productId === checkoutData.product_id
 			);
 			if ( variationModal ) {
 				variationModal
@@ -285,7 +284,7 @@ domReady( () => {
 						].forEach( afterSuccessParam => {
 							const existingInputs = singleVariationForm.querySelectorAll( 'input[name="' +  afterSuccessParam + '"]' );
 							if ( 0 === existingInputs.length ) {
-								singleVariationForm.appendChild( createHiddenInput( afterSuccessParam, formData.get( afterSuccessParam ) ) );
+								singleVariationForm.appendChild( createHiddenInput( afterSuccessParam, checkoutData[ afterSuccessParam ] ) );
 							}
 						} );
 
@@ -325,13 +324,13 @@ domReady( () => {
 
 		// Populate cart and redirect to checkout if there is an unsupported payment gateway.
 		if ( ! isModalCheckout && ! shouldPromptRegistration() ) {
-			generateCart( formData ).then( url => {
+			generateCart( checkoutData ).then( url => {
 				// Remove modal checkout query string and trailing question mark (if any).
 				window.location.href = url;
 			} );
 			// Add some animation to the Checkout Button while the non-modal checkout is loading.
 			// For now, don't do it when any popup opens, just when we go right to the checkout page.
-			if ( ! ( formData.get( 'is_variable' ) && ! formData.get( 'variation_id' ) ) ) {
+			if ( ! ( checkoutData.is_variable && ! checkoutData.variation_id ) ) {
 				const buttons = form.querySelectorAll( 'button[type=submit]:focus' );
 				buttons.forEach( button => {
 					button.classList.add( 'non-modal-checkout-loading' );
@@ -352,11 +351,11 @@ domReady( () => {
 		if ( shouldPromptRegistration() ) {
 			ev.preventDefault();
 
-			const priceSummary = formData.get( 'price_summary' );
+			const priceSummary = checkoutData.price_summary;
 			const content = priceSummary ? `<div class="order-details-summary ${ CLASS_PREFIX }__box ${ CLASS_PREFIX }__box--text-center"><p><strong>${ priceSummary }</strong></p></div>` : '';
 
 			// Generate cart asynchroneously.
-			const cartReq = generateCart( formData );
+			const cartReq = generateCart( checkoutData );
 
 			// Update pending checkout URL.
 			cartReq.then( url => {
@@ -374,7 +373,7 @@ domReady( () => {
 						// Populate cart and redirect to checkout if there is an unsupported payment gateway.
 						if ( ! isModalCheckout ) {
 							// Remove modal checkout query string, and trailing question mark (if any).
-							generateCart( formData ).then( window.location.href = url );
+							generateCart( checkoutData ).then( window.location.href = url );
 						} else {
 							const checkoutForm = generateCheckoutPageForm( url );
 							triggerFormSubmit( checkoutForm );
