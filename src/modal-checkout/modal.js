@@ -90,6 +90,9 @@ domReady( () => {
 			}
 		}
 		const container = iframe?.contentDocument?.querySelector( `#${ IFRAME_CONTAINER_ID }` );
+		if ( ! container ) {
+			return;
+		}
 		const setModalReady = () => {
 			iframeResizeObserver.observe( container );
 			if ( spinner.style.display !== 'none' ) {
@@ -102,39 +105,40 @@ domReady( () => {
 		}
 		const productDetails = container.querySelector( '#modal-checkout-product-details' );
 		const checkoutData = getCheckoutData( productDetails );
-		if ( container ) {
-			if ( container.checkoutComplete ) {
-				// Dispatch a `checkout_completed` activity to RAS.
-				window.newspackRAS.push( [ 'checkout_completed', checkoutData ] );
+		if ( container.checkoutComplete ) {
+			// Dispatch a `checkout_completed` activity to RAS.
+			window.newspackRAS.push( [ 'checkout_completed', checkoutData ] );
 
-				// Update the newsletters signup modal if it exists.
-				if ( window?.newspackReaderActivation?.refreshNewslettersSignupModal && window?.newspackReaderActivation?.getReader()?.email ) {
-					window.newspackReaderActivation.refreshNewslettersSignupModal( window.newspackReaderActivation.getReader().email );
-				}
-
-				// Update the modal title and width to reflect successful transaction.
-				setModalSize( 'small' );
-				setModalTitle( newspackBlocksModal.labels.thankyou_modal_title );
-				setModalReady();
-				a11y.trapFocus( modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }` ) );
-			} else {
-				// Make sure the order summary renders the correct text.
-				productDetails.querySelector( 'strong' ).textContent = checkoutData.price_summary;
-
-				// Revert modal title and width default value.
-				setModalSize();
-				setModalTitle( checkoutTitle );
-				if ( iframe.contentWindow?.newspackBlocksModalCheckout?.checkout_nonce ) {
-					// Store the checkout nonce for later use.
-					// We store the nonce from the iframe content window to ensure the nonce was generated for a logged in session
-					modalCheckout.checkout_nonce = iframe.contentWindow.newspackBlocksModalCheckout.checkout_nonce;
-				}
+			// Update the newsletters signup modal if it exists.
+			if ( window?.newspackReaderActivation?.refreshNewslettersSignupModal && window?.newspackReaderActivation?.getReader()?.email ) {
+				window.newspackReaderActivation.refreshNewslettersSignupModal( window.newspackReaderActivation.getReader().email );
 			}
-			if ( container.checkoutReady ) {
-				setModalReady();
-			} else {
-				container.addEventListener( 'checkout-ready', setModalReady );
+
+			// Update the modal title and width to reflect successful transaction.
+			setModalSize( 'small' );
+			setModalTitle( newspackBlocksModal.labels.thankyou_modal_title );
+			setModalReady();
+			a11y.trapFocus( modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }` ) );
+		} else {
+			// Make sure the order summary renders the correct text.
+			const summaryTextNode = productDetails?.querySelector( 'strong' );
+			if ( summaryTextNode ) {
+				summaryTextNode.textContent = checkoutData.price_summary;
 			}
+
+			// Revert modal title and width default value.
+			setModalSize();
+			setModalTitle( checkoutTitle );
+			if ( iframe.contentWindow?.newspackBlocksModalCheckout?.checkout_nonce ) {
+				// Store the checkout nonce for later use.
+				// We store the nonce from the iframe content window to ensure the nonce was generated for a logged in session
+				modalCheckout.checkout_nonce = iframe.contentWindow.newspackBlocksModalCheckout.checkout_nonce;
+			}
+		}
+		if ( container.checkoutReady ) {
+			setModalReady();
+		} else {
+			container.addEventListener( 'checkout-ready', setModalReady );
 		}
 	}
 
