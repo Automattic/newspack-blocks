@@ -263,11 +263,21 @@ final class Checkout_Data {
 		/**
 		 * Gate and popup data.
 		 */
-		$gate_post_id = ! empty( $order ) ? $order->get_meta( '_memberships_content_gate' ) : filter_input( INPUT_GET, 'memberships_content_gate', FILTER_SANITIZE_NUMBER_INT );
+		$gate_post_id = null;
+		$newspack_popup_id = null;
+		if ( $order ) {
+			$gate_post_id = $order->get_meta( '_memberships_content_gate' );
+			$newspack_popup_id = $order->get_meta( '_newspack_popup_id' );
+		} elseif ( $cart_item ) {
+			$gate_post_id = $cart_item['memberships_content_gate'] ?? null;
+			$newspack_popup_id = $cart_item['newspack_popup_id'] ?? null;
+		} else {
+			$gate_post_id = filter_input( INPUT_GET, 'memberships_content_gate', FILTER_SANITIZE_NUMBER_INT );
+			$newspack_popup_id = filter_input( INPUT_GET, 'newspack_popup_id', FILTER_SANITIZE_NUMBER_INT );
+		}
 		if ( $gate_post_id ) {
 			$data['gate_post_id'] = $gate_post_id;
 		}
-		$newspack_popup_id = ! empty( $order ) ? $order->get_meta( '_newspack_popup_id' ) : filter_input( INPUT_GET, 'newspack_popup_id', FILTER_SANITIZE_NUMBER_INT );
 		if ( $newspack_popup_id ) {
 			$data['newspack_popup_id'] = $newspack_popup_id;
 		}
