@@ -27,6 +27,9 @@ function newspack_blocks_manually_load_plugin() {
 }
 tests_add_filter( 'muplugins_loaded', 'newspack_blocks_manually_load_plugin' );
 
+// Print errors to stdout.
+ini_set( 'error_log', 'php://stdout' ); // phpcs:ignore WordPress.PHP.IniSet.Risky
+
 // Load the composer autoloader.
 require_once __DIR__ . '/../vendor/autoload.php';
 
