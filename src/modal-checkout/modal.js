@@ -327,7 +327,8 @@ domReady( () => {
 			} );
 			// Add some animation to the Checkout Button while the non-modal checkout is loading.
 			// For now, don't do it when any popup opens, just when we go right to the checkout page.
-			if ( ! ( formData.get( 'is_variable' ) && ! formData.get( 'variation_id' ) ) ) {
+			const formDataset = JSON.parse( form.dataset.product );
+			if ( ! formDataset.is_variable && ! formDataset.variation_id ) {
 				const buttons = form.querySelectorAll( 'button[type=submit]:focus' );
 				buttons.forEach( button => {
 					button.classList.add( 'non-modal-checkout-loading' );
