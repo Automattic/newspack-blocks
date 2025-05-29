@@ -18,8 +18,9 @@ export const getEventPayload = ( action, extraParams = {} ) => {
  * @type {string[]}
  */
 const eventKeys = [
-	'amount',
+	'action',
 	'action_type',
+	'amount',
 	'currency',
 	'product_id',
 	'product_type',
