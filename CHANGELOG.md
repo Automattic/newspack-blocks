@@ -1,3 +1,10 @@
+## [4.12.1](https://github.com/Automattic/newspack-blocks/compare/v4.12.0...v4.12.1) (2025-05-29)
+
+
+### Bug Fixes
+
+* **checkout-button:** action hook for hidden fields ([#2134](https://github.com/Automattic/newspack-blocks/issues/2134)) ([c5ee4d4](https://github.com/Automattic/newspack-blocks/commit/c5ee4d4c7f2cf68abd97466b2dd570b77ec06365))
+
 # [4.12.0](https://github.com/Automattic/newspack-blocks/compare/v4.11.0...v4.12.0) (2025-05-14)
 
 
