@@ -1,3 +1,10 @@
+## [4.12.3](https://github.com/Automattic/newspack-blocks/compare/v4.12.2...v4.12.3) (2025-06-03)
+
+
+### Bug Fixes
+
+* **homepage-articles:** revert block inline style enqueue strategy ([#2139](https://github.com/Automattic/newspack-blocks/issues/2139)) ([290edd5](https://github.com/Automattic/newspack-blocks/commit/290edd51f246a797ec47a035fbad0aa5ae086d31))
+
 ## [4.12.2](https://github.com/Automattic/newspack-blocks/compare/v4.12.1...v4.12.2) (2025-06-02)
 
 
