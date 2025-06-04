@@ -901,7 +901,7 @@
 		}
 	}
 
-	.woocommerce .woocommerce-notices-wrapper {
+	.woocommerce .woocommerce-notices-wrapper:not(:empty) {
 		margin-bottom: var(--newspack-ui-spacer-5, 24px);
 		margin-top: 0;
 	}
@@ -914,5 +914,27 @@
 	/* stylelint-disable-next-line selector-id-pattern */
 	#address_rdi_field {
 		display: none;
+	}
+
+	/**
+	 * Change Payment Method form.
+	 */
+	/* stylelint-disable-next-line selector-id-pattern */
+	#order_review {
+		.payment_methods {
+			margin: 0 0 var(--newspack-ui-spacer-5, 24px);
+			padding: 0;
+			.wc_payment_method:only-child {
+				> label {
+					display: none;
+				}
+			}
+		}
+		.update-all-subscriptions-payment-method-wrap {
+			label {
+				font-weight: normal;
+				font-size: var(--newspack-ui-font-size-xs, 14px);
+			}
+		}
 	}
 }

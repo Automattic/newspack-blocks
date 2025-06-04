@@ -12,7 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 ?>
-<form id="order_review" class="checkout" method="post">
+<form id="order_review" method="post" target="_parent">
+
 	<div id="payment">
 		<?php
 		if ( $subscription->has_payment_gateway() ) {
@@ -28,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		if ( $available_gateways ) :
 			?>
-			<ul class="wc_payment_methods payment_methods methods">
+			<ul class="payment_methods methods">
 				<?php
 
 				if ( count( $available_gateways ) ) {
@@ -37,9 +38,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 				foreach ( $available_gateways as $gateway ) :
 					$supports_payment_method_changes = WC_Subscriptions_Change_Payment_Gateway::can_update_all_subscription_payment_methods( $gateway, $subscription );
-					include 'payment-method.php';
-				endforeach;
-				?>
+					?>
+					<li class="wc_payment_method payment_method_<?php echo esc_attr( $gateway->id ); ?>">
+						<input id="payment_method_<?php echo esc_attr( $gateway->id ); ?>" type="radio" class="input-radio <?php echo $supports_payment_method_changes ? 'supports-payment-method-changes' : ''; ?>" name="payment_method" value="<?php echo esc_attr( $gateway->id ); ?>" <?php checked( $gateway->chosen, true ); ?> data-order_button_text="<?php echo esc_attr( apply_filters( 'wcs_gateway_change_payment_button_text', $pay_order_button_text, $gateway ) ); ?>"/>
+						<label for="payment_method_<?php echo esc_attr( $gateway->id ); ?>"><?php echo esc_html( $gateway->get_title() ); ?><?php echo wp_kses_post( $gateway->get_icon() ); ?></label>
+						<?php
+						if ( $gateway->has_fields() || $gateway->get_description() ) {
+							echo '<div class="payment_box payment_method_' . esc_attr( $gateway->id ) . '" style="display:none;">';
+							$gateway->payment_fields();
+							echo '</div>';
+						}
+						?>
+					</li>
+				<?php endforeach; ?>
 			</ul>
 		<?php else : ?>
 			<div class="woocommerce-error">
@@ -74,14 +85,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 			<?php
 			echo wp_kses(
-				apply_filters( 'woocommerce_change_payment_button_html', '<input type="submit" class="button alt' . esc_attr( wc_wp_theme_get_element_class_name( 'button' ) ? ' ' . wc_wp_theme_get_element_class_name( 'button' ) : '' ) . '" id="place_order" value="' . esc_attr( $pay_order_button_text ) . '" data-value="' . esc_attr( $pay_order_button_text ) . '" />' ),
+				apply_filters( 'woocommerce_change_payment_button_html', '<button type="submit" class="newspack-ui__button newspack-ui__button--primary newspack-ui__button--wide button alt' . esc_attr( wc_wp_theme_get_element_class_name( 'button' ) ? ' ' . wc_wp_theme_get_element_class_name( 'button' ) : '' ) . '" id="place_order">' . esc_html( $pay_order_button_text ) . '</button>' ),
 				array(
-					'input' => array(
-						'type'       => array(),
-						'class'      => array(),
-						'id'         => array(),
-						'value'      => array(),
-						'data-value' => array(),
+					'button' => array(
+						'type'  => array(),
+						'class' => array(),
+						'id'    => array(),
 					),
 				)
 			);
