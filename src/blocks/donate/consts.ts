@@ -14,9 +14,7 @@ export const FREQUENCIES: { [ Key in DonationFrequencySlug as string ]: string }
 	year: __( 'Annually', 'newspack-blocks' ),
 };
 
-export const FREQUENCY_SLUGS: DonationFrequencySlug[] = Object.keys(
-	FREQUENCIES
-) as DonationFrequencySlug[];
+export const FREQUENCY_SLUGS: DonationFrequencySlug[] = Object.keys( FREQUENCIES ) as DonationFrequencySlug[];
 
 export const LAYOUT_OPTIONS: { label: string; key: DonateBlockAttributes[ 'layoutOption' ] }[] = [
 	{ label: __( 'Frequency', 'newspack-blocks' ), key: 'frequency' },

@@ -41,19 +41,10 @@ export const settings = {
 		foreground: '#406ebc',
 	},
 	category,
-	keywords: [
-		__( 'donate', 'newspack-blocks' ),
-		__( 'memberships', 'newspack-blocks' ),
-		__( 'subscriptions', 'newspack-blocks' ),
-	],
+	keywords: [ __( 'donate', 'newspack-blocks' ), __( 'memberships', 'newspack-blocks' ), __( 'subscriptions', 'newspack-blocks' ) ],
 	description: (
 		<>
-			<p>
-				{ __(
-					'Manually place a donation block on any post or page on your site.',
-					'newspack-blocks'
-				) }
-			</p>
+			<p>{ __( 'Manually place a donation block on any post or page on your site.', 'newspack-blocks' ) }</p>
 			<ExternalLink href="https://help.newspack.com/publishing-and-appearance/blocks/donate-block/">
 				{ __( 'Support reference', 'newspack-blocks' ) }
 			</ExternalLink>

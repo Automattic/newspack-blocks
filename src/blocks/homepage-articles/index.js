@@ -51,19 +51,16 @@ export const settings = {
 		__( 'homepage', 'newspack-blocks' ),
 		__( 'query', 'newspack-blocks' ),
 	],
-	description: __(
-		'An advanced block that allows displaying content based on different parameters and visual configurations.',
-		'newspack-blocks'
-	),
+	description: __( 'An advanced block that allows displaying content based on different parameters and visual configurations.', 'newspack-blocks' ),
 	styles: [
 		{
 			name: 'default',
-			label: _x('Default', 'block style', 'newspack-blocks'),
+			label: _x( 'Default', 'block style', 'newspack-blocks' ),
 			isDefault: true,
 		},
 		{
 			name: 'borders',
-			label: _x('Borders', 'block style', 'newspack-blocks'),
+			label: _x( 'Borders', 'block style', 'newspack-blocks' ),
 		},
 	],
 	supports: {
@@ -78,26 +75,16 @@ export const settings = {
 			{
 				type: 'block',
 				blocks: [ 'core/latest-posts' ],
-				transform: ( {
-					displayPostContent,
-					displayPostDate,
-					postLayout,
-					columns,
-					postsToShow,
-					categories,
-				} ) => {
-					return createBlock(
-						applyFilters( 'blocks.transforms_from_name', 'newspack-blocks/homepage-articles' ),
-						{
-							showExcerpt: displayPostContent,
-							showDate: displayPostDate,
-							postLayout,
-							columns,
-							postsToShow,
-							showAuthor: false,
-							categories: categories ? [ categories ] : [],
-						}
-					);
+				transform: ( { displayPostContent, displayPostDate, postLayout, columns, postsToShow, categories } ) => {
+					return createBlock( applyFilters( 'blocks.transforms_from_name', 'newspack-blocks/homepage-articles' ), {
+						showExcerpt: displayPostContent,
+						showDate: displayPostDate,
+						postLayout,
+						columns,
+						postsToShow,
+						showAuthor: false,
+						categories: categories ? [ categories ] : [],
+					} );
 				},
 			},
 		],

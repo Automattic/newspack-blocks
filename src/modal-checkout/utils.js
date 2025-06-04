@@ -63,7 +63,7 @@ export function iframeReady( iframe, cb ) {
 		}
 	}
 	function readyState() {
-		if ( this.readyState === "complete" ) {
+		if ( this.readyState === 'complete' ) {
 			ready.call( this );
 		}
 	}
@@ -73,7 +73,7 @@ export function iframeReady( iframe, cb ) {
 			return;
 		}
 		const doc = iframe.contentDocument || iframe.contentWindow?.document;
-		if ( doc && doc.URL.indexOf('about:') !== 0 ) {
+		if ( doc && doc.URL.indexOf( 'about:' ) !== 0 ) {
 			if ( doc?.readyState === 'complete' ) {
 				ready.call( doc );
 			} else {
@@ -149,7 +149,6 @@ export function getCheckoutData( element ) {
 
 	return data;
 }
-
 
 /**
  * Get formatted amount for price summary display.

@@ -69,9 +69,7 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 				deleteIframeArchive();
 			}
 		} catch ( e ) {
-			setError(
-				e.message || __( 'An error occured when uploading the iframe archive.', 'newspack-blocks' )
-			);
+			setError( e.message || __( 'An error occured when uploading the iframe archive.', 'newspack-blocks' ) );
 		}
 
 		setIsUploadingArchive( false );
@@ -104,9 +102,7 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 
 			setShowPreview( true );
 		} catch ( e ) {
-			setError(
-				e.message || __( 'An error occured when uploading the iframe archive.', 'newspack-blocks' )
-			);
+			setError( e.message || __( 'An error occured when uploading the iframe archive.', 'newspack-blocks' ) );
 		}
 
 		setIsUploadingArchive( false );
@@ -137,13 +133,7 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 			} );
 			setShowPreview( true );
 		} catch ( e ) {
-			setError(
-				e.message ||
-					__(
-						'An error occured when setting the iframe from the archive media.',
-						'newspack-blocks'
-					)
-			);
+			setError( e.message || __( 'An error occured when setting the iframe from the archive media.', 'newspack-blocks' ) );
 		}
 
 		setIsUploadingArchive( false );
@@ -163,9 +153,7 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 	const iframeControls = [
 		{
 			icon: <Icon icon={ iconPreview } />,
-			title: showPreview
-				? __( 'Hide iframe preview', 'newspack-blocks' )
-				: __( 'Show iframe preview', 'newspack-blocks' ),
+			title: showPreview ? __( 'Hide iframe preview', 'newspack-blocks' ) : __( 'Show iframe preview', 'newspack-blocks' ),
 			onClick: () => setShowPreview( ! showPreview ),
 			isActive: showPreview,
 		},
@@ -174,11 +162,7 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 	return (
 		<Fragment>
 			{ isFullScreen && (
-				<Notice
-					status="warning"
-					className="wp-block-newspack-blocks-iframe-notice"
-					isDismissible={ false }
-				>
+				<Notice status="warning" className="wp-block-newspack-blocks-iframe-notice" isDismissible={ false }>
 					{ __( 'This block will take over the page content.', 'newspack-blocks' ) }
 				</Notice>
 			) }
@@ -186,11 +170,7 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 				<div className="iframe-container">
 					<FocusableIframe
 						title={ __( 'Newspack embedded iframe', 'newspack-blocks' ) }
-						src={
-							'document' === mode
-								? `https://docs.google.com/gview?embedded=true&url=${ encodeURIComponent( src ) }`
-								: src
-						}
+						src={ 'document' === mode ? `https://docs.google.com/gview?embedded=true&url=${ encodeURIComponent( src ) }` : src }
 						style={ {
 							width: isFullScreen ? '100vw' : width,
 							height: isFullScreen ? '100vh' : height,
@@ -223,10 +203,7 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 					<Fragment>
 						<ToggleControl
 							label={ __( 'Fullscreen', 'newspack-blocks' ) }
-							help={ __(
-								'If enabled, the iframe will be full screen and hide all the post content.',
-								'newspack-blocks'
-							) }
+							help={ __( 'If enabled, the iframe will be full screen and hide all the post content.', 'newspack-blocks' ) }
 							checked={ isFullScreen }
 							onChange={ _isFullScreen => setAttributes( { isFullScreen: _isFullScreen } ) }
 							required

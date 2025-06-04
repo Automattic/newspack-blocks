@@ -126,9 +126,7 @@ export default function createSwiper( els, config = {} ) {
 		},
 		on: {
 			init() {
-				forEachNode( this.wrapperEl.querySelectorAll( '.swiper-slide' ), slide =>
-					deactivateSlide( slide )
-				);
+				forEachNode( this.wrapperEl.querySelectorAll( '.swiper-slide' ), slide => deactivateSlide( slide ) );
 
 				setAspectRatio.call( this ); // Set the aspect ratio on init.
 				activateSlide( this.slides[ this.activeIndex ] ); // Set-up our active slide.
@@ -163,14 +161,7 @@ export default function createSwiper( els, config = {} ) {
 					speak(
 						escapeHTML(
 							`${ currentSlide.innerText },
-							${
-	alt
-		? /* translators: the title of the image. */ sprintf(
-			__( 'Image: %s, ', 'newspack-blocks' ),
-			alt
-		)
-		: ''
-}
+							${ alt ? /* translators: the title of the image. */ sprintf( __( 'Image: %s, ', 'newspack-blocks' ), alt ) : '' }
 							${ slideInfo }`
 						),
 						'assertive'

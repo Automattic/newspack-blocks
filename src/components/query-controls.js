@@ -3,14 +3,7 @@
  */
 import { __, sprintf } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
-import {
-	BaseControl,
-	Button,
-	ButtonGroup,
-	CheckboxControl,
-	SelectControl,
-	QueryControls as BasicQueryControls
-} from '@wordpress/components';
+import { BaseControl, Button, ButtonGroup, CheckboxControl, SelectControl, QueryControls as BasicQueryControls } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -20,8 +13,7 @@ import { decodeEntities } from '@wordpress/html-entities';
  */
 import AutocompleteTokenField from './autocomplete-tokenfield';
 
-const getCategoryTitle = category =>
-	decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' );
+const getCategoryTitle = category => decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' );
 
 const getTermTitle = term => decodeEntities( term.name ) || __( '(no title)', 'newspack-blocks' );
 
@@ -126,75 +118,69 @@ class QueryControls extends Component {
 		);
 	};
 	fetchSavedCategories = categoryIDs => {
-		return apiFetch({
-			path: addQueryArgs('/wp/v2/categories', {
+		return apiFetch( {
+			path: addQueryArgs( '/wp/v2/categories', {
 				per_page: 100,
 				_fields: 'id,name',
-				include: categoryIDs.join(','),
-			}),
-		}).then(function (categories) {
-			const allCats = categories.map(category => ({
+				include: categoryIDs.join( ',' ),
+			} ),
+		} ).then( function ( categories ) {
+			const allCats = categories.map( category => ( {
 				value: category.id,
-				label:
-					decodeEntities(category.name) ||
-					__('(no title)', 'newspack-blocks'),
-			}));
+				label: decodeEntities( category.name ) || __( '(no title)', 'newspack-blocks' ),
+			} ) );
 			// Look for categoryIDs that were not returned (deleted categories) and add them to the list.
-			categoryIDs.forEach(catID => {
-				if (!allCats.find(cat => cat.value === parseInt(catID))) {
-					allCats.push({
-						value: parseInt(catID),
-						label: __('Deleted category', 'newspack-blocks'),
-					});
+			categoryIDs.forEach( catID => {
+				if ( ! allCats.find( cat => cat.value === parseInt( catID ) ) ) {
+					allCats.push( {
+						value: parseInt( catID ),
+						label: __( 'Deleted category', 'newspack-blocks' ),
+					} );
 				}
-			});
+			} );
 			return allCats;
-		});
+		} );
 	};
 
 	fetchTagSuggestions = search => {
-		return apiFetch({
-			path: addQueryArgs('/wp/v2/tags', {
+		return apiFetch( {
+			path: addQueryArgs( '/wp/v2/tags', {
 				search,
 				per_page: 20,
 				_fields: 'id,name',
 				orderby: 'count',
 				order: 'desc',
-			}),
-		}).then(function (tags) {
-			return tags.map(tag => ({
+			} ),
+		} ).then( function ( tags ) {
+			return tags.map( tag => ( {
 				value: tag.id,
-				label:
-					decodeEntities(tag.name) ||
-					__('(no title)', 'newspack-blocks'),
-			}));
-		});
+				label: decodeEntities( tag.name ) || __( '(no title)', 'newspack-blocks' ),
+			} ) );
+		} );
 	};
 	fetchSavedTags = tagIDs => {
-		return apiFetch({
-			path: addQueryArgs('/wp/v2/tags', {
+		return apiFetch( {
+			path: addQueryArgs( '/wp/v2/tags', {
 				per_page: 100,
 				_fields: 'id,name',
-				include: tagIDs.join(','),
-			}),
-		}).then(function (tags) {
-			const allTags = tags.map(tag => ({
+				include: tagIDs.join( ',' ),
+			} ),
+		} ).then( function ( tags ) {
+			const allTags = tags.map( tag => ( {
 				value: tag.id,
-				label:
-					decodeEntities(tag.name) ||
-					__('(no title)', 'newspack-blocks'),
-			}));
+				label: decodeEntities( tag.name ) || __( '(no title)', 'newspack-blocks' ),
+			} ) );
 			// Look for tagIDs that were not returned (deleted tags) and add them to the list.
-			tagIDs.forEach(tagID => {
-				if (!allTags.find(tag => tag.value === parseInt(tagID))) {
-					allTags.push({
-						value: parseInt(tagID),
-						label: __('Deleted tag', 'newspack-blocks'),
-					});
+			tagIDs.forEach( tagID => {
+				if ( ! allTags.find( tag => tag.value === parseInt( tagID ) ) ) {
+					allTags.push( {
+						value: parseInt( tagID ),
+						label: __( 'Deleted tag', 'newspack-blocks' ),
+					} );
 				}
-			});
+			} );
 			return allTags;
-		});
+		} );
 	};
 
 	fetchCustomTaxonomiesSuggestions = ( taxSlug, search ) => {
@@ -290,25 +276,17 @@ class QueryControls extends Component {
 						label={ __( 'Mode', 'newspack-blocks' ) }
 						id="newspack-block__loop-type"
 						className="newspack-block__button-group"
-						help={ specificMode ? (
-							__( 'The block will display only the specifically selected post(s).', 'newspack-blocks' )
-						) : (
-							__( 'The block will display content based on the filtering settings below.', 'newspack-blocks' )
-						) }
+						help={
+							specificMode
+								? __( 'The block will display only the specifically selected post(s).', 'newspack-blocks' )
+								: __( 'The block will display content based on the filtering settings below.', 'newspack-blocks' )
+						}
 					>
 						<ButtonGroup>
-							<Button
-								variant={ ! specificMode && 'primary' }
-								aria-pressed={ ! specificMode }
-								onClick={ onLoopModeChange }
-							>
+							<Button variant={ ! specificMode && 'primary' } aria-pressed={ ! specificMode } onClick={ onLoopModeChange }>
 								{ __( 'Dynamic', 'newspack-blocks' ) }
 							</Button>
-							<Button
-								variant={ specificMode && 'primary' }
-								aria-pressed={ specificMode }
-								onClick={ onSpecificModeChange }
-							>
+							<Button variant={ specificMode && 'primary' } aria-pressed={ specificMode } onClick={ onSpecificModeChange }>
 								{ __( 'Static', 'newspack-blocks' ) }
 							</Button>
 						</ButtonGroup>
@@ -321,22 +299,15 @@ class QueryControls extends Component {
 						fetchSuggestions={ this.fetchPostSuggestions }
 						fetchSavedInfo={ this.fetchSavedPosts }
 						label={ __( 'Posts', 'newspack-blocks' ) }
-						help={ __(
-							'Begin typing any word in a post title. Click on an autocomplete result to select it.',
-							'newspack-blocks'
-						) }
+						help={ __( 'Begin typing any word in a post title. Click on an autocomplete result to select it.', 'newspack-blocks' ) }
 					/>
 				) : (
 					<>
 						<BasicQueryControls { ...this.props } maxItems={ 30 } />
 						{ onCategoriesChange && (
-							<BaseControl
-								id="newspack-block__category-control"
-							>
+							<BaseControl id="newspack-block__category-control">
 								<div className="components-base-control__label-dropdown">
-									<BaseControl.VisualLabel>
-										{ __( 'Category', 'newspack-blocks' ) }
-									</BaseControl.VisualLabel>
+									<BaseControl.VisualLabel>{ __( 'Category', 'newspack-blocks' ) }</BaseControl.VisualLabel>
 									<SelectControl
 										size="small"
 										value={ categoryJoinType }
@@ -344,7 +315,7 @@ class QueryControls extends Component {
 											{ label: __( 'is one of', 'newspack-blocks' ), value: 'or' },
 											{ label: __( 'is all of', 'newspack-blocks' ), value: 'all' },
 										] }
-										onChange={ ( value ) => {
+										onChange={ value => {
 											if ( 'all' === value ) {
 												onIncludeSubcategoriesChange( false );
 											}
@@ -392,16 +363,9 @@ class QueryControls extends Component {
 									key={ index }
 									tokens={ getTermsOfCustomTaxonomy( customTaxonomies, tax.slug ) }
 									onChange={ value => {
-										customTaxonomiesPrepareChange(
-											customTaxonomies,
-											onCustomTaxonomiesChange,
-											tax.slug,
-											value
-										);
+										customTaxonomiesPrepareChange( customTaxonomies, onCustomTaxonomiesChange, tax.slug, value );
 									} }
-									fetchSuggestions={ search =>
-										this.fetchCustomTaxonomiesSuggestions( tax.slug, search )
-									}
+									fetchSuggestions={ search => this.fetchCustomTaxonomiesSuggestions( tax.slug, search ) }
 									fetchSavedInfo={ termIds => this.fetchSavedCustomTaxonomies( tax.slug, termIds ) }
 									label={ tax.label }
 								/>
@@ -429,9 +393,7 @@ class QueryControls extends Component {
 							registeredCustomTaxonomies.map( ( { label, slug } ) => (
 								<AutocompleteTokenField
 									fetchSavedInfo={ termIds => this.fetchSavedCustomTaxonomies( slug, termIds ) }
-									fetchSuggestions={ search =>
-										this.fetchCustomTaxonomiesSuggestions( slug, search )
-									}
+									fetchSuggestions={ search => this.fetchCustomTaxonomiesSuggestions( slug, search ) }
 									key={ `${ slug }-exclusions-selector` }
 									label={ sprintf(
 										// translators: %s is the custom taxonomy label.
@@ -439,12 +401,7 @@ class QueryControls extends Component {
 										label
 									) }
 									onChange={ value =>
-										customTaxonomiesPrepareChange(
-											customTaxonomyExclusions,
-											onCustomTaxonomyExclusionsChange,
-											slug,
-											value
-										)
+										customTaxonomiesPrepareChange( customTaxonomyExclusions, onCustomTaxonomyExclusionsChange, slug, value )
 									}
 									tokens={ getTermsOfCustomTaxonomy( customTaxonomyExclusions, slug ) }
 								/>

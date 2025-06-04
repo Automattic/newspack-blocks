@@ -22,14 +22,7 @@ import {
 } from '@wordpress/components';
 import { Fragment, useEffect, useState } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
-import {
-	Icon,
-	columns as columnsIcon,
-	edit,
-	listView,
-	pullLeft,
-	pullRight,
-} from '@wordpress/icons';
+import { Icon, columns as columnsIcon, edit, listView, pullLeft, pullRight } from '@wordpress/icons';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { avatarSizeOptions, textSizeOptions, units } from '../author-profile/edit';
@@ -138,12 +131,12 @@ const AuthorList = ( { attributes, clientId, setAttributes } ) => {
 									'all' === authorType
 										? __( 'Both guest authors and WP users', 'newspack-blocks' )
 										: sprintf(
-											// translators: currently selected author type option.
-											__( '%s only', 'newspack-blocks' ),
-											'guest-authors' === authorType
-												? __( 'Guest authors', 'newspack-blocks' )
-												: __( 'WP users', 'newspack-blocks' )
-										)
+												// translators: currently selected author type option.
+												__( '%s only', 'newspack-blocks' ),
+												'guest-authors' === authorType
+													? __( 'Guest authors', 'newspack-blocks' )
+													: __( 'WP users', 'newspack-blocks' )
+										  )
 								) }
 								selected={ authorType || 'all' }
 								options={ [
@@ -169,10 +162,7 @@ const AuthorList = ( { attributes, clientId, setAttributes } ) => {
 					) }
 					{ 'guest-authors' !== authorType && (
 						<PanelRow>
-							<BaseControl
-								id="newspack-blocks__author-list-roles"
-								label={ __( 'WP User Roles', 'newspack-blocks' ) }
-							>
+							<BaseControl id="newspack-blocks__author-list-roles" label={ __( 'WP User Roles', 'newspack-blocks' ) }>
 								{ editableRoles.map( ( role, index ) => (
 									<CheckboxControl
 										checked={ -1 < authorRoles.indexOf( role ) }
@@ -180,9 +170,7 @@ const AuthorList = ( { attributes, clientId, setAttributes } ) => {
 										label={ role }
 										value={ role }
 										onChange={ check => {
-											const selectedRoles = check
-												? [ ...authorRoles, role ]
-												: authorRoles.filter( _role => _role !== role );
+											const selectedRoles = check ? [ ...authorRoles, role ] : authorRoles.filter( _role => _role !== role );
 
 											setAttributes( { authorRoles: selectedRoles } );
 										} }
@@ -203,10 +191,7 @@ const AuthorList = ( { attributes, clientId, setAttributes } ) => {
 						<PanelRow>
 							<ToggleControl
 								label={ __( 'Group authors by alphabet', 'newspack-blocks' ) }
-								help={ __(
-									'Display each alphabetical chunk as a discrete section.',
-									'newspack-blocks'
-								) }
+								help={ __( 'Display each alphabetical chunk as a discrete section.', 'newspack-blocks' ) }
 								checked={ separatorSections }
 								onChange={ () => setAttributes( { separatorSections: ! separatorSections } ) }
 							/>
@@ -220,9 +205,7 @@ const AuthorList = ( { attributes, clientId, setAttributes } ) => {
 							help={ sprintf(
 								// Translators: Help message for "include empty authors" toggle.
 								__( 'Authors with no published posts will be %s.', 'newspack-blocks' ),
-								excludeEmpty
-									? __( 'hidden', 'newspack-blocks' )
-									: __( 'displayed', 'newspack-blocks' )
+								excludeEmpty ? __( 'hidden', 'newspack-blocks' ) : __( 'displayed', 'newspack-blocks' )
 							) }
 							checked={ excludeEmpty }
 							onChange={ () => setAttributes( { excludeEmpty: ! excludeEmpty } ) }
@@ -266,15 +249,9 @@ const AuthorList = ( { attributes, clientId, setAttributes } ) => {
 					</PanelRow>
 				</PanelBody>
 				<PanelBody title={ __( 'Author Profile Settings', 'newspack-blocks' ) }>
-					<BaseControl
-						label={ __( 'Text Size', 'newspack-blocks' ) }
-						id="newspack-blocks__text-size-control"
-					>
+					<BaseControl label={ __( 'Text Size', 'newspack-blocks' ) } id="newspack-blocks__text-size-control">
 						<PanelRow>
-							<ButtonGroup
-								id="newspack-blocks__text-size-control-buttons"
-								aria-label={ __( 'Text Size', 'newspack-blocks' ) }
-							>
+							<ButtonGroup id="newspack-blocks__text-size-control-buttons" aria-label={ __( 'Text Size', 'newspack-blocks' ) }>
 								{ textSizeOptions.map( option => {
 									const isCurrent = textSize === option.value;
 									return (
@@ -312,15 +289,9 @@ const AuthorList = ( { attributes, clientId, setAttributes } ) => {
 						</PanelRow>
 					) }
 					{ showAvatar && (
-						<BaseControl
-							label={ __( 'Avatar Size', 'newspack-blocks' ) }
-							id="newspack-blocks__avatar-size-control"
-						>
+						<BaseControl label={ __( 'Avatar Size', 'newspack-blocks' ) } id="newspack-blocks__avatar-size-control">
 							<PanelRow>
-								<ButtonGroup
-									id="newspack-blocks__avatar-size-control-buttons"
-									aria-label={ __( 'Avatar Size', 'newspack-blocks' ) }
-								>
+								<ButtonGroup id="newspack-blocks__avatar-size-control-buttons" aria-label={ __( 'Avatar Size', 'newspack-blocks' ) }>
 									{ avatarSizeOptions.map( option => {
 										const isCurrent = avatarSize === option.value;
 										return (
@@ -347,9 +318,7 @@ const AuthorList = ( { attributes, clientId, setAttributes } ) => {
 								__unstableInputWidth="80px"
 								units={ units }
 								value={ avatarBorderRadius }
-								onChange={ value =>
-									setAttributes( { avatarBorderRadius: 0 > parseFloat( value ) ? '0' : value } )
-								}
+								onChange={ value => setAttributes( { avatarBorderRadius: 0 > parseFloat( value ) ? '0' : value } ) }
 							/>
 						</PanelRow>
 					) }
@@ -474,10 +443,7 @@ const AuthorList = ( { attributes, clientId, setAttributes } ) => {
 					</>
 				) }
 				{ ( ! authors || isLoading ) && (
-					<Placeholder
-						icon={ <Icon icon={ listView } /> }
-						label={ __( 'Author List', 'newspack-blocks' ) }
-					>
+					<Placeholder icon={ <Icon icon={ listView } /> } label={ __( 'Author List', 'newspack-blocks' ) }>
 						{ error && (
 							<Notice status="error" isDismissible={ false }>
 								{ error }

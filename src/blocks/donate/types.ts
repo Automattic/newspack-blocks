@@ -43,10 +43,7 @@ export type DonationSettings = {
 	platform: string;
 };
 
-export type EditState = Pick<
-	DonationSettings,
-	'amounts' | 'currencySymbol' | 'tiered' | 'disabledFrequencies' | 'minimumDonation' | 'platform'
->;
+export type EditState = Pick< DonationSettings, 'amounts' | 'currencySymbol' | 'tiered' | 'disabledFrequencies' | 'minimumDonation' | 'platform' >;
 
 export type DonationAmountsArray = [ number, number, number, number ];
 export type DonationAmounts = {

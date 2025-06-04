@@ -59,37 +59,22 @@ export const textSizeOptions = [
 	{
 		value: 'small',
 		label: /* translators: label for small text size option */ __( 'Small', 'newspack-blocks' ),
-		shortName: /* translators: abbreviation for small text size option */ __(
-			'S',
-			'newspack-blocks'
-		),
+		shortName: /* translators: abbreviation for small text size option */ __( 'S', 'newspack-blocks' ),
 	},
 	{
 		value: 'medium',
 		label: /* translators: label for medium text size option */ __( 'Medium', 'newspack-blocks' ),
-		shortName: /* translators: abbreviation for medium text size option */ __(
-			'M',
-			'newspack-blocks'
-		),
+		shortName: /* translators: abbreviation for medium text size option */ __( 'M', 'newspack-blocks' ),
 	},
 	{
 		value: 'large',
 		label: /* translators: label for small text size option */ __( 'Large', 'newspack-blocks' ),
-		shortName: /* translators: abbreviation for large text size option */ __(
-			'L',
-			'newspack-blocks'
-		),
+		shortName: /* translators: abbreviation for large text size option */ __( 'L', 'newspack-blocks' ),
 	},
 	{
 		value: 'extra-large',
-		label: /* translators: label for extra-large text size option */ __(
-			'Extra Large',
-			'newspack-blocks'
-		),
-		shortName: /* translators: abbreviation for small text size option */ __(
-			'XL',
-			'newspack-blocks'
-		),
+		label: /* translators: label for extra-large text size option */ __( 'Extra Large', 'newspack-blocks' ),
+		shortName: /* translators: abbreviation for small text size option */ __( 'XL', 'newspack-blocks' ),
 	},
 ];
 
@@ -98,37 +83,22 @@ export const avatarSizeOptions = [
 	{
 		value: 72,
 		label: /* translators: label for small avatar size option */ __( 'Small', 'newspack-blocks' ),
-		shortName: /* translators: abbreviation for small avatar size option */ __(
-			'S',
-			'newspack-blocks'
-		),
+		shortName: /* translators: abbreviation for small avatar size option */ __( 'S', 'newspack-blocks' ),
 	},
 	{
 		value: 128,
 		label: /* translators: label for medium avatar size option */ __( 'Medium', 'newspack-blocks' ),
-		shortName: /* translators: abbreviation for medium avatar size option */ __(
-			'M',
-			'newspack-blocks'
-		),
+		shortName: /* translators: abbreviation for medium avatar size option */ __( 'M', 'newspack-blocks' ),
 	},
 	{
 		value: 192,
 		label: /* translators: label for large avatar size option */ __( 'Large', 'newspack-blocks' ),
-		shortName: /* translators: abbreviation for large avatar size option */ __(
-			'L',
-			'newspack-blocks'
-		),
+		shortName: /* translators: abbreviation for large avatar size option */ __( 'L', 'newspack-blocks' ),
 	},
 	{
 		value: 256,
-		label: /* translators: label for extra-large avatar size option */ __(
-			'Extra-large',
-			'newspack-blocks'
-		),
-		shortName: /* translators: abbreviation for extra-large avatar size option  */ __(
-			'XL',
-			'newspack-blocks'
-		),
+		label: /* translators: label for extra-large avatar size option */ __( 'Extra-large', 'newspack-blocks' ),
+		shortName: /* translators: abbreviation for extra-large avatar size option  */ __( 'XL', 'newspack-blocks' ),
 	},
 ];
 
@@ -211,15 +181,9 @@ const AuthorProfile = ( { attributes, setAttributes } ) => {
 		<>
 			<InspectorControls>
 				<PanelBody title={ __( 'Author Profile Settings', 'newspack-blocks' ) }>
-					<BaseControl
-						label={ __( 'Text Size', 'newspack-blocks' ) }
-						id="newspack-blocks__text-size-control"
-					>
+					<BaseControl label={ __( 'Text Size', 'newspack-blocks' ) } id="newspack-blocks__text-size-control">
 						<PanelRow>
-							<ButtonGroup
-								id="newspack-blocks__text-size-control-buttons"
-								aria-label={ __( 'Text Size', 'newspack-blocks' ) }
-							>
+							<ButtonGroup id="newspack-blocks__text-size-control-buttons" aria-label={ __( 'Text Size', 'newspack-blocks' ) }>
 								{ textSizeOptions.map( option => {
 									const isCurrent = textSize === option.value;
 									return (
@@ -257,15 +221,9 @@ const AuthorProfile = ( { attributes, setAttributes } ) => {
 						</PanelRow>
 					) }
 					{ showAvatar && (
-						<BaseControl
-							label={ __( 'Avatar size', 'newspack-blocks' ) }
-							id="newspack-blocks__avatar-size-control"
-						>
+						<BaseControl label={ __( 'Avatar size', 'newspack-blocks' ) } id="newspack-blocks__avatar-size-control">
 							<PanelRow>
-								<ButtonGroup
-									id="newspack-blocks__avatar-size-control-buttons"
-									aria-label={ __( 'Avatar size', 'newspack-blocks' ) }
-								>
+								<ButtonGroup id="newspack-blocks__avatar-size-control-buttons" aria-label={ __( 'Avatar size', 'newspack-blocks' ) }>
 									{ avatarSizeOptions.map( option => {
 										const isCurrent = avatarSize === option.value;
 										return (
@@ -292,9 +250,7 @@ const AuthorProfile = ( { attributes, setAttributes } ) => {
 								__unstableInputWidth="80px"
 								units={ units }
 								value={ avatarBorderRadius }
-								onChange={ value =>
-									setAttributes( { avatarBorderRadius: 0 > parseFloat( value ) ? '0' : value } )
-								}
+								onChange={ value => setAttributes( { avatarBorderRadius: 0 > parseFloat( value ) ? '0' : value } ) }
 							/>
 						</PanelRow>
 					) }
@@ -356,10 +312,7 @@ const AuthorProfile = ( { attributes, setAttributes } ) => {
 					{ ! isLoading && (
 						<AutocompleteWithSuggestions
 							label={ __( 'Search for an author to display', 'newspack-blocks' ) }
-							help={ __(
-								'Begin typing name, click autocomplete result to select.',
-								'newspack-blocks'
-							) }
+							help={ __( 'Begin typing name, click autocomplete result to select.', 'newspack-blocks' ) }
 							fetchSuggestions={ async ( search = null, offset = 0 ) => {
 								// Reset suggestions in state.
 								setSuggestions( null );
@@ -404,10 +357,7 @@ const AuthorProfile = ( { attributes, setAttributes } ) => {
 								// We need to check whether the selected author is a guest author or not.
 								if ( suggestions ) {
 									suggestions.forEach( suggestion => {
-										if (
-											parseInt( selection?.value ) === parseInt( suggestion?.value ) &&
-											suggestion?.isGuestAuthor
-										) {
+										if ( parseInt( selection?.value ) === parseInt( suggestion?.value ) && suggestion?.isGuestAuthor ) {
 											selectionIsGuest = true;
 										}
 									} );
