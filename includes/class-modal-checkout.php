@@ -1049,7 +1049,7 @@ final class Modal_Checkout {
 			<link rel="profile" href="https://gmpg.org/xfn/11" />
 			<?php wp_head(); ?>
 		</head>
-		<body class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal__content" ); ?>" id="newspack_modal_checkout_container">
+		<body <?php body_class( "$class_prefix {$class_prefix}__modal__content" ); ?> id="newspack_modal_checkout_container">
 			<?php
 			if ( is_checkout() || is_order_received_page() ) {
 				echo do_shortcode( '[woocommerce_checkout]' );
@@ -1196,6 +1196,7 @@ final class Modal_Checkout {
 			$custom_templates['global/form-login.php']       = 'src/modal-checkout/templates/thankyou.php';
 			$custom_templates['checkout/form-checkout.php']  = 'src/modal-checkout/templates/form-checkout.php';
 			$custom_templates['checkout/payment-method.php'] = 'src/modal-checkout/templates/payment-method.php';
+			$custom_templates['checkout/form-change-payment-method.php'] = 'src/modal-checkout/templates/form-change-payment-method.php';
 			$custom_templates['checkout/thankyou.php']       = 'src/modal-checkout/templates/thankyou.php';
 		}
 

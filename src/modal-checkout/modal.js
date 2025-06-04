@@ -800,6 +800,8 @@ domReady( () => {
 	 * Open the modal checkout.
 	 *
 	 * @param {Object}   options                    Modal checkout options object.
+	 * @param {string}   options.url                The URL to open the modal checkout on.
+	 *                                              If not provided, the default checkout URL will be used.
 	 * @param {string}   options.title              The title to set for the modal.
 	 * @param {string}   options.actionType         The action type to set for the modal.
 	 * @param {Object}   options.afterSuccess       The after success configuration object.
@@ -807,6 +809,7 @@ domReady( () => {
 	 * @param {Function} options.onClose            The callback to call when the modal is closed.
 	 */
 	window.newspackOpenModalCheckout = ( {
+		url = null,
 		title = null,
 		actionType = null,
 		afterSuccess = {},
@@ -823,7 +826,21 @@ domReady( () => {
 		/**
 		 * Start with the default checkout URL.
 		 */
-		const url = new URL( newspackBlocksModal.checkout_url );
+		 url = new URL( url || newspackBlocksModal.checkout_url );
+
+		/**
+		 * For integration purposes, remove `my_account_checkout` from the URL if it exists.
+		 */
+		if ( url.searchParams.has( 'my_account_checkout' ) ) {
+			url.searchParams.delete( 'my_account_checkout' );
+		}
+
+		/**
+		 * Add `modal_checkout` to the URL if it doesn't exist.
+		 */
+		if ( ! url.searchParams.has( 'modal_checkout' ) ) {
+			url.searchParams.set( 'modal_checkout', '1' );
+		}
 
 		/**
 		 * Custom action type configuration.

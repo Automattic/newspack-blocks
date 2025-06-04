@@ -72,7 +72,8 @@ import { domReady } from './utils';
 				const $form = $( 'form.checkout' );
 
 				if ( ! $form.length ) {
-					console.warn( 'Form is not available' ); // eslint-disable-line no-console
+					console.warn( 'Checkout form is not available' ); // eslint-disable-line no-console
+					setReady();
 					return;
 				}
 
