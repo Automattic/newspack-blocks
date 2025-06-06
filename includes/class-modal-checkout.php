@@ -2153,18 +2153,26 @@ final class Modal_Checkout {
 	 * @return string Post checkout success message text.
 	 */
 	public static function get_post_checkout_success_text() {
-		if ( ! class_exists( '\Newspack\Reader_Activation' ) || ! \Newspack\Reader_Activation::is_enabled() ) {
-			return sprintf(
-				// Translators: %s is the site name.
-				__( 'Thank you for supporting %s. Your transaction was completed successfully.', 'newspack-blocks' ),
-				get_option( 'blogname' )
-			);
+		$text = sprintf(
+			// Translators: %s is the site name.
+			__( 'Thank you for supporting %s. Your transaction was completed successfully.', 'newspack-blocks' ),
+			get_option( 'blogname' )
+		);
+
+		if ( class_exists( '\Newspack\Reader_Activation' ) && \Newspack\Reader_Activation::is_enabled() ) {
+			if ( ! self::is_registration_required() && self::is_checkout_registration() ) {
+				$text = \Newspack\Reader_Activation::get_post_checkout_registration_success_text();
+			} else {
+				$text = \Newspack\Reader_Activation::get_post_checkout_success_text();
+			}
 		}
-		if ( ! self::is_registration_required() && self::is_checkout_registration() ) {
-			return \Newspack\Reader_Activation::get_post_checkout_registration_success_text();
-		} else {
-			return \Newspack\Reader_Activation::get_post_checkout_success_text();
-		}
+
+		/**
+		 * Filters the post checkout success message text.
+		 *
+		 * @param string $text The post checkout success message text.
+		 */
+		return apply_filters( 'newspack_modal_checkout_success_text', $text );
 	}
 }
 Modal_Checkout::init();

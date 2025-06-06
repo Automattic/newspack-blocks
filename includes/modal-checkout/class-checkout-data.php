@@ -123,6 +123,9 @@ final class Checkout_Data {
 				$action_type = 'donation';
 			}
 		}
+		if ( isset( $_GET['action_type'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$action_type = sanitize_text_field( wp_unslash( $_GET['action_type'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		}
 		return $action_type;
 	}
 
@@ -190,7 +193,12 @@ final class Checkout_Data {
 			$amount       = $cart_item['data']->get_price();
 			$referrer     = $cart_item['referer'] ?? '';
 		} elseif ( $source instanceof \WC_Order ) {
-			$order        = $source;
+			// If order as actually a subscription object, we need to get the original order.
+			if ( $source instanceof \WC_Subscription ) {
+				$order = $source->get_parent();
+			} else {
+				$order = $source;
+			}
 			$order_items  = $order->get_items();
 			$order_item   = reset( $order_items ); // Use only the first item in the order.
 			$product_id   = $order_item->get_product_id();
@@ -282,6 +290,12 @@ final class Checkout_Data {
 			$data['newspack_popup_id'] = $newspack_popup_id;
 		}
 
-		return $data;
+		/**
+		 * Filters the checkout data.
+		 *
+		 * @param array $data The checkout data.
+		 * @param \WC_Product|\WC_Product_Variation|\WC_Cart|\WC_Order $source Product, product variation, cart or order object.
+		 */
+		return apply_filters( 'newspack_modal_checkout_data', $data, $source );
 	}
 }
