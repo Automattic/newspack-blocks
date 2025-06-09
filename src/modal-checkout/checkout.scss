@@ -921,12 +921,12 @@
 	 */
 	/* stylelint-disable-next-line selector-id-pattern */
 	#order_review {
-		.payment_methods {
-			margin: 0 0 var(--newspack-ui-spacer-5, 24px);
-			padding: 0;
+		.wc_payment_methods {
 			.wc_payment_method:only-child {
 				> label {
-					display: none;
+					background: transparent;
+					border-color: transparent;
+					padding: 0;
 				}
 			}
 		}

@@ -29,28 +29,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		if ( $available_gateways ) :
 			?>
-			<ul class="payment_methods methods">
+			<ul class="wc_payment_methods payment_methods methods">
 				<?php
 
 				if ( count( $available_gateways ) ) {
 					current( $available_gateways )->set_current();
 				}
 
-				foreach ( $available_gateways as $gateway ) :
-					$supports_payment_method_changes = WC_Subscriptions_Change_Payment_Gateway::can_update_all_subscription_payment_methods( $gateway, $subscription );
-					?>
-					<li class="wc_payment_method payment_method_<?php echo esc_attr( $gateway->id ); ?>">
-						<input id="payment_method_<?php echo esc_attr( $gateway->id ); ?>" type="radio" class="input-radio <?php echo $supports_payment_method_changes ? 'supports-payment-method-changes' : ''; ?>" name="payment_method" value="<?php echo esc_attr( $gateway->id ); ?>" <?php checked( $gateway->chosen, true ); ?> data-order_button_text="<?php echo esc_attr( apply_filters( 'wcs_gateway_change_payment_button_text', $pay_order_button_text, $gateway ) ); ?>"/>
-						<label for="payment_method_<?php echo esc_attr( $gateway->id ); ?>"><?php echo esc_html( $gateway->get_title() ); ?><?php echo wp_kses_post( $gateway->get_icon() ); ?></label>
-						<?php
-						if ( $gateway->has_fields() || $gateway->get_description() ) {
-							echo '<div class="payment_box payment_method_' . esc_attr( $gateway->id ) . '" style="display:none;">';
-							$gateway->payment_fields();
-							echo '</div>';
-						}
-						?>
-					</li>
-				<?php endforeach; ?>
+				foreach ( $available_gateways as $gateway ) {
+					require 'payment-method.php';
+				}
+
+				?>
 			</ul>
 		<?php else : ?>
 			<div class="woocommerce-error">

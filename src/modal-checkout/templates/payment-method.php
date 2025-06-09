@@ -9,11 +9,15 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+$supports_payment_method_changes = false;
+if ( ! empty( $subscription ) ) {
+	$supports_payment_method_changes = WC_Subscriptions_Change_Payment_Gateway::can_update_all_subscription_payment_methods( $gateway, $subscription );
+}
 ?>
 
 <li class="wc_payment_method payment_method_<?php echo esc_attr( $gateway->id ); ?>">
 	<label class="newspack-ui__input-card" for="payment_method_<?php echo esc_attr( $gateway->id ); ?>">
-		<input id="payment_method_<?php echo esc_attr( $gateway->id ); ?>" type="radio" class="input-radio" name="payment_method" value="<?php echo esc_attr( $gateway->id ); ?>" <?php checked( $gateway->chosen, true ); ?> data-order_button_text="<?php echo esc_attr( $gateway->order_button_text ); ?>" />
+		<input id="payment_method_<?php echo esc_attr( $gateway->id ); ?>" type="radio" class="input-radio <?php echo $supports_payment_method_changes ? 'supports-payment-method-changes' : ''; ?>" name="payment_method" value="<?php echo esc_attr( $gateway->id ); ?>" <?php checked( $gateway->chosen, true ); ?> data-order_button_text="<?php echo esc_attr( $gateway->order_button_text ); ?>" />
 		<span>
 			<?php echo $gateway->get_title(); /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */ ?> <?php echo $gateway->get_icon(); /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped */ ?>
 			<?php if ( $gateway->has_fields() || $gateway->get_description() ) : ?>
