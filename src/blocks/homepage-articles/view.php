@@ -251,6 +251,18 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		return;
 	}
 
+	// If the block is rendered in wp_kses_post() call, ensure the `time` tag is allowed.
+	\add_filter(
+		'wp_kses_allowed_html',
+		function( $tags ) {
+			$tags['time'] = [
+				'class'    => true,
+				'datetime' => true,
+			];
+			return $tags;
+		}
+	);
+
 	// This will let the FSE plugin know we need CSS/JS now.
 	do_action( 'newspack_blocks_render_homepage_articles' );
 
