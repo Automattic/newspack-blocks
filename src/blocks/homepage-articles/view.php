@@ -263,6 +263,8 @@ function newspack_blocks_render_block_homepage_articles( $attributes ) {
 		}
 	);
 
+	newspack_blocks_enqueue_block_homepage_articles_styles();
+
 	// This will let the FSE plugin know we need CSS/JS now.
 	do_action( 'newspack_blocks_render_homepage_articles' );
 
