@@ -44,12 +44,13 @@ export function createHiddenInput( name, value = null ) {
 /**
  * Run a callback when an iframe is ready.
  *
- * @param {HTMLIFrameElement} iframe The iframe element.
- * @param {Function}          cb     The callback to execute when the iframe is ready.
+ * @param {HTMLIFrameElement} iframe  The iframe element.
+ * @param {Function}          cb      The callback to execute when the iframe is ready.
+ * @param {Function}          onReset The callback to execute when the iframe is reset.
  *
  * @return {void}
  */
-export function iframeReady( iframe, cb ) {
+export function iframeReady( iframe, cb, onReset ) {
 	iframe._ready = false;
 	if ( iframe._readyTimer ) {
 		clearTimeout( iframe._readyTimer );
@@ -73,6 +74,9 @@ export function iframeReady( iframe, cb ) {
 
 	function cleanup() {
 		iframe._ready = false;
+		if ( onReset ) {
+			onReset();
+		}
 		if ( iframe._readyTimer ) {
 			clearTimeout( iframe._readyTimer );
 		}

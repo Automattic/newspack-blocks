@@ -150,7 +150,9 @@ domReady( () => {
 		} );
 	}
 
-	iframeReady( iframe, handleIframeReady );
+	iframeReady( iframe, handleIframeReady, () => {
+		spinner.style.display = 'flex';
+	} );
 
 	/**
 	 * Generate cart via ajax.
