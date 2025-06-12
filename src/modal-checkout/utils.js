@@ -50,10 +50,12 @@ export function createHiddenInput( name, value = null ) {
  * @return {void}
  */
 export function iframeReady( iframe, cb ) {
+	iframe._ready = false;
 	if ( iframe._readyTimer ) {
 		clearTimeout( iframe._readyTimer );
 	}
 	let fired = false;
+	let lastLocation = '';
 
 	function ready() {
 		if ( ! fired ) {
@@ -62,14 +64,28 @@ export function iframeReady( iframe, cb ) {
 			cb.call( this );
 		}
 	}
+
 	function readyState() {
 		if ( this.readyState === "complete" ) {
 			ready.call( this );
 		}
 	}
+
+	function cleanup() {
+		iframe._ready = false;
+		if ( iframe._readyTimer ) {
+			clearTimeout( iframe._readyTimer );
+		}
+		const doc = iframe.contentDocument || iframe.contentWindow?.document;
+		if ( doc ) {
+			doc.removeEventListener( 'DOMContentLoaded', ready );
+			doc.removeEventListener( 'readystatechange', readyState );
+		}
+	}
+
 	function checkLoaded() {
 		if ( iframe._ready ) {
-			clearTimeout( iframe._readyTimer );
+			cleanup();
 			return;
 		}
 		const doc = iframe.contentDocument || iframe.contentWindow?.document;
@@ -84,7 +100,65 @@ export function iframeReady( iframe, cb ) {
 			iframe._readyTimer = setTimeout( checkLoaded, 10 );
 		}
 	}
+
+	function handleLocationChange() {
+		const doc = iframe.contentDocument || iframe.contentWindow?.document;
+		if ( doc && doc.URL !== lastLocation ) {
+			lastLocation = doc.URL;
+			fired = false;
+			cleanup();
+			checkLoaded();
+		}
+	}
+
+	// Set up MutationObserver to watch for src changes
+	if ( ! iframe._observer ) {
+		iframe._observer = new MutationObserver( ( mutations ) => {
+			mutations.forEach( ( mutation ) => {
+				if ( mutation.type === 'attributes' && mutation.attributeName === 'src' ) {
+					fired = false;
+					cleanup();
+					checkLoaded();
+				}
+			} );
+		} );
+		iframe._observer.observe( iframe, { attributes: true } );
+	}
+
+	// Set up location change detection
+	if ( ! iframe._locationObserver ) {
+		iframe._locationObserver = setInterval( handleLocationChange, 50 );
+	}
+
 	checkLoaded();
+}
+
+/**
+ * Run a callback when the checkout is ready.
+ *
+ * @param {Object}   container The container element inside the iframe document.
+ * @param {Function} callback  The callback to execute when the checkout is ready.
+ */
+export function onCheckoutReady( container, callback ) {
+	if ( container.checkoutReady ) {
+		callback();
+	} else {
+		container.addEventListener( 'checkout-ready', callback );
+	}
+}
+
+/**
+ * Run a callback when the checkout is complete.
+ *
+ * @param {Object}   container The container element inside the iframe document.
+ * @param {Function} callback  The callback to execute when the checkout is complete.
+ */
+export function onCheckoutComplete( container, callback ) {
+	if ( container.checkoutComplete ) {
+		callback();
+	} else {
+		container.addEventListener( 'checkout-complete', callback );
+	}
 }
 
 /**

@@ -19,6 +19,7 @@ import { domReady } from './utils';
 
 		const CLASS_PREFIX = newspackBlocksModalCheckout.newspack_class_prefix;
 		const readyEvent = new CustomEvent( 'checkout-ready' );
+		const completeEvent = new CustomEvent( 'checkout-complete' );
 
 		function getEventHandlers( element, event ) {
 			const events = $._data( element, 'events' );
@@ -59,6 +60,7 @@ import { domReady } from './utils';
 			const container = document.querySelector( '#newspack_modal_checkout_container' );
 			if ( container ) {
 				container.checkoutComplete = true;
+				container.dispatchEvent( completeEvent );
 			}
 		} else {
 			function init() {

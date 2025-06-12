@@ -13,6 +13,8 @@ import { manageDismissed, manageOpened } from './analytics';
 import {
 	domReady,
 	iframeReady,
+	onCheckoutReady,
+	onCheckoutComplete,
 	createHiddenInput,
 	triggerFormSubmit,
 	getCheckoutData,
@@ -74,6 +76,22 @@ domReady( () => {
 	iframe.style.visibility = 'hidden';
 
 	/**
+	 * Set the modal as ready.
+	 *
+	 * @param {Object} container The container element inside the iframe document.
+	 */
+	const setModalReady = container => {
+		iframeResizeObserver.observe( container );
+		if ( spinner.style.display !== 'none' ) {
+			spinner.style.display = 'none';
+		}
+		if ( iframe.style.visibility !== 'visible' ) {
+			iframe.style.visibility = 'visible';
+		}
+		iframe._ready = true;
+	}
+
+	/**
 	 * Handle iframe load state.
 	 */
 	function handleIframeReady() {
@@ -93,33 +111,11 @@ domReady( () => {
 		if ( ! container ) {
 			return;
 		}
-		const setModalReady = () => {
-			iframeResizeObserver.observe( container );
-			if ( spinner.style.display !== 'none' ) {
-				spinner.style.display = 'none';
-			}
-			if ( iframe.style.visibility !== 'visible' ) {
-				iframe.style.visibility = 'visible';
-			}
-			iframe._ready = true;
-		}
+
 		const productDetails = container.querySelector( '#modal-checkout-product-details' );
 		const checkoutData = getCheckoutData( productDetails );
-		if ( container.checkoutComplete ) {
-			// Dispatch a `checkout_completed` activity to RAS.
-			window.newspackRAS.push( [ 'checkout_completed', checkoutData ] );
 
-			// Update the newsletters signup modal if it exists.
-			if ( window?.newspackReaderActivation?.refreshNewslettersSignupModal && window?.newspackReaderActivation?.getReader()?.email ) {
-				window.newspackReaderActivation.refreshNewslettersSignupModal( window.newspackReaderActivation.getReader().email );
-			}
-
-			// Update the modal title and width to reflect successful transaction.
-			setModalSize( 'small' );
-			setModalTitle( newspackBlocksModal.labels.thankyou_modal_title );
-			setModalReady();
-			a11y.trapFocus( modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }` ) );
-		} else {
+		onCheckoutReady( container, () => {
 			// Make sure the order summary renders the correct text.
 			const summaryTextNode = productDetails?.querySelector( 'strong' );
 			if ( summaryTextNode ) {
@@ -134,15 +130,27 @@ domReady( () => {
 				// We store the nonce from the iframe content window to ensure the nonce was generated for a logged in session
 				modalCheckout.checkout_nonce = iframe.contentWindow.newspackBlocksModalCheckout.checkout_nonce;
 			}
-		}
-		if ( container.checkoutReady ) {
-			setModalReady();
-		} else {
-			container.addEventListener( 'checkout-ready', setModalReady );
-		}
+			setModalReady( container );
+		} );
+
+		onCheckoutComplete( container, () => {
+			// Dispatch a `checkout_completed` activity to RAS.
+			window.newspackRAS.push( [ 'checkout_completed', checkoutData ] );
+
+			// Update the newsletters signup modal if it exists.
+			if ( window?.newspackReaderActivation?.refreshNewslettersSignupModal && window?.newspackReaderActivation?.getReader()?.email ) {
+				window.newspackReaderActivation.refreshNewslettersSignupModal( window.newspackReaderActivation.getReader().email );
+			}
+
+			// Update the modal title and width to reflect successful transaction.
+			setModalSize( 'small' );
+			setModalTitle( newspackBlocksModal.labels.thankyou_modal_title );
+			setModalReady( container );
+			a11y.trapFocus( modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }` ) );
+		} );
 	}
 
-	iframe.addEventListener( 'load', handleIframeReady );
+	iframeReady( iframe, handleIframeReady );
 
 	/**
 	 * Generate cart via ajax.
@@ -568,8 +576,6 @@ domReady( () => {
 
 		a11y.trapFocus( modalCheckout, iframe );
 
-		iframeReady( handleIframeReady );
-
 		document.addEventListener( 'keydown', handleKeydown );
 	};
 
@@ -813,6 +819,7 @@ domReady( () => {
 		title = null,
 		actionType = null,
 		afterSuccess = {},
+		// eslint-disable-next-line @typescript-eslint/no-shadow
 		onCheckoutComplete = null,
 		onClose = null,
 	} ) => {
