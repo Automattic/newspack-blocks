@@ -206,7 +206,7 @@ final class Checkout_Data {
 		}
 
 		$product_type = self::get_product_type( $product_id );
-		$recurrence   = self::get_purchase_recurrence( $product_id );
+		$recurrence   = self::get_purchase_recurrence( $variation_id ? $variation_id : $product_id );
 
 		/**
 		 * Price summary name.
