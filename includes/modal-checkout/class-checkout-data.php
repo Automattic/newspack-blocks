@@ -17,22 +17,41 @@ final class Checkout_Data {
 	 * @param string $name      The name.
 	 * @param string $price     The price. Optional. If not provided, the price string will contain 0.
 	 * @param string $frequency The frequency. Optional. If not provided, the price will be treated as a one-time payment.
+	 * @param int    $product_id Product ID to get additional subscription details. Optional.
 	 *
 	 * @return string The price string.
 	 */
-	public static function get_price_summary( $name, $price = '', $frequency = '' ) {
+	public static function get_price_summary( $name, $price = '', $frequency = '', $product_id = null ) {
 		if ( ! $price ) {
 			$price = '0';
 		}
 
 		if ( function_exists( 'wcs_price_string' ) && function_exists( 'wc_price' ) ) {
 			if ( $frequency && $frequency !== 'once' ) {
+				// Get additional subscription details if product_id is provided.
+				$subscription_interval = 1;
+				$trial_length = 0;
+				$trial_period = '';
+
+				if ( $product_id ) {
+					$subscription_interval = get_post_meta( $product_id, '_subscription_period_interval', true );
+					$trial_length = get_post_meta( $product_id, '_subscription_trial_length', true );
+					$trial_period = get_post_meta( $product_id, '_subscription_trial_period', true );
+
+					if ( empty( $subscription_interval ) ) {
+						$subscription_interval = 1;
+					}
+				}
+
 				$price = wp_strip_all_tags(
 					wcs_price_string(
 						[
-							'recurring_amount'    => $price,
-							'subscription_period' => $frequency,
-							'use_per_slash'       => true,
+							'recurring_amount'      => $price,
+							'subscription_period'   => $frequency,
+							'subscription_interval' => $subscription_interval,
+							'use_per_slash'         => true,
+							'trial_length'          => $trial_length,
+							'trial_period'          => $trial_period,
 						]
 					)
 				);
@@ -235,8 +254,8 @@ final class Checkout_Data {
 			'currency'         => function_exists( 'get_woocommerce_currency' ) ? \get_woocommerce_currency() : 'USD',
 			'product_id'       => strval( $product_id ? $product_id : '' ),
 			'product_type'     => $product_type,
-			'price_summary'    => self::get_price_summary( $name, $amount, $recurrence ),
-			'summary_template' => self::get_price_summary( $name, '{{PRICE}}', $recurrence ),
+			'price_summary'    => self::get_price_summary( $name, $amount, $recurrence, $variation_id ? $variation_id : $product_id ),
+			'summary_template' => self::get_price_summary( $name, '{{PRICE}}', $recurrence, $variation_id ? $variation_id : $product_id ),
 			'referrer'         => $referrer ? str_replace( home_url(), '', $referrer ) : '', // Keeps format consistent for Homepage with Donate and Checkout Button blocks.
 			'recurrence'       => $recurrence,
 			'variation_id'     => strval( $variation_id ? $variation_id : '' ),
