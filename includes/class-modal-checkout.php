@@ -126,13 +126,6 @@ final class Modal_Checkout {
 	];
 
 	/**
-	 * Cached result of payment gateway check.
-	 *
-	 * @var bool|null
-	 */
-	private static $payment_gateway_check_result = null;
-
-	/**
 	 * Initialize hooks.
 	 */
 	public static function init() {
@@ -142,9 +135,6 @@ final class Modal_Checkout {
 		add_action( 'wp', [ __CLASS__, 'process_checkout_request' ] );
 		add_action( 'wp_ajax_abandon_modal_checkout', [ __CLASS__, 'process_abandon_checkout' ] );
 		add_action( 'wp_ajax_nopriv_abandon_modal_checkout', [ __CLASS__, 'process_abandon_checkout' ] );
-
-		// Perform payment gateway check after WooCommerce is fully initialized.
-		add_action( 'woocommerce_init', [ __CLASS__, 'has_unsupported_payment_gateway' ] );
 
 		add_filter( 'wp_redirect', [ __CLASS__, 'pass_url_param_on_redirect' ] );
 		add_filter( 'woocommerce_cart_product_cannot_be_purchased_message', [ __CLASS__, 'woocommerce_cart_product_cannot_be_purchased_message' ], 10, 2 );
@@ -279,38 +269,16 @@ final class Modal_Checkout {
 	 * @return boolean
 	 */
 	public static function has_unsupported_payment_gateway() {
-		// Return saved result if available.
-		if ( null !== self::$payment_gateway_check_result ) {
-			return self::$payment_gateway_check_result;
-		}
-
-		// Only perform check if WooCommerce is fully initialized.
-		if ( ! function_exists( 'WC' ) || ! WC() || ! WC()->payment_gateways ) {
-			return false;
-		}
-
-		$supported_gateways = self::get_supported_payment_gateways();
-		$available_gateways = WC()->payment_gateways->get_available_payment_gateways();
-
-		// If no gateways are available yet, assume that they are not supported.
-		if ( empty( $available_gateways ) ) {
-			return true;
-		}
-
-		$unsupported_gateways = [];
+		$supported_gateways          = self::get_supported_payment_gateways();
+		$available_gateways          = function_exists( 'WC' ) ? \WC()->payment_gateways->get_available_payment_gateways() : [];
+		$unsupported_payment_gateway = false;
 		foreach ( $available_gateways as $id => $gateway ) {
 			if ( ! in_array( $id, $supported_gateways, true ) ) {
-				$unsupported_gateways[] = $id;
+				$unsupported_payment_gateway = true;
+				break;
 			}
 		}
-
-		if ( ! empty( $unsupported_gateways ) ) {
-			self::$payment_gateway_check_result = true;
-			return true;
-		}
-
-		self::$payment_gateway_check_result = false;
-		return false;
+		return $unsupported_payment_gateway;
 	}
 
 	/**
