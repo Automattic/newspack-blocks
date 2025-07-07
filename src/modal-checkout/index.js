@@ -29,7 +29,7 @@ import { domReady } from './utils';
 			if ( ! event ) {
 				return events;
 			}
-			return $._data( element, 'events' )[ event ];
+			return events[ event ] || [];
 		}
 
 		function clearNotices() {
