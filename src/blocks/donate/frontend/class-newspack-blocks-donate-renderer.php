@@ -70,7 +70,7 @@ class Newspack_Blocks_Donate_Renderer {
 		wp_script_add_data( $handle, 'async', true );
 
 		if ( $has_css ) {
-			$style_path = NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $filename . ( is_rtl() ? '.rtl' : '' ) . '.css';
+			$style_path = NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $filename . ( is_rtl() ? '-rtl' : '' ) . '.css';
 			wp_enqueue_style(
 				$handle,
 				plugins_url( $style_path, NEWSPACK_BLOCKS__PLUGIN_FILE ),

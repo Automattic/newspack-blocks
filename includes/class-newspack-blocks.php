@@ -315,7 +315,7 @@ class Newspack_Blocks {
 	 * Enqueue block styles stylesheet.
 	 */
 	public static function enqueue_block_styles_assets() {
-		$style_path = NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'block_styles' . ( is_rtl() ? '.rtl' : '' ) . '.css';
+		$style_path = NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'block_styles' . ( is_rtl() ? '-rtl' : '' ) . '.css';
 		if ( file_exists( NEWSPACK_BLOCKS__PLUGIN_DIR . $style_path ) ) {
 			wp_enqueue_style(
 				'newspack-blocks-block-styles-stylesheet',
@@ -334,7 +334,7 @@ class Newspack_Blocks {
 	public static function enqueue_view_assets( $type ) {
 		$style_path = apply_filters(
 			'newspack_blocks_enqueue_view_assets',
-			NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $type . '/view' . ( is_rtl() ? '.rtl' : '' ) . '.css',
+			NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $type . '/view' . ( is_rtl() ? '-rtl' : '' ) . '.css',
 			$type,
 			is_rtl()
 		);
