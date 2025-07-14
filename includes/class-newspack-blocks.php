@@ -315,14 +315,16 @@ class Newspack_Blocks {
 	 * Enqueue block styles stylesheet.
 	 */
 	public static function enqueue_block_styles_assets() {
-		$style_path = NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'block_styles' . ( is_rtl() ? '-rtl' : '' ) . '.css';
+		$style_path = NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'block_styles.css';
 		if ( file_exists( NEWSPACK_BLOCKS__PLUGIN_DIR . $style_path ) ) {
+			$handle = 'newspack-blocks-block-styles-stylesheet';
 			wp_enqueue_style(
-				'newspack-blocks-block-styles-stylesheet',
+				$handle,
 				plugins_url( $style_path, NEWSPACK_BLOCKS__PLUGIN_FILE ),
 				array(),
 				NEWSPACK_BLOCKS__VERSION
 			);
+			wp_style_add_data( $handle, 'rtl', 'replace' );
 		}
 	}
 
@@ -334,18 +336,20 @@ class Newspack_Blocks {
 	public static function enqueue_view_assets( $type ) {
 		$style_path = apply_filters(
 			'newspack_blocks_enqueue_view_assets',
-			NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $type . '/view' . ( is_rtl() ? '-rtl' : '' ) . '.css',
+			NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $type . '/view.css',
 			$type,
 			is_rtl()
 		);
 
 		if ( file_exists( NEWSPACK_BLOCKS__PLUGIN_DIR . $style_path ) ) {
+			$handle = "newspack-blocks-{$type}";
 			wp_enqueue_style(
-				"newspack-blocks-{$type}",
+				$handle,
 				plugins_url( $style_path, NEWSPACK_BLOCKS__PLUGIN_FILE ),
 				array(),
 				NEWSPACK_BLOCKS__VERSION
 			);
+			wp_style_add_data( $handle, 'rtl', 'replace' );
 		}
 		$script_data = static::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $type . '/view.js' );
 		if ( $script_data ) {
