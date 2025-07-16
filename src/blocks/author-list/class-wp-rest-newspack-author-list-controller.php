@@ -263,7 +263,7 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 						array_filter(
 							$options['exclude'],
 							function( $item ) {
-								return isset( $item['isGuest'] ) ? empty( $item['isGuest'] ) : true;
+								return isset( $item['isGuest'] ) ? empty( $item['isGuest'] ) || 'false' === $item['isGuest'] : true;
 							}
 						)
 					)
