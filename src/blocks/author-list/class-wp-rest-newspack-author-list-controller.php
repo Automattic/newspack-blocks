@@ -101,16 +101,16 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 	public function get_editable_roles() {
 		global $wp_roles;
 
-		$editable_roles = array_reduce(
-			$wp_roles->roles,
-			function( $acc, $role ) {
-				if ( isset( $role['capabilities'] ) && isset( $role['capabilities']['edit_posts'] ) && $role['capabilities']['edit_posts'] ) {
-					$acc[] = $role['name'];
-				}
-				return $acc;
-			},
-			[]
-		);
+		$editable_roles = [];
+
+		foreach ( $wp_roles->roles as $role_slug => $role ) {
+			if ( isset( $role['capabilities'] ) && isset( $role['capabilities']['edit_posts'] ) && $role['capabilities']['edit_posts'] ) {
+				$editable_roles[ $role_slug ] = [
+					'slug'  => $role_slug,
+					'label' => $role['name'],
+				];
+			}
+		}
 
 		/**
 		 * Filter the array of editable roles so other plugins can add/remove as needed.
@@ -174,7 +174,7 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 	public function get_all_authors( $options = [] ) {
 		$default_options = [
 			'author_type'         => 'all',
-			'author_roles'        => $this->get_editable_roles(),
+			'author_roles'        => array_keys( $this->get_editable_roles() ),
 			'avatar_hide_default' => false,
 			'exclude'             => [], // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
 			'exclude_empty'       => false,

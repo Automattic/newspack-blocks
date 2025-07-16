@@ -240,7 +240,7 @@ class Newspack_Blocks {
 			if ( class_exists( 'WP_REST_Newspack_Author_List_Controller' ) ) {
 				$localized_data['can_use_cap']    = class_exists( 'CoAuthors_Guest_Authors' );
 				$author_list_controller           = new WP_REST_Newspack_Author_List_Controller();
-				$localized_data['editable_roles'] = $author_list_controller->get_editable_roles();
+				$localized_data['editable_roles'] = array_values( $author_list_controller->get_editable_roles() );
 			}
 
 			if ( class_exists( '\Newspack\Authors_Custom_Fields' ) ) {
