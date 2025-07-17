@@ -28,6 +28,9 @@ require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'includes/plugins/class-the-events-ca
 
 require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'includes/tracking/class-data-events.php';
 
+// Shared functions for blocks.
+require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/shared/authors.php';
+
 // REST Controller for Articles Block.
 require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/homepage-articles/class-wp-rest-newspack-articles-controller.php';
 

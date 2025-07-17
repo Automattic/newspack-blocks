@@ -96,32 +96,11 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 	/**
 	 * Get a list of user roles on this site that have the edit_posts capability.
 	 *
+	 * @deprecated Use Newspack_Blocks\get_authors_roles() instead.
 	 * @return array List of roles with edit_posts capability.
 	 */
 	public function get_editable_roles() {
-		global $wp_roles;
-
-		$editable_roles = [];
-
-		foreach ( $wp_roles->roles as $role_slug => $role ) {
-			if ( isset( $role['capabilities'] ) && isset( $role['capabilities']['edit_posts'] ) && $role['capabilities']['edit_posts'] ) {
-				$editable_roles[ $role_slug ] = [
-					'slug'  => $role_slug,
-					'label' => $role['name'],
-				];
-			}
-		}
-
-		/**
-		 * Filter the array of editable roles so other plugins can add/remove as needed.
-		 * The array should be a flat array of the name of each role as registered via add_role.
-		 * https://developer.wordpress.org/reference/functions/add_role/
-		 *
-		 * @param array $editable_roles Array of editable role names as registered via add_role.
-		 *
-		 * @return array Filtered array of roles.
-		 */
-		return apply_filters( 'newspack_blocks_author_list_editable_roles', $editable_roles );
+		return Newspack_Blocks\get_authors_roles();
 	}
 
 	/**
@@ -174,7 +153,7 @@ class WP_REST_Newspack_Author_List_Controller extends WP_REST_Newspack_Authors_C
 	public function get_all_authors( $options = [] ) {
 		$default_options = [
 			'author_type'         => 'all',
-			'author_roles'        => array_keys( $this->get_editable_roles() ),
+			'author_roles'        => Newspack_Blocks\get_authors_roles_slugs(),
 			'avatar_hide_default' => false,
 			'exclude'             => [], // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
 			'exclude_empty'       => false,
