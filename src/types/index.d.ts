@@ -42,6 +42,7 @@ declare global {
 		showExcerpt?: boolean;
 		showCaption?: boolean,
 		showCredit?: boolean,
+		collections?: number[];
 	};
 
 	type Block = {
@@ -112,6 +113,7 @@ declare global {
 		tagExclusions: TagId[];
 		categoryExclusions: CategoryId[];
 		customTaxonomyExclusions: Taxonomy[];
+		collections: number[];
 		className: string;
 		excerptLength: number;
 		showReadMore: boolean;

@@ -298,6 +298,7 @@ class Edit extends Component< HomepageArticlesProps > {
 			tagExclusions,
 			categoryExclusions,
 			customTaxonomyExclusions,
+			collections,
 		} = attributes;
 
 		const imageSizeOptions = [
@@ -376,6 +377,8 @@ class Edit extends Component< HomepageArticlesProps > {
 						onCategoryExclusionsChange={ handleAttributeChange( 'categoryExclusions' ) }
 						customTaxonomyExclusions={ customTaxonomyExclusions }
 						onCustomTaxonomyExclusionsChange={ handleAttributeChange( 'customTaxonomyExclusions' ) }
+						collections={ collections }
+						onCollectionsChange={ handleAttributeChange( 'collections' ) }
 						postType={ postType }
 					/>
 					<ToggleControl

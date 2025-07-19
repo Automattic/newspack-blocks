@@ -47,6 +47,13 @@
 		"customTaxonomies": {
 			"type": "array"
 		},
+		"collections": {
+			"type": "array",
+			"default": [],
+			"items": {
+				"type": "integer"
+			}
+		},
 		"showDate": {
 			"type": "boolean",
 			"default": true

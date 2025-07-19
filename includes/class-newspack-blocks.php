@@ -226,6 +226,7 @@ class Newspack_Blocks {
 				'authors_rest_url'           => rest_url( 'newspack-blocks/v1/authors' ),
 				'assets_path'                => plugins_url( '/src/assets', NEWSPACK_BLOCKS__PLUGIN_FILE ),
 				'post_subtitle'              => get_theme_support( 'post-subtitle' ),
+				'collections_enabled'        => class_exists( '\Newspack\Optional_Modules\Collections' ) && \Newspack\Optional_Modules\Collections::is_module_active(),
 				'iframe_accepted_file_mimes' => WP_REST_Newspack_Iframe_Controller::iframe_accepted_file_mimes(),
 				'iframe_can_upload_archives' => WP_REST_Newspack_Iframe_Controller::can_upload_archives(),
 				'supports_recaptcha'         => class_exists( 'Newspack\Recaptcha' ),
@@ -616,6 +617,7 @@ class Newspack_Blocks {
 		$category_join              = isset( $attributes['categoryJoinType'] ) ? $attributes['categoryJoinType'] : 'or';
 		$tags                       = isset( $attributes['tags'] ) ? $attributes['tags'] : array();
 		$custom_taxonomies          = isset( $attributes['customTaxonomies'] ) ? $attributes['customTaxonomies'] : array();
+		$collections                = isset( $attributes['collections'] ) ? $attributes['collections'] : array();
 		$tag_exclusions             = isset( $attributes['tagExclusions'] ) ? $attributes['tagExclusions'] : array();
 		$category_exclusions        = isset( $attributes['categoryExclusions'] ) ? $attributes['categoryExclusions'] : array();
 		$custom_taxonomy_exclusions = isset( $attributes['customTaxonomyExclusions'] ) ? $attributes['customTaxonomyExclusions'] : array();
@@ -696,6 +698,38 @@ class Newspack_Blocks {
 						'taxonomy'         => $exclusion['slug'],
 						'terms'            => $exclusion['terms'],
 					];
+				}
+			}
+
+			// Handle collections filtering.
+			if ( $collections && count( $collections ) ) {
+				// Check if Collections module is active.
+				if ( class_exists( '\Newspack\Optional_Modules\Collections' ) && \Newspack\Optional_Modules\Collections::is_module_active() ) {
+					// Get the collection taxonomy terms that correspond to the selected collections.
+					$collection_terms = [];
+					foreach ( $collections as $collection_id ) {
+						$collection_post = get_post( $collection_id );
+						if ( $collection_post && 'newspack_collection' === $collection_post->post_type ) {
+							// Find the corresponding taxonomy term for this collection.
+							$terms = get_terms(
+								[
+									'taxonomy' => 'newspack_collection_taxonomy',
+									'name'     => $collection_post->post_title,
+									'fields'   => 'ids',
+								]
+							);
+							if ( ! empty( $terms ) ) {
+								$collection_terms = array_merge( $collection_terms, $terms );
+							}
+						}
+					}
+					if ( ! empty( $collection_terms ) ) {
+						$args['tax_query'][] = [
+							'taxonomy' => 'newspack_collection_taxonomy',
+							'field'    => 'term_id',
+							'terms'    => $collection_terms,
+						];
+					}
 				}
 			}
 

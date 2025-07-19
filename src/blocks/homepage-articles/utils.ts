@@ -38,6 +38,7 @@ const POST_QUERY_ATTRIBUTES = [
 	'tagExclusions',
 	'categoryExclusions',
 	'customTaxonomyExclusions',
+	'collections',
 	'postType',
 	'includedPostStatuses',
 	'deduplicate',
@@ -83,6 +84,7 @@ export const queryCriteriaFromAttributes = ( attributes: Block[ 'attributes' ] )
 		tagExclusions,
 		categoryExclusions,
 		customTaxonomyExclusions,
+		collections,
 		includedPostStatuses,
 	} = pick( attributes, POST_QUERY_ATTRIBUTES );
 
@@ -105,6 +107,7 @@ export const queryCriteriaFromAttributes = ( attributes: Block[ 'attributes' ] )
 				categoryExclusions: validateAttributeCollection( categoryExclusions ),
 				customTaxonomyExclusions,
 				customTaxonomies,
+				collections: validateAttributeCollection( collections ),
 				postType,
 				includedPostStatuses,
 			},

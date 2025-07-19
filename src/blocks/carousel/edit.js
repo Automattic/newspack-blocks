@@ -167,6 +167,7 @@ class Edit extends Component {
 			specificMode,
 			specificPosts,
 			tags,
+			collections,
 		} = attributes;
 		const classes = classnames(
 			className,
@@ -387,6 +388,8 @@ class Edit extends Component {
 								onSpecificPostsChange={ _specificPosts =>
 									setAttributes( { specificPosts: _specificPosts } )
 								}
+								collections={ collections }
+								onCollectionsChange={ value => setAttributes( { collections: value } ) }
 								postType={ postType }
 							/>
 						) }

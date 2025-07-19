@@ -242,6 +242,44 @@ class QueryControls extends Component {
 		} );
 	};
 
+	fetchCollectionSuggestions = search => {
+		return apiFetch( {
+			path: addQueryArgs( '/newspack/v1/collections', {
+				search,
+				per_page: 20,
+			} ),
+		} ).then( function ( collections ) {
+			return collections.map( collection => ( {
+				value: collection.id,
+				label: decodeEntities( collection.title ) || __( '(no title)', 'newspack-blocks' ),
+			} ) );
+		} );
+	};
+
+	fetchSavedCollections = collectionIDs => {
+		return apiFetch( {
+			path: addQueryArgs( '/newspack/v1/collections', {
+				per_page: 100,
+				include: collectionIDs.join( ',' ),
+			} ),
+		} ).then( function ( collections ) {
+			const allCollections = collections.map( collection => ( {
+				value: collection.id,
+				label: decodeEntities( collection.title ) || __( '(no title)', 'newspack-blocks' ),
+			} ) );
+			// Look for collectionIDs that were not returned (deleted collections) and add them to the list.
+			collectionIDs.forEach( collectionID => {
+				if ( ! allCollections.find( collection => collection.value === parseInt( collectionID ) ) ) {
+					allCollections.push( {
+						value: parseInt( collectionID ),
+						label: __( 'Deleted collection', 'newspack-blocks' ),
+					} );
+				}
+			} );
+			return allCollections;
+		} );
+	};
+
 	render = () => {
 		const {
 			specificMode,
@@ -267,10 +305,13 @@ class QueryControls extends Component {
 			onCategoryExclusionsChange,
 			customTaxonomyExclusions,
 			onCustomTaxonomyExclusionsChange,
+			collections,
+			onCollectionsChange,
 			enableSpecific,
 		} = this.props;
 
 		const registeredCustomTaxonomies = window.newspack_blocks_data?.custom_taxonomies;
+		const collectionsEnabled = window.newspack_blocks_data?.collections_enabled || false;
 
 		const customTaxonomiesPrepareChange = ( taxArr, taxHandler, taxSlug, value ) => {
 			let newValue = taxArr.filter( tax => tax.slug !== taxSlug );
@@ -386,6 +427,15 @@ class QueryControls extends Component {
 								label={ __( 'Authors', 'newspack-blocks' ) }
 							/>
 						) }
+						{ onCollectionsChange && collectionsEnabled && (
+							<AutocompleteTokenField
+								tokens={ collections || [] }
+								onChange={ onCollectionsChange }
+								fetchSuggestions={ this.fetchCollectionSuggestions }
+								fetchSavedInfo={ this.fetchSavedCollections }
+								label={ __( 'Collections', 'newspack-blocks' ) }
+							/>
+						) }
 						{ onCustomTaxonomiesChange &&
 							registeredCustomTaxonomies.map( ( tax, index ) => (
 								<AutocompleteTokenField
@@ -465,6 +515,7 @@ QueryControls.defaultProps = {
 	customTaxonomies: [],
 	tagExclusions: [],
 	customTaxonomyExclusions: [],
+	collections: [],
 };
 
 export default QueryControls;
