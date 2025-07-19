@@ -1,3 +1,10 @@
+## [4.14.5](https://github.com/Automattic/newspack-blocks/compare/v4.14.4...v4.14.5) (2025-07-14)
+
+
+### Bug Fixes
+
+* **modal-checkout:** price formatting with interval and trial handling ([#2153](https://github.com/Automattic/newspack-blocks/issues/2153)) ([6570cd4](https://github.com/Automattic/newspack-blocks/commit/6570cd46d07c9c030c9a5769a66ba646e2a21308))
+
 ## [4.14.4](https://github.com/Automattic/newspack-blocks/compare/v4.14.3...v4.14.4) (2025-07-14)
 
 
