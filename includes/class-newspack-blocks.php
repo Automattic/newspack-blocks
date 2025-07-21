@@ -636,9 +636,7 @@ class Newspack_Blocks {
 			$args['orderby']        = 'post__in';
 		} else {
 			$args['posts_per_page'] = $posts_to_show;
-			if ( ! self::should_deduplicate_block( $attributes ) ) {
-				$args['post__not_in'] = [ get_the_ID() ]; // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_post__not_in
-			} else {
+			if ( self::should_deduplicate_block( $attributes ) ) {
 				if ( count( $newspack_blocks_all_specific_posts_ids ) ) {
 					$args['post__not_in'] = $newspack_blocks_all_specific_posts_ids; // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_post__not_in
 				}
