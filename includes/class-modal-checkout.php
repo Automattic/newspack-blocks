@@ -135,6 +135,9 @@ final class Modal_Checkout {
 		add_action( 'wp', [ __CLASS__, 'process_checkout_request' ] );
 		add_action( 'wp_ajax_abandon_modal_checkout', [ __CLASS__, 'process_abandon_checkout' ] );
 		add_action( 'wp_ajax_nopriv_abandon_modal_checkout', [ __CLASS__, 'process_abandon_checkout' ] );
+		// Separate field validation endpoint.
+		add_action( 'wp_ajax_newspack_validate_checkout_fields', [ __CLASS__, 'validate_fields_only' ] );
+		add_action( 'wp_ajax_nopriv_newspack_validate_checkout_fields', [ __CLASS__, 'validate_fields_only' ] );
 
 		add_filter( 'wp_redirect', [ __CLASS__, 'pass_url_param_on_redirect' ] );
 		add_filter( 'woocommerce_cart_product_cannot_be_purchased_message', [ __CLASS__, 'woocommerce_cart_product_cannot_be_purchased_message' ], 10, 2 );
@@ -149,8 +152,6 @@ final class Modal_Checkout {
 		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 2 );
 		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'woocommerce_checkout_fields' ] );
 		add_filter( 'woocommerce_update_order_review_fragments', [ __CLASS__, 'order_review_fragments' ] );
-		add_filter( 'woocommerce_cart_needs_payment', [ __CLASS__, 'cart_needs_payment' ] );
-		add_filter( 'newspack_recaptcha_verify_captcha', [ __CLASS__, 'recaptcha_verify_captcha' ], 10, 3 );
 		add_filter( 'woocommerce_enqueue_styles', [ __CLASS__, 'dequeue_woocommerce_styles' ] );
 		add_filter( 'wcs_place_subscription_order_text', [ __CLASS__, 'order_button_text' ], 5 );
 		add_filter( 'woocommerce_order_button_text', [ __CLASS__, 'order_button_text' ], 5 );
@@ -788,6 +789,7 @@ final class Modal_Checkout {
 				'ajax_url'              => admin_url( 'admin-ajax.php' ),
 				'nyp_nonce'             => wp_create_nonce( 'newspack_checkout_name_your_price' ),
 				'checkout_nonce'        => wp_create_nonce( 'newspack_modal_checkout_nonce' ),
+				'validate_nonce'        => wp_create_nonce( 'newspack_validate_fields' ),
 				'newspack_class_prefix' => self::get_class_prefix(),
 				'is_checkout_complete'  => function_exists( 'is_order_received_page' ) && is_order_received_page(),
 				'divider_text'          => esc_html__( 'Or', 'newspack-blocks' ),
@@ -1449,54 +1451,77 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Is the current request only to validate billing field inputs on the first modal screen?
-	 *
-	 * @return bool True if the request is for validation only.
+	 * Validate checkout fields using WooCommerce's validation without processing checkout.
+	 * This endpoint only validates field formats and requirements.
 	 */
-	private static function is_validation_only() {
-		return boolval( filter_input( INPUT_POST, 'is_validation_only', FILTER_SANITIZE_NUMBER_INT ) );
-	}
-
-	/**
-	 * Determine if the request needs payment.
-	 * If we're just validating billing fields at the first modal screen, this should always be false.
-	 *
-	 * @param bool $needs_payment Whether the cart needs payment.
-	 *
-	 * @return bool False if we're in modal checkout and validating billing fields.
-	 */
-	public static function cart_needs_payment( $needs_payment ) {
-		if ( self::is_modal_checkout() && self::is_validation_only() ) {
-			return false;
-		}
-		return $needs_payment;
-	}
-
-	/**
-	 * Prevent reCAPTCHA from being verified for AJAX checkout (e.g. Apple Pay).
-	 *
-	 * @param bool   $should_verify Whether to verify the captcha.
-	 * @param string $url The URL from which the verification request originated.
-	 * @param string $context The context that triggered the verification request.
-	 */
-	public static function recaptcha_verify_captcha( $should_verify, $url, $context = 'unknown' ) {
-		if ( 'checkout' !== $context ) {
-			return $should_verify;
+	public static function validate_fields_only() {
+		// Basic nonce check.
+		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ?? '' ) ), 'newspack_validate_fields' ) ) {
+			wp_send_json_error( 'Invalid nonce' );
 		}
 
-		parse_str( \wp_parse_url( $url, PHP_URL_QUERY ), $query );
-		if (
-			// Only in the context of a true checkout request.
-			self::is_validation_only() ||
-			(
-				defined( 'WOOCOMMERCE_CHECKOUT' )
-				&& isset( $query['wc-ajax'] )
-				&& 'wc_stripe_create_order' === $query['wc-ajax']
-			)
-		) {
-			return false;
+		// Use WooCommerce's actual validation instead of duplicating logic.
+		$checkout = WC()->checkout();
+		$errors   = new \WP_Error();
+
+		// Create a temporary data array with only the fields we want to validate.
+		$data           = array();
+		$allowed_fields = array(
+			'billing_first_name',
+			'billing_last_name',
+			'billing_email',
+			'billing_address_1',
+			'billing_city',
+			'billing_postcode',
+			'billing_country',
+			'billing_state',
+			'billing_phone',
+			'billing_company',
+			'billing_address_2',
+			'shipping_first_name',
+			'shipping_last_name',
+			'shipping_address_1',
+			'shipping_city',
+			'shipping_postcode',
+			'shipping_country',
+			'shipping_state',
+			'shipping_company',
+			'shipping_address_2',
+			'ship_to_different_address',
+		);
+
+		foreach ( $allowed_fields as $field ) {
+			if ( isset( $_POST[ $field ] ) ) {
+				$data[ $field ] = sanitize_text_field( $_POST[ $field ] );
+			}
 		}
-		return $should_verify;
+
+		// Use WooCommerce's actual validation method.
+		try {
+			$reflection = new \ReflectionClass( 'WC_Checkout' );
+			$method     = $reflection->getMethod( 'validate_posted_data' );
+			$method->setAccessible( true );
+			$method->invokeArgs( $checkout, array( &$data, &$errors ) );
+		} catch ( \Exception $e ) {
+			wp_send_json_error( 'Validation failed' );
+		}
+
+		// Return validation results.
+		if ( $errors->has_errors() ) {
+			$error_data = array();
+			foreach ( $errors->get_error_codes() as $code ) {
+				$messages = $errors->get_error_messages( $code );
+				$data     = $errors->get_error_data( $code );
+				$error_data[] = array(
+					'code'    => $code,
+					'message' => is_array( $messages ) ? implode( ' ', $messages ) : $messages,
+					'data'    => $data,
+				);
+			}
+			wp_send_json_error( $error_data );
+		} else {
+			wp_send_json_success();
+		}
 	}
 
 	/**

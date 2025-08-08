@@ -645,46 +645,46 @@ import { domReady } from './utils';
 						$genericErrors.remove();
 					}
 
-					const removeFromValidation = [
-						'save_user_in_woopay',
+					// Use our separate validation endpoint instead of WooCommerce checkout.
+					const formData = new FormData();
+					formData.append( 'action', 'newspack_validate_checkout_fields' );
+					formData.append( 'nonce', newspackBlocksModalCheckout.validate_nonce );
+
+					// Only send basic field data for validation.
+					const fieldsToValidate = [
+						'billing_first_name', 'billing_last_name', 'billing_email',
+						'billing_address_1', 'billing_city', 'billing_postcode', 
+						'billing_country', 'billing_state', 'billing_phone',
+						'billing_company', 'billing_address_2',
+						'shipping_first_name', 'shipping_last_name', 
+						'shipping_address_1', 'shipping_city', 'shipping_postcode',
+						'shipping_country', 'shipping_state', 'shipping_company',
+						'shipping_address_2', 'ship_to_different_address'
 					];
-					// Serialize form and remove fields that shouldn't be included for validation.
-					const serializedForm = $form.serializeArray().filter(
-						item => ! removeFromValidation.includes( item.name )
-					);
-					// Add 'update totals' parameter so it just performs validation.
-					serializedForm.push( { name: 'woocommerce_checkout_update_totals', value: '1' } );
-					// Ajax request.
+
+					fieldsToValidate.forEach( field => {
+						const $field = $form.find( `[name="${field}"]` );
+						if ( $field.length ) {
+							let value = $field.val();
+							// Handle checkboxes
+							if ( $field.is(':checkbox') ) {
+								value = $field.is(':checked') ? '1' : '';
+							}
+							formData.append( field, value );
+						}
+					});
+
+					// Ajax request to our validation endpoint.
 					$.ajax( {
 						type: 'POST',
-						url: wc_checkout_params.checkout_url,
-						data: serializedForm,
-						dataType: 'html',
+						url: newspackBlocksModalCheckout.ajax_url,
+						data: formData,
+						processData: false,
+						contentType: false,
 						success: response => {
-							let result;
-							try {
-								result = JSON.parse( response );
-							} catch ( e ) {
-								result = {
-									messages:
-										'<div class="woocommerce-error">' +
-										wc_checkout_params.i18n_checkout_error +
-										'</div>',
-								};
-							}
-
-							// Reload page
-							if ( ! silent && true === result.reload ) {
-								window.location.reload();
-								return;
-							}
-
 							unblockForm( $form );
 
-							// Result will always be 'failure' from the server. We'll check for
-							// 'messages' in the response to see if it was successful.
-							const success = ! result.messages;
-							if ( success ) {
+							if ( response.success ) {
 								setEditingDetails( false );
 								// If click #checkout_back event handler doesn't already exist add it to the form.
 								if (
@@ -699,28 +699,36 @@ import { domReady } from './utils';
 									} );
 								}
 							} else if ( ! silent ) {
-								if ( result.messages ) {
-									handleFormError( result.messages );
+								// Handle validation errors from our endpoint.
+								if ( response.data && Array.isArray( response.data ) ) {
+									let errorMessages = '';
+									response.data.forEach( error => {
+										errorMessages += `<li data-id="${ error.data?.id || '' }">${ error.message }</li>`;
+									} );
+									if ( errorMessages ) {
+										errorMessages = `<ul class="woocommerce-error" role="alert">${ errorMessages }</ul>`;
+									}
+									handleFormError( errorMessages );
 								} else {
 									handleFormError(
 										`<div class="${ CLASS_PREFIX }__inline-error">` +
-											wc_checkout_params.i18n_checkout_error +
+											( response.data || 'Validation failed' ) +
 											'</div>'
 									);
 								}
 							}
-							cb( result );
+							cb( response );
 						},
 						error: ( jqXHR, textStatus, errorThrown ) => {
-							let messages = '';
+							unblockForm( $form );
 							if ( ! silent ) {
-								messages =
+								const messages =
 									'<div class="woocommerce-error">' +
-									( errorThrown || wc_checkout_params.i18n_checkout_error ) +
+									( errorThrown || 'Validation failed' ) +
 									'</div>';
 								handleFormError( messages );
 							}
-							cb( { messages } );
+							cb( { success: false, data: errorThrown || 'Validation failed' } );
 						},
 					} );
 				}
