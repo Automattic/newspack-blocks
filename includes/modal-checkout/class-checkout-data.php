@@ -30,13 +30,15 @@ final class Checkout_Data {
 			if ( $frequency && $frequency !== 'once' ) {
 				// Get additional subscription details if product_id is provided.
 				$subscription_interval = 1;
-				$trial_length = 0;
-				$trial_period = '';
+				$trial_length          = 0;
+				$trial_period          = '';
+				$initial_amount        = 0;
 
 				if ( $product_id ) {
 					$subscription_interval = get_post_meta( $product_id, '_subscription_period_interval', true );
 					$trial_length = get_post_meta( $product_id, '_subscription_trial_length', true );
 					$trial_period = get_post_meta( $product_id, '_subscription_trial_period', true );
+					$initial_amount = get_post_meta( $product_id, '_subscription_sign_up_fee', true );
 
 					if ( empty( $subscription_interval ) ) {
 						$subscription_interval = 1;
@@ -52,6 +54,7 @@ final class Checkout_Data {
 							'use_per_slash'         => true,
 							'trial_length'          => $trial_length,
 							'trial_period'          => $trial_period,
+							'initial_amount'        => $initial_amount,
 						]
 					)
 				);
