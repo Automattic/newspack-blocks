@@ -70,10 +70,11 @@ final class Checkout_Data {
 		 * Filters the price summary string that appears in modal checkout.
 		 *
 		 * @param string $price_summary The formatted price summary string.
+		 * @param string $product_id    The product ID, if available.
 		 *
 		 * @return string The filtered price summary string.
 		 */
-		return apply_filters( 'newspack_modal_checkout_price_summary', $price_summary );
+		return apply_filters( 'newspack_modal_checkout_price_summary', $price_summary, $product_id );
 	}
 
 	/**
