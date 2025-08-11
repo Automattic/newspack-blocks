@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-08-11T17:13:27+00:00\n"
+"POT-Creation-Date: 2025-08-11T19:44:30+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: newspack-blocks\n"
@@ -125,7 +125,7 @@ msgstr ""
 #. translators: 1: Checkout button confirmation text. 2: Order total.
 #. translators: 1 is the name of the item. 2 is the price of the item.
 #: includes/class-modal-checkout.php:1630
-#: includes/modal-checkout/class-checkout-data.php:64
+#: includes/modal-checkout/class-checkout-data.php:67
 #, php-format
 msgid "%1$s: %2$s"
 msgstr ""
@@ -283,7 +283,7 @@ msgstr ""
 msgid " per "
 msgstr ""
 
-#: includes/modal-checkout/class-checkout-data.php:242
+#: includes/modal-checkout/class-checkout-data.php:255
 #: dist/editor.js:35
 #: src/blocks/donate/index.js:25
 msgid "Donate"

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Newspack Blocks 1.0.0-alpha.25\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/project\n"
-"POT-Creation-Date: 2025-08-11T17:13:27+00:00\n"
+"POT-Creation-Date: 2025-08-11T19:44:30+00:00\n"
 "PO-Revision-Date: 2024-08-30 08:46-0700\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -128,7 +128,7 @@ msgstr ""
 #. translators: 1: Checkout button confirmation text. 2: Order total.
 #. translators: 1 is the name of the item. 2 is the price of the item.
 #: includes/class-modal-checkout.php:1630
-#: includes/modal-checkout/class-checkout-data.php:64
+#: includes/modal-checkout/class-checkout-data.php:67
 #, php-format
 msgid "%1$s: %2$s"
 msgstr ""
@@ -288,7 +288,7 @@ msgstr ""
 msgid " per "
 msgstr ""
 
-#: includes/modal-checkout/class-checkout-data.php:242 dist/editor.js:35
+#: includes/modal-checkout/class-checkout-data.php:255 dist/editor.js:35
 #: src/blocks/donate/index.js:25
 msgid "Donate"
 msgstr "Doação"
