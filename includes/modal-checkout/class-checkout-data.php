@@ -64,7 +64,16 @@ final class Checkout_Data {
 		}
 
 		// translators: 1 is the name of the item. 2 is the price of the item.
-		return sprintf( __( '%1$s: %2$s', 'newspack-blocks' ), $name, $price );
+		$price_summary = sprintf( __( '%1$s: %2$s', 'newspack-blocks' ), $name, $price );
+
+		/**
+		 * Filters the price summary string that appears in modal checkout.
+		 *
+		 * @param string $price_summary The formatted price summary string.
+		 *
+		 * @return string The filtered price summary string.
+		 */
+		return apply_filters( 'newspack_modal_checkout_price_summary', $price_summary );
 	}
 
 	/**
