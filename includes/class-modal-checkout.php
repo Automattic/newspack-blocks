@@ -1483,17 +1483,7 @@ final class Modal_Checkout {
 		if ( 'checkout' !== $context ) {
 			return $should_verify;
 		}
-
-		parse_str( \wp_parse_url( $url, PHP_URL_QUERY ), $query );
-		if (
-			// Only in the context of a true checkout request.
-			self::is_validation_only() ||
-			(
-				defined( 'WOOCOMMERCE_CHECKOUT' )
-				&& isset( $query['wc-ajax'] )
-				&& 'wc_stripe_create_order' === $query['wc-ajax']
-			)
-		) {
+		if ( self::is_validation_only() ) {
 			return false;
 		}
 		return $should_verify;
@@ -1869,12 +1859,19 @@ final class Modal_Checkout {
 	 * @return array Modified $data.
 	 */
 	public static function skip_account_creation( $data ) {
-		if ( ! self::is_modal_checkout() ) {
-			return $data;
+		$should_skip_account_creation = false;
+
+		// Always skip account creation during validation-only requests.
+		if ( self::is_validation_only() ) {
+			$should_skip_account_creation = true;
+		} elseif ( self::is_modal_checkout() && ! empty( $data['billing_email'] ) ) {
+			$customer = \get_user_by( 'email', $data['billing_email'] );
+			if ( $customer ) {
+				$should_skip_account_creation = true;
+			}
 		}
-		$email    = $data['billing_email'];
-		$customer = \get_user_by( 'email', $email );
-		if ( $customer ) {
+
+		if ( $should_skip_account_creation ) {
 			$data['createaccount'] = 0;
 			\add_filter( 'woocommerce_checkout_registration_required', '__return_false', 9999 );
 		}
