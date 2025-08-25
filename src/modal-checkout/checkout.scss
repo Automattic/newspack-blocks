@@ -412,94 +412,20 @@
 	.wc_payment_methods {
 		margin: var(--newspack-ui-spacer-5, 24px) 0;
 
-		// Largely copied and reorganized from newspack-ui/forms/_labels.scss
-		// since WooCommerce forms are different from our standard forms.
-		span.newspack-ui__input-card {
-			border: 1px solid var(--newspack-ui-color-border, #ddd);
-			border-radius: var(--newspack-ui-border-radius-m);
-			color: var(--newspack-ui-label-color, #000);
-			cursor: pointer;
-			display: block;
-			font-family: var(--newspack-ui-font-family, system-ui);
-			font-size: var(--newspack-ui-font-size-s, 16px);
-			font-weight: 600;
-			gap: 0 var(--newspack-ui-spacer-3, 16px);
-			line-height: var(--newspack-ui-line-height-s, 1.5);
-			margin-bottom: var(--newspack-ui-spacer-5);
-			margin-top: calc(var(--newspack-ui-spacer-2) * -1);
-			padding: var(--newspack-ui-spacer-3, 16px) !important;
-			transition: background-color 125ms ease-in-out, border-color 125ms ease-in-out;
-
-			&:has(> input) {
-				background: var(--newspack-ui-color-neutral-0, #fff) !important;
-				border-color: var(--newspack-ui-color-border, #ddd) !important;
-			}
-
-			&:has(> input:checked) {
-				background: var(--newspack-ui-color-neutral-5, #f7f7f7) !important;
-				border-color: var(--newspack-ui-color-neutral-90, #1e1e1e) !important;
-			}
-
-			// For labels containing radio, checkbox inputs:
-			&:has(input[type="checkbox"]),
-			&:has(input[type="radio"]) {
-				display: grid !important;
-				grid-template-columns: var(--newspack-ui-spacer-4, 20px) 1fr;
-
-				> *:not(input) {
-					grid-column: 2 / span 1;
-				}
-
-				> label {
-					grid-column: 1 / span 2;
-
-					&::before {
-						margin-right: var(--newspack-ui-spacer-3, 16px);
-					}
-				}
-
-				> input {
-					margin-top: 0.125em;
-				}
-			}
-
-			label {
-				font-weight: var(--newspack-ui-font-weight-strong, 600);
-			}
-
-			> label:first-of-type {
-				margin: unset;
-
-				img {
-					float: right;
-				}
-			}
-
-			a {
-				text-decoration: underline;
-			}
-
-			.required {
-				color: var(--newspack-ui-color-error-50);
-			}
-
-			+ span.newspack-ui__input-card {
-				margin-top: calc(var(--newspack-ui-spacer-2, 12px) * -1);
-			}
-
-			&:first-child:last-child {
-				grid-template-columns: 0;
-				gap: 0;
-
-				> label::before {
-					display: none;
-				}
-			}
-		}
-
 		.wc_payment_method {
 			+ .wc_payment_method {
 				margin-top: var(--newspack-ui-spacer-2, 12px);
+			}
+
+			&:first-child:last-child {
+				> span.newspack-ui__input-card {
+					grid-template-columns: 0;
+					gap: 0;
+
+					> label::before {
+						display: none;
+					}
+				}
 			}
 
 			.payment_box {
@@ -579,6 +505,95 @@
 						display: none;
 					}
 				}
+			}
+		}
+
+		// Largely copied and reorganized from newspack-ui/forms/_labels.scss
+		// since WooCommerce forms are different from our standard forms.
+		span.newspack-ui__input-card {
+			border: 1px solid var(--newspack-ui-color-border, #ddd);
+			border-radius: var(--newspack-ui-border-radius-m);
+			color: var(--newspack-ui-label-color, #000);
+			cursor: pointer;
+			display: block;
+			font-family: var(--newspack-ui-font-family, system-ui);
+			font-size: var(--newspack-ui-font-size-s, 16px);
+			font-weight: 600;
+			gap: 0 var(--newspack-ui-spacer-3, 16px);
+			line-height: var(--newspack-ui-line-height-s, 1.5);
+			margin-bottom: var(--newspack-ui-spacer-5);
+			margin-top: calc(var(--newspack-ui-spacer-2) * -1);
+			padding: var(--newspack-ui-spacer-3, 16px) !important;
+			transition: background-color 125ms ease-in-out, border-color 125ms ease-in-out;
+
+			&:has(> input) {
+				background: var(--newspack-ui-color-neutral-0, #fff) !important;
+				border-color: var(--newspack-ui-color-border, #ddd) !important;
+			}
+
+			&:has(> input:checked) {
+				background: var(--newspack-ui-color-neutral-5, #f7f7f7) !important;
+				border-color: var(--newspack-ui-color-neutral-90, #1e1e1e) !important;
+			}
+
+			// For labels containing radio, checkbox inputs:
+			&:has(input[type="checkbox"]),
+			&:has(input[type="radio"]) {
+				display: grid !important;
+				grid-template-columns: var(--newspack-ui-spacer-4, 20px) 1fr;
+
+				> *:not(input) {
+					grid-column: 2 / span 1;
+				}
+
+				> label {
+					grid-column: 1 / span 2;
+
+					&::before {
+						margin-right: var(--newspack-ui-spacer-3, 16px);
+						transform: translateY(0) !important; // Align label text with custom input styles.
+					}
+				}
+
+				> input {
+					margin-top: 0.125em;
+				}
+			}
+
+			> input + label::before {
+				background: var(--newspack-ui-color-neutral-0, #fff) !important;
+				border: 1px solid var(--newspack-ui-color-input-border, #ccc) !important;
+				box-shadow: none;
+				height: var(--newspack-ui-spacer-4, 20px);
+				width: var(--newspack-ui-spacer-4, 20px);
+				margin: auto 0;
+			}
+
+			> input:checked + label::before {
+				border: 6px solid var(--newspack-ui-color-neutral-90, #1e1e1e) !important;
+			}
+
+			> label {
+				margin: unset;
+				display: flex;
+				align-items: center;
+				font-weight: var(--newspack-ui-font-weight-strong, 600);
+
+				img {
+					margin-left: auto;
+				}
+			}
+
+			a {
+				text-decoration: underline;
+			}
+
+			.required {
+				color: var(--newspack-ui-color-error-50);
+			}
+
+			+ span.newspack-ui__input-card {
+				margin-top: calc(var(--newspack-ui-spacer-2, 12px) * -1);
 			}
 		}
 	}
