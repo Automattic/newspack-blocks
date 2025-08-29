@@ -1,4 +1,9 @@
 /**
+ * Newspack dependencies
+ */
+import colors from 'newspack-colors';
+
+/**
  * WordPress dependencies
  */
 import { ExternalLink } from '@wordpress/components';
@@ -26,7 +31,7 @@ export const settings = {
 	title,
 	icon: {
 		src: iframeIcon,
-		foreground: '#406ebc',
+		foreground: colors['primary-400'],
 	},
 	category,
 	keywords: [ __( 'iframe', 'newspack-blocks' ), __( 'project iframe', 'newspack-blocks' ) ],
