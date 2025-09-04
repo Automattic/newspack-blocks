@@ -423,8 +423,12 @@ class Edit extends Component< HomepageArticlesProps > {
 					<ToggleGroupControl
 						label={ __( 'Text', 'newspack-blocks' ) }
 						value={ ( () => {
-							if ( showFullContent ) return 'full';
-							if ( showExcerpt ) return 'excerpt';
+							if ( showFullContent ) {
+								return 'full';
+							}
+							if ( showExcerpt ) {
+								return 'excerpt';
+							}
 							return 'none';
 						} )() }
 						onChange={ ( value: string ) => {
