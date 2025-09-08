@@ -149,6 +149,7 @@ function render_callback( $attributes ) {
 
 		$checkout_data = Checkout_Data::get_checkout_data( $product );
 		$checkout_data['is_variable'] = $is_variable;
+		$checkout_data['is_grouped']  = $product->is_type( 'grouped' );
 
 		$form = sprintf(
 			'<form data-checkout="%1$s">%2$s %3$s</form>',

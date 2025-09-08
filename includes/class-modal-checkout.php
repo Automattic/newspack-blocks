@@ -678,17 +678,16 @@ final class Modal_Checkout {
 		$products = array_keys( self::$products );
 		foreach ( $products as $product_id ) {
 			$product = wc_get_product( $product_id );
-			if ( ! $product || ! $product->is_type( 'variable' ) ) {
+			if ( ! $product || ( ! $product->is_type( 'variable' ) && ! $product->is_type( 'grouped' ) ) ) {
 				continue;
 			}
-			$product_name = $product->get_name();
 			?>
 			<div
 				class="<?php echo esc_attr( "$class_prefix {$class_prefix}__modal-container newspack-blocks__modal-variation" ); ?>"
 				data-product-id="<?php echo esc_attr( $product_id ); ?>"
 			>
 				<div class="<?php echo esc_attr( "{$class_prefix}__modal-container__overlay" ); ?>"></div>
-				<div class="<?php echo esc_attr( "{$class_prefix}__modal" ); ?>" role="dialog" aria-modal="true" aria-labelledby="newspack-modal-checkout-label">
+				<div class="<?php echo esc_attr( "{$class_prefix}__modal {$class_prefix}__modal--small" ); ?>" role="dialog" aria-modal="true" aria-labelledby="newspack-modal-checkout-label">
 					<header class="<?php echo esc_attr( "{$class_prefix}__modal__header" ); ?>">
 						<h2 id="newspack-modal-checkout-label"><?php echo esc_html( $title ); ?></h2>
 						<button class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--icon {$class_prefix}__button--ghost {$class_prefix}__modal__close" ); ?>">
@@ -699,54 +698,12 @@ final class Modal_Checkout {
 						</button>
 					</header>
 					<section class="<?php echo esc_attr( "{$class_prefix}__modal__content" ); ?>">
-						<h3><?php echo esc_html( $product_name ); ?></h3>
-						<p><?php esc_html_e( 'Select an option to continue:', 'newspack-blocks' ); ?></p>
-						<div class="<?php echo esc_attr( "{$class_prefix}__selection" ); ?>" data-product-id="<?php echo esc_attr( $product_id ); ?>">
-							<ul class="newspack-blocks__options"">
-								<?php
-								$variations = $product->get_available_variations( 'objects' );
-								foreach ( $variations as $variation ) :
-									$variation_id   = $variation->get_id();
-									$variation_name = wc_get_formatted_variation( $variation, true );
-									$price          = $variation->get_price();
-									$price_html     = $variation->get_price_html();
-
-									// Use suggested price if NYP is active and set for variation.
-									if ( \Newspack_Blocks::can_use_name_your_price() && \WC_Name_Your_Price_Helpers::is_nyp( $variation_id ) ) {
-										$price = \WC_Name_Your_Price_Helpers::get_suggested_price( $variation_id );
-										$min_price = \WC_Name_Your_Price_Helpers::get_minimum_price( $variation_id );
-										if ( ! $price && ! $min_price ) {
-											continue;
-										}
-									}
-
-									// Replace nyp price html for variations.
-									if ( class_exists( '\WC_Name_Your_Price_Helpers' ) && \WC_Name_Your_Price_Helpers::is_nyp( $variation->get_id() ) ) {
-										$price_html = str_replace( ':', '', $price_html );
-										$price_html = str_replace( '<span class="suggested-text">', '<span class="suggested-text"><span class="suggested-prefix">', $price_html );
-										$price_html = str_replace( '<span class="woocommerce-Price-amount amount">', '</span><span class="woocommerce-Price-amount amount">', $price_html );
-									}
-									?>
-									<li class="newspack-blocks__options__item"">
-										<div class="summary">
-											<span class="price"><?php echo $price_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
-										</div>
-										<div class="variation"><?php echo esc_html( $variation_name ); ?></div>
-										<form data-checkout="<?php echo esc_attr( wp_json_encode( Checkout_Data::get_checkout_data( $variation ) ) ); ?>">
-											<input type="hidden" name="newspack_checkout" value="1" />
-											<button type="submit" class="<?php echo esc_attr( "{$class_prefix}__button {$class_prefix}__button--primary" ); ?> newspack-modal-checkout-variation-selection"><?php echo esc_html( self::get_modal_checkout_labels( 'checkout_confirm_variation' ) ); ?></button>
-										</form>
-									</li>
-								<?php endforeach; ?>
-							</ul>
-						</div>
+						<?php \Newspack\Subscriptions_Tiers::render_form( $product ); ?>
 					</section>
 				</div>
 			</div>
 			<?php
 		}
-		remove_filter( 'woocommerce_subscriptions_product_price_string', [ __CLASS__, 'update_subscriptions_product_price_string' ], 10, 1 );
-		remove_filter( 'formatted_woocommerce_price', [ __CLASS__, 'maybe_remove_decimal_spaces' ], 10, 1 );
 	}
 
 	/**

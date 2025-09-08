@@ -14,9 +14,9 @@ final class Checkout_Data {
 	/**
 	 * Get price string for the price summary card to render in auth flow.
 	 *
-	 * @param string $name      The name.
-	 * @param string $price     The price. Optional. If not provided, the price string will contain 0.
-	 * @param string $frequency The frequency. Optional. If not provided, the price will be treated as a one-time payment.
+	 * @param string $name       The name.
+	 * @param string $price      The price. Optional. If not provided, the price string will contain 0.
+	 * @param string $frequency  The frequency. Optional. If not provided, the price will be treated as a one-time payment.
 	 * @param int    $product_id Product ID to get additional subscription details. Optional.
 	 *
 	 * @return string The price string.

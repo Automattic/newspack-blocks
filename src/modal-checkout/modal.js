@@ -282,7 +282,7 @@ domReady( () => {
 		} );
 
 		// Trigger variation modal if variation is not selected.
-		if ( checkoutData.is_variable && ! checkoutData.variation_id ) {
+		if ( checkoutData.is_grouped || ( checkoutData.is_variable && ! checkoutData.variation_id ) ) {
 			const variationModal = [ ...variationModals ].find(
 				modal => modal.dataset.productId === checkoutData.product_id
 			);
@@ -662,7 +662,7 @@ domReady( () => {
 	 */
 	document
 		.querySelectorAll(
-			'.wpbnbd.wpbnbd--platform-wc, .wp-block-newspack-blocks-checkout-button, .newspack-blocks__modal-variation'
+			'.wpbnbd.wpbnbd--platform-wc, .wp-block-newspack-blocks-checkout-button'
 		)
 		.forEach( element => {
 			const forms = element.querySelectorAll( 'form' );
