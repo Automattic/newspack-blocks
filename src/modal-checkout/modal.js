@@ -662,7 +662,7 @@ domReady( () => {
 	 */
 	document
 		.querySelectorAll(
-			'.wpbnbd.wpbnbd--platform-wc, .wp-block-newspack-blocks-checkout-button'
+			'.wpbnbd.wpbnbd--platform-wc, .wp-block-newspack-blocks-checkout-button, .newspack-blocks__modal-variation'
 		)
 		.forEach( element => {
 			const forms = element.querySelectorAll( 'form' );
