@@ -1,3 +1,12 @@
+## [4.15.1](https://github.com/Automattic/newspack-blocks/compare/v4.15.0...v4.15.1) (2025-09-08)
+
+
+### Bug Fixes
+
+* **modal-checkout:** apply newspack-ui styles to subscription confirmation checkbox ([#2193](https://github.com/Automattic/newspack-blocks/issues/2193)) ([02f1e4e](https://github.com/Automattic/newspack-blocks/commit/02f1e4e2cbdd5788230d581582718fcbc7fc8b0c))
+* **modal-checkout:** support stripe optimized checkout ([#2189](https://github.com/Automattic/newspack-blocks/issues/2189)) ([d42e8ca](https://github.com/Automattic/newspack-blocks/commit/d42e8caa7028a612e34543f41834b45d64b77413))
+* show updated date if later than published ([6df3883](https://github.com/Automattic/newspack-blocks/commit/6df388375b0d5b7d58d3025233ee59730f2aa395))
+
 # [4.15.0](https://github.com/Automattic/newspack-blocks/compare/v4.14.8...v4.15.0) (2025-08-25)
 
 
