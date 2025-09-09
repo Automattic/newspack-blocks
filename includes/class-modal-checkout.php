@@ -663,6 +663,9 @@ final class Modal_Checkout {
 		if ( ! function_exists( 'WC' ) ) {
 			return;
 		}
+		if ( ! method_exists( 'Newspack\Subscriptions_Tiers', 'render_form' ) ) {
+			return;
+		}
 
 		add_filter( 'woocommerce_subscriptions_product_price_string', [ __CLASS__, 'update_subscriptions_product_price_string' ], 10, 1 );
 		add_filter( 'formatted_woocommerce_price', [ __CLASS__, 'maybe_remove_decimal_spaces' ], 10, 1 );
