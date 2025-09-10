@@ -1515,7 +1515,7 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Alternative error message to show when limiting a subscription product's purchase.
+	 * Alternative error message to show when limiting a subscription product's purchase to only one active subscription.
 	 *
 	 * @return string
 	 */
@@ -1528,6 +1528,15 @@ final class Modal_Checkout {
 	}
 
 	/**
+	 * Alternative error message to show when limiting a subscription product's purchase to one of any status.
+	 *
+	 * @return string
+	 */
+	public static function get_subscription_limited_message_any() {
+		return __( "You're already a subscriber! You can only have one subscription at a time. If you wish to renew an expired subscription, please Sign In and visit the subscriptions page on your account.", 'newspack-blocks' );
+	}
+
+	/**
 	 * Filters the error message shown when a product can't be added to the cart.
 	 *
 	 * @param string     $message Message.
@@ -1537,9 +1546,15 @@ final class Modal_Checkout {
 	 */
 	public static function woocommerce_cart_product_cannot_be_purchased_message( $message, $product_data ) {
 		if ( method_exists( 'WCS_Limiter', 'is_purchasable' ) ) {
-			$product = \wc_get_product( $product_data->get_id() );
+			$product            = \wc_get_product( $product_data->get_id() );
+			$product_limitation = wcs_get_product_limitation( $product->get_id() );
+
 			if ( ! \WCS_Limiter::is_purchasable( false, $product ) ) {
-				$message = self::get_subscription_limited_message();
+				if ( 'active' === $product_limitation ) {
+					$message = self::get_subscription_limited_message();
+				} else {
+					$message = self::get_subscription_limited_message_any();
+				}
 			}
 		}
 
@@ -2111,8 +2126,10 @@ final class Modal_Checkout {
 		$id_from_email = self::get_user_id_from_email();
 		if ( $id_from_email ) {
 			$is_limited_for_user = wcs_is_product_limited_for_user( $product, $id_from_email );
+			$product_limitation  = wcs_get_product_limitation( $product->get_id() );
+			$callback = 'active' === $product_limitation ? 'get_subscription_limited_message' : 'get_subscription_limited_message_any';
 			if ( $is_limited_for_user ) {
-				add_filter( 'woocommerce_cart_item_removed_message', [ __CLASS__, 'get_subscription_limited_message' ], 10, 2 );
+				add_filter( 'woocommerce_cart_item_removed_message', [ __CLASS__, $callback ], 10, 2 );
 			}
 		}
 		return $is_limited_for_user;
