@@ -25,7 +25,6 @@ import {
 import { Fragment, useEffect, useState } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import {
-	Icon,
 	columns as columnsIcon,
 	edit,
 	listView,
@@ -301,7 +300,8 @@ const AuthorList = ( { attributes, clientId, setAttributes } ) => {
 					) }
 					{ showAvatar && (
 						<ToggleGroupControl
-							label={ __( 'Avatar Size', 'newspack-blocks' ) }
+							label={ __( 'Size', 'newspack-blocks' ) }
+							aria-label={ __( 'Avatar size', 'newspack-blocks' ) }
 							value={ avatarSize }
 							onChange={ value => setAttributes( { avatarSize: value } ) }
 							isBlock
@@ -317,20 +317,18 @@ const AuthorList = ( { attributes, clientId, setAttributes } ) => {
 						</ToggleGroupControl>
 					) }
 					{ showAvatar && (
-						<PanelRow>
-							<UnitControl
-								label={ __( 'Border radius', 'newspack-blocks' ) }
-								aria-label={ __( 'Avatar border radius', 'newspack-blocks' ) }
-								labelPosition="edge"
-								units={ units }
-								value={ avatarBorderRadius }
-								onChange={ value =>
-									setAttributes( { avatarBorderRadius: 0 > parseFloat( value ) ? '0' : value } )
-								}
-								__next40pxDefaultSize
-								__unstableInputWidth="80px"
-							/>
-						</PanelRow>
+						<UnitControl
+							label={ __( 'Border radius', 'newspack-blocks' ) }
+							aria-label={ __( 'Avatar border radius', 'newspack-blocks' ) }
+							labelPosition="edge"
+							units={ units }
+							value={ avatarBorderRadius }
+							onChange={ value =>
+								setAttributes( { avatarBorderRadius: 0 > parseFloat( value ) ? '0' : value } )
+							}
+							__next40pxDefaultSize
+							__unstableInputWidth="80px"
+						/>
 					) }
 				</PanelBody>
 			</InspectorControls>
@@ -454,7 +452,7 @@ const AuthorList = ( { attributes, clientId, setAttributes } ) => {
 				) }
 				{ ( ! authors || isLoading ) && (
 					<Placeholder
-						icon={ <Icon icon={ listView } /> }
+						icon={ listView }
 						label={ __( 'Author List', 'newspack-blocks' ) }
 					>
 						{ error && (
