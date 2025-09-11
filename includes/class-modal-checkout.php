@@ -1343,6 +1343,9 @@ final class Modal_Checkout {
 		if ( ! empty( $cart->get_fees() ) ) {
 			return true;
 		}
+		if ( method_exists( 'WC_Subscriptions_Switcher', 'cart_contains_switches' ) && \WC_Subscriptions_Switcher::cart_contains_switches( 'any' ) ) {
+			return true;
+		}
 		if ( $cart->needs_shipping_address() ) {
 			$shipping       = \WC()->shipping;
 			$packages       = $shipping->get_packages();
@@ -1580,6 +1583,11 @@ final class Modal_Checkout {
 
 		// If this isn't a cart, if the cart is empty, or if this is a donation product, bail.
 		if ( ! $cart || $cart->is_empty() || $is_donation ) {
+			return;
+		}
+
+		// Bail if this is a subscription switch.
+		if ( method_exists( 'WC_Subscriptions_Switcher', 'cart_contains_switches' ) && \WC_Subscriptions_Switcher::cart_contains_switches( 'any' ) ) {
 			return;
 		}
 
