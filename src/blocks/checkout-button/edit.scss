@@ -63,5 +63,18 @@
 	&__button {
 		width: auto;
 	}
+
+	&.wp-block-button__justification-center {
+		justify-content: center;
+	}
+	&.wp-block-button__justification-left {
+		justify-content: flex-start;
+	}
+	&.wp-block-button__justification-right {
+		justify-content: flex-end;
+	}
+	&.wp-block-button__justification-space-between {
+		justify-content: space-between;
+	}
 }
 

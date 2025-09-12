@@ -207,7 +207,7 @@ function ProductControl( props ) {
 
 function CheckoutButtonEdit( props ) {
 	const { attributes, setAttributes, className } = props;
-	const { placeholder, style, text, product, price, variation, width } = attributes;
+	const { placeholder, style, text, product, price, variation, width, layout } = attributes;
 
 	const [ productData, setProductData ] = useState( {} );
 	const [ variations, setVariations ] = useState( [] );
@@ -266,6 +266,7 @@ function CheckoutButtonEdit( props ) {
 	const colorProps = useColorProps( attributes );
 	const spacingProps = useSpacingProps( attributes );
 	const blockProps = useBlockProps();
+
 	return (
 		<>
 			<div
@@ -274,6 +275,7 @@ function CheckoutButtonEdit( props ) {
 					[ `wp-block-button` ]: true,
 					[ `has-custom-font-size` ]: blockProps.style.fontSize,
 					[ `has-custom-width wp-block-button__width-${ width }` ]: width,
+					[ `has-custom-justification wp-block-button__justification-${ layout?.justifyContent }` ]: layout?.justifyContent,
 				} ) }
 			>
 				<RichText
@@ -302,7 +304,7 @@ function CheckoutButtonEdit( props ) {
 					identifier="text"
 				/>
 			</div>
-			<InspectorControls>
+			<InspectorControls group="settings">
 				<PanelBody title={ __( 'Product', 'newspack-blocks' ) }>
 					<ProductControl
 						value={ product }
@@ -391,7 +393,7 @@ function CheckoutButtonEdit( props ) {
 					</PanelBody>
 				) }
 			</InspectorControls>
-			<InspectorControls>
+			<InspectorControls group="settings">
 				<WidthPanel selectedWidth={ width } setAttributes={ setAttributes } />
 			</InspectorControls>
 		</>

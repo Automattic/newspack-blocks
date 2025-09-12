@@ -99,7 +99,16 @@
 			"__experimentalDefaultControls": {
 				"radius": true
 			}
-		}
+		},
+		"layout": {
+		  "default": {
+		    "type": "flex"
+      },
+      "allowJustification": true,
+      "allowVerticalAlignment": false,
+      "allowOrientation": false,
+      "allowSwitching": false
+    }
 	},
 	"styles": [
 		{
