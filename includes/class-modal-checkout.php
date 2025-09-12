@@ -59,6 +59,7 @@ final class Modal_Checkout {
 		'jquery',
 		'google_gtagjs',
 		// Newspack.
+		'newspack_commons',
 		'newspack-newsletters-',
 		'newspack-blocks-modal',
 		'newspack-blocks-modal-checkout',
@@ -67,6 +68,8 @@ final class Modal_Checkout {
 		'newspack-style',
 		'newspack-recaptcha',
 		'newspack-woocommerce-style',
+		'newspack-reader-activation',
+		'newspack-my-account',
 		// Woo.
 		'woocommerce',
 		'WCPAY',
