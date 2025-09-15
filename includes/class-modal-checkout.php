@@ -663,7 +663,7 @@ final class Modal_Checkout {
 		if ( ! function_exists( 'WC' ) ) {
 			return;
 		}
-		if ( ! method_exists( 'Newspack\Subscriptions_Tiers', 'render_form' ) ) {
+		if ( ! class_exists( 'Newspack\Subscriptions_Tiers' ) || ! method_exists( 'Newspack\Subscriptions_Tiers', 'render_form' ) ) {
 			return;
 		}
 
