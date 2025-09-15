@@ -34,14 +34,14 @@
 
 	&.alignwide,
 	&.alignfull {
-		div {
+		.wp-block-button__link {
 			width: 100%;
 		}
 	}
-	&.aligncenter {
+	[data-align="center"] & {
 		flex-direction: column;
 
-		div {
+		.wp-block-button__link {
 			margin-left: auto;
 			margin-right: auto;
 		}
