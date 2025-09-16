@@ -131,7 +131,7 @@ import { domReady } from './utils';
 						$wrapper.removeClass( 'hidden' );
 					}
 
-					const $details = $( '#after_customer_details')
+					const $details = $( '#after_customer_details' );
 					const expanded = $details.hasClass( 'transaction-details-expanded' );
 
 					// Move new order review table to the payment methods.
