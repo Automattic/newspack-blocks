@@ -304,12 +304,12 @@ final class Modal_Checkout {
 		$after_success_url          = filter_input( INPUT_GET, 'after_success_url', FILTER_SANITIZE_URL );
 		$after_success_button_label = filter_input( INPUT_GET, 'after_success_button_label', FILTER_SANITIZE_SPECIAL_CHARS );
 
-		if ( ! $product_id ) {
-			return;
-		}
-
 		if ( $variation_id ) {
 			$product_id = $variation_id;
+		}
+
+		if ( ! $product_id ) {
+			return;
 		}
 
 		$referer    = wp_get_referer();
