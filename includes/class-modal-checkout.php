@@ -1533,7 +1533,7 @@ final class Modal_Checkout {
 	 * @return string
 	 */
 	public static function get_subscription_limited_message_any() {
-		return __( "You're already a subscriber! You can only have one subscription at a time. If you wish to renew an expired subscription, please Sign In and visit the subscriptions page on your account.", 'newspack-blocks' );
+		return __( "You're already a subscriber! You can only have one subscription at a time. If you wish to renew an expired subscription, please sign in and visit the subscriptions page on your account.", 'newspack-blocks' );
 	}
 
 	/**
