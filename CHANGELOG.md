@@ -1,3 +1,10 @@
+## [4.15.3](https://github.com/Automattic/newspack-blocks/compare/v4.15.2...v4.15.3) (2025-09-25)
+
+
+### Bug Fixes
+
+* **modal-checkout:** handling of tiered donation block ([#2216](https://github.com/Automattic/newspack-blocks/issues/2216)) ([5f74453](https://github.com/Automattic/newspack-blocks/commit/5f744533f6a1f14a8adc4fe1304f5912cb691905))
+
 ## [4.15.2](https://github.com/Automattic/newspack-blocks/compare/v4.15.1...v4.15.2) (2025-09-22)
 
 
