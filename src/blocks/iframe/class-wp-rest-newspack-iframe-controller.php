@@ -206,6 +206,19 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 	}
 
 	/**
+	 * Validate the file extension of a file.
+	 *
+	 * @param string  $file_name The name of the file.
+	 * @param boolean $in_archive If true, the file is inside an archive, which can contain HTML/CSS/JS files.
+	 *
+	 * @return boolean
+	 */
+	private function validate_file_extension( $file_name, $in_archive = false ) {
+		$file_extension = pathinfo( $file_name, PATHINFO_EXTENSION );
+		return ! empty( $file_extension ) && in_array( $file_extension, array_values( self::iframe_accepted_file_mimes( $in_archive ) ), true );
+	}
+
+	/**
 	 * Validate the raw contents of a file inside a .zip archive.
 	 *
 	 * @param string $contents The contents of the file.
@@ -350,6 +363,18 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	private function process_iframe_document( $request, $document_filename, $media_source_path ) {
+		if ( ! $this->validate_file_extension( $document_filename, false ) ) {
+			return new WP_Error(
+				'newspack_blocks',
+				sprintf(
+					// Translators: %s is a list of supported file extensions for uploading.
+					__( "Unsupported filetype. Please make sure it's one of the supported filetypes: % s", 'newspack-blocks' ),
+					implode( ', ', array_values( self::iframe_document_accepted_file_mimes() ) )
+				),
+				[ 'status' => '400' ]
+			);
+		}
+
 		$wp_upload_dir     = wp_upload_dir();
 		$iframe_upload_dir = $wp_upload_dir['path'] . self::IFRAME_UPLOAD_DIR;
 		$iframe_path       = $iframe_upload_dir . $document_filename;
@@ -430,7 +455,7 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 			$contents = $zip->getFromIndex( $file_index );
 			if ( $this->validate_archive_file_contents( $contents ) ) {
 				$stat = $zip->statIndex( $file_index );
-				if ( $stat && isset( $stat['name'] ) ) {
+				if ( $stat && isset( $stat['name'] ) && $this->validate_file_extension( $stat['name'], true ) ) {
 					if ( ! file_exists( dirname( $iframe_path . $stat['name'] ) ) ) {
 						wp_mkdir_p( dirname( $iframe_path . $stat['name'] ) );
 					}
