@@ -452,10 +452,13 @@ class WP_REST_Newspack_Iframe_Controller extends WP_REST_Controller {
 
 		// Validate all files inside the archive. Only extract files of allowed types.
 		for ( $file_index = 0; $file_index < $zip->numFiles; $file_index++ ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			if ( ! $this->validate_file_extension( $zip->getNameIndex( $file_index ), true ) ) {
+				continue;
+			}
 			$contents = $zip->getFromIndex( $file_index );
 			if ( $this->validate_archive_file_contents( $contents ) ) {
 				$stat = $zip->statIndex( $file_index );
-				if ( $stat && isset( $stat['name'] ) && $this->validate_file_extension( $stat['name'], true ) ) {
+				if ( $stat && isset( $stat['name'] ) ) {
 					if ( ! file_exists( dirname( $iframe_path . $stat['name'] ) ) ) {
 						wp_mkdir_p( dirname( $iframe_path . $stat['name'] ) );
 					}
