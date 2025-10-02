@@ -8,7 +8,6 @@ import { contentLoop as icon } from 'newspack-icons';
  * WordPress dependencies
  */
 import { createBlock } from '@wordpress/blocks';
-import { Path, SVG } from '@wordpress/components';
 import { applyFilters } from '@wordpress/hooks';
 import { __, _x } from '@wordpress/i18n';
 

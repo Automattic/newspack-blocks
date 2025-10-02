@@ -2,6 +2,7 @@
  * Newspack dependencies
  */
 import colors from 'newspack-colors';
+import { iframe as icon } from 'newspack-icons';
 
 /**
  * WordPress dependencies
@@ -20,7 +21,6 @@ const { name, attributes, category } = metadata;
  * Style dependencies - will load in editor
  */
 import './editor.scss';
-import { iframeIcon } from './icons';
 
 export const title = __( 'Iframe', 'newspack-blocks' );
 
@@ -30,7 +30,7 @@ export { name };
 export const settings = {
 	title,
 	icon: {
-		src: iframeIcon,
+		src: icon,
 		foreground: colors['primary-400'],
 	},
 	category,

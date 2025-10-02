@@ -1,16 +1,19 @@
 /**
+ * Newspack dependencies
+ */
+import { iframe as icon } from 'newspack-icons';
+
+/**
  * WordPress dependencies
  */
 import { Fragment, useState } from '@wordpress/element';
 import { InspectorControls, BlockControls } from '@wordpress/block-editor';
 import {
 	PanelBody,
-	Path,
 	ToggleControl,
 	Toolbar,
 	FocusableIframe,
 	Notice,
-	SVG,
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalUnitControl as UnitControl,
 } from '@wordpress/components';
@@ -22,7 +25,6 @@ import apiFetch from '@wordpress/api-fetch';
  * Internal dependencies
  */
 import IframePlaceholder from './iframe-placeholder';
-import { iframeIcon } from './icons';
 
 const IframeEdit = ( { attributes, setAttributes } ) => {
 	const label = __( 'Iframe', 'block title' );
@@ -195,7 +197,7 @@ const IframeEdit = ( { attributes, setAttributes } ) => {
 				</div>
 			) : (
 				<IframePlaceholder
-					icon={ iframeIcon }
+					icon={ icon }
 					label={ label }
 					src={ src }
 					onSelectURL={ embedURL }

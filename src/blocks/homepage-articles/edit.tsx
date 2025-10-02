@@ -38,11 +38,9 @@ import {
 } from '@wordpress/block-editor';
 import {
 	PanelBody,
-	Path,
 	Placeholder,
 	RangeControl,
 	Spinner,
-	SVG,
 	Toolbar,
 	ToggleControl,
 	TextControl,
