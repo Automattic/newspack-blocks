@@ -239,8 +239,7 @@ class Newspack_Blocks {
 
 			if ( class_exists( 'WP_REST_Newspack_Author_List_Controller' ) ) {
 				$localized_data['can_use_cap']    = class_exists( 'CoAuthors_Guest_Authors' );
-				$author_list_controller           = new WP_REST_Newspack_Author_List_Controller();
-				$localized_data['editable_roles'] = $author_list_controller->get_editable_roles();
+				$localized_data['editable_roles'] = Newspack_Blocks\get_authors_roles();
 			}
 
 			if ( class_exists( '\Newspack\Authors_Custom_Fields' ) ) {
@@ -637,9 +636,7 @@ class Newspack_Blocks {
 			$args['orderby']        = 'post__in';
 		} else {
 			$args['posts_per_page'] = $posts_to_show;
-			if ( ! self::should_deduplicate_block( $attributes ) ) {
-				$args['post__not_in'] = [ get_the_ID() ]; // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_post__not_in
-			} else {
+			if ( self::should_deduplicate_block( $attributes ) ) {
 				if ( count( $newspack_blocks_all_specific_posts_ids ) ) {
 					$args['post__not_in'] = $newspack_blocks_all_specific_posts_ids; // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_post__not_in
 				}

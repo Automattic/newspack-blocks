@@ -14,9 +14,9 @@ final class Checkout_Data {
 	/**
 	 * Get price string for the price summary card to render in auth flow.
 	 *
-	 * @param string $name      The name.
-	 * @param string $price     The price. Optional. If not provided, the price string will contain 0.
-	 * @param string $frequency The frequency. Optional. If not provided, the price will be treated as a one-time payment.
+	 * @param string $name       The name.
+	 * @param string $price      The price. Optional. If not provided, the price string will contain 0.
+	 * @param string $frequency  The frequency. Optional. If not provided, the price will be treated as a one-time payment.
 	 * @param int    $product_id Product ID to get additional subscription details. Optional.
 	 *
 	 * @return string The price string.
@@ -30,13 +30,15 @@ final class Checkout_Data {
 			if ( $frequency && $frequency !== 'once' ) {
 				// Get additional subscription details if product_id is provided.
 				$subscription_interval = 1;
-				$trial_length = 0;
-				$trial_period = '';
+				$trial_length          = 0;
+				$trial_period          = '';
+				$initial_amount        = 0;
 
 				if ( $product_id ) {
 					$subscription_interval = get_post_meta( $product_id, '_subscription_period_interval', true );
 					$trial_length = get_post_meta( $product_id, '_subscription_trial_length', true );
 					$trial_period = get_post_meta( $product_id, '_subscription_trial_period', true );
+					$initial_amount = get_post_meta( $product_id, '_subscription_sign_up_fee', true );
 
 					if ( empty( $subscription_interval ) ) {
 						$subscription_interval = 1;
@@ -52,16 +54,27 @@ final class Checkout_Data {
 							'use_per_slash'         => true,
 							'trial_length'          => $trial_length,
 							'trial_period'          => $trial_period,
+							'initial_amount'        => $initial_amount,
 						]
 					)
 				);
-			} else {
+			} elseif ( $price !== '{{PRICE}}' ) { // Preserve placeholder for templating.
 				$price = wp_strip_all_tags( wc_price( $price ) );
 			}
 		}
 
 		// translators: 1 is the name of the item. 2 is the price of the item.
-		return sprintf( __( '%1$s: %2$s', 'newspack-blocks' ), $name, $price );
+		$price_summary = sprintf( __( '%1$s: %2$s', 'newspack-blocks' ), $name, $price );
+
+		/**
+		 * Filters the price summary string that appears in modal checkout.
+		 *
+		 * @param string $price_summary The formatted price summary string.
+		 * @param string $product_id    The product ID, if available.
+		 *
+		 * @return string The filtered price summary string.
+		 */
+		return apply_filters( 'newspack_modal_checkout_price_summary', $price_summary, $product_id );
 	}
 
 	/**
@@ -142,6 +155,10 @@ final class Checkout_Data {
 				$action_type = 'donation';
 			}
 		}
+		// Check if it's a subscription switch.
+		if ( method_exists( 'WC_Subscriptions_Switcher', 'cart_contains_switches' ) && \WC_Subscriptions_Switcher::cart_contains_switches( 'any' ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$action_type = 'subscription_switch';
+		}
 		if ( isset( $_GET['action_type'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$action_type = sanitize_text_field( wp_unslash( $_GET['action_type'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		}
@@ -176,6 +193,26 @@ final class Checkout_Data {
 	}
 
 	/**
+	 * Recursively get the children of a product, returning only ungrouped children.
+	 *
+	 * @param \WC_Product $product Product object.
+	 * @return array Array of child product IDs.
+	 */
+	public static function get_children( $product ) {
+		$children = [];
+		foreach ( $product->get_children() as $child_id ) {
+			$child = \wc_get_product( $child_id );
+			// Check if the child has children of its own.
+			if ( method_exists( $child, 'get_children' ) && $child->get_children() ) {
+				$children = array_merge( $children, self::get_children( $child ) );
+			} else {
+				$children[] = $child_id;
+			}
+		}
+		return $children;
+	}
+
+	/**
 	 * Returns checkout data given a product, product variation, cart or order object.
 	 *
 	 * @param \WC_Product|\WC_Product_Variation|\WC_Cart|\WC_Order $source Product, product variation, cart or order object.
@@ -192,18 +229,30 @@ final class Checkout_Data {
 		$order        = null;
 		$referrer     = '';
 		$variation_id = null;
+		$is_variable  = false;
+		$is_grouped   = false;
 
-		if ( $source instanceof \WC_Product_Variation ) {
-			$product_id = $source->get_parent_id();
-			$variation_id = $source->get_id();
-			$amount = $source->get_price();
-		} elseif ( $source instanceof \WC_Product ) {
-			$product_id = $source->get_id();
-			if ( $source->get_parent_id() ) {
-				$product_id   = $source->get_parent_id();
+		if ( $source instanceof \WC_Product ) {
+			if ( $source->is_type( 'grouped' ) ) {
+				$is_grouped = true;
+				$product_id = $source->get_id();
+				$children   = self::get_children( $source );
+			} elseif ( $source->is_type( 'variable' ) ) {
+				$is_variable = true;
+				$product_id  = $source->get_id();
+				$children    = self::get_children( $source );
+			} elseif ( $source instanceof \WC_Product_Variation ) {
+				$product_id = $source->get_parent_id();
 				$variation_id = $source->get_id();
+				$amount = $source->get_price();
+			} else {
+				$product_id = $source->get_id();
+				if ( $source->get_parent_id() ) {
+					$product_id   = $source->get_parent_id();
+					$variation_id = $source->get_id();
+				}
+				$amount = $source->get_price();
 			}
-			$amount = $source->get_price();
 		} elseif ( $source instanceof \WC_Cart ) {
 			$cart_items   = $source->get_cart();
 			$cart_item    = reset( $cart_items ); // Use only the first item in the cart.
@@ -249,17 +298,28 @@ final class Checkout_Data {
 		}
 
 		$data = [
-			'amount'           => $amount,
-			'action_type'      => self::get_action_type( $product_id ),
-			'currency'         => function_exists( 'get_woocommerce_currency' ) ? \get_woocommerce_currency() : 'USD',
-			'product_id'       => strval( $product_id ? $product_id : '' ),
-			'product_type'     => $product_type,
-			'price_summary'    => self::get_price_summary( $name, $amount, $recurrence, $variation_id ? $variation_id : $product_id ),
-			'summary_template' => self::get_price_summary( $name, '{{PRICE}}', $recurrence, $variation_id ? $variation_id : $product_id ),
-			'referrer'         => $referrer ? str_replace( home_url(), '', $referrer ) : '', // Keeps format consistent for Homepage with Donate and Checkout Button blocks.
-			'recurrence'       => $recurrence,
-			'variation_id'     => strval( $variation_id ? $variation_id : '' ),
+			'action_type'  => self::get_action_type( $product_id ),
+			'currency'     => function_exists( 'get_woocommerce_currency' ) ? \get_woocommerce_currency() : 'USD',
+			'product_id'   => strval( $product_id ? $product_id : '' ),
+			'product_type' => $product_type,
+			'referrer'     => $referrer ? str_replace( home_url(), '', $referrer ) : '', // Keeps format consistent for Homepage with Donate and Checkout Button blocks.
 		];
+
+		if ( $is_variable ) {
+			$data['is_variable'] = true;
+			$data['variation_ids'] = $children;
+		} elseif ( $is_grouped ) {
+			$data['is_grouped'] = true;
+			$data['child_ids'] = $children;
+		} else {
+			$data['amount']           = $amount;
+			$data['price_summary']    = self::get_price_summary( $name, $amount, $recurrence, $variation_id ? $variation_id : $product_id );
+			$data['summary_template'] = self::get_price_summary( $name, '{{PRICE}}', $recurrence, $variation_id ? $variation_id : $product_id );
+			$data['recurrence']       = $recurrence;
+		}
+		if ( $variation_id ) {
+			$data['variation_id'] = strval( $variation_id );
+		}
 
 		/**
 		 * Order specific data.

@@ -1,3 +1,69 @@
+## [4.15.4](https://github.com/Automattic/newspack-blocks/compare/v4.15.3...v4.15.4) (2025-10-01)
+
+
+### Bug Fixes
+
+* **iframe-block:** validate file extensions before allowing upload ([#2220](https://github.com/Automattic/newspack-blocks/issues/2220)) ([263e419](https://github.com/Automattic/newspack-blocks/commit/263e419b56814d3f848d6629a5442f54b1dad28d))
+
+## [4.15.3](https://github.com/Automattic/newspack-blocks/compare/v4.15.2...v4.15.3) (2025-09-25)
+
+
+### Bug Fixes
+
+* **modal-checkout:** handling of tiered donation block ([#2216](https://github.com/Automattic/newspack-blocks/issues/2216)) ([5f74453](https://github.com/Automattic/newspack-blocks/commit/5f744533f6a1f14a8adc4fe1304f5912cb691905))
+
+## [4.15.2](https://github.com/Automattic/newspack-blocks/compare/v4.15.1...v4.15.2) (2025-09-22)
+
+
+### Bug Fixes
+
+* **checkout-button:** editor width settings ([#2196](https://github.com/Automattic/newspack-blocks/issues/2196)) ([4862c37](https://github.com/Automattic/newspack-blocks/commit/4862c3796d0b5197c56f2ab004d83ac8bf919ea6))
+* **donate:** modern style variation wrong border-radius ([#2195](https://github.com/Automattic/newspack-blocks/issues/2195)) ([b756404](https://github.com/Automattic/newspack-blocks/commit/b756404ce53e430583c30a79650ee611a5082720))
+
+## [4.15.1](https://github.com/Automattic/newspack-blocks/compare/v4.15.0...v4.15.1) (2025-09-08)
+
+
+### Bug Fixes
+
+* **modal-checkout:** apply newspack-ui styles to subscription confirmation checkbox ([#2193](https://github.com/Automattic/newspack-blocks/issues/2193)) ([02f1e4e](https://github.com/Automattic/newspack-blocks/commit/02f1e4e2cbdd5788230d581582718fcbc7fc8b0c))
+* **modal-checkout:** support stripe optimized checkout ([#2189](https://github.com/Automattic/newspack-blocks/issues/2189)) ([d42e8ca](https://github.com/Automattic/newspack-blocks/commit/d42e8caa7028a612e34543f41834b45d64b77413))
+* show updated date if later than published ([6df3883](https://github.com/Automattic/newspack-blocks/commit/6df388375b0d5b7d58d3025233ee59730f2aa395))
+
+# [4.15.0](https://github.com/Automattic/newspack-blocks/compare/v4.14.8...v4.15.0) (2025-08-25)
+
+
+### Bug Fixes
+
+* skip acct creation on verification request ([#2182](https://github.com/Automattic/newspack-blocks/issues/2182)) [trigger release] ([caec396](https://github.com/Automattic/newspack-blocks/commit/caec3965df53a97b603e289ec0e32eb2b0d46655))
+
+
+### Features
+
+* add hooks around the content loop's content ([#2187](https://github.com/Automattic/newspack-blocks/issues/2187)) ([a2c4c37](https://github.com/Automattic/newspack-blocks/commit/a2c4c37f69b8b02afe9c9a78c98a388b14c97fc3))
+
+## [4.14.8](https://github.com/Automattic/newspack-blocks/compare/v4.14.7...v4.14.8) (2025-08-12)
+
+
+### Bug Fixes
+
+* **modal-checkout:** account for signup fee in price summary ([#2183](https://github.com/Automattic/newspack-blocks/issues/2183)) ([9ba0a6a](https://github.com/Automattic/newspack-blocks/commit/9ba0a6a84fd727e42bec3db2813b2530cab0dbfa))
+
+## [4.14.7](https://github.com/Automattic/newspack-blocks/compare/v4.14.6...v4.14.7) (2025-08-12)
+
+
+### Bug Fixes
+
+* **author-block:** classname application ([#2172](https://github.com/Automattic/newspack-blocks/issues/2172)) ([b689c66](https://github.com/Automattic/newspack-blocks/commit/b689c667d219199e5ae3a4d5a849eb7fb4334b07))
+* skip acct creation on verification request ([#2182](https://github.com/Automattic/newspack-blocks/issues/2182)) ([8aaef1d](https://github.com/Automattic/newspack-blocks/commit/8aaef1db423c8b1d9cbcc3f3f1a53220b0d82743))
+
+## [4.14.6](https://github.com/Automattic/newspack-blocks/compare/v4.14.5...v4.14.6) (2025-07-28)
+
+
+### Bug Fixes
+
+* Fix/author list roles and exclusion ([#2166](https://github.com/Automattic/newspack-blocks/issues/2166)) ([f2dfe4d](https://github.com/Automattic/newspack-blocks/commit/f2dfe4d1297740d483e25ef680f4cf5735ba2a28))
+* remove current page deduplication from logic when deduplication is disabled ([#2169](https://github.com/Automattic/newspack-blocks/issues/2169)) ([4000d85](https://github.com/Automattic/newspack-blocks/commit/4000d858b6931137d883e06b2b6c1200a420dfa7))
+
 ## [4.14.5](https://github.com/Automattic/newspack-blocks/compare/v4.14.4...v4.14.5) (2025-07-14)
 
 
