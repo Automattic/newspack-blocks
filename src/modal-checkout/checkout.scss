@@ -417,12 +417,15 @@
 				margin-top: var(--newspack-ui-spacer-2, 12px);
 			}
 
-			&:first-child:last-child {
+			&:only-child {
 				> span.newspack-ui__input-card {
 					grid-template-columns: 0;
 					gap: 0;
+					border: none;
+					padding: 0;
+					background-color: transparent;
 
-					> label::before {
+					> label {
 						display: none;
 					}
 				}
@@ -523,17 +526,17 @@
 			line-height: var(--newspack-ui-line-height-s, 1.5);
 			margin-bottom: var(--newspack-ui-spacer-5);
 			margin-top: calc(var(--newspack-ui-spacer-2) * -1);
-			padding: var(--newspack-ui-spacer-3, 16px) !important;
+			padding: var(--newspack-ui-spacer-3, 16px);
 			transition: background-color 125ms ease-in-out, border-color 125ms ease-in-out;
 
 			&:has(> input) {
-				background: var(--newspack-ui-color-neutral-0, #fff) !important;
-				border-color: var(--newspack-ui-color-border, #ddd) !important;
+				background: var(--newspack-ui-color-neutral-0, #fff);
+				border-color: var(--newspack-ui-color-border, #ddd);
 			}
 
 			&:has(> input:checked) {
-				background: var(--newspack-ui-color-neutral-5, #f7f7f7) !important;
-				border-color: var(--newspack-ui-color-neutral-90, #1e1e1e) !important;
+				background: var(--newspack-ui-color-neutral-5, #f7f7f7);
+				border-color: var(--newspack-ui-color-neutral-90, #1e1e1e);
 			}
 
 			// For labels containing radio, checkbox inputs:
@@ -990,16 +993,12 @@
 	 * Change Payment Method form.
 	 */
 	/* stylelint-disable-next-line selector-id-pattern */
-	#order_review {
-		.wc_payment_methods {
-			.wc_payment_method:only-child {
-				> label {
-					background: transparent;
-					border-color: transparent;
-					padding: 0;
-				}
-			}
-		}
+	.woocommerce-info:has(+ #order_review.change-payment-method) {
+		background: transparent;
+		padding: 0;
+	}
+	/* stylelint-disable-next-line selector-id-pattern */
+	#order_review.change-payment-method {
 		.update-all-subscriptions-payment-method-wrap {
 			label {
 				font-weight: normal;

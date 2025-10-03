@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 ?>
-<form id="order_review" method="post">
+<form id="order_review" class="change-payment-method" method="post">
 
 	<div id="payment">
 		<?php
