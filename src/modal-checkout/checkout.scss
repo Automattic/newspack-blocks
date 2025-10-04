@@ -499,8 +499,8 @@
 				.newspack-cover-fees,
 				.woocommerce-SavedPaymentMethods-saveNew {
 					label {
-						font-size: var(--newspack-ui-font-size-xs, 14px);
-						line-height: var(--newspack-ui-line-height-xs, 1.4286);
+						font-size: var(--newspack-ui-font-size-s, 16px);
+						line-height: var(--newspack-ui-line-height-s, 1.5);
 					}
 
 					&::before {
@@ -994,6 +994,8 @@
 	/* stylelint-disable-next-line selector-id-pattern */
 	.woocommerce-info:has(+ #order_review.change-payment-method) {
 		background: transparent;
+		font-size: var(--newspack-ui-font-size-s, 16px);
+		line-height: var(--newspack-ui-line-height-s, 1.5);
 		padding: 0;
 	}
 	/* stylelint-disable-next-line selector-id-pattern */
@@ -1001,7 +1003,8 @@
 		.update-all-subscriptions-payment-method-wrap {
 			label {
 				font-weight: normal;
-				font-size: var(--newspack-ui-font-size-xs, 14px);
+				font-size: var(--newspack-ui-font-size-s, 16px);
+				line-height: var(--newspack-ui-line-height-s, 1.5);
 			}
 		}
 	}
