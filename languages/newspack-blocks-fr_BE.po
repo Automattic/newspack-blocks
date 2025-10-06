@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Newspack Blocks 1.0.0-alpha.25\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/project\n"
-"POT-Creation-Date: 2025-10-04T12:29:25+00:00\n"
+"POT-Creation-Date: 2025-10-06T16:39:26+00:00\n"
 "PO-Revision-Date: 2024-08-30 08:46-0700\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -249,45 +249,45 @@ msgstr ""
 msgid "Newspack Subscribe"
 msgstr ""
 
-#: includes/class-newspack-blocks.php:900
+#: includes/class-newspack-blocks.php:902
 msgid "Common"
 msgstr ""
 
 #. translators: separates last two sponsor names; needs a space on either side.
-#: includes/class-newspack-blocks.php:1001
+#: includes/class-newspack-blocks.php:1003
 msgid " and "
 msgstr " et "
 
 #. translators: separates all but the last two sponsor names; needs a space at the end.
-#: includes/class-newspack-blocks.php:1004
+#: includes/class-newspack-blocks.php:1006
 msgid ", "
 msgstr ""
 
-#: includes/class-newspack-blocks.php:1305
+#: includes/class-newspack-blocks.php:1307
 msgid "Jetpack donations is disabled in favour of Newspack donations."
 msgstr ""
 
-#: includes/class-newspack-blocks.php:1338 dist/editor.js:8
+#: includes/class-newspack-blocks.php:1340 dist/editor.js:8
 #: src/shared/js/utils.js:56
 msgid "Draft"
 msgstr ""
 
-#: includes/class-newspack-blocks.php:1339 dist/editor.js:8
+#: includes/class-newspack-blocks.php:1341 dist/editor.js:8
 #: src/shared/js/utils.js:56
 msgid "Scheduled"
 msgstr ""
 
 #. Translators: %s is the %s is the frequency.
-#: includes/class-newspack-blocks.php:1497 dist/editor.js:35
+#: includes/class-newspack-blocks.php:1499 dist/editor.js:35
 #, php-format
 msgid "per %s"
 msgstr ""
 
-#: includes/class-newspack-blocks.php:1528 dist/editor.js:29
+#: includes/class-newspack-blocks.php:1530 dist/editor.js:29
 msgid " once"
 msgstr ""
 
-#: includes/class-newspack-blocks.php:1531
+#: includes/class-newspack-blocks.php:1533
 msgid " per "
 msgstr ""
 

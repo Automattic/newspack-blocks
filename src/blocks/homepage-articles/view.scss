@@ -510,6 +510,28 @@
 	}
 }
 
+[dir="rtl"] {
+	.wpnbha {
+		&.has-text-align-right {
+			.cat-links,
+			.entry-meta,
+			.entry-sponsors,
+			.sponsor-logos {
+				justify-content: flex-start;
+			}
+		}
+
+		&.has-text-align-left {
+			.cat-links,
+			.entry-meta,
+			.entry-sponsors,
+			.sponsor-logos {
+				justify-content: flex-end;
+			}
+		}
+	}
+}
+
 /*
 	Some really rough font sizing.
  */
