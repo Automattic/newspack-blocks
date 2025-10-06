@@ -85,6 +85,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				)
 			);
 			?>
+			<a href="<?php echo esc_url( $subscription->get_view_order_url() ); ?>" target="_top" class="newspack-ui__button newspack-ui__button--ghost newspack-ui__button--wide"><?php esc_html_e( 'Cancel', 'newspack-plugin' ); ?></a>
 
 			<?php do_action( 'woocommerce_subscriptions_change_payment_after_submit' ); ?>
 
