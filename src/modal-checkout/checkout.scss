@@ -454,14 +454,15 @@
 						}
 
 						label {
-							font-size: var(--newspack-ui-font-size-xs, 14px);
+							font-size: var(--newspack-ui-font-size-s, 16px);
 							font-weight: normal;
-							line-height: inherit;
+							line-height: var(--newspack-ui-line-height-s, 1.5);
 							margin: 0;
 						}
 
 						input {
 							margin-right: var(--newspack-ui-spacer-base, 8px);
+							margin-top: calc((var(--newspack-ui-font-size-s, 16px) * var(--newspack-ui-line-height-s, 1.5) - 20px) / 2);
 						}
 					}
 				}
@@ -1000,12 +1001,22 @@
 	}
 	/* stylelint-disable-next-line selector-id-pattern */
 	#order_review.change-payment-method {
+		.payment_box ul.wc-saved-payment-methods {
+			margin-top: 0;
+		}
+
 		.update-all-subscriptions-payment-method-wrap {
 			label {
 				font-weight: normal;
 				font-size: var(--newspack-ui-font-size-s, 16px);
 				line-height: var(--newspack-ui-line-height-s, 1.5);
 			}
+		}
+	}
+	/* stylelint-disable-next-line selector-id-pattern */
+	#update_all_subscriptions_payment_method_field {
+		label {
+			margin-bottom: 0;
 		}
 	}
 }
