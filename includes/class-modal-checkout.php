@@ -2000,7 +2000,6 @@ final class Modal_Checkout {
 				'checkout_confirm_variation' => __( 'Purchase', 'newspack-blocks' ),
 				'checkout_edit_billing'      => __( 'Edit billing information', 'newspack-blocks' ),
 				'checkout_cancel'            => __( 'Cancel', 'newspack-blocks' ),
-				'checkout_back'              => __( 'Back', 'newspack-blocks' ),
 				'checkout_success'           => __( 'Transaction successful', 'newspack-blocks' ),
 				'checkout_nyp'               => __( "Your contribution directly funds our work. If you're moved to do so, you can opt to pay more than the standard rate.", 'newspack-blocks' ),
 				'checkout_nyp_thankyou'      => __( "Thank you for your generosity! We couldn't do this without you!", 'newspack-blocks' ),
