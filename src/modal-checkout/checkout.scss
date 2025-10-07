@@ -940,8 +940,13 @@
 	}
 
 	// stylelint-disable-next-line selector-id-pattern
-	#checkout_back {
+	#checkout_edit_billing {
 		margin-top: 0;
+	}
+
+	// stylelint-disable-next-line selector-id-pattern
+	#checkout_cancel {
+		margin-top: var(--newspack-ui-spacer-2);
 	}
 
 	// stylelint-disable-next-line selector-id-pattern
