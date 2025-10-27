@@ -3,7 +3,7 @@
 	"version": "4.16.1",
 	"author": "Automattic",
 	"devDependencies": {
-		"@rushstack/eslint-patch": "^1.12.0",
+		"@rushstack/eslint-patch": "^1.14.1",
 		"@testing-library/dom": "^10.4.1",
 		"@testing-library/user-event": "^14.6.1",
 		"@types/lodash": "^4.17.20",
