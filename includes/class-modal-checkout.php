@@ -1294,7 +1294,7 @@ final class Modal_Checkout {
 		if (
 			1 === count( array_values( $cart_items ) ) &&
 			method_exists( 'WCS_Gifting', 'email_belongs_to_current_user' ) &&
-			method_exists( 'WCS_Gifting', 'update_cart_item_key' ) &&
+			method_exists( 'WCS_Gifting', 'update_cart_item_recipient' ) &&
 			method_exists( 'WCSG_Cart', 'is_giftable_item' )
 		) {
 			$is_gift   = ! empty( filter_input( INPUT_POST, 'newspack_wcsg_is_gift', FILTER_SANITIZE_SPECIAL_CHARS ) );
@@ -1307,7 +1307,7 @@ final class Modal_Checkout {
 
 				// If no errors, attach the recipient's email address to the subscription item.
 				if ( $is_valid_email ) {
-					\WCS_Gifting::update_cart_item_key( $cart_item, $cart_item_key, $recipient_email );
+					\WCS_Gifting::update_cart_item_recipient( $cart_item, $cart_item_key, $recipient_email );
 				} else {
 					$notice = $self_gifting
 						? __( 'Please enter someone else\' email address to receive this gift.', 'newspack-blocks' )
