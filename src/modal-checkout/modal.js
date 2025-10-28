@@ -498,6 +498,8 @@ domReady( () => {
 		);
 		const hasNewsletterPopup = document?.querySelector( '.newspack-newsletters-signup-modal' );
 
+		const checkoutData = getCheckoutData( container?.querySelector( '#modal-checkout-product-details' ) );
+
 		// Empty cart if checkout is not complete.
 		if ( ! container?.checkoutComplete ) {
 			emptyCart();
@@ -546,7 +548,7 @@ domReady( () => {
 				inCheckoutIntent = false;
 			};
 
-			if ( window?.newspackReaderActivation?.openNewslettersSignupModal ) {
+			if ( checkoutData.action_type !== 'subscription_switch' && window?.newspackReaderActivation?.openNewslettersSignupModal ) {
 				window.newspackReaderActivation.openNewslettersSignupModal( {
 					onSuccess: handleCheckoutComplete,
 					onError: handleCheckoutComplete,
