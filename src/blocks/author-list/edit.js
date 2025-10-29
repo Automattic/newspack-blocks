@@ -24,7 +24,7 @@ import {
 } from '@wordpress/components';
 import { Fragment, useEffect, useState } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
-import { columns as columnsIcon, edit, listView, pullLeft, pullRight } from '@wordpress/icons';
+import { columns as columnsIcon, pencil, listView, pullLeft, pullRight } from '@wordpress/icons';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { avatarSizeOptions, textSizeOptions, units } from '../author-profile/edit';
@@ -351,7 +351,7 @@ const AuthorList = ( { attributes, clientId, setAttributes } ) => {
 					<Toolbar
 						controls={ [
 							{
-								icon: edit,
+								icon: pencil,
 								title: __( 'Edit selection', 'newspack-blocks' ),
 								onClick: () => {
 									setAttributes( { authorId: 0 } );
