@@ -67,7 +67,7 @@ export function iframeReady( iframe, cb, onReset ) {
 	}
 
 	function readyState() {
-		if ( this.readyState === "complete" ) {
+		if ( this.readyState === 'complete' ) {
 			ready.call( this );
 		}
 	}
@@ -93,7 +93,7 @@ export function iframeReady( iframe, cb, onReset ) {
 			return;
 		}
 		const doc = iframe.contentDocument || iframe.contentWindow?.document;
-		if ( doc && doc.URL.indexOf('about:') !== 0 ) {
+		if ( doc && doc.URL.indexOf( 'about:' ) !== 0 ) {
 			if ( doc?.readyState === 'complete' ) {
 				ready.call( doc );
 			} else {
@@ -117,8 +117,8 @@ export function iframeReady( iframe, cb, onReset ) {
 
 	// Set up MutationObserver to watch for src changes
 	if ( ! iframe._observer ) {
-		iframe._observer = new MutationObserver( ( mutations ) => {
-			mutations.forEach( ( mutation ) => {
+		iframe._observer = new MutationObserver( mutations => {
+			mutations.forEach( mutation => {
 				if ( mutation.type === 'attributes' && mutation.attributeName === 'src' ) {
 					fired = false;
 					cleanup();
@@ -227,7 +227,6 @@ export function getCheckoutData( element ) {
 
 	return data;
 }
-
 
 /**
  * Get formatted amount for price summary display.

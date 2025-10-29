@@ -20,9 +20,7 @@ const blockList = JSON.parse( fs.readFileSync( blockListFile ) );
 const editorSetup = path.join( __dirname, 'src', 'setup', 'editor' );
 
 function blockScripts( type, inputDir, blocks ) {
-	return blocks
-		.map( block => path.join( inputDir, 'blocks', block, `${ type }.js` ) )
-		.filter( fs.existsSync );
+	return blocks.map( block => path.join( inputDir, 'blocks', block, `${ type }.js` ) ).filter( fs.existsSync );
 }
 
 const blocksDir = path.join( __dirname, 'src', 'blocks' );
@@ -36,7 +34,7 @@ const viewBlocksScripts = blocks.reduce( ( viewBlocks, block ) => {
 	const pathToBlock = [ __dirname, 'src', 'blocks', block ];
 	let viewScriptPath = path.join( ...pathToBlock, 'view.js' );
 	let fileExists = fs.existsSync( viewScriptPath );
-	if ( !fileExists ) {
+	if ( ! fileExists ) {
 		// Try TS.
 		viewScriptPath = path.join( ...pathToBlock, 'view.ts' );
 		fileExists = fs.existsSync( viewScriptPath );
@@ -48,10 +46,7 @@ const viewBlocksScripts = blocks.reduce( ( viewBlocks, block ) => {
 }, {} );
 
 // Combines all the different blocks into one editor.js script
-const editorScript = [
-	editorSetup,
-	...blockScripts( 'editor', path.join( __dirname, 'src' ), blocks ),
-];
+const editorScript = [ editorSetup, ...blockScripts( 'editor', path.join( __dirname, 'src' ), blocks ) ];
 
 const placeholderBlocksScript = path.join( __dirname, 'src', 'setup', 'placeholder-blocks' );
 
@@ -68,27 +63,20 @@ const entry = {
 	...viewBlocksScripts,
 };
 
-const webpackConfig = getBaseWebpackConfig(
-	{
-		entry,
-	}
-);
+const webpackConfig = getBaseWebpackConfig( {
+	entry,
+} );
 
 // Add rule to handle JSX files from newspack-icons
-webpackConfig.module.rules.push({
+webpackConfig.module.rules.push( {
 	test: /\.jsx?$/,
-	include: [
-		path.resolve(__dirname, 'node_modules/newspack-icons')
-	],
+	include: [ path.resolve( __dirname, 'node_modules/newspack-icons' ) ],
 	use: {
 		loader: 'babel-loader',
 		options: {
-			presets: [
-				'@babel/preset-env',
-				['@babel/preset-react', { runtime: 'automatic' }]
-			]
-		}
-	}
-});
+			presets: [ '@babel/preset-env', [ '@babel/preset-react', { runtime: 'automatic' } ] ],
+		},
+	},
+} );
 
 module.exports = webpackConfig;
