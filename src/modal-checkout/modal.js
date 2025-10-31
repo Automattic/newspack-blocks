@@ -193,7 +193,7 @@ domReady( () => {
 	 */
 	const emptyCart = async () => {
 		const body = new FormData();
-		if ( ! newspackBlocksModal.has_unsupported_payment_gateway ) {
+		if ( newspackBlocksModal.has_supported_payment_gateway ) {
 			body.append( 'modal_checkout', '1' );
 		}
 		body.append( 'action', 'abandon_modal_checkout' );
@@ -229,7 +229,7 @@ domReady( () => {
 	 * @param {Event} ev
 	 */
 	const handleCheckoutFormSubmit = ev => {
-		const isModalCheckout = ! newspackBlocksModal.has_unsupported_payment_gateway;
+		const isModalCheckout = newspackBlocksModal.has_supported_payment_gateway;
 		if ( ! isModalCheckout ) {
 			ev.preventDefault();
 		}
@@ -679,7 +679,7 @@ domReady( () => {
 		.forEach( element => {
 			const forms = element.querySelectorAll( 'form' );
 			forms.forEach( form => {
-				if ( ! newspackBlocksModal.has_unsupported_payment_gateway ) {
+				if ( newspackBlocksModal.has_supported_payment_gateway ) {
 					form.prepend( modalCheckoutHiddenInput.cloneNode() );
 				}
 				form.target = IFRAME_NAME;
