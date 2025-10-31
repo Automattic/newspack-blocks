@@ -200,6 +200,7 @@ final class Modal_Checkout {
 
 		// Wrap required checkbox text in a span so it works nicely with the Newspack UI grid layout.
 		add_filter( 'woocommerce_form_field_checkbox', [ __CLASS__, 'wrap_required_checkbox_text' ], 10, 4 );
+		add_filter( 'woocommerce_available_payment_gateways', [ __CLASS__, 'filter_available_payment_gateways' ] );
 
 		/**
 		 * Ensure that options to limit the number of subscriptions per product are respected.
@@ -264,6 +265,28 @@ final class Modal_Checkout {
 		 * @param array $supported_gateways
 		 */
 		return apply_filters( 'newspack_blocks_modal_checkout_supported_gateways', self::$supported_gateways );
+	}
+
+	/**
+	 * Filter available payment gateways to only supported ones in modal checkout.
+	 *
+	 * @param array $available_gateways Available payment gateways.
+	 *
+	 * @return array Filtered available payment gateways.
+	 */
+	public static function filter_available_payment_gateways( $available_gateways ) {
+		if ( ! self::is_modal_checkout() ) {
+			return $available_gateways;
+		}
+
+		$supported_gateways = self::get_supported_payment_gateways();
+		foreach ( $available_gateways as $id => $gateway ) {
+			if ( ! in_array( $id, $supported_gateways, true ) ) {
+				unset( $available_gateways[ $id ] );
+			}
+		}
+
+		return $available_gateways;
 	}
 
 	/**
