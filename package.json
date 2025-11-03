@@ -44,8 +44,8 @@
 	],
 	"dependencies": {
 		"classnames": "^2.5.1",
-		"newspack-colors": "^1.0.0",
-		"newspack-icons": "^1.0.2",
+		"newspack-colors": "^1.1.0",
+		"newspack-icons": "^1.0.4",
 		"redux": "^5.0.0",
 		"redux-saga": "^1.4.2",
 		"regenerator-runtime": "^0.14.1",
@@ -53,8 +53,8 @@
 	},
 	"devDependencies": {
 		"@types/lodash": "^4.17.20",
-		"newspack-components": "^4.1.0",
-		"newspack-scripts": "github:Automattic/newspack-scripts#chore/refresh-dependencies"
+		"newspack-components": "^4.2.0",
+		"newspack-scripts": "^5.8.0"
 	},
 	"overrides": {
 		"path-to-regexp": "1.7.0"
