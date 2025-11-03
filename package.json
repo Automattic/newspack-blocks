@@ -45,7 +45,7 @@
 	"dependencies": {
 		"classnames": "^2.5.1",
 		"newspack-colors": "^1.1.0",
-		"newspack-icons": "^1.0.4",
+		"newspack-icons": "^1.0.5",
 		"redux": "^5.0.0",
 		"redux-saga": "^1.4.2",
 		"regenerator-runtime": "^0.14.1",
