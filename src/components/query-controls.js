@@ -294,7 +294,7 @@ class QueryControls extends Component {
 						isBlock
 						help={
 							specificMode
-								? __( 'The block will display only the specifically selected post(s).', 'newspack-blocks' )
+								? __( 'The block will display only the specifically selected content.', 'newspack-blocks' )
 								: __( 'The block will display content based on the filtering settings below.', 'newspack-blocks' )
 						}
 						__next40pxDefaultSize
@@ -309,8 +309,8 @@ class QueryControls extends Component {
 						onChange={ onSpecificPostsChange }
 						fetchSuggestions={ this.fetchPostSuggestions }
 						fetchSavedInfo={ this.fetchSavedPosts }
-						label={ __( 'Posts', 'newspack-blocks' ) }
-						help={ __( 'Begin typing any word in a post title. Click on an autocomplete result to select it.', 'newspack-blocks' ) }
+						label={ __( 'Content', 'newspack-blocks' ) }
+						help={ __( 'Begin typing any word in a title. Click on an autocomplete result to select it.', 'newspack-blocks' ) }
 					/>
 				) : (
 					<>

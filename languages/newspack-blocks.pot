@@ -741,7 +741,7 @@ msgstr ""
 
 #: dist/editor.js:1
 #: src/components/query-controls.js:297
-msgid "The block will display only the specifically selected post(s)."
+msgid "The block will display only the specifically selected content."
 msgstr ""
 
 #: dist/editor.js:1
@@ -761,7 +761,7 @@ msgstr ""
 
 #: dist/editor.js:1
 #: src/components/query-controls.js:312
-msgid "Posts"
+msgid "Content"
 msgstr ""
 
 #: dist/editor.js:1
@@ -1797,7 +1797,7 @@ msgid "Grid"
 msgstr ""
 
 #: dist/editor.js:41
-msgid "Allow duplicate stories"
+msgid "Allow duplicate content"
 msgstr ""
 
 #: dist/editor.js:41
