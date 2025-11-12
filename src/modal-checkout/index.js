@@ -120,11 +120,11 @@ import { domReady } from './utils';
 					}
 					placedOrder = true;
 					container.dispatchEvent( placeOrderStartEvent );
-				});
+				} );
 				$form.on( 'checkout_place_order_success', function () {
 					placedOrder = false;
 					container.dispatchEvent( placeOrderSuccessEvent );
-				});
+				} );
 
 				$( document.body ).on( 'checkout_error', function () {
 					if ( ! placedOrder ) {
@@ -132,14 +132,14 @@ import { domReady } from './utils';
 					}
 					placedOrder = false;
 					container.dispatchEvent( placeOrderErrorEvent );
-				})
+				} );
 				$form.on( 'update_checkout', function () {
 					if ( ! placedOrder ) {
 						return;
 					}
 					placedOrder = false;
 					container.dispatchEvent( placeOrderErrorEvent );
-				});
+				} );
 
 
 				/**
