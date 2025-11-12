@@ -242,17 +242,15 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 							{ __( 'Tiers layout is disabled if the block is set to render untiered.', 'newspack-blocks' ) }
 						</Notice>
 					) }
-					{ ! isTierBasedLayoutEnabled && (
-						<SelectControl
-							label={ __( 'Default Tab', 'newspack-blocks' ) }
-							value={ attributes.defaultFrequency }
-							options={ availableFrequencies.map( key => ( {
-								label: FREQUENCIES[ key ],
-								value: key,
-							} ) ) }
-							onChange={ ( defaultFrequency: DonationFrequencySlug ) => setAttributes( { defaultFrequency } ) }
-						/>
-					) }
+					<SelectControl
+						label={ __( 'Default Tab', 'newspack-blocks' ) }
+						value={ attributes.defaultFrequency }
+						options={ availableFrequencies.map( key => ( {
+							label: FREQUENCIES[ key ],
+							value: key,
+						} ) ) }
+						onChange={ ( defaultFrequency: DonationFrequencySlug ) => setAttributes( { defaultFrequency } ) }
+					/>
 				</PanelBody>
 				{ canUseNameYourPrice && (
 					<PanelBody title={ __( 'Suggested Donations', 'newspack-blocks' ) }>

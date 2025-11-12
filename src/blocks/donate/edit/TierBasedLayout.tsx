@@ -15,12 +15,12 @@ import { FREQUENCIES, DISABLED_IN_TIERS_BASED_LAYOUT_TIER_INDEX } from '../const
 
 const TierBasedLayout = ( props: ComponentProps ) => {
 	const { amounts, availableFrequencies, attributes } = props;
-	const [ currentFrequency, setCurrencyFrequency ] = useState( availableFrequencies[ 0 ] );
+	const [ currentFrequency, setCurrencyFrequency ] = useState( attributes.defaultFrequency || availableFrequencies[ 0 ] );
 
 	const displayedAmounts = amounts[ currentFrequency ].slice( 0, DISABLED_IN_TIERS_BASED_LAYOUT_TIER_INDEX );
 
 	useEffect( () => {
-		setCurrencyFrequency( availableFrequencies[ 0 ] );
+		setCurrencyFrequency( attributes.defaultFrequency || availableFrequencies[ 0 ] );
 	}, [ availableFrequencies.length ] );
 
 	const handleTierOptionChange = ( tierIndex: number, optionKey: keyof TierBasedOptionValue ) => ( value: string ) => {
