@@ -971,6 +971,21 @@ final class Modal_Checkout {
 					'signin_modal_title'   => self::get_modal_checkout_labels( 'signin_modal_title' ),
 					'thankyou_modal_title' => self::get_modal_checkout_labels( 'checkout_success' ),
 				],
+
+				'processing_payment_messages'     => [
+					[
+						'text'  => __( 'Processing payment...', 'newspack-blocks' ),
+						'delay' => 0,
+					],
+					[
+						'text'  => __( 'Verifying details...', 'newspack-blocks' ),
+						'delay' => 8000,
+					],
+					[
+						'text'  => __( 'Finalizing transaction...', 'newspack-blocks' ),
+						'delay' => 14000,
+					],
+				],
 			]
 		);
 		wp_enqueue_style(
