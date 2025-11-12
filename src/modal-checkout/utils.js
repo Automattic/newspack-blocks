@@ -193,7 +193,6 @@ export function onCheckoutPlaceOrderSuccess( container, callback ) {
 	}
 }
 
-
 /**
  * Run a callback when the checkout place order fails.
  *
