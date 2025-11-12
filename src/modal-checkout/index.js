@@ -141,7 +141,6 @@ import { domReady } from './utils';
 					container.dispatchEvent( placeOrderErrorEvent );
 				} );
 
-
 				/**
 				 * Toggle "Payment info" title if there's no money transaction.
 				 */
