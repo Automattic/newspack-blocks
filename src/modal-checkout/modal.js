@@ -292,11 +292,17 @@ domReady( () => {
 			const variationModal = [ ...variationModals ].find( modal => modal.dataset.productId === checkoutData.product_id );
 			if ( variationModal ) {
 				variationModal.querySelectorAll( `form[target="${ IFRAME_NAME }"]` ).forEach( singleVariationForm => {
-					// Fill in the after success variables in the variation modal.
-					[ 'after_success_behavior', 'after_success_url', 'after_success_button_label' ].forEach( afterSuccessParam => {
-						const existingInputs = singleVariationForm.querySelectorAll( 'input[name="' + afterSuccessParam + '"]' );
+					// Fill in the hidden params in the variation modal.
+					[
+						'after_success_behavior',
+						'after_success_url',
+						'after_success_button_label',
+						'gate_post_id',
+						'newspack_popup_id',
+					].forEach( hiddenParam => {
+						const existingInputs = singleVariationForm.querySelectorAll( 'input[name="' + hiddenParam + '"]' );
 						if ( 0 === existingInputs.length ) {
-							singleVariationForm.prepend( createHiddenInput( afterSuccessParam, checkoutData[ afterSuccessParam ] ) );
+							singleVariationForm.prepend( createHiddenInput( hiddenParam, checkoutData[ hiddenParam ] ) );
 						}
 					} );
 

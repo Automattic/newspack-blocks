@@ -363,13 +363,13 @@ final class Checkout_Data {
 		$gate_post_id = null;
 		$newspack_popup_id = null;
 		if ( $order ) {
-			$gate_post_id = $order->get_meta( '_memberships_content_gate' );
+			$gate_post_id = $order->get_meta( '_gate_post_id' );
 			$newspack_popup_id = $order->get_meta( '_newspack_popup_id' );
 		} elseif ( $cart_item ) {
-			$gate_post_id = $cart_item['memberships_content_gate'] ?? null;
+			$gate_post_id = $cart_item['gate_post_id'] ?? null;
 			$newspack_popup_id = $cart_item['newspack_popup_id'] ?? null;
 		} else {
-			$gate_post_id = filter_input( INPUT_GET, 'memberships_content_gate', FILTER_SANITIZE_NUMBER_INT );
+			$gate_post_id = filter_input( INPUT_GET, 'gate_post_id', FILTER_SANITIZE_NUMBER_INT );
 			$newspack_popup_id = filter_input( INPUT_GET, 'newspack_popup_id', FILTER_SANITIZE_NUMBER_INT );
 		}
 		if ( $gate_post_id ) {
