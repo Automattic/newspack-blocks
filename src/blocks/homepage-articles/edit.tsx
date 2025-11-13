@@ -287,7 +287,7 @@ class Edit extends Component< HomepageArticlesProps > {
 						postType={ postType }
 					/>
 					<ToggleControl
-						label={ __( 'Allow duplicate stories', 'newspack-blocks' ) }
+						label={ __( 'Allow duplicate content', 'newspack-blocks' ) }
 						help={ __( "Exclude this block from the page's deduplication logic.", 'newspack-blocks' ) }
 						checked={ ! attributes.deduplicate }
 						onChange={ ( value: boolean ) => setAttributes( { deduplicate: ! value } ) }

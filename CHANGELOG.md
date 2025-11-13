@@ -1,3 +1,11 @@
+## [4.17.4](https://github.com/Automattic/newspack-blocks/compare/v4.17.3...v4.17.4) (2025-11-13)
+
+
+### Bug Fixes
+
+* content gate metadata methods and params ([163e07f](https://github.com/Automattic/newspack-blocks/commit/163e07f56653b39eee68145659419d917606693d))
+* content gate metadata methods and params ([#2249](https://github.com/Automattic/newspack-blocks/issues/2249)) ([fe6cc18](https://github.com/Automattic/newspack-blocks/commit/fe6cc18898349d978af8f0dd9d62b65ed92df652))
+
 ## [4.17.3](https://github.com/Automattic/newspack-blocks/compare/v4.17.2...v4.17.3) (2025-11-11)
 
 
