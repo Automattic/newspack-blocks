@@ -15,6 +15,9 @@ import {
 	iframeReady,
 	onCheckoutReady,
 	onCheckoutComplete,
+	onCheckoutCancel,
+	onCheckoutPlaceOrderStart,
+	onCheckoutPlaceOrderError,
 	createHiddenInput,
 	triggerFormSubmit,
 	getCheckoutData,
@@ -27,6 +30,8 @@ const IFRAME_CONTAINER_ID = 'newspack_modal_checkout_container';
 const MODAL_CHECKOUT_ID = 'newspack_modal_checkout';
 const MODAL_CLASS_PREFIX = `${ CLASS_PREFIX }__modal`;
 const VARIATON_MODAL_CLASS_PREFIX = 'newspack-blocks__modal-variation';
+const PROCESSING_PAYMENT_TEXT_CLASS = `${ CLASS_PREFIX }__processing-payment-text`;
+const PROCESSING_PAYMENT_MESSAGES = newspackBlocksModal.processing_payment_messages;
 
 // Track the checkout intent to avoid multiple analytics events.
 let inCheckoutIntent = false;
@@ -115,9 +120,42 @@ domReady( () => {
 		const productDetails = container.querySelector( '#modal-checkout-product-details' );
 		const checkoutData = getCheckoutData( productDetails );
 
-		container.addEventListener( 'checkout-cancel', () => {
+		const processingPaymentText = document.createElement( 'p' );
+		processingPaymentText.classList.add( PROCESSING_PAYMENT_TEXT_CLASS );
+		let processingPaymentTimeouts = [];
+
+		const clearProcessingPaymentTimeouts = () => {
+			processingPaymentTimeouts.forEach( timeoutId => clearTimeout( timeoutId ) );
+			processingPaymentTimeouts = [];
+		};
+
+		const renderProcessingPaymentScreen = () => {
+			spinner.querySelectorAll( `.${ PROCESSING_PAYMENT_TEXT_CLASS }` ).forEach( node => node.remove() );
+			spinner.style.display = 'flex';
+			clearProcessingPaymentTimeouts();
+			processingPaymentText.textContent = PROCESSING_PAYMENT_MESSAGES[ 0 ]?.text ?? '';
+			PROCESSING_PAYMENT_MESSAGES.slice( 1 ).forEach( ( { text, delay } ) => {
+				const timeoutId = setTimeout( () => {
+					processingPaymentText.textContent = text;
+				}, delay );
+				processingPaymentTimeouts.push( timeoutId );
+			} );
+			spinner.appendChild( processingPaymentText );
+		};
+
+		const hideProcessingPaymentScreen = () => {
+			spinner.style.display = 'none';
+			clearProcessingPaymentTimeouts();
+			spinner.querySelectorAll( `.${ PROCESSING_PAYMENT_TEXT_CLASS }` ).forEach( node => node.remove() );
+		};
+
+		onCheckoutCancel( container, () => {
 			closeCheckout();
 		} );
+
+		onCheckoutPlaceOrderStart( container, renderProcessingPaymentScreen );
+
+		onCheckoutPlaceOrderError( container, hideProcessingPaymentScreen );
 
 		onCheckoutReady( container, () => {
 			// Make sure the order summary renders the correct text.
@@ -151,6 +189,8 @@ domReady( () => {
 			setModalTitle( newspackBlocksModal.labels.thankyou_modal_title );
 			setModalReady( container );
 			a11y.trapFocus( modalCheckout.querySelector( `.${ MODAL_CLASS_PREFIX }` ) );
+
+			hideProcessingPaymentScreen();
 		} );
 	}
 

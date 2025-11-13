@@ -23,6 +23,9 @@ import { domReady } from './utils';
 		const readyEvent = new CustomEvent( 'checkout-ready' );
 		const completeEvent = new CustomEvent( 'checkout-complete' );
 		const cancelEvent = new CustomEvent( 'checkout-cancel' );
+		const placeOrderStartEvent = new CustomEvent( 'checkout-place-order-start' );
+		const placeOrderSuccessEvent = new CustomEvent( 'checkout-place-order-success' );
+		const placeOrderErrorEvent = new CustomEvent( 'checkout-place-order-error' );
 
 		function getEventHandlers( element, event ) {
 			const events = $._data( element, 'events' );
@@ -106,6 +109,37 @@ import { domReady } from './utils';
 				$( document ).on( 'payment_method_selected', handlePaymentMethodSelect );
 				$( document ).on( 'updated_checkout', handlePaymentMethodSelect );
 				handlePaymentMethodSelect();
+
+				/**
+				 * Bubble up checkout place order event.
+				 */
+				let placedOrder = false;
+				$form.on( 'checkout_place_order', function () {
+					if ( placedOrder ) {
+						return;
+					}
+					placedOrder = true;
+					container.dispatchEvent( placeOrderStartEvent );
+				} );
+				$form.on( 'checkout_place_order_success', function () {
+					placedOrder = false;
+					container.dispatchEvent( placeOrderSuccessEvent );
+				} );
+
+				$( document.body ).on( 'checkout_error', function () {
+					if ( ! placedOrder ) {
+						return;
+					}
+					placedOrder = false;
+					container.dispatchEvent( placeOrderErrorEvent );
+				} );
+				$form.on( 'update_checkout', function () {
+					if ( ! placedOrder ) {
+						return;
+					}
+					placedOrder = false;
+					container.dispatchEvent( placeOrderErrorEvent );
+				} );
 
 				/**
 				 * Toggle "Payment info" title if there's no money transaction.
