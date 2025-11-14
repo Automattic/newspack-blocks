@@ -21,7 +21,7 @@ const TierBasedLayout = ( props: ComponentProps ) => {
 
 	useEffect( () => {
 		setCurrencyFrequency( attributes.defaultFrequency || availableFrequencies[ 0 ] );
-	}, [ availableFrequencies.length ] );
+	}, [ availableFrequencies.length, attributes.defaultFrequency ] );
 
 	const handleTierOptionChange = ( tierIndex: number, optionKey: keyof TierBasedOptionValue ) => ( value: string ) => {
 		const tiersBasedOptions: DonateBlockAttributes[ 'tiersBasedOptions' ] = [
