@@ -141,7 +141,6 @@ import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 						return;
 					}
 					placedOrder = false;
-					$( document.body ).trigger( 'update_checkout' );
 					container.dispatchEvent( placeOrderErrorEvent );
 				} );
 				$form.on( 'update_checkout', function () {
