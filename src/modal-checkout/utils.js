@@ -180,10 +180,10 @@ export function onCheckoutPlaceOrderStart( container, callback ) {
 }
 
 /**
- * Run a callback when the checkout place order processing.
+ * Run a callback when the checkout place order is processing.
  *
  * @param {Object}   container The container element inside the iframe document.
- * @param {Function} callback  The callback to execute when the checkout place order processing.
+ * @param {Function} callback  The callback to execute when the checkout place order is processing.
  */
 export function onCheckoutPlaceOrderProcessing( container, callback ) {
 	if ( container.checkoutPlaceOrderProcessing ) {

@@ -203,12 +203,11 @@ domReady( () => {
 			if ( ! form ) {
 				return;
 			}
-			const timeoutId = setTimeout( () => {
+			setTimeout( () => {
 				closeCheckout();
 				spinner.style.display = 'none';
 				form.requestSubmit( form.querySelector( 'button[type="submit"]' ) );
 				hideProcessingPaymentScreen();
-				clearTimeout( timeoutId );
 			}, 1000 );
 		};
 
