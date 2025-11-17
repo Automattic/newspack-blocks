@@ -515,6 +515,7 @@ domReady( () => {
 			// Match iframe and modal content heights to avoid inner iframe scollbar.
 			modalContent.style.height = iframeHeight + 'px';
 			iframe.style.height = iframeHeight + 'px';
+			iframe.style.visibility = 'visible';
 		}
 	} );
 
