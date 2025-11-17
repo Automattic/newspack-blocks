@@ -978,6 +978,10 @@ final class Modal_Checkout {
 						'delay' => 0,
 					],
 					[
+						'text'  => __( 'Processing payment...', 'newspack-blocks' ),
+						'delay' => 250,
+					],
+					[
 						'text'  => __( 'Verifying details...', 'newspack-blocks' ),
 						'delay' => 8000,
 					],

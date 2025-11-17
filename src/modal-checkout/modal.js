@@ -129,13 +129,14 @@ domReady( () => {
 			processingPaymentTimeouts = [];
 		};
 
-		const renderProcessingPaymentScreen = () => {
+		const renderProcessingPaymentScreen = event => {
 			spinner.querySelectorAll( `.${ PROCESSING_PAYMENT_TEXT_CLASS }` ).forEach( node => node.remove() );
 			spinner.style.display = 'flex';
 			clearProcessingPaymentTimeouts();
 			processingPaymentText.textContent = PROCESSING_PAYMENT_MESSAGES[ 0 ]?.text ?? '';
 			PROCESSING_PAYMENT_MESSAGES.slice( 1 ).forEach( ( { text, delay } ) => {
 				const timeoutId = setTimeout( () => {
+					event.target.dispatchEvent( new CustomEvent( 'checkout-place-order-processing' ) );
 					processingPaymentText.textContent = text;
 				}, delay );
 				processingPaymentTimeouts.push( timeoutId );

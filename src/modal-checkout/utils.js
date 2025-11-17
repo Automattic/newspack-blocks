@@ -180,16 +180,16 @@ export function onCheckoutPlaceOrderStart( container, callback ) {
 }
 
 /**
- * Run a callback when the checkout place order succeeds.
+ * Run a callback when the checkout place order processing.
  *
  * @param {Object}   container The container element inside the iframe document.
- * @param {Function} callback  The callback to execute when the checkout place order succeeds.
+ * @param {Function} callback  The callback to execute when the checkout place order processing.
  */
-export function onCheckoutPlaceOrderSuccess( container, callback ) {
-	if ( container.checkoutPlaceOrderSuccess ) {
+export function onCheckoutPlaceOrderProcessing( container, callback ) {
+	if ( container.checkoutPlaceOrderProcessing ) {
 		callback();
 	} else {
-		container.addEventListener( 'checkout-place-order-success', callback );
+		container.addEventListener( 'checkout-place-order-processing', callback );
 	}
 }
 

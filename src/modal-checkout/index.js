@@ -8,7 +8,7 @@ import './checkout.scss';
  * Internal dependencies
  */
 import { manageCheckoutAttempt, manageCheckoutSuccess, manageLoaded, managePagination } from './analytics';
-import { domReady } from './utils';
+import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 
 ( $ => {
 	domReady( () => {
@@ -121,6 +121,16 @@ import { domReady } from './utils';
 					placedOrder = true;
 					container.dispatchEvent( placeOrderStartEvent );
 				} );
+				onCheckoutPlaceOrderProcessing( container, function () {
+					if ( ! placedOrder ) {
+						return;
+					}
+					// If the form stops processing before the `checkout_place_order_success` event is fired, dispatch an error event.
+					if ( ! $form.is( '.processing' ) ) {
+						placedOrder = false;
+						container.dispatchEvent( placeOrderErrorEvent );
+					}
+				} );
 				$form.on( 'checkout_place_order_success', function () {
 					placedOrder = false;
 					container.dispatchEvent( placeOrderSuccessEvent );
@@ -131,6 +141,7 @@ import { domReady } from './utils';
 						return;
 					}
 					placedOrder = false;
+					$( document.body ).trigger( 'update_checkout' );
 					container.dispatchEvent( placeOrderErrorEvent );
 				} );
 				$form.on( 'update_checkout', function () {
