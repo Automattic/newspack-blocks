@@ -26,6 +26,7 @@ import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 		const placeOrderStartEvent = new CustomEvent( 'checkout-place-order-start' );
 		const placeOrderSuccessEvent = new CustomEvent( 'checkout-place-order-success' );
 		const placeOrderErrorEvent = new CustomEvent( 'checkout-place-order-error' );
+		const placeOrderCriticalErrorEvent = new CustomEvent( 'checkout-place-order-critical-error' );
 
 		function getEventHandlers( element, event ) {
 			const events = $._data( element, 'events' );
@@ -136,11 +137,15 @@ import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 					container.dispatchEvent( placeOrderSuccessEvent );
 				} );
 
-				$( document.body ).on( 'checkout_error', function () {
+				$( document.body ).on( 'checkout_error', function ( event, errors ) {
 					if ( ! placedOrder ) {
 						return;
 					}
 					placedOrder = false;
+					if ( errors && 0 <= errors.indexOf( newspackBlocksModalCheckout.labels.critical_error ) ) {
+						container.dispatchEvent( placeOrderCriticalErrorEvent );
+						return;
+					}
 					container.dispatchEvent( placeOrderErrorEvent );
 				} );
 				$form.on( 'update_checkout', function () {

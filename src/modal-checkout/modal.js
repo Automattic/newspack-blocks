@@ -18,6 +18,7 @@ import {
 	onCheckoutCancel,
 	onCheckoutPlaceOrderStart,
 	onCheckoutPlaceOrderError,
+	onCheckoutPlaceOrderCriticalError,
 	createHiddenInput,
 	triggerFormSubmit,
 	getCheckoutData,
@@ -38,6 +39,9 @@ let inCheckoutIntent = false;
 
 // Checkout title.
 let checkoutTitle = newspackBlocksModal.labels.checkout_modal_title;
+
+// Last-submitted checkout form.
+let activeCheckoutForm = null;
 
 // Close the modal.
 const closeModal = el => {
@@ -193,6 +197,22 @@ domReady( () => {
 
 			hideProcessingPaymentScreen();
 		} );
+
+		// Resubmit modal checkout form if an unrecoverable error is encountered.
+		const refreshCheckout = form => {
+			if ( ! form ) {
+				return;
+			}
+			const timeoutId = setTimeout( () => {
+				closeCheckout();
+				spinner.style.display = 'none';
+				form.requestSubmit( form.querySelector( 'button[type="submit"]' ) );
+				hideProcessingPaymentScreen();
+				clearTimeout( timeoutId );
+			}, 1000 );
+		};
+
+		onCheckoutPlaceOrderCriticalError( container, () => refreshCheckout( activeCheckoutForm ) );
 	}
 
 	iframeReady( iframe, handleIframeReady, () => {
@@ -469,6 +489,7 @@ domReady( () => {
 			// Append product data info to the modal, so we can grab it for GA4 events outside of the iframe.
 			document.getElementById( 'newspack_modal_checkout' ).setAttribute( 'data-checkout', JSON.stringify( checkoutData ) );
 		}
+		activeCheckoutForm = form;
 	};
 
 	/**

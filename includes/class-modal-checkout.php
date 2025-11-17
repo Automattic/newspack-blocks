@@ -759,6 +759,7 @@ final class Modal_Checkout {
 					'billing_details'  => self::get_modal_checkout_labels( 'billing_details' ),
 					'shipping_details' => self::get_modal_checkout_labels( 'shipping_details' ),
 					'gift_recipient'   => self::get_modal_checkout_labels( 'gift_recipient' ),
+					'critical_error'   => self::get_modal_checkout_labels( 'checkout_critical_error' ),
 					'complete_button'  => self::order_button_text_with_price(),
 				],
 			]
@@ -1555,7 +1556,7 @@ final class Modal_Checkout {
 	 */
 	public static function hide_expiry_message_shop_link( $message ) {
 		if ( self::is_modal_checkout() && strpos( $message, 'Sorry, your session has expired' ) !== false ) {
-			return __( 'Could not complete this transaction. Please contact us for assistance.', 'newspack-blocks' );
+			return self::get_modal_checkout_labels( 'checkout_critical_error' );
 		}
 		return $message;
 	}
@@ -2033,6 +2034,7 @@ final class Modal_Checkout {
 				'checkout_nyp_thankyou'      => __( "Thank you for your generosity! We couldn't do this without you!", 'newspack-blocks' ),
 				'checkout_nyp_title'         => __( 'Increase your support', 'newspack-blocks' ),
 				'checkout_nyp_apply'         => __( 'Apply', 'newspack-blocks' ),
+				'checkout_critical_error'    => __( 'We ran into a problem processing this request. Trying again...', 'newspack-blocks' ),
 			];
 
 			/**

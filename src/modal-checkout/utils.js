@@ -208,6 +208,20 @@ export function onCheckoutPlaceOrderError( container, callback ) {
 }
 
 /**
+ * Run a callback when the checkout place order fails in an unrecoverable state.
+ *
+ * @param {Object}   container The container element inside the iframe document.
+ * @param {Function} callback  The callback to execute when the checkout place order fails in an unrecoverable state.
+ */
+export function onCheckoutPlaceOrderCriticalError( container, callback ) {
+	if ( container.checkoutPlaceOrderCriticalError ) {
+		callback();
+	} else {
+		container.addEventListener( 'checkout-place-order-critical-error', callback );
+	}
+}
+
+/**
  * Run a callback when the checkout is complete.
  *
  * @param {Object}   container The container element inside the iframe document.
