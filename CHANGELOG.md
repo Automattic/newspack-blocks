@@ -1,3 +1,10 @@
+## [4.17.5](https://github.com/Automattic/newspack-blocks/compare/v4.17.4...v4.17.5) (2025-11-18)
+
+
+### Bug Fixes
+
+* **modal-checkout:** check product type to get recurrence data ([#2259](https://github.com/Automattic/newspack-blocks/issues/2259)) ([0c2ed81](https://github.com/Automattic/newspack-blocks/commit/0c2ed81a0ec2f68ae1aff3eb98633ed52def3218))
+
 ## [4.17.4](https://github.com/Automattic/newspack-blocks/compare/v4.17.3...v4.17.4) (2025-11-13)
 
 
