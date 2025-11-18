@@ -81,13 +81,21 @@ final class Checkout_Data {
 	 * Returns whether a product is a one time purchase, or recurring and when.
 	 *
 	 * @param string $product_id Product's ID.
+	 *
+	 * @return string The purchase recurrence.
 	 */
 	public static function get_purchase_recurrence( $product_id ) {
-		$recurrence = get_post_meta( $product_id, '_subscription_period', true );
-		if ( empty( $recurrence ) ) {
-			$recurrence = 'once';
+		if ( ! function_exists( 'wc_get_product' ) ) {
+			return 'once';
 		}
-		return $recurrence;
+		$product = \wc_get_product( $product_id );
+		if ( $product && ( $product->is_type( 'subscription' ) || $product->is_type( 'subscription_variation' ) ) ) {
+			$recurrence = get_post_meta( $product_id, '_subscription_period', true );
+			if ( ! empty( $recurrence ) ) {
+				return $recurrence;
+			}
+		}
+		return 'once';
 	}
 
 	/**
