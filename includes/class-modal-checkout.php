@@ -971,6 +971,7 @@ final class Modal_Checkout {
 					'register_modal_title' => self::get_modal_checkout_labels( 'register_modal_title' ),
 					'signin_modal_title'   => self::get_modal_checkout_labels( 'signin_modal_title' ),
 					'thankyou_modal_title' => self::get_modal_checkout_labels( 'checkout_success' ),
+					'critical_error'       => self::get_modal_checkout_labels( 'checkout_critical_error' ),
 				],
 
 				'processing_payment_messages'     => [
@@ -2034,7 +2035,7 @@ final class Modal_Checkout {
 				'checkout_nyp_thankyou'      => __( "Thank you for your generosity! We couldn't do this without you!", 'newspack-blocks' ),
 				'checkout_nyp_title'         => __( 'Increase your support', 'newspack-blocks' ),
 				'checkout_nyp_apply'         => __( 'Apply', 'newspack-blocks' ),
-				'checkout_critical_error'    => __( 'We ran into a problem processing this request. Trying again...', 'newspack-blocks' ),
+				'checkout_critical_error'    => __( 'We ran into a problem processing this request. Please try again.', 'newspack-blocks' ),
 			];
 
 			/**

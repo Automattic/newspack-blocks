@@ -169,6 +169,15 @@ domReady( () => {
 				summaryTextNode.textContent = checkoutData.price_summary;
 			}
 
+			// Display initial errors if any.
+			if ( modalCheckout.initialErrors ) {
+				const errorContainer = document.createElement( 'div' );
+				errorContainer.classList.add( 'woocommerce-error' );
+				errorContainer.textContent = modalCheckout.initialErrors;
+				container.prepend( errorContainer );
+				delete modalCheckout.initialErrors;
+			}
+
 			// Revert modal title and width default value.
 			setModalSize();
 			setModalTitle( checkoutTitle );
@@ -203,12 +212,11 @@ domReady( () => {
 			if ( ! form ) {
 				return;
 			}
-			setTimeout( () => {
-				closeCheckout();
-				spinner.style.display = 'none';
-				form.requestSubmit( form.querySelector( 'button[type="submit"]' ) );
-				hideProcessingPaymentScreen();
-			}, 1000 );
+			closeCheckout();
+			spinner.style.display = 'none';
+			modalCheckout.initialErrors = newspackBlocksModal.labels.critical_error;
+			form.requestSubmit( form.querySelector( 'button[type="submit"]' ) );
+			hideProcessingPaymentScreen();
 		};
 
 		onCheckoutPlaceOrderCriticalError( container, () => refreshCheckout( activeCheckoutForm ) );
