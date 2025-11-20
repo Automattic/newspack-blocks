@@ -1835,7 +1835,7 @@ final class Modal_Checkout {
 	 *
 	 * @return false|int User ID if found by email address, false otherwise.
 	 */
-	private static function get_user_id_from_email() {
+	public static function get_user_id_from_email() {
 		$billing_email = filter_input( INPUT_POST, 'billing_email', FILTER_SANITIZE_EMAIL );
 		if ( $billing_email ) {
 			$customer = \get_user_by( 'email', $billing_email );

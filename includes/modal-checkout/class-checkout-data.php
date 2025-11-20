@@ -26,7 +26,7 @@ final class Checkout_Data {
 			$price = '0';
 		}
 
-		if ( function_exists( 'wcs_price_string' ) && function_exists( 'wc_price' ) ) {
+		if ( function_exists( 'wcs_price_string' ) && function_exists( 'wc_price' ) && function_exists( 'wc_get_product' ) && class_exists( 'WC_Subscriptions_Product' ) ) {
 			if ( $frequency && $frequency !== 'once' ) {
 				// Get additional subscription details if product_id is provided.
 				$subscription_interval = 1;
@@ -35,10 +35,11 @@ final class Checkout_Data {
 				$initial_amount        = 0;
 
 				if ( $product_id ) {
-					$subscription_interval = get_post_meta( $product_id, '_subscription_period_interval', true );
-					$trial_length = get_post_meta( $product_id, '_subscription_trial_length', true );
-					$trial_period = get_post_meta( $product_id, '_subscription_trial_period', true );
-					$initial_amount = get_post_meta( $product_id, '_subscription_sign_up_fee', true );
+					$product = wc_get_product( $product_id );
+					$subscription_interval = \WC_Subscriptions_Product::get_interval( $product );
+					$trial_length = \WC_Subscriptions_Product::get_trial_length( $product );
+					$trial_period = \WC_Subscriptions_Product::get_trial_period( $product );
+					$initial_amount = \WC_Subscriptions_Product::get_sign_up_fee( $product );
 
 					if ( empty( $subscription_interval ) ) {
 						$subscription_interval = 1;
