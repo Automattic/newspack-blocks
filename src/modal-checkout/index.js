@@ -142,7 +142,7 @@ import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 						return;
 					}
 					placedOrder = false;
-					if ( errors && errors.indexOf( newspackBlocksModalCheckout.labels.critical_error >= 0 ) ) {
+					if ( errors && errors.indexOf( newspackBlocksModalCheckout.labels.critical_error ) >= 0 ) {
 						container.dispatchEvent( placeOrderCriticalErrorEvent );
 						return;
 					}
