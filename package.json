@@ -52,7 +52,7 @@
 		"swiper": "12.0.3"
 	},
 	"devDependencies": {
-		"@types/lodash": "^4.17.20",
+		"@types/lodash": "^4.17.21",
 		"newspack-components": "^4.2.0",
 		"newspack-scripts": "^5.8.0"
 	},
