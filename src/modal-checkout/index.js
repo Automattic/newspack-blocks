@@ -8,7 +8,7 @@ import './checkout.scss';
  * Internal dependencies
  */
 import { manageCheckoutAttempt, manageCheckoutSuccess, manageLoaded, managePagination } from './analytics';
-import { domReady } from './utils';
+import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 
 ( $ => {
 	domReady( () => {
@@ -26,6 +26,7 @@ import { domReady } from './utils';
 		const placeOrderStartEvent = new CustomEvent( 'checkout-place-order-start' );
 		const placeOrderSuccessEvent = new CustomEvent( 'checkout-place-order-success' );
 		const placeOrderErrorEvent = new CustomEvent( 'checkout-place-order-error' );
+		const placeOrderCriticalErrorEvent = new CustomEvent( 'checkout-place-order-critical-error' );
 
 		function getEventHandlers( element, event ) {
 			const events = $._data( element, 'events' );
@@ -121,16 +122,30 @@ import { domReady } from './utils';
 					placedOrder = true;
 					container.dispatchEvent( placeOrderStartEvent );
 				} );
+				onCheckoutPlaceOrderProcessing( container, function () {
+					if ( ! placedOrder ) {
+						return;
+					}
+					// If the form stops processing before the `checkout_place_order_success` event is fired, dispatch an error event.
+					if ( ! $form.is( '.processing' ) ) {
+						placedOrder = false;
+						container.dispatchEvent( placeOrderErrorEvent );
+					}
+				} );
 				$form.on( 'checkout_place_order_success', function () {
 					placedOrder = false;
 					container.dispatchEvent( placeOrderSuccessEvent );
 				} );
 
-				$( document.body ).on( 'checkout_error', function () {
+				$( document.body ).on( 'checkout_error', function ( event, errors ) {
 					if ( ! placedOrder ) {
 						return;
 					}
 					placedOrder = false;
+					if ( errors && errors.indexOf( newspackBlocksModalCheckout.labels.critical_error ) >= 0 ) {
+						container.dispatchEvent( placeOrderCriticalErrorEvent );
+						return;
+					}
 					container.dispatchEvent( placeOrderErrorEvent );
 				} );
 				$form.on( 'update_checkout', function () {

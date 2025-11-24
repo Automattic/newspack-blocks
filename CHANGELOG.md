@@ -1,3 +1,10 @@
+## [4.17.6](https://github.com/Automattic/newspack-blocks/compare/v4.17.5...v4.17.6) (2025-11-19)
+
+
+### Bug Fixes
+
+* don’t show trial info in modal checkout if not applicable ([#2245](https://github.com/Automattic/newspack-blocks/issues/2245)) ([26de0b9](https://github.com/Automattic/newspack-blocks/commit/26de0b9cf223dd3e5c5d4ee56ba6a8a915554baf))
+
 ## [4.17.5](https://github.com/Automattic/newspack-blocks/compare/v4.17.4...v4.17.5) (2025-11-18)
 
 
