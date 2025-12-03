@@ -85,4 +85,3 @@ $checkout_data          = Checkout_Data::get_checkout_data( $order );
 	<?php
 endif;
 do_action( 'newpack_blocks_modal_checkout_thankyou' );
-?>
