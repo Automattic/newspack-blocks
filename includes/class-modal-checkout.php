@@ -1590,7 +1590,7 @@ final class Modal_Checkout {
 		// Get express_payment_type in a way that works for both Stripe and WooPayments.
 		$express_payment_info = isset( $_POST['express_payment_type'] ) ? sanitize_text_field( wp_unslash( $_POST['express_payment_type'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 
-		$is_express_checkout = ! empty( $express_payment_info ) && in_array( $express_payment_info, [ 'apple_pay', 'google_pay', 'payment_request_api' ], true );  // Validate payment request types: https://github.com/woocommerce/woocommerce-gateway-stripe/blob/develop/includes/payment-methods/class-wc-stripe-payment-request.php#L557-L586.
+		$is_express_checkout = ! empty( $express_payment_info ) && in_array( $express_payment_info, [ 'apple_pay', 'google_pay', 'payment_request_api', 'link' ], true );  // Validate payment request types: https://github.com/woocommerce/woocommerce-gateway-stripe/blob/develop/includes/payment-methods/class-wc-stripe-payment-request.php#L557-L586.
 
 		if ( $is_express_checkout ) {
 			$referrer = isset( $_SERVER['HTTP_REFERER'] ) ? \esc_url_raw( \wp_unslash( $_SERVER['HTTP_REFERER'] ) ) : false; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
