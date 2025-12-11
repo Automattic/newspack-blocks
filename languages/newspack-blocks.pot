@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-11-24T20:10:24+00:00\n"
+"POT-Creation-Date: 2025-12-03T17:31:19+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: newspack-blocks\n"
@@ -480,24 +480,24 @@ msgid "Subscribe Pattern 7"
 msgstr ""
 
 #. translators: %d: Slide number.
-#: src/blocks/carousel/view.php:221
+#: src/blocks/carousel/view.php:227
 #, php-format
 msgid "Go to slide %d"
 msgstr ""
 
-#: src/blocks/carousel/view.php:242
+#: src/blocks/carousel/view.php:248
 msgid "Previous Slide"
 msgstr ""
 
-#: src/blocks/carousel/view.php:243
+#: src/blocks/carousel/view.php:249
 msgid "Next Slide"
 msgstr ""
 
-#: src/blocks/carousel/view.php:287
+#: src/blocks/carousel/view.php:293
 msgid "Pause Slideshow"
 msgstr ""
 
-#: src/blocks/carousel/view.php:288
+#: src/blocks/carousel/view.php:294
 msgid "Play Slideshow"
 msgstr ""
 
@@ -638,15 +638,15 @@ msgstr ""
 msgid "Recipient: "
 msgstr ""
 
-#: src/modal-checkout/templates/thankyou.php:79
+#: src/modal-checkout/templates/thankyou.php:78
 msgid "Unfortunately your order cannot be processed. Please attempt your purchase again."
 msgstr ""
 
-#: src/modal-checkout/templates/thankyou.php:82
+#: src/modal-checkout/templates/thankyou.php:81
 msgid "Pay"
 msgstr ""
 
-#: src/modal-checkout/templates/thankyou.php:84
+#: src/modal-checkout/templates/thankyou.php:83
 msgid "My account"
 msgstr ""
 

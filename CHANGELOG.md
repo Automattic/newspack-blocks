@@ -1,3 +1,18 @@
+# [4.19.0](https://github.com/Automattic/newspack-blocks/compare/v4.18.0...v4.19.0) (2025-12-08)
+
+
+### Bug Fixes
+
+* add a max-width to the Content Carousel block ([#2253](https://github.com/Automattic/newspack-blocks/issues/2253)) ([b791a3a](https://github.com/Automattic/newspack-blocks/commit/b791a3a23f5050638760f083911403f5dfeab13d))
+* handle checkout form inline errors and expired sessions ([#2255](https://github.com/Automattic/newspack-blocks/issues/2255)) ([9beb64e](https://github.com/Automattic/newspack-blocks/commit/9beb64e8be0296e9c039fb5e19b6c30628af90ff))
+* linting issues ([#2254](https://github.com/Automattic/newspack-blocks/issues/2254)) ([776514b](https://github.com/Automattic/newspack-blocks/commit/776514bef7618d8043ef9f358b8383ef9555c9cc))
+* **modal-checkout:** require change payment class ([#2257](https://github.com/Automattic/newspack-blocks/issues/2257)) ([4d606ef](https://github.com/Automattic/newspack-blocks/commit/4d606ef536ac91dc05433314b67ea055b52491a6))
+
+
+### Features
+
+* **donate-block:** default frequency for tiered layout ([#2248](https://github.com/Automattic/newspack-blocks/issues/2248)) ([df0e2f9](https://github.com/Automattic/newspack-blocks/commit/df0e2f9c9305ca1318b913ca9b19511ae572f429))
+
 # [4.18.0](https://github.com/Automattic/newspack-blocks/compare/v4.17.6...v4.18.0) (2025-11-24)
 
 
