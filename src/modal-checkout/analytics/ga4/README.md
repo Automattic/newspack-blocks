@@ -14,7 +14,6 @@ Each checkout will include the following actions:
 | `continue`                 | When the 'Continue' button is clicked                                                                              |
 | `back`                     | When the 'Back' button is clicked                                                                                  |
 | `dismissed`                | When the modal is closed before completion                                                                         |
-| `form_submission`          | When a submission attempt is made                                                                                  |
 | `form_submission_success`  | When a submission attempt is completed (back-end event)
 
 ## Action types

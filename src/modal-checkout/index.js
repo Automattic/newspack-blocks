@@ -7,7 +7,7 @@ import './checkout.scss';
 /**
  * Internal dependencies
  */
-import { manageCheckoutAttempt, manageCheckoutSuccess, manageLoaded, managePagination } from './analytics';
+import { manageCheckoutSuccess, manageLoaded, managePagination } from './analytics';
 import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 
 ( $ => {
@@ -743,11 +743,6 @@ import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 						},
 					} );
 				}
-
-				// Attach handler to "Place Order" button.
-				$form.on( 'click', '#place_order', function () {
-					manageCheckoutAttempt();
-				} );
 
 				/**
 				 * Blocks provided form.
