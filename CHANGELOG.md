@@ -1,3 +1,15 @@
+# [4.20.0](https://github.com/Automattic/newspack-blocks/compare/v4.19.0...v4.20.0) (2026-01-05)
+
+
+### Bug Fixes
+
+* avoid redeclaration of global function ([#2264](https://github.com/Automattic/newspack-blocks/issues/2264)) ([3af1ea7](https://github.com/Automattic/newspack-blocks/commit/3af1ea720849058e4fea15aa4adb498c8aa564a0))
+
+
+### Features
+
+* supress carousel block from feeds ([#2263](https://github.com/Automattic/newspack-blocks/issues/2263)) ([d0c6ad1](https://github.com/Automattic/newspack-blocks/commit/d0c6ad1cacc0c6aebfaec584de598dcc9e91294d))
+
 # [4.19.0](https://github.com/Automattic/newspack-blocks/compare/v4.18.0...v4.19.0) (2025-12-08)
 
 
