@@ -54,7 +54,7 @@ export const getFrequencyLabel = ( frequencySlug: DonationFrequencySlug, hideOnc
 					// Translators: %s is the frequency (e.g. per month, per year).
 					_x( 'per %s', 'per `Frequency`', 'newspack-blocks' ),
 					frequencySlug
-				) + ' ';
+				);
 };
 
 export const getFormattedAmount = ( amount: number, withCurrency = false ) => {
