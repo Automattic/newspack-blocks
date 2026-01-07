@@ -841,9 +841,16 @@ import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 					} );
 
 					observer.observe( container, { childList: true, subtree: true } );
+					return observer;
 				}
 
-				observeExpressCheckoutErrors();
+				const expressCheckoutErrorObserver = observeExpressCheckoutErrors();
+				if ( expressCheckoutErrorObserver ) {
+					const disconnect = () => expressCheckoutErrorObserver.disconnect();
+					container.addEventListener( 'checkout-complete', disconnect );
+					container.addEventListener( 'checkout-cancel', disconnect );
+					window.addEventListener( 'beforeunload', disconnect );
+				}
 			}
 			init();
 		}
