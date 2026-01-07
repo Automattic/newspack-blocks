@@ -40,8 +40,9 @@ import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 		}
 
 		function clearNotices() {
+			$( '.woocommerce-notices-wrapper' ).empty();
 			$(
-				`.woocommerce-NoticeGroup-checkout, .${ CLASS_PREFIX }__inline-error, .woocommerce-error, .woocommerce-message, .wc-block-components-notice-banner, .woocommerce-notices-wrapper`
+				`.woocommerce-NoticeGroup-checkout, .${ CLASS_PREFIX }__inline-error, .woocommerce-error, .woocommerce-message, .wc-block-components-notice-banner`
 			).remove();
 		}
 
@@ -786,6 +787,54 @@ import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 					form.removeClass( 'modal-processing' );
 					return true;
 				}
+
+				/**
+				 * Watch for Express Checkout errors added to the checkout container.
+				 * Express Checkout (GPay/Apple Pay) uses the Store API which doesn't trigger
+				 * the standard WooCommerce checkout_error event.
+				 */
+				function observeExpressCheckoutErrors() {
+					const ERROR_HANDLED_ATTR = 'data-newspack-error-handled';
+
+					const handleExpressCheckoutError = errorNode => {
+						if ( errorNode.hasAttribute( ERROR_HANDLED_ATTR ) ) {
+							return;
+						}
+						errorNode.setAttribute( ERROR_HANDLED_ATTR, 'true' );
+
+						$( errorNode ).addClass( `${ CLASS_PREFIX }__notice ${ CLASS_PREFIX }__notice--error` );
+						container.dispatchEvent( placeOrderErrorEvent );
+						errorNode.scrollIntoView( { behavior: 'smooth', block: 'center' } );
+					};
+
+					const isErrorNode = node => {
+						return node.classList?.contains( 'woocommerce-error' ) || node.classList?.contains( 'wc-block-components-notice-banner' );
+					};
+
+					const observer = new MutationObserver( mutations => {
+						for ( const mutation of mutations ) {
+							for ( const node of mutation.addedNodes ) {
+								if ( node.nodeType !== Node.ELEMENT_NODE ) {
+									continue;
+								}
+								if ( isErrorNode( node ) ) {
+									handleExpressCheckoutError( node );
+									return;
+								}
+								const nestedError = node.querySelector?.( '.woocommerce-error, .wc-block-components-notice-banner' );
+								if ( nestedError ) {
+									handleExpressCheckoutError( nestedError );
+									return;
+								}
+							}
+						}
+					} );
+
+					const observeTarget = container || document.body;
+					observer.observe( observeTarget, { childList: true, subtree: true } );
+				}
+
+				observeExpressCheckoutErrors();
 			}
 			init();
 		}
