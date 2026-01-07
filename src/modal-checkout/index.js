@@ -794,6 +794,10 @@ import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 				 * the standard WooCommerce checkout_error event.
 				 */
 				function observeExpressCheckoutErrors() {
+					if ( ! container ) {
+						return;
+					}
+
 					const ERROR_HANDLED_ATTR = 'data-newspack-error-handled';
 
 					const handleExpressCheckoutError = errorNode => {
@@ -808,7 +812,13 @@ import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 					};
 
 					const isErrorNode = node => {
-						return node.classList?.contains( 'woocommerce-error' ) || node.classList?.contains( 'wc-block-components-notice-banner' );
+						if ( node.classList?.contains( 'woocommerce-error' ) ) {
+							return true;
+						}
+						if ( node.classList?.contains( 'wc-block-components-notice-banner' ) && node.classList?.contains( 'is-error' ) ) {
+							return true;
+						}
+						return false;
 					};
 
 					const observer = new MutationObserver( mutations => {
@@ -821,7 +831,7 @@ import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 									handleExpressCheckoutError( node );
 									return;
 								}
-								const nestedError = node.querySelector?.( '.woocommerce-error, .wc-block-components-notice-banner' );
+								const nestedError = node.querySelector?.( '.woocommerce-error, .wc-block-components-notice-banner.is-error' );
 								if ( nestedError ) {
 									handleExpressCheckoutError( nestedError );
 									return;
@@ -830,8 +840,7 @@ import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 						}
 					} );
 
-					const observeTarget = container || document.body;
-					observer.observe( observeTarget, { childList: true, subtree: true } );
+					observer.observe( container, { childList: true, subtree: true } );
 				}
 
 				observeExpressCheckoutErrors();
