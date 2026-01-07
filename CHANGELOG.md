@@ -1,3 +1,10 @@
+## [4.20.1](https://github.com/Automattic/newspack-blocks/compare/v4.20.0...v4.20.1) (2026-01-07)
+
+
+### Bug Fixes
+
+* increase log level required to log caching status ([3f6be67](https://github.com/Automattic/newspack-blocks/commit/3f6be670dfcbcdec3d9450c222cebe48448f5bb1))
+
 # [4.20.0](https://github.com/Automattic/newspack-blocks/compare/v4.19.0...v4.20.0) (2026-01-05)
 
 
