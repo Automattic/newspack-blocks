@@ -172,7 +172,7 @@ final class Modal_Checkout {
 		add_action( 'init', [ __CLASS__, 'unhook_woocommerce_payments_update_billing_fields' ] );
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'update_password_strength_message' ], 9999 );
 		add_filter( 'woocommerce_enforce_password_strength_meter_on_checkout', '__return_true' );
-		add_action( 'woocommerce_payment_complete', [ __CLASS__, 'verify_new_reader_account' ], 11 );
+		add_action( 'woocommerce_payment_complete', [ __CLASS__, 'verify_reader_account' ], 11 );
 
 		/** Custom handling for registered users. */
 		add_filter( 'woocommerce_checkout_customer_id', [ __CLASS__, 'associate_existing_user' ] );
@@ -2198,15 +2198,15 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Verify new reader accounts created during modal checkout.
+	 * Verify reader accounts created during modal checkout.
 	 *
 	 * @param int $order_id The order ID.
 	 */
-	public static function verify_new_reader_account( $order_id ) {
+	public static function verify_reader_account( $order_id ) {
 		if ( ! self::is_modal_checkout() ) {
 			return;
 		}
-		if ( ! class_exists( '\Newspack\Reader_Activation' ) && ! \Newspack\Reader_Activation::is_enabled() ) {
+		if ( ! class_exists( '\Newspack\Reader_Activation' ) || ! \Newspack\Reader_Activation::is_enabled() ) {
 			return;
 		}
 		$order = wc_get_order( $order_id );
