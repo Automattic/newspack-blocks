@@ -1090,6 +1090,68 @@ class Newspack_Blocks {
 	}
 
 	/**
+	 * Support for Tag Labels.
+	 *
+	 * @param int|WP_Post|null $post Post to retrieve tag labels for.
+	 *
+	 * @return array|null Tag labels, if any, for this post.
+	 */
+	public static function get_tag_labels( $post = null ) {
+		if ( class_exists( '\Newspack\Tag_Labels' ) && method_exists( '\Newspack\Tag_Labels', 'get_labels_for_post' ) ) {
+			return \Newspack\Tag_Labels::get_labels_for_post( $post );
+		}
+
+		return null;
+	}
+
+	/**
+	 * Generates HTML for given tag labels.
+	 *
+	 * @param array $labels Labels to display.
+	 * @param bool  $links  Whether to include links to tag archives.
+	 * @param array $outer_classes Classes to apply to the outer container.
+	 * @param array $inner_classes Classes to apply to the inner container.
+	 *
+	 * @return string       Tag labels as HTML.
+	 */
+	public static function generate_tag_labels( $labels = null, $links = true, $outer_classes = array( 'tag-labels' ), $inner_classes = array( 'tag-label', 'flag' ) ) {
+		if ( empty( $labels ) ) {
+			return '';
+		}
+
+		$labels_html  = '';
+		$labels_html .= '<div class="' . join( ' ', array_map( 'esc_attr', $outer_classes ) ) . '">';
+		foreach ( $labels as $label ) {
+			if ( $links && isset( $label['flag'] ) && $label['link'] ) {
+				$labels_html .= '<a class="' . join( ' ', array_map( 'esc_attr', $inner_classes ) ) . '" href="' . esc_url( $label['link'] ) . '" rel="tag">' . esc_html( $label['flag'] ) . '</a>';
+			} elseif ( isset( $label['flag'] ) ) {
+				$labels_html .= '<span class="' . join( ' ', array_map( 'esc_attr', $inner_classes ) ) . '">' . esc_html( $label['flag'] ) . '</span>';
+			}
+		}
+		$labels_html .= '</div><!-- .tag-labels -->';
+
+		return $labels_html;
+	}
+
+	/**
+	 * Outputs HTML for given tag labels.
+	 *
+	 * @param array $labels Labels to display.
+	 * @param bool  $links  Whether to include links to tag archives.
+	 *
+	 * @return null
+	 */
+	public static function display_tag_labels( $labels = null, $links = true ) {
+		if ( empty( $labels ) ) {
+			return null;
+		}
+
+		echo wp_kses_post( self::generate_tag_labels( $labels, $links, array( 'tag-labels', 'cat-links' ) ) . ' ' );
+
+		return null;
+	}
+
+	/**
 	 * Closure for excerpt filtering that can be added and removed.
 	 *
 	 * @var Closure

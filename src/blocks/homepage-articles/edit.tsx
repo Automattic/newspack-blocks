@@ -112,6 +112,19 @@ class Edit extends Component< HomepageArticlesProps > {
 								<RawHTML>{ decodeEntities( post.newspack_category_info ) }</RawHTML>
 							) }
 						</div>
+					) }{ ' ' }
+					{ post.newspack_tag_labels && (
+						<div className="cat-links tag-labels">
+							{ post.newspack_tag_labels.map( newspack_tag_label => {
+								return newspack_tag_label.link ? (
+									<a href={ newspack_tag_label.link } className="tag-label flag">
+										{ newspack_tag_label.flag }
+									</a>
+								) : (
+									<span className="flag">{ newspack_tag_label.flag }</span>
+								);
+							} ) }
+						</div>
 					) }
 					{ RichText.isEmpty( sectionHeader ) ? (
 						<h2 className="entry-title" key="title">
