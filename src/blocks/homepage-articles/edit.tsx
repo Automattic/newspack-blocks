@@ -115,13 +115,19 @@ class Edit extends Component< HomepageArticlesProps > {
 					) }{ ' ' }
 					{ post.newspack_tag_labels && (
 						<div className="cat-links tag-labels">
-							{ post.newspack_tag_labels.map( newspack_tag_label => {
+							{ post.newspack_tag_labels.map( ( newspack_tag_label, index ) => {
 								return newspack_tag_label.link ? (
-									<a href={ newspack_tag_label.link } className="tag-label flag">
+									<a
+										key={ index }
+										href={ newspack_tag_label.link }
+										className="tag-label flag"
+									>
 										{ newspack_tag_label.flag }
 									</a>
 								) : (
-									<span className="flag">{ newspack_tag_label.flag }</span>
+									<span key={ index } className="flag">
+										{ newspack_tag_label.flag }
+									</span>
 								);
 							} ) }
 						</div>

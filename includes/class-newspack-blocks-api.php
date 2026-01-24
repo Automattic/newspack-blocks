@@ -174,9 +174,9 @@ class Newspack_Blocks_API {
 					'flag' => $tag_label['flag'],
 					'link' => $tag_label['link'],
 				];
-				$tag_label_info[] = $tag_label_info_item;
+				$tag_labels_info[] = $tag_label_info_item;
 			}
-			return $tag_label_info;
+			return $tag_labels_info;
 		}
 
 		return false;

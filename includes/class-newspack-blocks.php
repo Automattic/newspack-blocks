@@ -1139,16 +1139,14 @@ class Newspack_Blocks {
 	 * @param array $labels Labels to display.
 	 * @param bool  $links  Whether to include links to tag archives.
 	 *
-	 * @return null
+	 * @return void
 	 */
 	public static function display_tag_labels( $labels = null, $links = true ) {
 		if ( empty( $labels ) ) {
-			return null;
+			return;
 		}
 
 		echo wp_kses_post( self::generate_tag_labels( $labels, $links, array( 'tag-labels', 'cat-links' ) ) . ' ' );
-
-		return null;
 	}
 
 	/**
