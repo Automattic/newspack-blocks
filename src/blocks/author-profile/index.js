@@ -6,6 +6,7 @@ import colors from 'newspack-colors';
 /**
  * WordPress dependencies
  */
+import { InnerBlocks } from '@wordpress/block-editor';
 import { __, _x } from '@wordpress/i18n';
 import { postAuthor } from '@wordpress/icons';
 
@@ -55,5 +56,12 @@ export const settings = {
 		default: '',
 	},
 	edit,
-	save: () => null, // to use view.php
+	// Save inner blocks for nested mode (layoutVersion 2).
+	// For flat mode (layoutVersion 1), return null to use server-side rendering only.
+	save: props => {
+		if ( props.attributes.layoutVersion === 2 ) {
+			return <InnerBlocks.Content />;
+		}
+		return null;
+	},
 };

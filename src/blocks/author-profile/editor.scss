@@ -89,4 +89,93 @@
 			}
 		}
 	}
+
+	// Nested mode styles - uses InnerBlocks with core blocks
+	.wp-block-newspack-blocks-author-profile.is-nested-mode {
+		// Preview selector at top
+		.newspack-author-profile-preview-selector {
+			margin-bottom: 1rem;
+			padding-bottom: 1rem;
+			border-bottom: 1px solid #ddd;
+
+			.components-base-control {
+				margin-bottom: 0.5rem;
+			}
+
+			.description {
+				font-size: 12px;
+				color: #757575;
+				margin: 0;
+			}
+		}
+
+		// Grid layout for avatar + content
+		> .block-editor-inner-blocks > .block-editor-block-list__layout {
+			@include mixins.media( mobile ) {
+				display: grid;
+				grid-template-columns: auto 1fr;
+				gap: 1.5rem;
+			}
+
+			// Avatar takes first column, spans all rows
+			> .wp-block-newspack-avatar {
+				@include mixins.media( mobile ) {
+					grid-column: 1;
+					grid-row: 1 / -1;
+				}
+
+				// Ensure avatar is circular in nested mode
+				.newspack-avatar-wrapper {
+					border-radius: 50%;
+					overflow: hidden;
+				}
+
+				img {
+					border-radius: 0;
+					display: block;
+					height: 100%;
+					max-width: none;
+					object-fit: cover;
+					width: 100%;
+				}
+			}
+
+			// All other blocks go in second column
+			> *:not(.wp-block-newspack-avatar) {
+				@include mixins.media( mobile ) {
+					grid-column: 2;
+				}
+			}
+		}
+
+		// Author name heading
+		.author-name {
+			margin-top: 0;
+			margin-bottom: 0.5em;
+		}
+
+		// Meta fields styling
+		.author-job-title {
+			margin-top: 0;
+			margin-bottom: 0;
+		}
+
+		.author-role,
+		.author-employer {
+			margin-top: 0;
+			margin-bottom: 0;
+			font-size: 0.8em;
+		}
+
+		.author-bio {
+			margin-top: 0.5em;
+		}
+
+		.author-email,
+		.author-phone {
+			margin-top: 0;
+			margin-bottom: 0;
+			font-size: 0.9em;
+		}
+	}
 }

@@ -6,6 +6,92 @@
  */
 
 /**
+ * Register block bindings source for author data.
+ *
+ * This allows core blocks to bind their content to author fields using:
+ * {"metadata":{"bindings":{"content":{"source":"newspack-blocks/author","args":{"key":"name"}}}}}
+ *
+ * Supported keys: name, bio, url, email, newspack_job_title, newspack_role, newspack_employer, newspack_phone_number
+ */
+function newspack_blocks_register_author_bindings_source() {
+	// Block bindings require WordPress 6.5+.
+	if ( ! function_exists( 'register_block_bindings_source' ) ) {
+		return;
+	}
+
+	register_block_bindings_source(
+		'newspack-blocks/author',
+		[
+			'label'              => __( 'Author Profile', 'newspack-blocks' ),
+			'get_value_callback' => 'newspack_blocks_get_author_binding_value',
+			'uses_context'       => [ 'newspack-blocks/author' ],
+		]
+	);
+}
+add_action( 'init', 'newspack_blocks_register_author_bindings_source' );
+
+/**
+ * Get a value from the author context for block bindings.
+ *
+ * @param array    $source_args    Array containing 'key' for the author field to retrieve.
+ * @param WP_Block $block_instance The block instance.
+ * @param string   $attribute_name The attribute being bound.
+ * @return mixed The value for the binding, or null if not found.
+ */
+function newspack_blocks_get_author_binding_value( $source_args, $block_instance, $attribute_name ) {
+	$author = $block_instance->context['newspack-blocks/author'] ?? null;
+
+	if ( ! $author || empty( $source_args['key'] ) ) {
+		return null;
+	}
+
+	$key = $source_args['key'];
+
+	// Handle special cases.
+	switch ( $key ) {
+		case 'archive_url':
+		case 'url':
+			return $author['url'] ?? null;
+
+		case 'email_url':
+			$email = $author['email'] ?? null;
+			if ( is_array( $email ) ) {
+				return $email['url'] ?? null;
+			}
+			return $email ? 'mailto:' . $email : null;
+
+		case 'email':
+			// Email comes as array {url, svg} from API - extract display value.
+			$email = $author['email'] ?? null;
+			if ( is_array( $email ) ) {
+				$url = $email['url'] ?? '';
+				return str_replace( 'mailto:', '', $url );
+			}
+			return $email;
+
+		case 'phone_url':
+			$phone = $author['newspack_phone_number'] ?? null;
+			if ( is_array( $phone ) ) {
+				return $phone['url'] ?? null;
+			}
+			return $phone ? 'tel:' . $phone : null;
+
+		case 'newspack_phone_number':
+			// Phone comes as array {url, svg} from API - extract display value.
+			$phone = $author['newspack_phone_number'] ?? null;
+			if ( is_array( $phone ) ) {
+				$url = $phone['url'] ?? '';
+				return str_replace( 'tel:', '', $url );
+			}
+			return $phone;
+
+		default:
+			// Direct field access (name, bio, newspack_job_title, etc.).
+			return $author[ $key ] ?? null;
+	}
+}
+
+/**
  * Dynamic block registration.
  */
 function newspack_blocks_register_author_profile() {
@@ -227,7 +313,6 @@ function newspack_blocks_render_author_profile_card( $author, $attributes ) {
  */
 function newspack_blocks_render_block_author_profile( $attributes, $content, $block ) {
 	$is_contextual  = ! empty( $attributes['isContextual'] );
-	$is_nested_mode = defined( 'NEWSPACK_AUTHOR_PROFILE_NESTED_BLOCKS' ) && NEWSPACK_AUTHOR_PROFILE_NESTED_BLOCKS;
 	$layout_version = $attributes['layoutVersion'] ?? 1;
 
 	// Get authors based on mode.
@@ -239,18 +324,11 @@ function newspack_blocks_render_block_author_profile( $attributes, $content, $bl
 
 	Newspack_Blocks::enqueue_view_assets( 'author-profile' );
 
-	// NESTED MODE: Render inner blocks with author context.
-	if ( $is_nested_mode && ! empty( $block->inner_blocks ) ) {
+	// NESTED MODE: Determined by layoutVersion, not feature flag.
+	// Once a block is created in nested mode (layoutVersion 2), it stays nested.
+	// The feature flag only controls whether NEW blocks default to nested mode.
+	if ( 2 === $layout_version && ! empty( $block->inner_blocks ) ) {
 		return newspack_blocks_render_nested_author_profile( $authors, $attributes, $block );
-	}
-
-	// FLAT FALLBACK: If block was created in nested mode but flag is now off.
-	if ( ! $is_nested_mode && 2 === $layout_version && ! empty( $block->inner_blocks ) ) {
-		// Fall back to flat rendering with a notice.
-		$warning = '<div class="newspack-author-profile-nested-disabled">' .
-			esc_html__( 'Layout customization is disabled. Enable NEWSPACK_AUTHOR_PROFILE_NESTED_BLOCKS to restore your layout.', 'newspack-blocks' ) .
-			'</div>';
-		return $warning . newspack_blocks_render_flat_author_profiles( $authors, $attributes );
 	}
 
 	// FLAT MODE: Use existing template rendering.
@@ -355,7 +433,10 @@ function newspack_blocks_render_nested_author_profile( $authors, $attributes, $b
 
 		$author_output = '<div class="' . esc_attr( $classes ) . '">';
 
-		// Render each inner block with author context.
+		// Separate avatar from other blocks to match flat mode structure.
+		$avatar_output = '';
+		$bio_output    = '';
+
 		foreach ( $block->inner_blocks as $inner_block ) {
 			// Create new WP_Block instance with author-specific context.
 			$inner_block_instance = new WP_Block(
@@ -365,7 +446,25 @@ function newspack_blocks_render_nested_author_profile( $authors, $attributes, $b
 					[ 'newspack-blocks/author' => $author ]
 				)
 			);
-			$author_output .= $inner_block_instance->render();
+			$rendered = $inner_block_instance->render();
+
+			// Avatar block goes in __avatar wrapper.
+			if ( 'newspack/avatar' === $inner_block->name ) {
+				$avatar_output .= $rendered;
+			} else {
+				$bio_output .= $rendered;
+			}
+		}
+
+		// Output avatar wrapper (matching flat mode structure).
+		// Note: The avatar block handles its own figure/img styling, so we just wrap it.
+		if ( ! empty( $avatar_output ) ) {
+			$author_output .= '<div class="wp-block-newspack-blocks-author-profile__avatar">' . $avatar_output . '</div>';
+		}
+
+		// Output bio wrapper (matching flat mode structure).
+		if ( ! empty( $bio_output ) ) {
+			$author_output .= '<div class="wp-block-newspack-blocks-author-profile__bio">' . $bio_output . '</div>';
 		}
 
 		$author_output .= '</div>';

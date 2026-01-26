@@ -2,10 +2,6 @@
 	"production": [
 		"author-list",
 		"author-profile",
-		"author-profile-archive-link",
-		"author-profile-bio",
-		"author-profile-meta",
-		"author-profile-name",
 		"author-profile-social",
 		"carousel",
 		"checkout-button",

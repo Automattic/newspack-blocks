@@ -3,6 +3,7 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 import { BlockControls, InnerBlocks, InspectorControls, useBlockProps } from '@wordpress/block-editor';
+import { registerBlockBindingsSource } from '@wordpress/blocks';
 import {
 	Button,
 	ButtonGroup,
@@ -26,6 +27,60 @@ import { decodeEntities } from '@wordpress/html-entities';
 import { pencil, postAuthor, pullLeft, pullRight } from '@wordpress/icons';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
+
+/**
+ * Register block bindings source for author data in the editor.
+ * This enables core blocks to display author data via bindings.
+ *
+ * Note: The binding reads from a global author object that is set by the
+ * AuthorContext.Provider. This is a workaround since bindings don't have
+ * direct access to React context.
+ */
+if ( typeof registerBlockBindingsSource === 'function' ) {
+	registerBlockBindingsSource( {
+		name: 'newspack-blocks/author',
+		label: __( 'Author Profile', 'newspack-blocks' ),
+		getValues( { bindings } ) {
+			// Read author from global state set by AuthorContext.Provider.
+			const author = window.__newspackCurrentAuthor || {};
+			return Object.fromEntries(
+				Object.entries( bindings ).map( ( [ attribute, { args } ] ) => {
+					const key = args?.key;
+					if ( ! key ) {
+						return [ attribute, '' ];
+					}
+					// Handle special cases.
+					if ( key === 'url' || key === 'archive_url' ) {
+						return [ attribute, author.url || '' ];
+					}
+					// Email comes as object {url, svg} from API - extract display value.
+					if ( key === 'email' ) {
+						const email = author.email;
+						if ( ! email ) {
+							return [ attribute, '' ];
+						}
+						if ( typeof email === 'object' ) {
+							return [ attribute, email.url?.replace( 'mailto:', '' ) || '' ];
+						}
+						return [ attribute, email ];
+					}
+					// Phone comes as object {url, svg} from API - extract display value.
+					if ( key === 'newspack_phone_number' ) {
+						const phone = author.newspack_phone_number;
+						if ( ! phone ) {
+							return [ attribute, '' ];
+						}
+						if ( typeof phone === 'object' ) {
+							return [ attribute, phone.url?.replace( 'tel:', '' ) || '' ];
+						}
+						return [ attribute, phone ];
+					}
+					return [ attribute, author[ key ] || '' ];
+				} )
+			);
+		},
+	} );
+}
 
 /**
  * Internal dependencies
@@ -110,26 +165,67 @@ export const avatarSizeOptions = [
 // Feature flag for nested inner blocks mode.
 const isNestedMode = window.newspack_blocks_data?.authorProfileNestedBlocks ?? false;
 
+// Helper to create a bound paragraph block with custom list view name.
+const createBoundParagraph = ( key, className, name ) => [
+	'core/paragraph',
+	{
+		metadata: {
+			name, // Custom name shown in list view.
+			bindings: {
+				content: {
+					source: 'newspack-blocks/author',
+					args: { key },
+				},
+			},
+		},
+		className,
+	},
+];
+
 // Template for nested inner blocks.
-// Uses newspack/avatar from newspack-plugin which supports both standalone and nested modes.
+// Each author field is a separate block that can be reordered or removed.
+// Block bindings connect core block attributes to author data via 'newspack-blocks/author' source.
 const NESTED_TEMPLATE = [
 	[ 'newspack/avatar' ],
-	[ 'newspack-blocks/author-profile-name' ],
-	[ 'newspack-blocks/author-profile-meta' ],
-	[ 'newspack-blocks/author-profile-bio' ],
-	[ 'newspack-blocks/author-profile-archive-link' ],
-	[ 'newspack-blocks/author-profile-social' ],
+	[
+		'core/heading',
+		{
+			level: 3,
+			metadata: {
+				name: __( 'Author Name', 'newspack-blocks' ),
+				bindings: {
+					content: {
+						source: 'newspack-blocks/author',
+						args: { key: 'name' },
+					},
+				},
+			},
+			className: 'author-name',
+		},
+	],
+	createBoundParagraph( 'newspack_job_title', 'author-job-title', __( 'Job Title', 'newspack-blocks' ) ),
+	createBoundParagraph( 'newspack_role', 'author-role', __( 'Role', 'newspack-blocks' ) ),
+	createBoundParagraph( 'newspack_employer', 'author-employer', __( 'Employer', 'newspack-blocks' ) ),
+	createBoundParagraph( 'bio', 'author-bio', __( 'Bio', 'newspack-blocks' ) ),
+	createBoundParagraph( 'email', 'author-email', __( 'Email', 'newspack-blocks' ) ),
+	createBoundParagraph( 'newspack_phone_number', 'author-phone', __( 'Phone', 'newspack-blocks' ) ),
+	[ 'newspack-blocks/author-profile-social' ], // Social links need custom handling for icons/SVGs.
 ];
 
 // Allowed inner blocks for nested mode.
-// Includes newspack/avatar from newspack-plugin for avatar rendering.
+// Includes core blocks for flexibility and custom blocks for complex functionality.
 const ALLOWED_BLOCKS = [
 	'newspack/avatar',
-	'newspack-blocks/author-profile-name',
-	'newspack-blocks/author-profile-bio',
-	'newspack-blocks/author-profile-social',
-	'newspack-blocks/author-profile-archive-link',
-	'newspack-blocks/author-profile-meta',
+	'core/heading',
+	'core/paragraph',
+	'core/button',
+	'core/buttons',
+	'core/group',
+	'core/columns',
+	'core/column',
+	'core/social-links',
+	'core/social-link',
+	'newspack-blocks/author-profile-social', // Keep for social icons with SVGs.
 ];
 
 const AuthorProfile = ( { attributes, setAttributes, context } ) => {
@@ -286,6 +382,17 @@ const AuthorProfile = ( { attributes, setAttributes, context } ) => {
 		setPreviewAuthorIndex( 0 );
 	}, [ authorsToRender.length ] );
 
+	// Set global author for block bindings in editor.
+	// This allows bound core blocks to access author data.
+	useEffect( () => {
+		const safeIndex = Math.min( previewAuthorIndex, Math.max( 0, authorsToRender.length - 1 ) );
+		const previewAuthor = authorsToRender[ safeIndex ] || null;
+		window.__newspackCurrentAuthor = previewAuthor;
+		return () => {
+			window.__newspackCurrentAuthor = null;
+		};
+	}, [ authorsToRender, previewAuthorIndex ] );
+
 	// Combine social links and email, which are shown together.
 	const getSocialLinks = authorData => {
 		const socialLinks = ( showSocial && authorData?.social ) || {};
@@ -296,6 +403,10 @@ const AuthorProfile = ( { attributes, setAttributes, context } ) => {
 		}
 		return socialLinks;
 	};
+
+	// Determine if we're in nested layout mode (publisher-controlled composition).
+	// In nested mode, hide field toggles since publishers control display by adding/removing blocks.
+	const isNestedLayout = layoutVersion === 2;
 
 	// Inspector controls for display settings
 	const inspectorControls = (
@@ -319,60 +430,66 @@ const AuthorProfile = ( { attributes, setAttributes, context } ) => {
 					} }
 				/>
 			</PanelBody>
-			<PanelBody title={ __( 'Author Profile Settings', 'newspack-blocks' ) }>
-				<ToggleGroupControl
-					label={ __( 'Text Size', 'newspack-blocks' ) }
-					value={ textSize }
-					onChange={ value => setAttributes( { textSize: value } ) }
-					isBlock
-					__next40pxDefaultSize
-				>
-					{ textSizeOptions.map( option => (
-						<ToggleGroupControlOption key={ option.value } label={ option.shortName } value={ option.value } />
-					) ) }
-				</ToggleGroupControl>
-				<AuthorDisplaySettings attributes={ attributes } setAttributes={ setAttributes } />
-			</PanelBody>
-			<PanelBody title={ __( 'Avatar', 'newspack-blocks' ) }>
-				<ToggleControl
-					label={ __( 'Display avatar', 'newspack-blocks' ) }
-					checked={ showAvatar }
-					onChange={ () => setAttributes( { showAvatar: ! showAvatar } ) }
-				/>
-				{ showAvatar && (
-					<ToggleControl
-						label={ __( 'Hide default avatar', 'newspack-blocks' ) }
-						checked={ avatarHideDefault }
-						onChange={ () => setAttributes( { avatarHideDefault: ! avatarHideDefault } ) }
-					/>
-				) }
-				{ showAvatar && (
+			{ /* In nested mode, publishers control layout via inner blocks - no need for field toggles */ }
+			{ ! isNestedLayout && (
+				<PanelBody title={ __( 'Author Profile Settings', 'newspack-blocks' ) }>
 					<ToggleGroupControl
-						label={ __( 'Size', 'newspack-blocks' ) }
-						aria-label={ __( 'Avatar size', 'newspack-blocks' ) }
-						value={ avatarSize }
-						onChange={ value => setAttributes( { avatarSize: value } ) }
+						label={ __( 'Text Size', 'newspack-blocks' ) }
+						value={ textSize }
+						onChange={ value => setAttributes( { textSize: value } ) }
 						isBlock
 						__next40pxDefaultSize
 					>
-						{ avatarSizeOptions.map( option => (
+						{ textSizeOptions.map( option => (
 							<ToggleGroupControlOption key={ option.value } label={ option.shortName } value={ option.value } />
 						) ) }
 					</ToggleGroupControl>
-				) }
-				{ showAvatar && (
-					<UnitControl
-						label={ __( 'Border radius', 'newspack-blocks' ) }
-						aria-label={ __( 'Avatar border radius', 'newspack-blocks' ) }
-						labelPosition="edge"
-						__next40pxDefaultSize
-						__unstableInputWidth="80px"
-						units={ units }
-						value={ avatarBorderRadius }
-						onChange={ value => setAttributes( { avatarBorderRadius: 0 > parseFloat( value ) ? '0' : value } ) }
+					<AuthorDisplaySettings attributes={ attributes } setAttributes={ setAttributes } />
+				</PanelBody>
+			) }
+			{ /* In nested mode, avatar is controlled via the inner newspack/avatar block */ }
+			{ ! isNestedLayout && (
+				<PanelBody title={ __( 'Avatar', 'newspack-blocks' ) }>
+					<ToggleControl
+						label={ __( 'Display avatar', 'newspack-blocks' ) }
+						checked={ showAvatar }
+						onChange={ () => setAttributes( { showAvatar: ! showAvatar } ) }
 					/>
-				) }
-			</PanelBody>
+					{ showAvatar && (
+						<ToggleControl
+							label={ __( 'Hide default avatar', 'newspack-blocks' ) }
+							checked={ avatarHideDefault }
+							onChange={ () => setAttributes( { avatarHideDefault: ! avatarHideDefault } ) }
+						/>
+					) }
+					{ showAvatar && (
+						<ToggleGroupControl
+							label={ __( 'Size', 'newspack-blocks' ) }
+							aria-label={ __( 'Avatar size', 'newspack-blocks' ) }
+							value={ avatarSize }
+							onChange={ value => setAttributes( { avatarSize: value } ) }
+							isBlock
+							__next40pxDefaultSize
+						>
+							{ avatarSizeOptions.map( option => (
+								<ToggleGroupControlOption key={ option.value } label={ option.shortName } value={ option.value } />
+							) ) }
+						</ToggleGroupControl>
+					) }
+					{ showAvatar && (
+						<UnitControl
+							label={ __( 'Border radius', 'newspack-blocks' ) }
+							aria-label={ __( 'Avatar border radius', 'newspack-blocks' ) }
+							labelPosition="edge"
+							__next40pxDefaultSize
+							__unstableInputWidth="80px"
+							units={ units }
+							value={ avatarBorderRadius }
+							onChange={ value => setAttributes( { avatarBorderRadius: 0 > parseFloat( value ) ? '0' : value } ) }
+						/>
+					) }
+				</PanelBody>
+			) }
 		</InspectorControls>
 	);
 
@@ -463,15 +580,78 @@ const AuthorProfile = ( { attributes, setAttributes, context } ) => {
 			);
 		}
 
-		// No authors found
-		if ( ! authorsToRender.length ) {
+		// Specific mode: show author search when no author selected
+		if ( ! isContextual && ! authorId ) {
 			return (
 				<div { ...blockProps }>
 					{ inspectorControls }
 					<Placeholder className="newspack-blocks-author-profile" icon={ postAuthor } label={ __( 'Author Profile', 'newspack-blocks' ) }>
-						{ isContextual
-							? __( 'No authors found for this post.', 'newspack-blocks' )
-							: __( 'Select an author to preview.', 'newspack-blocks' ) }
+						{ error && (
+							<Notice status="error" isDismissible={ false }>
+								{ error }
+							</Notice>
+						) }
+						<AutocompleteWithSuggestions
+							label={ __( 'Search for an author to display', 'newspack-blocks' ) }
+							help={ __( 'Begin typing name, click autocomplete result to select.', 'newspack-blocks' ) }
+							fetchSuggestions={ async ( search = null, offset = 0 ) => {
+								setSuggestions( null );
+								if ( authorId && ! error ) {
+									return [];
+								}
+								const response = await apiFetch( {
+									parse: false,
+									path: addQueryArgs( '/newspack-blocks/v1/authors', {
+										search,
+										offset,
+										fields: 'id,name',
+									} ),
+								} );
+								const total = parseInt( response.headers.get( 'x-wp-total' ) || 0, 10 );
+								const authors = await response.json();
+								if ( ! maxItemsToSuggest && ! search ) {
+									setMaxItemsToSuggest( total );
+								}
+								const _suggestions = authors.map( _author => ( {
+									value: _author.id,
+									label: decodeEntities( _author.name ) || __( '(no name)', 'newspack-blocks' ),
+									isGuestAuthor: _author.is_guest,
+								} ) );
+								setSuggestions( _suggestions );
+								return _suggestions;
+							} }
+							maxItemsToSuggest={ maxItemsToSuggest }
+							onChange={ items => {
+								let selectionIsGuest = false;
+								const selection = items[ 0 ];
+								if ( suggestions ) {
+									suggestions.forEach( suggestion => {
+										if ( parseInt( selection?.value, 10 ) === parseInt( suggestion?.value, 10 ) && suggestion?.isGuestAuthor ) {
+											selectionIsGuest = true;
+										}
+									} );
+								}
+								setAttributes( {
+									authorId: parseInt( selection?.value || 0, 10 ),
+									isGuestAuthor: selectionIsGuest,
+								} );
+							} }
+							postTypeLabel={ __( 'author', 'newspack-blocks' ) }
+							postTypeLabelPlural={ __( 'authors', 'newspack-blocks' ) }
+							selectedItems={ [] }
+						/>
+					</Placeholder>
+				</div>
+			);
+		}
+
+		// Contextual mode: no authors found
+		if ( isContextual && ! authorsToRender.length ) {
+			return (
+				<div { ...blockProps }>
+					{ inspectorControls }
+					<Placeholder className="newspack-blocks-author-profile" icon={ postAuthor } label={ __( 'Author Profile', 'newspack-blocks' ) }>
+						{ __( 'No authors found for this post.', 'newspack-blocks' ) }
 					</Placeholder>
 				</div>
 			);
@@ -481,9 +661,19 @@ const AuthorProfile = ( { attributes, setAttributes, context } ) => {
 		const safeIndex = Math.min( previewAuthorIndex, authorsToRender.length - 1 );
 		const previewAuthor = authorsToRender[ safeIndex ];
 
+		// Set global synchronously so bindings have access on first render.
+		// The useEffect handles cleanup when component unmounts.
+		window.__newspackCurrentAuthor = previewAuthor;
+
+		// Add nested mode class to block wrapper for styling.
+		const nestedBlockProps = {
+			...blockProps,
+			className: `${ blockProps.className } is-nested-mode`,
+		};
+
 		return (
 			<AuthorContext.Provider value={ previewAuthor }>
-				<div { ...blockProps }>
+				<div { ...nestedBlockProps }>
 					{ inspectorControls }
 					{ blockControls }
 					{ /* Author selector: only shown in contextual mode with multiple authors */ }
@@ -507,7 +697,8 @@ const AuthorProfile = ( { attributes, setAttributes, context } ) => {
 							</p>
 						</div>
 					) }
-					<InnerBlocks template={ NESTED_TEMPLATE } allowedBlocks={ ALLOWED_BLOCKS } />
+					{ /* Key forces re-render when author changes, which re-evaluates bindings */ }
+					<InnerBlocks key={ `author-${ previewAuthor?.id || 'none' }` } template={ NESTED_TEMPLATE } allowedBlocks={ ALLOWED_BLOCKS } />
 				</div>
 			</AuthorContext.Provider>
 		);
