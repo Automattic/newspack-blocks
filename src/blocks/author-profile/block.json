@@ -2,6 +2,7 @@
 	"name": "author-profile",
 	"category": "newspack",
 	"apiVersion": 3,
+	"usesContext": [ "postId", "postType" ],
 	"attributes": {
 		"className": {
 			"type": "string",
@@ -10,6 +11,18 @@
 		"authorId": {
 			"type": "number",
 			"default": 0
+		},
+		"isContextual": {
+			"type": "boolean",
+			"default": false
+		},
+		"layoutVersion": {
+			"type": "number",
+			"default": 1
+		},
+		"showEmptyBio": {
+			"type": "boolean",
+			"default": false
 		},
 		"isGuestAuthor": {
 			"type": "boolean",

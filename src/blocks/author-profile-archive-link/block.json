@@ -1,0 +1,31 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "newspack-blocks/author-profile-archive-link",
+	"title": "Author Archive Link",
+	"category": "newspack",
+	"parent": [ "newspack-blocks/author-profile" ],
+	"description": "Display a link to the author's archive page.",
+	"usesContext": [ "newspack-blocks/author" ],
+	"textdomain": "newspack-blocks",
+	"attributes": {
+		"label": {
+			"type": "string",
+			"default": "More by %s"
+		}
+	},
+	"supports": {
+		"html": false,
+		"typography": {
+			"fontSize": true
+		},
+		"color": {
+			"text": true,
+			"link": true
+		},
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	}
+}

@@ -246,6 +246,9 @@ class Newspack_Blocks {
 				$localized_data['author_custom_fields'] = \Newspack\Authors_Custom_Fields::get_custom_fields();
 			}
 
+			// Feature flag for Author Profile nested inner blocks mode.
+			$localized_data['authorProfileNestedBlocks'] = defined( 'NEWSPACK_AUTHOR_PROFILE_NESTED_BLOCKS' ) && NEWSPACK_AUTHOR_PROFILE_NESTED_BLOCKS;
+
 			wp_localize_script(
 				'newspack-blocks-editor',
 				'newspack_blocks_data',
@@ -275,10 +278,6 @@ class Newspack_Blocks {
 	 * Enqueue block scripts and styles for view.
 	 */
 	public static function manage_view_scripts() {
-		if ( is_admin() ) {
-			// In editor environment, do nothing.
-			return;
-		}
 		$src_directory  = NEWSPACK_BLOCKS__PLUGIN_DIR . 'src/blocks/';
 		$dist_directory = NEWSPACK_BLOCKS__PLUGIN_DIR . 'dist/';
 		$iterator       = new DirectoryIterator( $src_directory );
@@ -293,6 +292,11 @@ class Newspack_Blocks {
 
 			if ( file_exists( $view_php_path ) ) {
 				include_once $view_php_path;
+				continue;
+			}
+
+			// Skip remaining logic in admin - only needed for frontend asset loading.
+			if ( is_admin() ) {
 				continue;
 			}
 

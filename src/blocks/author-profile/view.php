@@ -27,8 +27,12 @@ function newspack_blocks_register_author_profile() {
 	register_block_type(
 		'newspack-blocks/' . $block_json['name'],
 		[
-			'attributes'      => $block_json['attributes'],
-			'render_callback' => 'newspack_blocks_render_block_author_profile',
+			'attributes'       => $block_json['attributes'],
+			'render_callback'  => 'newspack_blocks_render_block_author_profile',
+			'uses_context'     => $block_json['usesContext'] ?? [],
+			'provides_context' => [
+				'newspack-blocks/author' => 'author', // This will be set dynamically in render.
+			],
 		]
 	);
 }
@@ -96,35 +100,279 @@ function newspack_blocks_get_author_or_guest_author( $author_id, $avatar_size = 
 }
 
 /**
- * Block render callback.
+ * Check if custom byline is active for a post.
  *
- * @param array $attributes Block attributes.
+ * @param int $post_id Post ID to check.
+ * @return bool True if custom byline is active.
  */
-function newspack_blocks_render_block_author_profile( $attributes ) {
-	// Bail if there's no author ID for this block.
-	if ( empty( $attributes['authorId'] ) ) {
-		return;
+function newspack_blocks_is_custom_byline_active( $post_id ) {
+	return (bool) get_post_meta( $post_id, '_newspack_byline_active', true );
+}
+
+/**
+ * Get authors for a post (CAP or default).
+ *
+ * @param int   $post_id Post ID to get authors for.
+ * @param array $attributes Block attributes.
+ * @return array Array of author data.
+ */
+function newspack_blocks_get_post_authors( $post_id, $attributes ) {
+	$authors      = [];
+	$avatar_size  = intval( $attributes['avatarSize'] ?? 128 );
+	$hide_default = $attributes['avatarHideDefault'] ?? false;
+
+	// Try Co-Authors Plus first.
+	if ( function_exists( 'get_coauthors' ) ) {
+		$coauthors = get_coauthors( $post_id );
+		if ( ! empty( $coauthors ) ) {
+			foreach ( $coauthors as $coauthor ) {
+				$author = newspack_blocks_get_contextual_author( $coauthor, $attributes );
+				if ( $author ) {
+					$authors[] = $author;
+				}
+			}
+			return $authors;
+		}
 	}
 
-	// Get the author by ID.
-	$author = newspack_blocks_get_author_or_guest_author( intval( $attributes['authorId'] ), intval( $attributes['avatarSize'] ), $attributes['avatarHideDefault'], $attributes['isGuestAuthor'] );
-
-	// Bail if there's no author or guest author with the saved ID.
-	if ( empty( $author ) ) {
-		return;
+	// Fallback to default author.
+	$author_id = get_post_field( 'post_author', $post_id );
+	if ( $author_id ) {
+		$author = newspack_blocks_get_author_or_guest_author(
+			$author_id,
+			$avatar_size,
+			$hide_default,
+			false // Not a guest author.
+		);
+		if ( $author ) {
+			$authors[] = $author;
+		}
 	}
 
-	Newspack_Blocks::enqueue_view_assets( 'author-profile' );
+	return $authors;
+}
 
-	$content = Newspack_Blocks::template_include(
+/**
+ * Convert a WP_User, WP_Post (guest author), or stdClass to the expected format.
+ *
+ * Note: get_coauthors() returns stdClass objects, not WP_User.
+ * Guest authors from get_queried_object() are WP_Post objects.
+ *
+ * @param object $author_obj Author object from WP_User, WP_Post, or stdClass.
+ * @param array  $attributes Block attributes.
+ * @return array|null Author data array or null if invalid.
+ */
+function newspack_blocks_get_contextual_author( $author_obj, $attributes ) {
+	$avatar_size  = intval( $attributes['avatarSize'] ?? 128 );
+	$hide_default = $attributes['avatarHideDefault'] ?? false;
+
+	// WP_Post object - guest author from get_queried_object() on author archives.
+	if ( $author_obj instanceof WP_Post && 'guest-author' === $author_obj->post_type ) {
+		return newspack_blocks_get_author_or_guest_author(
+			$author_obj->ID,
+			$avatar_size,
+			$hide_default,
+			true // Is guest author.
+		);
+	}
+
+	// WP_User object - regular author from get_queried_object() on author archives.
+	if ( $author_obj instanceof WP_User ) {
+		return newspack_blocks_get_author_or_guest_author(
+			$author_obj->ID,
+			$avatar_size,
+			$hide_default,
+			false
+		);
+	}
+
+	// stdClass from get_coauthors() - check 'type' property to determine guest vs user.
+	if ( is_object( $author_obj ) && isset( $author_obj->ID ) ) {
+		$is_guest = isset( $author_obj->type ) && 'guest-author' === $author_obj->type;
+		return newspack_blocks_get_author_or_guest_author(
+			$author_obj->ID,
+			$avatar_size,
+			$hide_default,
+			$is_guest
+		);
+	}
+
+	return null;
+}
+
+/**
+ * Render a single author profile card.
+ *
+ * @param array $author Author data array.
+ * @param array $attributes Block attributes.
+ * @return string Rendered HTML.
+ */
+function newspack_blocks_render_author_profile_card( $author, $attributes ) {
+	return Newspack_Blocks::template_include(
 		'author-profile-card',
 		[
 			'attributes' => $attributes,
 			'author'     => $author,
 		]
 	);
+}
 
-	return $content;
+/**
+ * Block render callback.
+ *
+ * @param array    $attributes Block attributes.
+ * @param string   $content Block inner content.
+ * @param WP_Block $block Block instance.
+ * @return string Rendered block HTML.
+ */
+function newspack_blocks_render_block_author_profile( $attributes, $content, $block ) {
+	$is_contextual  = ! empty( $attributes['isContextual'] );
+	$is_nested_mode = defined( 'NEWSPACK_AUTHOR_PROFILE_NESTED_BLOCKS' ) && NEWSPACK_AUTHOR_PROFILE_NESTED_BLOCKS;
+	$layout_version = $attributes['layoutVersion'] ?? 1;
+
+	// Get authors based on mode.
+	$authors = newspack_blocks_get_authors_for_render( $attributes, $block );
+
+	if ( empty( $authors ) ) {
+		return '';
+	}
+
+	Newspack_Blocks::enqueue_view_assets( 'author-profile' );
+
+	// NESTED MODE: Render inner blocks with author context.
+	if ( $is_nested_mode && ! empty( $block->inner_blocks ) ) {
+		return newspack_blocks_render_nested_author_profile( $authors, $attributes, $block );
+	}
+
+	// FLAT FALLBACK: If block was created in nested mode but flag is now off.
+	if ( ! $is_nested_mode && 2 === $layout_version && ! empty( $block->inner_blocks ) ) {
+		// Fall back to flat rendering with a notice.
+		$warning = '<div class="newspack-author-profile-nested-disabled">' .
+			esc_html__( 'Layout customization is disabled. Enable NEWSPACK_AUTHOR_PROFILE_NESTED_BLOCKS to restore your layout.', 'newspack-blocks' ) .
+			'</div>';
+		return $warning . newspack_blocks_render_flat_author_profiles( $authors, $attributes );
+	}
+
+	// FLAT MODE: Use existing template rendering.
+	return newspack_blocks_render_flat_author_profiles( $authors, $attributes );
+}
+
+/**
+ * Get authors for rendering based on block mode.
+ *
+ * @param array    $attributes Block attributes.
+ * @param WP_Block $block Block instance.
+ * @return array Array of author data.
+ */
+function newspack_blocks_get_authors_for_render( $attributes, $block ) {
+	$is_contextual = ! empty( $attributes['isContextual'] );
+
+	// SPECIFIC MODE: Get single author by ID.
+	if ( ! $is_contextual ) {
+		if ( empty( $attributes['authorId'] ) ) {
+			return [];
+		}
+
+		$author = newspack_blocks_get_author_or_guest_author(
+			intval( $attributes['authorId'] ),
+			intval( $attributes['avatarSize'] ),
+			$attributes['avatarHideDefault'],
+			$attributes['isGuestAuthor']
+		);
+
+		return $author ? [ $author ] : [];
+	}
+
+	// CONTEXTUAL MODE: Auto-detect authors.
+	$post_id = $block->context['postId'] ?? get_the_ID();
+
+	// On author archives: render the queried author.
+	if ( is_author() ) {
+		$queried = get_queried_object();
+		$author  = newspack_blocks_get_contextual_author( $queried, $attributes );
+		return $author ? [ $author ] : [];
+	}
+
+	// On single posts: check custom byline first.
+	if ( newspack_blocks_is_custom_byline_active( $post_id ) ) {
+		return []; // Hide bio when custom byline is active.
+	}
+
+	// Get authors (CAP or default).
+	return newspack_blocks_get_post_authors( $post_id, $attributes );
+}
+
+/**
+ * Render author profiles using flat template (existing behavior).
+ *
+ * @param array $authors Array of author data.
+ * @param array $attributes Block attributes.
+ * @return string Rendered HTML.
+ */
+function newspack_blocks_render_flat_author_profiles( $authors, $attributes ) {
+	$output         = '';
+	$show_empty_bio = $attributes['showEmptyBio'] ?? false;
+
+	foreach ( $authors as $author ) {
+		// Skip authors with no bio if configured.
+		if ( empty( $author['bio'] ) && ! $show_empty_bio ) {
+			continue;
+		}
+		$output .= newspack_blocks_render_author_profile_card( $author, $attributes );
+	}
+
+	return $output;
+}
+
+/**
+ * Render author profiles using nested inner blocks.
+ *
+ * @param array    $authors Array of author data.
+ * @param array    $attributes Block attributes.
+ * @param WP_Block $block Block instance.
+ * @return string Rendered HTML.
+ */
+function newspack_blocks_render_nested_author_profile( $authors, $attributes, $block ) {
+	$output         = '';
+	$show_empty_bio = $attributes['showEmptyBio'] ?? false;
+
+	foreach ( $authors as $author ) {
+		// Skip authors with no bio if configured.
+		if ( empty( $author['bio'] ) && ! $show_empty_bio ) {
+			continue;
+		}
+
+		// Build wrapper classes.
+		$extra_classes = [
+			'text-size-' . ( $attributes['textSize'] ?? 'medium' ),
+			'avatar-' . ( $attributes['avatarAlignment'] ?? 'left' ),
+		];
+		$classes = Newspack_Blocks::block_classes(
+			'author-profile',
+			$attributes,
+			$extra_classes
+		);
+
+		$author_output = '<div class="' . esc_attr( $classes ) . '">';
+
+		// Render each inner block with author context.
+		foreach ( $block->inner_blocks as $inner_block ) {
+			// Create new WP_Block instance with author-specific context.
+			$inner_block_instance = new WP_Block(
+				$inner_block->parsed_block,
+				array_merge(
+					$block->context,
+					[ 'newspack-blocks/author' => $author ]
+				)
+			);
+			$author_output .= $inner_block_instance->render();
+		}
+
+		$author_output .= '</div>';
+		$output        .= $author_output;
+	}
+
+	return $output;
 }
 
 add_action( 'init', 'newspack_blocks_register_author_profile' );
