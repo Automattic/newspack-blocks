@@ -47,8 +47,20 @@ class Newspack_Blocks_Caching {
 			add_filter( 'pre_render_block', [ __CLASS__, 'maybe_serve_cached_block' ], 10, 2 );
 			add_filter( 'render_block', [ __CLASS__, 'maybe_cache_block' ], 9999, 2 );
 
+			/**
+			 * Cache duration in seconds for Newspack blocks (Homepage Posts, etc.).
+			 * Blocks are cached for non-logged-in users to improve performance.
+			 * Set to 0 to disable caching.
+			 *
+			 * @constant NEWSPACK_BLOCKS_CACHE_BLOCKS_TIME
+			 * @type     int
+			 * @default  120 (two minutes)
+			 * @status   draft
+			 *
+			 * @example define( 'NEWSPACK_BLOCKS_CACHE_BLOCKS_TIME', 300 );
+			 */
 			if ( ! defined( 'NEWSPACK_BLOCKS_CACHE_BLOCKS_TIME' ) ) {
-				define( 'NEWSPACK_BLOCKS_CACHE_BLOCKS_TIME', 120 ); // Two minutes.
+				define( 'NEWSPACK_BLOCKS_CACHE_BLOCKS_TIME', 120 );
 			}
 		}
 	}

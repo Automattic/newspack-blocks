@@ -776,6 +776,17 @@ final class Modal_Checkout {
 	 * Dequeue scripts not needed in the modal checkout.
 	 */
 	public static function dequeue_scripts() {
+		/**
+		 * Prevents dequeuing of scripts in modal checkout. By default,
+		 * Newspack removes unnecessary scripts to improve modal checkout performance.
+		 *
+		 * @constant NEWSPACK_ALLOW_ALL_CHECKOUT_SCRIPTS
+		 * @type     bool
+		 * @default  Unnecessary scripts dequeued in modal checkout
+		 * @status   draft
+		 *
+		 * @example define( 'NEWSPACK_ALLOW_ALL_CHECKOUT_SCRIPTS', true );
+		 */
 		if (
 			! self::is_modal_checkout() ||
 			( defined( 'NEWSPACK_ALLOW_ALL_CHECKOUT_SCRIPTS' ) && NEWSPACK_ALLOW_ALL_CHECKOUT_SCRIPTS )
@@ -1819,7 +1830,18 @@ final class Modal_Checkout {
 			return $option_value;
 		}
 
-		// Escape hatch in case we want the standard behavior even in modal checkout.
+		/**
+		 * Prevents forcing the WooCommerce base location as the default
+		 * customer address in modal checkout. Use if you need standard
+		 * geolocation behavior.
+		 *
+		 * @constant NEWSPACK_PREVENT_FORCE_BASE_DEFAULT_CUSTOMER_ADDRESS
+		 * @type     bool
+		 * @default  Base address forced in modal checkout
+		 * @status   draft
+		 *
+		 * @example define( 'NEWSPACK_PREVENT_FORCE_BASE_DEFAULT_CUSTOMER_ADDRESS', true );
+		 */
 		if ( defined( 'NEWSPACK_PREVENT_FORCE_BASE_DEFAULT_CUSTOMER_ADDRESS' ) && NEWSPACK_PREVENT_FORCE_BASE_DEFAULT_CUSTOMER_ADDRESS ) {
 			return $option_value;
 		}
