@@ -7,6 +7,9 @@
 	"parent": [ "newspack-blocks/author-profile" ],
 	"description": "Display the author's social media links and email.",
 	"usesContext": [ "newspack-blocks/author" ],
+	"providesContext": {
+		"newspack-blocks/iconSize": "iconSize"
+	},
 	"textdomain": "newspack-blocks",
 	"attributes": {
 		"showEmail": {

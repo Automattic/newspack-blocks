@@ -53,6 +53,10 @@ if ( typeof registerBlockBindingsSource === 'function' ) {
 					if ( key === 'url' || key === 'archive_url' ) {
 						return [ attribute, author.url || '' ];
 					}
+					// "More by [author]" link text.
+					if ( key === 'archive_link_text' ) {
+						return [ attribute, author.name ? `${ __( 'More by', 'newspack-blocks' ) } ${ author.name }` : '' ];
+					}
 					// Email comes as object {url, svg} from API - extract display value.
 					if ( key === 'email' ) {
 						const email = author.email;
@@ -207,9 +211,8 @@ const NESTED_TEMPLATE = [
 	createBoundParagraph( 'newspack_role', 'author-role', __( 'Role', 'newspack-blocks' ) ),
 	createBoundParagraph( 'newspack_employer', 'author-employer', __( 'Employer', 'newspack-blocks' ) ),
 	createBoundParagraph( 'bio', 'author-bio', __( 'Bio', 'newspack-blocks' ) ),
-	createBoundParagraph( 'email', 'author-email', __( 'Email', 'newspack-blocks' ) ),
-	createBoundParagraph( 'newspack_phone_number', 'author-phone', __( 'Phone', 'newspack-blocks' ) ),
-	[ 'newspack-blocks/author-profile-social' ], // Social links need custom handling for icons/SVGs.
+	createBoundParagraph( 'archive_link_text', 'author-archive-link', __( 'More by Author', 'newspack-blocks' ) ),
+	[ 'newspack-blocks/author-profile-social' ], // Social links with email + phone as icons.
 ];
 
 // Allowed inner blocks for nested mode.
@@ -226,6 +229,7 @@ const ALLOWED_BLOCKS = [
 	'core/social-links',
 	'core/social-link',
 	'newspack-blocks/author-profile-social', // Keep for social icons with SVGs.
+	'newspack-blocks/author-social-link', // Individual social icon blocks.
 ];
 
 const AuthorProfile = ( { attributes, setAttributes, context } ) => {

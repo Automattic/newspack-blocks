@@ -53,6 +53,28 @@ function newspack_blocks_get_author_binding_value( $source_args, $block_instance
 		case 'url':
 			return $author['url'] ?? null;
 
+		case 'archive_link_text':
+			$name = $author['name'] ?? null;
+			if ( ! $name ) {
+				return null;
+			}
+			/* translators: %s: author name */
+			return sprintf( __( 'More by %s', 'newspack-blocks' ), $name );
+
+		case 'email_label':
+			$email = $author['email'] ?? null;
+			if ( ! $email ) {
+				return null;
+			}
+			return __( 'Email', 'newspack-blocks' );
+
+		case 'phone_label':
+			$phone = $author['newspack_phone_number'] ?? null;
+			if ( ! $phone ) {
+				return null;
+			}
+			return __( 'Phone', 'newspack-blocks' );
+
 		case 'email_url':
 			$email = $author['email'] ?? null;
 			if ( is_array( $email ) ) {
@@ -447,6 +469,47 @@ function newspack_blocks_render_nested_author_profile( $authors, $attributes, $b
 				)
 			);
 			$rendered = $inner_block_instance->render();
+
+			// Get block className for special handling.
+			$class_name = $inner_block->parsed_block['attrs']['className'] ?? '';
+
+			// Wrap archive link in anchor tag.
+			if ( strpos( $class_name, 'author-archive-link' ) !== false ) {
+				$url = $author['url'] ?? '';
+				if ( $url && $rendered ) {
+					$rendered = preg_replace(
+						'/(<p[^>]*>)(.*?)(<\/p>)/s',
+						'$1<a href="' . esc_url( $url ) . '">$2</a>$3',
+						$rendered
+					);
+				}
+			}
+
+			// Wrap email in mailto link.
+			if ( strpos( $class_name, 'author-email' ) !== false ) {
+				$email = $author['email'] ?? null;
+				$email_url = is_array( $email ) ? ( $email['url'] ?? '' ) : ( $email ? 'mailto:' . $email : '' );
+				if ( $email_url && $rendered ) {
+					$rendered = preg_replace(
+						'/(<p[^>]*>)(.*?)(<\/p>)/s',
+						'$1<a href="' . esc_url( $email_url ) . '">$2</a>$3',
+						$rendered
+					);
+				}
+			}
+
+			// Wrap phone in tel link.
+			if ( strpos( $class_name, 'author-phone' ) !== false ) {
+				$phone = $author['newspack_phone_number'] ?? null;
+				$phone_url = is_array( $phone ) ? ( $phone['url'] ?? '' ) : ( $phone ? 'tel:' . $phone : '' );
+				if ( $phone_url && $rendered ) {
+					$rendered = preg_replace(
+						'/(<p[^>]*>)(.*?)(<\/p>)/s',
+						'$1<a href="' . esc_url( $phone_url ) . '">$2</a>$3',
+						$rendered
+					);
+				}
+			}
 
 			// Avatar block goes in __avatar wrapper.
 			if ( 'newspack/avatar' === $inner_block->name ) {

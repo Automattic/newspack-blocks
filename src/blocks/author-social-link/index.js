@@ -4,8 +4,6 @@
 import { __ } from '@wordpress/i18n';
 import { share } from '@wordpress/icons';
 
-import { InnerBlocks } from '@wordpress/block-editor';
-
 /**
  * Internal dependencies
  */
@@ -18,8 +16,8 @@ export { name };
 
 export const settings = {
 	...metadata,
-	title: __( 'Author Social Links', 'newspack-blocks' ),
+	title: __( 'Author Social Link', 'newspack-blocks' ),
 	icon: share,
 	edit,
-	save: () => <InnerBlocks.Content />,
+	save: () => null,
 };
