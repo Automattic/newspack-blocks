@@ -444,6 +444,7 @@ function newspack_blocks_render_nested_author_profile( $authors, $attributes, $b
 
 		// Build wrapper classes.
 		$extra_classes = [
+			'is-nested-mode',
 			'text-size-' . ( $attributes['textSize'] ?? 'medium' ),
 			'avatar-' . ( $attributes['avatarAlignment'] ?? 'left' ),
 		];

@@ -91,7 +91,8 @@
 	}
 
 	// Nested mode styles - uses InnerBlocks with core blocks
-	.wp-block-newspack-blocks-author-profile.is-nested-mode {
+	// Note: In the editor, the block wrapper uses data-type attribute rather than the block class name.
+	.is-nested-mode[data-type="newspack-blocks/author-profile"] {
 		// Preview selector at top
 		.newspack-author-profile-preview-selector {
 			margin-bottom: 1rem;
@@ -109,49 +110,32 @@
 			}
 		}
 
-		// Grid layout for avatar + content
+		// Layout: avatar floated left, content flows naturally
 		> .block-editor-inner-blocks > .block-editor-block-list__layout {
 			@include mixins.media( mobile ) {
-				display: grid;
-				grid-template-columns: auto 1fr;
-				gap: 1.5rem;
+				position: relative;
+				padding-left: calc( 128px + 1.5rem );
+				min-height: 128px;
 			}
 
-			// Avatar takes first column, spans all rows
-			> .wp-block-newspack-avatar {
+			// Avatar positioned absolutely so it doesn't affect content flow
+			> [data-type="newspack/avatar"] {
 				@include mixins.media( mobile ) {
-					grid-column: 1;
-					grid-row: 1 / -1;
+					position: absolute;
+					top: 0;
+					left: 0;
 				}
 
-				// Ensure avatar is circular in nested mode
+				// Circular avatar in nested mode
 				.newspack-avatar-wrapper {
 					border-radius: 50%;
 					overflow: hidden;
 				}
-
-				img {
-					border-radius: 0;
-					display: block;
-					height: 100%;
-					max-width: none;
-					object-fit: cover;
-					width: 100%;
-				}
-			}
-
-			// All other blocks go in second column
-			> *:not(.wp-block-newspack-avatar) {
-				@include mixins.media( mobile ) {
-					grid-column: 2;
-				}
 			}
 		}
 
-		// Author name heading
-		.author-name {
-			margin-top: 0;
-			margin-bottom: 0.5em;
+		h3.author-name {
+			margin: 0 0 0.5em;
 		}
 
 		// Meta fields styling
@@ -171,11 +155,72 @@
 			margin-top: 0.5em;
 		}
 
-		.author-email,
-		.author-phone {
+		// Archive link – rendered as <a> on frontend, style as link in editor.
+		.author-archive-link {
+			margin-top: 0.5em;
+			margin-bottom: 0.5em;
+			text-decoration: underline;
+		}
+
+		// Email and phone badge styling (matching frontend visual appearance)
+		// Note: In editor, these are stacked (grid items) rather than inline, but the
+		// visual styling matches. Frontend renders them inline correctly.
+		.block-editor-block-list__block.author-email,
+		.block-editor-block-list__block.author-phone {
+			margin-right: 0.5em;
 			margin-top: 0;
-			margin-bottom: 0;
-			font-size: 0.9em;
+			margin-bottom: 0.5em;
+			background: #f0f0f0;
+			border-radius: 3px;
+			font-size: 0.7em;
+			padding: 0.4em 0.6em;
+			text-transform: uppercase;
+		}
+
+		// Social links block
+		.wp-block-newspack-blocks-author-profile-social {
+			color: var(--newspack-ui-color-neutral-60);
+			.author-profile-social__list {
+				display: flex;
+				flex-wrap: wrap;
+				list-style: none;
+				margin: 0 -8px;
+				padding: 0;
+
+				// InnerBlocks wrapper needs to be flex too so <li> children flow horizontally.
+				.block-editor-inner-blocks,
+				.block-editor-block-list__layout {
+					display: flex;
+					flex-wrap: wrap;
+				}
+
+				li {
+					margin: 8px;
+				}
+
+				a {
+					color: inherit;
+					text-decoration: none;
+				}
+
+				span {
+					display: inline-block;
+
+					svg {
+						display: block;
+						fill: currentcolor;
+					}
+				}
+
+				.service-name {
+					background: #f0f0f0;
+					border-radius: 3px;
+					display: block;
+					font-size: 0.7em;
+					padding: 0.4em 0.6em;
+					text-transform: uppercase;
+				}
+			}
 		}
 	}
 }

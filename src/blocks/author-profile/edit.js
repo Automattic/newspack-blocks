@@ -190,7 +190,7 @@ const createBoundParagraph = ( key, className, name ) => [
 // Each author field is a separate block that can be reordered or removed.
 // Block bindings connect core block attributes to author data via 'newspack-blocks/author' source.
 const NESTED_TEMPLATE = [
-	[ 'newspack/avatar' ],
+	[ 'newspack/avatar', { size: 128, lock: { move: true, remove: false } } ],
 	[
 		'core/heading',
 		{

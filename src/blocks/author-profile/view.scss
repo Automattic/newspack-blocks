@@ -53,12 +53,12 @@
 		// Nested mode: Style the avatar block within author profile.
 		// Avatar block uses .newspack-avatar-wrapper, not figure.
 		.wp-block-newspack-avatar {
-			// Force avatar size to match flat mode (96px default).
+			// Force avatar size to match flat mode default (128px).
 			.newspack-avatar-wrapper {
 				border-radius: 50%;
-				height: 96px;
+				height: 128px;
 				overflow: hidden;
-				width: 96px;
+				width: 128px;
 			}
 
 			img {
@@ -81,6 +81,21 @@
 			}
 		}
 
+		// Nested mode: Style email and phone as inline badges.
+		.author-email,
+		.author-phone {
+			display: inline-block;
+			margin-right: 0.5em;
+			margin-top: 0;
+			margin-bottom: 0.5em;
+
+			background: #f0f0f0;
+			border-radius: 3px;
+			font-size: 0.7em;
+			padding: 0.4em 0.6em;
+			text-transform: uppercase;
+		}
+
 		// Nested mode: Style the social links block to match flat mode badges.
 		.wp-block-newspack-blocks-author-profile-social {
 			.author-profile-social__list {
@@ -97,6 +112,15 @@
 				a {
 					display: block;
 					text-decoration: none;
+
+					span {
+						display: inline-block;
+
+						svg {
+							display: block;
+							fill: currentcolor;
+						}
+					}
 
 					.service-name {
 						background: #f0f0f0;
@@ -155,6 +179,11 @@
 				order: 2;
 			}
 		}
+	}
+
+	/* Nested mode */
+	&.is-nested-mode a:hover {
+		color: var(--newspack-ui-color-neutral-90);
 	}
 
 	/* Style – Center */
