@@ -31,6 +31,7 @@ export { name };
 export const title = __( 'Donate', 'newspack-blocks' );
 
 export const settings = {
+	...metadata,
 	title,
 	icon: {
 		src: icon,

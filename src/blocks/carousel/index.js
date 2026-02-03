@@ -28,6 +28,7 @@ export { name };
 export const title = __( 'Content Carousel', 'newspack-blocks' );
 
 export const settings = {
+	...metadata,
 	title,
 	icon: {
 		src: icon,

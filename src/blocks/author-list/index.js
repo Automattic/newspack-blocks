@@ -37,6 +37,7 @@ authorCustomFields.forEach( field => {
 } );
 
 export const settings = {
+	...metadata,
 	title,
 	icon: {
 		src: listView,

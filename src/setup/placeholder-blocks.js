@@ -57,6 +57,8 @@ function registerPlaceholderBlock( blockName, { title, description, icon, messag
 		);
 	};
 	registerBlockType( blockName, {
+		$schema: 'https://schemas.wp.org/trunk/block.json',
+		apiVersion: 3,
 		title,
 		description,
 		icon,

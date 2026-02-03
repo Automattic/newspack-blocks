@@ -23,6 +23,8 @@ export const name = 'youtube-video-playlist';
 export const title = __( 'YouTube Video Playlist (DEPRECATED)', 'newspack-blocks' );
 
 export const settings = {
+	$schema: 'https://schemas.wp.org/trunk/block.json',
+	apiVersion: 3,
 	title,
 	icon: {
 		src: icon,

@@ -28,6 +28,7 @@ export const title = __( 'Iframe', 'newspack-blocks' );
 export { name };
 
 export const settings = {
+	...metadata,
 	title,
 	icon: {
 		src: icon,

@@ -30,6 +30,7 @@ export { name };
 export const title = __( 'Content Loop', 'newspack-blocks' );
 
 export const settings = {
+	...metadata,
 	title,
 	icon: {
 		src: icon,

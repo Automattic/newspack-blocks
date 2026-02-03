@@ -38,7 +38,7 @@ authorCustomFields.forEach( field => {
 } );
 
 export const settings = {
-	apiVersion: metadata.apiVersion,
+	...metadata,
 	title,
 	icon: {
 		src: postAuthor,
