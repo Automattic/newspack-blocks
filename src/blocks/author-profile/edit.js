@@ -232,7 +232,7 @@ const ALLOWED_BLOCKS = [
 	'newspack-blocks/author-social-link', // Individual social icon blocks.
 ];
 
-const AuthorProfile = ( { attributes, setAttributes, context } ) => {
+const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 	const blockProps = useBlockProps();
 
 	// ALL HOOKS MUST BE CALLED UNCONDITIONALLY (React rules of hooks)
@@ -274,6 +274,16 @@ const AuthorProfile = ( { attributes, setAttributes, context } ) => {
 			return meta?._newspack_byline_active ?? false;
 		},
 		[ isContextual ]
+	);
+
+	// Read avatar block size from inner blocks for dynamic layout spacing.
+	const nestedAvatarSize = useSelect(
+		select => {
+			const innerBlocks = select( 'core/block-editor' ).getBlocks( clientId );
+			const avatarBlock = innerBlocks.find( b => b.name === 'newspack/avatar' );
+			return avatarBlock?.attributes?.size || null;
+		},
+		[ clientId ]
 	);
 
 	// Set layoutVersion to 2 when in nested mode for migration detection
@@ -669,10 +679,14 @@ const AuthorProfile = ( { attributes, setAttributes, context } ) => {
 		// The useEffect handles cleanup when component unmounts.
 		window.__newspackCurrentAuthor = previewAuthor;
 
-		// Add nested mode class to block wrapper for styling.
+		// Add nested mode class and avatar size variable to block wrapper.
 		const nestedBlockProps = {
 			...blockProps,
 			className: `${ blockProps.className } is-nested-mode`,
+			style: {
+				...( blockProps.style || {} ),
+				...( nestedAvatarSize ? { '--avatar-size': `${ nestedAvatarSize }px` } : {} ),
+			},
 		};
 
 		return (

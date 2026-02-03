@@ -110,15 +110,20 @@
 			}
 		}
 
-		// Layout: avatar floated left, content flows naturally
+		// Layout: absolute avatar with dynamic padding via --avatar-size
 		> .block-editor-inner-blocks > .block-editor-block-list__layout {
 			@include mixins.media( mobile ) {
 				position: relative;
-				padding-left: calc( 128px + 1.5rem );
-				min-height: 128px;
 			}
 
-			// Avatar positioned absolutely so it doesn't affect content flow
+			// When avatar is present, add padding based on its size
+			&:has(> [data-type="newspack/avatar"]) {
+				@include mixins.media( mobile ) {
+					padding-left: calc( var(--avatar-size, 128px) + 1.5rem );
+					min-height: var(--avatar-size, 128px);
+				}
+			}
+
 			> [data-type="newspack/avatar"] {
 				@include mixins.media( mobile ) {
 					position: absolute;

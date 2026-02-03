@@ -53,12 +53,11 @@
 		// Nested mode: Style the avatar block within author profile.
 		// Avatar block uses .newspack-avatar-wrapper, not figure.
 		.wp-block-newspack-avatar {
-			// Force avatar size to match flat mode default (128px).
 			.newspack-avatar-wrapper {
 				border-radius: 50%;
-				height: 128px;
+				height: var(--avatar-size, 128px);
 				overflow: hidden;
-				width: 128px;
+				width: var(--avatar-size, 128px);
 			}
 
 			img {
