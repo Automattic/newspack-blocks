@@ -207,7 +207,7 @@ class Newspack_Blocks {
 	/**
 	 * Enqueue block scripts and styles for editor.
 	 */
-	public static function enqueue_block_editor_assets() {
+	public static function enqueue_block_assets() {
 		$script_data = static::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.js' );
 
 		if ( $script_data ) {

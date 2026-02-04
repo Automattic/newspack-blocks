@@ -389,6 +389,7 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 		avatarHideDefault,
 		showEmptyBio,
 	} = attributes;
+	const blockProps = useBlockProps();
 
 	// Get post ID from block context or editor
 	const editorPostId = useSelect( select => select( 'core/editor' )?.getCurrentPostId?.(), [] );
@@ -710,6 +711,7 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 					) }
 				</PanelBody>
 			) }
+<<<<<<< HEAD
 		</InspectorControls>
 	);
 

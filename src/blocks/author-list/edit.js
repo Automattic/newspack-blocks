@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import apiFetch from '@wordpress/api-fetch';
-import { BlockControls, InspectorControls } from '@wordpress/block-editor';
+import { BlockControls, InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import {
 	BaseControl,
 	CheckboxControl,
@@ -24,7 +24,7 @@ import {
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { Fragment, useEffect, useState } from '@wordpress/element';
+import { Fragment, useEffect, useRef, useState } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { columns as columnsIcon, pencil, listView, pullLeft, pullRight } from '@wordpress/icons';
 import { __, sprintf } from '@wordpress/i18n';
@@ -48,8 +48,8 @@ const AuthorList = ( { attributes, clientId, setAttributes } ) => {
 	const [ error, setError ] = useState( null );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ maxItemsToSuggest, setMaxItemsToSuggest ] = useState( 0 );
-	const canUseCAP = Boolean( window.newspack_blocks_data?.can_use_cap );
-	const editableRoles = window.newspack_blocks_data?.editable_roles;
+	const [ canUseCAP, setCanUseCAP ] = useState( false );
+	const [ editableRoles, setEditableRoles ] = useState( [] );
 	const separators = [];
 	const {
 		authorRoles,
@@ -68,10 +68,27 @@ const AuthorList = ( { attributes, clientId, setAttributes } ) => {
 		avatarHideDefault,
 	} = attributes;
 	const isColumns = 'columns' === layout;
+	const ref = useRef();
 
 	useEffect( () => {
 		getAuthors();
 	}, [ authorRoles, authorType, avatarHideDefault, exclude, excludeEmpty ] );
+
+	// Handle global newspack_blocks_data availability in iframe editor.
+	// See https://developer.wordpress.org/block-editor/reference-guides/block-api/block-api-versions/block-migration-for-iframe-editor-compatibility/#document-and-window.
+	useEffect( () => {
+		const { ownerDocument } = ref.current || {};
+		const { defaultView } = ownerDocument || {};
+		if ( defaultView ) {
+			setCanUseCAP( Boolean( defaultView.newspack_blocks_data?.can_use_cap ) );
+			setEditableRoles( defaultView.newspack_blocks_data?.editable_roles || [] );
+		}
+	}, [] );
+
+	const blockProps = useBlockProps( {
+		className: classnames( attributes.className, 'wp-block-newspack-blocks-author-list' ),
+		ref,
+	} );
 
 	const getAuthors = async () => {
 		setError( null );
@@ -363,7 +380,7 @@ const AuthorList = ( { attributes, clientId, setAttributes } ) => {
 					/>
 				</BlockControls>
 			) }
-			<div className={ classnames( attributes.className, 'wp-block-newspack-blocks-author-list' ) }>
+			<div { ...blockProps }>
 				{ ! isLoading && ! error && authors && Array.isArray( authors ) && (
 					<>
 						{ isColumns && showSeparators && separatorSections ? (
