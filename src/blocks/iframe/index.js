@@ -15,7 +15,7 @@ import { __ } from '@wordpress/i18n';
  */
 import edit from './edit';
 import metadata from './block.json';
-const { name, attributes, category } = metadata;
+const { name, attributes, apiVersion, category } = metadata;
 
 /**
  * Style dependencies - will load in editor
@@ -28,7 +28,7 @@ export const title = __( 'Iframe', 'newspack-blocks' );
 export { name };
 
 export const settings = {
-	...metadata,
+	apiVersion,
 	title,
 	icon: {
 		src: icon,

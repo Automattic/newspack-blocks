@@ -304,6 +304,7 @@ function newspack_blocks_register_carousel() {
 		apply_filters(
 			'newspack_blocks_block_args',
 			array(
+				'api_version'     => 3,
 				'attributes'      => array(
 					'className'        => array(
 						'type' => 'string',

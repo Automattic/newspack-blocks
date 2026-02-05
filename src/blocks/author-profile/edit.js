@@ -711,7 +711,6 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 					) }
 				</PanelBody>
 			) }
-<<<<<<< HEAD
 		</InspectorControls>
 	);
 

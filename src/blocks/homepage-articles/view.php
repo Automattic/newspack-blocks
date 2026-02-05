@@ -440,6 +440,7 @@ function newspack_blocks_register_homepage_articles() {
 		apply_filters(
 			'newspack_blocks_block_args',
 			array(
+				'api_version'     => $block['apiVersion'],
 				'attributes'      => $block['attributes'],
 				'render_callback' => 'newspack_blocks_render_block_homepage_articles',
 				'supports'        => [],
