@@ -23,7 +23,7 @@ import {
 	Button,
 	Notice,
 } from '@wordpress/components';
-import { BlockControls, ColorPaletteControl, InspectorControls } from '@wordpress/block-editor';
+import { BlockControls, ColorPaletteControl, InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { isEmpty, pick } from 'lodash';
 import { Icon, formatListBullets, grid } from '@wordpress/icons';
 
@@ -41,6 +41,7 @@ import RedirectAfterSuccess from '../../../components/redirect-after-success';
 const TIER_LABELS = [ __( 'Low-tier', 'newspack-blocks' ), __( 'Mid-tier', 'newspack-blocks' ), __( 'High-tier', 'newspack-blocks' ) ];
 
 const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
+	const blockProps = useBlockProps();
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ error, setError ] = useState( '' );
 
@@ -101,30 +102,38 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 
 	if ( error.length ) {
 		return (
-			<Placeholder icon="warning" label={ __( 'Error', 'newspack-blocks' ) } instructions={ error }>
-				<ExternalLink href="/wp-admin/admin.php?page=newspack-audience#/payment">
-					{ __( 'Go to checkout & payment settings to troubleshoot.', 'newspack-blocks' ) }
-				</ExternalLink>
-			</Placeholder>
+			<div { ...blockProps }>
+				<Placeholder icon="warning" label={ __( 'Error', 'newspack-blocks' ) } instructions={ error }>
+					<ExternalLink href="/wp-admin/admin.php?page=newspack-audience#/payment">
+						{ __( 'Go to checkout & payment settings to troubleshoot.', 'newspack-blocks' ) }
+					</ExternalLink>
+				</Placeholder>
+			</div>
 		);
 	}
 
 	if ( settings.platform === 'other' ) {
 		return (
-			<Placeholder
-				icon="warning"
-				label={ __( 'The Donate block will not be rendered.', 'newspack-blocks' ) }
-				instructions={ __( 'The Reader Revenue platform is set to "other".', 'newspack-blocks' ) }
-			>
-				<ExternalLink href="/wp-admin/admin.php?page=newspack-audience#/payment">
-					{ __( 'Go to checkout & payment settings to update the platform.', 'newspack-blocks' ) }
-				</ExternalLink>
-			</Placeholder>
+			<div { ...blockProps }>
+				<Placeholder
+					icon="warning"
+					label={ __( 'The Donate block will not be rendered.', 'newspack-blocks' ) }
+					instructions={ __( 'The Reader Revenue platform is set to "other".', 'newspack-blocks' ) }
+				>
+					<ExternalLink href="/wp-admin/admin.php?page=newspack-audience#/payment">
+						{ __( 'Go to checkout & payment settings to update the platform.', 'newspack-blocks' ) }
+					</ExternalLink>
+				</Placeholder>
+			</div>
 		);
 	}
 
 	if ( isLoading ) {
-		return <Placeholder icon={ <Spinner /> } className="component-placeholder__align-center" />;
+		return (
+			<div { ...blockProps }>
+				<Placeholder icon={ <Spinner /> } className="component-placeholder__align-center" />
+			</div>
+		);
 	}
 
 	const canUseNameYourPrice = window.newspack_blocks_data?.can_use_name_your_price;
@@ -200,22 +209,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 	);
 
 	return (
-		<>
-			{ isTierBasedLayoutEnabled ? (
-				<>
-					<div className={ getWrapperClassNames() }>
-						<TierBasedLayout { ...componentProps } amounts={ displayedAmounts } />
-					</div>
-					<BlockControls>
-						<Toolbar controls={ tiersLayoutControls } />
-					</BlockControls>
-				</>
-			) : (
-				<div className={ getWrapperClassNames( [ isTiered ? 'tiered' : 'untiered' ] ) }>
-					<FrequencyBasedLayout isTiered={ isTiered } { ...componentProps } amounts={ displayedAmounts } />
-				</div>
-			) }
-
+		<Fragment>
 			<InspectorControls>
 				<PanelBody title={ __( 'Layout', 'newspack-blocks' ) }>
 					{ canUseNameYourPrice && (
@@ -421,7 +415,23 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 					<RedirectAfterSuccess setAttributes={ setAttributes } attributes={ attributes } />
 				</PanelBody>
 			</InspectorControls>
-		</>
+			<div { ...blockProps }>
+				{ isTierBasedLayoutEnabled ? (
+					<>
+						<div className={ getWrapperClassNames() }>
+							<TierBasedLayout { ...componentProps } amounts={ displayedAmounts } />
+						</div>
+						<BlockControls>
+							<Toolbar controls={ tiersLayoutControls } />
+						</BlockControls>
+					</>
+				) : (
+					<div className={ getWrapperClassNames( [ isTiered ? 'tiered' : 'untiered' ] ) }>
+						<FrequencyBasedLayout isTiered={ isTiered } { ...componentProps } amounts={ displayedAmounts } />
+					</div>
+				) }
+			</div>
+		</Fragment>
 	);
 };
 
