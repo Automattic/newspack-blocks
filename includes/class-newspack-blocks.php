@@ -131,6 +131,10 @@ class Newspack_Blocks {
 	 * Enqueue placeholder blocks assets.
 	 */
 	public static function enqueue_placeholder_blocks_assets() {
+		if ( ! is_admin() ) {
+			// In non-editor environment, do nothing.
+			return;
+		}
 		$script_data = self::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'placeholder_blocks.js' );
 		if ( $script_data ) {
 			wp_enqueue_script(
@@ -208,8 +212,11 @@ class Newspack_Blocks {
 	 * Enqueue block scripts and styles for editor.
 	 */
 	public static function enqueue_block_assets() {
+		if ( ! is_admin() ) {
+			// In non-editor environment, do nothing.
+			return;
+		}
 		$script_data = static::script_enqueue_helper( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.js' );
-
 		if ( $script_data ) {
 			wp_enqueue_script(
 				'newspack-blocks-editor',
@@ -260,7 +267,6 @@ class Newspack_Blocks {
 		}
 
 		$editor_style = plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . 'editor.css', NEWSPACK_BLOCKS__PLUGIN_FILE );
-
 		$handle = 'newspack-blocks-editor';
 		wp_enqueue_style(
 			$handle,

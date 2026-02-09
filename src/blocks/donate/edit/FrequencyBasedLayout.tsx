@@ -19,11 +19,11 @@ import { FREQUENCIES } from '../consts';
 import type { ComponentProps, DonationFrequencySlug } from '../types';
 import { updateBlockClassName, getFormData } from '../view';
 
-const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) => {
+const FrequencyBasedLayout = ( props: { canUseNameYourPrice: boolean; isTiered: boolean } & ComponentProps ) => {
 	// Unique identifier to prevent collisions with other Donate blocks' labels.
 	const uid = useMemo( () => Math.random().toString( 16 ).slice( 2 ), [] );
 
-	const { attributes, settings, amounts, availableFrequencies, setAttributes } = props;
+	const { attributes, settings, amounts, availableFrequencies, setAttributes, canUseNameYourPrice } = props;
 
 	const formRef = useRef< HTMLFormElement >( null );
 
@@ -69,7 +69,6 @@ const FrequencyBasedLayout = ( props: { isTiered: boolean } & ComponentProps ) =
 	}, [ attributes.defaultFrequency ] );
 
 	const [ selectedFrequency, setSelectedFrequency ] = useState( attributes.defaultFrequency );
-	const canUseNameYourPrice = window.newspack_blocks_data?.can_use_name_your_price;
 	const renderFrequencySelect = ( frequencySlug: DonationFrequencySlug ) => (
 		<>
 			<input

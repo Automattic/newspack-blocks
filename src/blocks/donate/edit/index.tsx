@@ -40,8 +40,7 @@ import RedirectAfterSuccess from '../../../components/redirect-after-success';
 
 const TIER_LABELS = [ __( 'Low-tier', 'newspack-blocks' ), __( 'Mid-tier', 'newspack-blocks' ), __( 'High-tier', 'newspack-blocks' ) ];
 
-const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
-	const blockProps = useBlockProps();
+const Edit = ( { attributes, setAttributes }: EditProps ) => {
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ error, setError ] = useState( '' );
 
@@ -100,6 +99,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 			.finally( () => setIsLoading( false ) );
 	}, [] );
 
+	const blockProps = useBlockProps();
 	if ( error.length ) {
 		return (
 			<div { ...blockProps }>
@@ -136,11 +136,14 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 		);
 	}
 
-	const canUseNameYourPrice = window.newspack_blocks_data?.can_use_name_your_price;
+	const canUseNameYourPrice = window?.newspack_blocks_data?.can_use_name_your_price;
 	const isManual = attributes.manual && canUseNameYourPrice;
 	const isTiered = isManual ? attributes.tiered : settings.tiered;
 	const isTierBasedLayoutEnabled = isTiered && attributes.layoutOption === 'tiers';
 	const tierLayoutStyle = attributes.tierStyle;
+	const hasRecaptcha = window?.newspack_blocks_data?.has_recaptcha;
+	const supportsRecaptcha = window?.newspack_blocks_data?.supports_recaptcha;
+	const recaptchaURL = window?.newspack_blocks_data?.recaptcha_url || '';
 
 	const amounts = isManual ? attributes.amounts : settings.amounts;
 
@@ -148,8 +151,9 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 		isManual ? ! attributes.disabledFrequencies[ slug ] : ! settings.disabledFrequencies[ slug ]
 	);
 
+	let { className } = attributes;
 	// Editor bug – initially, the default style is selected, but the class not applied.
-	if ( className?.indexOf( 'is-style' ) === -1 ) {
+	if ( className.indexOf( 'is-style' ) === -1 ) {
 		className += ' is-style-default';
 	}
 	if ( ! canUseNameYourPrice ) {
@@ -389,16 +393,16 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 						/>
 					</PanelBody>
 				) }
-				{ window.newspack_blocks_data.supports_recaptcha && (
+				{ supportsRecaptcha && (
 					<PanelBody title={ __( 'Spam protection', 'newspack' ) }>
 						<p>
 							{ sprintf(
 								// translators: %s is either 'enabled' or 'disabled'.
 								__( 'reCAPTCHA is currently %s.', 'newspack' ),
-								window.newspack_blocks_data.has_recaptcha ? __( 'enabled', 'newspack' ) : __( 'disabled', 'newspack' )
+								hasRecaptcha ? __( 'enabled', 'newspack' ) : __( 'disabled', 'newspack' )
 							) }
 						</p>
-						{ ! window.newspack_blocks_data.has_recaptcha && (
+						{ ! hasRecaptcha && (
 							<p>
 								{ __(
 									"It's highly recommended that you enable reCAPTCHA protection to prevent spambots from using this form!",
@@ -407,7 +411,7 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 							</p>
 						) }
 						<p>
-							<a href={ window.newspack_blocks_data.recaptcha_url }>{ __( 'Configure your reCAPTCHA settings.', 'newspack' ) }</a>
+							<a href={ recaptchaURL }>{ __( 'Configure your reCAPTCHA settings.', 'newspack' ) }</a>
 						</p>
 					</PanelBody>
 				) }
@@ -415,19 +419,24 @@ const Edit = ( { attributes, setAttributes, className }: EditProps ) => {
 					<RedirectAfterSuccess setAttributes={ setAttributes } attributes={ attributes } />
 				</PanelBody>
 			</InspectorControls>
+			{ isTierBasedLayoutEnabled && (
+				<BlockControls>
+					<Toolbar controls={ tiersLayoutControls } />
+				</BlockControls>
+			) }
 			<div { ...blockProps }>
 				{ isTierBasedLayoutEnabled ? (
-					<>
-						<div className={ getWrapperClassNames() }>
-							<TierBasedLayout { ...componentProps } amounts={ displayedAmounts } />
-						</div>
-						<BlockControls>
-							<Toolbar controls={ tiersLayoutControls } />
-						</BlockControls>
-					</>
+					<div className={ getWrapperClassNames() }>
+						<TierBasedLayout { ...componentProps } amounts={ displayedAmounts } />
+					</div>
 				) : (
 					<div className={ getWrapperClassNames( [ isTiered ? 'tiered' : 'untiered' ] ) }>
-						<FrequencyBasedLayout isTiered={ isTiered } { ...componentProps } amounts={ displayedAmounts } />
+						<FrequencyBasedLayout
+							isTiered={ isTiered }
+							canUseNameYourPrice={ canUseNameYourPrice }
+							amounts={ displayedAmounts }
+							{ ...componentProps }
+						/>
 					</div>
 				) }
 			</div>
