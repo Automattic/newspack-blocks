@@ -151,7 +151,7 @@ const Edit = ( { attributes, setAttributes }: EditProps ) => {
 		isManual ? ! attributes.disabledFrequencies[ slug ] : ! settings.disabledFrequencies[ slug ]
 	);
 
-	let { className } = attributes;
+	let className = attributes?.className || '';
 	// Editor bug – initially, the default style is selected, but the class not applied.
 	if ( className.indexOf( 'is-style' ) === -1 ) {
 		className += ' is-style-default';
@@ -424,22 +424,20 @@ const Edit = ( { attributes, setAttributes }: EditProps ) => {
 					<Toolbar controls={ tiersLayoutControls } />
 				</BlockControls>
 			) }
-			<div { ...blockProps }>
-				{ isTierBasedLayoutEnabled ? (
-					<div className={ getWrapperClassNames() }>
-						<TierBasedLayout { ...componentProps } amounts={ displayedAmounts } />
-					</div>
-				) : (
-					<div className={ getWrapperClassNames( [ isTiered ? 'tiered' : 'untiered' ] ) }>
-						<FrequencyBasedLayout
-							isTiered={ isTiered }
-							canUseNameYourPrice={ canUseNameYourPrice }
-							amounts={ displayedAmounts }
-							{ ...componentProps }
-						/>
-					</div>
-				) }
-			</div>
+			{ isTierBasedLayoutEnabled ? (
+				<div { ...blockProps } className={ classNames( blockProps.className, getWrapperClassNames() ) }>
+					<TierBasedLayout { ...componentProps } amounts={ displayedAmounts } />
+				</div>
+			) : (
+				<div { ...blockProps } className={ classNames( blockProps.className, getWrapperClassNames( [ isTiered ? 'tiered' : 'untiered' ] ) ) }>
+					<FrequencyBasedLayout
+						isTiered={ isTiered }
+						canUseNameYourPrice={ canUseNameYourPrice }
+						amounts={ displayedAmounts }
+						{ ...componentProps }
+					/>
+				</div>
+			) }
 		</Fragment>
 	);
 };

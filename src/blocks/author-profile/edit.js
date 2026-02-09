@@ -360,7 +360,6 @@ const getPlaceholderAuthor = ( socialIconSvgs = {} ) => {
 };
 
 const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
-	const blockProps = useBlockProps();
 	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
 
 	// ALL HOOKS MUST BE CALLED UNCONDITIONALLY (React rules of hooks)

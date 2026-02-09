@@ -347,114 +347,111 @@ class Edit extends Component {
 					<PostTypesPanel attributes={ attributes } setAttributes={ setAttributes } />
 					<PostStatusesPanel attributes={ attributes } setAttributes={ setAttributes } />
 				</InspectorControls>
-				<div { ...blockProps }>
-					<div className={ classes } ref={ this.props.carouselRef }>
-						{ hasNoPosts && (
-							<Placeholder className="component-placeholder__align-center">
-								<div style={ { margin: 'auto' } }>{ __( 'Sorry, no posts were found.' ) }</div>
-							</Placeholder>
-						) }
-						{ ( ! this.state.swiperInitialized || ! latestPosts ) && (
-							<Placeholder icon={ <Spinner /> } className="component-placeholder__align-center" />
-						) }
-						{ latestPosts && (
-							<Fragment>
-								{ autoplay && (
-									<Fragment>
-										<button className="swiper-button swiper-button-pause" ref={ this.btnPauseRef } />
-										<button className="swiper-button swiper-button-play" ref={ this.btnPlayRef } />
-									</Fragment>
-								) }
-								<div className="swiper-wrapper">
-									{ latestPosts.map( post => (
-										<article
-											className={ `post-has-image swiper-slide ${ post.post_type } ${ post.newspack_article_classes || '' }` }
-											key={ post.id }
-										>
-											{ getPostStatusLabel( post ) }
-											<figure className="post-thumbnail">
-												<a href="#" rel="bookmark">
-													{ post.newspack_featured_image_src ? (
-														<img
-															className={ `image-fit-${ imageFit }` }
-															src={ post.newspack_featured_image_src.large }
-															alt=""
-														/>
-													) : (
-														<div className="wp-block-newspack-blocks-carousel__placeholder" />
-													) }
-												</a>
-											</figure>
-											{ ( post.newspack_post_sponsors ||
-												showCategory ||
-												showTitle ||
-												showAuthor ||
-												showDate ||
-												showCaption ||
-												showCredit ) && (
-												<div className="entry-wrapper">
-													{ ( post.newspack_post_sponsors ||
-														( showCategory && 0 < post.newspack_category_info.length ) ) && (
-														<div className={ 'cat-links' + ( post.newspack_post_sponsors ? ' sponsor-label' : '' ) }>
-															{ post.newspack_post_sponsors && (
-																<span className="flag">{ post.newspack_post_sponsors[ 0 ].flag }</span>
-															) }
-															{ showCategory &&
-																( ! post.newspack_post_sponsors || post.newspack_sponsors_show_categories ) && (
-																	<RawHTML>{ decodeEntities( post.newspack_category_info ) }</RawHTML>
-																) }
-														</div>
-													) }
-													{ showTitle && (
-														<h3 className="entry-title">
-															<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
-														</h3>
-													) }
-													<div className="entry-meta">
+				<div { ...blockProps } className={ classes } ref={ this.props.carouselRef }>
+					{ hasNoPosts && (
+						<Placeholder className="component-placeholder__align-center">
+							<div style={ { margin: 'auto' } }>{ __( 'Sorry, no posts were found.' ) }</div>
+						</Placeholder>
+					) }
+					{ ( ! this.state.swiperInitialized || ! latestPosts ) && (
+						<Placeholder icon={ <Spinner /> } className="component-placeholder__align-center" />
+					) }
+					{ latestPosts && (
+						<Fragment>
+							{ autoplay && (
+								<Fragment>
+									<button className="swiper-button swiper-button-pause" ref={ this.btnPauseRef } />
+									<button className="swiper-button swiper-button-play" ref={ this.btnPlayRef } />
+								</Fragment>
+							) }
+							<div className="swiper-wrapper">
+								{ latestPosts.map( post => (
+									<article
+										className={ `post-has-image swiper-slide ${ post.post_type } ${ post.newspack_article_classes || '' }` }
+										key={ post.id }
+									>
+										{ getPostStatusLabel( post ) }
+										<figure className="post-thumbnail">
+											<a href="#" rel="bookmark">
+												{ post.newspack_featured_image_src ? (
+													<img
+														className={ `image-fit-${ imageFit }` }
+														src={ post.newspack_featured_image_src.large }
+														alt=""
+													/>
+												) : (
+													<div className="wp-block-newspack-blocks-carousel__placeholder" />
+												) }
+											</a>
+										</figure>
+										{ ( post.newspack_post_sponsors ||
+											showCategory ||
+											showTitle ||
+											showAuthor ||
+											showDate ||
+											showCaption ||
+											showCredit ) && (
+											<div className="entry-wrapper">
+												{ ( post.newspack_post_sponsors || ( showCategory && 0 < post.newspack_category_info.length ) ) && (
+													<div className={ 'cat-links' + ( post.newspack_post_sponsors ? ' sponsor-label' : '' ) }>
 														{ post.newspack_post_sponsors && (
-															<span
-																className={ `entry-sponsors ${
-																	post.newspack_sponsors_show_author ? 'plus-author' : ''
-																}` }
-															>
-																{ formatSponsorLogos( post.newspack_post_sponsors ) }
-																{ formatSponsorByline( post.newspack_post_sponsors ) }
-															</span>
+															<span className="flag">{ post.newspack_post_sponsors[ 0 ].flag }</span>
 														) }
-														{ showAuthor &&
-															! post.newspack_listings_hide_author &&
-															( ! post.newspack_post_sponsors || post.newspack_sponsors_show_author ) && (
-																<RawHTML className="byline-container">{ getBylineHTML( post, showAvatar ) }</RawHTML>
+														{ showCategory &&
+															( ! post.newspack_post_sponsors || post.newspack_sponsors_show_categories ) && (
+																<RawHTML>{ decodeEntities( post.newspack_category_info ) }</RawHTML>
 															) }
-														{ showDate && (
-															<time className="entry-date published" key="pub-date">
-																{ dateI18n( dateFormat, post.date ) }
-															</time>
-														) }
-														{ ( showCaption || showCredit ) && post.newspack_featured_image_caption && (
-															<div
-																className="entry-caption"
-																dangerouslySetInnerHTML={ {
-																	__html: post.newspack_featured_image_caption,
-																} }
-															/>
-														) }
 													</div>
+												) }
+												{ showTitle && (
+													<h3 className="entry-title">
+														<a href="#">{ decodeEntities( post.title.rendered.trim() ) }</a>
+													</h3>
+												) }
+												<div className="entry-meta">
+													{ post.newspack_post_sponsors && (
+														<span
+															className={ `entry-sponsors ${
+																post.newspack_sponsors_show_author ? 'plus-author' : ''
+															}` }
+														>
+															{ formatSponsorLogos( post.newspack_post_sponsors ) }
+															{ formatSponsorByline( post.newspack_post_sponsors ) }
+														</span>
+													) }
+													{ showAuthor &&
+														! post.newspack_listings_hide_author &&
+														( ! post.newspack_post_sponsors || post.newspack_sponsors_show_author ) && (
+															<RawHTML className="byline-container">{ getBylineHTML( post, showAvatar ) }</RawHTML>
+														) }
+													{ showDate && (
+														<time className="entry-date published" key="pub-date">
+															{ dateI18n( dateFormat, post.date ) }
+														</time>
+													) }
+													{ ( showCaption || showCredit ) && post.newspack_featured_image_caption && (
+														<div
+															className="entry-caption"
+															dangerouslySetInnerHTML={ {
+																__html: post.newspack_featured_image_caption,
+															} }
+														/>
+													) }
 												</div>
-											) }
-										</article>
-									) ) }
-								</div>
-								{ ! hasNoPosts && ! hasOnePost && (
-									<>
-										<button className="swiper-button swiper-button-prev" ref={ this.btnPrevRef } />
-										<button className="swiper-button swiper-button-next" ref={ this.btnNextRef } />
-										<div className="swiper-pagination swiper-pagination-bullets" ref={ this.paginationRef } />
-									</>
-								) }
-							</Fragment>
-						) }
-					</div>
+											</div>
+										) }
+									</article>
+								) ) }
+							</div>
+							{ ! hasNoPosts && ! hasOnePost && (
+								<>
+									<button className="swiper-button swiper-button-prev" ref={ this.btnPrevRef } />
+									<button className="swiper-button swiper-button-next" ref={ this.btnNextRef } />
+									<div className="swiper-pagination swiper-pagination-bullets" ref={ this.paginationRef } />
+								</>
+							) }
+						</Fragment>
+					) }
 				</div>
 			</Fragment>
 		);
