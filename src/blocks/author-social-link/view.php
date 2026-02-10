@@ -107,7 +107,7 @@ function newspack_blocks_render_author_social_link( $attributes, $content, $bloc
 	$icon_size = $block->context['newspack-blocks/iconSize'] ?? 24;
 	$svg       = newspack_blocks_get_social_service_svg( $author, $service );
 
-	$output = '<li class="wp-block-newspack-blocks-author-social-link">';
+	$output  = '<li class="wp-block-newspack-blocks-author-social-link">';
 	$output .= sprintf( '<a href="%s">', esc_url( $url ) );
 
 	if ( $svg ) {

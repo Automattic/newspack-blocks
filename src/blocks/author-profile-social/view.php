@@ -115,6 +115,7 @@ function newspack_blocks_render_social_with_inner_blocks( $attributes, $block, $
 				]
 			)
 		);
+
 		$rendered = $inner_block_instance->render();
 		if ( $rendered ) {
 			$inner_content .= $rendered;
@@ -144,7 +145,7 @@ function newspack_blocks_render_social_with_inner_blocks( $attributes, $block, $
 					'newspack-blocks/iconSize' => $icon_size,
 				]
 			);
-			$rendered = $fallback_block->render();
+			$rendered       = $fallback_block->render();
 			if ( $rendered ) {
 				$inner_content .= $rendered;
 			}

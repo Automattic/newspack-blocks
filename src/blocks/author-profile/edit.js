@@ -205,6 +205,25 @@ const NESTED_TEMPLATE = [
 	],
 ];
 
+// Placeholder author for Site Editor template context.
+// When editing a template, we show generic labels instead of real author data.
+const getPlaceholderAuthor = () => ( {
+	id: 'placeholder',
+	name: __( '[Author Name]', 'newspack-blocks' ),
+	bio: __( '[Author bio will appear here]', 'newspack-blocks' ),
+	newspack_job_title: __( '[Job Title]', 'newspack-blocks' ),
+	newspack_role: __( '[Role]', 'newspack-blocks' ),
+	newspack_employer: __( '[Employer]', 'newspack-blocks' ),
+	url: '#',
+	avatar: '', // Empty triggers the avatar block's built-in placeholder rendering.
+	social: {
+		facebook: { url: '#' },
+		twitter: { url: '#' },
+	},
+	email: { url: 'mailto:placeholder@example.com' },
+	newspack_phone_number: { url: 'tel:0000000000' },
+} );
+
 // Allowed inner blocks for nested mode.
 // Includes core blocks for flexibility and custom blocks for complex functionality.
 const ALLOWED_BLOCKS = [
@@ -266,6 +285,12 @@ const AuthorProfile = ( { attributes, setAttributes, context } ) => {
 		[ isContextual ]
 	);
 
+	// Detect Site Editor template context where real author data is not meaningful.
+	const isTemplateLikeContext = useSelect( select => {
+		const postType = select( 'core/editor' )?.getCurrentPostType?.();
+		return postType === 'wp_template' || postType === 'wp_template_part';
+	}, [] );
+
 	// Set layoutVersion to 2 when in nested mode for migration detection
 	useEffect( () => {
 		if ( isNestedMode && layoutVersion !== 2 ) {
@@ -283,12 +308,12 @@ const AuthorProfile = ( { attributes, setAttributes, context } ) => {
 
 	// Fetch authors for contextual mode
 	useEffect( () => {
-		if ( ! isContextual || customBylineActive || ! postId ) {
+		if ( ! isContextual || customBylineActive || ! postId || isTemplateLikeContext ) {
 			setContextualAuthors( [] );
 			return;
 		}
 		getContextualAuthors();
-	}, [ isContextual, postId, avatarHideDefault, showEmail, customBylineActive ] );
+	}, [ isContextual, postId, avatarHideDefault, showEmail, customBylineActive, isTemplateLikeContext ] );
 
 	const getAuthorById = async () => {
 		setError( null );
@@ -366,10 +391,13 @@ const AuthorProfile = ( { attributes, setAttributes, context } ) => {
 	// Memoize authors for rendering based on mode
 	const authorsToRender = useMemo( () => {
 		if ( isContextual ) {
+			if ( isTemplateLikeContext ) {
+				return [ getPlaceholderAuthor() ];
+			}
 			return contextualAuthors;
 		}
 		return author ? [ author ] : [];
-	}, [ isContextual, contextualAuthors, author ] );
+	}, [ isContextual, isTemplateLikeContext, contextualAuthors, author ] );
 
 	// Reset preview index when authors list changes (e.g., switching posts)
 	useEffect( () => {
