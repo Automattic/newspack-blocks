@@ -89,6 +89,10 @@
 			display: block;
 		}
 
+		a:hover {
+			color: var(--wp--preset--color--contrast-2, inherit);
+		}
+
 		svg {
 			fill: currentcolor;
 		}

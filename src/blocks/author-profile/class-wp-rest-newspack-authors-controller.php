@@ -311,6 +311,8 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 					];
 					if ( class_exists( 'Newspack_SVG_Icons' ) ) {
 						$value['svg'] = Newspack_SVG_Icons::get_social_link_svg( $value['url'], 24 );
+					} elseif ( class_exists( '\Newspack\Blocks\Author_Profile_Social\Author_Profile_Social_Block' ) ) {
+						$value['svg'] = \Newspack\Blocks\Author_Profile_Social\Author_Profile_Social_Block::get_fallback_social_svg( 'phone' );
 					}
 				}
 				$guest_author_data[ $custom_field['name'] ] = $value;
@@ -360,6 +362,8 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 					];
 					if ( class_exists( 'Newspack_SVG_Icons' ) ) {
 						$value['svg'] = Newspack_SVG_Icons::get_social_link_svg( $value['url'], 24 );
+					} elseif ( class_exists( '\Newspack\Blocks\Author_Profile_Social\Author_Profile_Social_Block' ) ) {
+						$value['svg'] = \Newspack\Blocks\Author_Profile_Social\Author_Profile_Social_Block::get_fallback_social_svg( 'phone' );
 					}
 				}
 				$user_data[ $custom_field['name'] ] = $value;
@@ -405,6 +409,8 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 
 			if ( class_exists( 'Newspack_SVG_Icons' ) ) {
 				$email_data['svg'] = Newspack_SVG_Icons::get_social_link_svg( 'mailto:' . $email_address, 24 );
+			} elseif ( class_exists( '\Newspack\Blocks\Author_Profile_Social\Author_Profile_Social_Block' ) ) {
+				$email_data['svg'] = \Newspack\Blocks\Author_Profile_Social\Author_Profile_Social_Block::get_fallback_social_svg( 'email' );
 			}
 		}
 
@@ -445,6 +451,8 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 
 					if ( class_exists( 'Newspack_SVG_Icons' ) ) {
 						$acc[ $profile ]['svg'] = $is_website ? Newspack_SVG_Icons::get_svg( 'ui', 'link', 24 ) : Newspack_SVG_Icons::get_social_link_svg( $url, 24 );
+					} elseif ( class_exists( '\Newspack\Blocks\Author_Profile_Social\Author_Profile_Social_Block' ) ) {
+						$acc[ $profile ]['svg'] = \Newspack\Blocks\Author_Profile_Social\Author_Profile_Social_Block::get_fallback_social_svg( $profile );
 					}
 				}
 
