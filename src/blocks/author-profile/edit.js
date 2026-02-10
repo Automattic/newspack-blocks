@@ -3,7 +3,7 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 import { BlockControls, InnerBlocks, InspectorControls, useBlockProps } from '@wordpress/block-editor';
-import { registerBlockBindingsSource } from '@wordpress/blocks';
+import { createBlocksFromInnerBlocksTemplate, registerBlockBindingsSource } from '@wordpress/blocks';
 import {
 	Button,
 	ButtonGroup,
@@ -14,6 +14,8 @@ import {
 	Spinner,
 	ToggleControl,
 	Toolbar,
+	ToolbarButton,
+	ToolbarGroup,
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalUnitControl as UnitControl,
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
@@ -22,9 +24,9 @@ import {
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 import { useEffect, useState, useMemo } from '@wordpress/element';
-import { useSelect } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { decodeEntities } from '@wordpress/html-entities';
-import { pencil, postAuthor, pullLeft, pullRight } from '@wordpress/icons';
+import { backup, pencil, postAuthor, pullLeft, pullRight } from '@wordpress/icons';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 
@@ -170,12 +172,24 @@ const createBoundParagraph = ( key, className, name ) => [
 const NESTED_TEMPLATE = [
 	[
 		'core/columns',
-		{ isStackedOnMobile: true, className: 'author-profile-columns' },
+		{ isStackedOnMobile: true, className: 'author-profile-columns', templateLock: 'insert' },
 		[
-			[ 'core/column', { className: 'author-profile-avatar-column' }, [ [ 'newspack/avatar', { size: 128 } ] ] ],
 			[
 				'core/column',
-				{ className: 'author-profile-content-column' },
+				{
+					className: 'author-profile-avatar-column',
+					templateLock: 'insert',
+					allowedBlocks: [ 'newspack/avatar' ],
+				},
+				[ [ 'newspack/avatar', { size: 128 } ] ],
+			],
+			[
+				'core/column',
+				{
+					className: 'author-profile-content-column',
+					templateLock: false,
+					allowedBlocks: [ 'core/heading', 'core/paragraph', 'newspack-blocks/author-profile-social' ],
+				},
 				[
 					[
 						'core/heading',
@@ -225,25 +239,9 @@ const getPlaceholderAuthor = () => ( {
 	newspack_phone_number: { url: 'tel:0000000000' },
 } );
 
-// Allowed inner blocks for nested mode.
-// Includes core blocks for flexibility and custom blocks for complex functionality.
-const ALLOWED_BLOCKS = [
-	'newspack/avatar',
-	'core/heading',
-	'core/paragraph',
-	'core/button',
-	'core/buttons',
-	'core/group',
-	'core/columns',
-	'core/column',
-	'core/social-links',
-	'core/social-link',
-	'newspack-blocks/author-profile-social', // Keep for social icons with SVGs.
-	'newspack-blocks/author-social-link', // Individual social icon blocks.
-];
-
-const AuthorProfile = ( { attributes, setAttributes, context } ) => {
+const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 	const blockProps = useBlockProps();
+	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
 
 	// ALL HOOKS MUST BE CALLED UNCONDITIONALLY (React rules of hooks)
 	const [ author, setAuthor ] = useState( null );
@@ -431,6 +429,10 @@ const AuthorProfile = ( { attributes, setAttributes, context } ) => {
 	// In nested mode, hide field toggles since publishers control display by adding/removing blocks.
 	const isNestedLayout = layoutVersion === 2;
 
+	const resetLayout = () => {
+		replaceInnerBlocks( clientId, createBlocksFromInnerBlocksTemplate( NESTED_TEMPLATE ), false );
+	};
+
 	// Inspector controls for display settings
 	const inspectorControls = (
 		<InspectorControls>
@@ -550,6 +552,11 @@ const AuthorProfile = ( { attributes, setAttributes, context } ) => {
 						},
 					] }
 				/>
+			) }
+			{ isNestedLayout && (
+				<ToolbarGroup>
+					<ToolbarButton icon={ backup } label={ __( 'Reset layout', 'newspack-blocks' ) } onClick={ resetLayout } />
+				</ToolbarGroup>
 			) }
 		</BlockControls>
 	);
@@ -720,7 +727,12 @@ const AuthorProfile = ( { attributes, setAttributes, context } ) => {
 						</div>
 					) }
 					{ /* Key forces re-render when author changes, which re-evaluates bindings */ }
-					<InnerBlocks key={ `author-${ previewAuthor?.id || 'none' }` } template={ NESTED_TEMPLATE } allowedBlocks={ ALLOWED_BLOCKS } />
+					<InnerBlocks
+						key={ `author-${ previewAuthor?.id || 'none' }` }
+						template={ NESTED_TEMPLATE }
+						templateLock="insert"
+						allowedBlocks={ [ 'core/columns' ] }
+					/>
 				</div>
 			</AuthorContext.Provider>
 		);
