@@ -111,6 +111,20 @@
 
 	/* Nested mode */
 	&.is-nested-mode {
+		// Dynamic column sizing: avatar column fits content, content column flexes to fill
+		.author-profile-columns {
+			.author-profile-avatar-column {
+				flex-basis: auto;
+				flex-grow: 0;
+				flex-shrink: 0;
+			}
+
+			.author-profile-content-column {
+				flex-basis: auto;
+				flex-grow: 1;
+			}
+		}
+
 		a {
 			color: inherit;
 

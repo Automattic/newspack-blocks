@@ -170,12 +170,12 @@ const createBoundParagraph = ( key, className, name ) => [
 const NESTED_TEMPLATE = [
 	[
 		'core/columns',
-		{ isStackedOnMobile: true },
+		{ isStackedOnMobile: true, className: 'author-profile-columns' },
 		[
-			[ 'core/column', { width: '20%' }, [ [ 'newspack/avatar', { size: 128 } ] ] ],
+			[ 'core/column', { className: 'author-profile-avatar-column' }, [ [ 'newspack/avatar', { size: 128 } ] ] ],
 			[
 				'core/column',
-				{ width: '80%' },
+				{ className: 'author-profile-content-column' },
 				[
 					[
 						'core/heading',
@@ -209,7 +209,7 @@ const NESTED_TEMPLATE = [
 // When editing a template, we show generic labels instead of real author data.
 const getPlaceholderAuthor = () => ( {
 	id: 'placeholder',
-	name: __( '[Author Name]', 'newspack-blocks' ),
+	name: __( '[Author]', 'newspack-blocks' ),
 	bio: __( '[Author bio will appear here]', 'newspack-blocks' ),
 	newspack_job_title: __( '[Job Title]', 'newspack-blocks' ),
 	newspack_role: __( '[Role]', 'newspack-blocks' ),
