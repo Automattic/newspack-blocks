@@ -11,7 +11,7 @@
  * This allows core blocks to bind their content to author fields using:
  * {"metadata":{"bindings":{"content":{"source":"newspack-blocks/author","args":{"key":"name"}}}}}
  *
- * Supported keys: name, bio, url, newspack_job_title, newspack_role, newspack_employer
+ * Supported keys: name, bio, url, archive_url, archive_link_text, newspack_job_title, newspack_role, newspack_employer
  */
 function newspack_blocks_register_author_bindings_source() {
 	// Block bindings require WordPress 6.5+.
@@ -291,7 +291,6 @@ function newspack_blocks_render_author_profile_card( $author, $attributes ) {
  * @return string Rendered block HTML.
  */
 function newspack_blocks_render_block_author_profile( $attributes, $content, $block ) {
-	$is_contextual  = ! empty( $attributes['isContextual'] );
 	$layout_version = $attributes['layoutVersion'] ?? 1;
 
 	// Get authors based on mode.
@@ -443,9 +442,15 @@ function newspack_blocks_render_nested_author_profile( $authors, $attributes, $b
 function newspack_blocks_wrap_author_archive_link( $html, $author ) {
 	$url = $author['url'] ?? '';
 	if ( $url ) {
-		$html = preg_replace(
+		$html = preg_replace_callback(
 			'/(<p[^>]*class="[^"]*author-archive-link[^"]*"[^>]*>)(.*?)(<\/p>)/s',
-			'$1<a href="' . esc_url( $url ) . '">$2</a>$3',
+			function ( $matches ) use ( $url ) {
+				// Avoid creating nested anchors if the paragraph already contains a link.
+				if ( false !== stripos( $matches[2], '<a ' ) ) {
+					return $matches[0];
+				}
+				return $matches[1] . '<a href="' . esc_url( $url ) . '">' . $matches[2] . '</a>' . $matches[3];
+			},
 			$html
 		);
 	}
