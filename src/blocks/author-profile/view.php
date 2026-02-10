@@ -430,6 +430,9 @@ function newspack_blocks_render_flat_author_profiles( $authors, $attributes ) {
 /**
  * Render author profiles using nested inner blocks.
  *
+ * Renders the full inner block tree (including core/columns) and post-processes
+ * the HTML to wrap specific paragraphs in links.
+ *
  * @param array    $authors Array of author data.
  * @param array    $attributes Block attributes.
  * @param WP_Block $block Block instance.
@@ -440,31 +443,18 @@ function newspack_blocks_render_nested_author_profile( $authors, $attributes, $b
 	$show_empty_bio = $attributes['showEmptyBio'] ?? false;
 
 	foreach ( $authors as $author ) {
-		// Skip authors with no bio if configured.
 		if ( empty( $author['bio'] ) && ! $show_empty_bio ) {
 			continue;
 		}
 
-		// Build wrapper classes.
-		$extra_classes = [
-			'is-nested-mode',
-			'text-size-' . ( $attributes['textSize'] ?? 'medium' ),
-			'avatar-' . ( $attributes['avatarAlignment'] ?? 'left' ),
-		];
-		$classes = Newspack_Blocks::block_classes(
-			'author-profile',
-			$attributes,
-			$extra_classes
-		);
+		$extra_classes = [ 'is-nested-mode' ];
+		$classes       = Newspack_Blocks::block_classes( 'author-profile', $attributes, $extra_classes );
 
-		$author_output = '<div class="' . esc_attr( $classes ) . '">';
-
-		// Separate avatar from other blocks to match flat mode structure.
-		$avatar_output = '';
-		$bio_output    = '';
-
+		// Render entire inner block tree with author context.
+		// WP_Block propagates available_context to all descendants automatically
+		// through core/columns > core/column > child blocks.
+		$author_html = '';
 		foreach ( $block->inner_blocks as $inner_block ) {
-			// Create new WP_Block instance with author-specific context.
 			$inner_block_instance = new WP_Block(
 				$inner_block->parsed_block,
 				array_merge(
@@ -477,73 +467,62 @@ function newspack_blocks_render_nested_author_profile( $authors, $attributes, $b
 					]
 				)
 			);
-			$rendered = $inner_block_instance->render();
-
-			// Get block className for special handling.
-			$class_name = $inner_block->parsed_block['attrs']['className'] ?? '';
-
-			// Wrap archive link in anchor tag.
-			if ( strpos( $class_name, 'author-archive-link' ) !== false ) {
-				$url = $author['url'] ?? '';
-				if ( $url && $rendered ) {
-					$rendered = preg_replace(
-						'/(<p[^>]*>)(.*?)(<\/p>)/s',
-						'$1<a href="' . esc_url( $url ) . '">$2</a>$3',
-						$rendered
-					);
-				}
-			}
-
-			// Wrap email in mailto link.
-			if ( strpos( $class_name, 'author-email' ) !== false ) {
-				$email = $author['email'] ?? null;
-				$email_url = is_array( $email ) ? ( $email['url'] ?? '' ) : ( $email ? 'mailto:' . $email : '' );
-				if ( $email_url && $rendered ) {
-					$rendered = preg_replace(
-						'/(<p[^>]*>)(.*?)(<\/p>)/s',
-						'$1<a href="' . esc_url( $email_url ) . '">$2</a>$3',
-						$rendered
-					);
-				}
-			}
-
-			// Wrap phone in tel link.
-			if ( strpos( $class_name, 'author-phone' ) !== false ) {
-				$phone = $author['newspack_phone_number'] ?? null;
-				$phone_url = is_array( $phone ) ? ( $phone['url'] ?? '' ) : ( $phone ? 'tel:' . $phone : '' );
-				if ( $phone_url && $rendered ) {
-					$rendered = preg_replace(
-						'/(<p[^>]*>)(.*?)(<\/p>)/s',
-						'$1<a href="' . esc_url( $phone_url ) . '">$2</a>$3',
-						$rendered
-					);
-				}
-			}
-
-			// Avatar block goes in __avatar wrapper.
-			if ( 'newspack/avatar' === $inner_block->name ) {
-				$avatar_output .= $rendered;
-			} else {
-				$bio_output .= $rendered;
-			}
+			$author_html         .= $inner_block_instance->render();
 		}
 
-		// Output avatar wrapper (matching flat mode structure).
-		// Note: The avatar block handles its own figure/img styling, so we just wrap it.
-		if ( ! empty( $avatar_output ) ) {
-			$author_output .= '<div class="wp-block-newspack-blocks-author-profile__avatar">' . $avatar_output . '</div>';
-		}
+		// Post-process: wrap specific paragraphs in links.
+		$author_html = newspack_blocks_wrap_author_links( $author_html, $author );
 
-		// Output bio wrapper (matching flat mode structure).
-		if ( ! empty( $bio_output ) ) {
-			$author_output .= '<div class="wp-block-newspack-blocks-author-profile__bio">' . $bio_output . '</div>';
-		}
-
-		$author_output .= '</div>';
-		$output        .= $author_output;
+		$output .= '<div class="' . esc_attr( $classes ) . '">' . $author_html . '</div>';
 	}
 
 	return $output;
+}
+
+/**
+ * Post-process rendered HTML to wrap author paragraphs in links.
+ *
+ * Wraps archive link, email, and phone paragraphs in anchor tags based on
+ * their CSS class names.
+ *
+ * @param string $html Rendered HTML from inner blocks.
+ * @param array  $author Author data array.
+ * @return string Processed HTML with links wrapped.
+ */
+function newspack_blocks_wrap_author_links( $html, $author ) {
+	// Archive link.
+	$url = $author['url'] ?? '';
+	if ( $url ) {
+		$html = preg_replace(
+			'/(<p[^>]*class="[^"]*author-archive-link[^"]*"[^>]*>)(.*?)(<\/p>)/s',
+			'$1<a href="' . esc_url( $url ) . '">$2</a>$3',
+			$html
+		);
+	}
+
+	// Email link.
+	$email     = $author['email'] ?? null;
+	$email_url = is_array( $email ) ? ( $email['url'] ?? '' ) : ( $email ? 'mailto:' . $email : '' );
+	if ( $email_url ) {
+		$html = preg_replace(
+			'/(<p[^>]*class="[^"]*author-email[^"]*"[^>]*>)(.*?)(<\/p>)/s',
+			'$1<a href="' . esc_url( $email_url ) . '">$2</a>$3',
+			$html
+		);
+	}
+
+	// Phone link.
+	$phone     = $author['newspack_phone_number'] ?? null;
+	$phone_url = is_array( $phone ) ? ( $phone['url'] ?? '' ) : ( $phone ? 'tel:' . $phone : '' );
+	if ( $phone_url ) {
+		$html = preg_replace(
+			'/(<p[^>]*class="[^"]*author-phone[^"]*"[^>]*>)(.*?)(<\/p>)/s',
+			'$1<a href="' . esc_url( $phone_url ) . '">$2</a>$3',
+			$html
+		);
+	}
+
+	return $html;
 }
 
 add_action( 'init', 'newspack_blocks_register_author_profile' );

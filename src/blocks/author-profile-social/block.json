@@ -4,7 +4,7 @@
 	"name": "newspack-blocks/author-profile-social",
 	"title": "Author Social Links",
 	"category": "newspack",
-	"parent": [ "newspack-blocks/author-profile" ],
+	"ancestor": [ "newspack-blocks/author-profile" ],
 	"description": "Display the author's social media links and email.",
 	"usesContext": [ "newspack-blocks/author" ],
 	"providesContext": {

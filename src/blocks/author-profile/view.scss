@@ -2,8 +2,10 @@
 @use "../../shared/sass/mixins";
 
 .wp-block-newspack-blocks-author-profile {
-	@include mixins.media( mobile ) {
-		display: flex;
+	&:not(.is-nested-mode) {
+		@include mixins.media( mobile ) {
+			display: flex;
+		}
 	}
 
 	+ .wp-block-newspack-blocks-author-profile {
@@ -49,26 +51,6 @@
 			object-fit: cover;
 			width: 100%;
 		}
-
-		// Nested mode: Style the avatar block within author profile.
-		// Avatar block uses .newspack-avatar-wrapper, not figure.
-		.wp-block-newspack-avatar {
-			.newspack-avatar-wrapper {
-				border-radius: 50%;
-				height: var(--avatar-size, 128px);
-				overflow: hidden;
-				width: var(--avatar-size, 128px);
-			}
-
-			img {
-				border-radius: 0;
-				display: block;
-				height: 100%;
-				max-width: none;
-				object-fit: cover;
-				width: 100%;
-			}
-		}
 	}
 
 	&__bio {
@@ -77,59 +59,6 @@
 
 			h3 {
 				margin-top: 0;
-			}
-		}
-
-		// Nested mode: Style email and phone as inline badges.
-		.author-email,
-		.author-phone {
-			display: inline-block;
-			margin-right: 0.5em;
-			margin-top: 0;
-			margin-bottom: 0.5em;
-
-			background: #f0f0f0;
-			border-radius: 3px;
-			font-size: 0.7em;
-			padding: 0.4em 0.6em;
-			text-transform: uppercase;
-		}
-
-		// Nested mode: Style the social links block to match flat mode badges.
-		.wp-block-newspack-blocks-author-profile-social {
-			.author-profile-social__list {
-				display: flex;
-				flex-wrap: wrap;
-				list-style: none;
-				margin: 0 -8px;
-				padding: 0;
-
-				li {
-					margin: 8px;
-				}
-
-				a {
-					display: block;
-					text-decoration: none;
-
-					span {
-						display: inline-block;
-
-						svg {
-							display: block;
-							fill: currentcolor;
-						}
-					}
-
-					.service-name {
-						background: #f0f0f0;
-						border-radius: 3px;
-						display: block;
-						font-size: 0.7em;
-						padding: 0.4em 0.6em;
-						text-transform: uppercase;
-					}
-				}
 			}
 		}
 	}
@@ -181,8 +110,98 @@
 	}
 
 	/* Nested mode */
-	&.is-nested-mode a:hover {
-		color: var(--newspack-ui-color-neutral-90);
+	&.is-nested-mode {
+		a {
+			color: inherit;
+
+			&:hover {
+				color: var(--newspack-ui-color-neutral-90);
+			}
+		}
+
+		h3.author-name {
+			margin: 0 0 0.5em;
+		}
+
+		.author-job-title {
+			margin-top: 0;
+			margin-bottom: 0;
+		}
+
+		.author-role,
+		.author-employer {
+			margin-top: 0;
+			margin-bottom: 0;
+			font-size: 0.8em;
+		}
+
+		.author-bio {
+			margin-top: 0.5em;
+		}
+
+		.author-archive-link {
+			margin-top: 0.5em;
+			margin-bottom: 0.5em;
+			color: var(--newspack-ui-color-neutral-60);
+
+			&:hover {
+				color: var(--newspack-ui-color-neutral-90);
+			}
+		}
+
+		.author-email,
+		.author-phone {
+			display: inline-block;
+			background: #f0f0f0;
+			border-radius: 3px;
+			font-size: 0.7em;
+			padding: 0.4em 0.6em;
+			text-transform: uppercase;
+		}
+
+		.wp-block-newspack-blocks-author-profile-social {
+			margin-top: 0.5em;
+			color: var(--newspack-ui-color-neutral-60);
+
+			.author-profile-social__list {
+				display: flex;
+				flex-wrap: wrap;
+				list-style: none;
+				margin: 0 -8px;
+				padding: 0;
+
+				li {
+					margin: 8px;
+				}
+
+				a {
+					display: block;
+					text-decoration: none;
+
+					&:hover {
+						color: var(--newspack-ui-color-neutral-90);
+					}
+
+					span {
+						display: inline-block;
+
+						svg {
+							display: block;
+							fill: currentcolor;
+						}
+					}
+
+					.service-name {
+						background: #f0f0f0;
+						border-radius: 3px;
+						display: block;
+						font-size: 0.7em;
+						padding: 0.4em 0.6em;
+						text-transform: uppercase;
+					}
+				}
+			}
+		}
 	}
 
 	/* Style – Center */

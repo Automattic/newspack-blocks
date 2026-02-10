@@ -190,29 +190,41 @@ const createBoundParagraph = ( key, className, name ) => [
 // Each author field is a separate block that can be reordered or removed.
 // Block bindings connect core block attributes to author data via 'newspack-blocks/author' source.
 const NESTED_TEMPLATE = [
-	[ 'newspack/avatar', { size: 128, lock: { move: true, remove: false } } ],
 	[
-		'core/heading',
-		{
-			level: 3,
-			metadata: {
-				name: __( 'Author Name', 'newspack-blocks' ),
-				bindings: {
-					content: {
-						source: 'newspack-blocks/author',
-						args: { key: 'name' },
-					},
-				},
-			},
-			className: 'author-name',
-		},
+		'core/columns',
+		{ isStackedOnMobile: true },
+		[
+			[ 'core/column', { width: '20%' }, [ [ 'newspack/avatar', { size: 128 } ] ] ],
+			[
+				'core/column',
+				{ width: '80%' },
+				[
+					[
+						'core/heading',
+						{
+							level: 3,
+							metadata: {
+								name: __( 'Author Name', 'newspack-blocks' ),
+								bindings: {
+									content: {
+										source: 'newspack-blocks/author',
+										args: { key: 'name' },
+									},
+								},
+							},
+							className: 'author-name',
+						},
+					],
+					createBoundParagraph( 'newspack_job_title', 'author-job-title', __( 'Job Title', 'newspack-blocks' ) ),
+					createBoundParagraph( 'newspack_role', 'author-role', __( 'Role', 'newspack-blocks' ) ),
+					createBoundParagraph( 'newspack_employer', 'author-employer', __( 'Employer', 'newspack-blocks' ) ),
+					createBoundParagraph( 'bio', 'author-bio', __( 'Bio', 'newspack-blocks' ) ),
+					createBoundParagraph( 'archive_link_text', 'author-archive-link', __( 'More by Author', 'newspack-blocks' ) ),
+					[ 'newspack-blocks/author-profile-social' ],
+				],
+			],
+		],
 	],
-	createBoundParagraph( 'newspack_job_title', 'author-job-title', __( 'Job Title', 'newspack-blocks' ) ),
-	createBoundParagraph( 'newspack_role', 'author-role', __( 'Role', 'newspack-blocks' ) ),
-	createBoundParagraph( 'newspack_employer', 'author-employer', __( 'Employer', 'newspack-blocks' ) ),
-	createBoundParagraph( 'bio', 'author-bio', __( 'Bio', 'newspack-blocks' ) ),
-	createBoundParagraph( 'archive_link_text', 'author-archive-link', __( 'More by Author', 'newspack-blocks' ) ),
-	[ 'newspack-blocks/author-profile-social' ], // Social links with email + phone as icons.
 ];
 
 // Allowed inner blocks for nested mode.
@@ -232,7 +244,7 @@ const ALLOWED_BLOCKS = [
 	'newspack-blocks/author-social-link', // Individual social icon blocks.
 ];
 
-const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
+const AuthorProfile = ( { attributes, setAttributes, context } ) => {
 	const blockProps = useBlockProps();
 
 	// ALL HOOKS MUST BE CALLED UNCONDITIONALLY (React rules of hooks)
@@ -274,16 +286,6 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 			return meta?._newspack_byline_active ?? false;
 		},
 		[ isContextual ]
-	);
-
-	// Read avatar block size from inner blocks for dynamic layout spacing.
-	const nestedAvatarSize = useSelect(
-		select => {
-			const innerBlocks = select( 'core/block-editor' ).getBlocks( clientId );
-			const avatarBlock = innerBlocks.find( b => b.name === 'newspack/avatar' );
-			return avatarBlock?.attributes?.size || null;
-		},
-		[ clientId ]
 	);
 
 	// Set layoutVersion to 2 when in nested mode for migration detection
@@ -510,7 +512,7 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 	// Block controls for avatar alignment and edit button
 	const blockControls = authorsToRender.length > 0 && (
 		<BlockControls>
-			{ showAvatar && ! attributes.className?.includes( 'is-style-center' ) && (
+			{ ! isNestedLayout && showAvatar && ! attributes.className?.includes( 'is-style-center' ) && (
 				<Toolbar
 					controls={ [
 						{
@@ -679,14 +681,9 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 		// The useEffect handles cleanup when component unmounts.
 		window.__newspackCurrentAuthor = previewAuthor;
 
-		// Add nested mode class and avatar size variable to block wrapper.
 		const nestedBlockProps = {
 			...blockProps,
-			className: `${ blockProps.className } is-nested-mode`,
-			style: {
-				...( blockProps.style || {} ),
-				...( nestedAvatarSize ? { '--avatar-size': `${ nestedAvatarSize }px` } : {} ),
-			},
+			className: `${ blockProps.className } wp-block-newspack-blocks-author-profile is-nested-mode`,
 		};
 
 		return (
