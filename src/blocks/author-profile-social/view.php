@@ -52,7 +52,8 @@ function newspack_blocks_get_fallback_social_svg( $service ) {
  * Register the Author Profile Social Links block.
  */
 function newspack_blocks_register_author_profile_social() {
-	$is_nested_mode = defined( 'NEWSPACK_AUTHOR_PROFILE_NESTED_BLOCKS' ) && NEWSPACK_AUTHOR_PROFILE_NESTED_BLOCKS;
+	// Enable inserter only in block themes where nested layout is supported.
+	$is_nested_mode = wp_is_block_theme();
 
 	register_block_type(
 		__DIR__ . '/block.json',

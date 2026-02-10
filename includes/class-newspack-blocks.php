@@ -246,9 +246,6 @@ class Newspack_Blocks {
 				$localized_data['author_custom_fields'] = \Newspack\Authors_Custom_Fields::get_custom_fields();
 			}
 
-			// Feature flag for Author Profile nested inner blocks mode.
-			$localized_data['authorProfileNestedBlocks'] = defined( 'NEWSPACK_AUTHOR_PROFILE_NESTED_BLOCKS' ) && NEWSPACK_AUTHOR_PROFILE_NESTED_BLOCKS;
-
 			wp_localize_script(
 				'newspack-blocks-editor',
 				'newspack_blocks_data',

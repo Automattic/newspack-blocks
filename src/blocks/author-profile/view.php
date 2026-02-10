@@ -303,9 +303,9 @@ function newspack_blocks_render_block_author_profile( $attributes, $content, $bl
 
 	Newspack_Blocks::enqueue_view_assets( 'author-profile' );
 
-	// NESTED MODE: Determined by layoutVersion, not feature flag.
+	// NESTED MODE: Determined by layoutVersion attribute, not theme type.
 	// Once a block is created in nested mode (layoutVersion 2), it stays nested.
-	// The feature flag only controls whether NEW blocks default to nested mode.
+	// Block themes automatically set layoutVersion 2 for NEW blocks.
 	if ( 2 === $layout_version && ! empty( $block->inner_blocks ) ) {
 		return newspack_blocks_render_nested_author_profile( $authors, $attributes, $block );
 	}

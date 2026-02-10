@@ -23,6 +23,7 @@ import {
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
+import { store as coreStore } from '@wordpress/core-data';
 import { useEffect, useState, useMemo } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -145,9 +146,6 @@ export const avatarSizeOptions = [
 		shortName: /* translators: abbreviation for extra-large avatar size option  */ __( 'XL', 'newspack-blocks' ),
 	},
 ];
-
-// Feature flag for nested inner blocks mode.
-const isNestedMode = window.newspack_blocks_data?.authorProfileNestedBlocks ?? false;
 
 // Helper to create a bound paragraph block with custom list view name.
 const createBoundParagraph = ( key, className, name ) => [
@@ -290,7 +288,15 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 		return postType === 'wp_template' || postType === 'wp_template_part';
 	}, [] );
 
-	// Set layoutVersion to 2 when in nested mode for migration detection
+	// Nested inner blocks mode is enabled automatically in block themes.
+	// Block themes support the Site Editor where nested blocks provide full layout control.
+	const isNestedMode = useSelect( select => {
+		const theme = select( coreStore ).getCurrentTheme();
+		return theme?.is_block_theme ?? false;
+	}, [] );
+
+	// Set layoutVersion to 2 for new blocks in block themes.
+	// This persists the mode choice and enables InnerBlocks-based layout.
 	useEffect( () => {
 		if ( isNestedMode && layoutVersion !== 2 ) {
 			setAttributes( { layoutVersion: 2 } );
@@ -561,7 +567,7 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 		</BlockControls>
 	);
 
-	// NESTED MODE: When feature flag is enabled, use InnerBlocks
+	// NESTED MODE: In block themes, use InnerBlocks for publisher-controlled layout
 	if ( isNestedMode ) {
 		// Mode selection for new blocks in nested mode
 		if ( ! authorId && ! isContextual && ! showSpecificSelector ) {
