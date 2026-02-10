@@ -11,7 +11,7 @@
  * This allows core blocks to bind their content to author fields using:
  * {"metadata":{"bindings":{"content":{"source":"newspack-blocks/author","args":{"key":"name"}}}}}
  *
- * Supported keys: name, bio, url, email, newspack_job_title, newspack_role, newspack_employer, newspack_phone_number
+ * Supported keys: name, bio, url, newspack_job_title, newspack_role, newspack_employer
  */
 function newspack_blocks_register_author_bindings_source() {
 	// Block bindings require WordPress 6.5+.
@@ -60,52 +60,6 @@ function newspack_blocks_get_author_binding_value( $source_args, $block_instance
 			}
 			/* translators: %s: author name */
 			return sprintf( __( 'More by %s', 'newspack-blocks' ), $name );
-
-		case 'email_label':
-			$email = $author['email'] ?? null;
-			if ( ! $email ) {
-				return null;
-			}
-			return __( 'Email', 'newspack-blocks' );
-
-		case 'phone_label':
-			$phone = $author['newspack_phone_number'] ?? null;
-			if ( ! $phone ) {
-				return null;
-			}
-			return __( 'Phone', 'newspack-blocks' );
-
-		case 'email_url':
-			$email = $author['email'] ?? null;
-			if ( is_array( $email ) ) {
-				return $email['url'] ?? null;
-			}
-			return $email ? 'mailto:' . $email : null;
-
-		case 'email':
-			// Email comes as array {url, svg} from API - extract display value.
-			$email = $author['email'] ?? null;
-			if ( is_array( $email ) ) {
-				$url = $email['url'] ?? '';
-				return str_replace( 'mailto:', '', $url );
-			}
-			return $email;
-
-		case 'phone_url':
-			$phone = $author['newspack_phone_number'] ?? null;
-			if ( is_array( $phone ) ) {
-				return $phone['url'] ?? null;
-			}
-			return $phone ? 'tel:' . $phone : null;
-
-		case 'newspack_phone_number':
-			// Phone comes as array {url, svg} from API - extract display value.
-			$phone = $author['newspack_phone_number'] ?? null;
-			if ( is_array( $phone ) ) {
-				$url = $phone['url'] ?? '';
-				return str_replace( 'tel:', '', $url );
-			}
-			return $phone;
 
 		default:
 			// Direct field access (name, bio, newspack_job_title, etc.).
@@ -470,8 +424,8 @@ function newspack_blocks_render_nested_author_profile( $authors, $attributes, $b
 			$author_html         .= $inner_block_instance->render();
 		}
 
-		// Post-process: wrap specific paragraphs in links.
-		$author_html = newspack_blocks_wrap_author_links( $author_html, $author );
+		// Post-process: wrap archive link paragraph in anchor tag.
+		$author_html = newspack_blocks_wrap_author_archive_link( $author_html, $author );
 
 		$output .= '<div class="' . esc_attr( $classes ) . '">' . $author_html . '</div>';
 	}
@@ -480,44 +434,18 @@ function newspack_blocks_render_nested_author_profile( $authors, $attributes, $b
 }
 
 /**
- * Post-process rendered HTML to wrap author paragraphs in links.
- *
- * Wraps archive link, email, and phone paragraphs in anchor tags based on
- * their CSS class names.
+ * Post-process rendered HTML to wrap the archive link paragraph in an anchor tag.
  *
  * @param string $html Rendered HTML from inner blocks.
  * @param array  $author Author data array.
- * @return string Processed HTML with links wrapped.
+ * @return string Processed HTML with archive link wrapped.
  */
-function newspack_blocks_wrap_author_links( $html, $author ) {
-	// Archive link.
+function newspack_blocks_wrap_author_archive_link( $html, $author ) {
 	$url = $author['url'] ?? '';
 	if ( $url ) {
 		$html = preg_replace(
 			'/(<p[^>]*class="[^"]*author-archive-link[^"]*"[^>]*>)(.*?)(<\/p>)/s',
 			'$1<a href="' . esc_url( $url ) . '">$2</a>$3',
-			$html
-		);
-	}
-
-	// Email link.
-	$email     = $author['email'] ?? null;
-	$email_url = is_array( $email ) ? ( $email['url'] ?? '' ) : ( $email ? 'mailto:' . $email : '' );
-	if ( $email_url ) {
-		$html = preg_replace(
-			'/(<p[^>]*class="[^"]*author-email[^"]*"[^>]*>)(.*?)(<\/p>)/s',
-			'$1<a href="' . esc_url( $email_url ) . '">$2</a>$3',
-			$html
-		);
-	}
-
-	// Phone link.
-	$phone     = $author['newspack_phone_number'] ?? null;
-	$phone_url = is_array( $phone ) ? ( $phone['url'] ?? '' ) : ( $phone ? 'tel:' . $phone : '' );
-	if ( $phone_url ) {
-		$html = preg_replace(
-			'/(<p[^>]*class="[^"]*author-phone[^"]*"[^>]*>)(.*?)(<\/p>)/s',
-			'$1<a href="' . esc_url( $phone_url ) . '">$2</a>$3',
 			$html
 		);
 	}

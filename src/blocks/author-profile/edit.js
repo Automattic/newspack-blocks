@@ -57,28 +57,6 @@ if ( typeof registerBlockBindingsSource === 'function' ) {
 					if ( key === 'archive_link_text' ) {
 						return [ attribute, author.name ? `${ __( 'More by', 'newspack-blocks' ) } ${ author.name }` : '' ];
 					}
-					// Email comes as object {url, svg} from API - extract display value.
-					if ( key === 'email' ) {
-						const email = author.email;
-						if ( ! email ) {
-							return [ attribute, '' ];
-						}
-						if ( typeof email === 'object' ) {
-							return [ attribute, email.url?.replace( 'mailto:', '' ) || '' ];
-						}
-						return [ attribute, email ];
-					}
-					// Phone comes as object {url, svg} from API - extract display value.
-					if ( key === 'newspack_phone_number' ) {
-						const phone = author.newspack_phone_number;
-						if ( ! phone ) {
-							return [ attribute, '' ];
-						}
-						if ( typeof phone === 'object' ) {
-							return [ attribute, phone.url?.replace( 'tel:', '' ) || '' ];
-						}
-						return [ attribute, phone ];
-					}
 					return [ attribute, author[ key ] || '' ];
 				} )
 			);
