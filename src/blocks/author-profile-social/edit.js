@@ -2,10 +2,11 @@
  * WordPress dependencies
  */
 import { useContext, useEffect, useRef } from '@wordpress/element';
-import { useBlockProps, InnerBlocks, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, RangeControl, Button } from '@wordpress/components';
+import { BlockControls, useBlockProps, InnerBlocks, InspectorControls } from '@wordpress/block-editor';
+import { PanelBody, RangeControl, Button, ToolbarButton, ToolbarGroup } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { backup } from '@wordpress/icons';
 
 /**
  * Internal dependencies
@@ -139,6 +140,11 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 
 	return (
 		<>
+			<BlockControls>
+				<ToolbarGroup>
+					<ToolbarButton icon={ backup } label={ __( 'Reset links', 'newspack-blocks' ) } onClick={ resetLinks } />
+				</ToolbarGroup>
+			</BlockControls>
 			<InspectorControls>
 				<PanelBody title={ __( 'Social Links Settings', 'newspack-blocks' ) }>
 					<RangeControl
@@ -149,13 +155,10 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 						max={ 48 }
 					/>
 					{ missingServices.length > 0 && (
-						<Button variant="secondary" onClick={ addMissingLinks } style={ { marginBottom: '8px' } }>
+						<Button variant="secondary" onClick={ addMissingLinks }>
 							{ __( 'Add missing links', 'newspack-blocks' ) }
 						</Button>
 					) }
-					<Button variant="tertiary" onClick={ resetLinks } isDestructive>
-						{ __( 'Reset to all author links', 'newspack-blocks' ) }
-					</Button>
 				</PanelBody>
 			</InspectorControls>
 			<div { ...blockProps }>
