@@ -9,6 +9,8 @@ import { InnerBlocks } from '@wordpress/block-editor';
 /**
  * Internal dependencies
  */
+import './view.scss';
+import './editor.scss';
 import edit from './edit';
 import metadata from './block.json';
 

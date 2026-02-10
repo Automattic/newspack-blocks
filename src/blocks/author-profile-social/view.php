@@ -76,6 +76,8 @@ add_action( 'init', 'newspack_blocks_register_author_profile_social' );
  * @return string The rendered block markup.
  */
 function newspack_blocks_render_author_profile_social( $attributes, $content, $block ) {
+	Newspack_Blocks::enqueue_view_assets( 'author-profile-social' );
+
 	$author = $block->context['newspack-blocks/author'] ?? null;
 	if ( ! $author ) {
 		return '';

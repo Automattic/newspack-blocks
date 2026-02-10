@@ -112,15 +112,5 @@
 			text-decoration: underline;
 		}
 
-		// Editor-only inner block wrappers need flex for horizontal flow.
-		.wp-block-newspack-blocks-author-profile-social {
-			.author-profile-social__list {
-				.block-editor-inner-blocks,
-				.block-editor-block-list__layout {
-					display: flex;
-					flex-wrap: wrap;
-				}
-			}
-		}
 	}
 }
