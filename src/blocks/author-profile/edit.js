@@ -295,13 +295,15 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 		return theme?.is_block_theme ?? false;
 	}, [] );
 
-	// Set layoutVersion to 2 for new blocks in block themes.
+	// Set layoutVersion to 2 for brand new blocks in block themes.
 	// This persists the mode choice and enables InnerBlocks-based layout.
+	// Only converts unconfigured blocks to preserve existing blocks created in classic themes.
+	const isUnconfiguredBlock = authorId === 0 && ! isContextual;
 	useEffect( () => {
-		if ( isNestedMode && layoutVersion !== 2 ) {
+		if ( isNestedMode && layoutVersion === 1 && isUnconfiguredBlock ) {
 			setAttributes( { layoutVersion: 2 } );
 		}
-	}, [ isNestedMode, layoutVersion, setAttributes ] );
+	}, [ isNestedMode, layoutVersion, isUnconfiguredBlock, setAttributes ] );
 
 	// Fetch author for specific mode
 	useEffect( () => {
@@ -567,8 +569,9 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 		</BlockControls>
 	);
 
-	// NESTED MODE: In block themes, use InnerBlocks for publisher-controlled layout
-	if ( isNestedMode ) {
+	// NESTED MODE: Use InnerBlocks for publisher-controlled layout (layoutVersion 2)
+	// This respects the block's saved mode regardless of current theme
+	if ( isNestedLayout ) {
 		// Mode selection for new blocks in nested mode
 		if ( ! authorId && ! isContextual && ! showSpecificSelector ) {
 			return (
