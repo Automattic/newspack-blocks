@@ -58,7 +58,16 @@ if ( typeof registerBlockBindingsSource === 'function' ) {
 					}
 					// "More by [author]" link text.
 					if ( key === 'archive_link_text' ) {
-						return [ attribute, author.name ? `${ __( 'More by', 'newspack-blocks' ) } ${ author.name }` : '' ];
+						return [
+							attribute,
+							author.name
+								? sprintf(
+										/* translators: %s: author name */
+										__( 'More by %s', 'newspack-blocks' ),
+										author.name
+								  )
+								: '',
+						];
 					}
 					return [ attribute, author[ key ] || '' ];
 				} )
@@ -411,16 +420,19 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 		setPreviewAuthorIndex( 0 );
 	}, [ authorsToRender.length ] );
 
-	// Set global author for block bindings in editor.
+	// Set global author for block bindings in editor (nested mode only).
 	// This allows bound core blocks to access author data.
 	useEffect( () => {
+		if ( layoutVersion !== 2 ) {
+			return;
+		}
 		const safeIndex = Math.min( previewAuthorIndex, Math.max( 0, authorsToRender.length - 1 ) );
 		const previewAuthor = authorsToRender[ safeIndex ] || null;
 		window.__newspackCurrentAuthor = previewAuthor;
 		return () => {
 			window.__newspackCurrentAuthor = null;
 		};
-	}, [ authorsToRender, previewAuthorIndex ] );
+	}, [ authorsToRender, previewAuthorIndex, layoutVersion ] );
 
 	// Combine social links and email, which are shown together.
 	const getSocialLinks = authorData => {
