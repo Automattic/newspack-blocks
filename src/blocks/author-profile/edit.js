@@ -219,6 +219,7 @@ const getPlaceholderAuthor = () => ( {
 	social: {
 		facebook: { url: '#' },
 		twitter: { url: '#' },
+		linkedin: { url: '#' },
 	},
 	email: { url: 'mailto:placeholder@example.com' },
 	newspack_phone_number: { url: 'tel:0000000000' },

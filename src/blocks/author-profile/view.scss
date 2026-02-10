@@ -142,7 +142,7 @@
 		.author-archive-link {
 			margin-top: 0.5em;
 			margin-bottom: 0.5em;
-			color: var(--newspack-ui-color-neutral-60);
+			color: var(--newspack-ui-color-neutral-60, #6c6c6c);
 
 			&:hover {
 				color: var(--newspack-ui-color-neutral-90);
@@ -151,7 +151,7 @@
 
 		.wp-block-newspack-blocks-author-profile-social {
 			margin-top: 0.5em;
-			color: var(--newspack-ui-color-neutral-60);
+			color: var(--newspack-ui-color-neutral-60, #6c6c6c);
 
 			.author-profile-social__list {
 				display: flex;
