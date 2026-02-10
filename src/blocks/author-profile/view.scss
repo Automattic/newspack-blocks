@@ -134,7 +134,7 @@
 			color: inherit;
 
 			&:hover {
-				color: var(--newspack-ui-color-neutral-90);
+				color: var(--newspack-ui-color-neutral-90, #1e1e1e);
 			}
 		}
 
@@ -164,7 +164,7 @@
 			color: var(--newspack-ui-color-neutral-60, #6c6c6c);
 
 			&:hover {
-				color: var(--newspack-ui-color-neutral-90);
+				color: var(--newspack-ui-color-neutral-90, #1e1e1e);
 			}
 		}
 
