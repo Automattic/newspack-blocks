@@ -186,7 +186,7 @@ const NESTED_TEMPLATE = [
 				{
 					className: 'author-profile-content-column',
 					templateLock: false,
-					allowedBlocks: [ 'core/heading', 'core/paragraph', 'newspack-blocks/author-profile-social' ],
+					allowedBlocks: [ 'core/heading', 'core/paragraph', 'newspack/author-profile-social' ],
 				},
 				[
 					[
@@ -210,7 +210,7 @@ const NESTED_TEMPLATE = [
 					createBoundParagraph( 'newspack_employer', 'author-employer', __( 'Employer', 'newspack-blocks' ) ),
 					createBoundParagraph( 'bio', 'author-bio', __( 'Bio', 'newspack-blocks' ) ),
 					createBoundParagraph( 'archive_link_text', 'author-archive-link', __( 'More by Author', 'newspack-blocks' ) ),
-					[ 'newspack-blocks/author-profile-social' ],
+					[ 'newspack/author-profile-social' ],
 				],
 			],
 		],
