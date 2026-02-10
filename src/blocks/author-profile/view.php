@@ -138,8 +138,11 @@ function newspack_blocks_register_author_profile() {
 			'attributes'       => $block_json['attributes'],
 			'render_callback'  => 'newspack_blocks_render_block_author_profile',
 			'uses_context'     => $block_json['usesContext'] ?? [],
+			// Note: provides_context is declared here for registration but the actual
+			// context injection happens in newspack_blocks_render_nested_author_profile()
+			// via new WP_Block() with a merged context array.
 			'provides_context' => [
-				'newspack-blocks/author' => 'author', // This will be set dynamically in render.
+				'newspack-blocks/author' => 'author',
 			],
 		]
 	);
@@ -466,7 +469,12 @@ function newspack_blocks_render_nested_author_profile( $authors, $attributes, $b
 				$inner_block->parsed_block,
 				array_merge(
 					$block->context,
-					[ 'newspack-blocks/author' => $author ]
+					[
+						'newspack-blocks/author' => array_merge(
+							$author,
+							[ 'avatarHideDefault' => ! empty( $attributes['avatarHideDefault'] ) ]
+						),
+					]
 				)
 			);
 			$rendered = $inner_block_instance->render();
