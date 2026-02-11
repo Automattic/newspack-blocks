@@ -39,13 +39,21 @@ import { addQueryArgs } from '@wordpress/url';
  * AuthorContext.Provider. This is a workaround since bindings don't have
  * direct access to React context.
  */
+// Per-instance author map for block bindings.
+// Each Author Profile block registers its author here keyed by clientId,
+// so multiple instances on the same page don't overwrite each other.
+window.__newspackAuthorsByBlock = window.__newspackAuthorsByBlock || {};
+
 if ( typeof registerBlockBindingsSource === 'function' ) {
 	registerBlockBindingsSource( {
 		name: 'newspack-blocks/author',
 		label: __( 'Author Profile', 'newspack-blocks' ),
-		getValues( { bindings } ) {
-			// Read author from global state set by AuthorContext.Provider.
-			const author = window.__newspackCurrentAuthor || {};
+		getValues( { bindings, clientId, select } ) {
+			// Find the parent Author Profile block and look up its author.
+			const parents = select( 'core/block-editor' ).getBlockParents( clientId );
+			const authorMap = window.__newspackAuthorsByBlock;
+			const parentId = parents.find( id => authorMap[ id ] );
+			const author = ( parentId && authorMap[ parentId ] ) || {};
 			return Object.fromEntries(
 				Object.entries( bindings ).map( ( [ attribute, { args } ] ) => {
 					const key = args?.key;
@@ -420,19 +428,20 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 		setPreviewAuthorIndex( 0 );
 	}, [ authorsToRender.length ] );
 
-	// Set global author for block bindings in editor (nested mode only).
-	// This allows bound core blocks to access author data.
+	// Register author in the per-instance map for block bindings (nested mode only).
+	// Each Author Profile block stores its author keyed by clientId, so bindings
+	// in child blocks can look up the correct author via getBlockParents().
 	useEffect( () => {
 		if ( layoutVersion !== 2 ) {
 			return;
 		}
 		const safeIndex = Math.min( previewAuthorIndex, Math.max( 0, authorsToRender.length - 1 ) );
 		const previewAuthor = authorsToRender[ safeIndex ] || null;
-		window.__newspackCurrentAuthor = previewAuthor;
+		window.__newspackAuthorsByBlock[ clientId ] = previewAuthor;
 		return () => {
-			window.__newspackCurrentAuthor = null;
+			delete window.__newspackAuthorsByBlock[ clientId ];
 		};
-	}, [ authorsToRender, previewAuthorIndex, layoutVersion ] );
+	}, [ authorsToRender, previewAuthorIndex, layoutVersion, clientId ] );
 
 	// Combine social links and email, which are shown together.
 	const getSocialLinks = authorData => {
@@ -712,9 +721,9 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 		const safeIndex = Math.min( previewAuthorIndex, authorsToRender.length - 1 );
 		const previewAuthor = authorsToRender[ safeIndex ];
 
-		// Set global synchronously so bindings have access on first render.
+		// Set in the per-instance map synchronously so bindings have access on first render.
 		// The useEffect handles cleanup when component unmounts.
-		window.__newspackCurrentAuthor = previewAuthor;
+		window.__newspackAuthorsByBlock[ clientId ] = previewAuthor;
 
 		const nestedBlockProps = {
 			...blockProps,
