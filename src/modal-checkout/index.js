@@ -560,6 +560,10 @@ import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 						handleSubscriptionConfirmation();
 					}
 					$form.triggerHandler( 'editing_details', [ isEditingDetails ] );
+					// When transitioning to step 2, trigger update_checkout just in case for shipping totals.
+					if ( ! isEditingDetails ) {
+						$( document.body ).trigger( 'update_checkout' );
+					}
 					// Scroll to top.
 					window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
 				}
