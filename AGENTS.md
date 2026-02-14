@@ -16,7 +16,7 @@ All blocks use `save: () => null` (or `<InnerBlocks.Content />` for nested mode)
 
 Unlike many block plugins, ALL block editor scripts are compiled into a single `dist/editor.js` file. There are no per-block editor scripts. This bundle includes:
 - All block `editor.js` files from `src/blocks/*/`
-- Editor setup from `src/setup/editor.js` (Newspack category, block-styles, placeholder blocks)
+- Editor setup from `src/setup/editor.js` (Newspack category, block-styles, unregister-blocks)
 
 ### Separate View Bundles
 
@@ -151,7 +151,7 @@ Defined in `webpack.config.js` using `newspack-scripts/config/getWebpackConfig`:
 | `editor` | All `src/blocks/*/editor.js` + `src/setup/editor.js` | Combined editor bundle |
 | `<block>/view` | Each `src/blocks/*/view.{js,ts}` | Per-block frontend scripts |
 | `placeholder_blocks` | `src/setup/placeholder-blocks.js` | Placeholder UI for unavailable plugins |
-| `block_styles` | `src/block-styles/index.js` | Core block style overrides |
+| `block_styles` | `src/block-styles/view.js` | Core block style overrides |
 | `modal` | `src/modal-checkout/modal.js` | Modal checkout dialog |
 | `modalCheckout` | `src/modal-checkout/index.js` | Modal checkout logic |
 | `frequencyBased` | `src/blocks/donate/frequency-based/index.ts` | Donate frequency-based frontend |
