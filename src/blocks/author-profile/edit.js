@@ -281,6 +281,7 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 		avatarBorderRadius,
 		avatarSize,
 		avatarHideDefault,
+		showEmptyBio,
 	} = attributes;
 
 	// Get post ID from block context or editor
@@ -414,14 +415,20 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 
 	// Memoize authors for rendering based on mode
 	const authorsToRender = useMemo( () => {
+		let authors;
 		if ( isContextual ) {
 			if ( isTemplateLikeContext ) {
 				return [ getPlaceholderAuthor() ];
 			}
-			return contextualAuthors;
+			authors = contextualAuthors;
+		} else {
+			authors = author ? [ author ] : [];
 		}
-		return author ? [ author ] : [];
-	}, [ isContextual, isTemplateLikeContext, contextualAuthors, author ] );
+		if ( ! showEmptyBio ) {
+			authors = authors.filter( a => a.bio );
+		}
+		return authors;
+	}, [ isContextual, showEmptyBio, isTemplateLikeContext, contextualAuthors, author ] );
 
 	// Reset preview index when authors list changes (e.g., switching posts)
 	useEffect( () => {
@@ -484,6 +491,16 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 					} }
 				/>
 			</PanelBody>
+			{ isNestedLayout && (
+				<PanelBody title={ __( 'Display Settings', 'newspack-blocks' ) }>
+					<ToggleControl
+						label={ __( 'Show authors without bio', 'newspack-blocks' ) }
+						help={ __( 'Display author profiles even if their bio is empty.', 'newspack-blocks' ) }
+						checked={ showEmptyBio }
+						onChange={ () => setAttributes( { showEmptyBio: ! showEmptyBio } ) }
+					/>
+				</PanelBody>
+			) }
 			{ /* In nested mode, publishers control layout via inner blocks - no need for field toggles */ }
 			{ ! isNestedLayout && (
 				<PanelBody title={ __( 'Author Profile Settings', 'newspack-blocks' ) }>

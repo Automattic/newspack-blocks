@@ -22,7 +22,7 @@
 		},
 		"showEmptyBio": {
 			"type": "boolean",
-			"default": false
+			"default": true
 		},
 		"isGuestAuthor": {
 			"type": "boolean",
