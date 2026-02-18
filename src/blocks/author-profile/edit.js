@@ -564,6 +564,19 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 		</InspectorControls>
 	);
 
+	// Loading placeholder shared between nested and flat mode.
+	const loadingPlaceholder = (
+		<div { ...blockProps }>
+			{ inspectorControls }
+			<Placeholder className="newspack-blocks-author-profile" icon={ postAuthor } label={ __( 'Author Profile', 'newspack-blocks' ) }>
+				<div className="is-loading">
+					{ __( 'Fetching author info…', 'newspack-blocks' ) }
+					<Spinner />
+				</div>
+			</Placeholder>
+		</div>
+	);
+
 	// Block controls for avatar alignment and edit button
 	const blockControls = authorsToRender.length > 0 && (
 		<BlockControls>
@@ -632,15 +645,7 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 
 		// Loading state
 		if ( isLoading ) {
-			return (
-				<div { ...blockProps }>
-					{ inspectorControls }
-					<div className="newspack-author-profile-loading">
-						<Spinner />
-						{ __( 'Loading author info…', 'newspack-blocks' ) }
-					</div>
-				</div>
-			);
+			return loadingPlaceholder;
 		}
 
 		// Custom byline active warning (contextual mode only)
@@ -809,15 +814,7 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 	if ( isContextual ) {
 		// Loading state
 		if ( isLoading ) {
-			return (
-				<div { ...blockProps }>
-					{ inspectorControls }
-					<div className="newspack-author-profile-loading">
-						<Spinner />
-						{ __( 'Loading author info…', 'newspack-blocks' ) }
-					</div>
-				</div>
-			);
+			return loadingPlaceholder;
 		}
 
 		// Custom byline active warning

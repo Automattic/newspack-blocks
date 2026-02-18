@@ -1,20 +1,6 @@
 @use "../../shared/sass/mixins";
 
 .editor-styles-wrapper {
-	// Author Profile block loading state
-	.newspack-author-profile-loading {
-		align-items: center;
-		display: flex;
-		gap: 8px;
-		padding: 16px;
-		background: #f0f0f0;
-		border-radius: 4px;
-
-		.components-spinner {
-			margin: 0;
-		}
-	}
-
 	// Author Profile block disabled state (custom byline active)
 	.newspack-author-profile-disabled {
 		.components-notice {
