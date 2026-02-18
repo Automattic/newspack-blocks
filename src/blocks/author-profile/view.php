@@ -305,7 +305,11 @@ function newspack_blocks_render_block_author_profile( $attributes, $content, $bl
 	// NESTED MODE: Determined by layoutVersion attribute, not theme type.
 	// Once a block is created in nested mode (layoutVersion 2), it stays nested.
 	// Block themes automatically set layoutVersion 2 for NEW blocks.
+	// Fall back to flat rendering if a v2 block is used in a classic theme.
 	if ( 2 === $layout_version && ! empty( $block->inner_blocks ) ) {
+		if ( ! wp_is_block_theme() ) {
+			return newspack_blocks_render_flat_author_profiles( $authors, $attributes );
+		}
 		return newspack_blocks_render_nested_author_profile( $authors, $attributes, $block );
 	}
 

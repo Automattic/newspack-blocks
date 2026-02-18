@@ -623,6 +623,23 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 	// NESTED MODE: Use InnerBlocks for publisher-controlled layout (layoutVersion 2)
 	// This respects the block's saved mode regardless of current theme
 	if ( isNestedLayout ) {
+		// A v2 block opened in a classic theme can't render its inner blocks properly.
+		if ( ! isNestedMode ) {
+			return (
+				<div { ...blockProps }>
+					{ inspectorControls }
+					<Placeholder className="newspack-blocks-author-profile" icon={ postAuthor } label={ __( 'Author Profile', 'newspack-blocks' ) }>
+						<Notice status="warning" isDismissible={ false }>
+							{ __(
+								'This block was created with a block theme and is not supported in the current theme. It will render using the classic layout on the frontend.',
+								'newspack-blocks'
+							) }
+						</Notice>
+					</Placeholder>
+				</div>
+			);
+		}
+
 		// Mode selection for new blocks in nested mode
 		if ( ! authorId && ! isContextual && ! showSpecificSelector ) {
 			return (
