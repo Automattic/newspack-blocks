@@ -453,7 +453,7 @@ function newspack_blocks_wrap_author_archive_link( $html, $author ) {
 				if ( false !== stripos( $matches[2], '<a ' ) ) {
 					return $matches[0];
 				}
-				return $matches[1] . '<a href="' . esc_url( $url ) . '">' . $matches[2] . '</a>' . $matches[3];
+				return $matches[1] . '<a href="' . esc_url( $url ) . '">' . wp_kses_post( $matches[2] ) . '</a>' . $matches[3];
 			},
 			$html
 		);
