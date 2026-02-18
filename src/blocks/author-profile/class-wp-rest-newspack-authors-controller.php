@@ -309,10 +309,8 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 					$value = [
 						'url' => 'tel:' . $value,
 					];
-					if ( class_exists( '\Newspack\Blocks\Author_Profile_Social\Author_Profile_Social_Block' ) ) {
-						$value['svg'] = \Newspack\Blocks\Author_Profile_Social\Author_Profile_Social_Block::get_social_svg( 'phone' );
-					} elseif ( class_exists( 'Newspack_SVG_Icons' ) ) {
-						$value['svg'] = Newspack_SVG_Icons::get_social_link_svg( $value['url'], 24 );
+					if ( class_exists( '\Newspack\Social_Icons' ) ) {
+						$value['svg'] = \Newspack\Social_Icons::get_svg( 'phone' );
 					}
 				}
 				$guest_author_data[ $custom_field['name'] ] = $value;
@@ -360,10 +358,8 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 					$value = [
 						'url' => 'tel:' . $value,
 					];
-					if ( class_exists( '\Newspack\Blocks\Author_Profile_Social\Author_Profile_Social_Block' ) ) {
-						$value['svg'] = \Newspack\Blocks\Author_Profile_Social\Author_Profile_Social_Block::get_social_svg( 'phone' );
-					} elseif ( class_exists( 'Newspack_SVG_Icons' ) ) {
-						$value['svg'] = Newspack_SVG_Icons::get_social_link_svg( $value['url'], 24 );
+					if ( class_exists( '\Newspack\Social_Icons' ) ) {
+						$value['svg'] = \Newspack\Social_Icons::get_svg( 'phone' );
 					}
 				}
 				$user_data[ $custom_field['name'] ] = $value;
@@ -407,10 +403,8 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 		if ( $email_address ) {
 			$email_data = [ 'url' => 'mailto:' . $email_address ];
 
-			if ( class_exists( '\Newspack\Blocks\Author_Profile_Social\Author_Profile_Social_Block' ) ) {
-				$email_data['svg'] = \Newspack\Blocks\Author_Profile_Social\Author_Profile_Social_Block::get_social_svg( 'email' );
-			} elseif ( class_exists( 'Newspack_SVG_Icons' ) ) {
-				$email_data['svg'] = Newspack_SVG_Icons::get_social_link_svg( 'mailto:' . $email_address, 24 );
+			if ( class_exists( '\Newspack\Social_Icons' ) ) {
+				$email_data['svg'] = \Newspack\Social_Icons::get_svg( 'email' );
 			}
 		}
 
@@ -449,10 +443,8 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 					$url             = 'twitter' === $profile ? esc_url( 'https://x.com/' . $handle ) : esc_url( $handle );
 					$acc[ $profile ] = [ 'url' => $url ];
 
-					if ( class_exists( '\Newspack\Blocks\Author_Profile_Social\Author_Profile_Social_Block' ) && ! $is_website ) {
-						$acc[ $profile ]['svg'] = \Newspack\Blocks\Author_Profile_Social\Author_Profile_Social_Block::get_social_svg( $profile );
-					} elseif ( class_exists( 'Newspack_SVG_Icons' ) ) {
-						$acc[ $profile ]['svg'] = $is_website ? Newspack_SVG_Icons::get_svg( 'ui', 'link', 24 ) : Newspack_SVG_Icons::get_social_link_svg( $url, 24 );
+					if ( class_exists( '\Newspack\Social_Icons' ) && ! $is_website ) {
+						$acc[ $profile ]['svg'] = \Newspack\Social_Icons::get_svg( $profile );
 					}
 				}
 
