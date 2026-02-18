@@ -3,7 +3,7 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 import { BlockControls, InnerBlocks, InspectorControls, useBlockProps } from '@wordpress/block-editor';
-import { createBlocksFromInnerBlocksTemplate, registerBlockBindingsSource } from '@wordpress/blocks';
+import { createBlocksFromInnerBlocksTemplate, getBlockType, registerBlockBindingsSource } from '@wordpress/blocks';
 import {
 	Button,
 	ButtonGroup,
@@ -308,11 +308,11 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 		return postType === 'wp_template' || postType === 'wp_template_part';
 	}, [] );
 
-	// Nested inner blocks mode is enabled automatically in block themes.
-	// Block themes support the Site Editor where nested blocks provide full layout control.
+	// Nested inner blocks mode is enabled automatically in block themes when
+	// Newspack Plugin is active (provides the avatar and social links blocks).
 	const isNestedMode = useSelect( select => {
 		const theme = select( coreStore ).getCurrentTheme();
-		return theme?.is_block_theme ?? false;
+		return ( theme?.is_block_theme ?? false ) && !! getBlockType( 'newspack/avatar' ) && !! getBlockType( 'newspack/author-profile-social' );
 	}, [] );
 
 	// Set layoutVersion to 2 for brand new blocks in block themes.

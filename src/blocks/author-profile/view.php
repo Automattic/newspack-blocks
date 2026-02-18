@@ -307,7 +307,9 @@ function newspack_blocks_render_block_author_profile( $attributes, $content, $bl
 	// Block themes automatically set layoutVersion 2 for NEW blocks.
 	// Fall back to flat rendering if a v2 block is used in a classic theme.
 	if ( 2 === $layout_version && ! empty( $block->inner_blocks ) ) {
-		if ( ! wp_is_block_theme() ) {
+		$registry          = WP_Block_Type_Registry::get_instance();
+		$has_nested_blocks = $registry->is_registered( 'newspack/avatar' ) && $registry->is_registered( 'newspack/author-profile-social' );
+		if ( ! wp_is_block_theme() || ! $has_nested_blocks ) {
 			return newspack_blocks_render_flat_author_profiles( $authors, $attributes );
 		}
 		return newspack_blocks_render_nested_author_profile( $authors, $attributes, $block );
