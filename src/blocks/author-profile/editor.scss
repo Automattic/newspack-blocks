@@ -10,10 +10,13 @@
 
 	// Mode selector buttons in placeholder
 	.newspack-blocks-author-profile {
+		.components-placeholder__fieldset {
+			align-items: center;
+		}
+
 		.components-button-group {
 			display: flex;
 			gap: 8px;
-			margin-top: 16px;
 
 			.components-button {
 				justify-content: center;

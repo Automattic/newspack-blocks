@@ -491,6 +491,7 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 						setAuthor( null );
 						setShowSpecificSelector( false );
 					} }
+					__nextHasNoMarginBottom
 				/>
 			</PanelBody>
 			{ isNestedLayout && (
@@ -500,6 +501,7 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 						help={ __( 'Display author profiles even if their bio is empty.', 'newspack-blocks' ) }
 						checked={ showEmptyBio }
 						onChange={ () => setAttributes( { showEmptyBio: ! showEmptyBio } ) }
+						__nextHasNoMarginBottom
 					/>
 				</PanelBody>
 			) }
@@ -527,12 +529,14 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 						label={ __( 'Display avatar', 'newspack-blocks' ) }
 						checked={ showAvatar }
 						onChange={ () => setAttributes( { showAvatar: ! showAvatar } ) }
+						__nextHasNoMarginBottom
 					/>
 					{ showAvatar && (
 						<ToggleControl
 							label={ __( 'Hide default avatar', 'newspack-blocks' ) }
 							checked={ avatarHideDefault }
 							onChange={ () => setAttributes( { avatarHideDefault: ! avatarHideDefault } ) }
+							__nextHasNoMarginBottom
 						/>
 					) }
 					{ showAvatar && (
@@ -622,6 +626,24 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 		</BlockControls>
 	);
 
+	// Mode selection placeholder for new blocks (shared by nested and flat modes).
+	const modeSelectionPlaceholder = (
+		<div { ...blockProps }>
+			{ inspectorControls }
+			<Placeholder className="newspack-blocks-author-profile" icon={ postAuthor } label={ __( 'Author Profile', 'newspack-blocks' ) }>
+				<p>{ __( 'Select a type to start with:', 'newspack-blocks' ) }</p>
+				<ButtonGroup>
+					<Button variant="secondary" onClick={ () => setShowSpecificSelector( true ) }>
+						{ __( 'Specific', 'newspack-blocks' ) }
+					</Button>
+					<Button variant="primary" onClick={ () => setAttributes( { isContextual: true } ) }>
+						{ __( 'Contextual', 'newspack-blocks' ) }
+					</Button>
+				</ButtonGroup>
+			</Placeholder>
+		</div>
+	);
+
 	// NESTED MODE: Use InnerBlocks for publisher-controlled layout (layoutVersion 2)
 	// This respects the block's saved mode regardless of current theme
 	if ( isNestedLayout ) {
@@ -644,22 +666,7 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 
 		// Mode selection for new blocks in nested mode
 		if ( ! authorId && ! isContextual && ! showSpecificSelector ) {
-			return (
-				<div { ...blockProps }>
-					{ inspectorControls }
-					<Placeholder className="newspack-blocks-author-profile" icon={ postAuthor } label={ __( 'Author Profile', 'newspack-blocks' ) }>
-						<p>{ __( 'Select a type to start with.', 'newspack-blocks' ) }</p>
-						<ButtonGroup>
-							<Button variant="secondary" onClick={ () => setShowSpecificSelector( true ) }>
-								{ __( 'Specific', 'newspack-blocks' ) }
-							</Button>
-							<Button variant="primary" onClick={ () => setAttributes( { isContextual: true } ) }>
-								{ __( 'Contextual', 'newspack-blocks' ) }
-							</Button>
-						</ButtonGroup>
-					</Placeholder>
-				</div>
-			);
+			return modeSelectionPlaceholder;
 		}
 
 		// Loading state
@@ -787,6 +794,8 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 									value: index,
 								} ) ) }
 								onChange={ value => setPreviewAuthorIndex( parseInt( value, 10 ) ) }
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom
 							/>
 							<p className="description">
 								{ sprintf(
@@ -811,22 +820,7 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 
 	// MODE SELECTION: Show mode selector for NEW blocks (no authorId and not contextual)
 	if ( ! authorId && ! isContextual && ! showSpecificSelector ) {
-		return (
-			<div { ...blockProps }>
-				{ inspectorControls }
-				<Placeholder className="newspack-blocks-author-profile" icon={ postAuthor } label={ __( 'Author Profile', 'newspack-blocks' ) }>
-					<p>{ __( 'Select a type to start with.', 'newspack-blocks' ) }</p>
-					<ButtonGroup>
-						<Button variant="secondary" onClick={ () => setShowSpecificSelector( true ) }>
-							{ __( 'Specific', 'newspack-blocks' ) }
-						</Button>
-						<Button variant="primary" onClick={ () => setAttributes( { isContextual: true } ) }>
-							{ __( 'Contextual', 'newspack-blocks' ) }
-						</Button>
-					</ButtonGroup>
-				</Placeholder>
-			</div>
-		);
+		return modeSelectionPlaceholder;
 	}
 
 	// CONTEXTUAL MODE
