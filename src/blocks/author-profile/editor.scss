@@ -78,6 +78,11 @@
 		}
 	}
 
+	// Prevent flex layout on the block wrapper (flex is for individual author cards).
+	[data-type="newspack-blocks/author-profile"]:not(.is-nested-mode) {
+		display: block;
+	}
+
 	// Nested mode: editor-specific overrides.
 	.is-nested-mode[data-type="newspack-blocks/author-profile"] {
 		.newspack-author-profile-preview-selector {
