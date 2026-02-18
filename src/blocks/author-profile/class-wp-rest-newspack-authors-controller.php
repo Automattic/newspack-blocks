@@ -472,21 +472,20 @@ class WP_REST_Newspack_Authors_Controller extends WP_REST_Controller {
 
 		$authors = [];
 
-		// Try Co-Authors Plus first.
+		// Try Co-Authors Plus first. When CAP is active, always return its result
+		// and never fall back to post_author, which could show the wrong person.
 		if ( function_exists( 'get_coauthors' ) ) {
 			$coauthors = get_coauthors( $post_id );
-			if ( ! empty( $coauthors ) ) {
-				foreach ( $coauthors as $coauthor ) {
-					$author_data = $this->format_coauthor( $coauthor, $fields, $avatar_hide_default );
-					if ( $author_data ) {
-						$authors[] = $author_data;
-					}
+			foreach ( $coauthors as $coauthor ) {
+				$author_data = $this->format_coauthor( $coauthor, $fields, $avatar_hide_default );
+				if ( $author_data ) {
+					$authors[] = $author_data;
 				}
-
-				$response = new WP_REST_Response( $authors );
-				$response->header( 'x-wp-total', count( $authors ) );
-				return rest_ensure_response( $response );
 			}
+
+			$response = new WP_REST_Response( $authors );
+			$response->header( 'x-wp-total', count( $authors ) );
+			return rest_ensure_response( $response );
 		}
 
 		// Fallback to default post author.

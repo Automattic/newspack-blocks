@@ -186,18 +186,17 @@ function newspack_blocks_get_post_authors( $post_id, $attributes ) {
 	$avatar_size  = intval( $attributes['avatarSize'] ?? 128 );
 	$hide_default = $attributes['avatarHideDefault'] ?? false;
 
-	// Try Co-Authors Plus first.
+	// Try Co-Authors Plus first. When CAP is active, always return its result
+	// and never fall back to post_author, which could show the wrong person.
 	if ( function_exists( 'get_coauthors' ) ) {
 		$coauthors = get_coauthors( $post_id );
-		if ( ! empty( $coauthors ) ) {
-			foreach ( $coauthors as $coauthor ) {
-				$author = newspack_blocks_get_contextual_author( $coauthor, $attributes );
-				if ( $author ) {
-					$authors[] = $author;
-				}
+		foreach ( $coauthors as $coauthor ) {
+			$author = newspack_blocks_get_contextual_author( $coauthor, $attributes );
+			if ( $author ) {
+				$authors[] = $author;
 			}
-			return $authors;
 		}
+		return $authors;
 	}
 
 	// Fallback to default author.
