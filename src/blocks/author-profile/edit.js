@@ -235,9 +235,19 @@ const NESTED_TEMPLATE = [
 	],
 ];
 
+// Module-level cache for social icon SVGs so multiple block instances share one fetch.
+let socialIconSvgsCache = null;
+const fetchSocialIconSvgs = () => {
+	if ( ! socialIconSvgsCache ) {
+		socialIconSvgsCache = apiFetch( { path: '/newspack/v1/social-icons' } ).catch( () => ( {} ) );
+	}
+	return socialIconSvgsCache;
+};
+
 // Placeholder author for Site Editor template context.
 // When editing a template, we show generic labels instead of real author data.
-const getPlaceholderAuthor = () => ( {
+// Accepts an optional SVG map to populate social icon markup.
+const getPlaceholderAuthor = ( socialIconSvgs = {} ) => ( {
 	id: 'placeholder',
 	name: __( '[Author]', 'newspack-blocks' ),
 	bio: __( '[Author bio will appear here]', 'newspack-blocks' ),
@@ -248,12 +258,12 @@ const getPlaceholderAuthor = () => ( {
 	url: '#',
 	avatar: '', // Empty triggers the avatar block's built-in placeholder rendering.
 	social: {
-		facebook: { url: '#' },
-		twitter: { url: '#' },
-		linkedin: { url: '#' },
+		facebook: { url: '#', svg: socialIconSvgs.facebook || '' },
+		twitter: { url: '#', svg: socialIconSvgs.twitter || '' },
+		linkedin: { url: '#', svg: socialIconSvgs.linkedin || '' },
 	},
-	email: { url: 'mailto:placeholder@example.com' },
-	newspack_phone_number: { url: 'tel:0000000000' },
+	email: { url: 'mailto:placeholder@example.com', svg: socialIconSvgs.email || '' },
+	newspack_phone_number: { url: 'tel:0000000000', svg: socialIconSvgs.phone || '' },
 } );
 
 const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
@@ -269,6 +279,7 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 	const [ maxItemsToSuggest, setMaxItemsToSuggest ] = useState( 0 );
 	const [ showSpecificSelector, setShowSpecificSelector ] = useState( false );
 	const [ previewAuthorIndex, setPreviewAuthorIndex ] = useState( 0 );
+	const [ socialIconSvgs, setSocialIconSvgs ] = useState( {} );
 
 	const {
 		authorId,
@@ -315,6 +326,14 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 		const postType = select( 'core/editor' )?.getCurrentPostType?.();
 		return postType === 'wp_template' || postType === 'wp_template_part';
 	}, [] );
+
+	// Fetch social icon SVGs for the placeholder in template context.
+	useEffect( () => {
+		if ( ! isTemplateLikeContext ) {
+			return;
+		}
+		fetchSocialIconSvgs().then( setSocialIconSvgs );
+	}, [ isTemplateLikeContext ] );
 
 	// Nested inner blocks mode is enabled automatically in block themes when
 	// Newspack Plugin is active (provides the avatar and social links blocks).
@@ -472,7 +491,7 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 		let authors;
 		if ( isContextual ) {
 			if ( isTemplateLikeContext ) {
-				return [ getPlaceholderAuthor() ];
+				return [ getPlaceholderAuthor( socialIconSvgs ) ];
 			}
 			authors = contextualAuthors;
 		} else {
@@ -482,7 +501,7 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 			authors = authors.filter( a => a.bio );
 		}
 		return authors;
-	}, [ isContextual, showEmptyBio, isTemplateLikeContext, contextualAuthors, author ] );
+	}, [ isContextual, showEmptyBio, isTemplateLikeContext, socialIconSvgs, contextualAuthors, author ] );
 
 	// Reset preview index when authors list changes (e.g., switching posts)
 	useEffect( () => {
