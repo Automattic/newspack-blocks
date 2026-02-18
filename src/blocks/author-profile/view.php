@@ -51,19 +51,19 @@ function newspack_blocks_get_author_binding_value( $source_args, $block_instance
 	switch ( $key ) {
 		case 'archive_url':
 		case 'url':
-			return $author['url'] ?? null;
+			return $author['url'] ?? '';
 
 		case 'archive_link_text':
-			$name = $author['name'] ?? null;
+			$name = $author['name'] ?? '';
 			if ( ! $name ) {
-				return null;
+				return '';
 			}
 			/* translators: %s: author name */
 			return sprintf( __( 'More by %s', 'newspack-blocks' ), $name );
 
 		default:
-			// Direct field access (name, bio, newspack_job_title, etc.).
-			return $author[ $key ] ?? null;
+			// Empty string prevents saved editor placeholders from leaking to frontend.
+			return $author[ $key ] ?? '';
 	}
 }
 

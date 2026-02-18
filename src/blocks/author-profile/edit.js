@@ -54,6 +54,9 @@ if ( typeof registerBlockBindingsSource === 'function' ) {
 			const authorMap = window.__newspackAuthorsByBlock;
 			const parentId = parents.find( id => authorMap[ id ] );
 			const author = ( parentId && authorMap[ parentId ] ) || {};
+			// Use placeholder author as fallback so empty fields show field-specific
+			// labels (e.g. "[Job Title]") instead of the generic source label.
+			const placeholder = getPlaceholderAuthor();
 			return Object.fromEntries(
 				Object.entries( bindings ).map( ( [ attribute, { args } ] ) => {
 					const key = args?.key;
@@ -66,18 +69,16 @@ if ( typeof registerBlockBindingsSource === 'function' ) {
 					}
 					// "More by [author]" link text.
 					if ( key === 'archive_link_text' ) {
-						return [
-							attribute,
-							author.name
-								? sprintf(
-										/* translators: %s: author name */
-										__( 'More by %s', 'newspack-blocks' ),
-										author.name
-								  )
-								: '',
-						];
+						const value = author.name
+							? sprintf(
+									/* translators: %s: author name */
+									__( 'More by %s', 'newspack-blocks' ),
+									author.name
+							  )
+							: '';
+						return [ attribute, value || placeholder[ key ] || '' ];
 					}
-					return [ attribute, author[ key ] || '' ];
+					return [ attribute, author[ key ] || placeholder[ key ] || '' ];
 				} )
 			);
 		},
@@ -243,6 +244,7 @@ const getPlaceholderAuthor = () => ( {
 	newspack_job_title: __( '[Job Title]', 'newspack-blocks' ),
 	newspack_role: __( '[Role]', 'newspack-blocks' ),
 	newspack_employer: __( '[Employer]', 'newspack-blocks' ),
+	archive_link_text: __( '[More by Author]', 'newspack-blocks' ),
 	url: '#',
 	avatar: '', // Empty triggers the avatar block's built-in placeholder rendering.
 	social: {
