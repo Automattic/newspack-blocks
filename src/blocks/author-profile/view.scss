@@ -134,7 +134,7 @@
 			color: inherit;
 
 			&:hover {
-				color: var(--newspack-ui-color-neutral-90, #1e1e1e);
+				color: var(--wp--preset--color--contrast, #1e1e1e);
 			}
 		}
 
@@ -161,10 +161,10 @@
 		.author-archive-link {
 			margin-top: 0.5em;
 			margin-bottom: 0.5em;
-			color: var(--newspack-ui-color-neutral-60, #6c6c6c);
+			color: var(--wp--preset--color--contrast-2, #3e3e3e);
 
 			&:hover {
-				color: var(--newspack-ui-color-neutral-90, #1e1e1e);
+				color: var(--wp--preset--color--contrast, #1e1e1e);
 			}
 		}
 
