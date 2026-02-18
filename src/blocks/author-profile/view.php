@@ -354,9 +354,23 @@ function newspack_blocks_get_authors_for_render( $attributes, $block ) {
 		return $author ? [ $author ] : [];
 	}
 
-	// On single posts: check custom byline first.
+	// On single posts: if custom byline is active, show the referenced authors (if any).
 	if ( newspack_blocks_is_custom_byline_active( $post_id ) ) {
-		return []; // Hide bio when custom byline is active.
+		if ( class_exists( 'Newspack\Bylines' ) ) {
+			$byline_authors = \Newspack\Bylines::get_post_byline_authors( $post_id );
+			$authors        = [];
+			foreach ( $byline_authors as $wp_user ) {
+				if ( $wp_user instanceof WP_User ) {
+					$author = newspack_blocks_get_contextual_author( $wp_user, $attributes );
+					if ( $author ) {
+						$authors[] = $author;
+					}
+				}
+			}
+			return $authors;
+		}
+		// Bylines class unavailable: byline is active so don't show post authors.
+		return [];
 	}
 
 	// Get authors (CAP or default).

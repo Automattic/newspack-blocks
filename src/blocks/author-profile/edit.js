@@ -290,17 +290,25 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 	const editorPostId = useSelect( select => select( 'core/editor' )?.getCurrentPostId?.(), [] );
 	const postId = context?.postId || editorPostId;
 
-	// Check if custom byline is active on the current post
-	const customBylineActive = useSelect(
+	// Check if custom byline is active and extract referenced author IDs.
+	// Returns IDs as a comma-separated string to avoid new array references on each render.
+	const { customBylineActive, bylineAuthorIdsStr } = useSelect(
 		select => {
 			if ( ! isContextual ) {
-				return false;
+				return { customBylineActive: false, bylineAuthorIdsStr: '' };
 			}
 			const meta = select( 'core/editor' )?.getEditedPostAttribute?.( 'meta' );
-			return meta?._newspack_byline_active ?? false;
+			const isActive = meta?._newspack_byline_active ?? false;
+			if ( ! isActive ) {
+				return { customBylineActive: false, bylineAuthorIdsStr: '' };
+			}
+			const byline = meta?._newspack_byline ?? '';
+			const ids = [ ...byline.matchAll( /\[Author\s+id\s*=\s*(\d+)\]/gi ) ].map( m => m[ 1 ] );
+			return { customBylineActive: true, bylineAuthorIdsStr: ids.join( ',' ) };
 		},
 		[ isContextual ]
 	);
+	const bylineAuthorIds = bylineAuthorIdsStr ? bylineAuthorIdsStr.split( ',' ).map( Number ) : [];
 
 	// Detect Site Editor template context where real author data is not meaningful.
 	const isTemplateLikeContext = useSelect( select => {
@@ -335,12 +343,25 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 
 	// Fetch authors for contextual mode
 	useEffect( () => {
-		if ( ! isContextual || customBylineActive || ! postId || isTemplateLikeContext ) {
+		if ( ! isContextual || isTemplateLikeContext ) {
+			setContextualAuthors( [] );
+			return;
+		}
+		// When custom byline is active, fetch the specific byline authors.
+		if ( customBylineActive ) {
+			if ( bylineAuthorIds.length ) {
+				getBylineAuthors();
+			} else {
+				setContextualAuthors( [] );
+			}
+			return;
+		}
+		if ( ! postId ) {
 			setContextualAuthors( [] );
 			return;
 		}
 		getContextualAuthors();
-	}, [ isContextual, postId, avatarHideDefault, showEmail, customBylineActive, isTemplateLikeContext ] );
+	}, [ isContextual, postId, avatarHideDefault, showEmail, customBylineActive, bylineAuthorIdsStr, isTemplateLikeContext ] );
 
 	const getAuthorById = async () => {
 		setError( null );
@@ -410,6 +431,37 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 			setContextualAuthors( response || [] );
 		} catch ( e ) {
 			setError( e.message || e || __( 'Error fetching authors for this post.', 'newspack-blocks' ) );
+			setContextualAuthors( [] );
+		}
+		setIsLoading( false );
+	};
+
+	const getBylineAuthors = async () => {
+		setError( null );
+		setIsLoading( true );
+		try {
+			const fields = [ 'id', 'name', 'bio', 'social', 'avatar', 'url' ];
+			if ( showEmail ) {
+				fields.push( 'email' );
+			}
+			const results = await Promise.all(
+				bylineAuthorIds.map( id => {
+					const params = {
+						author_id: id,
+						is_guest_author: 0,
+						fields: fields.join( ',' ),
+					};
+					if ( avatarHideDefault ) {
+						params.avatar_hide_default = 1;
+					}
+					return apiFetch( {
+						path: addQueryArgs( '/newspack-blocks/v1/authors', params ),
+					} );
+				} )
+			);
+			setContextualAuthors( results.flat().filter( Boolean ) );
+		} catch ( e ) {
+			setError( e.message || e || __( 'Error fetching byline authors.', 'newspack-blocks' ) );
 			setContextualAuthors( [] );
 		}
 		setIsLoading( false );
@@ -674,8 +726,8 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 			return loadingPlaceholder;
 		}
 
-		// Custom byline active warning (contextual mode only)
-		if ( isContextual && customBylineActive ) {
+		// Custom byline with no real authors referenced
+		if ( isContextual && customBylineActive && ! bylineAuthorIds.length ) {
 			return (
 				<div { ...blockProps }>
 					{ inspectorControls }
@@ -830,8 +882,8 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 			return loadingPlaceholder;
 		}
 
-		// Custom byline active warning
-		if ( customBylineActive ) {
+		// Custom byline with no real authors referenced
+		if ( customBylineActive && ! bylineAuthorIds.length ) {
 			return (
 				<div { ...blockProps }>
 					{ inspectorControls }
