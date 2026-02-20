@@ -174,7 +174,7 @@ export const avatarSizeOptions = [
 
 // Helper to create a bound paragraph block with custom list view name.
 // If wrapInLink is true, the content will be wrapped in an anchor tag for editor preview.
-const createBoundParagraph = ( key, className, name, placeholder, wrapInLink = false, ...extraAttributes ) => {
+const createBoundParagraph = ( key, className, name, placeholder, wrapInLink = false ) => {
 	const attributes = {
 		metadata: {
 			name, // Custom name shown in list view.
@@ -187,7 +187,6 @@ const createBoundParagraph = ( key, className, name, placeholder, wrapInLink = f
 		},
 		className,
 		placeholder: placeholder || name,
-		...extraAttributes,
 	};
 
 	// If wrapInLink is true, set initial content with link wrapper for editor preview.
