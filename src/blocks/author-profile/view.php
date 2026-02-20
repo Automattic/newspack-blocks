@@ -100,6 +100,26 @@ function newspack_blocks_register_author_profile() {
 			],
 		]
 	);
+
+	// Register layout styles only for classic themes. Block themes use
+	// InnerBlocks (nested mode) for layout control instead.
+	if ( ! wp_is_block_theme() ) {
+		register_block_style(
+			'newspack-blocks/author-profile',
+			[
+				'name'       => 'default',
+				'label'      => _x( 'Default', 'block style', 'newspack-blocks' ),
+				'is_default' => true,
+			]
+		);
+		register_block_style(
+			'newspack-blocks/author-profile',
+			[
+				'name'  => 'center',
+				'label' => _x( 'Centered', 'block style', 'newspack-blocks' ),
+			]
+		);
+	}
 }
 
 /**

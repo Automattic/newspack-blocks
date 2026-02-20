@@ -7,7 +7,7 @@ import colors from 'newspack-colors';
  * WordPress dependencies
  */
 import { InnerBlocks } from '@wordpress/block-editor';
-import { __, _x } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { postAuthor } from '@wordpress/icons';
 
 /**
@@ -46,10 +46,6 @@ export const settings = {
 	},
 	keywords: [ __( 'author', 'newspack-blocks' ), __( 'profile', 'newspack-blocks' ) ],
 	description: __( 'Display an author profile card.', 'newspack-blocks' ),
-	styles: [
-		{ name: 'default', label: _x( 'Default', 'block style', 'newspack-blocks' ), isDefault: true },
-		{ name: 'center', label: _x( 'Centered', 'block style', 'newspack-blocks' ) },
-	],
 	attributes,
 	category,
 	supports: {
