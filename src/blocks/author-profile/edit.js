@@ -6,7 +6,6 @@ import { BlockControls, InnerBlocks, InspectorControls, useBlockProps } from '@w
 import { createBlocksFromInnerBlocksTemplate, getBlockType, registerBlockBindingsSource } from '@wordpress/blocks';
 import {
 	Button,
-	ButtonGroup,
 	Card,
 	CardBody,
 	Notice,
@@ -793,16 +792,18 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 	const modeSelectionPlaceholder = (
 		<div { ...blockProps }>
 			{ inspectorControls }
-			<Placeholder className="newspack-blocks-author-profile" icon={ postAuthor } label={ __( 'Author Profile', 'newspack-blocks' ) }>
-				<p>{ __( 'Select a type to start with:', 'newspack-blocks' ) }</p>
-				<ButtonGroup>
-					<Button variant="secondary" onClick={ () => setShowSpecificSelector( true ) }>
-						{ __( 'Specific', 'newspack-blocks' ) }
-					</Button>
-					<Button variant="primary" onClick={ () => setAttributes( { isContextual: true } ) }>
-						{ __( 'Contextual', 'newspack-blocks' ) }
-					</Button>
-				</ButtonGroup>
+			<Placeholder
+				className="newspack-blocks-author-profile"
+				icon={ postAuthor }
+				label={ __( 'Author Profile', 'newspack-blocks' ) }
+				instructions={ __( 'Select a type to start with.', 'newspack-blocks' ) }
+			>
+				<Button variant="primary" onClick={ () => setAttributes( { isContextual: true } ) }>
+					{ __( 'Contextual', 'newspack-blocks' ) }
+				</Button>
+				<Button variant="secondary" onClick={ () => setShowSpecificSelector( true ) }>
+					{ __( 'Specific', 'newspack-blocks' ) }
+				</Button>
 			</Placeholder>
 		</div>
 	);
