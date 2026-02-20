@@ -18,6 +18,7 @@ import {
 	Toolbar,
 	ToolbarButton,
 	ToolbarGroup,
+	Tooltip,
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalUnitControl as UnitControl,
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
@@ -29,7 +30,7 @@ import { store as coreStore } from '@wordpress/core-data';
 import { useEffect, useState, useMemo } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { decodeEntities } from '@wordpress/html-entities';
-import { backup, pencil, postAuthor, pullLeft, pullRight } from '@wordpress/icons';
+import { pencil, postAuthor, pullLeft, pullRight } from '@wordpress/icons';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 
@@ -778,7 +779,11 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 			) }
 			{ isNestedLayout && (
 				<ToolbarGroup>
-					<ToolbarButton icon={ backup } label={ __( 'Reset layout', 'newspack-blocks' ) } onClick={ resetLayout } />
+					<Tooltip text={ __( 'Reset layout', 'newspack-blocks' ) }>
+						<ToolbarButton label={ __( 'Reset layout', 'newspack-blocks' ) } onClick={ resetLayout }>
+							{ __( 'Reset', 'newspack-blocks' ) }
+						</ToolbarButton>
+					</Tooltip>
 				</ToolbarGroup>
 			) }
 		</BlockControls>
