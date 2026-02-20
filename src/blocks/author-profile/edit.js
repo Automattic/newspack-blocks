@@ -24,6 +24,8 @@ import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
+	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { store as coreStore } from '@wordpress/core-data';
 import { useEffect, useState, useMemo } from '@wordpress/element';
@@ -633,28 +635,8 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 	// Inspector controls for display settings
 	const inspectorControls = (
 		<InspectorControls>
-			<PanelBody title={ __( 'Author Source', 'newspack-blocks' ) } initialOpen={ true }>
-				<ToggleControl
-					label={ __( 'Use contextual author', 'newspack-blocks' ) }
-					help={
-						isContextual
-							? __( 'Displays authors from current post or archive.', 'newspack-blocks' )
-							: __( 'Displays a specific selected author.', 'newspack-blocks' )
-					}
-					checked={ isContextual }
-					onChange={ () => {
-						setAttributes( {
-							isContextual: ! isContextual,
-							authorId: 0, // Reset author selection when switching modes
-						} );
-						setAuthor( null );
-						setShowSpecificSelector( false );
-					} }
-					__nextHasNoMarginBottom
-				/>
-			</PanelBody>
 			{ isNestedLayout && (
-				<PanelBody title={ __( 'Display Settings', 'newspack-blocks' ) }>
+				<PanelBody title={ __( 'Display', 'newspack-blocks' ) }>
 					<ToggleControl
 						label={ __( 'Show authors without bio', 'newspack-blocks' ) }
 						help={ __( 'Display author profiles even if their bio is empty.', 'newspack-blocks' ) }
@@ -665,9 +647,9 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 				</PanelBody>
 			) }
 			{ ! isNestedLayout && (
-				<PanelBody title={ __( 'Author Profile Settings', 'newspack-blocks' ) }>
+				<PanelBody title={ __( 'Settings', 'newspack-blocks' ) }>
 					<ToggleGroupControl
-						label={ __( 'Text Size', 'newspack-blocks' ) }
+						label={ __( 'Text size', 'newspack-blocks' ) }
 						value={ textSize }
 						onChange={ value => setAttributes( { textSize: value } ) }
 						isBlock
@@ -704,7 +686,7 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 							value={ avatarSize }
 							onChange={ value => setAttributes( { avatarSize: value } ) }
 							isBlock
-							__next40pxDefaultSize
+							__next40pxDefaultSize={ true }
 						>
 							{ avatarSizeOptions.map( option => (
 								<ToggleGroupControlOption key={ option.value } label={ option.shortName } value={ option.value } />
@@ -733,10 +715,10 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 		<div { ...blockProps }>
 			{ inspectorControls }
 			<Placeholder className="newspack-blocks-author-profile" icon={ postAuthor } label={ __( 'Author Profile', 'newspack-blocks' ) }>
-				<div className="is-loading">
-					{ __( 'Fetching author info…', 'newspack-blocks' ) }
-					<Spinner />
-				</div>
+				<VStack alignment="center" style={ { width: '100%' } }>
+					<Spinner style={ { margin: '0' } } />
+					<span style={ { fontWeight: '500' } }>{ __( 'Fetching authors…', 'newspack-blocks' ) }</span>
+				</VStack>
 			</Placeholder>
 		</div>
 	);
@@ -1058,10 +1040,10 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 					</Notice>
 				) }
 				{ isLoading && (
-					<div className="is-loading">
-						{ __( 'Fetching author info…', 'newspack-blocks' ) }
-						<Spinner />
-					</div>
+					<VStack alignment="center" style={ { width: '100%' } }>
+						<Spinner style={ { margin: '0' } } />
+						<span style={ { fontWeight: '500' } }>{ __( 'Fetching authors…', 'newspack-blocks' ) }</span>
+					</VStack>
 				) }
 				{ ! isLoading && (
 					<AutocompleteWithSuggestions

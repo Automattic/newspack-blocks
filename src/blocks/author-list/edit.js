@@ -21,6 +21,8 @@ import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
+	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { Fragment, useEffect, useState } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -434,10 +436,10 @@ const AuthorList = ( { attributes, clientId, setAttributes } ) => {
 							</Notice>
 						) }
 						{ isLoading && (
-							<div className="is-loading">
-								{ __( 'Fetching authors…', 'newspack-blocks' ) }
-								<Spinner />
-							</div>
+							<VStack alignment="center" style={ { width: '100%' } }>
+								<Spinner style={ { margin: '0' } } />
+								<span style={ { fontWeight: '500' } }>{ __( 'Fetching authors…', 'newspack-blocks' ) }</span>
+							</VStack>
 						) }
 					</Placeholder>
 				) }
