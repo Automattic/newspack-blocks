@@ -246,8 +246,9 @@ const fetchSocialIconSvgs = () => {
 
 // Placeholder author for Site Editor template context.
 // When editing a template, we show generic labels instead of real author data.
-// Accepts an optional SVG map to populate social icon markup.
-const getPlaceholderAuthor = ( socialIconSvgs = {} ) => ( {
+// Builds the social entries from the SVG map so every supported service gets an
+// inner block in the template. Publishers can then remove the ones they don't need.
+const DEFAULT_PLACEHOLDER_AUTHOR = Object.freeze( {
 	id: 'placeholder',
 	name: __( '[Author]', 'newspack-blocks' ),
 	bio: __( '[Author bio will appear here]', 'newspack-blocks' ),
@@ -257,14 +258,30 @@ const getPlaceholderAuthor = ( socialIconSvgs = {} ) => ( {
 	archive_link_text: __( '[More by Author]', 'newspack-blocks' ),
 	url: '#',
 	avatar: '', // Empty triggers the avatar block's built-in placeholder rendering.
-	social: {
-		facebook: { url: '#', svg: socialIconSvgs.facebook || '' },
-		twitter: { url: '#', svg: socialIconSvgs.twitter || '' },
-		linkedin: { url: '#', svg: socialIconSvgs.linkedin || '' },
-	},
-	email: { url: 'mailto:placeholder@example.com', svg: socialIconSvgs.email || '' },
-	newspack_phone_number: { url: 'tel:0000000000', svg: socialIconSvgs.phone || '' },
+	social: Object.freeze( {} ),
+	email: Object.freeze( { url: 'mailto:placeholder@example.com', svg: '' } ),
+	newspack_phone_number: Object.freeze( { url: 'tel:0000000000', svg: '' } ),
 } );
+
+const getPlaceholderAuthor = ( socialIconSvgs = {} ) => {
+	const hasSocialSvgs = Object.keys( socialIconSvgs ).length > 0;
+	if ( ! hasSocialSvgs ) {
+		return DEFAULT_PLACEHOLDER_AUTHOR;
+	}
+
+	const social = Object.fromEntries(
+		Object.entries( socialIconSvgs )
+			.filter( ( [ key ] ) => ! [ 'email', 'phone' ].includes( key ) ) // Exclude top-level properties on the author object.
+			.map( ( [ service, svg ] ) => [ service, { url: '#', svg: svg || '' } ] )
+	);
+
+	return {
+		...DEFAULT_PLACEHOLDER_AUTHOR,
+		social,
+		email: { url: 'mailto:placeholder@example.com', svg: socialIconSvgs.email || '' },
+		newspack_phone_number: { url: 'tel:0000000000', svg: socialIconSvgs.phone || '' },
+	};
+};
 
 const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 	const blockProps = useBlockProps();
