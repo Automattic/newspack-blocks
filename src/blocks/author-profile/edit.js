@@ -685,7 +685,7 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 							value={ avatarSize }
 							onChange={ value => setAttributes( { avatarSize: value } ) }
 							isBlock
-							__next40pxDefaultSize={ true }
+							__next40pxDefaultSize
 						>
 							{ avatarSizeOptions.map( option => (
 								<ToggleGroupControlOption key={ option.value } label={ option.shortName } value={ option.value } />
