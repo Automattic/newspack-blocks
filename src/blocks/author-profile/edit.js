@@ -54,13 +54,14 @@ if ( typeof registerBlockBindingsSource === 'function' ) {
 			const authorMap = window.__newspackAuthorsByBlock;
 			const parentId = parents.find( id => authorMap[ id ] );
 			const author = ( parentId && authorMap[ parentId ] ) || {};
-			// Use placeholder author as fallback so empty fields show field-specific
-			// labels (e.g. "[Job Title]") instead of the generic source label.
-			const placeholder = getPlaceholderAuthor();
+			// Return empty for missing fields so WordPress core shows each block's
+			// own `placeholder` attribute in its native greyed-out style.
+			// Skip placeholder authors entirely (Site Editor template context).
+			const isPlaceholder = author.id === 'placeholder';
 			return Object.fromEntries(
 				Object.entries( bindings ).map( ( [ attribute, { args } ] ) => {
 					const key = args?.key;
-					if ( ! key ) {
+					if ( ! key || isPlaceholder ) {
 						return [ attribute, '' ];
 					}
 					// Handle special cases.
@@ -69,16 +70,18 @@ if ( typeof registerBlockBindingsSource === 'function' ) {
 					}
 					// "More by [author]" link text.
 					if ( key === 'archive_link_text' ) {
-						const value = author.name
-							? sprintf(
-									/* translators: %s: author name */
-									__( 'More by %s', 'newspack-blocks' ),
-									author.name
-							  )
-							: '';
-						return [ attribute, value || placeholder[ key ] || '' ];
+						return [
+							attribute,
+							author.name
+								? sprintf(
+										/* translators: %s: author name */
+										__( 'More by %s', 'newspack-blocks' ),
+										author.name
+								  )
+								: '',
+						];
 					}
-					return [ attribute, author[ key ] || placeholder[ key ] || '' ];
+					return [ attribute, author[ key ] || '' ];
 				} )
 			);
 		},
@@ -166,7 +169,7 @@ export const avatarSizeOptions = [
 ];
 
 // Helper to create a bound paragraph block with custom list view name.
-const createBoundParagraph = ( key, className, name ) => [
+const createBoundParagraph = ( key, className, name, placeholder ) => [
 	'core/paragraph',
 	{
 		metadata: {
@@ -179,6 +182,7 @@ const createBoundParagraph = ( key, className, name ) => [
 			},
 		},
 		className,
+		placeholder: placeholder || `[${ name }]`,
 	},
 ];
 
@@ -221,6 +225,7 @@ const NESTED_TEMPLATE = [
 								},
 							},
 							className: 'author-name',
+							placeholder: `[${ __( 'Author Name', 'newspack-blocks' ) }]`,
 						},
 					],
 					createBoundParagraph( 'newspack_job_title', 'author-job-title', __( 'Job Title', 'newspack-blocks' ) ),
@@ -245,17 +250,10 @@ const fetchSocialIconSvgs = () => {
 };
 
 // Placeholder author for Site Editor template context.
-// When editing a template, we show generic labels instead of real author data.
 // Builds the social entries from the SVG map so every supported service gets an
 // inner block in the template. Publishers can then remove the ones they don't need.
 const DEFAULT_PLACEHOLDER_AUTHOR = Object.freeze( {
 	id: 'placeholder',
-	name: __( '[Author]', 'newspack-blocks' ),
-	bio: __( '[Author bio will appear here]', 'newspack-blocks' ),
-	newspack_job_title: __( '[Job Title]', 'newspack-blocks' ),
-	newspack_role: __( '[Role]', 'newspack-blocks' ),
-	newspack_employer: __( '[Employer]', 'newspack-blocks' ),
-	archive_link_text: __( '[More by Author]', 'newspack-blocks' ),
 	url: '#',
 	avatar: '', // Empty triggers the avatar block's built-in placeholder rendering.
 	social: Object.freeze( {} ),
