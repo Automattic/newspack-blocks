@@ -172,7 +172,7 @@ export const avatarSizeOptions = [
 
 // Helper to create a bound paragraph block with custom list view name.
 // If wrapInLink is true, the content will be wrapped in an anchor tag for editor preview.
-const createBoundParagraph = ( key, className, name, placeholder, wrapInLink = false ) => {
+const createBoundParagraph = ( key, className, name, placeholder, wrapInLink = false, ...extraAttributes ) => {
 	const attributes = {
 		metadata: {
 			name, // Custom name shown in list view.
@@ -184,12 +184,13 @@ const createBoundParagraph = ( key, className, name, placeholder, wrapInLink = f
 			},
 		},
 		className,
-		placeholder: placeholder || `[${ name }]`,
+		placeholder: placeholder || name,
+		...extraAttributes,
 	};
 
 	// If wrapInLink is true, set initial content with link wrapper for editor preview.
 	if ( wrapInLink ) {
-		const linkText = placeholder || `[${ name }]`;
+		const linkText = placeholder || name;
 		attributes.content = `<a href="#" class="no-op">${ linkText }</a>`;
 	}
 
@@ -240,7 +241,7 @@ const NESTED_TEMPLATE = [
 						{
 							level: 3,
 							metadata: {
-								name: __( 'Author Name', 'newspack-blocks' ),
+								name: __( 'Author name', 'newspack-blocks' ),
 								bindings: {
 									content: {
 										source: 'newspack-blocks/author',
@@ -249,16 +250,51 @@ const NESTED_TEMPLATE = [
 								},
 							},
 							className: 'author-name',
-							placeholder: `[${ __( 'Author Name', 'newspack-blocks' ) }]`,
+							placeholder: __( 'Author name', 'newspack-blocks' ),
 							textColor: 'contrast',
 							fontSize: 'large',
 						},
 					],
-					createBoundParagraph( 'newspack_job_title', 'author-job-title', __( 'Job Title', 'newspack-blocks' ) ),
+					[
+						'core/paragraph',
+						{
+							metadata: {
+								name: __( 'Job title', 'newspack-blocks' ),
+								bindings: {
+									content: {
+										source: 'newspack-blocks/author',
+										args: { key: 'newspack_job_title' },
+									},
+								},
+							},
+							className: 'author-job-title',
+							placeholder: __( 'Job title', 'newspack-blocks' ),
+							style: {
+								typography: {
+									fontStyle: 'normal',
+									fontWeight: '600',
+								},
+								elements: {
+									link: {
+										color: {
+											text: 'var:preset|color|contrast',
+										},
+									},
+								},
+							},
+							textColor: 'contrast',
+						},
+					],
 					createBoundParagraph( 'newspack_role', 'author-role', __( 'Role', 'newspack-blocks' ) ),
 					createBoundParagraph( 'newspack_employer', 'author-employer', __( 'Employer', 'newspack-blocks' ) ),
 					createBoundParagraph( 'bio', 'author-bio', __( 'Bio', 'newspack-blocks' ) ),
-					createBoundParagraph( 'archive_link_text', 'author-archive-link', __( 'More by Author', 'newspack-blocks' ), undefined, true ),
+					createBoundParagraph(
+						'archive_link_text',
+						'author-archive-link',
+						__( 'More by Author name', 'newspack-blocks' ),
+						undefined,
+						true
+					),
 					[
 						'newspack/author-profile-social',
 						{
