@@ -7,6 +7,8 @@ import { createBlocksFromInnerBlocksTemplate, getBlockType, registerBlockBinding
 import {
 	Button,
 	ButtonGroup,
+	Card,
+	CardBody,
 	Notice,
 	PanelBody,
 	Placeholder,
@@ -70,16 +72,16 @@ if ( typeof registerBlockBindingsSource === 'function' ) {
 					}
 					// "More by [author]" link text.
 					if ( key === 'archive_link_text' ) {
-						return [
-							attribute,
-							author.name
-								? sprintf(
-										/* translators: %s: author name */
-										__( 'More by %s', 'newspack-blocks' ),
-										author.name
-								  )
-								: '',
-						];
+						const linkText = author.name
+							? sprintf(
+									/* translators: %s: author name */
+									__( 'More by %s', 'newspack-blocks' ),
+									author.name
+							  )
+							: '';
+						// Return HTML with link tag for editor preview.
+						const linkUrl = author.url || '#';
+						return [ attribute, linkText ? `<a href="${ linkUrl }" class="no-op">${ linkText }</a>` : '' ];
 					}
 					return [ attribute, author[ key ] || '' ];
 				} )
@@ -169,9 +171,9 @@ export const avatarSizeOptions = [
 ];
 
 // Helper to create a bound paragraph block with custom list view name.
-const createBoundParagraph = ( key, className, name, placeholder ) => [
-	'core/paragraph',
-	{
+// If wrapInLink is true, the content will be wrapped in an anchor tag for editor preview.
+const createBoundParagraph = ( key, className, name, placeholder, wrapInLink = false ) => {
+	const attributes = {
 		metadata: {
 			name, // Custom name shown in list view.
 			bindings: {
@@ -183,8 +185,16 @@ const createBoundParagraph = ( key, className, name, placeholder ) => [
 		},
 		className,
 		placeholder: placeholder || `[${ name }]`,
-	},
-];
+	};
+
+	// If wrapInLink is true, set initial content with link wrapper for editor preview.
+	if ( wrapInLink ) {
+		const linkText = placeholder || `[${ name }]`;
+		attributes.content = `<a href="#" class="no-op">${ linkText }</a>`;
+	}
+
+	return [ 'core/paragraph', attributes ];
+};
 
 // Template for nested inner blocks.
 // Each author field is a separate block that can be reordered or removed.
@@ -209,6 +219,20 @@ const NESTED_TEMPLATE = [
 					className: 'author-profile-content-column',
 					templateLock: false,
 					allowedBlocks: [ 'core/heading', 'core/paragraph', 'newspack/author-profile-social' ],
+					style: {
+						spacing: {
+							blockGap: 'var:preset|spacing|20',
+						},
+						elements: {
+							link: {
+								color: {
+									text: 'var:preset|color|contrast-3',
+								},
+							},
+						},
+					},
+					textColor: 'contrast-3',
+					fontSize: 'small',
 				},
 				[
 					[
@@ -226,14 +250,27 @@ const NESTED_TEMPLATE = [
 							},
 							className: 'author-name',
 							placeholder: `[${ __( 'Author Name', 'newspack-blocks' ) }]`,
+							textColor: 'contrast',
+							fontSize: 'large',
 						},
 					],
 					createBoundParagraph( 'newspack_job_title', 'author-job-title', __( 'Job Title', 'newspack-blocks' ) ),
 					createBoundParagraph( 'newspack_role', 'author-role', __( 'Role', 'newspack-blocks' ) ),
 					createBoundParagraph( 'newspack_employer', 'author-employer', __( 'Employer', 'newspack-blocks' ) ),
 					createBoundParagraph( 'bio', 'author-bio', __( 'Bio', 'newspack-blocks' ) ),
-					createBoundParagraph( 'archive_link_text', 'author-archive-link', __( 'More by Author', 'newspack-blocks' ) ),
-					[ 'newspack/author-profile-social' ],
+					createBoundParagraph( 'archive_link_text', 'author-archive-link', __( 'More by Author', 'newspack-blocks' ), undefined, true ),
+					[
+						'newspack/author-profile-social',
+						{
+							style: {
+								spacing: {
+									padding: {
+										top: 'var:preset|spacing|20',
+									},
+								},
+							},
+						},
+					],
 				],
 			],
 		],
@@ -591,7 +628,6 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 					/>
 				</PanelBody>
 			) }
-			{ /* In nested mode, publishers control layout via inner blocks - no need for field toggles */ }
 			{ ! isNestedLayout && (
 				<PanelBody title={ __( 'Author Profile Settings', 'newspack-blocks' ) }>
 					<ToggleGroupControl
@@ -871,26 +907,26 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 					{ blockControls }
 					{ /* Author selector: only shown in contextual mode with multiple authors */ }
 					{ isContextual && authorsToRender.length > 1 && (
-						<div className="newspack-author-profile-preview-selector">
-							<SelectControl
-								label={ __( 'Preview author', 'newspack-blocks' ) }
-								value={ safeIndex }
-								options={ authorsToRender.map( ( a, index ) => ( {
-									label: a.name,
-									value: index,
-								} ) ) }
-								onChange={ value => setPreviewAuthorIndex( parseInt( value, 10 ) ) }
-								__next40pxDefaultSize
-								__nextHasNoMarginBottom
-							/>
-							<p className="description">
-								{ sprintf(
-									/* translators: %d: number of authors */
-									__( 'Previewing 1 of %d authors. All authors display on frontend.', 'newspack-blocks' ),
-									authorsToRender.length
-								) }
-							</p>
-						</div>
+						<Card isRounded={ false } size="small" style={ { marginBottom: '32px' } } variant="secondary">
+							<CardBody>
+								<SelectControl
+									label={ __( 'Preview author', 'newspack-blocks' ) }
+									value={ safeIndex }
+									options={ authorsToRender.map( ( a, index ) => ( {
+										label: a.name,
+										value: index,
+									} ) ) }
+									onChange={ value => setPreviewAuthorIndex( parseInt( value, 10 ) ) }
+									help={ sprintf(
+										/* translators: %d: number of authors */
+										__( 'Previewing 1 of %d authors. All authors display on frontend.', 'newspack-blocks' ),
+										authorsToRender.length
+									) }
+									__next40pxDefaultSize
+									__nextHasNoMarginBottom
+								/>
+							</CardBody>
+						</Card>
 					) }
 					{ /* Key forces re-render when author changes, which re-evaluates bindings */ }
 					<InnerBlocks

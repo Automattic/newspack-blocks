@@ -45,10 +45,6 @@
 			pointer-events: none;
 		}
 
-		p {
-			font-size: 1em;
-		}
-
 		&__bio {
 			@include mixins.media( mobile ) {
 				flex: 4;
@@ -81,30 +77,5 @@
 	// Prevent flex layout on the block wrapper (flex is for individual author cards).
 	[data-type="newspack-blocks/author-profile"]:not(.is-nested-mode) {
 		display: block;
-	}
-
-	// Nested mode: editor-specific overrides.
-	.is-nested-mode[data-type="newspack-blocks/author-profile"] {
-		.newspack-author-profile-preview-selector {
-			margin-bottom: 1rem;
-			padding-bottom: 1rem;
-			border-bottom: 1px solid #ddd;
-
-			.components-base-control {
-				margin-bottom: 0.5rem;
-			}
-
-			.description {
-				font-size: 12px;
-				color: #757575;
-				margin: 0;
-			}
-		}
-
-		// Frontend wraps in <a>, editor renders as <p>.
-		.author-archive-link {
-			text-decoration: underline;
-		}
-
 	}
 }
