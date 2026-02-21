@@ -72,7 +72,7 @@ if ( typeof registerBlockBindingsSource === 'function' ) {
 					if ( key === 'url' || key === 'archive_url' ) {
 						return [ attribute, author.url || '' ];
 					}
-					// "More by [author]" link text.
+					// "More by Author Name" link text.
 					if ( key === 'archive_link_text' ) {
 						const linkText = author.name
 							? sprintf(
@@ -242,7 +242,7 @@ const NESTED_TEMPLATE = [
 						{
 							level: 3,
 							metadata: {
-								name: __( 'Author name', 'newspack-blocks' ),
+								name: __( 'Author Name', 'newspack-blocks' ),
 								bindings: {
 									content: {
 										source: 'newspack-blocks/author',
@@ -251,7 +251,7 @@ const NESTED_TEMPLATE = [
 								},
 							},
 							className: 'author-name',
-							placeholder: __( 'Author name', 'newspack-blocks' ),
+							placeholder: __( 'Author Name', 'newspack-blocks' ),
 							textColor: 'contrast',
 							fontSize: 'large',
 						},
@@ -260,7 +260,7 @@ const NESTED_TEMPLATE = [
 						'core/paragraph',
 						{
 							metadata: {
-								name: __( 'Job title', 'newspack-blocks' ),
+								name: __( 'Job Title', 'newspack-blocks' ),
 								bindings: {
 									content: {
 										source: 'newspack-blocks/author',
@@ -269,7 +269,7 @@ const NESTED_TEMPLATE = [
 								},
 							},
 							className: 'author-job-title',
-							placeholder: __( 'Job title', 'newspack-blocks' ),
+							placeholder: __( 'Job Title', 'newspack-blocks' ),
 							style: {
 								typography: {
 									fontStyle: 'normal',
@@ -288,11 +288,15 @@ const NESTED_TEMPLATE = [
 					],
 					createBoundParagraph( 'newspack_role', 'author-role', __( 'Role', 'newspack-blocks' ) ),
 					createBoundParagraph( 'newspack_employer', 'author-employer', __( 'Employer', 'newspack-blocks' ) ),
-					createBoundParagraph( 'bio', 'author-bio', __( 'Bio', 'newspack-blocks' ) ),
+					createBoundParagraph( 'bio', 'author-bio', __( 'Biography', 'newspack-blocks' ) ),
 					createBoundParagraph(
 						'archive_link_text',
 						'author-archive-link',
-						__( 'More by Author name', 'newspack-blocks' ),
+						sprintf(
+							/* translators: %s: author name. */
+							__( 'More by %s', 'newspack-blocks' ),
+							__( 'Author Name', 'newspack-blocks' )
+						),
 						undefined,
 						true
 					),
