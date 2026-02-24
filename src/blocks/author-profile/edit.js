@@ -220,7 +220,7 @@ const NESTED_TEMPLATE = [
 				{
 					className: 'author-profile-content-column',
 					templateLock: false,
-					allowedBlocks: [ 'core/heading', 'core/paragraph', 'newspack/author-profile-social' ],
+					allowedBlocks: [ 'core/heading', 'core/paragraph', 'core/separator', 'core/spacer', 'newspack/author-profile-social' ],
 					style: {
 						spacing: {
 							blockGap: 'var:preset|spacing|20',
