@@ -89,7 +89,7 @@ function newspack_blocks_register_author_profile() {
 	register_block_type(
 		'newspack-blocks/' . $block_json['name'],
 		[
-			'api_version'     => $block_json['apiVersion'],
+			'api_version'      => $block_json['apiVersion'],
 			'attributes'       => $block_json['attributes'],
 			'render_callback'  => 'newspack_blocks_render_block_author_profile',
 			'uses_context'     => $block_json['usesContext'] ?? [],
