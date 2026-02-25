@@ -68,6 +68,10 @@
 		"avatarHideDefault": {
 			"type": "boolean",
 			"default": false
+		},
+		"variation": {
+			"type": "string",
+			"default": ""
 		}
 	}
 }

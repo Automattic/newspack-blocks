@@ -14,6 +14,7 @@ import { postAuthor } from '@wordpress/icons';
  * Internal dependencies
  */
 import edit from './edit';
+import variations from './variations';
 
 /**
  * Style dependencies - will load in editor
@@ -53,6 +54,7 @@ export const settings = {
 		default: '',
 	},
 	edit,
+	variations,
 	// Save inner blocks for nested mode (layoutVersion 2).
 	// For flat mode (layoutVersion 1), return null to use server-side rendering only.
 	save: props => {
