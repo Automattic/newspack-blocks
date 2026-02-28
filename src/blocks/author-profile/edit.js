@@ -199,11 +199,11 @@ function VariationPlaceholder( { clientId, name, setAttributes } ) {
 		},
 		[ name ]
 	);
-	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
+	const { replaceInnerBlocks } = useDispatch( blockEditorStore );
 	const blockProps = useBlockProps();
 
 	// Use short labels in the picker to avoid layout overflow.
-	const pickerVariations = variations.map( v => ( {
+	const pickerVariations = variations?.map( v => ( {
 		...v,
 		title: v.label || v.title,
 	} ) );
@@ -231,7 +231,7 @@ function VariationPlaceholder( { clientId, name, setAttributes } ) {
  */
 function VariationSwitcherModal( { clientId, name, currentVariation, setAttributes, onClose } ) {
 	const variations = useSelect( select => select( blocksStore ).getBlockVariations( name, 'block' ), [ name ] );
-	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
+	const { replaceInnerBlocks } = useDispatch( blockEditorStore );
 	const [ pendingVariation, setPendingVariation ] = useState( null );
 
 	const applyVariation = variation => {
@@ -245,7 +245,7 @@ function VariationSwitcherModal( { clientId, name, currentVariation, setAttribut
 	return (
 		<Modal title={ __( 'Change layout', 'newspack-blocks' ) } onRequestClose={ onClose }>
 			<div className="newspack-author-profile-variation-switcher">
-				{ variations.map( variation => (
+				{ variations?.map( variation => (
 					<Button
 						key={ variation.name }
 						className={ `newspack-author-profile-variation-switcher__option${ variation.name === currentVariation ? ' is-active' : '' }` }
@@ -313,7 +313,7 @@ const getPlaceholderAuthor = ( socialIconSvgs = {} ) => {
 };
 
 const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
-	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
+	const { replaceInnerBlocks } = useDispatch( blockEditorStore );
 
 	// ALL HOOKS MUST BE CALLED UNCONDITIONALLY (React rules of hooks)
 	const [ author, setAuthor ] = useState( null );
