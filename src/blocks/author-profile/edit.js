@@ -18,7 +18,7 @@ import {
 	CardBody,
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalConfirmDialog as ConfirmDialog,
-	Modal,
+	DropdownMenu,
 	Notice,
 	PanelBody,
 	Placeholder,
@@ -28,7 +28,6 @@ import {
 	Toolbar,
 	ToolbarButton,
 	ToolbarGroup,
-	Tooltip,
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalUnitControl as UnitControl,
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
@@ -227,50 +226,86 @@ function VariationPlaceholder( { clientId, name, setAttributes } ) {
 }
 
 /**
- * Modal for switching between layout variations after initial selection.
+ * Toolbar dropdown for switching between layout variations.
  */
-function VariationSwitcherModal( { clientId, name, currentVariation, setAttributes, onClose } ) {
-	const variations = useSelect( select => select( blocksStore ).getBlockVariations( name, 'block' ), [ name ] );
+function VariationToolbarDropdown( { clientId, name, currentVariation, setAttributes } ) {
+	const { variations, innerBlocks, activeTemplate } = useSelect(
+		select => {
+			const allVariations = select( blocksStore ).getBlockVariations( name, 'block' );
+			const active = allVariations?.find( v => v.name === currentVariation );
+			return {
+				variations: allVariations,
+				innerBlocks: select( blockEditorStore ).getBlocks( clientId ),
+				activeTemplate: active?.innerBlocks,
+			};
+		},
+		[ name, clientId, currentVariation ]
+	);
 	const { replaceInnerBlocks } = useDispatch( blockEditorStore );
 	const [ pendingVariation, setPendingVariation ] = useState( null );
+
+	const hasCustomEdits = () => {
+		if ( ! activeTemplate ) {
+			return true;
+		}
+		// Compare block structure and attributes, ignoring runtime differences:
+		// - `content`: populated by block bindings (author name, bio, etc.)
+		// - `allowedBlocks`, `templateLock`: structural attrs that evolve with the template
+		// - Inner blocks of dynamic blocks (e.g. social links, populated from author data)
+		const DYNAMIC_BLOCKS = [ 'newspack/author-profile-social' ];
+		const IGNORED_ATTRS = [ 'content', 'allowedBlocks', 'templateLock' ];
+		const fingerprint = blocks =>
+			blocks.map( block => {
+				const attrs = Object.fromEntries( Object.entries( block.attributes ).filter( ( [ key ] ) => ! IGNORED_ATTRS.includes( key ) ) );
+				return {
+					name: block.name,
+					attributes: attrs,
+					innerBlocks: DYNAMIC_BLOCKS.includes( block.name ) ? [] : fingerprint( block.innerBlocks || [] ),
+				};
+			} );
+		const freshBlocks = createBlocksFromInnerBlocksTemplate( activeTemplate );
+		return JSON.stringify( fingerprint( innerBlocks ) ) !== JSON.stringify( fingerprint( freshBlocks ) );
+	};
 
 	const applyVariation = variation => {
 		setAttributes( { variation: variation.name } );
 		if ( variation.innerBlocks ) {
 			replaceInnerBlocks( clientId, createBlocksFromInnerBlocksTemplate( variation.innerBlocks ), false );
 		}
-		onClose();
 	};
 
+	const controls = variations?.map( variation => ( {
+		icon: variation.icon?.src || variation.icon,
+		title: variation.label || variation.title,
+		isActive: variation.name === currentVariation,
+		role: 'menuitemradio',
+		onClick: () => {
+			if ( variation.name !== currentVariation ) {
+				if ( hasCustomEdits() ) {
+					setPendingVariation( variation );
+				} else {
+					applyVariation( variation );
+				}
+			}
+		},
+	} ) );
+
 	return (
-		<Modal title={ __( 'Change layout', 'newspack-blocks' ) } onRequestClose={ onClose }>
-			<div className="newspack-author-profile-variation-switcher">
-				{ variations?.map( variation => (
-					<Tooltip key={ variation.name } text={ variation.description }>
-						<Button
-							className={ `newspack-author-profile-variation-switcher__option${
-								variation.name === currentVariation ? ' is-active' : ''
-							}` }
-							onClick={ () => {
-								if ( variation.name === currentVariation ) {
-									onClose();
-									return;
-								}
-								setPendingVariation( variation );
-							} }
-						>
-							<span className="newspack-author-profile-variation-switcher__icon">{ variation.icon?.src || variation.icon }</span>
-							<span className="newspack-author-profile-variation-switcher__title">{ variation.label || variation.title }</span>
-						</Button>
-					</Tooltip>
-				) ) }
-			</div>
+		<>
+			<DropdownMenu icon={ layout } label={ __( 'Change layout', 'newspack-blocks' ) } controls={ controls } />
 			{ pendingVariation && (
-				<ConfirmDialog isOpen onConfirm={ () => applyVariation( pendingVariation ) } onCancel={ () => setPendingVariation( null ) }>
+				<ConfirmDialog
+					isOpen
+					onConfirm={ () => {
+						applyVariation( pendingVariation );
+						setPendingVariation( null );
+					} }
+					onCancel={ () => setPendingVariation( null ) }
+				>
 					{ __( 'Switching layouts will replace the current block content. Continue?', 'newspack-blocks' ) }
 				</ConfirmDialog>
 			) }
-		</Modal>
+		</>
 	);
 }
 
@@ -326,7 +361,6 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ maxItemsToSuggest, setMaxItemsToSuggest ] = useState( 0 );
 	const [ showSpecificSelector, setShowSpecificSelector ] = useState( false );
-	const [ isVariationSwitcherOpen, setIsVariationSwitcherOpen ] = useState( false );
 	const [ previewAuthorIndex, setPreviewAuthorIndex ] = useState( 0 );
 	const [ socialIconSvgs, setSocialIconSvgs ] = useState( {} );
 
@@ -744,16 +778,15 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 			) }
 			{ isNestedLayout && (
 				<ToolbarGroup>
-					<ToolbarButton
-						icon={ layout }
-						label={ __( 'Change layout', 'newspack-blocks' ) }
-						onClick={ () => setIsVariationSwitcherOpen( true ) }
+					<VariationToolbarDropdown
+						clientId={ clientId }
+						name="newspack-blocks/author-profile"
+						currentVariation={ variation }
+						setAttributes={ setAttributes }
 					/>
-					<Tooltip text={ __( 'Reset layout', 'newspack-blocks' ) }>
-						<ToolbarButton label={ __( 'Reset layout', 'newspack-blocks' ) } onClick={ resetLayout }>
-							{ __( 'Reset', 'newspack-blocks' ) }
-						</ToolbarButton>
-					</Tooltip>
+					<ToolbarButton label={ __( 'Reset layout', 'newspack-blocks' ) } onClick={ resetLayout }>
+						{ __( 'Reset', 'newspack-blocks' ) }
+					</ToolbarButton>
 				</ToolbarGroup>
 			) }
 		</BlockControls>
@@ -953,15 +986,6 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 						templateLock="insert"
 						allowedBlocks={ [ 'core/columns', 'core/group' ] }
 					/>
-					{ isVariationSwitcherOpen && (
-						<VariationSwitcherModal
-							clientId={ clientId }
-							name="newspack-blocks/author-profile"
-							currentVariation={ variation }
-							setAttributes={ setAttributes }
-							onClose={ () => setIsVariationSwitcherOpen( false ) }
-						/>
-					) }
 				</div>
 			</AuthorContext.Provider>
 		);
