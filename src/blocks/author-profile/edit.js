@@ -268,7 +268,7 @@ function VariationToolbarDropdown( { clientId, name, currentVariation, setAttrib
 	};
 
 	const applyVariation = variation => {
-		setAttributes( { variation: variation.name } );
+		setAttributes( { ...variation.attributes, variation: variation.name } );
 		if ( variation.innerBlocks ) {
 			replaceInnerBlocks( clientId, createBlocksFromInnerBlocksTemplate( variation.innerBlocks ), false );
 		}
@@ -450,7 +450,8 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 
 	// Auto-populate inner blocks from variation attribute on mount (e.g., when inserted from a pattern).
 	// Only runs once; subsequent empty states show the variation picker instead of auto-repopulating.
-	const [ didAutoPopulate, setDidAutoPopulate ] = useState( false );
+	// Initialized with hasInnerBlocks so existing blocks (after page reload) don't re-populate.
+	const [ didAutoPopulate, setDidAutoPopulate ] = useState( hasInnerBlocks );
 	useEffect( () => {
 		if ( ! didAutoPopulate && variation && ! hasInnerBlocks && activeVariationTemplate ) {
 			replaceInnerBlocks( clientId, createBlocksFromInnerBlocksTemplate( activeVariationTemplate ), true );

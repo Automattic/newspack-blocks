@@ -171,7 +171,7 @@ const GROUP_STYLES = Object.freeze( {
 } );
 
 // Content blocks shared across all layouts.
-// Shared references are frozen to prevent accidental mutation across templates.
+// Shallow-frozen to prevent push/splice; nested block definitions are safe because templates compose via spread.
 const CONTENT_BLOCKS = Object.freeze( [ HEADING_BLOCK, JOB_TITLE_BLOCK, ROLE_BLOCK, EMPLOYER_BLOCK, BIO_BLOCK, ARCHIVE_LINK_BLOCK, SOCIAL_BLOCK ] );
 
 // -- Layout Templates --------------------------------------------------------
