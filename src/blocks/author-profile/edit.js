@@ -246,20 +246,23 @@ function VariationSwitcherModal( { clientId, name, currentVariation, setAttribut
 		<Modal title={ __( 'Change layout', 'newspack-blocks' ) } onRequestClose={ onClose }>
 			<div className="newspack-author-profile-variation-switcher">
 				{ variations?.map( variation => (
-					<Button
-						key={ variation.name }
-						className={ `newspack-author-profile-variation-switcher__option${ variation.name === currentVariation ? ' is-active' : '' }` }
-						onClick={ () => {
-							if ( variation.name === currentVariation ) {
-								onClose();
-								return;
-							}
-							setPendingVariation( variation );
-						} }
-					>
-						<span className="newspack-author-profile-variation-switcher__icon">{ variation.icon?.src || variation.icon }</span>
-						<span className="newspack-author-profile-variation-switcher__title">{ variation.label || variation.title }</span>
-					</Button>
+					<Tooltip key={ variation.name } text={ variation.description }>
+						<Button
+							className={ `newspack-author-profile-variation-switcher__option${
+								variation.name === currentVariation ? ' is-active' : ''
+							}` }
+							onClick={ () => {
+								if ( variation.name === currentVariation ) {
+									onClose();
+									return;
+								}
+								setPendingVariation( variation );
+							} }
+						>
+							<span className="newspack-author-profile-variation-switcher__icon">{ variation.icon?.src || variation.icon }</span>
+							<span className="newspack-author-profile-variation-switcher__title">{ variation.label || variation.title }</span>
+						</Button>
+					</Tooltip>
 				) ) }
 			</div>
 			{ pendingVariation && (
