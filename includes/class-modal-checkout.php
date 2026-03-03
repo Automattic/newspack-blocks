@@ -269,7 +269,7 @@ final class Modal_Checkout {
 	/**
 	 * Whether any available payment gateways are not supported in modal checkout.
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public static function has_unsupported_payment_gateway() {
 		if ( ! function_exists( 'WC' ) ) {
@@ -280,7 +280,7 @@ final class Modal_Checkout {
 		$available_gateways = \WC()->payment_gateways->get_available_payment_gateways();
 		$all_gateways       = \WC()->payment_gateways()->payment_gateways();
 
-		foreach ( $available_gateways as $id => $gateway ) {
+		foreach ( array_keys( $available_gateways ) as $id ) {
 			if ( ! in_array( $id, $supported_gateways, true ) ) {
 				return true;
 			}
@@ -304,7 +304,7 @@ final class Modal_Checkout {
 	 * Whether a gateway is explicitly enabled via WooCommerce settings.
 	 *
 	 * @param string $gateway_id Gateway ID.
-	 * @return boolean
+	 * @return bool
 	 */
 	private static function is_gateway_enabled_in_settings( $gateway_id ) {
 		$settings = get_option( 'woocommerce_' . $gateway_id . '_settings', [] );
