@@ -544,7 +544,7 @@ final class Modal_Checkout {
 			if ( isset( $stripe_settings['express_checkout'] ) && 'yes' === $stripe_settings['express_checkout'] ) {
 				if ( isset( $settings['express_checkout_checkout_methods'] ) ) {
 					$settings['express_checkout_checkout_methods'] = array_values(
-						array_diff( $settings['express_checkout_checkout_methods'], [ 'payment_request' ] )
+						array_diff( (array) $settings['express_checkout_checkout_methods'], [ 'payment_request' ] )
 					);
 				}
 			}
