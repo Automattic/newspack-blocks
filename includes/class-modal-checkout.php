@@ -530,8 +530,24 @@ final class Modal_Checkout {
 		if ( ! self::is_modal_checkout() ) {
 			return $settings;
 		}
+		// Disable WooPay (Woo's hosted checkout experience) — not supported in the modal.
 		if ( isset( $settings['platform_checkout'] ) ) {
 			$settings['platform_checkout'] = 'no';
+		}
+		// If Stripe's express checkout is active, suppress WooPayments' express checkout
+		// (payment_request) to prevent duplicate Apple Pay / Google Pay buttons in the modal.
+		// Stripe is preferred: Newspack already manages its express checkout behavior (see
+		// class-woocommerce-gateway-stripe.php), and WooPayments is already partially filtered
+		// above (platform_checkout). WooPayments is suppressed, not the reverse.
+		if ( class_exists( 'WC_Stripe' ) ) {
+			$stripe_settings = get_option( 'woocommerce_stripe_settings', [] );
+			if ( isset( $stripe_settings['express_checkout'] ) && 'yes' === $stripe_settings['express_checkout'] ) {
+				if ( isset( $settings['express_checkout_checkout_methods'] ) ) {
+					$settings['express_checkout_checkout_methods'] = array_values(
+						array_diff( $settings['express_checkout_checkout_methods'], [ 'payment_request' ] )
+					);
+				}
+			}
 		}
 		return $settings;
 	}
