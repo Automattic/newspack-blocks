@@ -220,19 +220,10 @@ import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 					}
 
 					const $details = $( '#after_customer_details' );
-
-					// Skip the DOM move while the payment step is not visible (step 1).
-					// Moving .order-review-wrapper inside #payment during step 1 AJAX updates
-					// (e.g. billing-field changes) would cause the accordion to be lost when
-					// the next #payment fragment replacement fires in step 2.
-					if ( $details.is( ':hidden' ) ) {
-						return;
-					}
+					const expanded = $details.hasClass( 'transaction-details-expanded' );
 
 					// Move new order review table to the payment methods.
 					const $payment_methods = $( '.payment_methods' );
-					const expanded = $details.hasClass( 'transaction-details-expanded' );
-
 					if ( $payment_methods.length ) {
 						const $el = $wrapper.clone();
 						// Make sure Transaction Details toggle's aria-expanded value is correct in cloned version.

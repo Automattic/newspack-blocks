@@ -1034,8 +1034,6 @@ final class Modal_Checkout {
 		) {
 			return $template;
 		}
-
-
 		$class_prefix = self::get_class_prefix();
 		$wc_errors    = wc_get_notices( 'error' );
 		ob_start();
@@ -1182,7 +1180,6 @@ final class Modal_Checkout {
 		if ( ! self::is_modal_checkout() ) {
 			return $located;
 		}
-
 
 		$custom_templates = [
 			'checkout/form-coupon.php'            => 'src/modal-checkout/templates/form-coupon.php',
