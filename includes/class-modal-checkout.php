@@ -539,14 +539,14 @@ final class Modal_Checkout {
 		// Stripe is preferred: Newspack already manages its express checkout behavior (see
 		// newspack-plugin/includes/plugins/class-woocommerce-gateway-stripe.php), and WooPayments
 		// is already partially filtered above (platform_checkout). WooPayments is suppressed, not the reverse.
-		if ( class_exists( 'WC_Stripe' ) ) {
-			$stripe_settings = get_option( 'woocommerce_stripe_settings', [] );
-			if ( isset( $stripe_settings['express_checkout'] ) && 'yes' === $stripe_settings['express_checkout'] ) {
-				if ( isset( $settings['express_checkout_checkout_methods'] ) ) {
-					$settings['express_checkout_checkout_methods'] = array_values(
-						array_diff( (array) $settings['express_checkout_checkout_methods'], [ 'payment_request' ] )
-					);
-				}
+		$stripe_settings = get_option( 'woocommerce_stripe_settings', [] );
+		if ( isset( $stripe_settings['enabled'], $stripe_settings['express_checkout'] )
+			&& 'yes' === $stripe_settings['enabled']
+			&& 'yes' === $stripe_settings['express_checkout'] ) {
+			if ( isset( $settings['express_checkout_checkout_methods'] ) ) {
+				$settings['express_checkout_checkout_methods'] = array_values(
+					array_diff( (array) $settings['express_checkout_checkout_methods'], [ 'payment_request' ] )
+				);
 			}
 		}
 		return $settings;
