@@ -150,6 +150,7 @@ final class Modal_Checkout {
 		add_filter( 'woocommerce_get_return_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
 		add_filter( 'woocommerce_get_checkout_order_received_url', [ __CLASS__, 'woocommerce_get_return_url' ], 10, 2 );
 		add_filter( 'wc_get_template', [ __CLASS__, 'wc_get_template' ], 10, 2 );
+		add_filter( 'woocommerce_disable_compatibility_layer', [ __CLASS__, 'disable_block_compatibility_layer' ] );
 		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'woocommerce_checkout_fields' ] );
 		add_filter( 'woocommerce_update_order_review_fragments', [ __CLASS__, 'order_review_fragments' ] );
 		add_filter( 'woocommerce_cart_needs_payment', [ __CLASS__, 'cart_needs_payment' ] );
@@ -748,14 +749,15 @@ final class Modal_Checkout {
 			'newspack-blocks-modal-checkout',
 			'newspackBlocksModalCheckout',
 			[
-				'ajax_url'              => admin_url( 'admin-ajax.php' ),
-				'nyp_nonce'             => wp_create_nonce( 'newspack_checkout_name_your_price' ),
-				'checkout_nonce'        => wp_create_nonce( 'newspack_modal_checkout_nonce' ),
-				'newspack_class_prefix' => self::get_class_prefix(),
-				'is_checkout_complete'  => function_exists( 'is_order_received_page' ) && is_order_received_page(),
-				'divider_text'          => esc_html__( 'Or', 'newspack-blocks' ),
-				'is_error'              => ! is_checkout() && ! is_order_received_page(),
-				'labels'                => [
+				'ajax_url'               => admin_url( 'admin-ajax.php' ),
+				'nyp_nonce'              => wp_create_nonce( 'newspack_checkout_name_your_price' ),
+				'checkout_nonce'         => wp_create_nonce( 'newspack_modal_checkout_nonce' ),
+				'process_checkout_nonce' => wp_create_nonce( 'woocommerce-process_checkout' ),
+				'newspack_class_prefix'  => self::get_class_prefix(),
+				'is_checkout_complete'   => function_exists( 'is_order_received_page' ) && is_order_received_page(),
+				'divider_text'           => esc_html__( 'Or', 'newspack-blocks' ),
+				'is_error'               => ! is_checkout() && ! is_order_received_page(),
+				'labels'                 => [
 					'billing_details'  => self::get_modal_checkout_labels( 'billing_details' ),
 					'shipping_details' => self::get_modal_checkout_labels( 'shipping_details' ),
 					'gift_recipient'   => self::get_modal_checkout_labels( 'gift_recipient' ),
@@ -1032,6 +1034,8 @@ final class Modal_Checkout {
 		) {
 			return $template;
 		}
+
+
 		$class_prefix = self::get_class_prefix();
 		$wc_errors    = wc_get_notices( 'error' );
 		ob_start();
@@ -1179,6 +1183,7 @@ final class Modal_Checkout {
 			return $located;
 		}
 
+
 		$custom_templates = [
 			'checkout/form-coupon.php'            => 'src/modal-checkout/templates/form-coupon.php',
 			'checkout/form-gift-subscription.php' => 'src/modal-checkout/templates/form-gift-subscription.php',
@@ -1218,6 +1223,26 @@ final class Modal_Checkout {
 		}
 
 		return $located;
+	}
+
+	/**
+	 * Disable WooCommerce's block template compatibility layer during modal checkout.
+	 *
+	 * WooCommerce's BlockTemplatesController swaps classic checkout/cart templates
+	 * for blockified versions on block themes. Those blockified templates
+	 * render via the Store API with its own nonce system (wc_store_api header),
+	 * which is incompatible with the classic woocommerce-process-checkout-nonce
+	 * hidden field that modal checkout expects.
+	 *
+	 * @param bool $disabled Whether the compatibility layer is disabled.
+	 *
+	 * @return bool
+	 */
+	public static function disable_block_compatibility_layer( $disabled ) {
+		if ( self::is_modal_checkout() ) {
+			return true;
+		}
+		return $disabled;
 	}
 
 	/**

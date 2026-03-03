@@ -25,6 +25,12 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 ?>
 
 <form name="checkout" method="post" class="checkout woocommerce-checkout" action="<?php echo esc_url( wc_get_checkout_url() ); ?>" enctype="multipart/form-data">
+	<?php
+	// Ensure the classic checkout nonce is always present in the form.
+	// On block themes, WooCommerce removes the classic woocommerce_checkout_payment
+	// callback that normally renders checkout/payment.php (which contains this nonce).
+	wp_nonce_field( 'woocommerce-process_checkout', 'woocommerce-process-checkout-nonce' );
+	?>
 	<?php if ( $checkout->get_checkout_fields() ) : ?>
 		<?php do_action( 'woocommerce_checkout_before_customer_details' ); ?>
 		<div id="customer_details">
@@ -34,6 +40,17 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 			<button class="newspack-ui__button newspack-ui__button--primary newspack-ui__button--wide" id="checkout_continue" type="submit"><?php esc_html_e( 'Continue', 'newspack-blocks' ); ?></button>
 		</div>
 		<div id="after_customer_details">
+			<?php
+			if ( wp_is_block_theme() ) {
+				// Block themes do not move woocommerce_checkout_payment after customer details.
+				// With woocommerce_disable_compatibility_layer, it stays on order review
+				// (priority 20), so firing that action in the accordion is unsafe.
+				// Render payment explicitly here so #payment appears before Transaction Details.
+				if ( function_exists( 'woocommerce_checkout_payment' ) ) {
+					woocommerce_checkout_payment();
+				}
+			}
+			?>
 			<div class="order-review-wrapper hidden">
 				<?php do_action( 'woocommerce_checkout_before_order_review_heading' ); ?>
 				<button id="order_review_heading" aria-expanded="false" aria-controls="order_review_content" class="newspack-ui__button newspack-ui__button--ghost" type="button">
@@ -46,7 +63,21 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 					<div class="transaction-details-content-inner" id="order_review_content">
 						<?php do_action( 'woocommerce_checkout_before_order_review' ); ?>
 						<div id="order_review" class="woocommerce-checkout-review-order newspack-ui__box">
-							<?php do_action( 'woocommerce_checkout_order_review' ); ?>
+							<?php
+							if ( wp_is_block_theme() ) {
+								// On block themes, this hook still includes payment at priority 20.
+								// Triggering it here would render a duplicate #payment in the accordion.
+								// Render the order table directly instead.
+								if ( function_exists( 'woocommerce_order_review' ) ) {
+									woocommerce_order_review();
+								}
+							} else {
+								// Classic themes move payment to after customer details.
+								// Here, this hook is safe and should output only order review markup.
+								// Keep using it so theme/plugin customizations still run.
+								do_action( 'woocommerce_checkout_order_review' );
+							}
+							?>
 						</div>
 						<?php do_action( 'woocommerce_checkout_after_order_review' ); ?>
 					</div>

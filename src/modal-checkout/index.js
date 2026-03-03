@@ -98,6 +98,36 @@ import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 				const $customer_details = $( '#customer_details' );
 				const $after_customer_details = $( '#after_customer_details' );
 				const $gift_options = $( '.newspack-wcsg--wrapper' );
+				const processCheckoutNonceFieldName = 'woocommerce-process-checkout-nonce';
+
+				/**
+				 * Ensure checkout nonce exists in the modal form.
+				 * Block theme + blockized checkout flows may omit this field.
+				 *
+				 * @return {jQuery} Checkout nonce input.
+				 */
+				function ensureProcessCheckoutNonce() {
+					let $nonceField = $form.find( `input[name="${ processCheckoutNonceFieldName }"]` );
+					if ( $nonceField.length ) {
+						return $nonceField;
+					}
+
+					const localizedNonce = newspackBlocksModalCheckout.process_checkout_nonce;
+					if ( ! localizedNonce ) {
+						return $nonceField;
+					}
+
+					$nonceField = $( '<input />', {
+						type: 'hidden',
+						name: processCheckoutNonceFieldName,
+						value: localizedNonce,
+					} );
+					$form.prepend( $nonceField );
+					return $nonceField;
+				}
+
+				// Ensure the nonce is present from initial load.
+				ensureProcessCheckoutNonce();
 
 				/**
 				 * Handle styling update for selected payment method.
@@ -190,10 +220,19 @@ import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 					}
 
 					const $details = $( '#after_customer_details' );
-					const expanded = $details.hasClass( 'transaction-details-expanded' );
+
+					// Skip the DOM move while the payment step is not visible (step 1).
+					// Moving .order-review-wrapper inside #payment during step 1 AJAX updates
+					// (e.g. billing-field changes) would cause the accordion to be lost when
+					// the next #payment fragment replacement fires in step 2.
+					if ( $details.is( ':hidden' ) ) {
+						return;
+					}
 
 					// Move new order review table to the payment methods.
 					const $payment_methods = $( '.payment_methods' );
+					const expanded = $details.hasClass( 'transaction-details-expanded' );
+
 					if ( $payment_methods.length ) {
 						const $el = $wrapper.clone();
 						// Make sure Transaction Details toggle's aria-expanded value is correct in cloned version.
@@ -558,6 +597,10 @@ import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 
 						// Disable 'Place Order' button if Subscription Confirmation is required.
 						handleSubscriptionConfirmation();
+
+						// Refresh checkout fragments immediately after leaving validation-only mode
+						// so payment gateways are repopulated on step 2.
+						$( document.body ).trigger( 'update_checkout', { update_shipping_method: false } );
 					}
 					$form.triggerHandler( 'editing_details', [ isEditingDetails ] );
 					// Scroll to top.
@@ -684,6 +727,10 @@ import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 					const removeFromValidation = [ 'save_user_in_woopay' ];
 					// Serialize form and remove fields that shouldn't be included for validation.
 					const serializedForm = $form.serializeArray().filter( item => ! removeFromValidation.includes( item.name ) );
+					const nonceValue = ensureProcessCheckoutNonce().val();
+					if ( nonceValue && ! serializedForm.some( item => item.name === processCheckoutNonceFieldName ) ) {
+						serializedForm.push( { name: processCheckoutNonceFieldName, value: nonceValue } );
+					}
 					// Add 'update totals' parameter so it just performs validation.
 					serializedForm.push( { name: 'woocommerce_checkout_update_totals', value: '1' } );
 					// Ajax request.
