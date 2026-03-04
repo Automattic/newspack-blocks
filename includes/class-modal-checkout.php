@@ -267,7 +267,7 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Whether any available payment gateways are not supported in modal checkout.
+	 * Whether any enabled payment gateways are not supported in modal checkout.
 	 *
 	 * @return bool
 	 */
