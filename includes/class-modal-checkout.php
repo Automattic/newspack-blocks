@@ -277,38 +277,21 @@ final class Modal_Checkout {
 		}
 
 		$supported_gateways = self::get_supported_payment_gateways();
-		$available_gateways = \WC()->payment_gateways->get_available_payment_gateways();
 		$all_gateways       = \WC()->payment_gateways()->payment_gateways();
 
-		foreach ( array_keys( $available_gateways ) as $id ) {
-			if ( ! in_array( $id, $supported_gateways, true ) ) {
-				return true;
-			}
-		}
-
-		// Some gateways can be enabled in admin settings but omitted from
-		// get_available_payment_gateways() due to runtime constraints, for example Wompi.
+		// Check unsupported gateways directly against admin settings. Some gateways
+		// can be omitted from runtime availability due to constraints (like Wompi).
 		foreach ( array_keys( $all_gateways ) as $id ) {
 			if ( in_array( $id, $supported_gateways, true ) ) {
 				continue;
 			}
-			if ( self::is_gateway_enabled_in_settings( $id ) ) {
+			$settings = get_option( 'woocommerce_' . $id . '_settings', [] );
+			if ( is_array( $settings ) && isset( $settings['enabled'] ) && 'yes' === $settings['enabled'] ) {
 				return true;
 			}
 		}
 
 		return false;
-	}
-
-	/**
-	 * Whether a gateway is explicitly enabled via WooCommerce settings.
-	 *
-	 * @param string $gateway_id Gateway ID.
-	 * @return bool
-	 */
-	private static function is_gateway_enabled_in_settings( $gateway_id ) {
-		$settings = get_option( 'woocommerce_' . $gateway_id . '_settings', [] );
-		return is_array( $settings ) && isset( $settings['enabled'] ) && 'yes' === $settings['enabled'];
 	}
 
 	/**
