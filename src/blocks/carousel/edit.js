@@ -208,34 +208,34 @@ class Edit extends Component {
 					<PanelBody title={ __( 'Settings', 'newspack-blocks' ) } className="newspack-block__panel is-content">
 						{ postsToShow && (
 							<>
-							<QueryControls
-								numberOfItems={ postsToShow }
-								onNumberOfItemsChange={ value => setAttributes( { postsToShow: value ? value : 1 } ) }
-								authors={ authors }
-								onAuthorsChange={ value => setAttributes( { authors: value } ) }
-								categories={ categories }
-								onCategoriesChange={ value => setAttributes( { categories: value } ) }
-								includeSubcategories={ includeSubcategories }
-								onIncludeSubcategoriesChange={ value => setAttributes( { includeSubcategories: value } ) }
-								categoryJoinType={ categoryJoinType }
-								onCategoryJoinTypeChange={ value => setAttributes( { categoryJoinType: value } ) }
-								tags={ tags }
-								onTagsChange={ value => setAttributes( { tags: value } ) }
-								onCustomTaxonomiesChange={ value => setAttributes( { customTaxonomies: value } ) }
-								customTaxonomies={ customTaxonomies }
-								specificMode={ specificMode }
-								onSpecificModeChange={ () => setAttributes( { specificMode: true } ) }
-								onLoopModeChange={ () => setAttributes( { specificMode: false } ) }
-								specificPosts={ specificPosts }
-								onSpecificPostsChange={ _specificPosts => setAttributes( { specificPosts: _specificPosts } ) }
-								postType={ postType }
-							/>
-							<ToggleControl
-								label={ __( 'Allow duplicate content', 'newspack-blocks' ) }
-								help={ __( "Exclude this block from the page's deduplication logic.", 'newspack-blocks' ) }
-								checked={ ! attributes.deduplicate }
-								onChange={ ( value ) => setAttributes( { deduplicate: ! value } ) }
-							/>
+								<QueryControls
+									numberOfItems={ postsToShow }
+									onNumberOfItemsChange={ value => setAttributes( { postsToShow: value ? value : 1 } ) }
+									authors={ authors }
+									onAuthorsChange={ value => setAttributes( { authors: value } ) }
+									categories={ categories }
+									onCategoriesChange={ value => setAttributes( { categories: value } ) }
+									includeSubcategories={ includeSubcategories }
+									onIncludeSubcategoriesChange={ value => setAttributes( { includeSubcategories: value } ) }
+									categoryJoinType={ categoryJoinType }
+									onCategoryJoinTypeChange={ value => setAttributes( { categoryJoinType: value } ) }
+									tags={ tags }
+									onTagsChange={ value => setAttributes( { tags: value } ) }
+									onCustomTaxonomiesChange={ value => setAttributes( { customTaxonomies: value } ) }
+									customTaxonomies={ customTaxonomies }
+									specificMode={ specificMode }
+									onSpecificModeChange={ () => setAttributes( { specificMode: true } ) }
+									onLoopModeChange={ () => setAttributes( { specificMode: false } ) }
+									specificPosts={ specificPosts }
+									onSpecificPostsChange={ _specificPosts => setAttributes( { specificPosts: _specificPosts } ) }
+									postType={ postType }
+								/>
+								<ToggleControl
+									label={ __( 'Allow duplicate content', 'newspack-blocks' ) }
+									help={ __( "Exclude this block from the page's deduplication logic.", 'newspack-blocks' ) }
+									checked={ ! attributes.deduplicate }
+									onChange={ ( value ) => setAttributes( { deduplicate: ! value } ) }
+								/>
 							</>
 						) }
 					</PanelBody>
