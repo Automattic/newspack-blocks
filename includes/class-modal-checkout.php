@@ -267,21 +267,31 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Whether any available payment gateways are not suppored in modal checkout.
+	 * Whether any enabled payment gateways are not supported in modal checkout.
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public static function has_unsupported_payment_gateway() {
-		$supported_gateways          = self::get_supported_payment_gateways();
-		$available_gateways          = function_exists( 'WC' ) ? \WC()->payment_gateways->get_available_payment_gateways() : [];
-		$unsupported_payment_gateway = false;
-		foreach ( $available_gateways as $id => $gateway ) {
-			if ( ! in_array( $id, $supported_gateways, true ) ) {
-				$unsupported_payment_gateway = true;
-				break;
+		if ( ! function_exists( 'WC' ) ) {
+			return false;
+		}
+
+		$supported_gateways = self::get_supported_payment_gateways();
+		$all_gateways       = \WC()->payment_gateways()->payment_gateways();
+
+		// Check unsupported gateways directly against admin settings. Some gateways
+		// can be omitted from runtime availability due to constraints (like Wompi).
+		foreach ( array_keys( $all_gateways ) as $id ) {
+			if ( in_array( $id, $supported_gateways, true ) ) {
+				continue;
+			}
+			$settings = get_option( 'woocommerce_' . $id . '_settings', [] );
+			if ( is_array( $settings ) && isset( $settings['enabled'] ) && 'yes' === $settings['enabled'] ) {
+				return true;
 			}
 		}
-		return $unsupported_payment_gateway;
+
+		return false;
 	}
 
 	/**
