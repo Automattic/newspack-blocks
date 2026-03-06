@@ -229,7 +229,7 @@ class Edit extends Component {
 									specificPosts={ specificPosts }
 									onSpecificPostsChange={ _specificPosts => setAttributes( { specificPosts: _specificPosts } ) }
 									postType={ postType }
-									allowDedupeCurrentValue = { ! attributes.deduplicate }
+									allowDedupeCurrentValue={ ! attributes.deduplicate }
 									onAllowDedupeChange={ value => setAttributes( { deduplicate: ! value } ) }
 								/>
 							</>

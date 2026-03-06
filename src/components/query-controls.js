@@ -426,7 +426,7 @@ class QueryControls extends Component {
 								label={ __( 'Allow duplicate content', 'newspack-blocks' ) }
 								help={ __( "Exclude this block from the page's deduplication logic.", 'newspack-blocks' ) }
 								checked={ allowDedupeCurrentValue }
-								onChange={ ( value ) => onAllowDedupeChange( value ) }
+								onChange={ value => onAllowDedupeChange( value ) }
 							/>
 						) }
 					</>
