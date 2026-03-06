@@ -229,12 +229,8 @@ class Edit extends Component {
 									specificPosts={ specificPosts }
 									onSpecificPostsChange={ _specificPosts => setAttributes( { specificPosts: _specificPosts } ) }
 									postType={ postType }
-								/>
-								<ToggleControl
-									label={ __( 'Allow duplicate content', 'newspack-blocks' ) }
-									help={ __( "Exclude this block from the page's deduplication logic.", 'newspack-blocks' ) }
-									checked={ ! attributes.deduplicate }
-									onChange={ ( value ) => setAttributes( { deduplicate: ! value } ) }
+									allowDedupeCurrentValue = { ! attributes.deduplicate }
+									onAllowDedupeChange={ value => setAttributes( { deduplicate: ! value } ) }
 								/>
 							</>
 						) }

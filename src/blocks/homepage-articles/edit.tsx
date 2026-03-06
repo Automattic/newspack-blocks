@@ -285,12 +285,8 @@ class Edit extends Component< HomepageArticlesProps > {
 						customTaxonomyExclusions={ customTaxonomyExclusions }
 						onCustomTaxonomyExclusionsChange={ handleAttributeChange( 'customTaxonomyExclusions' ) }
 						postType={ postType }
-					/>
-					<ToggleControl
-						label={ __( 'Allow duplicate content', 'newspack-blocks' ) }
-						help={ __( "Exclude this block from the page's deduplication logic.", 'newspack-blocks' ) }
-						checked={ ! attributes.deduplicate }
-						onChange={ ( value: boolean ) => setAttributes( { deduplicate: ! value } ) }
+						allowDedupeCurrentValue={ ! attributes.deduplicate }
+						onAllowDedupeChange={ ( value: boolean ) => setAttributes( { deduplicate: ! value } ) }
 					/>
 					{ ! specificMode && isBlogPrivate() ? (
 						/*
