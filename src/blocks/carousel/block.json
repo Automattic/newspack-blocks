@@ -112,6 +112,10 @@
 			"items": {
 				"type": "string"
 			}
+		},
+    "deduplicate": {
+			"type": "boolean",
+			"default": true
 		}
 	}
 }

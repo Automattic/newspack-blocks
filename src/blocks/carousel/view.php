@@ -51,7 +51,9 @@ function newspack_blocks_render_block_carousel( $attributes ) {
 			$article_query->the_post();
 			$post_id                             = get_the_ID();
 			$authors                             = Newspack_Blocks::prepare_authors();
-			$newspack_blocks_post_id[ $post_id ] = true;
+			if ( Newspack_Blocks::should_deduplicate_block( $attributes ) ) {
+				$newspack_blocks_post_id[ $post_id ] = true;
+			}
 
 			$article_classes = [
 				'post-has-image',

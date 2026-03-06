@@ -207,6 +207,7 @@ class Edit extends Component {
 				<InspectorControls>
 					<PanelBody title={ __( 'Settings', 'newspack-blocks' ) } className="newspack-block__panel is-content">
 						{ postsToShow && (
+							<>
 							<QueryControls
 								numberOfItems={ postsToShow }
 								onNumberOfItemsChange={ value => setAttributes( { postsToShow: value ? value : 1 } ) }
@@ -229,6 +230,13 @@ class Edit extends Component {
 								onSpecificPostsChange={ _specificPosts => setAttributes( { specificPosts: _specificPosts } ) }
 								postType={ postType }
 							/>
+							<ToggleControl
+								label={ __( 'Allow duplicate content', 'newspack-blocks' ) }
+								help={ __( "Exclude this block from the page's deduplication logic.", 'newspack-blocks' ) }
+								checked={ ! attributes.deduplicate }
+								onChange={ ( value ) => setAttributes( { deduplicate: ! value } ) }
+							/>
+							</>
 						) }
 					</PanelBody>
 					<PanelBody title={ __( 'Display', 'newspack-blocks' ) }>
