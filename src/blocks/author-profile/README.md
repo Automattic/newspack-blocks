@@ -30,7 +30,7 @@ Used in block themes. The block saves `<InnerBlocks.Content />` and composes the
 
 | Variation | Template constant | Description |
 |-----------|------------------|-------------|
-| `default` | `DEFAULT_TEMPLATE` | Two-column: avatar left, content right |
+| `avatar-left` | `AVATAR_LEFT_TEMPLATE` | Two-column: avatar left, content right |
 | `avatar-right` | `AVATAR_RIGHT_TEMPLATE` | Two-column: content left, avatar right |
 | `centered` | `CENTERED_TEMPLATE` | Flex group: centered avatar, centered text |
 | `compact` | `COMPACT_TEMPLATE` | Flex group: no avatar, vertical stack |
@@ -94,7 +94,6 @@ In the editor, bindings resolve via a per-instance author map (`window.__newspac
 ## Editor behavior
 
 - **Variation picker**: Shown when the block has no inner blocks (nested mode). Follows the same pattern as the core Columns block.
-- **Variation toolbar dropdown**: Allows switching layouts after initial selection. Detects custom edits and shows a confirmation dialog before replacing content.
 - **Author context**: The [AuthorContext](./context.js) React context passes author data to inner blocks. It's also exposed globally as `window.NewspackAuthorContext` for cross-package use (e.g., by the avatar block in newspack-plugin).
 - **Template context**: In the Site Editor (templates/template parts), a placeholder author is shown with all supported social services populated.
 
