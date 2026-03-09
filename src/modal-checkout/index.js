@@ -685,7 +685,7 @@ import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 					// Serialize form and remove fields that shouldn't be included for validation.
 					const serializedForm = $form.serializeArray().filter( item => ! removeFromValidation.includes( item.name ) );
 					// Add 'update totals' parameter so it just performs validation.
-					serializedForm.push( { name: 'woocommerce_checkout_update_totals', value: '1' } );
+					serializedForm.push( { name: 'newspack_blocks_checkout_action', value: '1' } );
 					// Ajax request.
 					$.ajax( {
 						type: 'POST',

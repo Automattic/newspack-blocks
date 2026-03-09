@@ -138,6 +138,7 @@ final class Modal_Checkout {
 		add_action( 'wp', [ __CLASS__, 'process_checkout_request' ] );
 		add_action( 'wp_ajax_abandon_modal_checkout', [ __CLASS__, 'process_abandon_checkout' ] );
 		add_action( 'wp_ajax_nopriv_abandon_modal_checkout', [ __CLASS__, 'process_abandon_checkout' ] );
+		add_action( 'wp_loaded', [ __CLASS__, 'process_checkout_action' ], 21 );
 
 		add_filter( 'wp_redirect', [ __CLASS__, 'pass_url_param_on_redirect' ] );
 		add_filter( 'woocommerce_cart_product_cannot_be_purchased_message', [ __CLASS__, 'woocommerce_cart_product_cannot_be_purchased_message' ], 10, 2 );
@@ -292,6 +293,35 @@ final class Modal_Checkout {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Process checkout after order button is clicked in the modal.
+	 */
+	public static function process_checkout_action() {
+		if ( ! self::is_modal_checkout() ) {
+			return;
+		}
+
+		$nonce = isset( $_POST['newspack_checkout_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['newspack_checkout_nonce'] ) ) : '';
+		if ( ! wp_verify_nonce( $nonce, 'newspack_modal_checkout_nonce' ) ) {
+			wp_send_json_error( [ 'message' => __( 'Invalid nonce.', 'newspack-blocks' ) ] );
+			wp_die();
+		}
+
+		if ( isset( $_POST['newspack_blocks_checkout_action'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			wc_nocache_headers();
+
+			if ( \WC()->cart->is_empty() ) {
+				wp_safe_redirect( wc_get_cart_url() );
+				exit;
+			}
+
+			wc_maybe_define_constant( 'WOOCOMMERCE_CHECKOUT', true );
+			// Generate a fresh WC nonce so process_checkout() passes its internal verification.
+			$_REQUEST['woocommerce-process-checkout-nonce'] = wp_create_nonce( 'woocommerce-process_checkout' );
+			\WC()->checkout()->process_checkout();
+		}
 	}
 
 	/**
