@@ -16,9 +16,6 @@ import {
 	Button,
 	Card,
 	CardBody,
-	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
-	__experimentalConfirmDialog as ConfirmDialog,
-	DropdownMenu,
 	Notice,
 	PanelBody,
 	Placeholder,
@@ -26,8 +23,6 @@ import {
 	Spinner,
 	ToggleControl,
 	Toolbar,
-	ToolbarButton,
-	ToolbarGroup,
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalUnitControl as UnitControl,
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
@@ -41,7 +36,7 @@ import { store as coreStore } from '@wordpress/core-data';
 import { useEffect, useState, useMemo } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { decodeEntities } from '@wordpress/html-entities';
-import { layout, pencil, postAuthor, pullLeft, pullRight } from '@wordpress/icons';
+import { pencil, postAuthor, pullLeft, pullRight } from '@wordpress/icons';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 
@@ -201,19 +196,13 @@ function VariationPlaceholder( { clientId, name, setAttributes } ) {
 	const { replaceInnerBlocks } = useDispatch( blockEditorStore );
 	const blockProps = useBlockProps();
 
-	// Use short labels in the picker to avoid layout overflow.
-	const pickerVariations = variations?.map( v => ( {
-		...v,
-		title: v.label || v.title,
-	} ) );
-
 	return (
 		<div { ...blockProps }>
 			<BlockVariationPicker
 				icon={ blockType?.icon?.src }
 				label={ blockType?.title }
-				variations={ pickerVariations }
-				instructions={ __( 'Select a layout to start with.', 'newspack-blocks' ) }
+				variations={ variations }
+				instructions={ __( 'Select a layout to start with:', 'newspack-blocks' ) }
 				onSelect={ ( nextVariation = defaultVariation ) => {
 					setAttributes( { ...nextVariation.attributes, variation: nextVariation.name } );
 					if ( nextVariation.innerBlocks ) {
@@ -222,90 +211,6 @@ function VariationPlaceholder( { clientId, name, setAttributes } ) {
 				} }
 			/>
 		</div>
-	);
-}
-
-/**
- * Toolbar dropdown for switching between layout variations.
- */
-function VariationToolbarDropdown( { clientId, name, currentVariation, setAttributes } ) {
-	const { variations, innerBlocks, activeTemplate } = useSelect(
-		select => {
-			const allVariations = select( blocksStore ).getBlockVariations( name, 'block' );
-			const active = allVariations?.find( v => v.name === currentVariation );
-			return {
-				variations: allVariations,
-				innerBlocks: select( blockEditorStore ).getBlocks( clientId ),
-				activeTemplate: active?.innerBlocks,
-			};
-		},
-		[ name, clientId, currentVariation ]
-	);
-	const { replaceInnerBlocks } = useDispatch( blockEditorStore );
-	const [ pendingVariation, setPendingVariation ] = useState( null );
-
-	const hasCustomEdits = () => {
-		if ( ! activeTemplate ) {
-			return true;
-		}
-		// Compare block structure and attributes, ignoring runtime differences:
-		// - `content`: populated by block bindings (author name, bio, etc.)
-		// - `allowedBlocks`, `templateLock`: structural attrs that evolve with the template
-		// - Inner blocks of dynamic blocks (e.g. social links, populated from author data)
-		const DYNAMIC_BLOCKS = [ 'newspack/author-profile-social' ];
-		const IGNORED_ATTRS = [ 'content', 'allowedBlocks', 'templateLock' ];
-		const fingerprint = blocks =>
-			blocks.map( block => {
-				const attrs = Object.fromEntries( Object.entries( block.attributes ).filter( ( [ key ] ) => ! IGNORED_ATTRS.includes( key ) ) );
-				return {
-					name: block.name,
-					attributes: attrs,
-					innerBlocks: DYNAMIC_BLOCKS.includes( block.name ) ? [] : fingerprint( block.innerBlocks || [] ),
-				};
-			} );
-		const freshBlocks = createBlocksFromInnerBlocksTemplate( activeTemplate );
-		return JSON.stringify( fingerprint( innerBlocks ) ) !== JSON.stringify( fingerprint( freshBlocks ) );
-	};
-
-	const applyVariation = variation => {
-		setAttributes( { ...variation.attributes, variation: variation.name } );
-		if ( variation.innerBlocks ) {
-			replaceInnerBlocks( clientId, createBlocksFromInnerBlocksTemplate( variation.innerBlocks ), false );
-		}
-	};
-
-	const controls = variations?.map( variation => ( {
-		icon: variation.icon?.src || variation.icon,
-		title: variation.label || variation.title,
-		isActive: variation.name === currentVariation,
-		role: 'menuitemradio',
-		onClick: () => {
-			if ( variation.name !== currentVariation ) {
-				if ( hasCustomEdits() ) {
-					setPendingVariation( variation );
-				} else {
-					applyVariation( variation );
-				}
-			}
-		},
-	} ) );
-
-	return (
-		<>
-			<DropdownMenu icon={ layout } label={ __( 'Change layout', 'newspack-blocks' ) } controls={ controls } />
-			{ pendingVariation && (
-				<ConfirmDialog
-					isOpen
-					onConfirm={ () => {
-						applyVariation( pendingVariation );
-						setPendingVariation( null );
-					} }
-					onCancel={ () => setPendingVariation( null ) }
-				>
-					{ __( 'Switching layouts will replace the current block content. Continue?', 'newspack-blocks' ) }
-				</ConfirmDialog>
-			) }
-		</>
 	);
 }
 
@@ -645,12 +550,6 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 	// In nested mode, hide field toggles since publishers control display by adding/removing blocks.
 	const isNestedLayout = layoutVersion === 2;
 
-	const resetLayout = () => {
-		if ( activeVariationTemplate ) {
-			replaceInnerBlocks( clientId, createBlocksFromInnerBlocksTemplate( activeVariationTemplate ), false );
-		}
-	};
-
 	// Inspector controls for display settings
 	const inspectorControls = (
 		<InspectorControls>
@@ -777,19 +676,6 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 					] }
 				/>
 			) }
-			{ isNestedLayout && (
-				<ToolbarGroup>
-					<VariationToolbarDropdown
-						clientId={ clientId }
-						name="newspack-blocks/author-profile"
-						currentVariation={ variation }
-						setAttributes={ setAttributes }
-					/>
-					<ToolbarButton label={ __( 'Reset layout', 'newspack-blocks' ) } onClick={ resetLayout }>
-						{ __( 'Reset', 'newspack-blocks' ) }
-					</ToolbarButton>
-				</ToolbarGroup>
-			) }
 		</BlockControls>
 	);
 
@@ -801,7 +687,7 @@ const AuthorProfile = ( { attributes, setAttributes, context, clientId } ) => {
 				className="newspack-blocks-author-profile"
 				icon={ postAuthor }
 				label={ __( 'Author Profile', 'newspack-blocks' ) }
-				instructions={ __( 'Select a type to start with.', 'newspack-blocks' ) }
+				instructions={ __( 'Select a type:', 'newspack-blocks' ) }
 			>
 				<Button variant="primary" onClick={ () => setAttributes( { isContextual: true } ) }>
 					{ __( 'Contextual', 'newspack-blocks' ) }

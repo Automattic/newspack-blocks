@@ -43,53 +43,42 @@ const iconCompact = (
 	</SVG>
 );
 
-// `label` is a custom property (not part of the WordPress variation API).
-// It provides a short title for picker UIs, while `title` includes the block
-// name for contexts like the list view and sidebar where extra context helps.
 const variations = [
 	{
-		name: 'default',
-		title: __( 'Author Profile', 'newspack-blocks' ),
-		label: __( 'Default', 'newspack-blocks' ),
+		name: 'avatar-left',
+		title: __( 'Avatar left', 'newspack-blocks' ),
 		description: __( 'Avatar on the left, content on the right.', 'newspack-blocks' ),
 		icon: { src: iconAvatarLeft, foreground: ICON_COLOR },
-		attributes: { variation: 'default' },
+		attributes: { variation: 'avatar-left' },
 		innerBlocks: DEFAULT_TEMPLATE,
-		isActive: [ 'variation' ],
 		scope: [ 'block' ],
 		isDefault: true,
 	},
 	{
 		name: 'avatar-right',
-		title: __( 'Author Profile (Avatar right)', 'newspack-blocks' ),
-		label: __( 'Avatar right', 'newspack-blocks' ),
+		title: __( 'Avatar right', 'newspack-blocks' ),
 		description: __( 'Content on the left, avatar on the right.', 'newspack-blocks' ),
 		icon: { src: iconAvatarRight, foreground: ICON_COLOR },
 		attributes: { variation: 'avatar-right' },
 		innerBlocks: AVATAR_RIGHT_TEMPLATE,
-		isActive: [ 'variation' ],
 		scope: [ 'block' ],
 	},
 	{
 		name: 'centered',
-		title: __( 'Author Profile (Centered)', 'newspack-blocks' ),
-		label: __( 'Centered', 'newspack-blocks' ),
+		title: __( 'Centered', 'newspack-blocks' ),
 		description: __( 'Large centered avatar with center-aligned text.', 'newspack-blocks' ),
 		icon: { src: iconCentered, foreground: ICON_COLOR },
 		attributes: { variation: 'centered' },
 		innerBlocks: CENTERED_TEMPLATE,
-		isActive: [ 'variation' ],
 		scope: [ 'block' ],
 	},
 	{
 		name: 'compact',
-		title: __( 'Author Profile (Compact)', 'newspack-blocks' ),
-		label: __( 'Compact', 'newspack-blocks' ),
+		title: __( 'Compact', 'newspack-blocks' ),
 		description: __( 'No avatar, vertical stack.', 'newspack-blocks' ),
 		icon: { src: iconCompact, foreground: ICON_COLOR },
 		attributes: { variation: 'compact' },
 		innerBlocks: COMPACT_TEMPLATE,
-		isActive: [ 'variation' ],
 		scope: [ 'block' ],
 	},
 ];
