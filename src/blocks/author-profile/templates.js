@@ -177,9 +177,9 @@ const CONTENT_BLOCKS = Object.freeze( [ HEADING_BLOCK, JOB_TITLE_BLOCK, ROLE_BLO
 // -- Layout Templates --------------------------------------------------------
 
 /**
- * Default layout: avatar on the left, content on the right.
+ * Avatar left layout: avatar on the left, content on the right.
  */
-export const DEFAULT_TEMPLATE = [
+export const AVATAR_LEFT_TEMPLATE = [
 	[
 		'core/columns',
 		{ isStackedOnMobile: true, className: 'author-profile-columns', templateLock: 'insert' },

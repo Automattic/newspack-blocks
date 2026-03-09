@@ -12,7 +12,7 @@ import { SVG, Path } from '@wordpress/primitives';
 /**
  * Internal dependencies
  */
-import { DEFAULT_TEMPLATE, AVATAR_RIGHT_TEMPLATE, CENTERED_TEMPLATE, COMPACT_TEMPLATE } from './templates';
+import { AVATAR_LEFT_TEMPLATE, AVATAR_RIGHT_TEMPLATE, CENTERED_TEMPLATE, COMPACT_TEMPLATE } from './templates';
 
 const ICON_COLOR = colors[ 'primary-400' ];
 
@@ -50,7 +50,7 @@ const variations = [
 		description: __( 'Avatar on the left, content on the right.', 'newspack-blocks' ),
 		icon: { src: iconAvatarLeft, foreground: ICON_COLOR },
 		attributes: { variation: 'avatar-left' },
-		innerBlocks: DEFAULT_TEMPLATE,
+		innerBlocks: AVATAR_LEFT_TEMPLATE,
 		scope: [ 'block' ],
 		isDefault: true,
 	},
