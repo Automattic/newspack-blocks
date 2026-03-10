@@ -299,7 +299,7 @@ final class Modal_Checkout {
 	 * Process checkout after order button is clicked in the modal.
 	 */
 	public static function process_checkout_action() {
-		if ( ! self::is_modal_checkout() ) {
+		if ( ! self::is_modal_checkout() || ! isset( $_POST['newspack_blocks_checkout_action'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			return;
 		}
 
@@ -309,19 +309,23 @@ final class Modal_Checkout {
 			wp_die();
 		}
 
-		if ( isset( $_POST['newspack_blocks_checkout_action'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			wc_nocache_headers();
+		wc_nocache_headers();
 
-			if ( \WC()->cart->is_empty() ) {
-				wp_safe_redirect( wc_get_cart_url() );
-				exit;
-			}
-
-			wc_maybe_define_constant( 'WOOCOMMERCE_CHECKOUT', true );
-			// Generate a fresh WC nonce so process_checkout() passes its internal verification.
-			$_REQUEST['woocommerce-process-checkout-nonce'] = wp_create_nonce( 'woocommerce-process_checkout' );
-			\WC()->checkout()->process_checkout();
+		if ( \WC()->cart->is_empty() ) {
+			wp_safe_redirect( wc_get_cart_url() );
+			exit;
 		}
+
+		wc_maybe_define_constant( 'WOOCOMMERCE_CHECKOUT', true );
+
+		// If this is a validation-only request, set the flag that tells process_checkout() to only validate the order.
+		if ( isset( $_POST['is_validation_only'] ) ) {
+			$_POST['woocommerce_checkout_update_totals'] = '1';
+		}
+		// Generate a fresh WC nonce so process_checkout() passes its internal verification.
+		$_REQUEST['woocommerce-process-checkout-nonce'] = wp_create_nonce( 'woocommerce-process_checkout' );
+
+		\WC()->checkout()->process_checkout();
 	}
 
 	/**
