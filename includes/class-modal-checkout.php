@@ -316,6 +316,11 @@ final class Modal_Checkout {
 			exit;
 		}
 
+		// If checkout is already defined as being processed, don't run process_checkout().
+		if ( defined( 'WOOCOMMERCE_CHECKOUT' ) && WOOCOMMERCE_CHECKOUT ) {
+			return;
+		}
+
 		wc_maybe_define_constant( 'WOOCOMMERCE_CHECKOUT', true );
 
 		// If this is a validation-only request, set the flag that tells process_checkout() to only validate the order.
