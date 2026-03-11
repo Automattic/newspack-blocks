@@ -199,14 +199,14 @@ export const AVATAR_LEFT_TEMPLATE = [
 ];
 
 /**
- * Avatar right layout: content on the left, avatar on the right.
+ * Avatar right layout: avatar first in DOM for correct mobile stacking,
+ * CSS reorders content to the left on desktop.
  */
 export const AVATAR_RIGHT_TEMPLATE = [
 	[
 		'core/columns',
-		{ isStackedOnMobile: true, className: 'author-profile-columns', templateLock: 'insert' },
+		{ isStackedOnMobile: true, className: 'author-profile-columns is-style-first-col-to-second', templateLock: 'insert' },
 		[
-			[ 'core/column', CONTENT_COLUMN_ATTRS, CONTENT_BLOCKS ],
 			[
 				'core/column',
 				{
@@ -216,6 +216,7 @@ export const AVATAR_RIGHT_TEMPLATE = [
 				},
 				[ [ 'newspack/avatar', { size: 128 } ] ],
 			],
+			[ 'core/column', CONTENT_COLUMN_ATTRS, CONTENT_BLOCKS ],
 		],
 	],
 ];
