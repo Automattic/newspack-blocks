@@ -296,7 +296,7 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Process checkout after order button is clicked in the modal.
+	 * Process checkout handler for form validation and order complete.
 	 */
 	public static function process_checkout_action() {
 		if ( ! self::is_modal_checkout() || ! isset( $_POST['newspack_blocks_checkout_action'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
