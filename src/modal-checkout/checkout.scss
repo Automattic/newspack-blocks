@@ -856,12 +856,14 @@
 			word-break: break-all;
 		}
 
-		tr:last-child {
-			td,
-			th {
-				border-bottom: 0;
-			}
-		}
+        tfoot {
+          tr:last-child {
+              td,
+              th {
+                  border-bottom: 0;
+              }
+          }
+        }
 	}
 
 	.woocommerce .first-payment-date {
