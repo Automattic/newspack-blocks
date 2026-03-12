@@ -323,12 +323,15 @@ final class Modal_Checkout {
 
 		wc_maybe_define_constant( 'WOOCOMMERCE_CHECKOUT', true );
 
+		// Generate a fresh WC nonce so process_checkout() passes its internal verification.
+		// We take this approach to ensure compatibility with block theme which causes WC to no longer
+		// rely on this checkout nonce requried by process checkout.
+		$_REQUEST['woocommerce-process-checkout-nonce'] = wp_create_nonce( 'woocommerce-process_checkout' );
+
 		// If this is a validation-only request, set the flag that tells process_checkout() to only validate the order.
 		if ( isset( $_POST['is_validation_only'] ) ) {
 			$_POST['woocommerce_checkout_update_totals'] = '1';
 		}
-		// Generate a fresh WC nonce so process_checkout() passes its internal verification.
-		$_REQUEST['woocommerce-process-checkout-nonce'] = wp_create_nonce( 'woocommerce-process_checkout' );
 
 		\WC()->checkout()->process_checkout();
 	}
