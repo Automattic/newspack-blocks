@@ -83,7 +83,6 @@ add_action( 'rest_api_init', 'newspack_iframe_block_register_rest_routes' );
 Newspack_Blocks::manage_view_scripts();
 add_action( 'enqueue_block_editor_assets', array( 'Newspack_Blocks', 'enqueue_block_assets' ) );
 add_action( 'enqueue_block_editor_assets', array( 'Newspack_Blocks', 'enqueue_placeholder_blocks_assets' ), 9999 );
-add_action( 'enqueue_block_editor_assets', array( 'Newspack_Blocks', 'enqueue_block_styles_assets' ) );
 add_action( 'wp_enqueue_scripts', array( 'Newspack_Blocks', 'enqueue_block_styles_assets' ) );
 
 /**
