@@ -1,3 +1,10 @@
+## [4.25.2](https://github.com/Automattic/newspack-blocks/compare/v4.25.1...v4.25.2) (2026-03-17)
+
+
+### Bug Fixes
+
+* restore editing tools to Carousel block ([ee1354a](https://github.com/Automattic/newspack-blocks/commit/ee1354ae5f97475dc2afebfea05f6019599959dd))
+
 ## [4.25.1](https://github.com/Automattic/newspack-blocks/compare/v4.25.0...v4.25.1) (2026-03-17)
 
 

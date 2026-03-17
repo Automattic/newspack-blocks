@@ -347,7 +347,7 @@ class Edit extends Component {
 					<PostTypesPanel attributes={ attributes } setAttributes={ setAttributes } />
 					<PostStatusesPanel attributes={ attributes } setAttributes={ setAttributes } />
 				</InspectorControls>
-				<div { ...blockProps } className={ classes } ref={ this.props.carouselRef }>
+				<div { ...blockProps } className={ classes }>
 					{ hasNoPosts && (
 						<Placeholder className="component-placeholder__align-center">
 							<div style={ { margin: 'auto' } }>{ __( 'Sorry, no posts were found.' ) }</div>
@@ -460,7 +460,7 @@ class Edit extends Component {
 
 const EditWithBlockProps = props => {
 	const carouselRef = useRef();
-	const blockProps = useBlockProps();
+	const blockProps = useBlockProps( { ref: carouselRef } );
 	return <Edit { ...props } blockProps={ blockProps } carouselRef={ carouselRef } />;
 };
 
