@@ -123,8 +123,6 @@ final class Modal_Checkout {
 		'cheque',
 		'cod', // Cash on delivery.
 		'ppcp-gateway', // PayPal Payments.
-		'ppcp-googlepay', // PayPal Google Pay.
-		'ppcp-applepay', // PayPal Apple Pay.
 		'stripe',
 		'stripe_link', // Stripe Link.
 		'stripe_amazon_pay', // Stripe Amazon Pay.
