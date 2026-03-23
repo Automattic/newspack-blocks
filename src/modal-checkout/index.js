@@ -899,7 +899,7 @@ import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 		 */
 		$( document.body ).on( 'checkout_error', function () {
 			// Apply newspack styling to default Woo checkout errors.
-			const $errors = $( '.woocommerce-NoticeGroup-checkout, .woocommerce-notices-wrapper' );
+			const $errors = $( '.woocommerce-NoticeGroup-checkout, .woocommerce-notices-wrapper:not(:empty)' );
 			if ( $errors.length ) {
 				$errors.each( ( _, error ) => $( error ).addClass( `${ CLASS_PREFIX }__notice ${ CLASS_PREFIX }__notice--error` ) );
 			}
