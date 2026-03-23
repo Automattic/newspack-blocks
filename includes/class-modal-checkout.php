@@ -174,6 +174,7 @@ final class Modal_Checkout {
 		add_action( 'option_woocommerce_default_customer_address', [ __CLASS__, 'ensure_base_default_customer_address' ] );
 		add_action( 'default_option_woocommerce_default_customer_address', [ __CLASS__, 'ensure_base_default_customer_address' ] );
 		add_action( 'wp_ajax_process_name_your_price_request', [ __CLASS__, 'process_name_your_price_request' ] );
+		add_action( 'wp_ajax_nopriv_process_name_your_price_request', [ __CLASS__, 'process_name_your_price_request' ] );
 		add_filter( 'option_woocommerce_woocommerce_payments_settings', [ __CLASS__, 'filter_woocommerce_payments_settings' ] );
 		add_action( 'init', [ __CLASS__, 'unhook_woocommerce_payments_update_billing_fields' ] );
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'update_password_strength_message' ], 9999 );
