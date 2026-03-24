@@ -34,8 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // When this template replaces global/form-login.php, $order is not provided by WooCommerce.
 // Retrieve it from the URL query vars, the same way WooCommerce does in the order-received endpoint.
 if ( ! isset( $order ) || ! $order ) {
-	global $wp;
-	$order_id = isset( $wp->query_vars['order-received'] ) ? absint( $wp->query_vars['order-received'] ) : 0;
+	$order_id = absint( \get_query_var( 'order-received' ) );
 	$order    = $order_id ? \wc_get_order( $order_id ) : false; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 }
 
