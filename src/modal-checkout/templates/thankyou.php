@@ -36,7 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! isset( $order ) || ! $order ) {
 	global $wp;
 	$order_id = isset( $wp->query_vars['order-received'] ) ? absint( $wp->query_vars['order-received'] ) : 0;
-	$order    = $order_id ? \wc_get_order( $order_id ) : false;
+	$order    = $order_id ? \wc_get_order( $order_id ) : false; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 }
 
 $key      = isset( $_GET['key'] ) ? \wc_clean( \sanitize_text_field( \wp_unslash( $_GET['key'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
