@@ -121,7 +121,7 @@ class Edit extends Component< HomepageArticlesProps > {
 										{ newspack_tag_label.flag }
 									</a>
 								) : (
-									<span key={ index } className="flag">
+									<span key={ index } className="tag-label flag">
 										{ newspack_tag_label.flag }
 									</span>
 								);

@@ -90,6 +90,7 @@ declare global {
 			flag: string;
 		}[]
 		| false;
+		newspack_tag_labels?: { flag: string; link: string }[] | false;
 		newspack_listings_hide_author?: boolean;
 		newspack_listings_hide_publish_date?: boolean;
 	};
