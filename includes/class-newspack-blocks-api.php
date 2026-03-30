@@ -164,22 +164,8 @@ class Newspack_Blocks_API {
 	 * @return array|bool Tag labels, or false if none.
 	 */
 	public static function newspack_blocks_get_tag_labels( $object_info ) {
-		$tag_labels = Newspack_Blocks::get_tag_labels(
-			$object_info['id']
-		);
-		if ( ! empty( $tag_labels ) ) {
-			$tag_labels_info = [];
-			foreach ( $tag_labels as $tag_label ) {
-				$tag_label_info_item = [
-					'flag' => $tag_label['flag'],
-					'link' => $tag_label['link'],
-				];
-				$tag_labels_info[] = $tag_label_info_item;
-			}
-			return $tag_labels_info;
-		}
-
-		return false;
+		$tag_labels = Newspack_Blocks::get_tag_labels( $object_info['id'] );
+		return ! empty( $tag_labels ) ? array_values( $tag_labels ) : false;
 	}
 
 	/**
