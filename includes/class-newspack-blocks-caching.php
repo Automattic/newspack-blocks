@@ -22,7 +22,7 @@ class Newspack_Blocks_Caching {
 	/**
 	 * Track visited reusable block IDs to spot recursion.
 	 *
-	 * @var int[]
+	 * @var array<int, bool>
 	 */
 	private static $visited_reusable_blocks = [];
 
