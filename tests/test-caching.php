@@ -7,6 +7,8 @@
 
 /**
  * Newspack_Blocks_Caching test case.
+ *
+ * @group caching
  */
 class CachingTest extends WP_UnitTestCase { // phpcs:ignore
 
