@@ -1,3 +1,24 @@
+# [4.26.0](https://github.com/Automattic/newspack-blocks/compare/v4.25.4...v4.26.0) (2026-03-30)
+
+
+### Bug Fixes
+
+* **author-profile:** correct avatar-right mobile stacking order ([#2312](https://github.com/Automattic/newspack-blocks/issues/2312)) ([7bd89c2](https://github.com/Automattic/newspack-blocks/commit/7bd89c2d481b18f78c3b9f95f9445e7a3be724b1))
+* **block-theme:** modal checkout for block theme ([#2311](https://github.com/Automattic/newspack-blocks/issues/2311)) ([eefa9ab](https://github.com/Automattic/newspack-blocks/commit/eefa9ab8f5c31ed020f7228857c8f47ace4740dd))
+
+
+### Features
+
+* add dedupe option to Carousel block ([#2309](https://github.com/Automattic/newspack-blocks/issues/2309)) ([18f625e](https://github.com/Automattic/newspack-blocks/commit/18f625e16dbfa0ff61e46f2fa3b2bb8effe62f44))
+* **author-profile:** add block variations for layout selection ([#2302](https://github.com/Automattic/newspack-blocks/issues/2302)) ([1ba67ba](https://github.com/Automattic/newspack-blocks/commit/1ba67ba0bdfd8339c8209257e45c089edc48f3ae))
+
+## [4.25.4](https://github.com/Automattic/newspack-blocks/compare/v4.25.3...v4.25.4) (2026-03-26)
+
+
+### Bug Fixes
+
+* **modal-checkout:** prevent empty error notices and fix padding ([#2322](https://github.com/Automattic/newspack-blocks/issues/2322)) ([0c9307d](https://github.com/Automattic/newspack-blocks/commit/0c9307db777f0e3343e0c1e2129f8ecd887c26ab))
+
 ## [4.25.3](https://github.com/Automattic/newspack-blocks/compare/v4.25.2...v4.25.3) (2026-03-23)
 
 
