@@ -536,9 +536,9 @@ final class Modal_Checkout {
 		}
 		// If Stripe's express checkout is active, suppress WooPayments' express checkout
 		// (payment_request) to prevent duplicate Apple Pay / Google Pay buttons in the modal.
-		// Stripe is preferred: Newspack already manages its express checkout behavior (see
-		// newspack-plugin/includes/plugins/class-woocommerce-gateway-stripe.php), and WooPayments
-		// is already partially filtered above (platform_checkout). WooPayments is suppressed, not the reverse.
+		// Stripe is preferred here because Newspack already keys this behavior off the Stripe
+		// gateway settings below, while WooPayments is already partially filtered above via
+		// platform_checkout. WooPayments is suppressed, not the reverse.
 		$stripe_settings = get_option( 'woocommerce_stripe_settings', [] );
 		if ( isset( $stripe_settings['enabled'], $stripe_settings['express_checkout'] )
 			&& 'yes' === $stripe_settings['enabled']
