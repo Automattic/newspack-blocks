@@ -543,11 +543,10 @@ final class Modal_Checkout {
 		if ( isset( $stripe_settings['enabled'], $stripe_settings['express_checkout'] )
 			&& 'yes' === $stripe_settings['enabled']
 			&& 'yes' === $stripe_settings['express_checkout'] ) {
-			if ( isset( $settings['express_checkout_checkout_methods'] ) ) {
-				$settings['express_checkout_checkout_methods'] = array_values(
-					array_diff( (array) $settings['express_checkout_checkout_methods'], [ 'payment_request' ] )
-				);
-			}
+			// Always write the key — if it's absent from the DB, WooPayments falls back to its
+			// hardcoded default (['payment_request', 'woopay', 'amazon_pay']), bypassing this filter.
+			$methods = (array) ( $settings['express_checkout_checkout_methods'] ?? [ 'payment_request', 'woopay', 'amazon_pay' ] );
+			$settings['express_checkout_checkout_methods'] = array_values( array_diff( $methods, [ 'payment_request' ] ) );
 		}
 		return $settings;
 	}
