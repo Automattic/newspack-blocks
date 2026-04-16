@@ -302,6 +302,91 @@ class Test_Fast_Checkout extends WP_UnitTestCase_Blocks {
 		$this->assertSame( '', $result );
 	}
 
+	// ---- Post-purchase redirect tests (WC-dependent) ----
+
+	/**
+	 * Test that attach_line_item_meta copies the source post ID.
+	 */
+	public function test_attach_line_item_meta_copies_source_post() {
+		$this->skip_without_wc();
+
+		$item = new \WC_Order_Item_Product();
+		$values = [ Fast_Checkout::CART_ITEM_SOURCE_KEY => 123 ];
+		Fast_Checkout::attach_line_item_meta( $item, 'key', $values, null );
+		$this->assertSame( 123, $item->get_meta( Fast_Checkout::CART_ITEM_SOURCE_KEY ) );
+	}
+
+	/**
+	 * Test that attach_line_item_meta is a no-op without source key.
+	 */
+	public function test_attach_line_item_meta_noop_without_source() {
+		$this->skip_without_wc();
+
+		$item = new \WC_Order_Item_Product();
+		Fast_Checkout::attach_line_item_meta( $item, 'key', [], null );
+		$this->assertSame( '', $item->get_meta( Fast_Checkout::CART_ITEM_SOURCE_KEY ) );
+	}
+
+	/**
+	 * Test that return URL is overridden when order has source post with custom URL.
+	 */
+	public function test_return_url_override_uses_custom_url() {
+		$this->skip_without_wc();
+
+		$product = $this->create_simple_product();
+		$post_id = $this->make_fast_checkout_post(
+			$product->get_id(),
+			[ 'afterSuccessURL' => 'https://example.com/thank-you' ]
+		);
+
+		$order = wc_create_order();
+		$item  = new \WC_Order_Item_Product();
+		$item->set_product( $product );
+		$item->add_meta_data( Fast_Checkout::CART_ITEM_SOURCE_KEY, $post_id, true );
+		$order->add_item( $item );
+		$order->save();
+
+		$result = Fast_Checkout::maybe_override_return_url( 'https://default.com', $order );
+		$this->assertSame( 'https://example.com/thank-you', $result );
+	}
+
+	/**
+	 * Test that return URL passes through when block has no afterSuccessURL.
+	 */
+	public function test_return_url_override_passes_through_when_no_custom_url() {
+		$this->skip_without_wc();
+
+		$product = $this->create_simple_product();
+		$post_id = $this->make_fast_checkout_post( $product->get_id() );
+
+		$order = wc_create_order();
+		$item  = new \WC_Order_Item_Product();
+		$item->set_product( $product );
+		$item->add_meta_data( Fast_Checkout::CART_ITEM_SOURCE_KEY, $post_id, true );
+		$order->add_item( $item );
+		$order->save();
+
+		$result = Fast_Checkout::maybe_override_return_url( 'https://default.com', $order );
+		$this->assertSame( 'https://default.com', $result );
+	}
+
+	/**
+	 * Test that return URL passes through for unrelated orders.
+	 */
+	public function test_return_url_override_ignores_unrelated_orders() {
+		$this->skip_without_wc();
+
+		$product = $this->create_simple_product();
+		$order   = wc_create_order();
+		$item    = new \WC_Order_Item_Product();
+		$item->set_product( $product );
+		$order->add_item( $item );
+		$order->save();
+
+		$result = Fast_Checkout::maybe_override_return_url( 'https://default.com', $order );
+		$this->assertSame( 'https://default.com', $result );
+	}
+
 	/**
 	 * Test that a mismatched product in the cart is replaced.
 	 */

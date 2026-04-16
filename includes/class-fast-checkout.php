@@ -302,7 +302,60 @@ final class Fast_Checkout {
 	 * @return string Possibly overridden URL.
 	 */
 	public static function maybe_override_return_url( $url, $order ) {
+		if ( ! is_object( $order ) || ! method_exists( $order, 'get_items' ) ) {
+			return $url;
+		}
+		foreach ( $order->get_items() as $item ) {
+			$source_post_id = $item->get_meta( self::CART_ITEM_SOURCE_KEY );
+			if ( ! $source_post_id ) {
+				continue;
+			}
+			$custom_url = self::get_after_success_url( (int) $source_post_id );
+			if ( $custom_url ) {
+				return $custom_url;
+			}
+		}
 		return $url;
+	}
+
+	/**
+	 * Get the afterSuccessURL from a Fast Checkout block in a post.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return string Custom URL or empty string.
+	 */
+	private static function get_after_success_url( $post_id ) {
+		$post = get_post( $post_id );
+		if ( ! $post ) {
+			return '';
+		}
+		$blocks = parse_blocks( $post->post_content );
+		$block  = self::find_fast_checkout_block( $blocks );
+		if ( ! $block ) {
+			return '';
+		}
+		return $block['attrs']['afterSuccessURL'] ?? '';
+	}
+
+	/**
+	 * Recursively find the first Fast Checkout block.
+	 *
+	 * @param array $blocks Parsed blocks.
+	 * @return array|null Block array or null.
+	 */
+	private static function find_fast_checkout_block( $blocks ) {
+		foreach ( $blocks as $block ) {
+			if ( self::BLOCK_NAME === $block['blockName'] ) {
+				return $block;
+			}
+			if ( ! empty( $block['innerBlocks'] ) ) {
+				$found = self::find_fast_checkout_block( $block['innerBlocks'] );
+				if ( $found ) {
+					return $found;
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -314,7 +367,12 @@ final class Fast_Checkout {
 	 * @param \WC_Order              $order         The order.
 	 */
 	public static function attach_line_item_meta( $item, $cart_item_key, $values, $order ) {
-		// Stub.
+		if ( ! isset( $values[ self::CART_ITEM_SOURCE_KEY ] ) ) {
+			return;
+		}
+		if ( is_object( $item ) && method_exists( $item, 'add_meta_data' ) ) {
+			$item->add_meta_data( self::CART_ITEM_SOURCE_KEY, (int) $values[ self::CART_ITEM_SOURCE_KEY ], true );
+		}
 	}
 
 	/**
