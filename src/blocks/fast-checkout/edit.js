@@ -8,7 +8,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { debounce } from 'lodash';
 import { InnerBlocks, InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { PanelBody, BaseControl, TextControl, Button, Spinner, FormTokenField, SelectControl } from '@wordpress/components';
+import { PanelBody, BaseControl, TextControl, Button, Spinner, FormTokenField, SelectControl, Placeholder } from '@wordpress/components';
 
 import { DEFAULT_TEMPLATE } from './template';
 import { fetchProduct } from './bindings-source';
@@ -149,6 +149,28 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 			.catch( () => setAttributes( { is_variable: false } ) );
 	}, [ product ] );
 
+	if ( ! product ) {
+		return (
+			<div { ...blockProps }>
+				<Placeholder
+					label={ __( 'Fast Checkout', 'newspack-blocks' ) }
+					instructions={ __( 'Select a product to create a checkout landing page.', 'newspack-blocks' ) }
+				>
+					<ProductPicker
+						productId={ product }
+						onChange={ newId =>
+							setAttributes( {
+								product: newId,
+								variation: '',
+								is_variable: false,
+							} )
+						}
+					/>
+				</Placeholder>
+			</div>
+		);
+	}
+
 	return (
 		<>
 			<InspectorControls>
@@ -163,7 +185,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 							} )
 						}
 					/>
-					{ product && isVariable && (
+					{ isVariable && (
 						<VariationPicker
 							productId={ product }
 							variationId={ variation }
