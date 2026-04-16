@@ -204,6 +204,68 @@ class Test_Fast_Checkout extends WP_UnitTestCase_Blocks {
 		$this->assertSame( $keys_first, $keys_second );
 	}
 
+	// ---- Bindings source tests ----
+
+	/**
+	 * Test that the bindings source is registered.
+	 */
+	public function test_bindings_source_is_registered() {
+		if ( ! class_exists( 'WP_Block_Bindings_Registry' ) ) {
+			$this->markTestSkipped( 'WP_Block_Bindings_Registry not available.' );
+		}
+		$registry = WP_Block_Bindings_Registry::get_instance();
+		$source   = $registry->get_registered( Fast_Checkout::BINDINGS_SOURCE );
+		$this->assertNotNull( $source, 'Bindings source should be registered.' );
+	}
+
+	/**
+	 * Test that the title field resolves to the product name.
+	 */
+	public function test_bindings_title_resolves() {
+		$this->skip_without_wc();
+
+		$product = $this->create_simple_product();
+		$block   = (object) [
+			'context' => [
+				Fast_Checkout::CONTEXT_PRODUCT_KEY   => $product->get_id(),
+				Fast_Checkout::CONTEXT_VARIATION_KEY => 0,
+			],
+		];
+		$result  = Fast_Checkout::bindings_get_value( [ 'field' => 'title' ], $block, 'content' );
+		$this->assertSame( $product->get_name(), $result );
+	}
+
+	/**
+	 * Test that a missing product returns an empty string.
+	 */
+	public function test_bindings_missing_product_returns_empty_string() {
+		$block  = (object) [
+			'context' => [
+				Fast_Checkout::CONTEXT_PRODUCT_KEY   => 0,
+				Fast_Checkout::CONTEXT_VARIATION_KEY => 0,
+			],
+		];
+		$result = Fast_Checkout::bindings_get_value( [ 'field' => 'title' ], $block, 'content' );
+		$this->assertSame( '', $result );
+	}
+
+	/**
+	 * Test that an unknown field returns an empty string.
+	 */
+	public function test_bindings_unknown_field_returns_empty_string() {
+		$this->skip_without_wc();
+
+		$product = $this->create_simple_product();
+		$block   = (object) [
+			'context' => [
+				Fast_Checkout::CONTEXT_PRODUCT_KEY   => $product->get_id(),
+				Fast_Checkout::CONTEXT_VARIATION_KEY => 0,
+			],
+		];
+		$result  = Fast_Checkout::bindings_get_value( [ 'field' => 'nonexistent' ], $block, 'content' );
+		$this->assertSame( '', $result );
+	}
+
 	/**
 	 * Test that a mismatched product in the cart is replaced.
 	 */

@@ -141,7 +141,64 @@ final class Fast_Checkout {
 	 * Register the block bindings source.
 	 */
 	public static function register_bindings_source() {
-		// Stub.
+		if ( ! function_exists( 'register_block_bindings_source' ) ) {
+			return;
+		}
+		register_block_bindings_source(
+			self::BINDINGS_SOURCE,
+			[
+				'label'              => __( 'Fast Checkout Product', 'newspack-blocks' ),
+				'get_value_callback' => [ __CLASS__, 'bindings_get_value' ],
+				'uses_context'       => [ self::CONTEXT_PRODUCT_KEY, self::CONTEXT_VARIATION_KEY ],
+			]
+		);
+	}
+
+	/**
+	 * Resolve a product field value for block bindings.
+	 *
+	 * @param array  $source_args    Source arguments including 'field'.
+	 * @param object $block          The block instance with context.
+	 * @param string $attribute_name The bound attribute name.
+	 * @return string Resolved value or empty string.
+	 */
+	public static function bindings_get_value( $source_args, $block, $attribute_name ) {
+		$field        = $source_args['field'] ?? '';
+		$product_id   = $block->context[ self::CONTEXT_PRODUCT_KEY ] ?? 0;
+		$variation_id = $block->context[ self::CONTEXT_VARIATION_KEY ] ?? 0;
+
+		// Variation takes precedence.
+		$resolved_id = $variation_id ? (int) $variation_id : (int) $product_id;
+		if ( ! $resolved_id ) {
+			return '';
+		}
+
+		if ( ! function_exists( 'wc_get_product' ) ) {
+			return '';
+		}
+
+		$product = wc_get_product( $resolved_id );
+		if ( ! $product ) {
+			return '';
+		}
+
+		switch ( $field ) {
+			case 'title':
+				return $product->get_name();
+			case 'short_description':
+				return $product->get_short_description();
+			case 'price':
+				return wc_price( $product->get_price() );
+			case 'price_raw':
+				return (string) $product->get_price();
+			case 'image_url':
+				$image_url = wp_get_attachment_image_url( $product->get_image_id(), 'large' );
+				return $image_url ? $image_url : '';
+			case 'url':
+				return get_permalink( $product->get_id() );
+			default:
+				return '';
+		}
 	}
 
 	/**
