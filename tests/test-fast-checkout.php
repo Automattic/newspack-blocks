@@ -110,4 +110,123 @@ class Test_Fast_Checkout extends WP_UnitTestCase_Blocks {
 		$result = Fast_Checkout::get_block_product_id( null );
 		$this->assertNull( $result );
 	}
+
+	// ---- Cart replacement tests (WC-dependent) ----
+
+	/**
+	 * Skip the current test if WooCommerce is not available.
+	 */
+	private function skip_without_wc() {
+		if ( ! function_exists( 'WC' ) || ! class_exists( 'WC_Product_Simple' ) ) {
+			$this->markTestSkipped( 'WooCommerce is not available.' );
+		}
+	}
+
+	/**
+	 * Create a post containing a Fast Checkout block for the given product ID.
+	 *
+	 * @param int   $product_id Product ID.
+	 * @param array $extra_attrs Additional block attributes.
+	 * @return int Post ID.
+	 */
+	private function make_fast_checkout_post( $product_id, $extra_attrs = [] ) {
+		$attrs   = array_merge( [ 'product' => (string) $product_id ], $extra_attrs );
+		$json    = wp_json_encode( $attrs );
+		$content = sprintf( '<!-- wp:newspack-blocks/fast-checkout %s /-->', $json );
+		return self::factory()->post->create( [ 'post_content' => $content ] );
+	}
+
+	/**
+	 * Create a simple WC product.
+	 *
+	 * @return \WC_Product_Simple
+	 */
+	private function create_simple_product() {
+		$product = new \WC_Product_Simple();
+		$product->set_name( 'Test Product' );
+		$product->set_regular_price( '10.00' );
+		$product->set_status( 'publish' );
+		$product->save();
+		return $product;
+	}
+
+	/**
+	 * Test that maybe_replace_cart does nothing when no block is present.
+	 */
+	public function test_maybe_replace_cart_noop_without_block() {
+		$this->skip_without_wc();
+
+		$post_id = self::factory()->post->create(
+			[ 'post_content' => '<!-- wp:paragraph --><p>No block here</p><!-- /wp:paragraph -->' ]
+		);
+		$this->go_to( get_permalink( $post_id ) );
+		Fast_Checkout::maybe_replace_cart();
+		$this->assertCount( 0, WC()->cart->get_cart() );
+	}
+
+	/**
+	 * Test that maybe_replace_cart adds the product to the cart.
+	 */
+	public function test_maybe_replace_cart_adds_product() {
+		$this->skip_without_wc();
+
+		$product = $this->create_simple_product();
+		$post_id = $this->make_fast_checkout_post( $product->get_id() );
+		$this->go_to( get_permalink( $post_id ) );
+
+		Fast_Checkout::maybe_replace_cart();
+
+		$cart_contents = WC()->cart->get_cart();
+		$this->assertCount( 1, $cart_contents );
+
+		$item = reset( $cart_contents );
+		$this->assertSame( $product->get_id(), (int) $item['product_id'] );
+		$this->assertSame( $post_id, $item[ Fast_Checkout::CART_ITEM_SOURCE_KEY ] );
+	}
+
+	/**
+	 * Test that calling maybe_replace_cart twice is idempotent.
+	 */
+	public function test_maybe_replace_cart_is_idempotent() {
+		$this->skip_without_wc();
+
+		$product = $this->create_simple_product();
+		$post_id = $this->make_fast_checkout_post( $product->get_id() );
+		$this->go_to( get_permalink( $post_id ) );
+
+		Fast_Checkout::maybe_replace_cart();
+		$keys_first = array_keys( WC()->cart->get_cart() );
+
+		Fast_Checkout::reset_cache();
+		Fast_Checkout::maybe_replace_cart();
+		$keys_second = array_keys( WC()->cart->get_cart() );
+
+		$this->assertSame( $keys_first, $keys_second );
+	}
+
+	/**
+	 * Test that a mismatched product in the cart is replaced.
+	 */
+	public function test_maybe_replace_cart_replaces_mismatched() {
+		$this->skip_without_wc();
+
+		$product_a = $this->create_simple_product();
+		$product_b = $this->create_simple_product();
+
+		// Add product A to cart first.
+		WC()->cart->add_to_cart( $product_a->get_id() );
+		$this->assertCount( 1, WC()->cart->get_cart() );
+
+		// Post references product B.
+		$post_id = $this->make_fast_checkout_post( $product_b->get_id() );
+		$this->go_to( get_permalink( $post_id ) );
+
+		Fast_Checkout::maybe_replace_cart();
+
+		$cart_contents = WC()->cart->get_cart();
+		$this->assertCount( 1, $cart_contents );
+
+		$item = reset( $cart_contents );
+		$this->assertSame( $product_b->get_id(), (int) $item['product_id'] );
+	}
 }

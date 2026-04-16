@@ -155,7 +155,63 @@ final class Fast_Checkout {
 	 * Replace the WooCommerce cart contents with the block's product.
 	 */
 	public static function maybe_replace_cart() {
-		// Stub.
+		if ( is_admin() && ! wp_doing_ajax() ) {
+			return;
+		}
+		if ( ! function_exists( 'WC' ) || ! is_singular() ) {
+			return;
+		}
+		$post = get_post();
+		if ( ! $post || ! has_block( self::BLOCK_NAME, $post ) ) {
+			return;
+		}
+		$product_id = self::get_block_product_id( $post );
+		if ( ! $product_id ) {
+			return;
+		}
+		$product = wc_get_product( $product_id );
+		if ( ! $product || ! $product->is_purchasable() ) {
+			return;
+		}
+		$cart = WC()->cart;
+		if ( ! $cart ) {
+			return;
+		}
+
+		// Idempotency: if the cart already has exactly the right item, do nothing.
+		$cart_contents = $cart->get_cart();
+		if ( 1 === count( $cart_contents ) ) {
+			$item       = reset( $cart_contents );
+			$matches_id = ( $product->is_type( 'variation' ) )
+				? (int) $item['variation_id'] === $product_id
+				: (int) $item['product_id'] === $product_id;
+			if ( $matches_id && 1 === (int) $item['quantity'] ) {
+				return;
+			}
+		}
+
+		// Build cart item data.
+		$cart_item_data = [
+			self::CART_ITEM_SOURCE_KEY => $post->ID,
+		];
+
+		/**
+		 * Filter the cart item data added by Fast Checkout.
+		 *
+		 * @param array    $cart_item_data Cart item data.
+		 * @param int      $product_id     Resolved product or variation ID.
+		 * @param \WP_Post $post           The source post.
+		 */
+		$cart_item_data = apply_filters( 'newspack_blocks_fast_checkout_cart_item_data', $cart_item_data, $product_id, $post );
+
+		$cart->empty_cart();
+
+		if ( $product->is_type( 'variation' ) ) {
+			$parent_id = $product->get_parent_id();
+			$cart->add_to_cart( $parent_id, 1, $product_id, [], $cart_item_data );
+		} else {
+			$cart->add_to_cart( $product_id, 1, 0, [], $cart_item_data );
+		}
 	}
 
 	/**
