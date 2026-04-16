@@ -7,6 +7,7 @@ import { useEffect, useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import { debounce } from 'lodash';
 import { InnerBlocks, InspectorControls, useBlockProps } from '@wordpress/block-editor';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { PanelBody, BaseControl, TextControl, Button, Spinner, FormTokenField, SelectControl } from '@wordpress/components';
 
 import { DEFAULT_TEMPLATE } from './template';
@@ -116,9 +117,25 @@ function VariationPicker( { productId, variationId, onChange } ) {
 	);
 }
 
-export default function Edit( { attributes, setAttributes } ) {
+export default function Edit( { attributes, setAttributes, clientId } ) {
 	const { product, variation, is_variable: isVariable, afterSuccessURL } = attributes;
 	const blockProps = useBlockProps();
+	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
+
+	// On first insert, find the checkout-actions-block and disable "Return to Cart".
+	const allDescendants = useSelect(
+		select => {
+			const getBlocks = select( 'core/block-editor' ).getBlocks;
+			const walk = blocks => blocks.flatMap( b => [ b, ...walk( b.innerBlocks ) ] );
+			return walk( getBlocks( clientId ) );
+		},
+		[ clientId ]
+	);
+	useEffect( () => {
+		allDescendants
+			.filter( b => b.name === 'woocommerce/checkout-actions-block' && b.attributes.showReturnToCart )
+			.forEach( b => updateBlockAttributes( b.clientId, { showReturnToCart: false } ) );
+	}, [ allDescendants.length ] );
 
 	// Detect variable product when product changes.
 	useEffect( () => {

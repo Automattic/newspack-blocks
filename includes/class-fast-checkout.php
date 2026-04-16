@@ -63,6 +63,7 @@ final class Fast_Checkout {
 		add_action( 'woocommerce_checkout_create_order_line_item', [ __CLASS__, 'attach_line_item_meta' ], 10, 4 );
 		add_filter( 'block_type_metadata', [ __CLASS__, 'add_context_to_core_blocks' ] );
 		add_filter( 'woocommerce_is_checkout', [ __CLASS__, 'maybe_flag_as_checkout' ] );
+		add_filter( 'render_block_data', [ __CLASS__, 'filter_checkout_actions_block' ] );
 	}
 
 	/**
@@ -236,6 +237,28 @@ final class Fast_Checkout {
 			return true;
 		}
 		return $is_checkout;
+	}
+
+	/**
+	 * Hide the "Return to Cart" link in the checkout actions block when
+	 * rendering inside a Fast Checkout page.
+	 *
+	 * @param array $parsed_block Parsed block data.
+	 * @return array
+	 */
+	public static function filter_checkout_actions_block( $parsed_block ) {
+		if ( 'woocommerce/checkout-actions-block' !== ( $parsed_block['blockName'] ?? '' ) ) {
+			return $parsed_block;
+		}
+		if ( is_admin() || ! is_singular() ) {
+			return $parsed_block;
+		}
+		$post = get_post();
+		if ( ! $post || ! has_block( self::BLOCK_NAME, $post ) ) {
+			return $parsed_block;
+		}
+		$parsed_block['attrs']['showReturnToCart'] = false;
+		return $parsed_block;
 	}
 
 	/**
