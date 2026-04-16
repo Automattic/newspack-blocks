@@ -111,6 +111,45 @@ class Test_Fast_Checkout extends WP_UnitTestCase_Blocks {
 		$this->assertNull( $result );
 	}
 
+	// ---- Core block context opt-in tests ----
+
+	/**
+	 * Test that core/heading gets both context keys, preserving existing ones.
+	 */
+	public function test_add_context_to_core_blocks_extends_heading() {
+		$metadata = [
+			'name'        => 'core/heading',
+			'usesContext' => [ 'postId' ],
+		];
+		$result   = Fast_Checkout::add_context_to_core_blocks( $metadata );
+		$this->assertContains( 'postId', $result['usesContext'] );
+		$this->assertContains( Fast_Checkout::CONTEXT_PRODUCT_KEY, $result['usesContext'] );
+		$this->assertContains( Fast_Checkout::CONTEXT_VARIATION_KEY, $result['usesContext'] );
+	}
+
+	/**
+	 * Test that unrelated blocks are not modified.
+	 */
+	public function test_add_context_to_core_blocks_skips_unrelated() {
+		$metadata = [
+			'name'        => 'core/button',
+			'usesContext' => [ 'postId' ],
+		];
+		$result   = Fast_Checkout::add_context_to_core_blocks( $metadata );
+		$this->assertSame( [ 'postId' ], $result['usesContext'] );
+	}
+
+	/**
+	 * Test that blocks without usesContext get context keys added.
+	 */
+	public function test_add_context_to_core_blocks_handles_missing_uses_context() {
+		$metadata = [ 'name' => 'core/image' ];
+		$result   = Fast_Checkout::add_context_to_core_blocks( $metadata );
+		$this->assertContains( Fast_Checkout::CONTEXT_PRODUCT_KEY, $result['usesContext'] );
+		$this->assertContains( Fast_Checkout::CONTEXT_VARIATION_KEY, $result['usesContext'] );
+		$this->assertCount( 2, $result['usesContext'] );
+	}
+
 	// ---- Render filter tests ----
 
 	/**

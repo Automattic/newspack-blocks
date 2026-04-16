@@ -392,6 +392,20 @@ final class Fast_Checkout {
 	 * @return array Filtered metadata.
 	 */
 	public static function add_context_to_core_blocks( $metadata ) {
+		if ( ! is_array( $metadata ) || empty( $metadata['name'] ) ) {
+			return $metadata;
+		}
+		if ( ! in_array( $metadata['name'], self::CORE_CONTEXT_BLOCKS, true ) ) {
+			return $metadata;
+		}
+		$existing = isset( $metadata['usesContext'] ) && is_array( $metadata['usesContext'] )
+			? $metadata['usesContext']
+			: [];
+		$metadata['usesContext'] = array_values(
+			array_unique(
+				array_merge( $existing, [ self::CONTEXT_PRODUCT_KEY, self::CONTEXT_VARIATION_KEY ] )
+			)
+		);
 		return $metadata;
 	}
 }
