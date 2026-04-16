@@ -62,6 +62,7 @@ final class Fast_Checkout {
 		add_filter( 'woocommerce_get_return_url', [ __CLASS__, 'maybe_override_return_url' ], 10, 2 );
 		add_action( 'woocommerce_checkout_create_order_line_item', [ __CLASS__, 'attach_line_item_meta' ], 10, 4 );
 		add_filter( 'block_type_metadata', [ __CLASS__, 'add_context_to_core_blocks' ] );
+		add_filter( 'woocommerce_is_checkout', [ __CLASS__, 'maybe_flag_as_checkout' ] );
 	}
 
 	/**
@@ -216,6 +217,25 @@ final class Fast_Checkout {
 			define( 'DONOTCACHEPAGE', true );
 		}
 		nocache_headers();
+	}
+
+	/**
+	 * Flag the current page as a WooCommerce checkout page when it contains
+	 * a Fast Checkout block. This ensures payment gateway scripts (Stripe, etc.)
+	 * enqueue their initialization data.
+	 *
+	 * @param bool $is_checkout Current checkout flag.
+	 * @return bool
+	 */
+	public static function maybe_flag_as_checkout( $is_checkout ) {
+		if ( $is_checkout || is_admin() || ! is_singular() ) {
+			return $is_checkout;
+		}
+		$post = get_post();
+		if ( $post && has_block( self::BLOCK_NAME, $post ) ) {
+			return true;
+		}
+		return $is_checkout;
 	}
 
 	/**
