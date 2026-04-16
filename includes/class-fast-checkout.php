@@ -205,7 +205,17 @@ final class Fast_Checkout {
 	 * Mark the current page as non-cacheable when a Fast Checkout block is present.
 	 */
 	public static function mark_page_noncacheable() {
-		// Stub.
+		if ( is_admin() || ! is_singular() ) {
+			return;
+		}
+		$post = get_post();
+		if ( ! $post || ! has_block( self::BLOCK_NAME, $post ) ) {
+			return;
+		}
+		if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+			define( 'DONOTCACHEPAGE', true );
+		}
+		nocache_headers();
 	}
 
 	/**
