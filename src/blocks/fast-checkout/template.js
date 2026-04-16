@@ -11,48 +11,36 @@ const bind = field => ( { source: BINDING_SOURCE, args: { field } } );
 
 export const DEFAULT_TEMPLATE = [
 	[
-		'core/columns',
-		{},
-		[
-			[
-				'core/column',
-				{ width: '50%' },
-				[
-					[
-						'core/image',
-						{
-							metadata: {
-								bindings: {
-									url: bind( 'image_url' ),
-									alt: bind( 'title' ),
-								},
-							},
-						},
-					],
-					[
-						'core/heading',
-						{
-							level: 2,
-							metadata: {
-								bindings: {
-									content: bind( 'title' ),
-								},
-							},
-						},
-					],
-					[
-						'core/paragraph',
-						{
-							metadata: {
-								bindings: {
-									content: bind( 'short_description' ),
-								},
-							},
-						},
-					],
-				],
-			],
-			[ 'core/column', { width: '50%' }, [ [ 'woocommerce/checkout', { lock: { remove: true, move: true } } ] ] ],
-		],
+		'core/image',
+		{
+			metadata: {
+				bindings: {
+					url: bind( 'image_url' ),
+					alt: bind( 'title' ),
+				},
+			},
+		},
 	],
+	[
+		'core/heading',
+		{
+			level: 2,
+			metadata: {
+				bindings: {
+					content: bind( 'title' ),
+				},
+			},
+		},
+	],
+	[
+		'core/paragraph',
+		{
+			metadata: {
+				bindings: {
+					content: bind( 'short_description' ),
+				},
+			},
+		},
+	],
+	[ 'woocommerce/checkout', { lock: { remove: true, move: true } } ],
 ];
