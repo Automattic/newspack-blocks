@@ -45,6 +45,16 @@ final class Fast_Checkout {
 	const CORE_CONTEXT_BLOCKS = [ 'core/heading', 'core/image', 'core/paragraph' ];
 
 	/**
+	 * Query parameter names.
+	 */
+	const QP_EMAIL     = 'fc_email';
+	const QP_QTY       = 'fc_qty';
+	const QP_COUPON    = 'fc_coupon';
+	const QP_VARIATION = 'fc_variation';
+	const QP_PRICE     = 'fc_price';
+	const QP_SUCCESS   = 'fc_success';
+
+	/**
 	 * Cache of post ID → product ID lookups.
 	 *
 	 * @var array
@@ -262,7 +272,51 @@ final class Fast_Checkout {
 	}
 
 	/**
+	 * Read and sanitize the supported Fast Checkout query parameters.
+	 *
+	 * @return array Associative array of query parameter values (only non-empty ones).
+	 */
+	private static function get_query_params() {
+		$params = [];
+
+		$email = filter_input( INPUT_GET, self::QP_EMAIL, FILTER_SANITIZE_EMAIL );
+		if ( $email && is_email( $email ) ) {
+			$params['email'] = $email;
+		}
+
+		$qty = filter_input( INPUT_GET, self::QP_QTY, FILTER_SANITIZE_NUMBER_INT );
+		if ( $qty && (int) $qty > 0 ) {
+			$params['qty'] = (int) $qty;
+		}
+
+		$coupon = filter_input( INPUT_GET, self::QP_COUPON, FILTER_SANITIZE_SPECIAL_CHARS );
+		if ( $coupon ) {
+			$params['coupon'] = $coupon;
+		}
+
+		$variation = filter_input( INPUT_GET, self::QP_VARIATION, FILTER_SANITIZE_NUMBER_INT );
+		if ( $variation && (int) $variation > 0 ) {
+			$params['variation'] = (int) $variation;
+		}
+
+		$price = filter_input( INPUT_GET, self::QP_PRICE, FILTER_SANITIZE_SPECIAL_CHARS );
+		if ( $price && is_numeric( $price ) && (float) $price > 0 ) {
+			$params['price'] = (float) $price;
+		}
+
+		$success = filter_input( INPUT_GET, self::QP_SUCCESS, FILTER_SANITIZE_URL );
+		if ( $success ) {
+			$params['success'] = $success;
+		}
+
+		return $params;
+	}
+
+	/**
 	 * Replace the WooCommerce cart contents with the block's product.
+	 *
+	 * Supports URL query parameters to override variation, quantity, price,
+	 * coupon, billing email, and post-purchase redirect URL.
 	 */
 	public static function maybe_replace_cart() {
 		if ( is_admin() && ! wp_doing_ajax() ) {
@@ -275,7 +329,16 @@ final class Fast_Checkout {
 		if ( ! $post || ! has_block( self::BLOCK_NAME, $post ) ) {
 			return;
 		}
-		$product_id = self::get_block_product_id( $post );
+
+		$qp          = self::get_query_params();
+		$product_id  = self::get_block_product_id( $post );
+		$quantity    = $qp['qty'] ?? 1;
+
+		// fc_variation overrides the block attribute.
+		if ( ! empty( $qp['variation'] ) ) {
+			$product_id = $qp['variation'];
+		}
+
 		if ( ! $product_id ) {
 			return;
 		}
@@ -290,12 +353,12 @@ final class Fast_Checkout {
 
 		// Idempotency: if the cart already has exactly the right item, do nothing.
 		$cart_contents = $cart->get_cart();
-		if ( 1 === count( $cart_contents ) ) {
+		if ( 1 === count( $cart_contents ) && empty( $qp ) ) {
 			$item       = reset( $cart_contents );
 			$matches_id = ( $product->is_type( 'variation' ) )
 				? (int) $item['variation_id'] === $product_id
 				: (int) $item['product_id'] === $product_id;
-			if ( $matches_id && 1 === (int) $item['quantity'] ) {
+			if ( $matches_id && (int) $quantity === (int) $item['quantity'] ) {
 				return;
 			}
 		}
@@ -305,22 +368,51 @@ final class Fast_Checkout {
 			self::CART_ITEM_SOURCE_KEY => $post->ID,
 		];
 
+		// Store fc_success override in cart item data so it carries to the order.
+		if ( ! empty( $qp['success'] ) ) {
+			$cart_item_data['_fc_success_url'] = $qp['success'];
+		}
+
+		// Handle Name Your Price via fc_price.
+		if ( ! empty( $qp['price'] ) ) {
+			if ( class_exists( '\WC_Name_Your_Price_Helpers' ) && \WC_Name_Your_Price_Helpers::is_nyp( $product_id ) ) {
+				$price     = $qp['price'];
+				$min_price = \WC_Name_Your_Price_Helpers::get_minimum_price( $product_id );
+				$max_price = \WC_Name_Your_Price_Helpers::get_maximum_price( $product_id );
+				$price     = ! empty( $max_price ) ? min( $price, $max_price ) : $price;
+				$price     = ! empty( $min_price ) ? max( $price, $min_price ) : $price;
+				$cart_item_data['nyp'] = (float) \WC_Name_Your_Price_Helpers::standardize_number( $price );
+			}
+		}
+
 		/**
 		 * Filter the cart item data added by Fast Checkout.
 		 *
 		 * @param array    $cart_item_data Cart item data.
 		 * @param int      $product_id     Resolved product or variation ID.
 		 * @param \WP_Post $post           The source post.
+		 * @param array    $qp             Sanitized query parameters.
 		 */
-		$cart_item_data = apply_filters( 'newspack_blocks_fast_checkout_cart_item_data', $cart_item_data, $product_id, $post );
+		$cart_item_data = apply_filters( 'newspack_blocks_fast_checkout_cart_item_data', $cart_item_data, $product_id, $post, $qp );
 
 		$cart->empty_cart();
 
 		if ( $product->is_type( 'variation' ) ) {
 			$parent_id = $product->get_parent_id();
-			$cart->add_to_cart( $parent_id, 1, $product_id, [], $cart_item_data );
+			$cart->add_to_cart( $parent_id, $quantity, $product_id, [], $cart_item_data );
 		} else {
-			$cart->add_to_cart( $product_id, 1, 0, [], $cart_item_data );
+			$cart->add_to_cart( $product_id, $quantity, 0, [], $cart_item_data );
+		}
+
+		// Apply coupon.
+		if ( ! empty( $qp['coupon'] ) ) {
+			$cart->apply_coupon( $qp['coupon'] );
+		}
+
+		// Pre-fill billing email.
+		if ( ! empty( $qp['email'] ) ) {
+			WC()->customer->set_billing_email( $qp['email'] );
+			WC()->customer->save();
 		}
 	}
 
@@ -362,6 +454,11 @@ final class Fast_Checkout {
 			$source_post_id = $item->get_meta( self::CART_ITEM_SOURCE_KEY );
 			if ( ! $source_post_id ) {
 				continue;
+			}
+			// fc_success query param takes precedence over block attribute.
+			$fc_success = $item->get_meta( '_fc_success_url' );
+			if ( $fc_success ) {
+				return $fc_success;
 			}
 			$custom_url = self::get_after_success_url( (int) $source_post_id );
 			if ( $custom_url ) {
@@ -423,8 +520,12 @@ final class Fast_Checkout {
 		if ( ! isset( $values[ self::CART_ITEM_SOURCE_KEY ] ) ) {
 			return;
 		}
-		if ( is_object( $item ) && method_exists( $item, 'add_meta_data' ) ) {
-			$item->add_meta_data( self::CART_ITEM_SOURCE_KEY, (int) $values[ self::CART_ITEM_SOURCE_KEY ], true );
+		if ( ! is_object( $item ) || ! method_exists( $item, 'add_meta_data' ) ) {
+			return;
+		}
+		$item->add_meta_data( self::CART_ITEM_SOURCE_KEY, (int) $values[ self::CART_ITEM_SOURCE_KEY ], true );
+		if ( ! empty( $values['_fc_success_url'] ) ) {
+			$item->add_meta_data( '_fc_success_url', esc_url_raw( $values['_fc_success_url'] ), true );
 		}
 	}
 
