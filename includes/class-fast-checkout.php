@@ -279,7 +279,19 @@ final class Fast_Checkout {
 	 * @return string Filtered content.
 	 */
 	public static function filter_render( $content, $block ) {
-		return $content;
+		$attrs      = $block['attrs'] ?? [];
+		$product_id = self::resolve_product_id_from_attrs( $attrs );
+
+		if ( $product_id && function_exists( 'wc_get_product' ) ) {
+			$product = wc_get_product( $product_id );
+			if ( $product && $product->is_purchasable() ) {
+				return $content;
+			}
+		}
+
+		return '<div class="wp-block-newspack-blocks-fast-checkout--unavailable">'
+			. esc_html__( 'This product is no longer available.', 'newspack-blocks' )
+			. '</div>';
 	}
 
 	/**

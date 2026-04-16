@@ -111,6 +111,42 @@ class Test_Fast_Checkout extends WP_UnitTestCase_Blocks {
 		$this->assertNull( $result );
 	}
 
+	// ---- Render filter tests ----
+
+	/**
+	 * Test that filter_render passes through when product is valid.
+	 */
+	public function test_filter_render_passes_through_when_product_valid() {
+		$this->skip_without_wc();
+
+		$product  = $this->create_simple_product();
+		$content  = '<div class="wp-block-newspack-blocks-fast-checkout">Buy now</div>';
+		$block    = [ 'attrs' => [ 'product' => (string) $product->get_id() ] ];
+		$filtered = Fast_Checkout::filter_render( $content, $block );
+		$this->assertSame( $content, $filtered );
+	}
+
+	/**
+	 * Test that filter_render shows unavailable notice for missing product.
+	 */
+	public function test_filter_render_replaces_when_product_missing() {
+		$content  = '<div>Buy now</div>';
+		$block    = [ 'attrs' => [ 'product' => '999999' ] ];
+		$filtered = Fast_Checkout::filter_render( $content, $block );
+		$this->assertStringContainsString( 'unavailable', $filtered );
+		$this->assertStringNotContainsString( 'Buy now', $filtered );
+	}
+
+	/**
+	 * Test that filter_render shows unavailable notice when no product ID.
+	 */
+	public function test_filter_render_replaces_when_no_product_id() {
+		$content  = '<div>Buy now</div>';
+		$block    = [ 'attrs' => [] ];
+		$filtered = Fast_Checkout::filter_render( $content, $block );
+		$this->assertStringContainsString( 'unavailable', $filtered );
+	}
+
 	// ---- Cart replacement tests (WC-dependent) ----
 
 	/**
