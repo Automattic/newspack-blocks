@@ -8,32 +8,33 @@
 import { registerBlockBindingsSource } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
+import type { StoreApiProduct, ProductField, Binding, BindingsContext } from './types';
 
 const SOURCE_NAME = 'newspack-blocks/fast-checkout-product';
 const PRODUCT_CONTEXT_KEY = 'newspack-blocks/fastCheckoutProductId';
 const VARIATION_CONTEXT_KEY = 'newspack-blocks/fastCheckoutVariationId';
 
-const productCache = new Map();
-const pendingFetches = new Map();
+const productCache = new Map< number, StoreApiProduct | null >();
+const pendingFetches = new Map< number, Promise< StoreApiProduct | null > >();
 
 /**
  * Fetch a product from the WooCommerce Store API and cache it.
  *
- * @param {number|string} productId
- * @return {Promise<Object|null>} Cached or fetched product record.
+ * @param productId Product or variation ID.
+ * @return Cached or fetched product record.
  */
-export function fetchProduct( productId ) {
-	const id = parseInt( productId, 10 );
+export function fetchProduct( productId: number | string ): Promise< StoreApiProduct | null > {
+	const id = parseInt( String( productId ), 10 );
 	if ( ! id ) {
 		return Promise.resolve( null );
 	}
 	if ( productCache.has( id ) ) {
-		return Promise.resolve( productCache.get( id ) );
+		return Promise.resolve( productCache.get( id ) ?? null );
 	}
 	if ( pendingFetches.has( id ) ) {
-		return pendingFetches.get( id );
+		return pendingFetches.get( id )!;
 	}
-	const promise = apiFetch( { path: `/wc/store/v1/products/${ id }` } )
+	const promise = apiFetch< StoreApiProduct >( { path: `/wc/store/v1/products/${ id }` } )
 		.then( product => {
 			productCache.set( id, product );
 			pendingFetches.delete( id );
@@ -51,11 +52,11 @@ export function fetchProduct( productId ) {
 /**
  * Pull a single field from a cached Store API product record.
  *
- * @param {Object} product Store API product record.
- * @param {string} field   Field name.
- * @return {string} Resolved field value.
+ * @param product Store API product record.
+ * @param field   Field name.
+ * @return Resolved field value.
  */
-function readField( product, field ) {
+function readField( product: StoreApiProduct | null | undefined, field: ProductField ): string {
 	if ( ! product ) {
 		return '';
 	}
@@ -81,9 +82,9 @@ registerBlockBindingsSource( {
 	name: SOURCE_NAME,
 	label: __( 'Fast Checkout Product', 'newspack-blocks' ),
 	usesContext: [ PRODUCT_CONTEXT_KEY, VARIATION_CONTEXT_KEY ],
-	getValues( { bindings, context } ) {
-		const variationId = parseInt( context?.[ VARIATION_CONTEXT_KEY ], 10 ) || 0;
-		const productId = parseInt( context?.[ PRODUCT_CONTEXT_KEY ], 10 ) || 0;
+	getValues( { bindings, context }: { bindings: Record< string, Binding >; context: BindingsContext } ) {
+		const variationId = parseInt( String( context?.[ VARIATION_CONTEXT_KEY ] ?? 0 ), 10 ) || 0;
+		const productId = parseInt( String( context?.[ PRODUCT_CONTEXT_KEY ] ?? 0 ), 10 ) || 0;
 		const resolvedId = variationId || productId;
 		const product = resolvedId ? productCache.get( resolvedId ) : null;
 
@@ -93,7 +94,7 @@ registerBlockBindingsSource( {
 			fetchProduct( resolvedId );
 		}
 
-		const result = {};
+		const result: Record< string, string > = {};
 		for ( const [ attr, binding ] of Object.entries( bindings ) ) {
 			const field = binding?.args?.field;
 			result[ attr ] = field ? readField( product, field ) : '';

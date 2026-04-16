@@ -12,9 +12,15 @@ import { PanelBody, BaseControl, TextControl, Button, Spinner, FormTokenField, S
 
 import { DEFAULT_TEMPLATE } from './template';
 import { fetchProduct } from './bindings-source';
+import type { FastCheckoutAttributes, StoreApiProduct, StoreApiVariation, Variation } from './types';
 
-function ProductPicker( { productId, onChange } ) {
-	const [ suggestions, setSuggestions ] = useState( {} );
+interface ProductPickerProps {
+	productId?: string;
+	onChange: ( id: string ) => void;
+}
+
+function ProductPicker( { productId, onChange }: ProductPickerProps ) {
+	const [ suggestions, setSuggestions ] = useState< Record< string, string > >( {} );
 	const [ inFlight, setInFlight ] = useState( false );
 	const [ selectedName, setSelectedName ] = useState( '' );
 	const [ isChanging, setIsChanging ] = useState( ! productId );
@@ -29,16 +35,16 @@ function ProductPicker( { productId, onChange } ) {
 		} );
 	}, [ productId ] );
 
-	const fetchSuggestions = debounce( search => {
+	const fetchSuggestions = debounce( ( search: string ) => {
 		if ( search.length < 3 ) {
 			return;
 		}
 		setInFlight( true );
-		apiFetch( {
+		apiFetch< StoreApiProduct[] >( {
 			path: `/wc/store/v1/products?search=${ encodeURIComponent( search ) }&per_page=10`,
 		} )
 			.then( products => {
-				const next = {};
+				const next: Record< string, string > = {};
 				products.forEach( p => {
 					next[ p.id ] = p.name;
 				} );
@@ -66,7 +72,7 @@ function ProductPicker( { productId, onChange } ) {
 				placeholder={ __( 'Type to search for a product…', 'newspack-blocks' ) }
 				suggestions={ Object.values( suggestions ) }
 				onInputChange={ fetchSuggestions }
-				onChange={ tokens => {
+				onChange={ ( tokens: string[] ) => {
 					const tokenName = tokens[ 0 ];
 					const id = Object.keys( suggestions ).find( key => suggestions[ key ] === tokenName );
 					if ( id ) {
@@ -80,15 +86,21 @@ function ProductPicker( { productId, onChange } ) {
 	);
 }
 
-function VariationPicker( { productId, variationId, onChange } ) {
-	const [ variations, setVariations ] = useState( [] );
+interface VariationPickerProps {
+	productId: string;
+	variationId?: string;
+	onChange: ( variationId: string ) => void;
+}
+
+function VariationPicker( { productId, variationId, onChange }: VariationPickerProps ) {
+	const [ variations, setVariations ] = useState< Variation[] >( [] );
 
 	useEffect( () => {
 		if ( ! productId ) {
 			setVariations( [] );
 			return;
 		}
-		apiFetch( { path: `/wc/v2/products/${ productId }/variations?per_page=100` } )
+		apiFetch< StoreApiVariation[] >( { path: `/wc/v2/products/${ productId }/variations?per_page=100` } )
 			.then( res => {
 				setVariations(
 					res.map( v => ( {
@@ -117,7 +129,13 @@ function VariationPicker( { productId, variationId, onChange } ) {
 	);
 }
 
-export default function Edit( { attributes, setAttributes, clientId } ) {
+interface EditProps {
+	attributes: FastCheckoutAttributes;
+	setAttributes: ( attrs: Partial< FastCheckoutAttributes > ) => void;
+	clientId: string;
+}
+
+export default function Edit( { attributes, setAttributes, clientId }: EditProps ) {
 	const { product, variation, is_variable: isVariable, afterSuccessURL } = attributes;
 	const blockProps = useBlockProps();
 	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
@@ -125,8 +143,8 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 	// On first insert, find the checkout-actions-block and disable "Return to Cart".
 	const allDescendants = useSelect(
 		select => {
-			const getBlocks = select( 'core/block-editor' ).getBlocks;
-			const walk = blocks => blocks.flatMap( b => [ b, ...walk( b.innerBlocks ) ] );
+			const getBlocks = ( select( 'core/block-editor' ) as { getBlocks: ( id?: string ) => Block[] } ).getBlocks;
+			const walk = ( blocks: Block[] ): Block[] => blocks.flatMap( b => [ b, ...walk( b.innerBlocks ) ] );
 			return walk( getBlocks( clientId ) );
 		},
 		[ clientId ]
@@ -142,7 +160,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 		if ( ! product ) {
 			return;
 		}
-		apiFetch( { path: `/wc/store/v1/products/${ product }` } )
+		apiFetch< StoreApiProduct >( { path: `/wc/store/v1/products/${ product }` } )
 			.then( p => {
 				setAttributes( { is_variable: !! p?.variations?.length } );
 			} )

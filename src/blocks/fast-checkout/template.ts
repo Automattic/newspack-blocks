@@ -5,11 +5,15 @@
  * or reordered, while the rest of the template stays editable.
  */
 
+import type { ProductField } from './types';
+
 const BINDING_SOURCE = 'newspack-blocks/fast-checkout-product';
 
-const bind = field => ( { source: BINDING_SOURCE, args: { field } } );
+const bind = ( field: ProductField ) => ( { source: BINDING_SOURCE, args: { field } } );
 
-export const DEFAULT_TEMPLATE = [
+type TemplateBlock = [ string, Record< string, unknown >, ...TemplateBlock[][] ];
+
+export const DEFAULT_TEMPLATE: TemplateBlock[] = [
 	[
 		'core/image',
 		{
