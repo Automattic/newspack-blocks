@@ -580,7 +580,7 @@ final class Modal_Checkout {
 		if ( ! self::is_modal_checkout() ) {
 			return;
 		}
-		if ( ! class_exists( 'WC_Payments' ) ) {
+		if ( ! class_exists( 'WC_Payments' ) || ! class_exists( 'WC_Stripe' ) ) {
 			return;
 		}
 		// Only suppress WooPayments when Stripe is also providing express checkout. Otherwise
@@ -603,7 +603,6 @@ final class Modal_Checkout {
 			}
 		}
 	}
-
 
 	/**
 	 * Process name your price request for modal.
