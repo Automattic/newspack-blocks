@@ -593,12 +593,12 @@ final class Modal_Checkout {
 		if ( ! isset( $GLOBALS['wp_filter']['woocommerce_checkout_before_customer_details'] ) ) {
 			return;
 		}
-		$filters = $GLOBALS['wp_filter']['woocommerce_checkout_before_customer_details'];
-		foreach ( $filters as $index => $filter ) {
-			$keys = array_keys( $filter );
-			foreach ( $keys as $key ) {
+		$hook      = $GLOBALS['wp_filter']['woocommerce_checkout_before_customer_details'];
+		$callbacks = $hook instanceof \WP_Hook ? $hook->callbacks : (array) $hook;
+		foreach ( $callbacks as $priority => $priority_callbacks ) {
+			foreach ( array_keys( $priority_callbacks ) as $key ) {
 				if ( strpos( $key, 'display_express_checkout_buttons' ) !== false ) {
-					remove_action( 'woocommerce_checkout_before_customer_details', $key, $index );
+					remove_action( 'woocommerce_checkout_before_customer_details', $key, $priority );
 				}
 			}
 		}
