@@ -63,6 +63,13 @@ final class Fast_Checkout {
 	private static $post_product_cache = [];
 
 	/**
+	 * Cache of post ID → parsed block array.
+	 *
+	 * @var array
+	 */
+	private static $post_blocks_cache = [];
+
+	/**
 	 * Initialize hooks.
 	 */
 	public static function init() {
@@ -82,6 +89,20 @@ final class Fast_Checkout {
 	 */
 	public static function reset_cache() {
 		self::$post_product_cache = [];
+		self::$post_blocks_cache  = [];
+	}
+
+	/**
+	 * Parse the post's blocks once, caching the result per post ID.
+	 *
+	 * @param \WP_Post $post Post object.
+	 * @return array Parsed block tree.
+	 */
+	private static function get_parsed_blocks( $post ) {
+		if ( ! isset( self::$post_blocks_cache[ $post->ID ] ) ) {
+			self::$post_blocks_cache[ $post->ID ] = parse_blocks( $post->post_content );
+		}
+		return self::$post_blocks_cache[ $post->ID ];
 	}
 
 	/**
@@ -129,7 +150,7 @@ final class Fast_Checkout {
 		if ( isset( self::$post_product_cache[ $post->ID ] ) ) {
 			return self::$post_product_cache[ $post->ID ];
 		}
-		$blocks = parse_blocks( $post->post_content );
+		$blocks = self::get_parsed_blocks( $post );
 		$result = self::find_fast_checkout_block_product( $blocks );
 		self::$post_product_cache[ $post->ID ] = $result;
 		return $result;
@@ -163,7 +184,7 @@ final class Fast_Checkout {
 	 * @return array Block attributes.
 	 */
 	private static function get_block_attributes( $post ) {
-		$blocks = parse_blocks( $post->post_content );
+		$blocks = self::get_parsed_blocks( $post );
 		$block  = self::find_fast_checkout_block( $blocks );
 		return $block['attrs'] ?? [];
 	}
@@ -553,7 +574,7 @@ final class Fast_Checkout {
 		if ( ! $post ) {
 			return '';
 		}
-		$blocks = parse_blocks( $post->post_content );
+		$blocks = self::get_parsed_blocks( $post );
 		$block  = self::find_fast_checkout_block( $blocks );
 		if ( ! $block ) {
 			return '';
