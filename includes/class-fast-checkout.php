@@ -497,14 +497,19 @@ final class Fast_Checkout {
 			$cart_item_data['_fc_success_url'] = $qp['success'];
 		}
 
-		// Handle Name Your Price via fc_price.
-		if ( ! empty( $qp['price'] ) ) {
-			if ( class_exists( '\WC_Name_Your_Price_Helpers' ) && \WC_Name_Your_Price_Helpers::is_nyp( $product_id ) ) {
-				$price     = $qp['price'];
+		// Handle Name Your Price: query param > attribute > suggested.
+		if ( class_exists( '\WC_Name_Your_Price_Helpers' ) && \WC_Name_Your_Price_Helpers::is_nyp( $product_id ) ) {
+			$price = null;
+			if ( ! empty( $qp['price'] ) ) {
+				$price = (float) $qp['price'];
+			} elseif ( ! empty( $attrs['nyp_price'] ) && is_numeric( $attrs['nyp_price'] ) ) {
+				$price = (float) $attrs['nyp_price'];
+			}
+			if ( null !== $price ) {
 				$min_price = \WC_Name_Your_Price_Helpers::get_minimum_price( $product_id );
 				$max_price = \WC_Name_Your_Price_Helpers::get_maximum_price( $product_id );
-				$price     = ! empty( $max_price ) ? min( $price, $max_price ) : $price;
-				$price     = ! empty( $min_price ) ? max( $price, $min_price ) : $price;
+				$price     = ! empty( $max_price ) ? min( $price, (float) $max_price ) : $price;
+				$price     = ! empty( $min_price ) ? max( $price, (float) $min_price ) : $price;
 				$cart_item_data['nyp'] = (float) \WC_Name_Your_Price_Helpers::standardize_number( $price );
 			}
 		}
