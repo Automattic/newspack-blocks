@@ -443,8 +443,8 @@ class Test_Fast_Checkout extends WP_UnitTestCase_Blocks {
 	}
 
 	/**
-	 * Test that a grouped product without grouped_child returns null
-	 * (server-side will resolve first child via wc_get_product at runtime).
+	 * Test that a grouped product without grouped_child returns the parent ID.
+	 * Server-side runtime resolution to the first child happens in maybe_replace_cart.
 	 */
 	public function test_resolve_grouped_without_child_returns_parent() {
 		$result = Fast_Checkout::resolve_product_id_from_attrs(

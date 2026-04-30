@@ -86,11 +86,12 @@ final class Fast_Checkout {
 	/**
 	 * Resolve the effective product ID from block attributes.
 	 *
-	 * Returns the variation ID when the product is variable and a variation is set,
+	 * Returns the grouped child ID when the product is grouped and a child is set,
+	 * the variation ID when the product is variable and a variation is set,
 	 * otherwise the product ID. Returns null when no product attribute is present.
 	 *
 	 * @param array $attrs Block attributes.
-	 * @return int|null Product or variation ID, or null.
+	 * @return int|null Product, variation, or grouped child ID, or null.
 	 */
 	public static function resolve_product_id_from_attrs( $attrs ) {
 		if ( empty( $attrs['product'] ) ) {
