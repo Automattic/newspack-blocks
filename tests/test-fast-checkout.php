@@ -22,6 +22,17 @@ class Test_Fast_Checkout extends WP_UnitTestCase_Blocks {
 	}
 
 	/**
+	 * Invoke the private static get_query_params method via Reflection.
+	 *
+	 * @return array
+	 */
+	private function invoke_get_query_params(): array {
+		$method = ( new ReflectionClass( Fast_Checkout::class ) )->getMethod( 'get_query_params' );
+		$method->setAccessible( true );
+		return $method->invoke( null );
+	}
+
+	/**
 	 * Test that a simple product attribute resolves to the product ID.
 	 */
 	public function test_resolve_simple_product() {
@@ -466,11 +477,7 @@ class Test_Fast_Checkout extends WP_UnitTestCase_Blocks {
 	public function test_get_query_params_reads_grouped_child() {
 		$_GET[ Fast_Checkout::QP_GROUPED_CHILD ] = '123';
 
-		// Reflect-call the private static method.
-		$reflection = new ReflectionClass( Fast_Checkout::class );
-		$method     = $reflection->getMethod( 'get_query_params' );
-		$method->setAccessible( true );
-		$params = $method->invoke( null );
+		$params = $this->invoke_get_query_params();
 
 		$this->assertSame( 123, $params['grouped_child'] ?? null );
 
@@ -483,10 +490,7 @@ class Test_Fast_Checkout extends WP_UnitTestCase_Blocks {
 	public function test_get_query_params_rejects_invalid_grouped_child() {
 		$_GET[ Fast_Checkout::QP_GROUPED_CHILD ] = 'not-a-number';
 
-		$reflection = new ReflectionClass( Fast_Checkout::class );
-		$method     = $reflection->getMethod( 'get_query_params' );
-		$method->setAccessible( true );
-		$params = $method->invoke( null );
+		$params = $this->invoke_get_query_params();
 
 		$this->assertArrayNotHasKey( 'grouped_child', $params );
 

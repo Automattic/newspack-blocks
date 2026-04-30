@@ -306,11 +306,11 @@ final class Fast_Checkout {
 			$params['variation'] = (int) $variation;
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$grouped_child_raw = isset( $_GET[ self::QP_GROUPED_CHILD ] ) ? sanitize_text_field( wp_unslash( $_GET[ self::QP_GROUPED_CHILD ] ) ) : '';
-		$grouped_child     = filter_var( $grouped_child_raw, FILTER_SANITIZE_NUMBER_INT );
-		if ( $grouped_child && (int) $grouped_child > 0 ) {
-			$params['grouped_child'] = (int) $grouped_child;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$grouped_child_raw = isset( $_GET[ self::QP_GROUPED_CHILD ] ) ? wp_unslash( $_GET[ self::QP_GROUPED_CHILD ] ) : '';
+		$grouped_child     = (int) filter_var( $grouped_child_raw, FILTER_SANITIZE_NUMBER_INT );
+		if ( $grouped_child > 0 ) {
+			$params['grouped_child'] = $grouped_child;
 		}
 
 		$price = filter_input( INPUT_GET, self::QP_PRICE, FILTER_SANITIZE_SPECIAL_CHARS );
