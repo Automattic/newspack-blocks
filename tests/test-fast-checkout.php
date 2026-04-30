@@ -237,6 +237,21 @@ class Test_Fast_Checkout extends WP_UnitTestCase_Blocks {
 	}
 
 	/**
+	 * Create a grouped WC product with the given children.
+	 *
+	 * @param int[] $child_ids Existing child product IDs.
+	 * @return \WC_Product_Grouped
+	 */
+	private function create_grouped_product( $child_ids ) {
+		$product = new \WC_Product_Grouped();
+		$product->set_name( 'Test Grouped Product' );
+		$product->set_status( 'publish' );
+		$product->set_children( $child_ids );
+		$product->save();
+		return $product;
+	}
+
+	/**
 	 * Test that maybe_replace_cart does nothing when no block is present.
 	 */
 	public function test_maybe_replace_cart_noop_without_block() {
@@ -521,5 +536,112 @@ class Test_Fast_Checkout extends WP_UnitTestCase_Blocks {
 
 		$item = reset( $cart_contents );
 		$this->assertSame( $product_b->get_id(), (int) $item['product_id'] );
+	}
+
+	// ---- Cart replacement: grouped product tests ----
+
+	/**
+	 * Test that maybe_replace_cart adds grouped_child product to cart when set.
+	 */
+	public function test_maybe_replace_cart_adds_grouped_child() {
+		$this->skip_without_wc();
+
+		$child   = $this->create_simple_product();
+		$grouped = $this->create_grouped_product( [ $child->get_id() ] );
+		$post_id = $this->make_fast_checkout_post(
+			$grouped->get_id(),
+			[
+				'is_grouped'    => true,
+				'grouped_child' => (string) $child->get_id(),
+			]
+		);
+		$this->go_to( get_permalink( $post_id ) );
+
+		Fast_Checkout::maybe_replace_cart();
+
+		$cart_contents = WC()->cart->get_cart();
+		$this->assertCount( 1, $cart_contents );
+		$item = reset( $cart_contents );
+		$this->assertSame( $child->get_id(), (int) $item['product_id'] );
+	}
+
+	/**
+	 * Test that maybe_replace_cart resolves to the first child when grouped_child is empty.
+	 */
+	public function test_maybe_replace_cart_grouped_falls_back_to_first_child() {
+		$this->skip_without_wc();
+
+		$first   = $this->create_simple_product();
+		$second  = $this->create_simple_product();
+		$grouped = $this->create_grouped_product( [ $first->get_id(), $second->get_id() ] );
+		$post_id = $this->make_fast_checkout_post(
+			$grouped->get_id(),
+			[ 'is_grouped' => true ]
+		);
+		$this->go_to( get_permalink( $post_id ) );
+
+		Fast_Checkout::maybe_replace_cart();
+
+		$cart_contents = WC()->cart->get_cart();
+		$this->assertCount( 1, $cart_contents );
+		$item = reset( $cart_contents );
+		$this->assertSame( $first->get_id(), (int) $item['product_id'] );
+	}
+
+	/**
+	 * Test that fc_grouped_child query param overrides grouped_child attribute.
+	 */
+	public function test_maybe_replace_cart_grouped_query_param_override() {
+		$this->skip_without_wc();
+
+		$first   = $this->create_simple_product();
+		$second  = $this->create_simple_product();
+		$grouped = $this->create_grouped_product( [ $first->get_id(), $second->get_id() ] );
+		$post_id = $this->make_fast_checkout_post(
+			$grouped->get_id(),
+			[
+				'is_grouped'    => true,
+				'grouped_child' => (string) $first->get_id(),
+			]
+		);
+
+		$_GET[ Fast_Checkout::QP_GROUPED_CHILD ] = (string) $second->get_id();
+		$this->go_to( get_permalink( $post_id ) );
+
+		Fast_Checkout::maybe_replace_cart();
+
+		$cart_contents = WC()->cart->get_cart();
+		$this->assertCount( 1, $cart_contents );
+		$item = reset( $cart_contents );
+		$this->assertSame( $second->get_id(), (int) $item['product_id'] );
+
+		unset( $_GET[ Fast_Checkout::QP_GROUPED_CHILD ] );
+	}
+
+	/**
+	 * Test that fc_grouped_child referencing a non-child is rejected (falls back).
+	 */
+	public function test_maybe_replace_cart_grouped_query_param_rejects_foreign_id() {
+		$this->skip_without_wc();
+
+		$first    = $this->create_simple_product();
+		$foreign  = $this->create_simple_product();
+		$grouped  = $this->create_grouped_product( [ $first->get_id() ] );
+		$post_id  = $this->make_fast_checkout_post(
+			$grouped->get_id(),
+			[ 'is_grouped' => true ]
+		);
+
+		$_GET[ Fast_Checkout::QP_GROUPED_CHILD ] = (string) $foreign->get_id();
+		$this->go_to( get_permalink( $post_id ) );
+
+		Fast_Checkout::maybe_replace_cart();
+
+		$cart_contents = WC()->cart->get_cart();
+		$this->assertCount( 1, $cart_contents );
+		$item = reset( $cart_contents );
+		$this->assertSame( $first->get_id(), (int) $item['product_id'] );
+
+		unset( $_GET[ Fast_Checkout::QP_GROUPED_CHILD ] );
 	}
 }

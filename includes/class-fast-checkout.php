@@ -157,6 +157,68 @@ final class Fast_Checkout {
 	}
 
 	/**
+	 * Get the parsed attributes of the first Fast Checkout block in the post.
+	 *
+	 * @param \WP_Post $post Post object.
+	 * @return array Block attributes.
+	 */
+	private static function get_block_attributes( $post ) {
+		$blocks = parse_blocks( $post->post_content );
+		$block  = self::find_fast_checkout_block( $blocks );
+		return $block['attrs'] ?? [];
+	}
+
+	/**
+	 * Resolve the effective product ID for cart replacement, applying query
+	 * param overrides and runtime first-child fallback for grouped products.
+	 *
+	 * @param array $attrs Block attributes.
+	 * @param array $qp    Sanitized query params.
+	 * @return int|null Resolved product/variation ID, or null.
+	 */
+	private static function resolve_effective_product_id( $attrs, $qp ) {
+		if ( empty( $attrs['product'] ) ) {
+			return null;
+		}
+		$is_grouped  = ! empty( $attrs['is_grouped'] );
+		$is_variable = ! empty( $attrs['is_variable'] );
+
+		// Grouped: query param override → attribute → first child (runtime).
+		if ( $is_grouped ) {
+			$parent         = (int) $attrs['product'];
+			$valid_children = [];
+			if ( function_exists( 'wc_get_product' ) ) {
+				$parent_product = wc_get_product( $parent );
+				if ( $parent_product && method_exists( $parent_product, 'get_children' ) ) {
+					$valid_children = array_map( 'intval', $parent_product->get_children() );
+				}
+			}
+			if ( ! empty( $qp['grouped_child'] ) && in_array( (int) $qp['grouped_child'], $valid_children, true ) ) {
+				return (int) $qp['grouped_child'];
+			}
+			if ( ! empty( $attrs['grouped_child'] ) && in_array( (int) $attrs['grouped_child'], $valid_children, true ) ) {
+				return (int) $attrs['grouped_child'];
+			}
+			if ( ! empty( $valid_children ) ) {
+				return (int) $valid_children[0];
+			}
+			return $parent;
+		}
+
+		// Variable: existing logic, with query param override.
+		if ( $is_variable ) {
+			if ( ! empty( $qp['variation'] ) ) {
+				return (int) $qp['variation'];
+			}
+			if ( ! empty( $attrs['variation'] ) ) {
+				return (int) $attrs['variation'];
+			}
+		}
+
+		return (int) $attrs['product'];
+	}
+
+	/**
 	 * Register the block bindings source.
 	 */
 	public static function register_bindings_source() {
@@ -344,14 +406,10 @@ final class Fast_Checkout {
 			return;
 		}
 
-		$qp          = self::get_query_params();
-		$product_id  = self::get_block_product_id( $post );
-		$quantity    = $qp['qty'] ?? 1;
-
-		// fc_variation overrides the block attribute.
-		if ( ! empty( $qp['variation'] ) ) {
-			$product_id = $qp['variation'];
-		}
+		$qp         = self::get_query_params();
+		$attrs      = self::get_block_attributes( $post );
+		$product_id = self::resolve_effective_product_id( $attrs, $qp );
+		$quantity   = $qp['qty'] ?? 1;
 
 		if ( ! $product_id ) {
 			return;
@@ -368,11 +426,13 @@ final class Fast_Checkout {
 		// Idempotency: if the cart already has exactly the right item, do nothing.
 		$cart_contents = $cart->get_cart();
 		if ( 1 === count( $cart_contents ) && empty( $qp ) ) {
-			$item       = reset( $cart_contents );
-			$matches_id = ( $product->is_type( 'variation' ) )
-				? (int) $item['variation_id'] === $product_id
-				: (int) $item['product_id'] === $product_id;
-			if ( $matches_id && (int) $quantity === (int) $item['quantity'] ) {
+			$item        = reset( $cart_contents );
+			$cart_pid    = $product->is_type( 'variation' )
+				? (int) $item['variation_id']
+				: (int) $item['product_id'];
+			$matches_id  = $cart_pid === $product_id;
+			$matches_qty = (int) $quantity === (int) $item['quantity'];
+			if ( $matches_id && $matches_qty ) {
 				return;
 			}
 		}
