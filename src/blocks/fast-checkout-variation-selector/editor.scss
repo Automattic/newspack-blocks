@@ -1,0 +1,14 @@
+.wp-block-newspack-blocks-fast-checkout-variation-selector {
+	pointer-events: none;
+	opacity: 0.85;
+
+	&::before {
+		content: attr( data-editor-hint );
+		display: block;
+		font-size: 0.75em;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		opacity: 0.6;
+		margin-bottom: 0.5em;
+	}
+}

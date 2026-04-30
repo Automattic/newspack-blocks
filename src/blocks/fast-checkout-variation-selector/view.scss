@@ -1,0 +1,33 @@
+.wp-block-newspack-blocks-fast-checkout-variation-selector {
+	display: flex;
+	flex-direction: column;
+	gap: 1em;
+
+	fieldset {
+		border: 1px solid var(--wp--preset--color--secondary, #ddd);
+		padding: 0.75em 1em;
+
+		legend {
+			padding: 0 0.5em;
+			font-weight: 600;
+		}
+
+		label {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.4em;
+			margin-right: 1em;
+			cursor: pointer;
+		}
+
+		input[ type="radio" ]:disabled + span {
+			text-decoration: line-through;
+			opacity: 0.5;
+		}
+	}
+
+	.wp-block-newspack-blocks-fast-checkout-variation-selector__notice {
+		color: var(--wp--preset--color--vivid-red, #cc1818);
+		font-size: 0.875em;
+	}
+}
