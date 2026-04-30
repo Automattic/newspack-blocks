@@ -369,41 +369,70 @@ final class Fast_Checkout {
 	private static function get_query_params() {
 		$params = [];
 
-		$email = filter_input( INPUT_GET, self::QP_EMAIL, FILTER_SANITIZE_EMAIL );
-		if ( $email && is_email( $email ) ) {
-			$params['email'] = $email;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( isset( $_GET[ self::QP_EMAIL ] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$email = sanitize_email( wp_unslash( $_GET[ self::QP_EMAIL ] ) );
+			if ( $email && is_email( $email ) ) {
+				$params['email'] = $email;
+			}
 		}
 
-		$qty = filter_input( INPUT_GET, self::QP_QTY, FILTER_SANITIZE_NUMBER_INT );
-		if ( $qty && (int) $qty > 0 ) {
-			$params['qty'] = (int) $qty;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( isset( $_GET[ self::QP_QTY ] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$qty_raw = wp_unslash( $_GET[ self::QP_QTY ] );
+			$qty     = (int) filter_var( $qty_raw, FILTER_SANITIZE_NUMBER_INT );
+			if ( $qty > 0 ) {
+				$params['qty'] = $qty;
+			}
 		}
 
-		$coupon = filter_input( INPUT_GET, self::QP_COUPON, FILTER_SANITIZE_SPECIAL_CHARS );
-		if ( $coupon ) {
-			$params['coupon'] = $coupon;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( isset( $_GET[ self::QP_COUPON ] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$coupon = sanitize_text_field( wp_unslash( $_GET[ self::QP_COUPON ] ) );
+			if ( $coupon ) {
+				$params['coupon'] = $coupon;
+			}
 		}
 
-		$variation = filter_input( INPUT_GET, self::QP_VARIATION, FILTER_SANITIZE_NUMBER_INT );
-		if ( $variation && (int) $variation > 0 ) {
-			$params['variation'] = (int) $variation;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( isset( $_GET[ self::QP_VARIATION ] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$variation_raw = wp_unslash( $_GET[ self::QP_VARIATION ] );
+			$variation     = (int) filter_var( $variation_raw, FILTER_SANITIZE_NUMBER_INT );
+			if ( $variation > 0 ) {
+				$params['variation'] = $variation;
+			}
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$grouped_child_raw = isset( $_GET[ self::QP_GROUPED_CHILD ] ) ? wp_unslash( $_GET[ self::QP_GROUPED_CHILD ] ) : '';
-		$grouped_child     = (int) filter_var( $grouped_child_raw, FILTER_SANITIZE_NUMBER_INT );
-		if ( $grouped_child > 0 ) {
-			$params['grouped_child'] = $grouped_child;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( isset( $_GET[ self::QP_GROUPED_CHILD ] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$grouped_child_raw = wp_unslash( $_GET[ self::QP_GROUPED_CHILD ] );
+			$grouped_child     = (int) filter_var( $grouped_child_raw, FILTER_SANITIZE_NUMBER_INT );
+			if ( $grouped_child > 0 ) {
+				$params['grouped_child'] = $grouped_child;
+			}
 		}
 
-		$price = filter_input( INPUT_GET, self::QP_PRICE, FILTER_SANITIZE_SPECIAL_CHARS );
-		if ( $price && is_numeric( $price ) && (float) $price > 0 ) {
-			$params['price'] = (float) $price;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( isset( $_GET[ self::QP_PRICE ] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$price_raw = sanitize_text_field( wp_unslash( $_GET[ self::QP_PRICE ] ) );
+			if ( is_numeric( $price_raw ) && (float) $price_raw > 0 ) {
+				$params['price'] = (float) $price_raw;
+			}
 		}
 
-		$success = filter_input( INPUT_GET, self::QP_SUCCESS, FILTER_SANITIZE_URL );
-		if ( $success ) {
-			$params['success'] = $success;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( isset( $_GET[ self::QP_SUCCESS ] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$success = esc_url_raw( wp_unslash( $_GET[ self::QP_SUCCESS ] ) );
+			if ( $success ) {
+				$params['success'] = $success;
+			}
 		}
 
 		return $params;
