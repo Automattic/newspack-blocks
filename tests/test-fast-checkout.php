@@ -426,6 +426,38 @@ class Test_Fast_Checkout extends WP_UnitTestCase_Blocks {
 		$this->assertSame( 'https://default.com', $result );
 	}
 
+	// ---- Grouped product resolution tests ----
+
+	/**
+	 * Test that a grouped product with grouped_child resolves to the child ID.
+	 */
+	public function test_resolve_grouped_prefers_child() {
+		$result = Fast_Checkout::resolve_product_id_from_attrs(
+			[
+				'product'       => '42',
+				'grouped_child' => '88',
+				'is_grouped'    => true,
+			]
+		);
+		$this->assertSame( 88, $result );
+	}
+
+	/**
+	 * Test that a grouped product without grouped_child returns null
+	 * (server-side will resolve first child via wc_get_product at runtime).
+	 */
+	public function test_resolve_grouped_without_child_returns_parent() {
+		$result = Fast_Checkout::resolve_product_id_from_attrs(
+			[
+				'product'    => '42',
+				'is_grouped' => true,
+			]
+		);
+		// Without runtime WC lookup, the helper returns the parent ID.
+		// Runtime resolution to the first child happens in maybe_replace_cart.
+		$this->assertSame( 42, $result );
+	}
+
 	/**
 	 * Test that a mismatched product in the cart is replaced.
 	 */

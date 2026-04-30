@@ -96,10 +96,15 @@ final class Fast_Checkout {
 		if ( empty( $attrs['product'] ) ) {
 			return null;
 		}
-		$product_id  = (int) $attrs['product'];
-		$is_variable = ! empty( $attrs['is_variable'] );
-		$variation   = ! empty( $attrs['variation'] ) ? (int) $attrs['variation'] : 0;
+		$product_id    = (int) $attrs['product'];
+		$is_variable   = ! empty( $attrs['is_variable'] );
+		$is_grouped    = ! empty( $attrs['is_grouped'] );
+		$variation     = ! empty( $attrs['variation'] ) ? (int) $attrs['variation'] : 0;
+		$grouped_child = ! empty( $attrs['grouped_child'] ) ? (int) $attrs['grouped_child'] : 0;
 
+		if ( $is_grouped && $grouped_child ) {
+			return $grouped_child;
+		}
 		if ( $is_variable && $variation ) {
 			return $variation;
 		}
