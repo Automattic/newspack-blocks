@@ -458,6 +458,41 @@ class Test_Fast_Checkout extends WP_UnitTestCase_Blocks {
 		$this->assertSame( 42, $result );
 	}
 
+	// ---- Query param tests ----
+
+	/**
+	 * Test that fc_grouped_child query param is read into params.
+	 */
+	public function test_get_query_params_reads_grouped_child() {
+		$_GET[ Fast_Checkout::QP_GROUPED_CHILD ] = '123';
+
+		// Reflect-call the private static method.
+		$reflection = new ReflectionClass( Fast_Checkout::class );
+		$method     = $reflection->getMethod( 'get_query_params' );
+		$method->setAccessible( true );
+		$params = $method->invoke( null );
+
+		$this->assertSame( 123, $params['grouped_child'] ?? null );
+
+		unset( $_GET[ Fast_Checkout::QP_GROUPED_CHILD ] );
+	}
+
+	/**
+	 * Test that an invalid (non-numeric) fc_grouped_child is dropped.
+	 */
+	public function test_get_query_params_rejects_invalid_grouped_child() {
+		$_GET[ Fast_Checkout::QP_GROUPED_CHILD ] = 'not-a-number';
+
+		$reflection = new ReflectionClass( Fast_Checkout::class );
+		$method     = $reflection->getMethod( 'get_query_params' );
+		$method->setAccessible( true );
+		$params = $method->invoke( null );
+
+		$this->assertArrayNotHasKey( 'grouped_child', $params );
+
+		unset( $_GET[ Fast_Checkout::QP_GROUPED_CHILD ] );
+	}
+
 	/**
 	 * Test that a mismatched product in the cart is replaced.
 	 */

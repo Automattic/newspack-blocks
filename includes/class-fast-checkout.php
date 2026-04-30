@@ -47,12 +47,13 @@ final class Fast_Checkout {
 	/**
 	 * Query parameter names.
 	 */
-	const QP_EMAIL     = 'fc_email';
-	const QP_QTY       = 'fc_qty';
-	const QP_COUPON    = 'fc_coupon';
-	const QP_VARIATION = 'fc_variation';
-	const QP_PRICE     = 'fc_price';
-	const QP_SUCCESS   = 'fc_success';
+	const QP_EMAIL         = 'fc_email';
+	const QP_QTY           = 'fc_qty';
+	const QP_COUPON        = 'fc_coupon';
+	const QP_VARIATION     = 'fc_variation';
+	const QP_GROUPED_CHILD = 'fc_grouped_child';
+	const QP_PRICE         = 'fc_price';
+	const QP_SUCCESS       = 'fc_success';
 
 	/**
 	 * Cache of post ID → product ID lookups.
@@ -303,6 +304,13 @@ final class Fast_Checkout {
 		$variation = filter_input( INPUT_GET, self::QP_VARIATION, FILTER_SANITIZE_NUMBER_INT );
 		if ( $variation && (int) $variation > 0 ) {
 			$params['variation'] = (int) $variation;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$grouped_child_raw = isset( $_GET[ self::QP_GROUPED_CHILD ] ) ? sanitize_text_field( wp_unslash( $_GET[ self::QP_GROUPED_CHILD ] ) ) : '';
+		$grouped_child     = filter_var( $grouped_child_raw, FILTER_SANITIZE_NUMBER_INT );
+		if ( $grouped_child && (int) $grouped_child > 0 ) {
+			$params['grouped_child'] = (int) $grouped_child;
 		}
 
 		$price = filter_input( INPUT_GET, self::QP_PRICE, FILTER_SANITIZE_SPECIAL_CHARS );
