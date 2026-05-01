@@ -104,6 +104,17 @@ function GroupedSelector( { host, currentChildId }: RootProps ) {
 
 	useEffect( () => {
 		host.dataset.status = inFlight ? 'busy' : 'idle';
+		// Toggle the swapping flag on the parent Fast Checkout block so a CSS
+		// overlay can mask the WC Checkout block during cart updates and hide
+		// the brief "Your cart is currently empty" flash.
+		const fastCheckout = host.closest< HTMLElement >( '.wp-block-newspack-blocks-fast-checkout' );
+		if ( fastCheckout ) {
+			if ( inFlight ) {
+				fastCheckout.dataset.fcSwapping = 'true';
+			} else {
+				delete fastCheckout.dataset.fcSwapping;
+			}
+		}
 		host.querySelectorAll< HTMLInputElement >( 'input[type="radio"]' ).forEach( input => {
 			if ( ssrDisabled.current?.has( input ) ) {
 				input.disabled = true;

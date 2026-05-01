@@ -123,6 +123,17 @@ function VariationSelector( { host, productId, variations, currentVariationId }:
 
 	useEffect( () => {
 		host.dataset.status = inFlight ? 'busy' : 'idle';
+		// Toggle the swapping flag on the parent Fast Checkout block so a CSS
+		// overlay can mask the WC Checkout block during cart updates and hide
+		// the brief "Your cart is currently empty" flash.
+		const fastCheckout = host.closest< HTMLElement >( '.wp-block-newspack-blocks-fast-checkout' );
+		if ( fastCheckout ) {
+			if ( inFlight ) {
+				fastCheckout.dataset.fcSwapping = 'true';
+			} else {
+				delete fastCheckout.dataset.fcSwapping;
+			}
+		}
 		// Disable all non-SSR-disabled radios while in-flight; restore the original disabled state when idle.
 		host.querySelectorAll< HTMLInputElement >( 'input[type="radio"]' ).forEach( input => {
 			if ( ssrDisabled.current?.has( input ) ) {
