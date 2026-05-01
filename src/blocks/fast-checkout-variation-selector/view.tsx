@@ -155,21 +155,18 @@ function revertSelection( host: HTMLFormElement, currentId: number, variations: 
 async function swapCartItem( oldVariationId: number, newVariationId: number ) {
 	const cartActions = dispatch( STORE );
 	const cartSelectors = select( STORE );
-	// For variation cart items, item.id is the variation_id. Capture the
-	// existing key BEFORE adding the new item.
 	const items = cartSelectors.getCartData()?.items || [];
+	// For variation cart items, item.id is the variation_id.
 	const existing = items.find( ( item: { id?: number; key?: string } ) => item.id === oldVariationId );
-	const oldKey = ( existing as { key?: string } | undefined )?.key;
 
-	// Add new before removing old to keep the cart non-empty during the swap
-	// — otherwise the Checkout block flashes "Your cart is currently empty".
-	// The Store API accepts a variation ID directly as the cart item id; no
-	// need to spell out attributes.
-	await ( cartActions as { addItemToCart: ( id: number, qty: number ) => Promise< unknown > } ).addItemToCart( newVariationId, 1 );
-
-	if ( oldKey ) {
-		await ( cartActions as { removeItemFromCart: ( key: string ) => Promise< unknown > } ).removeItemFromCart( oldKey );
+	if ( existing ) {
+		await ( cartActions as { removeItemFromCart: ( key: string ) => Promise< unknown > } ).removeItemFromCart(
+			( existing as { key: string } ).key
+		);
 	}
+
+	// The Store API accepts a variation ID directly as the cart item id; no need to spell out attributes.
+	await ( cartActions as { addItemToCart: ( id: number, qty: number ) => Promise< unknown > } ).addItemToCart( newVariationId, 1 );
 }
 
 function updateUrlParam( key: string, value: string ) {

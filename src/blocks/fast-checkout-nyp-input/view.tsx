@@ -135,24 +135,17 @@ function NypInput( { host, productId, min, max }: RootProps ) {
 async function applyNypPrice( productId: number, price: number ) {
 	const cartActions = dispatch( STORE );
 	const cartSelectors = select( STORE );
-	// Capture the existing key BEFORE adding the new line. Different nyp
-	// values produce a distinct cart_item_data hash, so the new add creates
-	// a separate line item rather than merging.
 	const items = cartSelectors.getCartData()?.items || [];
 	const existing = items.find( ( item: { id?: number; key?: string } ) => item.id === productId ) as { key?: string } | undefined;
-	const oldKey = existing?.key;
 
-	// Add new before removing old to keep the cart non-empty during the swap
-	// — otherwise the Checkout block flashes "Your cart is currently empty".
+	if ( existing?.key ) {
+		await ( cartActions as { removeItemFromCart: ( key: string ) => Promise< unknown > } ).removeItemFromCart( existing.key );
+	}
 	await (
 		cartActions as {
 			addItemToCart: ( id: number, qty: number, variation?: unknown[], cartItemData?: Record< string, unknown > ) => Promise< unknown >;
 		}
 	 ).addItemToCart( productId, 1, [], { nyp: price } );
-
-	if ( oldKey ) {
-		await ( cartActions as { removeItemFromCart: ( key: string ) => Promise< unknown > } ).removeItemFromCart( oldKey );
-	}
 }
 
 function updateUrlParam( key: string, value: string ) {
