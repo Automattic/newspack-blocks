@@ -371,6 +371,16 @@ export default function Edit( { attributes, setAttributes, clientId }: EditProps
 
 		previousFlags.current = next;
 
+		// Donate-selector is manually inserted; auto-clean it on grouped → not-grouped transition.
+		if ( prev.g && ! next.g ) {
+			const donateIds = innerBlocks
+				.filter( ( b: Block ) => b.name === 'newspack-blocks/fast-checkout-donate-selector' )
+				.map( ( b: Block ) => b.clientId );
+			if ( donateIds.length ) {
+				removeBlocks( donateIds, false );
+			}
+		}
+
 		// Reset child/price defaults when the product type changes.
 		if ( prev.v && ! next.v && attributes.variation ) {
 			setAttributes( { variation: '' } );
