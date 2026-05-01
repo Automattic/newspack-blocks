@@ -277,7 +277,7 @@ function render_block( $attrs, $content, $block ) {
 
 		<div class="wp-block-newspack-blocks-fast-checkout-donate-selector__amount">
 			<label for="<?php echo esc_attr( $input_id ); ?>">
-				<?php esc_html_e( 'Set your price', 'newspack-blocks' ); ?>
+				<?php esc_html_e( 'Amount', 'newspack-blocks' ); ?>
 			</label>
 			<div class="wp-block-newspack-blocks-fast-checkout-donate-selector__input-wrapper">
 				<input

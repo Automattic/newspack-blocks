@@ -36,9 +36,11 @@
 		gap: 0.4em;
 
 		input[ type="number" ] {
+			flex: 1;
+			min-width: 0;
 			font-size: 1.25em;
 			padding: 0.4em 0.6em;
-			max-width: 8em;
+			width: 100%;
 		}
 	}
 

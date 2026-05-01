@@ -121,7 +121,7 @@ export default function Edit( { context }: EditProps ) {
 				} ) }
 			</div>
 			<div className="wp-block-newspack-blocks-fast-checkout-donate-selector__amount">
-				<label htmlFor={ inputId }>{ __( 'Set your price', 'newspack-blocks' ) }</label>
+				<label htmlFor={ inputId }>{ __( 'Amount', 'newspack-blocks' ) }</label>
 				<div className="wp-block-newspack-blocks-fast-checkout-donate-selector__input-wrapper">
 					<input id={ inputId } type="number" disabled />
 					<span className="wp-block-newspack-blocks-fast-checkout-donate-selector__suffix" />
