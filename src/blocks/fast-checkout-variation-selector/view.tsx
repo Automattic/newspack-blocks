@@ -16,14 +16,10 @@ import { createRoot, useEffect, useMemo, useState } from '@wordpress/element';
 import { dispatch, select } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import './view.scss';
+import { resolveVariationId } from './resolve';
+import type { VariationData } from './resolve';
 
 const STORE = 'wc/store/cart' as const;
-
-interface VariationData {
-	id: number;
-	attributes: Record< string, string >;
-	is_in_stock: boolean;
-}
 
 interface RootProps {
 	host: HTMLFormElement;
@@ -38,28 +34,6 @@ function readCurrentSelections( host: HTMLFormElement ): Record< string, string 
 		result[ input.name ] = input.value;
 	} );
 	return result;
-}
-
-/**
- * Check whether a variation's attributes match the current DOM selection.
- *
- * Both the variation attributes (from data-variations JSON) and the radio input
- * names have the "attribute_" prefix, so keys align directly.
- */
-function attributesMatch( variation: VariationData, selection: Record< string, string > ): boolean {
-	return Object.entries( variation.attributes ).every( ( [ key, value ] ) => selection[ key ] === value );
-}
-
-function resolveVariationId( variations: VariationData[], selection: Record< string, string > ): number | null {
-	const required = new Set< string >();
-	variations.forEach( v => Object.keys( v.attributes ).forEach( k => required.add( k ) ) );
-	for ( const key of required ) {
-		if ( ! selection[ key ] ) {
-			return null;
-		}
-	}
-	const match = variations.find( v => attributesMatch( v, selection ) );
-	return match ? match.id : null;
 }
 
 function VariationSelector( { host, productId, variations, currentVariationId }: RootProps ) {
