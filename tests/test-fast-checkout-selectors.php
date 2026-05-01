@@ -116,5 +116,9 @@ class Test_Fast_Checkout_Selectors extends WP_UnitTestCase_Blocks {
 		// Both 'blue' and 'm' radios should be checked.
 		$this->assertMatchesRegularExpression( '/value="blue"[^>]*checked/', $rendered );
 		$this->assertMatchesRegularExpression( '/value="m"[^>]*checked/', $rendered );
+
+		// Negative assertions: the unchecked radios should not have `checked`.
+		$this->assertDoesNotMatchRegularExpression( '/value="red"[^>]*checked/', $rendered );
+		$this->assertDoesNotMatchRegularExpression( '/value="s"[^>]*checked/', $rendered );
 	}
 }

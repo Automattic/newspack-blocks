@@ -82,11 +82,8 @@ function render_block( $attrs, $content, $block ) {
 	}
 
 	$current_attrs = [];
-	if ( $current_variation ) {
-		$variation_obj = wc_get_product( $current_variation );
-		if ( $variation_obj ) {
-			$current_attrs = $variation_obj->get_attributes();
-		}
+	if ( $current_variation && function_exists( 'wc_get_product_variation_attributes' ) ) {
+		$current_attrs = wc_get_product_variation_attributes( $current_variation );
 	}
 
 	$wrapper_attributes = get_block_wrapper_attributes(
@@ -115,7 +112,8 @@ function render_block( $attrs, $content, $block ) {
 			<?php
 			$label      = wc_attribute_label( $attribute_name, $product );
 			$field_name = 'attribute_' . sanitize_title( $attribute_name );
-			$current    = $current_attrs[ sanitize_title( $attribute_name ) ] ?? '';
+			$current    = $current_attrs[ $field_name ] ?? '';
+			$current    = sanitize_title( $current );
 			?>
 			<fieldset>
 				<legend><?php echo esc_html( $label ); ?></legend>
