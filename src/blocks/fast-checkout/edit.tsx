@@ -9,7 +9,7 @@ import { debounce } from 'lodash';
 import { createBlock } from '@wordpress/blocks';
 import { InnerBlocks, InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { PanelBody, BaseControl, TextControl, Button, Spinner, FormTokenField, SelectControl, Placeholder } from '@wordpress/components';
+import { PanelBody, BaseControl, TextControl, Button, Spinner, FormTokenField, SelectControl, Placeholder, Notice } from '@wordpress/components';
 
 import { DEFAULT_TEMPLATE } from './template';
 import { fetchProduct } from './bindings-source';
@@ -244,6 +244,7 @@ interface EditProps {
 
 export default function Edit( { attributes, setAttributes, clientId }: EditProps ) {
 	const { product, variation, is_variable: isVariable, afterSuccessURL } = attributes;
+	const [ groupedWarning, setGroupedWarning ] = useState< string >( '' );
 	const blockProps = useBlockProps();
 	const { updateBlockAttributes, insertBlocks, removeBlocks } = useDispatch( 'core/block-editor' );
 
@@ -282,8 +283,33 @@ export default function Edit( { attributes, setAttributes, clientId }: EditProps
 					is_nyp: !! p?.extensions?.nyp?.is_nyp,
 				};
 				setAttributes( flags );
+
+				if ( flags.is_grouped && p?.grouped_products?.length ) {
+					Promise.all(
+						p.grouped_products.map( id => apiFetch< StoreApiProduct >( { path: `/wc/store/v1/products/${ id }` } ).catch( () => null ) )
+					).then( children => {
+						const unsupported = children.filter(
+							( c ): c is StoreApiProduct => !! c && ( ( c.variations?.length ?? 0 ) > 0 || !! c.extensions?.nyp?.is_nyp )
+						);
+						if ( unsupported.length ) {
+							setGroupedWarning(
+								__(
+									'This grouped product contains variable or Name Your Price children. Fast Checkout treats children as simple products; those types are not supported.',
+									'newspack-blocks'
+								)
+							);
+						} else {
+							setGroupedWarning( '' );
+						}
+					} );
+				} else {
+					setGroupedWarning( '' );
+				}
 			} )
-			.catch( () => setAttributes( { is_variable: false, is_grouped: false, is_nyp: false } ) );
+			.catch( () => {
+				setAttributes( { is_variable: false, is_grouped: false, is_nyp: false } );
+				setGroupedWarning( '' );
+			} );
 	}, [ product ] );
 
 	// Track previous type flags so we only react to transitions, not every render.
@@ -413,6 +439,11 @@ export default function Edit( { attributes, setAttributes, clientId }: EditProps
 							value={ attributes.nyp_price }
 							onChange={ value => setAttributes( { nyp_price: value } ) }
 						/>
+					) }
+					{ groupedWarning && (
+						<Notice status="warning" isDismissible={ false }>
+							{ groupedWarning }
+						</Notice>
 					) }
 					<TextControl
 						label={ __( 'Post-purchase redirect URL', 'newspack-blocks' ) }
