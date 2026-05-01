@@ -5,7 +5,7 @@
  * line via the WC Store API cart store.
  */
 
-import { createRoot, useEffect, useMemo, useState } from '@wordpress/element';
+import { createRoot, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { dispatch, select } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import './view.scss';
@@ -21,11 +21,23 @@ function GroupedSelector( { host, currentChildId }: RootProps ) {
 	const [ pendingId, setPendingId ] = useState< number >( currentChildId );
 	const [ inFlight, setInFlight ] = useState( false );
 	const [ error, setError ] = useState< string >( '' );
+	const inFlightRef = useRef< boolean >( false );
+	// Remember which radios were SSR-disabled (out of stock / unpurchasable).
+	const ssrDisabled = useRef< Set< HTMLInputElement > | null >( null );
 
 	const noticeNode = useMemo< HTMLElement | null >(
 		() => host.querySelector( '.wp-block-newspack-blocks-fast-checkout-grouped-selector__notice' ),
 		[ host ]
 	);
+
+	useEffect( () => {
+		if ( ssrDisabled.current === null ) {
+			ssrDisabled.current = new Set();
+			host.querySelectorAll< HTMLInputElement >( 'input[type="radio"][disabled]' ).forEach( input => {
+				ssrDisabled.current!.add( input );
+			} );
+		}
+	}, [ host ] );
 
 	useEffect( () => {
 		if ( noticeNode ) {
@@ -41,6 +53,9 @@ function GroupedSelector( { host, currentChildId }: RootProps ) {
 
 	useEffect( () => {
 		const onChange = async ( e: Event ) => {
+			if ( inFlightRef.current ) {
+				return;
+			}
 			const target = e.target as HTMLInputElement;
 			if ( target?.type !== 'radio' ) {
 				return;
@@ -50,6 +65,7 @@ function GroupedSelector( { host, currentChildId }: RootProps ) {
 				return;
 			}
 			setError( '' );
+			inFlightRef.current = true;
 			setInFlight( true );
 			try {
 				await swapCartItem( pendingId, nextId );
@@ -62,6 +78,7 @@ function GroupedSelector( { host, currentChildId }: RootProps ) {
 					previous.checked = true;
 				}
 			} finally {
+				inFlightRef.current = false;
 				setInFlight( false );
 			}
 		};
@@ -86,10 +103,13 @@ function GroupedSelector( { host, currentChildId }: RootProps ) {
 	}, [ host, pendingId ] );
 
 	useEffect( () => {
+		host.dataset.status = inFlight ? 'busy' : 'idle';
 		host.querySelectorAll< HTMLInputElement >( 'input[type="radio"]' ).forEach( input => {
-			if ( ! input.disabled ) {
-				input.disabled = inFlight;
+			if ( ssrDisabled.current?.has( input ) ) {
+				input.disabled = true;
+				return;
 			}
+			input.disabled = inFlight;
 		} );
 	}, [ host, inFlight ] );
 
