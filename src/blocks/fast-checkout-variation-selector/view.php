@@ -66,6 +66,9 @@ function render_block( $attrs, $content, $block ) {
 
 	$variations        = $product->get_available_variations();
 	$current_variation = (int) ( $block->context['newspack-blocks/fastCheckoutVariationId'] ?? 0 );
+	if ( count( $variations ) < 2 ) {
+		return '';
+	}
 	// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 	if ( isset( $_GET[ Fast_Checkout::QP_VARIATION ] ) ) {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
@@ -105,6 +108,20 @@ function render_block( $attrs, $content, $block ) {
 		]
 	);
 
+	// Map each (attribute_name, option_value) to is-available across in-stock variations.
+	$option_availability = [];
+	foreach ( $variations as $v ) {
+		if ( empty( $v['is_in_stock'] ) ) {
+			continue;
+		}
+		foreach ( $v['attributes'] as $key => $value ) {
+			// $key is e.g. "attribute_color"; strip the prefix to match $attribute_name iteration below.
+			$attr  = preg_replace( '/^attribute_/', '', $key );
+			$value = sanitize_title( $value );
+			$option_availability[ $attr ][ $value ] = true;
+		}
+	}
+
 	ob_start();
 	?>
 	<form <?php echo $wrapper_attributes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
@@ -118,15 +135,23 @@ function render_block( $attrs, $content, $block ) {
 			<fieldset>
 				<legend><?php echo esc_html( $label ); ?></legend>
 				<?php foreach ( $options as $option ) : ?>
-					<?php $value = sanitize_title( $option ); ?>
+					<?php
+					$value          = sanitize_title( $option );
+					$attr_key       = sanitize_title( $attribute_name );
+					$is_available   = ! empty( $option_availability[ $attr_key ][ $value ] );
+					?>
 					<label>
 						<input
 							type="radio"
 							name="<?php echo esc_attr( $field_name ); ?>"
 							value="<?php echo esc_attr( $value ); ?>"
 							<?php checked( $current, $value ); ?>
+							<?php disabled( ! $is_available ); ?>
 						/>
 						<span><?php echo esc_html( $option ); ?></span>
+						<?php if ( ! $is_available ) : ?>
+							<span class="out-of-stock"><?php esc_html_e( '(out of stock)', 'newspack-blocks' ); ?></span>
+						<?php endif; ?>
 					</label>
 				<?php endforeach; ?>
 			</fieldset>

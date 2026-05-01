@@ -4,20 +4,14 @@
  * Hydrates SSR-rendered <form> elements, listens to radio changes, resolves
  * to a variation ID once all attributes are picked, and swaps the cart
  * line via the WC Store API cart store.
- *
- * NOTE on attribute key shape: WooCommerce's get_available_variation() calls
- * $variation->get_variation_attributes() with $with_prefix=true (default),
- * so the data-variations JSON has PREFIXED keys (e.g. "attribute_color").
- * Radio inputs also have prefixed names (e.g. name="attribute_color").
- * Keys match directly — no extra prefix translation needed.
  */
 
-import { createRoot, useEffect, useMemo, useState } from '@wordpress/element';
+import { createRoot, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { dispatch, select } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import './view.scss';
 import { resolveVariationId } from './resolve';
 import type { VariationData } from './resolve';
+import './view.scss';
 
 const STORE = 'wc/store/cart' as const;
 
@@ -40,11 +34,25 @@ function VariationSelector( { host, productId, variations, currentVariationId }:
 	const [ pendingId, setPendingId ] = useState< number >( currentVariationId );
 	const [ inFlight, setInFlight ] = useState( false );
 	const [ error, setError ] = useState< string >( '' );
+	// Track in-flight via ref so concurrent change events early-return without racing on state.
+	const inFlightRef = useRef< boolean >( false );
+	// Remember which radios were SSR-disabled (out of stock) so we don't re-enable them later.
+	const ssrDisabled = useRef< Set< HTMLInputElement > | null >( null );
 
 	const noticeNode = useMemo< HTMLElement | null >(
 		() => host.querySelector( '.wp-block-newspack-blocks-fast-checkout-variation-selector__notice' ),
 		[ host ]
 	);
+
+	// Capture SSR-disabled radios on mount so disabled-state toggling preserves them.
+	useEffect( () => {
+		if ( ssrDisabled.current === null ) {
+			ssrDisabled.current = new Set();
+			host.querySelectorAll< HTMLInputElement >( 'input[type="radio"][disabled]' ).forEach( input => {
+				ssrDisabled.current!.add( input );
+			} );
+		}
+	}, [ host ] );
 
 	useEffect( () => {
 		if ( noticeNode ) {
@@ -60,21 +68,36 @@ function VariationSelector( { host, productId, variations, currentVariationId }:
 
 	useEffect( () => {
 		const onChange = async () => {
+			if ( inFlightRef.current ) {
+				return;
+			}
 			setError( '' );
 			const selection = readCurrentSelections( host );
 			const resolvedId = resolveVariationId( variations, selection );
-			if ( ! resolvedId || resolvedId === pendingId ) {
+			if ( ! resolvedId ) {
 				return;
 			}
+			// Verify the resolved variation is in stock before attempting cart swap.
+			const resolved = variations.find( v => v.id === resolvedId );
+			if ( resolved && ! resolved.is_in_stock ) {
+				setError( __( 'That combination is out of stock.', 'newspack-blocks' ) );
+				revertSelection( host, pendingId, variations );
+				return;
+			}
+			if ( resolvedId === pendingId ) {
+				return;
+			}
+			inFlightRef.current = true;
 			setInFlight( true );
 			try {
-				await swapCartItem( productId, pendingId, resolvedId );
+				await swapCartItem( pendingId, resolvedId );
 				setPendingId( resolvedId );
 				updateUrlParam( 'fc_variation', String( resolvedId ) );
 			} catch ( e: unknown ) {
 				setError( ( e as Error )?.message || __( 'Could not update selection.', 'newspack-blocks' ) );
 				revertSelection( host, pendingId, variations );
 			} finally {
+				inFlightRef.current = false;
 				setInFlight( false );
 			}
 		};
@@ -99,7 +122,13 @@ function VariationSelector( { host, productId, variations, currentVariationId }:
 	}, [ host, variations, pendingId ] );
 
 	useEffect( () => {
+		host.dataset.status = inFlight ? 'busy' : 'idle';
+		// Disable all non-SSR-disabled radios while in-flight; restore the original disabled state when idle.
 		host.querySelectorAll< HTMLInputElement >( 'input[type="radio"]' ).forEach( input => {
+			if ( ssrDisabled.current?.has( input ) ) {
+				input.disabled = true;
+				return;
+			}
 			input.disabled = inFlight;
 		} );
 	}, [ host, inFlight ] );
@@ -107,12 +136,6 @@ function VariationSelector( { host, productId, variations, currentVariationId }:
 	return null;
 }
 
-/**
- * Apply a variation's attribute selections to the DOM radio inputs.
- *
- * Attribute keys in VariationData already carry the "attribute_" prefix
- * (matching the radio input name attributes), so no prefix translation needed.
- */
 function applySelectionToDom( host: HTMLFormElement, variation: VariationData ) {
 	Object.entries( variation.attributes ).forEach( ( [ key, value ] ) => {
 		const radio = host.querySelector< HTMLInputElement >( `input[type="radio"][name="${ key }"][value="${ value }"]` );
@@ -129,31 +152,21 @@ function revertSelection( host: HTMLFormElement, currentId: number, variations: 
 	}
 }
 
-async function swapCartItem( parentProductId: number, oldVariationId: number, newVariationId: number ) {
+async function swapCartItem( oldVariationId: number, newVariationId: number ) {
 	const cartActions = dispatch( STORE );
 	const cartSelectors = select( STORE );
-	const cart = cartSelectors.getCartData();
-	const items = cart?.items || [];
-	const existing = items.find( ( item: { id?: number; variation?: { value?: string }[] } ) => {
-		const itemVariationId = Number(
-			item.variation?.find( ( v: { attribute?: string; value?: string } ) => v.attribute === 'variation_id' )?.value
-		);
-		return itemVariationId === oldVariationId || item.id === parentProductId;
-	} );
+	const items = cartSelectors.getCartData()?.items || [];
+	// For variation cart items, item.id is the variation_id.
+	const existing = items.find( ( item: { id?: number; key?: string } ) => item.id === oldVariationId );
 
 	if ( existing ) {
-		await (
-			cartActions as {
-				removeItemFromCart: ( key: string ) => Promise< unknown >;
-			}
-		 ).removeItemFromCart( ( existing as { key: string } ).key );
+		await ( cartActions as { removeItemFromCart: ( key: string ) => Promise< unknown > } ).removeItemFromCart(
+			( existing as { key: string } ).key
+		);
 	}
 
-	await (
-		cartActions as {
-			addItemToCart: ( productId: number, quantity: number, variation?: { attribute: string; value: string }[] ) => Promise< unknown >;
-		}
-	 ).addItemToCart( parentProductId, 1, [ { attribute: 'variation_id', value: String( newVariationId ) } ] );
+	// The Store API accepts a variation ID directly as the cart item id; no need to spell out attributes.
+	await ( cartActions as { addItemToCart: ( id: number, qty: number ) => Promise< unknown > } ).addItemToCart( newVariationId, 1 );
 }
 
 function updateUrlParam( key: string, value: string ) {
