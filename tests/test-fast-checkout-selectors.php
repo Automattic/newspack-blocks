@@ -171,7 +171,7 @@ class Test_Fast_Checkout_Selectors extends WP_UnitTestCase_Blocks {
 
 		$this->assertStringContainsString( 'Annual', $rendered );
 		$this->assertStringContainsString( 'Monthly', $rendered );
-		$this->assertSame( 2, substr_count( $rendered, '<input type="radio"' ) );
+		$this->assertSame( 2, preg_match_all( '/<input[^>]+type="radio"/', $rendered ) );
 	}
 
 	/**
