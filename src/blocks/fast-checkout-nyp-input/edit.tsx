@@ -13,31 +13,35 @@ interface EditProps {
 	};
 }
 
+type NypState = { status: 'loading' } | { status: 'not-nyp' } | { status: 'ready'; min?: string; max?: string; suggested?: string };
+
 export default function Edit( { context }: EditProps ) {
 	const productId = parseInt( String( context?.[ 'newspack-blocks/fastCheckoutProductId' ] ?? 0 ), 10 );
 	const overridePrice = String( context?.[ 'newspack-blocks/fastCheckoutNypPrice' ] || '' );
 	const blockProps = useBlockProps();
-	const [ nyp, setNyp ] = useState< { min?: string; max?: string; suggested?: string } | null >( null );
+	const [ nyp, setNyp ] = useState< NypState >( { status: 'loading' } );
 
 	useEffect( () => {
 		if ( ! productId ) {
-			setNyp( null );
+			setNyp( { status: 'loading' } );
 			return;
 		}
+		setNyp( { status: 'loading' } );
 		apiFetch< StoreApiProduct >( { path: `/wc/store/v1/products/${ productId }` } )
 			.then( product => {
-				const ext = product?.extensions?.nyp;
+				const ext = product?.extensions?.name_your_price;
 				if ( ! ext?.is_nyp ) {
-					setNyp( null );
+					setNyp( { status: 'not-nyp' } );
 					return;
 				}
 				setNyp( {
+					status: 'ready',
 					min: ext.minimum_price,
 					max: ext.maximum_price,
 					suggested: ext.suggested_price,
 				} );
 			} )
-			.catch( () => setNyp( null ) );
+			.catch( () => setNyp( { status: 'not-nyp' } ) );
 	}, [ productId ] );
 
 	if ( ! productId ) {
@@ -48,10 +52,18 @@ export default function Edit( { context }: EditProps ) {
 		);
 	}
 
-	if ( null === nyp ) {
+	if ( nyp.status === 'loading' ) {
 		return (
 			<div { ...blockProps }>
 				<Spinner />
+			</div>
+		);
+	}
+
+	if ( nyp.status === 'not-nyp' ) {
+		return (
+			<div { ...blockProps }>
+				<em>{ __( 'This product is not configured for Name Your Price.', 'newspack-blocks' ) }</em>
 			</div>
 		);
 	}

@@ -193,7 +193,7 @@ function NypDefaultPrice( { productId, value, onChange }: NypDefaultPriceProps )
 		}
 		apiFetch< StoreApiProduct >( { path: `/wc/store/v1/products/${ productId }` } )
 			.then( product => {
-				const nyp = product?.extensions?.nyp;
+				const nyp = product?.extensions?.name_your_price;
 				if ( ! nyp?.is_nyp ) {
 					setHelp( '' );
 					return;
@@ -280,7 +280,7 @@ export default function Edit( { attributes, setAttributes, clientId }: EditProps
 				const flags = {
 					is_variable: !! p?.variations?.length,
 					is_grouped: p?.type === 'grouped' || !! p?.grouped_products?.length,
-					is_nyp: !! p?.extensions?.nyp?.is_nyp,
+					is_nyp: !! p?.extensions?.name_your_price?.is_nyp,
 				};
 				setAttributes( flags );
 
@@ -289,7 +289,7 @@ export default function Edit( { attributes, setAttributes, clientId }: EditProps
 						p.grouped_products.map( id => apiFetch< StoreApiProduct >( { path: `/wc/store/v1/products/${ id }` } ).catch( () => null ) )
 					).then( children => {
 						const unsupported = children.filter(
-							( c ): c is StoreApiProduct => !! c && ( ( c.variations?.length ?? 0 ) > 0 || !! c.extensions?.nyp?.is_nyp )
+							( c ): c is StoreApiProduct => !! c && ( ( c.variations?.length ?? 0 ) > 0 || !! c.extensions?.name_your_price?.is_nyp )
 						);
 						if ( unsupported.length ) {
 							setGroupedWarning(

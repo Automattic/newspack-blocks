@@ -12,7 +12,7 @@ export interface StoreApiProduct {
 	variations?: number[];
 	grouped_products?: number[];
 	extensions?: {
-		nyp?: {
+		name_your_price?: {
 			minimum_price?: string;
 			maximum_price?: string;
 			suggested_price?: string;
