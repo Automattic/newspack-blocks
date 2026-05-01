@@ -30,6 +30,7 @@ function NypInput( { host, productId, min, max }: RootProps ) {
 	const [ error, setError ] = useState< string >( '' );
 	const lastApplied = useRef< number >( parseFloat( input?.value || '0' ) || 0 );
 	const timer = useRef< ReturnType< typeof setTimeout > | null >( null );
+	const inFlightRef = useRef< boolean >( false );
 
 	useEffect( () => {
 		if ( noticeNode ) {
@@ -59,6 +60,9 @@ function NypInput( { host, productId, min, max }: RootProps ) {
 		};
 
 		const apply = async () => {
+			if ( inFlightRef.current ) {
+				return;
+			}
 			const raw = parseFloat( input.value );
 			if ( ! isFinite( raw ) || raw <= 0 ) {
 				setError( __( 'Enter a valid amount.', 'newspack-blocks' ) );
@@ -88,6 +92,7 @@ function NypInput( { host, productId, min, max }: RootProps ) {
 				return;
 			}
 
+			inFlightRef.current = true;
 			setInFlight( true );
 			try {
 				await applyNypPrice( productId, clamped );
@@ -97,6 +102,7 @@ function NypInput( { host, productId, min, max }: RootProps ) {
 				setError( ( ex as Error )?.message || __( 'Could not update price.', 'newspack-blocks' ) );
 				input.value = String( lastApplied.current );
 			} finally {
+				inFlightRef.current = false;
 				setInFlight( false );
 			}
 		};
