@@ -3,9 +3,10 @@
  */
 
 import { __ } from '@wordpress/i18n';
-import { useEffect, useState } from '@wordpress/element';
+import { useEffect, useRef, useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import { debounce } from 'lodash';
+import { createBlock } from '@wordpress/blocks';
 import { InnerBlocks, InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { PanelBody, BaseControl, TextControl, Button, Spinner, FormTokenField, SelectControl, Placeholder } from '@wordpress/components';
@@ -129,6 +130,13 @@ function VariationPicker( { productId, variationId, onChange }: VariationPickerP
 	);
 }
 
+interface Block {
+	name: string;
+	clientId: string;
+	attributes: Record< string, unknown >;
+	innerBlocks: Block[];
+}
+
 interface EditProps {
 	attributes: FastCheckoutAttributes;
 	setAttributes: ( attrs: Partial< FastCheckoutAttributes > ) => void;
@@ -138,7 +146,7 @@ interface EditProps {
 export default function Edit( { attributes, setAttributes, clientId }: EditProps ) {
 	const { product, variation, is_variable: isVariable, afterSuccessURL } = attributes;
 	const blockProps = useBlockProps();
-	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
+	const { updateBlockAttributes, insertBlocks, removeBlocks } = useDispatch( 'core/block-editor' );
 
 	// On first insert, find the checkout-actions-block and disable "Return to Cart".
 	const allDescendants = useSelect(
@@ -149,6 +157,13 @@ export default function Edit( { attributes, setAttributes, clientId }: EditProps
 		},
 		[ clientId ]
 	);
+
+	// Direct children of this block — used for selector auto-insert/auto-clean.
+	const innerBlocks = useSelect(
+		select => ( select( 'core/block-editor' ) as { getBlocks: ( id: string ) => Block[] } ).getBlocks( clientId ),
+		[ clientId ]
+	);
+
 	useEffect( () => {
 		allDescendants
 			.filter( b => b.name === 'woocommerce/checkout-actions-block' && b.attributes.showReturnToCart )
@@ -171,6 +186,77 @@ export default function Edit( { attributes, setAttributes, clientId }: EditProps
 			} )
 			.catch( () => setAttributes( { is_variable: false, is_grouped: false, is_nyp: false } ) );
 	}, [ product ] );
+
+	// Track previous type flags so we only react to transitions, not every render.
+	const previousFlags = useRef< { v: boolean; g: boolean; n: boolean } >( {
+		v: !! attributes.is_variable,
+		g: !! attributes.is_grouped,
+		n: !! attributes.is_nyp,
+	} );
+
+	// Auto-insert or auto-clean selector inner blocks when the product type changes.
+	useEffect( () => {
+		const prev = previousFlags.current;
+		const next = {
+			v: !! attributes.is_variable,
+			g: !! attributes.is_grouped,
+			n: !! attributes.is_nyp,
+		};
+
+		const transitions: { type: 'v' | 'g' | 'n'; on: boolean }[] = [];
+		if ( prev.v !== next.v ) {
+			transitions.push( { type: 'v', on: next.v } );
+		}
+		if ( prev.g !== next.g ) {
+			transitions.push( { type: 'g', on: next.g } );
+		}
+		if ( prev.n !== next.n ) {
+			transitions.push( { type: 'n', on: next.n } );
+		}
+
+		if ( ! transitions.length ) {
+			previousFlags.current = next;
+			return;
+		}
+
+		const slugFor: Record< 'v' | 'g' | 'n', string > = {
+			v: 'newspack-blocks/fast-checkout-variation-selector',
+			g: 'newspack-blocks/fast-checkout-grouped-selector',
+			n: 'newspack-blocks/fast-checkout-nyp-input',
+		};
+
+		const findClientIds = ( name: string ): string[] => innerBlocks.filter( ( b: Block ) => b.name === name ).map( ( b: Block ) => b.clientId );
+
+		const checkoutIndex = innerBlocks.findIndex( ( b: Block ) => b.name === 'woocommerce/checkout' );
+		const insertIndex = checkoutIndex >= 0 ? checkoutIndex : innerBlocks.length;
+
+		transitions.forEach( ( { type, on } ) => {
+			const slug = slugFor[ type ];
+			if ( on ) {
+				if ( findClientIds( slug ).length === 0 ) {
+					insertBlocks( createBlock( slug ), insertIndex, clientId, false );
+				}
+			} else {
+				const ids = findClientIds( slug );
+				if ( ids.length ) {
+					removeBlocks( ids, false );
+				}
+			}
+		} );
+
+		previousFlags.current = next;
+
+		// Reset child/price defaults when the product type changes.
+		if ( prev.v && ! next.v && attributes.variation ) {
+			setAttributes( { variation: '' } );
+		}
+		if ( prev.g && ! next.g && attributes.grouped_child ) {
+			setAttributes( { grouped_child: '' } );
+		}
+		if ( prev.n && ! next.n && attributes.nyp_price ) {
+			setAttributes( { nyp_price: '' } );
+		}
+	}, [ attributes.is_variable, attributes.is_grouped, attributes.is_nyp ] );
 
 	if ( ! product ) {
 		return (
