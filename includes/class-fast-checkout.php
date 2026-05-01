@@ -82,6 +82,7 @@ final class Fast_Checkout {
 		add_filter( 'block_type_metadata', [ __CLASS__, 'add_context_to_core_blocks' ] );
 		add_filter( 'woocommerce_is_checkout', [ __CLASS__, 'maybe_flag_as_checkout' ] );
 		add_filter( 'render_block_data', [ __CLASS__, 'filter_checkout_actions_block' ] );
+		add_filter( 'woocommerce_store_api_add_to_cart_data', [ __CLASS__, 'store_api_nyp_bridge_handler' ], 10, 2 );
 	}
 
 	/**
@@ -656,6 +657,61 @@ final class Fast_Checkout {
 		if ( ! empty( $values['_fc_success_url'] ) ) {
 			$item->add_meta_data( '_fc_success_url', esc_url_raw( $values['_fc_success_url'] ), true );
 		}
+	}
+
+	/**
+	 * Filter handler that adapts the WC Store API add-to-cart payload to inject
+	 * NYP cart_item_data when the reader-set price is present in the request.
+	 *
+	 * @param array            $request_data WC's normalized cart_item_data array.
+	 * @param \WP_REST_Request $request      Underlying REST request.
+	 * @return array
+	 */
+	public static function store_api_nyp_bridge_handler( $request_data, $request ) {
+		$product_id = isset( $request_data['product_id'] ) ? (int) $request_data['product_id'] : 0;
+		if ( ! $product_id && method_exists( $request, 'get_param' ) ) {
+			$product_id = (int) $request->get_param( 'id' );
+		}
+		$request_data['cart_item_data'] = self::store_api_nyp_bridge(
+			$request_data['cart_item_data'] ?? [],
+			$product_id,
+			$request
+		);
+		return $request_data;
+	}
+
+	/**
+	 * Pure helper: inject the NYP value into cart_item_data when the request
+	 * body carries one and the target product is NYP-eligible. Clamps to min/max.
+	 *
+	 * @param array            $cart_item_data Existing cart item data.
+	 * @param int              $product_id     Target product.
+	 * @param \WP_REST_Request $request        REST request.
+	 * @return array
+	 */
+	public static function store_api_nyp_bridge( $cart_item_data, $product_id, $request ) {
+		if ( ! class_exists( '\WC_Name_Your_Price_Helpers' ) ) {
+			return $cart_item_data;
+		}
+		if ( ! \WC_Name_Your_Price_Helpers::is_nyp( $product_id ) ) {
+			return $cart_item_data;
+		}
+		$body = method_exists( $request, 'get_body_params' ) ? $request->get_body_params() : [];
+		$raw  = $body['cart_item_data']['nyp'] ?? null;
+		if ( null === $raw && method_exists( $request, 'get_json_params' ) ) {
+			$json = $request->get_json_params();
+			$raw  = is_array( $json ) ? ( $json['cart_item_data']['nyp'] ?? null ) : null;
+		}
+		if ( null === $raw || ! is_numeric( $raw ) ) {
+			return $cart_item_data;
+		}
+		$price     = (float) $raw;
+		$min_price = \WC_Name_Your_Price_Helpers::get_minimum_price( $product_id );
+		$max_price = \WC_Name_Your_Price_Helpers::get_maximum_price( $product_id );
+		$price     = ! empty( $max_price ) ? min( $price, (float) $max_price ) : $price;
+		$price     = ! empty( $min_price ) ? max( $price, (float) $min_price ) : $price;
+		$cart_item_data['nyp'] = (float) \WC_Name_Your_Price_Helpers::standardize_number( $price );
+		return $cart_item_data;
 	}
 
 	/**

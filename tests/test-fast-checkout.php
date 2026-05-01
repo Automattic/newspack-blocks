@@ -680,6 +680,41 @@ class Test_Fast_Checkout extends WP_UnitTestCase_Blocks {
 	}
 
 	/**
+	 * Test that the Store API NYP bridge filter applies nyp from request body.
+	 */
+	public function test_store_api_nyp_bridge_applies_request_value() {
+		$this->skip_without_wc();
+		if ( ! class_exists( '\WC_Name_Your_Price_Helpers' ) ) {
+			$this->markTestSkipped( 'WC Name Your Price not available.' );
+		}
+
+		$product = $this->create_simple_product();
+		update_post_meta( $product->get_id(), '_nyp', 'yes' );
+		update_post_meta( $product->get_id(), '_min_price', '5' );
+		update_post_meta( $product->get_id(), '_max_price', '50' );
+		update_post_meta( $product->get_id(), '_suggested_price', '15' );
+
+		// Simulate Store API add_to_cart payload with cart_item_data.nyp.
+		$request = new \WP_REST_Request( 'POST', '/wc/store/v1/cart/add-item' );
+		$request->set_body_params(
+			[
+				'id'             => $product->get_id(),
+				'quantity'       => 1,
+				'cart_item_data' => [ 'nyp' => 22.5 ],
+			]
+		);
+
+		$cart_item_data = [];
+		$cart_item_data = Fast_Checkout::store_api_nyp_bridge(
+			$cart_item_data,
+			$product->get_id(),
+			$request
+		);
+
+		$this->assertSame( 22.5, $cart_item_data['nyp'] ?? null );
+	}
+
+	/**
 	 * Test that fc_price query param overrides nyp_price attribute when both set.
 	 *
 	 * Skips when WC Name Your Price plugin isn't active.
