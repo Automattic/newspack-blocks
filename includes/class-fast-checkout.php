@@ -227,13 +227,22 @@ final class Fast_Checkout {
 			return $parent;
 		}
 
-		// Variable: existing logic, with query param override.
+		// Variable: query param > attribute > first variation (runtime).
 		if ( $is_variable ) {
 			if ( ! empty( $qp['variation'] ) ) {
 				return (int) $qp['variation'];
 			}
 			if ( ! empty( $attrs['variation'] ) ) {
 				return (int) $attrs['variation'];
+			}
+			if ( function_exists( 'wc_get_product' ) ) {
+				$parent = wc_get_product( (int) $attrs['product'] );
+				if ( $parent && method_exists( $parent, 'get_children' ) ) {
+					$children = array_map( 'intval', $parent->get_children() );
+					if ( ! empty( $children ) ) {
+						return $children[0];
+					}
+				}
 			}
 		}
 
