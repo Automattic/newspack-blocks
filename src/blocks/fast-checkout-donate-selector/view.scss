@@ -6,15 +6,12 @@
 	&__frequencies {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.5em;
+		gap: 0.5em 1.25em;
 
 		label {
 			display: inline-flex;
 			align-items: center;
 			gap: 0.4em;
-			padding: 0.4em 0.8em;
-			border: 1px solid var( --wp--preset--color--secondary, #ddd );
-			border-radius: 4px;
 			cursor: pointer;
 		}
 

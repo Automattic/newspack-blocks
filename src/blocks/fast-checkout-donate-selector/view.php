@@ -93,6 +93,28 @@ function suffix_for_period( $period ) {
 }
 
 /**
+ * Map a WC Subscriptions period code to a frequency label
+ * ("One-time donation", "Monthly donation", etc.).
+ *
+ * @param string $period The period code.
+ * @return string Label.
+ */
+function label_for_period( $period ) {
+	switch ( $period ) {
+		case 'day':
+			return __( 'Daily donation', 'newspack-blocks' );
+		case 'week':
+			return __( 'Weekly donation', 'newspack-blocks' );
+		case 'month':
+			return __( 'Monthly donation', 'newspack-blocks' );
+		case 'year':
+			return __( 'Yearly donation', 'newspack-blocks' );
+		default:
+			return __( 'One-time donation', 'newspack-blocks' );
+	}
+}
+
+/**
  * Render the donate selector SSR shell.
  *
  * @param array  $attrs   Block attributes.
@@ -120,8 +142,7 @@ function render_block( $attrs, $content, $block ) {
 	}
 
 	// Build per-child data and skip non-NYP / non-purchasable children.
-	$parent_prefix = $product->get_name() . ': ';
-	$children      = [];
+	$children = [];
 	foreach ( $child_ids as $child_id ) {
 		$child = wc_get_product( $child_id );
 		if ( ! $child || ! $child->is_purchasable() ) {
@@ -132,14 +153,11 @@ function render_block( $attrs, $content, $block ) {
 			// Donate selector targets NYP children. Skip non-NYP.
 			continue;
 		}
-		$name = $child->get_name();
-		if ( 0 === strpos( $name, $parent_prefix ) ) {
-			$name = substr( $name, strlen( $parent_prefix ) );
-		}
+		$period     = get_subscription_period( $child_id );
 		$children[] = [
 			'id'        => $child_id,
-			'name'      => $name,
-			'period'    => get_subscription_period( $child_id ),
+			'name'      => label_for_period( $period ),
+			'period'    => $period,
 			'min'       => $nyp_config['min'],
 			'max'       => $nyp_config['max'],
 			'suggested' => $nyp_config['suggested'],

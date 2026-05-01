@@ -12,28 +12,32 @@ interface ChildPreview {
 }
 
 /**
- * Best-effort frequency rank from a (prefix-stripped) child name. Mirrors
- * the canonical period-meta sort the SSR uses, but operates on naming
- * conventions because Store API doesn't expose subscription period.
+ * Best-effort frequency derivation from a (prefix-stripped) child name.
+ * Mirrors the canonical period-meta sort the SSR uses, but operates on
+ * naming conventions because Store API doesn't expose subscription period.
+ *
+ * @param name Child product name (with parent prefix already stripped).
+ * @return Rank (for sorting) and frequency-derived label, or the raw name
+ *         for unrecognized frequencies (which sort last).
  */
-function rankFromName( name: string ): number {
+function frequencyFromName( name: string ): { rank: number; label: string } {
 	const lower = name.toLowerCase();
 	if ( lower.includes( 'one-time' ) || lower.includes( 'one time' ) || lower.includes( 'once' ) ) {
-		return 0;
+		return { rank: 0, label: __( 'One-time donation', 'newspack-blocks' ) };
 	}
 	if ( lower.includes( 'daily' ) || lower.includes( 'day' ) ) {
-		return 1;
+		return { rank: 1, label: __( 'Daily donation', 'newspack-blocks' ) };
 	}
 	if ( lower.includes( 'weekly' ) || lower.includes( 'week' ) ) {
-		return 2;
+		return { rank: 2, label: __( 'Weekly donation', 'newspack-blocks' ) };
 	}
 	if ( lower.includes( 'monthly' ) || lower.includes( 'month' ) ) {
-		return 3;
+		return { rank: 3, label: __( 'Monthly donation', 'newspack-blocks' ) };
 	}
 	if ( lower.includes( 'yearly' ) || lower.includes( 'year' ) || lower.includes( 'annual' ) ) {
-		return 4;
+		return { rank: 4, label: __( 'Yearly donation', 'newspack-blocks' ) };
 	}
-	return 99;
+	return { rank: 99, label: name };
 }
 
 interface EditProps {
@@ -63,14 +67,15 @@ export default function Edit( { context }: EditProps ) {
 				return Promise.all(
 					ids.map( id => apiFetch< StoreApiProduct >( { path: `/wc/store/v1/products/${ id }` } ).catch( () => null ) )
 				).then( fetched => {
-					const list: ChildPreview[] = fetched
+					const list = fetched
 						.filter( ( c ): c is StoreApiProduct => Boolean( c ) )
-						.map( c => ( {
-							id: c.id,
-							name: c.name.startsWith( parentPrefix ) ? c.name.slice( parentPrefix.length ) : c.name,
-						} ) );
-					list.sort( ( a, b ) => rankFromName( a.name ) - rankFromName( b.name ) );
-					setChildren( list );
+						.map( c => {
+							const stripped = c.name.startsWith( parentPrefix ) ? c.name.slice( parentPrefix.length ) : c.name;
+							const { rank, label } = frequencyFromName( stripped );
+							return { id: c.id, name: label, rank };
+						} );
+					list.sort( ( a, b ) => a.rank - b.rank );
+					setChildren( list.map( ( { id, name } ) => ( { id, name } ) ) );
 				} );
 			} )
 			.catch( () => setChildren( [] ) );
