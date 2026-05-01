@@ -582,7 +582,8 @@ final class Fast_Checkout {
 	 */
 	public static function filter_render( $content, $block ) {
 		$attrs      = $block['attrs'] ?? [];
-		$product_id = self::resolve_product_id_from_attrs( $attrs );
+		$qp         = self::get_query_params();
+		$product_id = self::resolve_effective_product_id( $attrs, $qp );
 
 		if ( $product_id && function_exists( 'wc_get_product' ) ) {
 			$product = wc_get_product( $product_id );

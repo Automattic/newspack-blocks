@@ -197,6 +197,30 @@ class Test_Fast_Checkout extends WP_UnitTestCase_Blocks {
 		$this->assertStringContainsString( 'unavailable', $filtered );
 	}
 
+	/**
+	 * Test that filter_render passes through for a grouped product without
+	 * an editor-set grouped_child, by resolving to the first purchasable child.
+	 *
+	 * Regression: previously called resolve_product_id_from_attrs (attrs-only),
+	 * which returned the parent grouped product ID — and grouped parents are
+	 * not purchasable, so the unavailable notice rendered instead of content.
+	 */
+	public function test_filter_render_passes_through_for_grouped_without_child() {
+		$this->skip_without_wc();
+
+		$child   = $this->create_simple_product();
+		$grouped = $this->create_grouped_product( [ $child->get_id() ] );
+		$content = '<div class="wp-block-newspack-blocks-fast-checkout">Buy now</div>';
+		$block   = [
+			'attrs' => [
+				'product'    => (string) $grouped->get_id(),
+				'is_grouped' => true,
+			],
+		];
+		$filtered = Fast_Checkout::filter_render( $content, $block );
+		$this->assertSame( $content, $filtered );
+	}
+
 	// ---- Cart replacement tests (WC-dependent) ----
 
 	/**
