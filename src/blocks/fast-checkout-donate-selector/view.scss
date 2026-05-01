@@ -31,22 +31,24 @@
 	}
 
 	&__input-wrapper {
-		display: flex;
-		align-items: baseline;
-		gap: 0.4em;
+		position: relative;
+		display: block;
 
 		input[ type="number" ] {
-			flex: 1;
-			min-width: 0;
-			font-size: 1.25em;
-			padding: 0.4em 0.6em;
 			width: 100%;
+			font-size: 1.25em;
+			padding: 0.4em 5em 0.4em 0.6em;
 		}
 	}
 
 	&__suffix {
-		font-size: 0.9em;
+		position: absolute;
+		top: 50%;
+		right: 0.6em;
+		transform: translateY( -50% );
+		font-size: 0.95em;
 		opacity: 0.75;
+		pointer-events: none;
 	}
 
 	&__hint {
