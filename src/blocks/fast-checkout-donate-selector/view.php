@@ -120,7 +120,8 @@ function render_block( $attrs, $content, $block ) {
 	}
 
 	// Build per-child data and skip non-NYP / non-purchasable children.
-	$children = [];
+	$parent_prefix = $product->get_name() . ': ';
+	$children      = [];
 	foreach ( $child_ids as $child_id ) {
 		$child = wc_get_product( $child_id );
 		if ( ! $child || ! $child->is_purchasable() ) {
@@ -131,9 +132,13 @@ function render_block( $attrs, $content, $block ) {
 			// Donate selector targets NYP children. Skip non-NYP.
 			continue;
 		}
+		$name = $child->get_name();
+		if ( 0 === strpos( $name, $parent_prefix ) ) {
+			$name = substr( $name, strlen( $parent_prefix ) );
+		}
 		$children[] = [
 			'id'        => $child_id,
-			'name'      => $child->get_name(),
+			'name'      => $name,
 			'period'    => get_subscription_period( $child_id ),
 			'min'       => $nyp_config['min'],
 			'max'       => $nyp_config['max'],
@@ -144,6 +149,21 @@ function render_block( $attrs, $content, $block ) {
 	if ( empty( $children ) ) {
 		return '';
 	}
+
+	// Sort by frequency: one-time → daily → weekly → monthly → yearly.
+	$period_rank = [
+		''      => 0,
+		'day'   => 1,
+		'week'  => 2,
+		'month' => 3,
+		'year'  => 4,
+	];
+	usort(
+		$children,
+		function ( $a, $b ) use ( $period_rank ) {
+			return ( $period_rank[ $a['period'] ] ?? 99 ) - ( $period_rank[ $b['period'] ] ?? 99 );
+		}
+	);
 
 	// Resolve the currently-selected child: query param > context attribute > first.
 	$current_child = (int) ( $block->context['newspack-blocks/fastCheckoutGroupedChild'] ?? 0 );

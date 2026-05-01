@@ -29,6 +29,7 @@ export default function Edit( { context }: EditProps ) {
 		}
 		apiFetch< StoreApiProduct >( { path: `/wc/store/v1/products/${ productId }` } )
 			.then( product => {
+				const parentPrefix = `${ product?.name || '' }: `;
 				const ids = product?.grouped_products || [];
 				if ( ! ids.length ) {
 					setChildren( [] );
@@ -37,7 +38,14 @@ export default function Edit( { context }: EditProps ) {
 				return Promise.all(
 					ids.map( id => apiFetch< StoreApiProduct >( { path: `/wc/store/v1/products/${ id }` } ).catch( () => null ) )
 				).then( fetched => {
-					setChildren( fetched.filter( ( c ): c is StoreApiProduct => Boolean( c ) ).map( c => ( { id: c.id, name: c.name } ) ) );
+					setChildren(
+						fetched
+							.filter( ( c ): c is StoreApiProduct => Boolean( c ) )
+							.map( c => ( {
+								id: c.id,
+								name: c.name.startsWith( parentPrefix ) ? c.name.slice( parentPrefix.length ) : c.name,
+							} ) )
+					);
 				} );
 			} )
 			.catch( () => setChildren( [] ) );
