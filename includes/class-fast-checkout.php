@@ -354,11 +354,19 @@ final class Fast_Checkout {
 		// Idempotency: if the cart already has exactly the right item, do nothing.
 		$cart_contents = $cart->get_cart();
 		if ( 1 === count( $cart_contents ) && empty( $qp ) ) {
-			$item       = reset( $cart_contents );
-			$matches_id = ( $product->is_type( 'variation' ) )
+			$item        = reset( $cart_contents );
+			$matches_id  = ( $product->is_type( 'variation' ) )
 				? (int) $item['variation_id'] === $product_id
 				: (int) $item['product_id'] === $product_id;
-			if ( $matches_id && (int) $quantity === (int) $item['quantity'] ) {
+			$matches_qty = (int) $quantity === (int) $item['quantity'];
+
+			// NYP products require a valid nyp value to checkout. If the cart
+			// item was added before the suggested-price fallback landed, it
+			// will be missing — fail idempotency so we re-populate.
+			$is_nyp        = class_exists( '\WC_Name_Your_Price_Helpers' ) && \WC_Name_Your_Price_Helpers::is_nyp( $product_id );
+			$has_valid_nyp = ! $is_nyp || ( isset( $item['nyp'] ) && is_numeric( $item['nyp'] ) && (float) $item['nyp'] > 0 );
+
+			if ( $matches_id && $matches_qty && $has_valid_nyp ) {
 				return;
 			}
 		}
@@ -402,6 +410,13 @@ final class Fast_Checkout {
 		$cart_item_data = apply_filters( 'newspack_blocks_fast_checkout_cart_item_data', $cart_item_data, $product_id, $post, $qp );
 
 		$cart->empty_cart();
+
+		// Clear stale validation notices from the prior cart state — e.g. WC NYP's
+		// `check_cart_items` may have added an error notice on `wp_loaded` (before
+		// this action) for an item that's about to be replaced.
+		if ( function_exists( 'wc_clear_notices' ) ) {
+			wc_clear_notices( 'error' );
+		}
 
 		if ( $product->is_type( 'variation' ) ) {
 			$parent_id = $product->get_parent_id();
