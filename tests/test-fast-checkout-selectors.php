@@ -8,6 +8,8 @@
 
 /**
  * Fast Checkout selectors test case.
+ *
+ * @group fast-checkout-selectors
  */
 class Test_Fast_Checkout_Selectors extends WP_UnitTestCase_Blocks {
 
@@ -120,5 +122,106 @@ class Test_Fast_Checkout_Selectors extends WP_UnitTestCase_Blocks {
 		// Negative assertions: the unchecked radios should not have `checked`.
 		$this->assertDoesNotMatchRegularExpression( '/value="red"[^>]*checked/', $rendered );
 		$this->assertDoesNotMatchRegularExpression( '/value="s"[^>]*checked/', $rendered );
+	}
+
+	/**
+	 * Create a grouped product with two children.
+	 *
+	 * @return array { 'parent': WC_Product_Grouped, 'children': WC_Product_Simple[] }
+	 */
+	private function create_grouped_product_fixture() {
+		$first  = new \WC_Product_Simple();
+		$first->set_name( 'Annual' );
+		$first->set_regular_price( '50.00' );
+		$first->set_status( 'publish' );
+		$first->save();
+
+		$second = new \WC_Product_Simple();
+		$second->set_name( 'Monthly' );
+		$second->set_regular_price( '5.00' );
+		$second->set_status( 'publish' );
+		$second->save();
+
+		$parent = new \WC_Product_Grouped();
+		$parent->set_name( 'Membership' );
+		$parent->set_status( 'publish' );
+		$parent->set_children( [ $first->get_id(), $second->get_id() ] );
+		$parent->save();
+
+		return [ 'parent' => wc_get_product( $parent->get_id() ), 'children' => [ $first, $second ] ];
+	}
+
+	/**
+	 * Test that the grouped-selector renders one radio per child.
+	 */
+	public function test_grouped_selector_renders_children() {
+		$this->skip_without_wc();
+		$fixture = $this->create_grouped_product_fixture();
+
+		$block_html = sprintf(
+			'<!-- wp:newspack-blocks/fast-checkout {"product":"%d","is_grouped":true} -->
+				<div class="wp-block-newspack-blocks-fast-checkout">
+					<!-- wp:newspack-blocks/fast-checkout-grouped-selector /-->
+				</div>
+			<!-- /wp:newspack-blocks/fast-checkout -->',
+			$fixture['parent']->get_id()
+		);
+
+		$rendered = do_blocks( $block_html );
+
+		$this->assertStringContainsString( 'Annual', $rendered );
+		$this->assertStringContainsString( 'Monthly', $rendered );
+		$this->assertSame( 2, substr_count( $rendered, '<input type="radio"' ) );
+	}
+
+	/**
+	 * Test that the grouped-selector pre-checks the editor's chosen child.
+	 */
+	public function test_grouped_selector_pre_checks_editor_child() {
+		$this->skip_without_wc();
+		$fixture = $this->create_grouped_product_fixture();
+		$monthly = $fixture['children'][1];
+
+		$block_html = sprintf(
+			'<!-- wp:newspack-blocks/fast-checkout {"product":"%d","is_grouped":true,"grouped_child":"%d"} -->
+				<div class="wp-block-newspack-blocks-fast-checkout">
+					<!-- wp:newspack-blocks/fast-checkout-grouped-selector /-->
+				</div>
+			<!-- /wp:newspack-blocks/fast-checkout -->',
+			$fixture['parent']->get_id(),
+			$monthly->get_id()
+		);
+
+		$rendered = do_blocks( $block_html );
+
+		$this->assertMatchesRegularExpression(
+			'/value="' . $monthly->get_id() . '"[^>]*checked/',
+			$rendered
+		);
+	}
+
+	/**
+	 * Test that the grouped-selector pre-checks the first child when none set.
+	 */
+	public function test_grouped_selector_falls_back_to_first_child() {
+		$this->skip_without_wc();
+		$fixture = $this->create_grouped_product_fixture();
+		$annual  = $fixture['children'][0];
+
+		$block_html = sprintf(
+			'<!-- wp:newspack-blocks/fast-checkout {"product":"%d","is_grouped":true} -->
+				<div class="wp-block-newspack-blocks-fast-checkout">
+					<!-- wp:newspack-blocks/fast-checkout-grouped-selector /-->
+				</div>
+			<!-- /wp:newspack-blocks/fast-checkout -->',
+			$fixture['parent']->get_id()
+		);
+
+		$rendered = do_blocks( $block_html );
+
+		$this->assertMatchesRegularExpression(
+			'/value="' . $annual->get_id() . '"[^>]*checked/',
+			$rendered
+		);
 	}
 }
