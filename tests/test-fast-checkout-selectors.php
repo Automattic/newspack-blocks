@@ -224,4 +224,41 @@ class Test_Fast_Checkout_Selectors extends WP_UnitTestCase_Blocks {
 			$rendered
 		);
 	}
+
+	/**
+	 * Test that the NYP input renders with min/max/suggested attributes when WC NYP is active.
+	 */
+	public function test_nyp_input_renders_constraints() {
+		$this->skip_without_wc();
+		if ( ! class_exists( '\WC_Name_Your_Price_Helpers' ) ) {
+			$this->markTestSkipped( 'WC Name Your Price not available.' );
+		}
+
+		$product = new \WC_Product_Simple();
+		$product->set_name( 'Donate' );
+		$product->set_status( 'publish' );
+		$product->save();
+		update_post_meta( $product->get_id(), '_nyp', 'yes' );
+		update_post_meta( $product->get_id(), '_min_price', '5' );
+		update_post_meta( $product->get_id(), '_max_price', '500' );
+		update_post_meta( $product->get_id(), '_suggested_price', '20' );
+
+		$block_html = sprintf(
+			'<!-- wp:newspack-blocks/fast-checkout {"product":"%d","is_nyp":true} -->
+				<div class="wp-block-newspack-blocks-fast-checkout">
+					<!-- wp:newspack-blocks/fast-checkout-nyp-input /-->
+				</div>
+			<!-- /wp:newspack-blocks/fast-checkout -->',
+			$product->get_id()
+		);
+
+		$rendered = do_blocks( $block_html );
+
+		$this->assertStringContainsString( 'data-min="5"', $rendered );
+		$this->assertStringContainsString( 'data-max="500"', $rendered );
+		$this->assertStringContainsString( 'data-suggested="20"', $rendered );
+		$this->assertStringContainsString( 'min="5"', $rendered );
+		$this->assertStringContainsString( 'max="500"', $rendered );
+		$this->assertStringContainsString( 'value="20"', $rendered );
+	}
 }
