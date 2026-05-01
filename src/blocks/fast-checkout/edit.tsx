@@ -155,16 +155,21 @@ export default function Edit( { attributes, setAttributes, clientId }: EditProps
 			.forEach( b => updateBlockAttributes( b.clientId, { showReturnToCart: false } ) );
 	}, [ allDescendants.length ] );
 
-	// Detect variable product when product changes.
+	// Detect product type and set flags when product changes.
 	useEffect( () => {
 		if ( ! product ) {
 			return;
 		}
 		apiFetch< StoreApiProduct >( { path: `/wc/store/v1/products/${ product }` } )
 			.then( p => {
-				setAttributes( { is_variable: !! p?.variations?.length } );
+				const flags = {
+					is_variable: !! p?.variations?.length,
+					is_grouped: p?.type === 'grouped' || !! p?.grouped_products?.length,
+					is_nyp: !! p?.extensions?.nyp?.is_nyp,
+				};
+				setAttributes( flags );
 			} )
-			.catch( () => setAttributes( { is_variable: false } ) );
+			.catch( () => setAttributes( { is_variable: false, is_grouped: false, is_nyp: false } ) );
 	}, [ product ] );
 
 	if ( ! product ) {
