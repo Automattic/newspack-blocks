@@ -1,0 +1,30 @@
+.wp-block-newspack-blocks-fast-checkout-nyp-input {
+	display: flex;
+	flex-direction: column;
+	gap: 0.4em;
+	max-width: 16em;
+
+	label {
+		font-weight: 600;
+	}
+
+	input[ type="number" ] {
+		font-size: 1.25em;
+		padding: 0.4em 0.6em;
+	}
+
+	.wp-block-newspack-blocks-fast-checkout-nyp-input__hint {
+		font-size: 0.8125em;
+		opacity: 0.75;
+	}
+
+	.wp-block-newspack-blocks-fast-checkout-nyp-input__notice {
+		color: var(--wp--preset--color--vivid-red, #cc1818);
+		font-size: 0.8125em;
+	}
+
+	&[ data-status="busy" ] input[ type="number" ] {
+		opacity: 0.6;
+		pointer-events: none;
+	}
+}
