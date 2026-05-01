@@ -130,6 +130,105 @@ function VariationPicker( { productId, variationId, onChange }: VariationPickerP
 	);
 }
 
+interface GroupedChildPickerProps {
+	productId: string;
+	childId?: string;
+	onChange: ( id: string ) => void;
+}
+
+function GroupedChildPicker( { productId, childId, onChange }: GroupedChildPickerProps ) {
+	const [ children, setChildren ] = useState< { id: number; name: string }[] >( [] );
+
+	useEffect( () => {
+		if ( ! productId ) {
+			setChildren( [] );
+			return;
+		}
+		apiFetch< StoreApiProduct >( { path: `/wc/store/v1/products/${ productId }` } )
+			.then( product => {
+				const ids = product?.grouped_products || [];
+				if ( ! ids.length ) {
+					setChildren( [] );
+					return;
+				}
+				return Promise.all(
+					ids.map( id => apiFetch< StoreApiProduct >( { path: `/wc/store/v1/products/${ id }` } ).catch( () => null ) )
+				).then( results => {
+					setChildren( results.filter( ( c ): c is StoreApiProduct => Boolean( c ) ).map( c => ( { id: c.id, name: c.name } ) ) );
+				} );
+			} )
+			.catch( () => setChildren( [] ) );
+	}, [ productId ] );
+
+	if ( ! children.length ) {
+		return null;
+	}
+
+	return (
+		<SelectControl
+			label={ __( 'Default child product', 'newspack-blocks' ) }
+			help={ __( 'Pre-select a child for readers; leave blank to use the first child.', 'newspack-blocks' ) }
+			value={ childId || '' }
+			options={ [
+				{ label: __( 'First child (default)', 'newspack-blocks' ), value: '' },
+				...children.map( c => ( { label: c.name, value: String( c.id ) } ) ),
+			] }
+			onChange={ onChange }
+		/>
+	);
+}
+
+interface NypDefaultPriceProps {
+	productId: string;
+	value?: string;
+	onChange: ( value: string ) => void;
+}
+
+function NypDefaultPrice( { productId, value, onChange }: NypDefaultPriceProps ) {
+	const [ help, setHelp ] = useState< string >( '' );
+
+	useEffect( () => {
+		if ( ! productId ) {
+			return;
+		}
+		apiFetch< StoreApiProduct >( { path: `/wc/store/v1/products/${ productId }` } )
+			.then( product => {
+				const nyp = product?.extensions?.nyp;
+				if ( ! nyp?.is_nyp ) {
+					setHelp( '' );
+					return;
+				}
+				const min = nyp.minimum_price;
+				const max = nyp.maximum_price;
+				const suggested = nyp.suggested_price;
+				const parts: string[] = [];
+				if ( min && max ) {
+					parts.push(
+						/* translators: 1: min price, 2: max price */
+						__( 'Allowed: %1$s – %2$s.', 'newspack-blocks' ).replace( '%1$s', min ).replace( '%2$s', max )
+					);
+				}
+				if ( suggested ) {
+					parts.push(
+						/* translators: %s: suggested price */
+						__( 'Suggested: %s.', 'newspack-blocks' ).replace( '%s', suggested )
+					);
+				}
+				setHelp( parts.join( ' ' ) || __( 'Reader can set any amount.', 'newspack-blocks' ) );
+			} )
+			.catch( () => setHelp( '' ) );
+	}, [ productId ] );
+
+	return (
+		<TextControl
+			label={ __( 'Default amount (override)', 'newspack-blocks' ) }
+			help={ help || __( "Leave blank to use the product's suggested amount.", 'newspack-blocks' ) }
+			value={ value || '' }
+			onChange={ onChange }
+		/>
+	);
+}
+
 interface Block {
 	name: string;
 	clientId: string;
@@ -299,6 +398,20 @@ export default function Edit( { attributes, setAttributes, clientId }: EditProps
 							productId={ product }
 							variationId={ variation }
 							onChange={ newVariation => setAttributes( { variation: newVariation } ) }
+						/>
+					) }
+					{ attributes.is_grouped && (
+						<GroupedChildPicker
+							productId={ product || '' }
+							childId={ attributes.grouped_child }
+							onChange={ value => setAttributes( { grouped_child: value } ) }
+						/>
+					) }
+					{ attributes.is_nyp && (
+						<NypDefaultPrice
+							productId={ product || '' }
+							value={ attributes.nyp_price }
+							onChange={ value => setAttributes( { nyp_price: value } ) }
 						/>
 					) }
 					<TextControl
