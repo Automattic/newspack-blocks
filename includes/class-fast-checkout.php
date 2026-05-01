@@ -492,7 +492,14 @@ final class Fast_Checkout {
 				: (int) $item['product_id'];
 			$matches_id  = $cart_pid === $product_id;
 			$matches_qty = (int) $quantity === (int) $item['quantity'];
-			if ( $matches_id && $matches_qty ) {
+
+			// NYP products require a valid nyp value to checkout. If the cart
+			// item was added before the suggested-price fallback landed, it
+			// will be missing — fail idempotency so we re-populate.
+			$is_nyp        = class_exists( '\WC_Name_Your_Price_Helpers' ) && \WC_Name_Your_Price_Helpers::is_nyp( $product_id );
+			$has_valid_nyp = ! $is_nyp || ( isset( $item['nyp'] ) && is_numeric( $item['nyp'] ) && (float) $item['nyp'] > 0 );
+
+			if ( $matches_id && $matches_qty && $has_valid_nyp ) {
 				return;
 			}
 		}
@@ -507,15 +514,19 @@ final class Fast_Checkout {
 			$cart_item_data['_fc_success_url'] = $qp['success'];
 		}
 
-		// Handle Name Your Price: query param > attribute > suggested.
+		// Handle Name Your Price: fc_price > nyp_price attr > suggested > minimum.
 		if ( class_exists( '\WC_Name_Your_Price_Helpers' ) && \WC_Name_Your_Price_Helpers::is_nyp( $product_id ) ) {
-			$price = null;
-			if ( ! empty( $qp['price'] ) ) {
-				$price = (float) $qp['price'];
-			} elseif ( ! empty( $attrs['nyp_price'] ) && is_numeric( $attrs['nyp_price'] ) ) {
+			$price = ! empty( $qp['price'] ) ? (float) $qp['price'] : null;
+			if ( null === $price && ! empty( $attrs['nyp_price'] ) && is_numeric( $attrs['nyp_price'] ) ) {
 				$price = (float) $attrs['nyp_price'];
 			}
-			if ( null !== $price ) {
+			if ( null === $price ) {
+				$price = (float) \WC_Name_Your_Price_Helpers::get_suggested_price( $product_id );
+			}
+			if ( ! $price ) {
+				$price = (float) \WC_Name_Your_Price_Helpers::get_minimum_price( $product_id );
+			}
+			if ( $price > 0 ) {
 				$min_price = \WC_Name_Your_Price_Helpers::get_minimum_price( $product_id );
 				$max_price = \WC_Name_Your_Price_Helpers::get_maximum_price( $product_id );
 				$price     = ! empty( $max_price ) ? min( $price, (float) $max_price ) : $price;
@@ -535,6 +546,13 @@ final class Fast_Checkout {
 		$cart_item_data = apply_filters( 'newspack_blocks_fast_checkout_cart_item_data', $cart_item_data, $product_id, $post, $qp );
 
 		$cart->empty_cart();
+
+		// Clear stale validation notices from the prior cart state — e.g. WC NYP's
+		// `check_cart_items` may have added an error notice on `wp_loaded` (before
+		// this action) for an item that's about to be replaced.
+		if ( function_exists( 'wc_clear_notices' ) ) {
+			wc_clear_notices( 'error' );
+		}
 
 		if ( $product->is_type( 'variation' ) ) {
 			$parent_id = $product->get_parent_id();
