@@ -751,4 +751,36 @@ class Test_Fast_Checkout extends WP_UnitTestCase_Blocks {
 
 		unset( $_GET[ Fast_Checkout::QP_PRICE ] );
 	}
+
+	/**
+	 * Test that maybe_replace_cart falls back to the product's suggested price
+	 * when neither fc_price nor nyp_price attribute is set.
+	 *
+	 * Skips when WC Name Your Price plugin isn't active.
+	 */
+	public function test_maybe_replace_cart_falls_back_to_suggested_nyp() {
+		$this->skip_without_wc();
+		if ( ! class_exists( '\WC_Name_Your_Price_Helpers' ) ) {
+			$this->markTestSkipped( 'WC Name Your Price not available.' );
+		}
+
+		$product = $this->create_simple_product();
+		update_post_meta( $product->get_id(), '_nyp', 'yes' );
+		update_post_meta( $product->get_id(), '_min_price', '5' );
+		update_post_meta( $product->get_id(), '_max_price', '50' );
+		update_post_meta( $product->get_id(), '_suggested_price', '15' );
+
+		$post_id = $this->make_fast_checkout_post(
+			$product->get_id(),
+			[ 'is_nyp' => true ]
+		);
+		$this->go_to( get_permalink( $post_id ) );
+
+		Fast_Checkout::maybe_replace_cart();
+
+		$cart_contents = WC()->cart->get_cart();
+		$this->assertCount( 1, $cart_contents );
+		$item = reset( $cart_contents );
+		$this->assertSame( 15.0, (float) $item['nyp'] );
+	}
 }
