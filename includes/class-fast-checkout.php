@@ -730,8 +730,17 @@ final class Fast_Checkout {
 			$json = $request->get_json_params();
 			$raw  = is_array( $json ) ? ( $json['nyp'] ?? null ) : null;
 		}
+		// No explicit price provided — fall back to the product's suggested
+		// price, then minimum. Lets selector swaps (which don't carry an nyp
+		// value) succeed for grouped/variable products with NYP children.
 		if ( null === $raw || ! is_numeric( $raw ) ) {
-			return $cart_item_data;
+			$raw = \WC_Name_Your_Price_Helpers::get_suggested_price( $product_id );
+			if ( ! is_numeric( $raw ) || (float) $raw <= 0 ) {
+				$raw = \WC_Name_Your_Price_Helpers::get_minimum_price( $product_id );
+			}
+			if ( ! is_numeric( $raw ) || (float) $raw <= 0 ) {
+				return $cart_item_data;
+			}
 		}
 		$price     = (float) $raw;
 		$min_price = \WC_Name_Your_Price_Helpers::get_minimum_price( $product_id );

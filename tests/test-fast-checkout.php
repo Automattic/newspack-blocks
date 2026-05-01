@@ -739,6 +739,40 @@ class Test_Fast_Checkout extends WP_UnitTestCase_Blocks {
 	}
 
 	/**
+	 * Test that the bridge falls back to the suggested price when the request
+	 * has no nyp value — covers the case of grouped-selector swaps for NYP
+	 * children, where addItemToCart is called without an explicit price.
+	 */
+	public function test_store_api_nyp_bridge_falls_back_to_suggested() {
+		$this->skip_without_wc();
+		if ( ! class_exists( '\WC_Name_Your_Price_Helpers' ) ) {
+			$this->markTestSkipped( 'WC Name Your Price not available.' );
+		}
+
+		$product = $this->create_simple_product();
+		update_post_meta( $product->get_id(), '_nyp', 'yes' );
+		update_post_meta( $product->get_id(), '_min_price', '5' );
+		update_post_meta( $product->get_id(), '_max_price', '50' );
+		update_post_meta( $product->get_id(), '_suggested_price', '15' );
+
+		$request = new \WP_REST_Request( 'POST', '/wc/store/v1/cart/add-item' );
+		$request->set_body_params(
+			[
+				'id'       => $product->get_id(),
+				'quantity' => 1,
+			]
+		);
+
+		$cart_item_data = Fast_Checkout::store_api_nyp_bridge(
+			[],
+			$product->get_id(),
+			$request
+		);
+
+		$this->assertSame( 15.0, (float) ( $cart_item_data['nyp'] ?? 0 ) );
+	}
+
+	/**
 	 * Test that fc_price query param overrides nyp_price attribute when both set.
 	 *
 	 * Skips when WC Name Your Price plugin isn't active.
