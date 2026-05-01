@@ -119,14 +119,17 @@ function GroupedSelector( { host, currentChildId }: RootProps ) {
 async function swapCartItem( oldChildId: number, newChildId: number ) {
 	const cartActions = dispatch( STORE );
 	const cartSelectors = select( STORE );
+	// Capture the old key BEFORE we add the new item, so the remove step
+	// targets the right line.
 	const items = cartSelectors.getCartData()?.items || [];
 	const existing = items.find( ( item: { id?: number; key?: string } ) => item.id === oldChildId );
-	if ( existing ) {
-		await ( cartActions as { removeItemFromCart: ( key: string ) => Promise< unknown > } ).removeItemFromCart(
-			( existing as { key: string } ).key
-		);
-	}
+	const oldKey = ( existing as { key?: string } | undefined )?.key;
+	// Add new before removing old to keep the cart non-empty during the swap
+	// — otherwise the Checkout block flashes "Your cart is currently empty".
 	await ( cartActions as { addItemToCart: ( id: number, qty: number ) => Promise< unknown > } ).addItemToCart( newChildId, 1 );
+	if ( oldKey ) {
+		await ( cartActions as { removeItemFromCart: ( key: string ) => Promise< unknown > } ).removeItemFromCart( oldKey );
+	}
 }
 
 function updateUrlParam( key: string, value: string ) {
