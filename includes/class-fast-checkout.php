@@ -706,10 +706,10 @@ final class Fast_Checkout {
 			return $cart_item_data;
 		}
 		$body = method_exists( $request, 'get_body_params' ) ? $request->get_body_params() : [];
-		$raw  = $body['cart_item_data']['nyp'] ?? null;
+		$raw  = $body['nyp'] ?? null;
 		if ( null === $raw && method_exists( $request, 'get_json_params' ) ) {
 			$json = $request->get_json_params();
-			$raw  = is_array( $json ) ? ( $json['cart_item_data']['nyp'] ?? null ) : null;
+			$raw  = is_array( $json ) ? ( $json['nyp'] ?? null ) : null;
 		}
 		if ( null === $raw || ! is_numeric( $raw ) ) {
 			return $cart_item_data;

@@ -698,9 +698,9 @@ class Test_Fast_Checkout extends WP_UnitTestCase_Blocks {
 		$request = new \WP_REST_Request( 'POST', '/wc/store/v1/cart/add-item' );
 		$request->set_body_params(
 			[
-				'id'             => $product->get_id(),
-				'quantity'       => 1,
-				'cart_item_data' => [ 'nyp' => 22.5 ],
+				'id'       => $product->get_id(),
+				'quantity' => 1,
+				'nyp'      => 22.5,
 			]
 		);
 
