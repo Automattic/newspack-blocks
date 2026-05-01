@@ -381,7 +381,7 @@ export default function Edit( { attributes, setAttributes, clientId }: EditProps
 		if ( prev.n && ! next.n && attributes.nyp_price ) {
 			setAttributes( { nyp_price: '' } );
 		}
-	}, [ attributes.is_variable, attributes.is_grouped, attributes.is_nyp ] );
+	}, [ attributes.is_variable, attributes.is_grouped, attributes.is_nyp, innerBlocks, insertBlocks, removeBlocks, clientId ] );
 
 	if ( ! product ) {
 		return (
@@ -396,7 +396,11 @@ export default function Edit( { attributes, setAttributes, clientId }: EditProps
 							setAttributes( {
 								product: newId,
 								variation: '',
+								grouped_child: '',
+								nyp_price: '',
 								is_variable: false,
+								is_grouped: false,
+								is_nyp: false,
 							} )
 						}
 					/>
@@ -415,7 +419,11 @@ export default function Edit( { attributes, setAttributes, clientId }: EditProps
 							setAttributes( {
 								product: newId,
 								variation: '',
+								grouped_child: '',
+								nyp_price: '',
 								is_variable: false,
+								is_grouped: false,
+								is_nyp: false,
 							} )
 						}
 					/>
