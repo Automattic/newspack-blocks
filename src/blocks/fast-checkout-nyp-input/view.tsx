@@ -106,7 +106,7 @@ function NypInput( { host, productId, min, max }: RootProps ) {
 			inFlightRef.current = true;
 			setInFlight( true );
 			try {
-				await applyNypPrice( productId, clamped );
+				await applyNypPrice( productId, clamped, parseInt( host.dataset.sourcePost || '0', 10 ) );
 				lastApplied.current = clamped;
 				updateUrlParam( 'fc_price', String( clamped ) );
 			} catch ( ex: unknown ) {
@@ -143,7 +143,7 @@ function NypInput( { host, productId, min, max }: RootProps ) {
 	return null;
 }
 
-async function applyNypPrice( productId: number, price: number ) {
+async function applyNypPrice( productId: number, price: number, sourcePost: number ) {
 	const cartActions = dispatch( STORE );
 	const cartSelectors = select( STORE );
 	const items = cartSelectors.getCartData()?.items || [];
@@ -152,11 +152,15 @@ async function applyNypPrice( productId: number, price: number ) {
 	if ( existing?.key ) {
 		await ( cartActions as { removeItemFromCart: ( key: string ) => Promise< unknown > } ).removeItemFromCart( existing.key );
 	}
+	const cartItemData: Record< string, unknown > = { nyp: price };
+	if ( sourcePost ) {
+		cartItemData._newspack_fast_checkout_source_post = sourcePost;
+	}
 	await (
 		cartActions as {
 			addItemToCart: ( id: number, qty: number, variation?: unknown[], cartItemData?: Record< string, unknown > ) => Promise< unknown >;
 		}
-	 ).addItemToCart( productId, 1, [], { nyp: price } );
+	 ).addItemToCart( productId, 1, [], cartItemData );
 }
 
 function updateUrlParam( key: string, value: string ) {

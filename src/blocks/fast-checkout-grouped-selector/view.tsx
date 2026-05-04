@@ -68,7 +68,7 @@ function GroupedSelector( { host, currentChildId }: RootProps ) {
 			inFlightRef.current = true;
 			setInFlight( true );
 			try {
-				await swapCartItem( pendingId, nextId );
+				await swapCartItem( pendingId, nextId, parseInt( host.dataset.sourcePost || '0', 10 ) );
 				setPendingId( nextId );
 				updateUrlParam( 'fc_grouped_child', String( nextId ) );
 			} catch ( ex: unknown ) {
@@ -127,7 +127,7 @@ function GroupedSelector( { host, currentChildId }: RootProps ) {
 	return null;
 }
 
-async function swapCartItem( oldChildId: number, newChildId: number ) {
+async function swapCartItem( oldChildId: number, newChildId: number, sourcePost: number ) {
 	const cartActions = dispatch( STORE );
 	const cartSelectors = select( STORE );
 	const items = cartSelectors.getCartData()?.items || [];
@@ -137,7 +137,15 @@ async function swapCartItem( oldChildId: number, newChildId: number ) {
 			( existing as { key: string } ).key
 		);
 	}
-	await ( cartActions as { addItemToCart: ( id: number, qty: number ) => Promise< unknown > } ).addItemToCart( newChildId, 1 );
+	const cartItemData: Record< string, unknown > = {};
+	if ( sourcePost ) {
+		cartItemData._newspack_fast_checkout_source_post = sourcePost;
+	}
+	await (
+		cartActions as {
+			addItemToCart: ( id: number, qty: number, variation?: unknown[], cartItemData?: Record< string, unknown > ) => Promise< unknown >;
+		}
+	 ).addItemToCart( newChildId, 1, [], cartItemData );
 }
 
 function updateUrlParam( key: string, value: string ) {

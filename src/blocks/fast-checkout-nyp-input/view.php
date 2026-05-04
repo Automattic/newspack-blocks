@@ -97,10 +97,11 @@ function render_block( $attrs, $content, $block ) {
 
 	$wrapper_attributes = get_block_wrapper_attributes(
 		[
-			'data-product-id' => (string) $product_id,
-			'data-min'        => (string) $min,
-			'data-max'        => (string) $max,
-			'data-suggested'  => (string) $suggested,
+			'data-product-id'  => (string) $product_id,
+			'data-source-post' => (string) get_the_ID(),
+			'data-min'         => (string) $min,
+			'data-max'         => (string) $max,
+			'data-suggested'   => (string) $suggested,
 		]
 	);
 

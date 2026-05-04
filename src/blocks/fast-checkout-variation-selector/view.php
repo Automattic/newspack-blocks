@@ -92,6 +92,7 @@ function render_block( $attrs, $content, $block ) {
 	$wrapper_attributes = get_block_wrapper_attributes(
 		[
 			'data-product-id'        => (string) $product_id,
+			'data-source-post'       => (string) get_the_ID(),
 			'data-current-variation' => (string) $current_variation,
 			'data-variations'        => wp_json_encode(
 				array_map(

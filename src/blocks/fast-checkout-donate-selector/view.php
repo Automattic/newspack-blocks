@@ -234,6 +234,7 @@ function render_block( $attrs, $content, $block ) {
 	$wrapper_attributes = get_block_wrapper_attributes(
 		[
 			'data-product-id'    => (string) $product_id,
+			'data-source-post'   => (string) get_the_ID(),
 			'data-current-child' => (string) $current_child,
 			'data-children'      => wp_json_encode( $children ),
 		]

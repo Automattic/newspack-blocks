@@ -90,7 +90,7 @@ function VariationSelector( { host, productId, variations, currentVariationId }:
 			inFlightRef.current = true;
 			setInFlight( true );
 			try {
-				await swapCartItem( pendingId, resolvedId );
+				await swapCartItem( pendingId, resolvedId, parseInt( host.dataset.sourcePost || '0', 10 ) );
 				setPendingId( resolvedId );
 				updateUrlParam( 'fc_variation', String( resolvedId ) );
 			} catch ( e: unknown ) {
@@ -163,7 +163,7 @@ function revertSelection( host: HTMLFormElement, currentId: number, variations: 
 	}
 }
 
-async function swapCartItem( oldVariationId: number, newVariationId: number ) {
+async function swapCartItem( oldVariationId: number, newVariationId: number, sourcePost: number ) {
 	const cartActions = dispatch( STORE );
 	const cartSelectors = select( STORE );
 	const items = cartSelectors.getCartData()?.items || [];
@@ -177,7 +177,15 @@ async function swapCartItem( oldVariationId: number, newVariationId: number ) {
 	}
 
 	// The Store API accepts a variation ID directly as the cart item id; no need to spell out attributes.
-	await ( cartActions as { addItemToCart: ( id: number, qty: number ) => Promise< unknown > } ).addItemToCart( newVariationId, 1 );
+	const cartItemData: Record< string, unknown > = {};
+	if ( sourcePost ) {
+		cartItemData._newspack_fast_checkout_source_post = sourcePost;
+	}
+	await (
+		cartActions as {
+			addItemToCart: ( id: number, qty: number, variation?: unknown[], cartItemData?: Record< string, unknown > ) => Promise< unknown >;
+		}
+	 ).addItemToCart( newVariationId, 1, [], cartItemData );
 }
 
 function updateUrlParam( key: string, value: string ) {

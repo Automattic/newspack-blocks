@@ -701,12 +701,37 @@ final class Fast_Checkout {
 		if ( ! $product_id && method_exists( $request, 'get_param' ) ) {
 			$product_id = (int) $request->get_param( 'id' );
 		}
-		$request_data['cart_item_data'] = self::store_api_nyp_bridge(
-			$request_data['cart_item_data'] ?? [],
-			$product_id,
-			$request
-		);
+		$cart_item_data                 = $request_data['cart_item_data'] ?? [];
+		$cart_item_data                 = self::propagate_source_post( $cart_item_data, $request );
+		$cart_item_data                 = self::store_api_nyp_bridge( $cart_item_data, $product_id, $request );
+		$request_data['cart_item_data'] = $cart_item_data;
 		return $request_data;
+	}
+
+	/**
+	 * Propagate the Fast Checkout source-post marker from the Store API
+	 * request into cart_item_data, so cart items added via selector swaps
+	 * remain identifiable as Fast Checkout items (drives edit-link
+	 * suppression, post-purchase redirect, and order line item meta).
+	 *
+	 * @param array            $cart_item_data Existing cart item data.
+	 * @param \WP_REST_Request $request        REST request.
+	 * @return array
+	 */
+	public static function propagate_source_post( $cart_item_data, $request ) {
+		if ( isset( $cart_item_data[ self::CART_ITEM_SOURCE_KEY ] ) ) {
+			return $cart_item_data;
+		}
+		$body = method_exists( $request, 'get_body_params' ) ? $request->get_body_params() : [];
+		$raw  = $body[ self::CART_ITEM_SOURCE_KEY ] ?? null;
+		if ( null === $raw && method_exists( $request, 'get_json_params' ) ) {
+			$json = $request->get_json_params();
+			$raw  = is_array( $json ) ? ( $json[ self::CART_ITEM_SOURCE_KEY ] ?? null ) : null;
+		}
+		if ( $raw && is_numeric( $raw ) && (int) $raw > 0 ) {
+			$cart_item_data[ self::CART_ITEM_SOURCE_KEY ] = (int) $raw;
+		}
+		return $cart_item_data;
 	}
 
 	/**

@@ -119,11 +119,16 @@ function DonateSelector( { host, children, currentChildId }: RootProps ) {
 			for ( const key of toRemove ) {
 				await ( cartActions as { removeItemFromCart: ( key: string ) => Promise< unknown > } ).removeItemFromCart( key );
 			}
+			const sourcePost = parseInt( host.dataset.sourcePost || '0', 10 );
+			const cartItemData: Record< string, unknown > = { nyp: nextAmount };
+			if ( sourcePost ) {
+				cartItemData._newspack_fast_checkout_source_post = sourcePost;
+			}
 			await (
 				cartActions as {
 					addItemToCart: ( id: number, qty: number, variation?: unknown[], cartItemData?: Record< string, unknown > ) => Promise< unknown >;
 				}
-			 ).addItemToCart( nextChildId, 1, [], { nyp: nextAmount } );
+			 ).addItemToCart( nextChildId, 1, [], cartItemData );
 			lastApplied.current = { childId: nextChildId, amount: nextAmount };
 			updateUrlParam( 'fc_grouped_child', String( nextChildId ) );
 			updateUrlParam( 'fc_price', String( nextAmount ) );
