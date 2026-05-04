@@ -83,6 +83,7 @@ final class Fast_Checkout {
 		add_filter( 'woocommerce_is_checkout', [ __CLASS__, 'maybe_flag_as_checkout' ] );
 		add_filter( 'render_block_data', [ __CLASS__, 'filter_checkout_actions_block' ] );
 		add_filter( 'woocommerce_store_api_add_to_cart_data', [ __CLASS__, 'store_api_nyp_bridge_handler' ], 10, 2 );
+		add_filter( 'wc_nyp_show_edit_link_in_cart', [ __CLASS__, 'suppress_nyp_edit_link' ], 10, 2 );
 	}
 
 	/**
@@ -749,6 +750,22 @@ final class Fast_Checkout {
 		$price     = ! empty( $min_price ) ? max( $price, (float) $min_price ) : $price;
 		$cart_item_data['nyp'] = (float) \WC_Name_Your_Price_Helpers::standardize_number( $price );
 		return $cart_item_data;
+	}
+
+	/**
+	 * Suppress WC Name Your Price's "Edit price" link in the checkout cart
+	 * summary for cart items added via Fast Checkout — the reader edits the
+	 * amount through our selector blocks instead.
+	 *
+	 * @param bool  $show      Whether the link should render.
+	 * @param array $cart_item The cart item.
+	 * @return bool
+	 */
+	public static function suppress_nyp_edit_link( $show, $cart_item ) {
+		if ( is_array( $cart_item ) && isset( $cart_item[ self::CART_ITEM_SOURCE_KEY ] ) ) {
+			return false;
+		}
+		return $show;
 	}
 
 	/**
