@@ -76,7 +76,6 @@ function render_callback( $attributes ) {
 		$attributes,
 		[
 			$width ? 'width:' . esc_attr( $width ) . '%;' : '',
-			$button_color ? 'color:' . esc_attr( $button_color ) . ';' : '',
 		]
 	);
 
