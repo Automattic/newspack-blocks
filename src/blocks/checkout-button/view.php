@@ -92,7 +92,8 @@ function render_callback( $attributes ) {
 			$font_family ? 'has-' . esc_attr( $font_family ) . '-font-family' : '',
 			$text_align ? 'has-text-align-' . esc_attr( $text_align ) : '',
 			isset( $style['border']['radius'] ) && $style['border']['radius'] === 0 ? 'no-border-radius' : '',
-			$button_color ? 'has-text-color has-' . esc_attr( $button_color ) . '-color' : '',
+			( $button_color || isset( $style['color']['text'] ) ) ? 'has-text-color' : '',
+			$button_color ? 'has-' . esc_attr( $button_color ) . '-color' : '',
 		]
 	);
 
