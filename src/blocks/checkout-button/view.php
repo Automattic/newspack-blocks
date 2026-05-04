@@ -49,6 +49,7 @@ function render_callback( $attributes ) {
 	$background_color           = $attributes['backgroundColor'] ?? '';
 	$gradient                   = $attributes['gradient'] ?? '';
 	$font_size                  = $attributes['fontSize'] ?? '';
+	$font_family                = $attributes['fontFamily'] ?? '';
 	$style                      = $attributes['style'] ?? [];
 	$text_align                 = $attributes['textAlign'] ?? '';
 	$width                      = $attributes['width'] ?? '';
@@ -74,8 +75,6 @@ function render_callback( $attributes ) {
 	$button_styles = Newspack_Blocks::block_styles(
 		$attributes,
 		[
-			$background_color ? 'background-color:' . esc_attr( $background_color ) . ';' : '',
-			$font_size ? 'font-size:' . esc_attr( $font_size ) . ';' : '',
 			$width ? 'width:' . esc_attr( $width ) . '%;' : '',
 			$button_color ? 'color:' . esc_attr( $button_color ) . ';' : '',
 		]
@@ -86,8 +85,11 @@ function render_callback( $attributes ) {
 		$attributes,
 		[
 			'wp-block-button__link',
-			$background_color ? 'has-background has-' . esc_attr( $background_color ) . '-background-color' : '',
-			$gradient ? 'has-background has-' . esc_attr( $gradient ) . '-gradient-background' : '',
+			( $background_color || $gradient || isset( $style['color']['background'] ) || isset( $style['color']['gradient'] ) ) ? 'has-background' : '',
+			$background_color ? 'has-' . esc_attr( $background_color ) . '-background-color' : '',
+			$gradient ? 'has-' . esc_attr( $gradient ) . '-gradient-background' : '',
+			$font_size ? 'has-' . esc_attr( $font_size ) . '-font-size' : '',
+			$font_family ? 'has-' . esc_attr( $font_family ) . '-font-family' : '',
 			$text_align ? 'has-text-align-' . esc_attr( $text_align ) : '',
 			isset( $style['border']['radius'] ) && $style['border']['radius'] === 0 ? 'no-border-radius' : '',
 			$button_color ? 'has-text-color has-' . esc_attr( $button_color ) . '-color' : '',
