@@ -6,7 +6,6 @@ import { __ } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import { debounce } from 'lodash';
-import { createBlock } from '@wordpress/blocks';
 import { InnerBlocks, InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { PanelBody, BaseControl, TextControl, Button, Spinner, FormTokenField, SelectControl, Placeholder, Notice } from '@wordpress/components';
@@ -246,7 +245,7 @@ export default function Edit( { attributes, setAttributes, clientId }: EditProps
 	const { product, variation, is_variable: isVariable, afterSuccessURL } = attributes;
 	const [ groupedWarning, setGroupedWarning ] = useState< string >( '' );
 	const blockProps = useBlockProps();
-	const { updateBlockAttributes, insertBlocks, removeBlocks } = useDispatch( 'core/block-editor' );
+	const { updateBlockAttributes, removeBlocks } = useDispatch( 'core/block-editor' );
 
 	// On first insert, find the checkout-actions-block and disable "Return to Cart".
 	const allDescendants = useSelect(
@@ -319,7 +318,9 @@ export default function Edit( { attributes, setAttributes, clientId }: EditProps
 		n: !! attributes.is_nyp,
 	} );
 
-	// Auto-insert or auto-clean selector inner blocks when the product type changes.
+	// On product type transitions: clean up the donate-selector inner block
+	// when the product is no longer grouped, and reset stale type-specific
+	// attributes so they don't carry over into the new product context.
 	useEffect( () => {
 		const prev = previousFlags.current;
 		const next = {
@@ -328,50 +329,13 @@ export default function Edit( { attributes, setAttributes, clientId }: EditProps
 			n: !! attributes.is_nyp,
 		};
 
-		const transitions: { type: 'v' | 'g' | 'n'; on: boolean }[] = [];
-		if ( prev.v !== next.v ) {
-			transitions.push( { type: 'v', on: next.v } );
-		}
-		if ( prev.g !== next.g ) {
-			transitions.push( { type: 'g', on: next.g } );
-		}
-		if ( prev.n !== next.n ) {
-			transitions.push( { type: 'n', on: next.n } );
-		}
-
-		if ( ! transitions.length ) {
-			previousFlags.current = next;
+		if ( prev.v === next.v && prev.g === next.g && prev.n === next.n ) {
 			return;
 		}
 
-		const slugFor: Record< 'v' | 'g' | 'n', string > = {
-			v: 'newspack-blocks/fast-checkout-variation-selector',
-			g: 'newspack-blocks/fast-checkout-grouped-selector',
-			n: 'newspack-blocks/fast-checkout-nyp-input',
-		};
-
-		const findClientIds = ( name: string ): string[] => innerBlocks.filter( ( b: Block ) => b.name === name ).map( ( b: Block ) => b.clientId );
-
-		const checkoutIndex = innerBlocks.findIndex( ( b: Block ) => b.name === 'woocommerce/checkout' );
-		const insertIndex = checkoutIndex >= 0 ? checkoutIndex : innerBlocks.length;
-
-		transitions.forEach( ( { type, on } ) => {
-			const slug = slugFor[ type ];
-			if ( on ) {
-				if ( findClientIds( slug ).length === 0 ) {
-					insertBlocks( createBlock( slug ), insertIndex, clientId, false );
-				}
-			} else {
-				const ids = findClientIds( slug );
-				if ( ids.length ) {
-					removeBlocks( ids, false );
-				}
-			}
-		} );
-
 		previousFlags.current = next;
 
-		// Donate-selector is manually inserted; auto-clean it on grouped → not-grouped transition.
+		// Donate-selector is manually inserted; auto-clean on grouped → not-grouped.
 		if ( prev.g && ! next.g ) {
 			const donateIds = innerBlocks
 				.filter( ( b: Block ) => b.name === 'newspack-blocks/fast-checkout-donate-selector' )
@@ -391,7 +355,7 @@ export default function Edit( { attributes, setAttributes, clientId }: EditProps
 		if ( prev.n && ! next.n && attributes.nyp_price ) {
 			setAttributes( { nyp_price: '' } );
 		}
-	}, [ attributes.is_variable, attributes.is_grouped, attributes.is_nyp, innerBlocks, insertBlocks, removeBlocks, clientId ] );
+	}, [ attributes.is_variable, attributes.is_grouped, attributes.is_nyp, innerBlocks, removeBlocks ] );
 
 	if ( ! product ) {
 		return (
