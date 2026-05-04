@@ -106,11 +106,18 @@ function DonateSelector( { host, children, currentChildId }: RootProps ) {
 			const cartActions = dispatch( STORE );
 			const cartSelectors = select( STORE );
 			const items = cartSelectors.getCartData()?.items || [];
-			const oldKey = (
-				items.find( ( item: { id?: number; key?: string } ) => item.id === lastApplied.current.childId ) as { key?: string } | undefined
-			 )?.key;
-			if ( oldKey ) {
-				await ( cartActions as { removeItemFromCart: ( key: string ) => Promise< unknown > } ).removeItemFromCart( oldKey );
+			// Remove ALL cart items matching any of this donate group's children
+			// (not just the one we think is there) so stale duplicates from
+			// earlier swaps or partial failures don't accumulate.
+			const childIds = new Set( children.map( c => c.id ) );
+			const toRemove: string[] = [];
+			items.forEach( ( item: { id?: number; key?: string } ) => {
+				if ( item.id && item.key && childIds.has( item.id ) ) {
+					toRemove.push( item.key );
+				}
+			} );
+			for ( const key of toRemove ) {
+				await ( cartActions as { removeItemFromCart: ( key: string ) => Promise< unknown > } ).removeItemFromCart( key );
 			}
 			await (
 				cartActions as {
