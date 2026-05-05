@@ -106,6 +106,17 @@ import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 					const selected = $( 'input[name="payment_method"]:checked' ).val();
 					$( '.wc_payment_method' ).removeClass( 'selected' );
 					$( '.wc_payment_method.payment_method_' + selected ).addClass( 'selected' );
+					// Skip reCAPTCHA on the Check Payments path. The cheque gateway has no
+					// client-side tokenization to serialize the submit, so v2 invisible
+					// races with updated_checkout resets and freezes the button (NPPM-2619).
+					// Skip while editing billing details — setEditingDetails owns the attr there.
+					if ( ! $form.find( '[name="is_validation_only"]' ).length ) {
+						if ( 'cheque' === selected ) {
+							$form.attr( 'data-skip-recaptcha', '1' );
+						} else {
+							$form.removeAttr( 'data-skip-recaptcha' );
+						}
+					}
 				}
 				$( 'input[name="payment_method"]' ).change( handlePaymentMethodSelect );
 				$( document ).on( 'payment_method_selected', handlePaymentMethodSelect );
