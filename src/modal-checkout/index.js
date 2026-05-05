@@ -569,6 +569,10 @@ import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 
 						// Disable 'Place Order' button if Subscription Confirmation is required.
 						handleSubscriptionConfirmation();
+						// Re-apply the payment-method-based reCAPTCHA toggle. validateForm's
+						// custom AJAX doesn't fire updated_checkout, so cheque bypass would
+						// otherwise be lost on return from the edit-billing step.
+						handlePaymentMethodSelect();
 					}
 					$form.triggerHandler( 'editing_details', [ isEditingDetails ] );
 					// Scroll to top.

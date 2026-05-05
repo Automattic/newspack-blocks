@@ -1584,8 +1584,14 @@ final class Modal_Checkout {
 		if ( 'checkout' !== $context ) {
 			return $should_verify;
 		}
-		// Skip captcha verification if we're in the modal checkout and this is a validation-only request,
-		// which happens when the user updates their billing details on the first screen of the modal checkout.
+		// All bypasses below are scoped to the modal checkout context so a
+		// crafted POST to standard /checkout/ can't disable reCAPTCHA via
+		// is_validation_only or payment_method=cheque.
+		if ( ! self::is_modal_checkout() ) {
+			return $should_verify;
+		}
+		// Skip captcha verification on the validation-only request fired when
+		// the user updates billing details on the first screen of the modal.
 		if ( self::is_validation_only() ) {
 			return false;
 		}
@@ -1593,11 +1599,9 @@ final class Modal_Checkout {
 		// client-side tokenization to serialize the submit, so v2 invisible
 		// races with updated_checkout resets and freezes the button (NPPM-2619).
 		// Mirrors the data-skip-recaptcha toggle on the modal checkout form.
-		if ( self::is_modal_checkout() ) {
-			$payment_method = isset( $_POST['payment_method'] ) ? sanitize_text_field( wp_unslash( $_POST['payment_method'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			if ( 'cheque' === $payment_method ) {
-				return false;
-			}
+		$payment_method = isset( $_POST['payment_method'] ) ? sanitize_text_field( wp_unslash( $_POST['payment_method'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		if ( 'cheque' === $payment_method ) {
+			return false;
 		}
 		return $should_verify;
 	}
