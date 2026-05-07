@@ -177,6 +177,7 @@ final class Modal_Checkout {
 		add_action( 'wp_ajax_nopriv_process_name_your_price_request', [ __CLASS__, 'process_name_your_price_request' ] );
 		add_filter( 'option_woocommerce_woocommerce_payments_settings', [ __CLASS__, 'filter_woocommerce_payments_settings' ] );
 		add_action( 'init', [ __CLASS__, 'unhook_woocommerce_payments_update_billing_fields' ] );
+		add_action( 'init', [ __CLASS__, 'unhook_woocommerce_payments_express_checkout_buttons' ], 20 );
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'update_password_strength_message' ], 9999 );
 		add_filter( 'woocommerce_enforce_password_strength_meter_on_checkout', '__return_true' );
 
@@ -565,6 +566,43 @@ final class Modal_Checkout {
 		}
 	}
 
+	/**
+	 * Unhook WooCommerce Payments' express checkout buttons during modal checkout.
+	 *
+	 * WooPayments 10.4 split Apple Pay / Google Pay into separate gateways. The display
+	 * handler attaches display_express_checkout_buttons to woocommerce_checkout_before_customer_details
+	 * at init priority 15; when Stripe's express checkout is also active the modal renders
+	 * duplicate Apple Pay / Google Pay rows. Removing the hook here suppresses WooPayments'
+	 * buttons while leaving Stripe's intact. Hooked on init at priority 20 so WooPayments'
+	 * init callback has already attached its actions.
+	 */
+	public static function unhook_woocommerce_payments_express_checkout_buttons() {
+		if ( ! self::is_modal_checkout() ) {
+			return;
+		}
+		if ( ! class_exists( 'WC_Payments' ) || ! class_exists( 'WC_Stripe' ) ) {
+			return;
+		}
+		// Only suppress WooPayments when Stripe is also providing express checkout. Otherwise
+		// WooPayments is the only source of Apple Pay / Google Pay in the modal and must render.
+		$stripe_settings = get_option( 'woocommerce_stripe_settings', [] );
+		if ( 'yes' !== ( $stripe_settings['enabled'] ?? '' )
+			|| 'yes' !== ( $stripe_settings['express_checkout'] ?? '' ) ) {
+			return;
+		}
+		if ( ! isset( $GLOBALS['wp_filter']['woocommerce_checkout_before_customer_details'] ) ) {
+			return;
+		}
+		$hook      = $GLOBALS['wp_filter']['woocommerce_checkout_before_customer_details'];
+		$callbacks = $hook instanceof \WP_Hook ? $hook->callbacks : (array) $hook;
+		foreach ( $callbacks as $priority => $priority_callbacks ) {
+			foreach ( array_keys( $priority_callbacks ) as $key ) {
+				if ( strpos( $key, 'display_express_checkout_buttons' ) !== false ) {
+					remove_action( 'woocommerce_checkout_before_customer_details', $key, $priority );
+				}
+			}
+		}
+	}
 
 	/**
 	 * Process name your price request for modal.
