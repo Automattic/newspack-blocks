@@ -98,9 +98,9 @@ function render_callback( $attributes ) {
 
 	$button = sprintf(
 		'<button class="%1$s" style="%2$s" type="submit">%3$s</button>',
-		$button_classes,
-		$button_styles,
-		$text
+		esc_attr( $button_classes ),
+		esc_attr( $button_styles ),
+		wp_kses_post( $text )
 	);
 
 	// Generate hidden fields for the form.
@@ -168,7 +168,7 @@ function render_callback( $attributes ) {
 		[
 			'wp-block-button',
 			( $font_size || isset( $style['typography']['fontSize'] ) ) ? 'has-custom-font-size' : '',
-			$width ? ' has-custom-width wp-block-button__width-' . esc_attr( $width ) : '',
+			$width ? 'has-custom-width wp-block-button__width-' . esc_attr( $width ) : '',
 		]
 	);
 	return sprintf(
