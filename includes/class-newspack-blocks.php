@@ -396,7 +396,7 @@ class Newspack_Blocks {
 			$classes = array_merge( $classes, $extra );
 		}
 
-		return implode( ' ', array_filter( $classes ) );
+		return implode( ' ', array_filter( $classes, 'strlen' ) );
 	}
 
 	/**
