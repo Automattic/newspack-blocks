@@ -60,12 +60,7 @@ const FrequencyBasedLayout = ( props: { canUseNameYourPrice: boolean; isTiered: 
 
 	// Update selected frequency when the default frequency attribute is updated.
 	useEffect( () => {
-		if ( formRef.current ) {
-			const defaultFrequencyInput = formRef.current.querySelector( `[name="donation_frequency"][value="${ attributes.defaultFrequency }"]` );
-			if ( defaultFrequencyInput instanceof HTMLInputElement ) {
-				defaultFrequencyInput.click();
-			}
-		}
+		setSelectedFrequency( attributes.defaultFrequency );
 	}, [ attributes.defaultFrequency ] );
 
 	const [ selectedFrequency, setSelectedFrequency ] = useState( attributes.defaultFrequency );
