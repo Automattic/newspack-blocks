@@ -1,3 +1,12 @@
+## [4.26.3](https://github.com/Automattic/newspack-blocks/compare/v4.26.2...v4.26.3) (2026-05-18)
+
+
+### Bug Fixes
+
+* change defaultFrequency approach in the Donate block to match tiered layout ([#2330](https://github.com/Automattic/newspack-blocks/issues/2330)) ([3f7da1f](https://github.com/Automattic/newspack-blocks/commit/3f7da1f94381bdf5bd5a37ffd219e0d136ac5949))
+* ensure block option spacing for checkout button block is consistent ([#2335](https://github.com/Automattic/newspack-blocks/issues/2335)) ([ecc3c2c](https://github.com/Automattic/newspack-blocks/commit/ecc3c2c054fb0c3ded71ade097d1ab3da0f881f5))
+* **modal-checkout:** suppress WooPayments express checkout when Stripe is active ([#2304](https://github.com/Automattic/newspack-blocks/issues/2304)) ([b9607ea](https://github.com/Automattic/newspack-blocks/commit/b9607eaeb822e5345ab6002600f4619c08b85245))
+
 ## [4.26.2](https://github.com/Automattic/newspack-blocks/compare/v4.26.1...v4.26.2) (2026-05-04)
 
 
