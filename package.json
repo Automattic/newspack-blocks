@@ -53,7 +53,7 @@
 	},
 	"devDependencies": {
 		"@types/lodash": "^4.17.23",
-		"newspack-components": "^4.2.0",
+		"newspack-components": "^4.3.0",
 		"newspack-scripts": "^5.9.2"
 	},
 	"overrides": {
