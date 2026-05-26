@@ -83,6 +83,10 @@
 			"type": "boolean",
 			"default": false
 		},
+		"showTagLabels": {
+			"type": "boolean",
+			"default": true
+		},
 		"postLayout": {
 			"type": "string",
 			"default": "list"

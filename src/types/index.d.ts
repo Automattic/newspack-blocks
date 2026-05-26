@@ -131,6 +131,7 @@ declare global {
 		showAuthor: boolean;
 		showAvatar: boolean;
 		showCategory: boolean;
+		showTagLabels: boolean;
 		postLayout: string;
 		columns: integer;
 		colGap: integer;

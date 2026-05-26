@@ -66,6 +66,7 @@ class Edit extends Component< HomepageArticlesProps > {
 			showAvatar,
 			showDate,
 			showCategory,
+			showTagLabels,
 			sectionHeader,
 		} = attributes;
 
@@ -113,7 +114,7 @@ class Edit extends Component< HomepageArticlesProps > {
 							) }
 						</div>
 					) }{ ' ' }
-					{ post.newspack_tag_labels && (
+					{ showTagLabels && post.newspack_tag_labels && (
 						<div className="cat-links tag-labels">
 							{ post.newspack_tag_labels.map( ( newspack_tag_label, index ) => {
 								return newspack_tag_label.link ? (
@@ -223,6 +224,7 @@ class Edit extends Component< HomepageArticlesProps > {
 			showAuthor,
 			showAvatar,
 			showCategory,
+			showTagLabels,
 			postLayout,
 			mediaPosition,
 			specificMode,
@@ -463,6 +465,11 @@ class Edit extends Component< HomepageArticlesProps > {
 						label={ __( 'Show category', 'newspack-blocks' ) }
 						checked={ showCategory }
 						onChange={ () => setAttributes( { showCategory: ! showCategory } ) }
+					/>
+					<ToggleControl
+						label={ __( 'Show tag labels', 'newspack-blocks' ) }
+						checked={ showTagLabels }
+						onChange={ () => setAttributes( { showTagLabels: ! showTagLabels } ) }
 					/>
 					{ IS_SUBTITLE_SUPPORTED_IN_THEME && (
 						<ToggleControl

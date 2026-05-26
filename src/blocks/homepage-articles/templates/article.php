@@ -116,7 +116,7 @@ call_user_func(
 				<?php
 			endif;
 
-			if ( ! empty( $tag_labels ) ) {
+			if ( ( $attributes['showTagLabels'] ?? true ) && ! empty( $tag_labels ) ) {
 				Newspack_Blocks::display_tag_labels( $tag_labels );
 			}
 
