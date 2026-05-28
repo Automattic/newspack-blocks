@@ -446,7 +446,14 @@ final class Modal_Checkout {
 
 		/** Apply NYP custom price */
 		$price = filter_input( INPUT_GET, 'price', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		if ( \Newspack_Blocks::can_use_name_your_price() ? \WC_Name_Your_Price_Helpers::is_nyp( $product_id ) : false ) {
+		// can_use_name_your_price() can return true under the NRH donation
+		// platform even when WC_Name_Your_Price_Helpers isn't loaded, so guard
+		// the class call directly. Mirrors process_name_your_price_request().
+		if (
+			\Newspack_Blocks::can_use_name_your_price() &&
+			class_exists( 'WC_Name_Your_Price_Helpers' ) &&
+			\WC_Name_Your_Price_Helpers::is_nyp( $product_id )
+		) {
 			if ( empty( $price ) ) {
 				$price = \WC_Name_Your_Price_Helpers::get_suggested_price( $product_id );
 			}
