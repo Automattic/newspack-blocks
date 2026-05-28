@@ -1595,7 +1595,12 @@ final class Modal_Checkout {
 	 * @return bool True if the request is for validation only.
 	 */
 	private static function is_validation_only() {
-		return boolval( filter_input( INPUT_POST, 'is_validation_only', FILTER_SANITIZE_NUMBER_INT ) );
+		// Read $_POST directly (rather than filter_input) so the recaptcha
+		// bypass branch this gates is exercisable from unit tests —
+		// filter_input(INPUT_POST, ...) returns null under PHP CLI. Nonce
+		// verification is owned by Woo's checkout flow upstream of every
+		// call site.
+		return ! empty( $_POST['is_validation_only'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 	}
 
 	/**
