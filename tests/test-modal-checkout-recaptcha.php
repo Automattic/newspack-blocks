@@ -11,12 +11,12 @@ use Newspack_Blocks\Modal_Checkout;
  * Modal_Checkout::recaptcha_verify_captcha scoping invariant.
  *
  * Locks the gating rules so future edits can't silently widen the bypass:
- *   - non-checkout context             → unchanged
- *   - non-modal request                → unchanged
- *   - modal + logged-out               → unchanged (auth gate)
- *   - modal + logged-in + validation   → false
- *   - modal + logged-in + cheque/bacs/cod → false
- *   - modal + logged-in + other gateway → unchanged
+ *   - non-checkout context                  → unchanged
+ *   - non-modal request                     → unchanged
+ *   - modal + missing/invalid nonce         → unchanged (nonce gate)
+ *   - modal + valid nonce + validation      → false
+ *   - modal + valid nonce + cheque/bacs/cod → false
+ *   - modal + valid nonce + other gateway   → unchanged
  *
  * @group modal-checkout
  */
@@ -28,27 +28,25 @@ class ModalCheckoutRecaptchaTest extends WP_UnitTestCase { // phpcs:ignore
 	const DUMMY_URL = 'https://example.test/checkout/';
 
 	/**
-	 * Reset superglobals and current user between cases.
+	 * Reset superglobals between cases.
 	 */
 	public function tear_down() {
 		unset( $_REQUEST['modal_checkout'], $_REQUEST['post_data'] );
-		unset( $_POST['payment_method'], $_POST['is_validation_only'] );
-		wp_set_current_user( 0 );
+		unset( $_POST['payment_method'], $_POST['is_validation_only'], $_POST['newspack_checkout_nonce'] );
 		parent::tear_down();
 	}
 
 	/**
-	 * Mark the request as a modal-checkout request and authenticate a reader.
+	 * Mark the request as a modal-checkout request carrying a valid modal nonce.
 	 *
 	 * @param string $payment_method Payment method to put on $_POST. Empty to leave unset.
 	 */
-	private function set_up_authed_modal_request( $payment_method = '' ) {
-		$_REQUEST['modal_checkout'] = '1';
+	private function set_up_nonced_modal_request( $payment_method = '' ) {
+		$_REQUEST['modal_checkout']          = '1';
+		$_POST['newspack_checkout_nonce']    = wp_create_nonce( 'newspack_modal_checkout_nonce' );
 		if ( '' !== $payment_method ) {
 			$_POST['payment_method'] = $payment_method;
 		}
-		$user_id = self::factory()->user->create();
-		wp_set_current_user( $user_id );
 	}
 
 	/**
@@ -74,40 +72,45 @@ class ModalCheckoutRecaptchaTest extends WP_UnitTestCase { // phpcs:ignore
 	}
 
 	/**
-	 * Unauthenticated modal requests must not be able to bypass reCAPTCHA —
-	 * this is the abuse-vector gate that prevents spamming reader/order
-	 * records via crafted POSTs with modal_checkout=1.
+	 * Modal requests without a valid modal-checkout nonce must not be able to
+	 * bypass reCAPTCHA — this is the abuse-vector gate that prevents spamming
+	 * reader/order records via crafted POSTs with modal_checkout=1.
 	 */
-	public function test_unauthenticated_modal_request_is_not_bypassed() {
+	public function test_modal_request_without_valid_nonce_is_not_bypassed() {
 		$_REQUEST['modal_checkout']  = '1';
 		$_POST['payment_method']     = 'cheque';
 		$_POST['is_validation_only'] = '1';
 
+		// No nonce at all.
+		$this->assertTrue( Modal_Checkout::recaptcha_verify_captcha( true, self::DUMMY_URL, 'checkout' ) );
+
+		// Garbage nonce.
+		$_POST['newspack_checkout_nonce'] = 'not-a-real-nonce';
 		$this->assertTrue( Modal_Checkout::recaptcha_verify_captcha( true, self::DUMMY_URL, 'checkout' ) );
 	}
 
 	/**
-	 * Authenticated modal + validation-only request bypasses reCAPTCHA. This
-	 * is the validation step from the first modal screen, which must not
-	 * consume the v2 widget.
+	 * Nonced modal + validation-only request bypasses reCAPTCHA. This is the
+	 * validation step from the first modal screen, which must not consume the
+	 * v2 widget.
 	 */
 	public function test_modal_validation_only_bypasses() {
-		$this->set_up_authed_modal_request();
+		$this->set_up_nonced_modal_request();
 		$_POST['is_validation_only'] = '1';
 
 		$this->assertFalse( Modal_Checkout::recaptcha_verify_captcha( true, self::DUMMY_URL, 'checkout' ) );
 	}
 
 	/**
-	 * Each offline gateway in the bypass allowlist must bypass reCAPTCHA when
-	 * a reader is authenticated inside the modal.
+	 * Each offline gateway in the bypass allowlist must bypass reCAPTCHA on a
+	 * nonced modal request.
 	 *
 	 * @dataProvider provider_bypass_gateways
 	 *
 	 * @param string $gateway Gateway ID.
 	 */
 	public function test_modal_bypass_gateway_bypasses( $gateway ) {
-		$this->set_up_authed_modal_request( $gateway );
+		$this->set_up_nonced_modal_request( $gateway );
 
 		$this->assertFalse(
 			Modal_Checkout::recaptcha_verify_captcha( true, self::DUMMY_URL, 'checkout' ),
@@ -132,17 +135,17 @@ class ModalCheckoutRecaptchaTest extends WP_UnitTestCase { // phpcs:ignore
 	 * A non-bypass gateway must still require reCAPTCHA verification.
 	 */
 	public function test_modal_non_bypass_gateway_still_verifies() {
-		$this->set_up_authed_modal_request( 'stripe' );
+		$this->set_up_nonced_modal_request( 'stripe' );
 
 		$this->assertTrue( Modal_Checkout::recaptcha_verify_captcha( true, self::DUMMY_URL, 'checkout' ) );
 	}
 
 	/**
-	 * Authenticated modal request with no validation_only and no
-	 * payment_method passes through to the caller's default.
+	 * Nonced modal request with no validation_only and no payment_method
+	 * passes through to the caller's default.
 	 */
 	public function test_modal_with_no_bypass_signals_passes_through() {
-		$this->set_up_authed_modal_request();
+		$this->set_up_nonced_modal_request();
 
 		$this->assertTrue( Modal_Checkout::recaptcha_verify_captcha( true, self::DUMMY_URL, 'checkout' ) );
 		$this->assertFalse( Modal_Checkout::recaptcha_verify_captcha( false, self::DUMMY_URL, 'checkout' ) );
@@ -159,7 +162,7 @@ class ModalCheckoutRecaptchaTest extends WP_UnitTestCase { // phpcs:ignore
 		};
 		add_filter( 'newspack_blocks_modal_checkout_recaptcha_bypass_gateways', $filter );
 
-		$this->set_up_authed_modal_request( 'custom_offline' );
+		$this->set_up_nonced_modal_request( 'custom_offline' );
 
 		$this->assertFalse( Modal_Checkout::recaptcha_verify_captcha( true, self::DUMMY_URL, 'checkout' ) );
 

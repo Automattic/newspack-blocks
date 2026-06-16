@@ -1624,10 +1624,10 @@ final class Modal_Checkout {
 	 * billing-edit step and offline gateways with no client-side tokenization
 	 * (e.g. Check Payments). Also covers AJAX checkout (e.g. Apple Pay).
 	 *
-	 * All bypasses are scoped to the modal checkout context and to logged-in
-	 * readers so a crafted POST to standard /checkout/ — or an unauthenticated
-	 * POST to the modal — can't disable reCAPTCHA to spam the reader/order
-	 * tables.
+	 * All bypasses are scoped to the modal checkout context and gated on a valid
+	 * modal-checkout nonce so a crafted POST to standard /checkout/ — or a blind
+	 * POST to the modal without the nonce — can't disable reCAPTCHA to spam the
+	 * reader/order tables.
 	 *
 	 * @param bool   $should_verify Whether to verify the captcha.
 	 * @param string $url The URL from which the verification request originated.
@@ -1640,10 +1640,16 @@ final class Modal_Checkout {
 		if ( ! self::is_modal_checkout() ) {
 			return $should_verify;
 		}
-		// Require an authenticated reader for any bypass. Reader Activation
-		// auto-registers and logs in the reader when they submit billing on the
-		// first modal screen, so the bypasses still apply on the real flow.
-		if ( ! is_user_logged_in() ) {
+		// Require a valid modal-checkout nonce for any bypass. The nonce is
+		// rendered into the modal checkout form (form-checkout.php) and submitted
+		// with the checkout request, so the real modal flow — including guest
+		// donors converting through the modal (NPPM-2619), who are not yet
+		// registered/logged in at woocommerce_checkout_process time — still hits
+		// the bypass. A crafted POST to standard /checkout/ with modal_checkout=1
+		// but no valid nonce falls through to standard reCAPTCHA verification,
+		// closing the spam vector without locking out unauthenticated readers.
+		$nonce = isset( $_POST['newspack_checkout_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['newspack_checkout_nonce'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		if ( ! wp_verify_nonce( $nonce, 'newspack_modal_checkout_nonce' ) ) {
 			return $should_verify;
 		}
 		// Skip captcha verification on the validation-only request fired when

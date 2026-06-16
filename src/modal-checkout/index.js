@@ -144,6 +144,11 @@ import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 				// and returns without submitting — the visible button goes dead. Catch
 				// the click on document capture phase (before the clone's element-level
 				// listener) and force a native submit when the bypass is active.
+				// NOTE: this is a deliberate cross-repo monkey-patch of newspack-plugin's
+				// recaptcha handler from newspack-blocks. The cleaner home would be a
+				// data-skip-recaptcha branch in newspack-plugin's recaptcha/index.js
+				// handleSubmit, but the cross-repo coordination isn't worth it for this
+				// one-off fix.
 				document.addEventListener(
 					'click',
 					function ( e ) {
