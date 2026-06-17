@@ -1114,8 +1114,8 @@ class Newspack_Blocks {
 	/**
 	 * Outputs HTML for given tag labels.
 	 *
-	 * @param array $labels Labels to display.
-	 * @param bool  $links  Whether to include links to tag archives.
+	 * @param array|null $labels Labels to display.
+	 * @param bool       $links  Whether to include links to tag archives.
 	 *
 	 * @return void
 	 */
