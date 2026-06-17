@@ -134,6 +134,21 @@ final class Modal_Checkout {
 	];
 
 	/**
+	 * Offline payment gateways with no client-side tokenization. These race with
+	 * Woo's updated_checkout reset under reCAPTCHA v2 invisible and freeze the
+	 * submit button (NPPM-2619), so reCAPTCHA verification is bypassed for them
+	 * inside the modal checkout. Mirrored in JS via the localized
+	 * `newspackBlocksModalCheckout.recaptcha_bypass_gateways` array.
+	 *
+	 * @var string[]
+	 */
+	private static $recaptcha_bypass_gateways = [
+		'bacs', // Direct bank transfer.
+		'cheque',
+		'cod', // Cash on delivery.
+	];
+
+	/**
 	 * Initialize hooks.
 	 */
 	public static function init() {
@@ -272,6 +287,23 @@ final class Modal_Checkout {
 		 * @param array $supported_gateways
 		 */
 		return apply_filters( 'newspack_blocks_modal_checkout_supported_gateways', self::$supported_gateways );
+	}
+
+	/**
+	 * Get the list of payment gateways for which reCAPTCHA verification should
+	 * be bypassed inside the modal checkout. Filterable via
+	 * `newspack_blocks_modal_checkout_recaptcha_bypass_gateways`.
+	 *
+	 * @return string[] Bypass gateway IDs.
+	 */
+	public static function get_recaptcha_bypass_gateways() {
+		/**
+		 * Filters the list of payment gateways that bypass reCAPTCHA verification
+		 * inside the modal checkout.
+		 *
+		 * @param string[] $bypass_gateways Bypass gateway IDs.
+		 */
+		return apply_filters( 'newspack_blocks_modal_checkout_recaptcha_bypass_gateways', self::$recaptcha_bypass_gateways );
 	}
 
 	/**
@@ -414,7 +446,14 @@ final class Modal_Checkout {
 
 		/** Apply NYP custom price */
 		$price = filter_input( INPUT_GET, 'price', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		if ( \Newspack_Blocks::can_use_name_your_price() ? \WC_Name_Your_Price_Helpers::is_nyp( $product_id ) : false ) {
+		// can_use_name_your_price() can return true under the NRH donation
+		// platform even when WC_Name_Your_Price_Helpers isn't loaded, so guard
+		// the class call directly. Mirrors process_name_your_price_request().
+		if (
+			\Newspack_Blocks::can_use_name_your_price() &&
+			class_exists( 'WC_Name_Your_Price_Helpers' ) &&
+			\WC_Name_Your_Price_Helpers::is_nyp( $product_id )
+		) {
 			if ( empty( $price ) ) {
 				$price = \WC_Name_Your_Price_Helpers::get_suggested_price( $product_id );
 			}
@@ -844,14 +883,15 @@ final class Modal_Checkout {
 			'newspack-blocks-modal-checkout',
 			'newspackBlocksModalCheckout',
 			[
-				'ajax_url'              => admin_url( 'admin-ajax.php' ),
-				'nyp_nonce'             => wp_create_nonce( 'newspack_checkout_name_your_price' ),
-				'checkout_nonce'        => wp_create_nonce( 'newspack_modal_checkout_nonce' ),
-				'newspack_class_prefix' => self::get_class_prefix(),
-				'is_checkout_complete'  => function_exists( 'is_order_received_page' ) && is_order_received_page(),
-				'divider_text'          => esc_html__( 'Or', 'newspack-blocks' ),
-				'is_error'              => ! is_checkout() && ! is_order_received_page(),
-				'labels'                => [
+				'ajax_url'                  => admin_url( 'admin-ajax.php' ),
+				'nyp_nonce'                 => wp_create_nonce( 'newspack_checkout_name_your_price' ),
+				'checkout_nonce'            => wp_create_nonce( 'newspack_modal_checkout_nonce' ),
+				'newspack_class_prefix'     => self::get_class_prefix(),
+				'is_checkout_complete'      => function_exists( 'is_order_received_page' ) && is_order_received_page(),
+				'divider_text'              => esc_html__( 'Or', 'newspack-blocks' ),
+				'is_error'                  => ! is_checkout() && ! is_order_received_page(),
+				'recaptcha_bypass_gateways' => array_values( self::get_recaptcha_bypass_gateways() ),
+				'labels'                    => [
 					'billing_details'  => self::get_modal_checkout_labels( 'billing_details' ),
 					'shipping_details' => self::get_modal_checkout_labels( 'shipping_details' ),
 					'gift_recipient'   => self::get_modal_checkout_labels( 'gift_recipient' ),
@@ -1555,7 +1595,12 @@ final class Modal_Checkout {
 	 * @return bool True if the request is for validation only.
 	 */
 	private static function is_validation_only() {
-		return boolval( filter_input( INPUT_POST, 'is_validation_only', FILTER_SANITIZE_NUMBER_INT ) );
+		// Read $_POST directly (rather than filter_input) so the recaptcha
+		// bypass branch this gates is exercisable from unit tests —
+		// filter_input(INPUT_POST, ...) returns null under PHP CLI. Nonce
+		// verification is owned by Woo's checkout flow upstream of every
+		// call site.
+		return ! empty( $_POST['is_validation_only'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 	}
 
 	/**
@@ -1574,7 +1619,15 @@ final class Modal_Checkout {
 	}
 
 	/**
-	 * Prevent reCAPTCHA from being verified for AJAX checkout (e.g. Apple Pay).
+	 * Selectively bypass reCAPTCHA verification in the modal checkout for paths
+	 * that can't safely serialize with the v2 widget — the validation-only
+	 * billing-edit step and offline gateways with no client-side tokenization
+	 * (e.g. Check Payments). Also covers AJAX checkout (e.g. Apple Pay).
+	 *
+	 * All bypasses are scoped to the modal checkout context and gated on a valid
+	 * modal-checkout nonce so a crafted POST to standard /checkout/ — or a blind
+	 * POST to the modal without the nonce — can't disable reCAPTCHA to spam the
+	 * reader/order tables.
 	 *
 	 * @param bool   $should_verify Whether to verify the captcha.
 	 * @param string $url The URL from which the verification request originated.
@@ -1584,7 +1637,36 @@ final class Modal_Checkout {
 		if ( 'checkout' !== $context ) {
 			return $should_verify;
 		}
+		if ( ! self::is_modal_checkout() ) {
+			return $should_verify;
+		}
+		// Require a valid modal-checkout nonce for any bypass. The nonce is
+		// rendered into the modal checkout form (form-checkout.php) and submitted
+		// with the checkout request, so the real modal flow — including guest
+		// donors converting through the modal (NPPM-2619), who are not yet
+		// registered/logged in at woocommerce_checkout_process time — still hits
+		// the bypass. A crafted POST to standard /checkout/ with modal_checkout=1
+		// but no valid nonce falls through to standard reCAPTCHA verification,
+		// closing the spam vector without locking out unauthenticated readers.
+		$nonce = isset( $_POST['newspack_checkout_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['newspack_checkout_nonce'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		if ( ! wp_verify_nonce( $nonce, 'newspack_modal_checkout_nonce' ) ) {
+			return $should_verify;
+		}
+		// Skip captcha verification on the validation-only request fired when
+		// the user updates billing details on the first screen of the modal.
 		if ( self::is_validation_only() ) {
+			return false;
+		}
+		// Skip captcha for offline gateways with no client-side tokenization
+		// (cheque, bacs, cod). v2 invisible races with updated_checkout resets
+		// and freezes the submit on these (NPPM-2619). Mirrors the
+		// data-skip-recaptcha toggle on the modal checkout form.
+		// Read $_POST directly (rather than filter_input) so this branch is
+		// exercisable from unit tests — filter_input(INPUT_POST, ...) returns
+		// null under PHP CLI. Nonce verification is owned by Woo's checkout
+		// flow upstream of this filter.
+		$payment_method = isset( $_POST['payment_method'] ) ? sanitize_text_field( wp_unslash( $_POST['payment_method'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		if ( $payment_method && in_array( $payment_method, self::get_recaptcha_bypass_gateways(), true ) ) {
 			return false;
 		}
 		return $should_verify;

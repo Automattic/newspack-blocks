@@ -99,18 +99,85 @@ import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 				const $after_customer_details = $( '#after_customer_details' );
 				const $gift_options = $( '.newspack-wcsg--wrapper' );
 
+				// Mirrored from PHP via Modal_Checkout::get_recaptcha_bypass_gateways().
+				// Filterable on the PHP side via newspack_blocks_modal_checkout_recaptcha_bypass_gateways.
+				const recaptchaBypassGateways = Array.isArray( newspackBlocksModalCheckout.recaptcha_bypass_gateways )
+					? newspackBlocksModalCheckout.recaptcha_bypass_gateways
+					: [];
+
+				// Tracked via the editing_details event below instead of probing the DOM.
+				let isEditingDetails = false;
+
 				/**
 				 * Handle styling update for selected payment method.
+				 *
+				 * Bound to input.change, payment_method_selected, and updated_checkout
+				 * because each fires in distinct scenarios (initial bind, programmatic
+				 * Woo updates, full fragment refresh). The body is idempotent so the
+				 * overlap is intentional and harmless.
 				 */
 				function handlePaymentMethodSelect() {
 					const selected = $( 'input[name="payment_method"]:checked' ).val();
 					$( '.wc_payment_method' ).removeClass( 'selected' );
 					$( '.wc_payment_method.payment_method_' + selected ).addClass( 'selected' );
+					// setEditingDetails owns data-skip-recaptcha during edit mode.
+					if ( isEditingDetails ) {
+						return;
+					}
+					// Bypass reCAPTCHA on offline gateways with no client-side
+					// tokenization (cheque/bacs/cod). v2 invisible races with
+					// updated_checkout resets and freezes the submit button (NPPM-2619).
+					if ( selected && recaptchaBypassGateways.indexOf( selected ) !== -1 ) {
+						$form.attr( 'data-skip-recaptcha', '1' );
+					} else {
+						$form.removeAttr( 'data-skip-recaptcha' );
+					}
 				}
 				$( 'input[name="payment_method"]' ).change( handlePaymentMethodSelect );
 				$( document ).on( 'payment_method_selected', handlePaymentMethodSelect );
 				$( document ).on( 'updated_checkout', handlePaymentMethodSelect );
 				handlePaymentMethodSelect();
+
+				// When v2 invisible is rendered, newspack-plugin's recaptcha attaches a
+				// click handler to #place_order_clone that preventDefaults and runs
+				// handleSubmit. In skip-recaptcha mode that handler clears an attribute
+				// and returns without submitting — the visible button goes dead. Catch
+				// the click on document capture phase (before the clone's element-level
+				// listener) and force a native submit when the bypass is active.
+				// NOTE: this is a deliberate cross-repo monkey-patch of newspack-plugin's
+				// recaptcha handler from newspack-blocks. The cleaner home would be a
+				// data-skip-recaptcha branch in newspack-plugin's recaptcha/index.js
+				// handleSubmit, but the cross-repo coordination isn't worth it for this
+				// one-off fix.
+				document.addEventListener(
+					'click',
+					function ( e ) {
+						const clone = e.target && e.target.closest ? e.target.closest( '#place_order_clone' ) : null;
+						if ( ! clone || ! $form.is( '[data-skip-recaptcha]' ) ) {
+							return;
+						}
+						e.preventDefault();
+						e.stopImmediatePropagation();
+						const formEl = $form.get( 0 );
+						if ( typeof formEl.requestSubmit === 'function' ) {
+							formEl.requestSubmit();
+						} else {
+							formEl.submit();
+						}
+					},
+					true
+				);
+
+				// Mirror setEditingDetails' state so handlePaymentMethodSelect can defer
+				// to it without probing the DOM, and re-apply the payment-method toggle
+				// when leaving edit mode (setEditingDetails(false) clears the attr
+				// unconditionally before this fires).
+				$form.on( 'editing_details', function ( e, editing ) {
+					isEditingDetails = !! editing;
+					if ( ! isEditingDetails ) {
+						handlePaymentMethodSelect();
+					}
+				} );
 
 				/**
 				 * Bubble up checkout place order event.
@@ -492,14 +559,14 @@ import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 				/**
 				 * Set the checkout state as editing billing/shipping fields or not.
 				 *
-				 * @param {boolean} isEditingDetails
+				 * @param {boolean} editing
 				 */
-				function setEditingDetails( isEditingDetails ) {
+				function setEditingDetails( editing ) {
 					const newspack_grecaptcha = window.newspack_grecaptcha || {};
 					clearNotices();
 					// Clear checkout details.
 					$( '#checkout_details' ).remove();
-					if ( isEditingDetails ) {
+					if ( editing ) {
 						$form.attr( 'data-skip-recaptcha', '1' );
 						$form.append( '<input name="is_validation_only" type="hidden" value="1" />' );
 						// Destroy reCAPTCHA inputs so we don't trigger validation between checkout steps.
@@ -559,7 +626,7 @@ import { domReady, onCheckoutPlaceOrderProcessing } from './utils';
 						// Disable 'Place Order' button if Subscription Confirmation is required.
 						handleSubscriptionConfirmation();
 					}
-					$form.triggerHandler( 'editing_details', [ isEditingDetails ] );
+					$form.triggerHandler( 'editing_details', [ editing ] );
 					// Scroll to top.
 					window.scroll( { top: 0, left: 0, behavior: 'smooth' } );
 				}
