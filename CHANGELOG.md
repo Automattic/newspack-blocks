@@ -1,3 +1,10 @@
+## [4.26.4](https://github.com/Automattic/newspack-blocks/compare/v4.26.3...v4.26.4) (2026-06-17)
+
+
+### Bug Fixes
+
+* **recaptcha:** bypass on Check Payments path in modal checkout ([db7e7f3](https://github.com/Automattic/newspack-blocks/commit/db7e7f339106caf5296dae59cc5c4a87a41ce930))
+
 ## [4.26.3](https://github.com/Automattic/newspack-blocks/compare/v4.26.2...v4.26.3) (2026-05-18)
 
 
