@@ -1112,24 +1112,6 @@ class Newspack_Blocks {
 	}
 
 	/**
-	 * Generates HTML for given tag labels.
-	 *
-	 * @param array $labels Labels to display.
-	 * @param bool  $links  Whether to include links to tag archives.
-	 * @param array $outer_classes Classes to apply to the outer container.
-	 * @param array $inner_classes Classes to apply to the inner container.
-	 *
-	 * @return string       Tag labels as HTML.
-	 */
-	public static function generate_tag_labels( $labels = null, $links = true, $outer_classes = array( 'tag-labels' ), $inner_classes = array( 'tag-label', 'flag' ) ) {
-		if ( class_exists( '\Newspack\Tag_Labels' ) && method_exists( '\Newspack\Tag_Labels', 'generate_html' ) ) {
-			return \Newspack\Tag_Labels::generate_html( $labels, $links, $outer_classes, $inner_classes, 'div' );
-		}
-
-		return '';
-	}
-
-	/**
 	 * Outputs HTML for given tag labels.
 	 *
 	 * @param array $labels Labels to display.
