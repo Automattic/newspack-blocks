@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name:     Newspack Blocks
+ * Plugin Name:     Newspack Blocks (WRONG VERSION)
  * Plugin URI:      https://newspack.com/
- * Description:     A collection of blocks for news publishers.
+ * Description:     This plugin was downloaded from the legacy plugin repo. Please download the latest version from https://github.com/Automattic/newspack-workspace.
  * Author:          Automattic
  * Author URI:      https://newspack.com/
  * Text Domain:     newspack-blocks
