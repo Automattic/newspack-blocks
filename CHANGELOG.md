@@ -1,3 +1,10 @@
+## [4.26.6](https://github.com/Automattic/newspack-blocks/compare/v4.26.5...v4.26.6) (2026-08-18)
+
+
+### Bug Fixes
+
+* soften sunset plugin name and add migration notice ([51bbe11](https://github.com/Automattic/newspack-blocks/commit/51bbe114f8e6b44212717b7f4243ed27880c3acc))
+
 ## [4.26.5](https://github.com/Automattic/newspack-blocks/compare/v4.26.4...v4.26.5) (2026-08-05)
 
 
