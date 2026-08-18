@@ -1,13 +1,13 @@
 <?php
 /**
- * Plugin Name:     Newspack Blocks (WRONG VERSION)
+ * Plugin Name:     Newspack Blocks (final version, please migrate)
  * Plugin URI:      https://newspack.com/
- * Description:     This plugin was downloaded from the legacy plugin repo. Please download the latest version from https://github.com/Automattic/newspack-workspace.
+ * Description:     Final version released from the legacy plugin repository. This copy will not receive further updates. Download the current version at https://newspack.com/download-center
  * Author:          Automattic
  * Author URI:      https://newspack.com/
  * Text Domain:     newspack-blocks
  * Domain Path:     /languages
- * Version:         4.26.4
+ * Version:         4.26.5
  *
  * @package         Newspack_Blocks
  */
@@ -15,7 +15,7 @@
 define( 'NEWSPACK_BLOCKS__PLUGIN_FILE', __FILE__ );
 define( 'NEWSPACK_BLOCKS__BLOCKS_DIRECTORY', 'dist/' );
 define( 'NEWSPACK_BLOCKS__PLUGIN_DIR', plugin_dir_path( NEWSPACK_BLOCKS__PLUGIN_FILE ) );
-define( 'NEWSPACK_BLOCKS__VERSION', '4.26.4' );
+define( 'NEWSPACK_BLOCKS__VERSION', '4.26.5' );
 
 require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'includes/class-newspack-blocks.php';
 require_once NEWSPACK_BLOCKS__PLUGIN_DIR . 'includes/class-newspack-blocks-api.php';
@@ -94,3 +94,40 @@ function newspack_blocks_plugin_textdomain() {
 	load_plugin_textdomain( 'newspack-blocks', false, dirname( plugin_basename( NEWSPACK_BLOCKS__PLUGIN_FILE ) ) . '/languages' );
 }
 add_action( 'plugins_loaded', 'newspack_blocks_plugin_textdomain' );
+
+/**
+ * Warn administrators that this build came from the legacy plugin repository.
+ */
+function newspack_blocks_legacy_repo_notice() {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+	?>
+	<div class="notice notice-error">
+		<p><strong><?php esc_html_e( 'You are running an outdated version of the Newspack Blocks plugin.', 'newspack-blocks' ); ?></strong></p>
+		<p>
+			<?php
+			printf(
+				wp_kses(
+					/* translators: 1: URL of the announcement post. 2: URL of the download center. */
+					__( 'This is the final version released from the legacy plugin repository, and it will not receive further updates. <a href="%1$s">Read the announcement</a>, then download the current version from the <a href="%2$s">Newspack download center</a>.', 'newspack-blocks' ),
+					[
+						'a' => [
+							'href' => [],
+						],
+					]
+				),
+				esc_url( 'https://newspack.com/newspack-plugins-and-themes-have-a-new-home/' ),
+				esc_url( 'https://newspack.com/download-center' )
+			);
+			?>
+		</p>
+	</div>
+	<?php
+}
+
+/*
+ * Newspack wizard screens call remove_all_actions() on the notice hooks at priority -9999,
+ * so this notice runs ahead of that to stay visible on every admin screen.
+ */
+add_action( 'all_admin_notices', 'newspack_blocks_legacy_repo_notice', -99999 );

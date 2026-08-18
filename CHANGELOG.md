@@ -1,3 +1,10 @@
+## [4.26.5](https://github.com/Automattic/newspack-blocks/compare/v4.26.4...v4.26.5) (2026-08-05)
+
+
+### Bug Fixes
+
+* trigger wrong version to sunset the repo ([c8aca09](https://github.com/Automattic/newspack-blocks/commit/c8aca098c9f5a2307e42192ccdf017088dcbae6a))
+
 ## [4.26.4](https://github.com/Automattic/newspack-blocks/compare/v4.26.3...v4.26.4) (2026-06-17)
 
 
